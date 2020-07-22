@@ -9,6 +9,7 @@ clusterAgent:
 
 clusterChecksRunner:
   enabled: true
+  replicas: 1
   rbac:
     dedicated: true
     serviceAccountAnnotations:
