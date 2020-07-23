@@ -1,4 +1,5 @@
 datadog:
+  clusterName: kubernetes-cluster.example.com
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
   clusterChecks:
@@ -6,9 +7,11 @@ datadog:
 
 clusterAgent:
   enabled: true
+  wpaController: true
 
 clusterChecksRunner:
   enabled: true
+  replicas: 1
 
   volumes:
     - name: tmp
