@@ -6,6 +6,15 @@ Datadog [offers two variants](https://hub.docker.com/r/datadog/agent/tags/), swi
 
 See the [Datadog JMX integration](https://docs.datadoghq.com/integrations/java/) to learn more.
 
+## How to use Datadog Helm repository
+
+You need to add this repository to your Helm repositories:
+
+```
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+```
+
 ## Prerequisites
 
 Kubernetes 1.4+ or OpenShift 3.4+, note that:
@@ -25,7 +34,7 @@ To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datad
 
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY> stable/datadog
+  --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
@@ -46,7 +55,7 @@ Now, the installation command contains the reference to the secret.
 
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME stable/datadog
+  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
 ```
 
 **Note**: Provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
@@ -63,7 +72,7 @@ helm install --name datadog-monitoring \
     --set datadog.appKey=<DATADOG_APP_KEY> \
     --set clusterAgent.enabled=true \
     --set clusterAgent.metricsProvider.enabled=true \
-    stable/datadog
+    datadog/datadog
 ```
 
 **Note**: Specifying `clusterAgent.metricsProvider.enabled=true` enables the External Metrics Server.
@@ -75,7 +84,7 @@ The Leader Election is enabled by default in the chart for the Cluster Agent. On
 
 You can specify the Datadog Cluster Agent token used to secure the communication between the Cluster Agent(s) and the Agents with `clusterAgent.token`.
 
-**If you don't specify a token, a random one is generated at each deployment so you must use `--recreate-pods` to ensure all pod use the same token.** see[Datadog Chart notes](https://github.com/helm/charts/blob/57d3030941ad2ec2d6f97c86afdf36666658a884/stable/datadog/templates/NOTES.txt#L49-L59) to learn more.
+**If you don't specify a token, a random one is generated at each deployment so you must use `--recreate-pods` to ensure all pod use the same token.** see[Datadog Chart notes](https://github.com/helm/charts/blob/57d3030941ad2ec2d6f97c86afdf36666658a884/datadog/datadog/templates/NOTES.txt#L49-L59) to learn more.
 
 ### Upgrading
 
@@ -84,7 +93,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 ⚠️ Migrating from 1.x to 2.x requires a manual action.
 
 The `datadog` chart has been refactored to regroup the `values.yaml` parameters in a more logical way.
-Please follow the [migration guide](https://github.com/helm/charts/blob/master/stable/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
+Please follow the [migration guide](https://github.com/helm/charts/blob/master/datadog/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
 
 #### From 1.19.0 onwards
 
@@ -96,7 +105,7 @@ The suggested approach is to delete the release and reinstall it.
 
 Starting with version 1.0.0, this chart does not support deploying Agent 5.x anymore. If you cannot upgrade to Agent 6.x or later, you can use a previous version of the chart by calling helm install with `--version 0.18.0`.
 
-See [0.18.1's README](https://github.com/helm/charts/blob/847f737479bb78d89f8fb650db25627558fbe1f0/stable/datadog/README.md) to see which options were supported at the time.
+See [0.18.1's README](https://github.com/helm/charts/blob/847f737479bb78d89f8fb650db25627558fbe1f0/datadog/datadog/README.md) to see which options were supported at the time.
 
 ### Uninstalling the Chart
 
@@ -117,7 +126,7 @@ As a best practice, a YAML file that specifies the values for the chart paramete
 3. Upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
@@ -137,7 +146,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 ### Enabling Process Collection
@@ -155,7 +164,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 ### Enabling System Probe Collection
@@ -175,7 +184,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 ### Kubernetes event collection
@@ -218,7 +227,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 For more details, please refer to [the documentation](https://docs.datadoghq.com/agent/kubernetes/integrations/).
@@ -247,7 +256,7 @@ podLabelsAsTags:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> stable/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
 ### CRI integration
@@ -266,7 +275,7 @@ The following table lists the configurable parameters of the Datadog chart and t
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
-  stable/datadog
+  datadog/datadog
 ```
 
 | Parameter                                                    | Description                                                                                                                                                                                                                                                                                         | Default                                         |
@@ -317,8 +326,14 @@ helm install --name <RELEASE_NAME> \
 | `datadog.podAnnotationsAsTags`                               | Kubernetes Annotations to Datadog Tags mapping                                                                                                                                                                                                                                                      | `nil`                                           |
 | `datadog.podLabelsAsTags`                                    | Kubernetes Labels to Datadog Tags mapping                                                                                                                                                                                                                                                           | `nil`                                           |
 | `datadog.securityContext`                                    | Allows you to overwrite the default securityContext applied to the container                                                                                                                                                                                                                        | `nil`                                           |
-| `datadog.acInclude`                                          | Include containers based on image name                                                                                                                                                                                                                                                              | `nil`                                           |
-| `datadog.acExclude`                                          | Exclude containers based on image name                                                                                                                                                                                                                                                              | `nil`                                           |
+| `datadog.acInclude`                                          | (Deprecated) Include containers based on image name                                                                                                                                                                                                                                                 | `nil`                                           |
+| `datadog.acExclude`                                          | (Deprecated) Exclude containers based on image name                                                                                                                                                                                                                                                 | `nil`                                           |
+| `datadog.containerInclude`                                   | Include containers based on image name, container name or kubernetes namespace                                                                                                                                                                                                                      | `nil`                                           |
+| `datadog.containerExclude`                                   | Exclude containers based on image name, container name or kubernetes namespace                                                                                                                                                                                                                      | `nil`                                           |
+| `datadog.containerIncludeMetrics`                            | Include containers for metrics collection based on image name, container name or kubernetes namespace                                                                                                                                                                                               | `nil`                                           |
+| `datadog.containerExcludeMetrics`                            | Exclude containers from metrics based on image name, container name or kubernetes namespace                                                                                                                                                                                                         | `nil`                                           |
+| `datadog.containerIncludeLogs`                               | Include containers for logs collection based on image name, container name or kubernetes namespace                                                                                                                                                                                                  | `nil`                                           |
+| `datadog.containerExcludeLogs`                               | Exclude containers from logs based on image name, container name or kubernetes namespace                                                                                                                                                                                                            | `nil`                                           |
 | `datadog.systemProbe.enabled`                                | enable system probe collection                                                                                                                                                                                                                                                                      | `false`                                         |
 | `datadog.systemProbe.seccomp`                                | Apply an ad-hoc seccomp profile to system-probe to restrict its privileges                                                                                                                                                                                                                          | `localhost/system-probe`                        |
 | `datadog.systemProbe.seccompRoot`                            | Seccomp root directory for system-probe                                                                                                                                                                                                                                                             | `/var/lib/kubelet/seccomp`                      |
@@ -338,10 +353,10 @@ helm install --name <RELEASE_NAME> \
 | `agents.dnsConfig`                                           | If set, configure dnsConfig options in datadog agent containers                                                                                                                                                                                                                                     | `nil`                                           |
 | `agents.containers.agent.env`                                | Additional list of environment variables to use in the agent container                                                                                                                                                                                                                              | `nil`                                           |
 | `agents.containers.agent.logLevel`                           | Agent log verbosity                                                                                                                                                                                                                                                                                 | `INFO`                                          |
-| `agents.containers.agent.resources.limits.cpu`               | CPU resource limits for the agent container                                                                                                                                                                                                                                                         | `200m`                                          |
-| `agents.containers.agent.resources.requests.cpu`             | CPU resource requests for the agent container                                                                                                                                                                                                                                                       | `200m`                                          |
-| `agents.containers.agent.resources.limits.memory`            | Memory resource limits for the agent container                                                                                                                                                                                                                                                      | `256Mi`                                         |
-| `agents.containers.agent.resources.requests.memory`          | Memory resource requests for the agent container                                                                                                                                                                                                                                                    | `256Mi`                                         |
+| `agents.containers.agent.resources.limits.cpu`               | CPU resource limits for the agent container                                                                                                                                                                                                                                                         | not set                                          |
+| `agents.containers.agent.resources.requests.cpu`             | CPU resource requests for the agent container                                                                                                                                                                                                                                                       | not set                                          |
+| `agents.containers.agent.resources.limits.memory`            | Memory resource limits for the agent container                                                                                                                                                                                                                                                      | not set                                         |
+| `agents.containers.agent.resources.requests.memory`          | Memory resource requests for the agent container                                                                                                                                                                                                                                                    | not set                                         |
 | `agents.containers.agent.livenessProbe`                      | Overrides the default liveness probe                                                                                                                                                                                                                                                                | http check on /live with port 5555              |
 | `agents.containers.agent.readinessProbe`                     | Overrides the default readiness probe                                                                                                                                                                                                                                                               | http check on /ready with port 5555             |
 | `agents.containers.processAgent.env`                         | Additional list of environment variables to use in the process-agent container                                                                                                                                                                                                                      | `nil`                                           |
@@ -362,10 +377,10 @@ helm install --name <RELEASE_NAME> \
 | `agents.containers.systemProbe.resources.requests.cpu`       | CPU resource requests for the system-probe container                                                                                                                                                                                                                                                | `100m`                                          |
 | `agents.containers.systemProbe.resources.limits.memory`      | Memory resource limits for the system-probe container                                                                                                                                                                                                                                               | `200Mi`                                         |
 | `agents.containers.systemProbe.resources.requests.memory`    | Memory resource requests for the system-probe container                                                                                                                                                                                                                                             | `200Mi`                                         |
-| `agents.containers.initContainers.resources.limits.cpu`      | CPU resource limits for the init containers container                                                                                                                                                                                                                                               | `200m`                                          |
-| `agents.containers.initContainers.resources.requests.cpu`    | CPU resource requests for the init containers container                                                                                                                                                                                                                                             | `200m`                                          |
-| `agents.containers.initContainers.resources.limits.memory`   | Memory resource limits for the init containers container                                                                                                                                                                                                                                            | `256Mi`                                         |
-| `agents.containers.initContainers.resources.requests.memory` | Memory resource requests for the init containers container                                                                                                                                                                                                                                          | `256Mi`                                         |
+| `agents.containers.initContainers.resources.limits.cpu`      | CPU resource limits for the init containers container                                                                                                                                                                                                                                               | not set                                          |
+| `agents.containers.initContainers.resources.requests.cpu`    | CPU resource requests for the init containers container                                                                                                                                                                                                                                             | not set                                          |
+| `agents.containers.initContainers.resources.limits.memory`   | Memory resource limits for the init containers container                                                                                                                                                                                                                                            | not set                                         |
+| `agents.containers.initContainers.resources.requests.memory` | Memory resource requests for the init containers container                                                                                                                                                                                                                                          | not set                                         |
 | `agents.priorityClassName`                                   | Which Priority Class to associate with the daemonset                                                                                                                                                                                                                                                | `nil`                                           |
 | `agents.useConfigMap`                                        | Configures a configmap to provide the agent configuration. Use this in combination with the `agent.customAgentConfig` parameter.                                                                                                                                                                    | `false`                                         |
 | `agents.customAgentConfig`                                   | Specify custom contents for the datadog agent config (datadog.yaml). Note the `agents.useConfigMap` parameter needs to be set to `true` for this parameter to be taken into account.                                                                                                                 | `{}`                                            |
@@ -396,7 +411,7 @@ helm install --name <RELEASE_NAME> \
 | `clusterAgent.rbac.serviceAccount`                           | existing ServiceAccount to use (ignored if rbac.create=true) for cluster agent's pods                                                                                                                                                                                                               | `default`                                       |
 | `clusterAgent.metricsProvider.enabled`                       | Enable Datadog metrics as a source for HPA scaling                                                                                                                                                                                                                                                  | `false`                                         |
 | `clusterAgent.metricsProvider.service.type`                  | The type of service to use for the clusterAgent metrics server                                                                                                                                                                                                                                      | `ClusterIP`                                     |
-| `clusterAgent.metricsProvider.service.port`                  | The port for service to use for the clusterAgent metrics server                                                                                                                                                                                                                                     | `8443`                                          |
+| `clusterAgent.metricsProvider.service.port`                  | The port for service to use for the clusterAgent metrics server (Kubernetes >= 1.15)                                                                                                                                                                                                                | `8443`                                          |
 | `clusterAgent.env`                                           | Additional Datadog environment variables for the cluster-agent                                                                                                                                                                                                                                      | `nil`                                           |
 | `clusterAgent.confd`                                         | Additional check configurations (static and Autodiscovery)                                                                                                                                                                                                                                          | `nil`                                           |
 | `clusterAgent.podAnnotations`                                | Annotations to add to the Cluster Agent Pod(s)                                                                                                                                                                                                                                                      | `nil`                                           |
@@ -405,10 +420,10 @@ helm install --name <RELEASE_NAME> \
 | `clusterAgent.priorityClassName`                             | Name of the priorityClass to apply to the Cluster Agent                                                                                                                                                                                                                                             | `nil`                                           |
 | `clusterAgent.nodeSelector`                                  | Node selectors to apply to the Cluster Agent deployment                                                                                                                                                                                                                                             | `nil`                                           |
 | `clusterAgent.affinity`                                      | Node affinities to apply to the Cluster Agent deployment                                                                                                                                                                                                                                            | `nil`                                           |
-| `clusterAgent.resources.requests.cpu`                        | CPU resource requests                                                                                                                                                                                                                                                                               | `200m`                                          |
-| `clusterAgent.resources.limits.cpu`                          | CPU resource limits                                                                                                                                                                                                                                                                                 | `200m`                                          |
-| `clusterAgent.resources.requests.memory`                     | Memory resource requests                                                                                                                                                                                                                                                                            | `256Mi`                                         |
-| `clusterAgent.resources.limits.memory`                       | Memory resource limits                                                                                                                                                                                                                                                                              | `256Mi`                                         |
+| `clusterAgent.resources.requests.cpu`                        | CPU resource requests                                                                                                                                                                                                                                                                               | not set                                          |
+| `clusterAgent.resources.limits.cpu`                          | CPU resource limits                                                                                                                                                                                                                                                                                 | not set                                          |
+| `clusterAgent.resources.requests.memory`                     | Memory resource requests                                                                                                                                                                                                                                                                            | not set                                         |
+| `clusterAgent.resources.limits.memory`                       | Memory resource limits                                                                                                                                                                                                                                                                              | not set                                         |
 | `clusterAgent.tolerations`                                   | List of node taints to tolerate                                                                                                                                                                                                                                                                     | `[]`                                            |
 | `clusterAgent.healthPort`                                    | Overrides the default health port used by the liveness and readiness endpoint                                                                                                                                                                                                                       | `5555`                                          |
 | `clusterAgent.livenessProbe`                                 | Overrides the default liveness probe                                                                                                                                                                                                                                                                | `http check on /live with port 5555`            |
@@ -421,10 +436,10 @@ helm install --name <RELEASE_NAME> \
 | `clusterChecksRunner.enabled`                                | Enable Datadog agent deployment dedicated for running Cluster Checks. It allows having different resources (Request/Limit) for Cluster Checks agent pods.                                                                                                                                           | `false`                                         |
 | `clusterChecksRunner.env`                                    | Additional Datadog environment variables for Cluster Checks Deployment                                                                                                                                                                                                                              | `nil`                                           |
 | `clusterChecksRunner.createPodDisruptionBudget`              | Enable a pod disruption budget to apply to the Cluster Checks pods                                                                                                                                                                                                                                  | `false`                                         |
-| `clusterChecksRunner.resources.requests.cpu`                 | CPU resource requests                                                                                                                                                                                                                                                                               | `200m`                                          |
-| `clusterChecksRunner.resources.limits.cpu`                   | CPU resource limits                                                                                                                                                                                                                                                                                 | `200m`                                          |
-| `clusterChecksRunner.resources.requests.memory`              | Memory resource requests                                                                                                                                                                                                                                                                            | `256Mi`                                         |
-| `clusterChecksRunner.resources.limits.memory`                | Memory resource limits                                                                                                                                                                                                                                                                              | `256Mi`                                         |
+| `clusterChecksRunner.resources.requests.cpu`                 | CPU resource requests                                                                                                                                                                                                                                                                               | not set                                          |
+| `clusterChecksRunner.resources.limits.cpu`                   | CPU resource limits                                                                                                                                                                                                                                                                                 | not set                                          |
+| `clusterChecksRunner.resources.requests.memory`              | Memory resource requests                                                                                                                                                                                                                                                                            | not set                                         |
+| `clusterChecksRunner.resources.limits.memory`                | Memory resource limits                                                                                                                                                                                                                                                                              | not set                                         |
 | `clusterChecksRunner.nodeSelector`                           | Node selectors                                                                                                                                                                                                                                                                                      | `nil`                                           |
 | `clusterChecksRunner.tolerations`                            | List of node taints to tolerate                                                                                                                                                                                                                                                                     | `nil`                                           |
 | `clusterChecksRunner.affinity`                               | Node affinities                                                                                                                                                                                                                                                                                     | avoid running pods on the same node             |
