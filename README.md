@@ -9,4 +9,5 @@ You need to add this repository to your Helm repositories:
 
 ```
 helm repo add datadog https://helm.datadoghq.com
+helm repo update
 ```

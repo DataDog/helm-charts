@@ -29,7 +29,7 @@ clusterAgent:
   nodeSelector:
     kubernetes.io/os: linux
   metricsProvider:
-    enabled: true
+    enabled: false
   admissionController:
     enabled: true
     mutateUnlabelled: true
