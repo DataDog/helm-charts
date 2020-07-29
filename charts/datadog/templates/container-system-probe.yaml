@@ -36,4 +36,9 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
+{{- if .Values.datadog.securityAgent.runtime.enabled }}
+    - name: runtimepoliciesdir
+      mountPath: /etc/datadog-agent/runtime-security.d
+      readOnly: true
+{{- end }}
 {{- end -}}
