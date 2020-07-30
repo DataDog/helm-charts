@@ -74,6 +74,11 @@
     - name: hostroot
       mountPath: /host/root
       readOnly: true
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: runtimesocketdir
+      mountPath: {{ print "/host/root" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
+      readOnly: true
+    {{- end }}
     - name: procdir
       mountPath: /host/proc
       readOnly: true
