@@ -83,6 +83,14 @@
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
 {{- end }}
   volumeMounts:
+    - name: installinfo
+      subPath: install_info
+      {{- if eq .Values.targetSystem "windows" }}
+      mountPath: C:/datadog-agent/install_info
+      {{- else }}
+      mountPath: /etc/datadog-agent/install_info
+      {{- end }}
+      readOnly: true
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if eq .Values.targetSystem "linux" }}
