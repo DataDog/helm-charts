@@ -816,6 +816,8 @@ agents:
     - NET_ADMIN
     - NET_BROADCAST
     - IPC_LOCK
+    - AUDIT_CONTROL
+    - AUDIT_READ
 
     ## @param volumes - list - optional
     ## Allowed volumes types
