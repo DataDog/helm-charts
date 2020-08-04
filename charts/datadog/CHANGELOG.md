@@ -2,6 +2,10 @@
 
 ## Changelog is now available through Git history/GitHub tags, previous tags kept as reference
 
+## 2.4.1
+
+* Add clusterAgent.metricsProvider.useDatadogMetrics to README
+
 ## 2.3.41
 
 * Fix issue with Kubernetes <= 1.14 and Cluster Agent's External Metrics Provider (must be 443)
