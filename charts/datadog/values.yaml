@@ -474,6 +474,11 @@ clusterAgent:
     #
     useDatadogMetrics: false
 
+    ## @param createReaderRbac - boolean - optional
+    ## Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent)
+    #
+    createReaderRbac: true
+
     ## Configuration for the service for the cluster-agent metrics server
     #
     service:
