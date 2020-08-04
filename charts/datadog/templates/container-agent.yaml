@@ -86,7 +86,7 @@
     - name: installinfo
       subPath: install_info
       {{- if eq .Values.targetSystem "windows" }}
-      mountPath: C:/datadog-agent/install_info
+      mountPath: C:/ProgramData/Datadog/install_info
       {{- else }}
       mountPath: /etc/datadog-agent/install_info
       {{- end }}
