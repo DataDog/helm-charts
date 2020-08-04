@@ -35,6 +35,7 @@ spec:
         {{- end }}
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         checksum/clusteragent-config: {{ tpl (toYaml .Values.clusterAgent.datadog_cluster_yaml) . | sha256sum }}
         {{- end }}
@@ -188,6 +189,14 @@ spec:
         readinessProbe:
 {{ toYaml .Values.clusterAgent.readinessProbe | indent 10 }}
         volumeMounts:
+          - name: installinfo
+            subPath: install_info
+            {{- if eq .Values.targetSystem "windows" }}
+            mountPath: C:/ProgramData/Datadog/install_info
+            {{- else }}
+            mountPath: /etc/datadog-agent/install_info
+            {{- end }}
+            readOnly: true
 {{- if .Values.clusterAgent.volumeMounts }}
 {{ toYaml .Values.clusterAgent.volumeMounts | indent 10 }}
 {{- end }}
@@ -203,6 +212,9 @@ spec:
             readOnly: true
 {{- end}}
       volumes:
+        - name: installinfo
+          configMap:
+            name: {{ template "datadog.fullname" . }}-installinfo
 {{- if .Values.clusterAgent.confd }}
         - name: confd
           configMap:

@@ -27,6 +27,7 @@ spec:
         {{- end }}
       name: {{ template "datadog.fullname" . }}
       annotations:
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
         checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
@@ -91,6 +92,9 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
+      - name: installinfo
+        configMap:
+          name: {{ template "datadog.fullname" . }}-installinfo
       - name: config
         emptyDir: {}
       {{- if eq .Values.targetSystem "linux" }}

@@ -22,6 +22,7 @@ spec:
         app: {{ template "datadog.fullname" . }}-clusterchecks
       name: {{ template "datadog.fullname" . }}-clusterchecks
       annotations:
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
         {{- end }}
@@ -134,8 +135,16 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
-{{- if .Values.clusterChecksRunner.volumeMounts }}
         volumeMounts:
+          - name: installinfo
+            subPath: install_info
+            {{- if eq .Values.targetSystem "windows" }}
+            mountPath: C:/ProgramData/Datadog/install_info
+            {{- else }}
+            mountPath: /etc/datadog-agent/install_info
+            {{- end }}
+            readOnly: true
+{{- if .Values.clusterChecksRunner.volumeMounts }}
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
 {{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
@@ -145,6 +154,9 @@ spec:
         readinessProbe:
 {{ toYaml .Values.clusterChecksRunner.readinessProbe | indent 10 }}
       volumes:
+        - name: installinfo
+          configMap:
+            name: {{ template "datadog.fullname" . }}-installinfo
 {{- if .Values.clusterChecksRunner.volumes }}
 {{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
 {{- end }}
