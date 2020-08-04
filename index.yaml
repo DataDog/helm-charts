@@ -3,6 +3,32 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2020-08-04T07:33:03.594457877Z"
+    dependencies:
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: =2.8.11
+    description: Datadog Agent
+    digest: f1d05a8c53ad5d58f3c0cfff07bff4dfcbb5a8e23e64d9d7faaad36e2e1548dd
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-2.4.1/datadog-2.4.1.tgz
+    version: 2.4.1
+  - apiVersion: v1
+    appVersion: "7"
     created: "2020-07-29T11:03:41.303974296Z"
     dependencies:
     - condition: datadog.kubeStateMetricsEnabled
