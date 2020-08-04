@@ -1,0 +1,75 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+rules:
+- apiGroups:
+  - "security.openshift.io"
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - restricted
+- apiGroups:
+  - rbac.authorization.k8s.io
+  - roles.rbac.authorization.k8s.io
+  - authorization.k8s.io
+  resources:
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - "*"
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents
+  - datadogagents/status
+  - datadogagents/finalizers
+  verbs:
+  - '*'
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+- apiGroups:
+  - apps
+  - batch
+  resources:
+  - replicasets
+  - deployments
+  - statefulsets
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+- apiGroups:
+  - apiregistration.k8s.io
+  resources:
+  - apiservices
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+  - delete
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "watermarkpodautoscalers"
+  verbs:
+  - "list"
+  - "get"
+  - "watch"
+{{- end -}}
