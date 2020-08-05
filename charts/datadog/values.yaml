@@ -735,7 +735,6 @@ agents:
     ## Provide securityContext configuration
     #
     securityContext:
-      type: MustRunAs
       seLinuxOptions:
         user: system_u
         role: system_r

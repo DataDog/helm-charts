@@ -27,6 +27,7 @@ spec:
   runAsUser:
     rule: RunAsAny
   seLinux:
+    rule: MustRunAs
 {{ toYaml .Values.agents.podSecurity.securityContext | indent 4 }}
   supplementalGroups:
     rule: RunAsAny
