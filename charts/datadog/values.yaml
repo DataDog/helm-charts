@@ -54,6 +54,12 @@ datadog:
   #    type: "spc_t"
   #    level: "s0"
 
+  ## @param  - string - optional
+  ## Allow to specify the `mountPropagation` value on all volumeMounts using HostPath
+  ## ref: https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+  #
+  hostVolumeMountPropagation: None
+
   ## @param clusterName - string - optional
   ## Set a unique cluster name to allow scoping hosts and Cluster Checks easily
   ## The name must be unique and must be dot-separated tokens where a token can be up to 40 characters with the following restrictions:

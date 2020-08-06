@@ -17,17 +17,21 @@
   volumeMounts:
     - name: debugfs
       mountPath: /sys/kernel/debug
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
     - name: procdir
       mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     - name: modules
       mountPath: /lib/modules
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     - name: src
       mountPath: /usr/src
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end -}}
