@@ -109,6 +109,15 @@ rules:
   - create
   - get
   - update
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  - replicasets
+  verbs:
+  - list
+  - get
+  - watch
 {{- end }}
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
 - apiGroups:
