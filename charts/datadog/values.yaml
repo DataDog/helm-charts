@@ -390,6 +390,12 @@ datadog:
     #
     enabled: false
 
+    ## @param scrubbing - boolean - required
+    ## Enable the scrubbing of containers for sensitive information.
+    ## The container scrubbing is taking significant resources on collection.
+    scrubbing:
+      enabled: true
+
 ## @param clusterAgent - object - required
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
