@@ -181,6 +181,10 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: "true"
           {{- end }}
+          {{- if .Values.datadog.orchestratorExplorer.container_scrubbing.enabled }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
+            value: "true"
+          {{- end }}
 {{- if .Values.clusterAgent.env }}
 {{ toYaml .Values.clusterAgent.env | indent 10 }}
 {{- end }}

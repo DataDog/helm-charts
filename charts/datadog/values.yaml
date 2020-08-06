@@ -390,10 +390,12 @@ datadog:
     #
     enabled: false
 
-    ## @param scrubbing - boolean - required
-    ## Enable the scrubbing of containers for sensitive information.
-    ## The container scrubbing is taking significant resources on collection.
-    scrubbing:
+    ## @param container_scrubbing - boolean - required
+    ## Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information.
+    ## The container scrubbing is taking significant resources during data collection.
+    ## If you notice that the cluster-agent uses too much CPU in larger clusters
+    ## turning this option off will improve the situation.
+    container_scrubbing:
       enabled: true
 
 ## @param clusterAgent - object - required
