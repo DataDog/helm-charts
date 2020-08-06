@@ -40,6 +40,7 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: runtimesocketdir
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "windows" }}
@@ -54,11 +55,13 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     - name: passwd
       mountPath: /etc/passwd
     - name: procdir
       mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- if .Values.datadog.systemProbe.enabled }}
     - name: sysprobe-socket-dir
