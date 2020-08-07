@@ -22,14 +22,16 @@
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.systemProbe.enabled | quote }}
     {{- end }}
-    {{- if .Values.datadog.orchestratorExplorer.enabled }}
+    {{- if (.Values.datadog.orchestratorExplorer.enabled | quote) }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-      value: "true"
+      value: {{ .Values.datadog.orchestratorExplorer.enabled | quote }}
+    {{- if eq (.Values.datadog.orchestratorExplorer.enabled | quote) "true" }}
     - name: DD_ORCHESTRATOR_CLUSTER_ID
       valueFrom:
         configMapKeyRef:
           name: datadog-cluster-id
           key: id
+    {{- end }}
     {{- end }}
 {{- if .Values.agents.containers.processAgent.env }}
 {{ toYaml .Values.agents.containers.processAgent.env | indent 4 }}
