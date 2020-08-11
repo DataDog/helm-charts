@@ -4,10 +4,14 @@
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["pwsh", "-Command"]
   args:
-    - Copy-Item -Recurse -Force {{ template "datadog.confPath" . }} C:/Temp
+    - |
+      Copy-Item -Recurse -Force {{ template "datadog.confPath" . }} C:/Temp
+      Copy-Item -Force C:/Temp/install_info/install_info C:/Temp/Datadog/install_info
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
+    - name: installinfo
+      mountPath: C:/Temp/install_info
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
