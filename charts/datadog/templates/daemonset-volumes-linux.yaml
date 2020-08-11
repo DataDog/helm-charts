@@ -41,12 +41,14 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
 - hostPath:
     path: /lib/modules
   name: modules
 - hostPath:
     path: /usr/src
   name: src
+{{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled .Values.datadog.systemProbe.enabled }}
 - hostPath:
