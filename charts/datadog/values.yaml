@@ -414,9 +414,9 @@ datadog:
       ## Set this to true to enable compliance checks
       #
       enabled: false
-      # @param configMap - string - required - contains compliance benchmarks that will be used
+      # @param configMap - string - optional - contains compliance benchmarks that will be used
       #
-      configMap: datadog-compliance-benchmarks
+      configMap:
       # @param checkInterval - duration - required - compliance check run interval
       #
       checkInterval: 20m
