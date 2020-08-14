@@ -29,6 +29,8 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    - name: DD_DOGSTATSD_TAG_CARDINALITY
+      value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
     {{- end }}
     {{- if not .Values.clusterAgent.enabled }}
     {{- if .Values.datadog.leaderElection }}
@@ -83,14 +85,12 @@
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
 {{- end }}
   volumeMounts:
+    {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
-      {{- if eq .Values.targetSystem "windows" }}
-      mountPath: C:/ProgramData/Datadog/install_info
-      {{- else }}
       mountPath: /etc/datadog-agent/install_info
-      {{- end }}
       readOnly: true
+    {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if eq .Values.targetSystem "linux" }}

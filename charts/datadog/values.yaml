@@ -154,6 +154,12 @@ datadog:
     #
     originDetection: false
 
+    ## @param tagCardinality - string - optional
+    ## Sets the tag cardinality relative to the origin detection
+    ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
+    #
+    tagCardinality: low
+
     ## @param useSocketVolume - boolean - optional
     ## Enable dogstatsd over Unix Domain Socket
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
