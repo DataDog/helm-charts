@@ -22,9 +22,9 @@
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.systemProbe.enabled | quote }}
     {{- end }}
-    {{- if .Values.datadog.orchestratorExplorer.enabled }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-      value: "true"
+      value: {{ .Values.datadog.orchestratorExplorer.enabled | quote }}
+    {{- if .Values.datadog.orchestratorExplorer.enabled }}
     - name: DD_ORCHESTRATOR_CLUSTER_ID
       valueFrom:
         configMapKeyRef:
