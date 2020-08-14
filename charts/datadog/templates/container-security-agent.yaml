@@ -21,6 +21,7 @@
       value: /host/root
     - name: DD_CLUSTER_AGENT_ENABLED
       value: {{ .Values.clusterAgent.enabled | quote }}
+    {{- if .Values.clusterAgent.enabled }}
     - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
       value: {{ template "datadog.fullname" . }}-cluster-agent
     - name: DD_CLUSTER_AGENT_AUTH_TOKEN
@@ -28,6 +29,7 @@
         secretKeyRef:
           name: {{ template "clusterAgent.tokenSecretName" . }}
           key: token
+    {{- end }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
