@@ -68,14 +68,10 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
-{{- else }}
-  emptyDir: {}
-{{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
