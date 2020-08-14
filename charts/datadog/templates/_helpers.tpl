@@ -135,3 +135,18 @@ Return agent config path
 C:/ProgramData/Datadog
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if we are installing on a GKE cluster without RBAC setup (versions older than GKE R26)
+*/}}
+{{- define "is-gke-without-external-metrics" -}}
+{{- if contains "-gke." .Capabilities.KubeVersion.GitVersion -}}
+{{- if semverCompare ">=1.17.9-gke.600 || >=1.16.13-gke.1" .Capabilities.KubeVersion.GitVersion -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
