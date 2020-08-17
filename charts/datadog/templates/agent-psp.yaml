@@ -17,6 +17,11 @@ metadata:
 spec:
   privileged: {{ .Values.agents.podSecurity.privileged }}
   hostNetwork: {{ .Values.agents.useHostNetwork }}
+  {{- if .Values.datadog.dogstatsd.useHostPort }}
+  hostPorts:
+  - min: 8125
+    max: 8125
+  {{- end }}
   hostPID: {{ .Values.datadog.dogstatsd.useHostPID }}
   allowedCapabilities: 
 {{ toYaml .Values.agents.podSecurity.capabilites | indent 4 }}
