@@ -154,6 +154,12 @@ datadog:
     #
     originDetection: false
 
+    ## @param tagCardinality - string - optional
+    ## Sets the tag cardinality relative to the origin detection
+    ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
+    #
+    tagCardinality: low
+
     ## @param useSocketVolume - boolean - optional
     ## Enable dogstatsd over Unix Domain Socket
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
@@ -389,6 +395,14 @@ datadog:
     ## ref: TODO - add doc link
     #
     enabled: false
+
+    ## @param container_scrubbing - boolean - required
+    ## Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information.
+    ## The container scrubbing is taking significant resources during data collection.
+    ## If you notice that the cluster-agent uses too much CPU in larger clusters
+    ## turning this option off will improve the situation.
+    container_scrubbing:
+      enabled: true
 
 ## @param clusterAgent - object - required
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
