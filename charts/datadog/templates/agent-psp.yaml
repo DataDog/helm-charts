@@ -20,7 +20,7 @@ spec:
   {{- if .Values.datadog.dogstatsd.useHostPort }}
   hostPorts:
   - min: 8125
-    max: 8125
+    max: 8126
   {{- end }}
   hostPID: {{ .Values.datadog.dogstatsd.useHostPID }}
   allowedCapabilities: 
