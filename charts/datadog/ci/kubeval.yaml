@@ -23,6 +23,11 @@ datadog:
   clusterChecks:
     enabled: true
   kubeStateMetricsEnabled: true
+  securityAgent:
+    compliance:
+      enabled: true
+    runtime:
+      enabled: true
 clusterAgent:
   enabled: true
   createPodDisruptionBudget: true
