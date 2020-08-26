@@ -64,6 +64,9 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- if .Values.datadog.systemProbe.enabled }}
+    - name: s6-run
+      mountPath: /var/run/s6
+      mountPropagation: None 
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
       readOnly: true
