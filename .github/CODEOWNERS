@@ -1,3 +1,6 @@
 # Code owners for charts
 
 *  @DataDog/container-integrations
+
+# Documentation
+*.md             @DataDog/documentation @DataDog/container-integrations
