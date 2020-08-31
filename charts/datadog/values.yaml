@@ -284,17 +284,20 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   #
   confd: {}
-  #   redisdb.yaml: |-
-  #     init_config:
-  #     instances:
-  #       - host: "name"
-  #         port: "6379"
-  #   kubernetes_state.yaml: |-
-  #     ad_identifiers:
-  #       - kube-state-metrics
-  #     init_config:
-  #     instances:
-  #       - kube_state_url: http://%%host%%:8080/metrics
+  #   redisdb.d:
+  #     conf.yaml: !-
+  #       init_config:
+  #       instances:
+  #         - host: "name"
+  #           port: "6379"
+  #   kube_apiserver_metrics.d:
+  #     auto_conf.yaml: --- # null existing auto_conf file
+  #     conf.yaml: |-
+  #       ad_identifiers:
+  #         - kube-state-metrics
+  #       init_config:
+  #       instances:
+  #         - kube_state_url: http://%%host%%:8080/metrics
 
   ## @param checksd - list of key:value strings - optional
   ## Provide additional custom checks as python code

@@ -29,7 +29,9 @@ spec:
       annotations:
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
-        checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
+        {{ range $key, $value := .Values.datadog.confd }}
+        checksum/confd-config-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}: {{ toYaml $value | sha256sum }}
+        {{- end }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}

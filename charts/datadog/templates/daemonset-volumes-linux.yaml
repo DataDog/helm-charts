@@ -19,10 +19,17 @@
 {{- end }}
 - name: s6-run
   emptyDir: {}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if .Values.datadog.autoconf }}
 - name: confd
   configMap:
     name: {{ template "datadog.fullname" . }}-confd
+{{- end }}
+{{- if .Values.datadog.confd }}
+{{- range $key, $value := .Values.datadog.confd }}
+- name: confd-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}
+  configMap:
+    name: {{ template "datadog.fullname" $ }}-confd-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}
+{{- end }}
 {{- end }}
 {{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled}}
 - name: sysprobe-config

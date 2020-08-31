@@ -1,8 +1,8 @@
-{{- range $key, $value := .Values.datadog.confd }}
+{{- if .Values.datadog.autoconf }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "datadog.fullname" $ }}-confd-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}
+  name: {{ template "datadog.fullname" $ }}-confd
   labels:
     helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" $ }}"
@@ -10,7 +10,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
     app.kubernetes.io/version: {{ $.Chart.AppVersion | quote }}
   annotations:
-    checksum/confd-config: {{ toYaml $value | sha256sum }}
+    checksum/autoconf-config: {{ toYaml $.Values.datadog.autoconf | sha256sum }}
 data:
-{{ toYaml $value | indent 2 }}
+{{/*
+Merge the legacy autoconf dict before so confd static configurations
+override duplicates
+*/}}
+{{ tpl (toYaml $.Values.datadog.autoconf) . | indent 2 }}
 {{- end -}}

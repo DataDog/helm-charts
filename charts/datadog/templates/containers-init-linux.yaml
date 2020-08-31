@@ -19,10 +19,17 @@
   volumeMounts:
     - name: config
       mountPath: /etc/datadog-agent
-    {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+    {{- if .Values.datadog.autoconf }}
     - name: confd
       mountPath: /conf.d
       readOnly: true
+    {{- end }}
+    {{- if .Values.datadog.confd }}
+    {{- range $key, $value := .Values.datadog.confd }}
+    - name: confd-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}
+      mountPath: /conf.d/{{ $key }}
+      readOnly: true
+    {{- end }}
     {{- end }}
     {{- if .Values.datadog.checksd }}
     - name: checksd
@@ -37,7 +44,7 @@
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled }}
+    {{- if .Values.datadog.systemProbe.enabled }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
