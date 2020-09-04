@@ -268,6 +268,22 @@ Standard paths are:
 - Containerd socket: `/var/run/containerd/containerd.sock`
 - Cri-o socket: `/var/run/crio/crio.sock`
 
+### Configuration required for Amazon Linux 2 based nodes
+
+Amazon Linux 2 does not support apparmor profile enforcement.
+Amazon Linux 2 is the default operating system for AWS Elastic Kubernetes Service (EKS) based clusters.
+Update your [datadog-values.yaml](values.yaml) file to disable apparmor enforcement:
+
+```yaml
+agents:
+  # (...)
+  apparmor:
+    # (...)
+    enabled: false
+
+# (...)
+```
+
 ## All configuration options
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
@@ -404,6 +420,7 @@ helm install --name <RELEASE_NAME> \
 | `agents.podSecurity.volumes`                                 | list of allowed volumes types                                                                                                                                                                                                                                                                       | `[configMap,downwardAPI,emptyDir,ostPath,secret]` |
 | `agents.podSecurity.seccompProfiles`                         | List of allowed seccomp profiles                                                                                                                                                                                                                                                                    | `["*"]`                                           |
 | `agents.podSecurity.apparmorProfiles`                        | List of allowed apparmor profiles                                                                                                                                                                                                                                                                   | `["*"]`                                           |
+| `agents.apparmor.enabled`                                    | Whether to enable apparmor profile enforcement                                                                                                                                                                                                                                                      | `true`                                            |
 | `datadog.leaderElection`                                     | Enable the leader Election feature                                                                                                                                                                                                                                                                  | `false`                                           |
 | `datadog.leaderLeaseDuration`                                | The duration for which a leader stays elected.                                                                                                                                                                                                                                                      | 60 sec, 15 if Cluster Checks enabled              |
 | `datadog.collectEvents`                                      | Enable Kubernetes event collection. Requires leader election.                                                                                                                                                                                                                                       | `false`                                           |
