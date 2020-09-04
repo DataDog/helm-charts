@@ -1,4 +1,5 @@
 {{- define "system-probe-init" -}}
+{{- if (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
 - name: seccomp-setup
   image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
   command:
@@ -11,6 +12,31 @@
   - name: seccomp-root
     mountPath: /host/var/lib/kubelet/seccomp
     mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+  resources:
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+{{- end }}
+- name: kernel-headers-apt
+  image: ubuntu:bionic
+  command: ["/bin/bash"]
+  args: ["-c", "apt-get update && apt-get install -y curl && curl https://raw.githubusercontent.com/DataDog/datadog-agent/pedro/kernel-header-poc/tools/ebpf/kernel_headers_downloader | bash"]
+  volumeMounts:
+  - mountPath: /host/etc/apt
+    name: etc-apt
+  - mountPath: /host/etc/debian_version
+    name: debian-version
+  resources:
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+- name: kernel-headers-yum
+  image: centos:8
+  command: ["/bin/bash"]
+  args: ["-c", "curl https://raw.githubusercontent.com/DataDog/datadog-agent/pedro/kernel-header-poc/tools/ebpf/kernel_headers_downloader | bash"]
+  volumeMounts:
+  - mountPath: /host/etc/yum
+    name: etc-yum
+  - mountPath: /host/etc/yum.repos.d
+    name: yum-sources
+  - mountPath: /host/etc/system-release-cpe
+    name: system-release
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 {{- end -}}

@@ -50,6 +50,28 @@
   name: src
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.systemProbe.enabled }}
+- hostPath:
+    path: /etc/apt
+    type: DirectoryOrCreate
+  name: etc-apt
+- hostPath:
+    path: /etc/yum
+    type: DirectoryOrCreate
+  name: etc-yum
+- hostPath:
+    path: /etc/yum.repos.d
+    type: DirectoryOrCreate
+  name: yum-sources
+- hostPath:
+    path: /etc/debian_version
+    type: FileOrCreate
+  name: debian-version
+- hostPath:
+    path: /etc/system-release-cpe
+    type: FileOrCreate
+  name: system-release
+{{- end }}
 {{- if or .Values.datadog.processAgent.enabled .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled }}
 - hostPath:
     path: /etc/passwd
