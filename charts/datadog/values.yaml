@@ -1130,6 +1130,12 @@ agents:
   #   # agent version >= 6.15
   #   # jmx_use_container_support: true
 
+  apparmor:
+    ## @param enabled - boolean - required
+    ## If true, enable apparmor enforcement, https://kubernetes.io/docs/tutorials/clusters/apparmor/
+    #
+    enabled: true
+
 clusterChecksRunner:
   ## @param enabled - boolean - required
   ## If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
