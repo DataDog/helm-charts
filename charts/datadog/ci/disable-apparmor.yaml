@@ -9,5 +9,5 @@ agents:
   podSecurity:
     podSecurityPolicy:
       create: true
-  apparmor:
-    enabled: false
+    apparmor:
+      enabled: false

@@ -277,9 +277,11 @@ Update your [datadog-values.yaml](values.yaml) file to disable apparmor enforcem
 ```yaml
 agents:
   # (...)
-  apparmor:
+  podSecurity:
     # (...)
-    enabled: false
+    apparmor:
+      # (...)
+      enabled: false
 
 # (...)
 ```
@@ -420,7 +422,7 @@ helm install --name <RELEASE_NAME> \
 | `agents.podSecurity.volumes`                                 | list of allowed volumes types                                                                                                                                                                                                                                                                       | `[configMap,downwardAPI,emptyDir,ostPath,secret]` |
 | `agents.podSecurity.seccompProfiles`                         | List of allowed seccomp profiles                                                                                                                                                                                                                                                                    | `["*"]`                                           |
 | `agents.podSecurity.apparmorProfiles`                        | List of allowed apparmor profiles                                                                                                                                                                                                                                                                   | `["*"]`                                           |
-| `agents.apparmor.enabled`                                    | Whether to enable apparmor profile enforcement                                                                                                                                                                                                                                                      | `true`                                            |
+| `agents.podSecurity.apparmor.enabled`                        | Whether to enable apparmor profile enforcement                                                                                                                                                                                                                                                      | `true`                                            |
 | `datadog.leaderElection`                                     | Enable the leader Election feature                                                                                                                                                                                                                                                                  | `false`                                           |
 | `datadog.leaderLeaseDuration`                                | The duration for which a leader stays elected.                                                                                                                                                                                                                                                      | 60 sec, 15 if Cluster Checks enabled              |
 | `datadog.collectEvents`                                      | Enable Kubernetes event collection. Requires leader election.                                                                                                                                                                                                                                       | `false`                                           |
