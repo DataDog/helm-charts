@@ -10,10 +10,12 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   annotations:
-    seccomp.security.alpha.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.seccompProfiles | quote }}
+    {{- if .Values.agents.podSecurity.apparmor.enabled }}
     apparmor.security.beta.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.apparmorProfiles | quote }}
-    seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"
     apparmor.security.beta.kubernetes.io/defaultProfileName: "runtime/default"
+    {{- end }}
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.seccompProfiles | quote }}
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"
 spec:
   privileged: {{ .Values.agents.podSecurity.privileged }}
   hostNetwork: {{ .Values.agents.useHostNetwork }}
