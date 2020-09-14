@@ -119,6 +119,8 @@ spec:
             value: {{ .Values.clusterAgent.metricsProvider.wpaController | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_USE_DATADOGMETRIC_CRD
             value: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics | quote }}
+          - name: DD_EXTERNAL_METRICS_AGGREGATOR
+            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}            
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED

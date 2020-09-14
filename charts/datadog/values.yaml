@@ -539,6 +539,11 @@ clusterAgent:
     #
     createReaderRbac: true
 
+    ## @param - string - optional - default: avg
+    ## Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum)
+    #
+    aggregator: avg
+
     ## Configuration for the service for the cluster-agent metrics server
     #
     service:
