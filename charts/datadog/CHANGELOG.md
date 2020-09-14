@@ -1,6 +1,77 @@
 # Datadog changelog
 
-## Changelog is now available through Git history/GitHub tags, previous tags kept as reference
+## 2.4.17
+
+* Update default `Agent` and `Cluster-Agent` image tags: `7.22` and `1.18`.
+
+## 2.4.16
+
+* Add `External Metric` Aggregator config on Chart.
+
+## 2.4.15
+
+* Add `agents.podSecurity.apparmor.enabled` flag (defaulted to `true`).
+
+## 2.4.14
+
+* Fix external metrics on GKE due to Google fix on recent versions (introduced in 2.4.1).
+
+## 2.4.13
+
+* fix Agent `PodSecurityPolicy` with `hostPorts` definition, and missing RBAC.
+
+## 2.4.12
+
+* Add `compliance` and `runtime` `security-agent` support.
+
+## 2.4.11
+
+* Add `NET_BROADCAST` capability for `system-probe`.
+
+## 2.4.10
+
+* Add `scrubbing` option for helm charts to "Orchestrator Explorer" support.
+
+## 2.4.9
+
+* Add `DD_DOGSTATSD_TAG_CARDINALITY` capability.
+
+## 2.4.8
+
+* Fix, Only try to mount `/lib/modules` and `/usr/src` when needed.
+
+## 2.4.7
+
+* Add `eventfd` and `eventfd2` to allowed syscalls for `system-probe`.
+
+## 2.4.6
+
+* Fix Windows deployment support (fixes #15).
+
+## 2.4.5
+
+* Add mount propagation option for `hostVolumes`.
+
+## 2.4.4
+
+* Fix typo in `allowHostPorts`.
+* Add support of `MustRunAs` in Agent `PodSecurityPolicy` and `SecurityContextConstraints`.
+
+## 2.4.3
+
+* Fix `Cluster-Agent` RBAC to collect new resources for the "Orchestrator Explorer" support.
+
+## 2.4.2
+
+* Add `install_info` file.
+
+## 2.4.1
+
+* Fix MetricsProvider RBAC setup on GKE clusters
+
+## 2.4.0
+
+* First release on github.com/datadog/helm-charts
 
 ## 2.3.41
 
