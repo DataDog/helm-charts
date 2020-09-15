@@ -144,9 +144,9 @@ spec:
             mountPath: /etc/datadog-agent/install_info
             {{- end }}
             readOnly: true
-{{- if .Values.clusterChecksRunner.volumeMounts }}
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
+{{- if .Values.clusterChecksRunner.volumeMounts }}
 {{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
 {{- end }}
         livenessProbe:
