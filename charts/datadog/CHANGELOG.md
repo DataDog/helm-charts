@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.18
+
+* Fix `config` volume not being mounted in clusterChecksRunner pods.
+
 ## 2.4.17
 
 * Update default `Agent` and `Cluster-Agent` image tags: `7.22` and `1.18`.
