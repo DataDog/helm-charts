@@ -1,5 +1,18 @@
 # Datadog changelog
 
+## 2.4.19
+
+* Add NetworkPolicy
+  Add the following parameters to control the creation of NetworkPolicy:
+  * `agents.networkPolicy.create`
+  * `clusterAgent.networkPolicy.create`
+  * `clusterChecksRunner.networkPolicy.create`
+  The NetworkPolicy managed by the Helm chart are designed to work out-of-the-box on most setups.
+  In particular, the agents need to connect to the datadog intakes. NetworkPolicy can be restricted
+  by IP but the datadog intake IP cannot be guaranteed to be stable.
+  The agents are also susceptible to connect to any pod, on any port, depending on the "auto-discovery" annotations
+  that can be dynamically added to them.
+
 ## 2.4.18
 
 * Fix `config` volume not being mounted in clusterChecksRunner pods.

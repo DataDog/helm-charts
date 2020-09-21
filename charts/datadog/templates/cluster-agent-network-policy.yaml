@@ -1,0 +1,40 @@
+{{- if $.Values.clusterAgent.networkPolicy.create -}}
+apiVersion: "networking.k8s.io/v1"
+kind: NetworkPolicy
+metadata:
+  name: {{ template "datadog.fullname" . }}-cluster-agent
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-cluster-agent
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+{{- if $.Values.clusterChecksRunner.enabled }}
+  - # Ingress from cluster checks runner
+    ports:
+      - port: 5005
+    from:
+      - podSelector:
+          matchLabels:
+            app: {{ template "datadog.fullname" . }}-clusterchecks
+{{- end }}
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+  - # Ingress from API server for external metrics
+    ports:
+      - port: {{ template "clusterAgent.metricsProvider.port" . }}
+{{- end }}
+  egress:
+    - # Egress to
+      # * Datadog intake
+      # * Kube API server
+      ports:
+        - port: 443
+{{- end}}
