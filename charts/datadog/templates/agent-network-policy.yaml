@@ -16,6 +16,19 @@ spec:
   policyTypes:
     - Ingress
     - Egress
+  ingress:
+{{- if $.Values.datadog.dogstatsd.port }}
+    - # Ingress for dogstatsd
+      ports:
+        - port: {{ $.Values.datadog.dogstatsd.port }}
+          protocol: UDP
+{{- end }}
+{{- if $.Values.datadog.apm.enabled }}
+    - # Ingress for APM trace
+      ports:
+        - port: {{ $.Values.datadog.apm.port }}
+          protocol: TCP
+{{- end }}
   egress:
     - # Egress to
       # * Datadog intake

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.20
+
+* Add NetworkPolicy ingress rules for dogstatsd and APM
+
 ## 2.4.19
 
 * Add NetworkPolicy
