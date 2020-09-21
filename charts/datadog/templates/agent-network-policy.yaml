@@ -1,0 +1,34 @@
+{{- if $.Values.agents.networkPolicy.create -}}
+apiVersion: "networking.k8s.io/v1"
+kind: NetworkPolicy
+metadata:
+  name: {{ template "datadog.fullname" . }}
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - # Egress to
+      # * Datadog intake
+      # * Kube API server
+      ports:
+        - port: 443
+# The agents are susceptible to connect to any pod
+# that would be annotated with auto-discovery annotations.
+#
+# When a user wants to add a check on one of its pod, he needs to
+# * annotate its pod
+# * add an ingress policy from the agent on its own pod
+# In order to not ask end-users to inject NetworkPolicy on the agent in
+# the agent namespace, the agent must be allowed to probe any pod.
+    - {} # Egress to anything for checks
+{{- end }}

@@ -711,6 +711,13 @@ clusterAgent:
   #
   createPodDisruptionBudget: false
 
+  ## @param networkPolicy - string - required
+  ## Provide Cluster Agent Network Policy configuration
+  networkPolicy:
+    ## @param create - boolean - required
+    ## If true, create a NetworkPolicy for the cluster agent
+    create: false
+
 agents:
   ## @param enabled - boolean - required
   ## You should keep Datadog DaemonSet enabled!
@@ -1140,6 +1147,14 @@ agents:
   #
   #   # agent version >= 6.15
   #   # jmx_use_container_support: true
+
+  ## @param networkPolicy - string - required
+  ## Provide Agent Network Policy configuration
+  networkPolicy:
+    ## @param create - boolean - required
+    ## If true, create a NetworkPolicy for the agents
+    create: false
+
 clusterChecksRunner:
   ## @param enabled - boolean - required
   ## If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
@@ -1318,6 +1333,13 @@ clusterChecksRunner:
   #   - name: <VOLUME_NAME>
   #     mountPath: <CONTAINER_PATH>
   #     readOnly: true
+
+  ## @param networkPolicy - string - required
+  ## Provide Cluster Checks Runners Network Policy configuration
+  networkPolicy:
+    ## @param create - boolean - required
+    ## If true, create a NetworkPolicy for the cluster checks runners
+    create: false
 
 kube-state-metrics:
   rbac:
