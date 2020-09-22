@@ -48,10 +48,18 @@ spec:
       securityContext:
 {{ toYaml .Values.datadog.securityContext| indent 8 }}
       {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
-      {{- if and (.Values.agents.podSecurity.securityContext) .Values.agents.podSecurity.securityContext.seLinuxOptions }}
+      {{- if .Values.agents.podSecurity.securityContext }}
+      {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}
       securityContext:
         seLinuxOptions:
 {{ toYaml .Values.agents.podSecurity.securityContext.seLinuxOptions | indent 10 }}
+      {{- end }}
+      {{- else if .Values.agents.podSecurity.seLinuxContext }}
+      {{- if .Values.agents.podSecurity.seLinuxContext.seLinuxOptions }}
+      securityContext:
+        seLinuxOptions:
+{{ toYaml .Values.agents.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
+      {{- end }}
       {{- end }}
       {{- end }}
       {{- if .Values.agents.useHostNetwork }}

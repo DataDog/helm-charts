@@ -24,8 +24,12 @@ volumes:
 # Use the `spc_t` selinux type to access the
 # docker/cri socket + proc and cgroup stats
 seLinuxContext:
-  type: MustRunAs
+{{- if .Values.agents.podSecurity.securityContext }}
+    rule: MustRunAs
 {{ toYaml .Values.agents.podSecurity.securityContext | indent 2 }}
+{{- else if .Values.agents.podSecurity.seLinuxContext }}
+{{ toYaml .Values.agents.podSecurity.seLinuxContext | replace "rule:" "type:" | indent 2 }}
+{{- end }}
 # system-probe requires some specific seccomp and capabilities
 seccompProfiles:
 {{ toYaml .Values.agents.podSecurity.seccompProfiles | indent 2 }}
