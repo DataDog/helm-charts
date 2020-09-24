@@ -782,7 +782,7 @@ agents:
     serviceAccountName: default
 
   ## @param podSecurity - object - optional
-  ## Provide Daemonset PodSecurityPolicy configuration
+  ## Provide Daemonset security configuration through PSP / SCC
   podSecurity:
 
     ## @param podSecurityPolicy - object - required
@@ -803,10 +803,11 @@ agents:
       #
       create: false
 
-    ## @param securityContext - object - required
-    ## Provide securityContext configuration
+    ## @param seLinuxContext - object - required
+    ## Provide seLinuxContext configuration for PSP/SCC
     #
-    securityContext:
+    seLinuxContext:
+      rule: MustRunAs
       seLinuxOptions:
         user: system_u
         role: system_r

@@ -34,8 +34,12 @@ spec:
   runAsUser:
     rule: RunAsAny
   seLinux:
+{{- if .Values.agents.podSecurity.securityContext }}
     rule: MustRunAs
 {{ toYaml .Values.agents.podSecurity.securityContext | indent 4 }}
+{{- else if .Values.agents.podSecurity.seLinuxContext }}
+{{ toYaml .Values.agents.podSecurity.seLinuxContext | indent 4 }}
+{{- end }}
   supplementalGroups:
     rule: RunAsAny
 {{- end }}

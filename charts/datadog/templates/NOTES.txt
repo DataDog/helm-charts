@@ -82,3 +82,14 @@ This version of the chart does not support deploying Agent 5.x.
 If you cannot upgrade to Agent 6.x or later, you can use a previous version
 of the chart by calling helm install with `--version 0.18.0`.
 {{- end }}
+
+{{- if .Values.agents.podSecurity.securityContext }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the datadog.podSecurity.securityContext parameter, which has been renamed datadog.podSecurity.seLinuxContext.
+This version still supports datadog.podSecurity.securityContext, but it will be removed in the next major version of our Helm chart.
+More information about this change: https://github.com/DataDog/helm-charts/pull/46
+{{- end }}
