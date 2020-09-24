@@ -90,6 +90,6 @@ of the chart by calling helm install with `--version 0.18.0`.
 #################################################################
 
 You are using the datadog.podSecurity.securityContext parameter, which has been renamed datadog.podSecurity.seLinuxContext.
-This version still supports datadog.podSecurity.securityContext, but it will be removed in a future version of our Helm chart.
+This version still supports datadog.podSecurity.securityContext, but it will be removed in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/46
 {{- end }}
