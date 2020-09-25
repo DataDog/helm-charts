@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.22
+
+* Add automatic README.md generation from `Values.yaml`
+
 ## 2.4.21
 
 * Change `securityContext` variable name to `seLinuxContext` allow setting the PSP/SCC seLinux `type` or `rule`. Backward compatible.
