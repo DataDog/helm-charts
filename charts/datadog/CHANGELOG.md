@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.22
+
+* Add `agents.deployment` and `agents.replicaCount` parameters to run the agents as a Deployment instead of a daemonset.
+
 ## 2.4.21
 
 * Change `securityContext` variable name to `seLinuxContext` allow setting the PSP/SCC seLinux `type` or `rule`. Backward compatible.
