@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.4.23
+
+* Add `datadog.envFrom` parameter to support passing references to secrets and/or configmaps for environment
+variables, instead of passing one by one.
+
 ## 2.4.22
 
 * Add automatic README.md generation from `Values.yaml`
