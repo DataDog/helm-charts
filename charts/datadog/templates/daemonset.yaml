@@ -2,7 +2,11 @@
 {{- if .Values.agents.enabled }}
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
 apiVersion: apps/v1
+{{- if .Values.agents.deployment }}
+kind: Deployment
+{{- else }}
 kind: DaemonSet
+{{- end }}
 metadata:
   name: {{ template "datadog.fullname" . }}
   labels:
@@ -12,6 +16,9 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 spec:
+{{- if .Values.agents.deployment }}
+  replicas: {{ .Values.agents.replicaCount }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}
@@ -161,7 +168,9 @@ spec:
       {{- if .Values.agents.nodeSelector }}
 {{ toYaml .Values.agents.nodeSelector | indent 8 }}
       {{- end }}
+{{- if (not .Values.agents.deployment) }}
   updateStrategy:
 {{ toYaml .Values.agents.updateStrategy | indent 4 }}
+{{- end }}
 {{ end }}
 {{ end }}

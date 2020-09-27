@@ -729,6 +729,14 @@ agents:
   #
   enabled: true
 
+  ## @param deployment - boolean - optional
+  ## Define if the agent will run as a deployment or a daemonset
+  deployment: false
+
+  ## @param replicaCount - boolean - optional
+  ## Define the number of replicas when running the agent as a deployment
+  replicaCount: 1
+
   ## @param image - object - required
   ## Define the Datadog image to work with.
   #
