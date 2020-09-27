@@ -3,7 +3,7 @@ name: Lint and Test Charts
 on:
   pull_request:
     paths:
-      - 'charts/**'
+      - "charts/**"
 
 jobs:
   lint-chart:
@@ -14,6 +14,7 @@ jobs:
       - name: Run chart-testing (lint)
         uses: helm/chart-testing-action@master
         with:
+          image: quay.io/helmpack/chart-testing:v3.0.0
           command: lint
           config: .github/ct.yaml
 
