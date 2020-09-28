@@ -445,7 +445,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
 | datadog.dogstatsd.useSocketVolume | bool | `false` | Enable dogstatsd over Unix Domain Socket |
 | datadog.env | list | `[]` | Set environment variables for all Agents |
-| datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets  |
+| datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.kubeStateMetricsEnabled | bool | `true` | If true, deploys the kube-state-metrics deployment |
 | datadog.leaderElection | bool | `false` | Enables leader election mechanism for event collection |
