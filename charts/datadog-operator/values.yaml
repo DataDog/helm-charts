@@ -34,8 +34,7 @@ rbac:
 serviceAccount:
   # serviceAccount.create -- Specifies whether a service account should be created
   create: true
-  # serviceAccount.name -- The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
   name:
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
