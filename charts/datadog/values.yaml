@@ -183,7 +183,7 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
-  ## datadog.env -- Set environment variables for all Agents directly from configMaps and/or secrets 
+  # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets 
   ## envFrom to pass configmaps or secrets as environment
   envFrom: []
   #   - configMapRef:

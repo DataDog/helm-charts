@@ -15,6 +15,10 @@
     hostPort: {{ .Values.datadog.apm.port }}
     name: traceport
     protocol: TCP
+{{- if .Values.datadog.envFrom }}
+  envFrom:
+{{ toYaml .Values.datadog.envFrom | indent 4 }}
+{{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
