@@ -1,30 +1,43 @@
 # Default values for datadog-operator.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of Datadog Operator
 replicaCount: 1
 image:
+  # image.repository -- Repository to use for Datadog Operator image
   repository: datadog/operator
+  # image.tag -- Define the Datadog Operator version to use
   tag: 0.3.1
+  # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
+# imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
+# nameOverride -- Override name of app
 nameOverride: ""
+# fullNameOverride -- Override the full qualified app name
 fullnameOverride: ""
+# logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
 logLevel: "info"
+# supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
 supportExtendedDaemonset: "false"
+# probesPort -- Port used by readiness/liveness probes
 probesPort: 9090
+# metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:
-  # Specifies the path to the command that implements the secret backend api
+  # secretBackend.command -- Specifies the path to the command that implements the secret backend api
   command: ""
 rbac:
-  # Specifies whether the RBAC resources should be created
+  # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
 serviceAccount:
-  # Specifies whether a service account should be created
+  # serviceAccount.create -- Specifies whether a service account should be created
   create: true
-  # The name of the service account to use.
+  # serviceAccount.name -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
+# resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
 # choice for the user. This also increases chances charts run on environments with little
@@ -37,6 +50,9 @@ resources: {}
 #   cpu: 100m
 #   memory: 128Mi
 
+# nodeSelector -- Allows to schedule Datadog Operator on specific nodes
 nodeSelector: {}
+# tolerations -- Allows to schedule Datadog Operator on tainted nodes
 tolerations: []
+# affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}

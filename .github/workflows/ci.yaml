@@ -3,7 +3,7 @@ name: Lint and Test Charts
 on:
   pull_request:
     paths:
-      - 'charts/**'
+      - "charts/**"
 
 jobs:
   lint-chart:
@@ -14,17 +14,17 @@ jobs:
       - name: Run chart-testing (lint)
         uses: helm/chart-testing-action@master
         with:
+          image: quay.io/helmpack/chart-testing:v3.0.0
           command: lint
           config: .github/ct.yaml
 
-# Currently fails due to https://github.com/norwoodj/helm-docs/issues/48
-#  lint-docs:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v1
-#      - name: Run helm-docs
-#        run: .github/helm-docs.sh
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Run helm-docs
+        run: .github/helm-docs.sh
 
   kubeval-chart:
     runs-on: ubuntu-latest
