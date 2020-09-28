@@ -48,9 +48,5 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Create the name of the service account to use
 */}}
 {{- define "datadog-operator.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "datadog-operator.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
+{{ default (include "datadog-operator.fullname" .) .Values.serviceAccount.name }}
 {{- end -}}

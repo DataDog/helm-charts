@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![AppVersion: 0.3.1](https://img.shields.io/badge/AppVersion-0.3.1-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![AppVersion: 0.3.1](https://img.shields.io/badge/AppVersion-0.3.1-informational?style=flat-square)
 
 ## Values
 
@@ -22,6 +22,6 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `nil` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |

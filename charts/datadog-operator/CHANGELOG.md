@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Fix name of serviceAccount used in Deployment if serviceAccount.name is set
+
 ## 0.1.1
 
 * Add automatic README.md generation from `Values.yaml`
