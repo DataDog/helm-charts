@@ -6,6 +6,10 @@
     capabilities:
       add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "IPC_LOCK"]
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+{{- if .Values.datadog.envFrom }}
+  envFrom:
+{{ toYaml .Values.datadog.envFrom | indent 4 }}
+{{- end }}
   env:
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
