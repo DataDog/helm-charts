@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.4.24
+
+* Fix the Cluster Agent's network policy (allow ingress from node Agents)
+* Add kube-state-metrics network policy
+
 ## 2.4.23
 
 * Add `datadog.envFrom` parameter to support passing references to secrets and/or configmaps for environment
