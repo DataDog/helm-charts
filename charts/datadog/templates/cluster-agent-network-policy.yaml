@@ -17,6 +17,13 @@ spec:
     - Ingress
     - Egress
   ingress:
+  - # Ingress from the node agents (for the metadata provider)
+    ports:
+      - port: 5005
+    from:
+      - podSelector:
+          matchLabels:
+            app: {{ template "datadog.fullname" . }}
 {{- if $.Values.clusterChecksRunner.enabled }}
   - # Ingress from cluster checks runner
     ports:

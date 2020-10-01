@@ -65,6 +65,10 @@ datadog:
   ## ref: https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics
   kubeStateMetricsEnabled: true
 
+  kubeStateMetricsNetworkPolicy:
+    # datadog.kubeStateMetricsNetworkPolicy.create -- If true, create a NetworkPolicy for kube state metrics
+    create: false
+
   ## Manage Cluster checks feature
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   ## Autodiscovery via Kube Service annotations is automatically enabled
