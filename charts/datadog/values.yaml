@@ -328,7 +328,7 @@ clusterAgent:
     repository: datadog/cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.8.0
+    tag: 1.9.0
 
     # clusterAgent.image.pullPolicy -- Cluster Agent image pullPolicy
     pullPolicy: IfNotPresent
@@ -526,7 +526,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.22.0
+    tag: 7.23.0
 
     # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
     ## By default, the version passed in agents.image.tag is checked
@@ -840,7 +840,7 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.22.0
+    tag: 7.23.0
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
