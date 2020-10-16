@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.26
+
+* Add `datadog.systemProbe.enableConntrackAllNamespaces` parameter to support conntrack listening for updates from all network namespaces
+
 ## 2.4.25
 
 * Update default `datadog/agent` image tag to `7.23.0`
