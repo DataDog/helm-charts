@@ -277,6 +277,9 @@ datadog:
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: false
 
+    # datadog.systemProbe.enableConntrackAllNamespaces -- Enable conntrack updates from all network namespaces
+    enableConntrackAllNamespaces: true
+
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer
     ## This requires processAgent.enabled and clusterAgent.enabled to be set to true
