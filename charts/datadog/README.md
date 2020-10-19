@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.25](https://img.shields.io/badge/Version-2.4.25-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.4.26](https://img.shields.io/badge/Version-2.4.26-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -487,6 +487,21 @@ helm install --name <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | nameOverride | string | `nil` | Override name of app |
+| syntheticsPrivateLocationWorker.affinity | object | `{}` | Allow the private location worker deployment to schedule using affinity rules. |
+| syntheticsPrivateLocationWorker.config | string | `nil` | JSON config obtained when creating the new private location from the Datadog UI/API |
+| syntheticsPrivateLocationWorker.dnsConfig | object | `{}` | specify dns configuration options for private location worker containers e.g ndots |
+| syntheticsPrivateLocationWorker.enabled | bool | `false` | If true, deploys private worker to perform synthetics checks |
+| syntheticsPrivateLocationWorker.env | list | `[]` | Environment variables specific to private location worker containers |
+| syntheticsPrivateLocationWorker.envFrom | list | `[]` | Set environment variables for private location worker containers directly from configMaps and/or secrets |
+| syntheticsPrivateLocationWorker.image.pullPolicy | string | `"IfNotPresent"` | Datadog private location worker image pull policy |
+| syntheticsPrivateLocationWorker.image.pullSecrets | list | `[]` | Datadog private location worker repository pullSecret (ex: specify docker registry credentials) |
+| syntheticsPrivateLocationWorker.image.repository | string | `"datadog/synthetics-private-location-worker"` | Datadog synthetics private location worker image repository to use |
+| syntheticsPrivateLocationWorker.image.tag | string | `"1.4.0"` | Define the worker version to use |
+| syntheticsPrivateLocationWorker.nodeSelector | object | `{}` | Allow the private location worker Deployment to schedule on selected nodes |
+| syntheticsPrivateLocationWorker.replicas | int | `1` | Number of worker instances |
+| syntheticsPrivateLocationWorker.resources | object | `{}` | Datadog private location worker resource requests and limits. |
+| syntheticsPrivateLocationWorker.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the private location worker deployment to perform a rolling update on helm update |
+| syntheticsPrivateLocationWorker.tolerations | list | `[]` | Tolerations for pod assignment |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 
 ## Configuration options for Windows deployments

@@ -1,0 +1,68 @@
+{{- if .Values.syntheticsPrivateLocationWorker.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "datadog.fullname" . }}-synthetics-private-location-worker
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  replicas: {{ .Values.syntheticsPrivateLocationWorker.replicas }}
+  strategy:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.strategy | indent 4 }}
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-synthetics-private-location-worker
+  template:
+    metadata:
+      labels:
+        app: {{ template "datadog.fullname" . }}-synthetics-private-location-worker
+      name: {{ template "datadog.fullname" . }}-synthetics-private-location-worker
+      annotations:
+        checksum/config: {{ tpl (toYaml .Values.syntheticsPrivateLocationWorker.config) . | sha256sum }}
+    spec:
+      {{- if .Values.syntheticsPrivateLocationWorker.dnsConfig }}
+      dnsConfig:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.dnsConfig | indent 8 }}
+      {{- end }}
+      imagePullSecrets:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.image.pullSecrets | indent 8 }}
+      containers:
+      - name: agent
+        image: "{{ .Values.syntheticsPrivateLocationWorker.image.repository }}:{{ .Values.syntheticsPrivateLocationWorker.image.tag }}"
+        imagePullPolicy: {{ .Values.syntheticsPrivateLocationWorker.image.pullPolicy }}
+{{- if .Values.syntheticsPrivateLocationWorker.env }}
+        env:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.env | indent 10 }}
+{{- end }}
+{{- if .Values.syntheticsPrivateLocationWorker.envFrom }}
+        envFrom:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.envFrom | indent 10 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.resources | indent 10 }}
+        volumeMounts:
+          - name: config
+            mountPath: /etc/datadog/synthetics-check-runner.json
+            subPath: config.json
+      volumes:
+        - name: config
+          secret:
+            secretName: {{ template "datadog.fullname" . }}-synthetics-private-location-worker-config
+{{- if .Values.syntheticsPrivateLocationWorker.affinity }}
+      affinity:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.affinity | indent 8 }}
+{{- end }}
+      nodeSelector:
+        {{ template "label.os" . }}: {{ .Values.targetSystem }}
+{{- if .Values.syntheticsPrivateLocationWorker.nodeSelector }}
+{{ toYaml .Values.syntheticsPrivateLocationWorker.nodeSelector | indent 8 }}
+{{- end }}
+{{- if .Values.syntheticsPrivateLocationWorker.tolerations }}
+      tolerations:
+{{ toYaml .Values.syntheticsPrivateLocationWorker.tolerations | indent 8 }}
+{{- end }}
+{{- end }}

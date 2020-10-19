@@ -971,6 +971,85 @@ clusterChecksRunner:
     # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners
     create: false
 
+syntheticsPrivateLocationWorker:
+  # syntheticsPrivateLocationWorker.enabled -- If true, deploys private worker to perform synthetics checks
+  ## ref: https://docs.datadoghq.com/getting_started/synthetics/private_location/
+  enabled: false
+
+  ## Define the Datadog image to work with.
+  image:
+    # syntheticsPrivateLocationWorker.image.repository -- Datadog synthetics private location worker image repository to use
+    repository: datadog/synthetics-private-location-worker
+
+    # syntheticsPrivateLocationWorker.image.tag -- Define the worker version to use
+    tag: 1.4.0
+
+    # syntheticsPrivateLocationWorker.image.pullPolicy -- Datadog private location worker image pull policy
+    pullPolicy: IfNotPresent
+
+    # syntheticsPrivateLocationWorker.image.pullSecrets -- Datadog private location worker repository pullSecret (ex: specify docker registry credentials)
+    ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+    pullSecrets: []
+    #   - name: "<REG_SECRET>"
+
+  # syntheticsPrivateLocationWorker.replicas -- Number of worker instances
+  replicas: 1
+
+  # syntheticsPrivateLocationWorker.resources -- Datadog private location worker resource requests and limits.
+  resources: {}
+  # requests:
+  #   cpu: 200m
+  #   memory: 500Mi
+  # limits:
+  #   cpu: 200m
+  #   memory: 500Mi
+
+  # syntheticsPrivateLocationWorker.affinity -- Allow the private location worker deployment to schedule using affinity rules.
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  # syntheticsPrivateLocationWorker.strategy -- Allow the private location worker deployment to perform a rolling update on helm update
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  # syntheticsPrivateLocationWorker.dnsConfig -- specify dns configuration options for private location worker containers e.g ndots
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+  dnsConfig: {}
+  #  options:
+  #  - name: ndots
+  #    value: "1"
+
+  # syntheticsPrivateLocationWorker.nodeSelector -- Allow the private location worker Deployment to schedule on selected nodes
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  #
+  nodeSelector: {}
+
+  # syntheticsPrivateLocationWorker.tolerations -- Tolerations for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  #
+  tolerations: []
+
+  # syntheticsPrivateLocationWorker.env -- Environment variables specific to private location worker containers
+  ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#environment-variables
+  env: []
+  #   - name: <ENV_VAR_NAME>
+  #     value: <ENV_VAR_VALUE>
+
+  # syntheticsPrivateLocationWorker.envFrom -- Set environment variables for private location worker containers
+  # directly from configMaps and/or secrets
+  envFrom: []
+  #   - configMapRef:
+  #       name: <CONFIGMAP_NAME>
+  #   - secretRef:
+  #       name: <SECRET_NAME>
+
+  # syntheticsPrivateLocationWorker.config -- JSON config obtained when creating the new private location from the Datadog UI/API
+  config:
+
 kube-state-metrics:
   rbac:
     # kube-state-metrics.rbac.create -- If true, create & use RBAC resources
