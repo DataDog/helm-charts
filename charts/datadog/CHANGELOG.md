@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.27
+
+* Added `common-env-vars` to `system-probe` container
+
 ## 2.4.26
 
 * Revert to Helm2 hash in `requirements.yaml` to retain compatibility with Helm 2
