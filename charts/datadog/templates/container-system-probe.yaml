@@ -11,6 +11,7 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
 {{- if .Values.agents.containers.systemProbe.env }}
