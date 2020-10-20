@@ -433,10 +433,6 @@ clusterAgent:
   # clusterAgent.livenessProbe -- Override default agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
-    httpGet:
-      port: 5555
-      path: /live
-      scheme: HTTP
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -446,10 +442,6 @@ clusterAgent:
   # clusterAgent.readinessProbe -- Override default cluster-agent readiness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   readinessProbe:
-    httpGet:
-      port: 5555
-      path: /ready
-      scheme: HTTP
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -685,8 +677,6 @@ agents:
       # agents.containers.traceAgent.livenessProbe -- Override default agent liveness probe settings
       # @default -- Every 15s
       livenessProbe:
-        tcpSocket:
-          port: 8126
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5

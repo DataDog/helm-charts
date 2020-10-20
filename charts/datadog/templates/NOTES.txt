@@ -51,11 +51,37 @@ This deployment will be incomplete until you get your APP key from Datadog.
 Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
   {{- end }}
-
+  {{- $healthPort := .Values.clusterAgent.healthPort }}
+  {{- with $liveness := .Values.clusterAgent.livenessProbe.httpGet }}
+  {{- if and $liveness.port (ne (int $healthPort) (int $liveness.port)) }}
+##############################################################################
+####               ERROR: Cluster Agent liveness probe misconfiguration   ####
+##############################################################################
+Cluster Agent health port setting ({{ $healthPort }}) is different from the configured liveness probe port ({{ $liveness.port }}).
+  {{- end }}
+  {{- end }}
+  {{- with $readiness := .Values.clusterAgent.readinessProbe.httpGet }}
+  {{- if and $readiness.port (ne (int $healthPort) (int $readiness.port)) }}
+##############################################################################
+####               ERROR: Cluster Agent readiness probe misconfiguration  ####
+##############################################################################
+Cluster Agent health port setting ({{ $healthPort }}) is different from the configured readiness probe port ({{ $readiness.port }}).
+  {{- end }}
+  {{- end }}
+  
 {{- end }}
 
 {{- if .Values.datadog.apm.enabled }}
-The Datadog Agent is listening on port {{ .Values.datadog.apm.port }} for APM service.
+  {{- $apmPort := .Values.datadog.apm.port }}
+  {{- with $liveness := .Values.agents.containers.traceAgent.livenessProbe.tcpSocket }}
+  {{- if and $liveness.port (ne (int $apmPort) (int $liveness.port)) }}
+##############################################################################
+####               ERROR: Trace Agent liveness probe misconfiguration     ####
+##############################################################################
+Trace Agent port setting ({{ $apmPort }}) is different from the configured liveness probe port ({{ $liveness.port }}).
+  {{- end }}
+  {{- end }}
+The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 {{- end }}
 
 {{- if .Values.datadog.autoconf }}
