@@ -2,7 +2,7 @@
 
 ## 2.4.27
 
-* Added `common-env-vars` to `system-probe` container
+* Add `common-env-vars` to `system-probe` container
 
 ## 2.4.26
 
