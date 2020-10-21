@@ -59,5 +59,6 @@
       mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}
   livenessProbe:
-{{ toYaml .Values.agents.containers.traceAgent.livenessProbe | indent 4 }}
+{{ $defaultLive := dict "tcpSocket" (dict "port" .Values.datadog.apm.port) }}
+{{ toYaml (mergeOverwrite $defaultLive .Values.agents.containers.traceAgent.livenessProbe) | indent 4 }}
 {{- end -}}

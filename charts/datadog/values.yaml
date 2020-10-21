@@ -427,29 +427,21 @@ clusterAgent:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
-  # clusterAgent.healthPort -- Port number use the cluster-agent to server healthz endpoint
+  # clusterAgent.healthPort -- Port number to use in the Cluster Agent for the healthz endpoint
   healthPort: 5555
 
-  # clusterAgent.livenessProbe -- Override default agent liveness probe settings
+  # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
-    httpGet:
-      port: 5555
-      path: /live
-      scheme: HTTP
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 6
 
-  # clusterAgent.readinessProbe -- Override default cluster-agent readiness probe settings
+  # clusterAgent.readinessProbe -- Override default Cluster Agent readiness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   readinessProbe:
-    httpGet:
-      port: 5555
-      path: /ready
-      scheme: HTTP
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -626,12 +618,12 @@ agents:
       #    cpu: 200m
       #    memory: 256Mi
 
+      # agents.containers.agent.healthPort -- Port number to use in the node agent for the healthz endpoint
+      healthPort: 5555
+
       # agents.containers.agent.livenessProbe -- Override default agent liveness probe settings
       # @default -- Every 15s / 6 KO / 1 OK
       livenessProbe:
-        httpGet:
-          path: /live
-          port: 5555
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
@@ -641,9 +633,6 @@ agents:
       # agents.containers.agent.readinessProbe -- Override default agent readiness probe settings
       # @default -- Every 15s / 6 KO / 1 OK
       readinessProbe:
-        httpGet:
-          path: /ready
-          port: 5555
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
@@ -685,8 +674,6 @@ agents:
       # agents.containers.traceAgent.livenessProbe -- Override default agent liveness probe settings
       # @default -- Every 15s
       livenessProbe:
-        tcpSocket:
-          port: 8126
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
