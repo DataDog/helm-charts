@@ -2,7 +2,7 @@
 
 ## 2.4.27
 
-* Show error notices on misconfiguration of liveness and readiness probes (APM and Cluster Agent).
+* Remove port defaults from liveness/readiness probes and show error notices on misconfiguration if user overrides are supplying custom node settings.
 
 ## 2.4.26
 

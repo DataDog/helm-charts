@@ -165,7 +165,9 @@
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
   livenessProbe:
-{{ toYaml .Values.agents.containers.agent.livenessProbe | indent 4 }}
+{{ $defaultLive := dict "httpGet" (dict "port" .Values.agents.containers.agent.healthPort "path" "/live" "scheme" "HTTP") }}
+{{ toYaml (mergeOverwrite $defaultLive .Values.agents.containers.agent.livenessProbe) | indent 4 }}
   readinessProbe:
-{{ toYaml .Values.agents.containers.agent.readinessProbe | indent 4 }}
+{{ $defaultReady := dict "httpGet" (dict "port" .Values.agents.containers.agent.healthPort "path" "/ready" "scheme" "HTTP") }}
+{{ toYaml (mergeOverwrite $defaultReady .Values.agents.containers.agent.readinessProbe) | indent 4 }}
 {{- end -}}
