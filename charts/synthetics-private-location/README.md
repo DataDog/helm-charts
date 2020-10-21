@@ -26,7 +26,8 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
-| fullnameOverride | string | `""` |  |
+| configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
+| fullnameOverride | string | `""` | Override the full qualified app name |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"datadog/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
 | image.tag | string | `"1.4.0"` | Define the Datadog Synthetics Private Location version to use |
@@ -35,9 +36,9 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | nodeSelector | object | `{}` | Allows to schedule Datadog Synthetics Private Location on specific nodes |
 | podAnnotations | object | `{}` | Annotations to set to Datadog Synthetics Private Location PODs |
 | podSecurityContext | object | `{}` | Security context to set to Datadog Synthetics Private Location PODs |
-| securityContext | object | `{}` | Security context to set to the Datadog Synthetics Private Location container |
 | replicaCount | int | `1` | Number of instances of Datadog Synthetics Private Location |
 | resources | object | `{}` | Set resources requests/limits for Datadog Synthetics Private Location PODs |
+| securityContext | object | `{}` | Security context to set to the Datadog Synthetics Private Location container |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
+| serviceAccount.name | string | `""` | The name of the service account to use. If not set name is generated using the fullname template |
 | tolerations | list | `[]` | Allows to schedule Datadog Synthetics Private Location on tainted nodes |
