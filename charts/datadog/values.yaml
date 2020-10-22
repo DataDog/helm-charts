@@ -93,7 +93,7 @@ datadog:
   #   iam.amazonaws.com/role: kube_iamrole
   #   <KUBERNETES_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
-  # datadog.tags -- List of statoc tags to attach to every metric, event and service check collected by this Agent.
+  # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/
   tags: []
   #   - "<KEY_1>:<VALUE_1>"

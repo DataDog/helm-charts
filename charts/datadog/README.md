@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.28](https://img.shields.io/badge/Version-2.4.28-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.4.27](https://img.shields.io/badge/Version-2.4.27-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -482,7 +482,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.enabled | bool | `false` | Set this to true to enable system-probe agent |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
-| datadog.tags | list | `[]` | List of statoc tags to attach to every metric, event and service check collected by this Agent. |
+| datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
 | kube-state-metrics.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | kube-state-metrics.resources | object | `{}` | Resource requests and limits for the kube-state-metrics container. |
