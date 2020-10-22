@@ -22,6 +22,7 @@ spec:
         app: {{ template "datadog.fullname" . }}-clusterchecks
       name: {{ template "datadog.fullname" . }}-clusterchecks
       annotations:
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/agent-secret.yaml") . | sha256sum }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}

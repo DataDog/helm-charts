@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.28
+
+* Make sure we rollout Agent/CLC/DCA when an upgrade is done (thus triggering a change in token secret)
+
 ## 2.4.27
 
 * Remove port defaults from liveness/readiness probes and show error notices on misconfiguration if user overrides are supplying custom node settings.

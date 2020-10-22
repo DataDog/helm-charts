@@ -35,6 +35,7 @@ spec:
         {{- end }}
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/agent-secret.yaml") . | sha256sum }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         checksum/clusteragent-config: {{ tpl (toYaml .Values.clusterAgent.datadog_cluster_yaml) . | sha256sum }}
