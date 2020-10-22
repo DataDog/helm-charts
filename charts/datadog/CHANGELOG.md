@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.29
+
+* Add `common-env-vars` to `system-probe` container
+
 ## 2.4.28
 
 * Make sure we rollout Agent/CLC/DCA when an upgrade is done (thus triggering a change in token secret)
