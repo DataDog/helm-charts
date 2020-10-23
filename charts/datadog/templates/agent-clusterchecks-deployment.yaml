@@ -101,7 +101,8 @@ spec:
           - name: DD_EXTRA_CONFIG_PROVIDERS
             value: "clusterchecks"
           - name: DD_HEALTH_PORT
-            value: "5555"
+          {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+            value: {{ $healthPort | quote }}
           # Cluster checks
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent
@@ -155,9 +156,11 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
 {{- end }}
         livenessProbe:
-{{ toYaml .Values.clusterChecksRunner.livenessProbe | indent 10 }}
+{{- $live := .Values.clusterChecksRunner.livenessProbe }}
+{{ include "probe.http" (dict "settings" $live "path" "/live" "port" $healthPort) | indent 10 }}
         readinessProbe:
-{{ toYaml .Values.clusterChecksRunner.readinessProbe | indent 10 }}
+{{- $ready := .Values.clusterChecksRunner.readinessProbe }}
+{{ include "probe.http" (dict "settings" $ready "path" "/ready" "port" $healthPort) | indent 10 }}
       volumes:
         - name: installinfo
           configMap:
