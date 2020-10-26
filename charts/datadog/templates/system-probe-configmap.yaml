@@ -1,4 +1,4 @@
-{{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkConfig.enabled }}
+{{- if eq (include "should-enable-system-probe" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
