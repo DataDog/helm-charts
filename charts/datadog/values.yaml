@@ -245,7 +245,7 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-    # datadog.systemProbe.enabled -- Enable the system-probe agent. DEPRECATED: use networkConfig or securityAgent blocks.
+    # datadog.systemProbe.enabled -- Enable the system-probe agent.
     enabled: false
 
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
