@@ -245,7 +245,7 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-    # datadog.systemProbe.enabled -- Set this to true to enable system-probe agent
+    # datadog.systemProbe.enabled -- Enable the system-probe agent. DEPRECATED: use networkConfig or securityAgent blocks.
     enabled: false
 
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
@@ -281,6 +281,10 @@ datadog:
     # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer
     ## This requires processAgent.enabled and clusterAgent.enabled to be set to true
     ## ref: TODO - add doc link
+    enabled: false
+
+  networkConfig:
+    # datadog.networkConfig.enabled -- Enable network performance monitoring.
     enabled: false
 
     # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.30
+
+* Add `datadog.networkConfig` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
+
 ## 2.4.29
 
 * Add `common-env-vars` to `system-probe` container
