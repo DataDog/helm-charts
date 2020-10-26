@@ -152,7 +152,8 @@ false
 {{- end -}}
 
 {{/*
-Return probe definition based on user settings and default HTTP port
+Returns probe definition based on user settings and default HTTP port.
+Accepts a map with `port` (default port), `path` (probe handler URI) and `settings` (probe settings).
 */}}
 {{- define "probe.http" -}}
 {{- if or .settings.httpGet .settings.tcpSocket .settings.exec -}}
@@ -164,7 +165,8 @@ Return probe definition based on user settings and default HTTP port
 {{- end -}}
 
 {{/*
-Return probe definition based on user settings and default TCP socket port
+Returns probe definition based on user settings and default TCP socket port.
+Accepts a map with `port` (default port) and `settings` (probe settings).
 */}}
 {{- define "probe.tcp" -}}
 {{- if or .settings.httpGet .settings.tcpSocket .settings.exec -}}
