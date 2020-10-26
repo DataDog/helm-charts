@@ -93,6 +93,29 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+  {{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
+    {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+    {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
+    {{- if and $liveness.port (ne $healthPort $liveness.port) }}
+
+#####################################################################################
+####               ERROR: Cluster Checks Runner liveness probe misconfiguration  ####
+#####################################################################################
+
+Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
+    {{- end }}
+    {{- end }}
+    {{- with $readiness := .Values.clusterChecksRunner.readinessProbe.httpGet }}
+    {{- if and $readiness.port (ne $healthPort $readiness.port) }}
+
+#####################################################################################
+####               ERROR: Cluster Checks Runner readiness probe misconfiguration ####
+#####################################################################################
+
+Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
+    {{- end }}
+    {{- end }}
+  {{- end }}
 {{- end }}
 {{- if .Values.datadog.apm.enabled }}
   {{- $apmPort := .Values.datadog.apm.port }}

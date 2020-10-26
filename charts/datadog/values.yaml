@@ -901,6 +901,9 @@ clusterChecksRunner:
   #
   tolerations: []
 
+  # clusterChecksRunner.healthPort -- Port number to use in the Cluster Checks Runner for the healthz endpoint
+  healthPort: 5555
+
   # clusterChecksRunner.livenessProbe -- Override default agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   ## In case of issues with the probe, you can disable it with the
@@ -911,9 +914,6 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   livenessProbe:
-    httpGet:
-      path: /live
-      port: 5555
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -930,9 +930,6 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   readinessProbe:
-    httpGet:
-      path: /ready
-      port: 5555
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5

@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 2.4.30
+
+* Refactor liveness and readiness probes with helpers to allow user overrides with other types of probes or disabling
+  probes entirely.
+* Introduce `clusterChecksRunner.healthPort` default setting.
+* Use health port defaults instead of hardcoded values.
+
 ## 2.4.29
 
 * Add `common-env-vars` to `system-probe` container
