@@ -16,7 +16,6 @@
   probes entirely.
 * Introduce `clusterChecksRunner.healthPort` default setting.
 * Use health port defaults instead of hardcoded values.
->>>>>>> origin/master
 
 ## 2.4.29
 
