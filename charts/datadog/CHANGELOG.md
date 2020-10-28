@@ -2,7 +2,7 @@
 
 ## 2.4.30
 
-* Add `datadog.networkConfig` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
+* Add `datadog.networkMonitoring` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
 
 ## 2.4.29
 

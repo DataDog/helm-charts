@@ -283,8 +283,8 @@ datadog:
     ## ref: TODO - add doc link
     enabled: false
 
-  networkConfig:
-    # datadog.networkConfig.enabled -- Enable network performance monitoring.
+  neworkMonitoring:
+    # datadog.networkMonitoring.enabled -- Enable network performance monitoring.
     enabled: false
 
     # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information

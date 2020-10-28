@@ -156,7 +156,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if (or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled $.Values.datadog.networkConfig.enabled)  -}}
+{{- if (or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled $.Values.datadog.networkMonitoring.enabled)  -}}
 true
 {{- else -}}
 false

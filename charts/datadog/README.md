@@ -457,8 +457,8 @@ helm install --name <RELEASE_NAME> \
 | datadog.logs.containerCollectAll | bool | `false` | Enable this to allow log collection for all containers |
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
-| datadog.networkConfig.container_scrubbing.enabled | bool | `true` |  |
-| datadog.networkConfig.enabled | bool | `false` | Enable network performance monitoring. |
+| datadog.neworkMonitoring.container_scrubbing.enabled | bool | `true` |  |
+| datadog.neworkMonitoring.enabled | bool | `false` |  |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.orchestratorExplorer.enabled | bool | `false` | Set this to true to enable the orchestrator explorer |
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
