@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.30](https://img.shields.io/badge/Version-2.4.30-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.4.31](https://img.shields.io/badge/Version-2.4.31-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -308,6 +308,7 @@ helm install --name <RELEASE_NAME> \
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| agents.additionalLabels | object | `{}` | Adds labels to the Agent daemonset and pods |
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
 | agents.containers.agent.healthPort | int | `5555` | Port number to use in the node agent for the healthz endpoint |
@@ -340,7 +341,7 @@ helm install --name <RELEASE_NAME> \
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
-| agents.podLabels | object | `{}` | Sets podLabels if defined |
+| agents.podLabels | object | `{}` | Sets podLabels if defined Note: These labels are also used as label selectors so they are immutable. |
 | agents.podSecurity.apparmor.enabled | bool | `true` | If true, enable apparmor enforcement |
 | agents.podSecurity.apparmorProfiles | list | `["runtime/default"]` | Allowed apparmor profiles |
 | agents.podSecurity.capabilites | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","IPC_LOCK","AUDIT_CONTROL","AUDIT_READ"]` | Allowed capabilites |
@@ -359,6 +360,7 @@ helm install --name <RELEASE_NAME> \
 | agents.useHostNetwork | bool | `false` | Bind ports on the hostNetwork |
 | agents.volumeMounts | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
+| clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
 | clusterAgent.admissionController.enabled | bool | `false` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
@@ -397,6 +399,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.useHostNetwork | string | `nil` | Bind ports on the hostNetwork |
 | clusterAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
 | clusterAgent.volumes | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
+| clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
