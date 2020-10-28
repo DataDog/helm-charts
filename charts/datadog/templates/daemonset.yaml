@@ -11,6 +11,9 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- if .Values.agents.additionalLabels }}
+{{ toYaml .Values.agents.additionalLabels | indent 4 }}
+    {{- end }}
 spec:
   selector:
     matchLabels:
@@ -24,6 +27,9 @@ spec:
         app: {{ template "datadog.fullname" . }}
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+        {{- if .Values.agents.additionalLabels }}
+{{ toYaml .Values.agents.additionalLabels | indent 8 }}
         {{- end }}
       name: {{ template "datadog.fullname" . }}
       annotations:

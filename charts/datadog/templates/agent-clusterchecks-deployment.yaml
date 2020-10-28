@@ -9,6 +9,9 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- if .Values.clusterChecksRunner.additionalLabels }}
+{{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.clusterChecksRunner.replicas }}
   strategy:
@@ -20,6 +23,9 @@ spec:
     metadata:
       labels:
         app: {{ template "datadog.fullname" . }}-clusterchecks
+        {{- if .Values.clusterChecksRunner.additionalLabels }}
+{{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
+        {{- end }}
       name: {{ template "datadog.fullname" . }}-clusterchecks
       annotations:
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/agent-secret.yaml") . | sha256sum }}

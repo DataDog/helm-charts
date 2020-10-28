@@ -9,6 +9,9 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- if .Values.clusterAgent.additionalLabels }}
+{{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
   strategy:
@@ -32,6 +35,9 @@ spec:
         app: {{ template "datadog.fullname" . }}-cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
+        {{- end }}
+        {{- if .Values.clusterAgent.additionalLabels }}
+{{ toYaml .Values.clusterAgent.additionalLabels | indent 8 }}
         {{- end }}
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
