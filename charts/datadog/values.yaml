@@ -245,7 +245,7 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-    # datadog.systemProbe.enabled -- Enable the system-probe agent.
+    # datadog.systemProbe.enabled -- Set this to true to enable system-probe agent
     enabled: false
 
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
@@ -283,16 +283,16 @@ datadog:
     ## ref: TODO - add doc link
     enabled: false
 
-  neworkMonitoring:
-    # datadog.networkMonitoring.enabled -- Enable network performance monitoring.
-    enabled: false
-
     # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information
     ## The container scrubbing is taking significant resources during data collection.
     ## If you notice that the cluster-agent uses too much CPU in larger clusters
     ## turning this option off will improve the situation.
     container_scrubbing:
       enabled: true
+
+  networkMonitoring:
+    # datadog.networkMonitoring.enabled -- Enable network performance monitoring.
+    enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
