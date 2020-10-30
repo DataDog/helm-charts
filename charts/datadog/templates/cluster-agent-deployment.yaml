@@ -132,7 +132,7 @@ spec:
           - name: DD_EXTERNAL_METRICS_PROVIDER_USE_DATADOGMETRIC_CRD
             value: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics | quote }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
-            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}            
+            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
@@ -151,9 +151,7 @@ spec:
             value: "kube_endpoints kube_services"
           {{- end }}
           {{- if .Values.datadog.clusterName }}
-          {{- if not (regexMatch "^([a-z]([a-z0-9\\-]{0,38}[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]{0,38}[a-z0-9])?)$" .Values.datadog.clusterName) }}
-          {{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by up to 39 lowercase letters, numbers, or hyphens and cannot end with a hyphen."}}
-          {{- end}}
+          {{- template "check-cluster-name" . }}
           - name: DD_CLUSTER_NAME
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
@@ -212,7 +210,7 @@ spec:
         readinessProbe:
 {{- $ready := .Values.clusterAgent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 10 }}
-        volumeMounts: 
+        volumeMounts:
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}

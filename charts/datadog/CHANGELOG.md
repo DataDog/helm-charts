@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.4.33
+
+* Introduce overall cluster-name limit of 80
+* Remove character limit of single parts of the cluster-name
+
 ## 2.4.32
 
 * The `agents.volumeMounts` option is now properly propagated to all agent containers.
