@@ -3,6 +3,7 @@
 ## 2.4.34
 
 * Add `datadog.networkMonitoring` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
+
 ## 2.4.33
 
 * Introduce overall cluster-name limit of 80
