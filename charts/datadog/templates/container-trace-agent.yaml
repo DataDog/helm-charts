@@ -58,6 +58,9 @@
     - name: apmsocket
       mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
   livenessProbe:
 {{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
 {{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}

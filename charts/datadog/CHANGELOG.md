@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.32
+
+* The `agents.volumeMounts` option is now properly propagated to all agent containers.
+
 ## 2.4.31
 
 * Support adding labels to the Agent pods and daemonset via `agents.additionalLabels`.
