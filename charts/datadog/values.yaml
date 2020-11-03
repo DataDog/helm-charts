@@ -734,7 +734,7 @@ agents:
   #       path: <HOST_PATH>
   #     name: <VOLUME_NAME>
 
-  # agents.volumeMounts -- Specify additional volumes to mount in the dd-agent container
+  # agents.volumeMounts -- Specify additional volumes to mount in all containers of the agent pod
   volumeMounts: []
   #   - name: <VOLUME_NAME>
   #     mountPath: <CONTAINER_PATH>

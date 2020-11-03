@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.31](https://img.shields.io/badge/Version-2.4.31-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.4.32](https://img.shields.io/badge/Version-2.4.32-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -358,7 +358,7 @@ helm install --name <RELEASE_NAME> \
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
 | agents.useConfigMap | string | `nil` | Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter. |
 | agents.useHostNetwork | bool | `false` | Bind ports on the hostNetwork |
-| agents.volumeMounts | list | `[]` | Specify additional volumes to mount in the dd-agent container |
+| agents.volumeMounts | list | `[]` | Specify additional volumes to mount in all containers of the agent pod |
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
 | clusterAgent.admissionController.enabled | bool | `false` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
