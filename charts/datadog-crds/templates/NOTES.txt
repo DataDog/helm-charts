@@ -1,0 +1,7 @@
+Datadog CRD(s) installed:
+{{- if .Values.crds.datadogMetric }}
+* DatadogMetric
+{{- end }}
+{{- if .Values.crds.datadogAgent }}
+* DatadogAgent
+{{- end }}
