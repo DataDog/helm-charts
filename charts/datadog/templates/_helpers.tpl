@@ -19,6 +19,16 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "check-cluster-name" }}
+{{- $length := len .Values.datadog.clusterName -}}
+{{- if (gt $length 80)}}
+{{- fail "Your `clusterName` isn’t valid it has to be below 81 chars." -}}
+{{- end}}
+{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" .Values.datadog.clusterName) -}}
+{{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Expand the name of the chart.
 */}}

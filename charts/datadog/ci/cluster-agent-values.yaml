@@ -1,5 +1,5 @@
 datadog:
-  clusterName: kubernetes-cluster.example.com
+  clusterName: kubernetes-cluster.example.comkubernetes-cluster.example.com.kube.rnetes-80chars
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
   kubeStateMetricsEnabled: false
