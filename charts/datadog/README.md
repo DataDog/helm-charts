@@ -358,7 +358,7 @@ helm install --name <RELEASE_NAME> \
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
 | agents.useConfigMap | string | `nil` | Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter. |
 | agents.useHostNetwork | bool | `false` | Bind ports on the hostNetwork |
-| agents.volumeMounts | list | `[]` | Specify additional volumes to mount in the dd-agent container |
+| agents.volumeMounts | list | `[]` | Specify additional volumes to mount in all containers of the agent pod |
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
 | clusterAgent.admissionController.enabled | bool | `false` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
