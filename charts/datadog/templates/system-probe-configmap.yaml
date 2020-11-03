@@ -13,7 +13,7 @@ metadata:
 data:
   system-probe.yaml: |
     system_probe_config:
-      enabled: {{ or $.Values.datadog.systemProbe.enabled $.Values.datadog.securityAgent.runtime.enabled $.Values.datadog.networkMonitoring.enabled }}
+      enabled: true
       debug_port:  {{ $.Values.datadog.systemProbe.debugPort }}
       sysprobe_socket: /var/run/sysprobe/sysprobe.sock
       enable_conntrack: {{ $.Values.datadog.systemProbe.enableConntrack }}
