@@ -1,0 +1,24 @@
+# Datadog Synthetics Private Location
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+[Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations).
+
+## How to use Datadog Helm repository
+
+You need to add this repository to your Helm repositories:
+
+```
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+```
+
+## Quick start
+
+To install the chart with the release name `<RELEASE_NAME>`, retrieve your Private Location configuration file from your [Synthetics Private Location settings page](https://app.datadoghq.com/synthetics/settings/private-locations/) and save it under `config.json` then run:
+
+```bash
+helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file configFile=config.json
+```
+
+{{ template "chart.valuesSection" . }}

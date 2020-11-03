@@ -68,10 +68,9 @@
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
-    {{- if not .Values.datadog.livenessProbe }}
     - name: DD_HEALTH_PORT
-      value: "5555"
-    {{- end }}
+    {{- $healthPort := .Values.agents.containers.agent.healthPort }}
+      value: {{ $healthPort | quote }}
     {{- if .Values.datadog.dogstatsd.useSocketVolume }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
@@ -165,9 +164,9 @@
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
   livenessProbe:
-{{ $defaultLive := dict "httpGet" (dict "port" .Values.agents.containers.agent.healthPort "path" "/live" "scheme" "HTTP") }}
-{{ toYaml (mergeOverwrite $defaultLive .Values.agents.containers.agent.livenessProbe) | indent 4 }}
+{{- $live := .Values.agents.containers.agent.livenessProbe }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 4 }}
   readinessProbe:
-{{ $defaultReady := dict "httpGet" (dict "port" .Values.agents.containers.agent.healthPort "path" "/ready" "scheme" "HTTP") }}
-{{ toYaml (mergeOverwrite $defaultReady .Values.agents.containers.agent.readinessProbe) | indent 4 }}
+{{- $ready := .Values.agents.containers.agent.readinessProbe }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
 {{- end -}}

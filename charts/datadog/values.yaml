@@ -502,6 +502,10 @@ clusterAgent:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent
     create: false
 
+  # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
+  additionalLabels: {}
+    # key: "value"
+
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
   ## The exceptional case could be a situation when you need to run
@@ -778,7 +782,12 @@ agents:
   priorityClassName:
 
   # agents.podLabels -- Sets podLabels if defined
+  # Note: These labels are also used as label selectors so they are immutable.
   podLabels: {}
+
+  # agents.additionalLabels -- Adds labels to the Agent daemonset and pods
+  additionalLabels: {}
+    # key: "value"
 
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
   useConfigMap:  # false
@@ -901,6 +910,9 @@ clusterChecksRunner:
   #
   tolerations: []
 
+  # clusterChecksRunner.healthPort -- Port number to use in the Cluster Checks Runner for the healthz endpoint
+  healthPort: 5555
+
   # clusterChecksRunner.livenessProbe -- Override default agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   ## In case of issues with the probe, you can disable it with the
@@ -911,9 +923,6 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   livenessProbe:
-    httpGet:
-      path: /live
-      port: 5555
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -930,9 +939,6 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   readinessProbe:
-    httpGet:
-      path: /ready
-      port: 5555
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
@@ -960,6 +966,10 @@ clusterChecksRunner:
   networkPolicy:
     # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners
     create: false
+
+  # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
+  additionalLabels: {}
+    # key: "value"
 
 kube-state-metrics:
   rbac:

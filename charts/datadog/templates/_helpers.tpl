@@ -150,3 +150,30 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Returns probe definition based on user settings and default HTTP port.
+Accepts a map with `port` (default port), `path` (probe handler URI) and `settings` (probe settings).
+*/}}
+{{- define "probe.http" -}}
+{{- if or .settings.httpGet .settings.tcpSocket .settings.exec -}}
+{{ toYaml .settings }}
+{{- else -}}
+{{- $handler := dict "httpGet" (dict "port" .port "path" .path "scheme" "HTTP") -}}
+{{ toYaml (merge $handler .settings) }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns probe definition based on user settings and default TCP socket port.
+Accepts a map with `port` (default port) and `settings` (probe settings).
+*/}}
+{{- define "probe.tcp" -}}
+{{- if or .settings.httpGet .settings.tcpSocket .settings.exec -}}
+{{ toYaml .settings }}
+{{- else -}}
+{{- $handler := dict "tcpSocket" (dict "port" .port) -}}
+{{- toYaml (merge $handler .settings) -}}
+{{- end -}}
+{{- end -}}
+

@@ -1,5 +1,18 @@
 # Datadog changelog
 
+## 2.4.31
+
+* Support adding labels to the Agent pods and daemonset via `agents.additionalLabels`.
+* Support adding labels to the Cluster Agent pods and deployment via `clusterAgent.additionalLabels`.
+* Support adding labels to the Cluster Checks Runner pods and deployment via `clusterChecksRunner.additionalLabels`.
+
+## 2.4.30
+
+* Refactor liveness and readiness probes with helpers to allow user overrides with other types of probes or disabling
+  probes entirely.
+* Introduce `clusterChecksRunner.healthPort` default setting.
+* Use health port defaults instead of hardcoded values.
+
 ## 2.4.29
 
 * Add `common-env-vars` to `system-probe` container
