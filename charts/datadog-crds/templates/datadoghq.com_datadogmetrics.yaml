@@ -1,7 +1,16 @@
+{{- if .Values.crds.datadogMetrics }}
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.3.0
+  creationTimestamp: null
   name: datadogmetrics.datadoghq.com
+  labels:
+    helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.conditions[?(@.type=='Active')].status
@@ -106,3 +115,10 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+{{- end }}
