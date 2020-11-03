@@ -4,3 +4,6 @@
 
 # Documentation
 *.md             @DataDog/documentation @DataDog/container-integrations
+charts/datadog/templates/container-system-probe.yaml @DataDog/networks @DataDog/container-integrations
+charts/datadog/templates/system-probe-configmap.yaml @DataDog/networks @DataDog/container-integrations
+charts/datadog/templates/system-probe-init.yaml      @DataDog/networks @DataDog/container-integrations
