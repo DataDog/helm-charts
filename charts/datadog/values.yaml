@@ -291,6 +291,10 @@ datadog:
     container_scrubbing:
       enabled: true
 
+  networkMonitoring:
+    # datadog.networkMonitoring.enabled -- Enable network performance monitoring
+    enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:

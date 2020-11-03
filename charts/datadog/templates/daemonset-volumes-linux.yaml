@@ -24,7 +24,7 @@
   configMap:
     name: {{ template "datadog.fullname" . }}-confd
 {{- end }}
-{{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled}}
+{{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
   configMap:
     name: {{ template "datadog.fullname" . }}-system-probe-config
