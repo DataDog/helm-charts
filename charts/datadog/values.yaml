@@ -20,6 +20,10 @@ datadog:
   ## If set, this parameter takes precedence over "apiKey".
   apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 
+  # datadog.apiKeyNoSecret -- Add a reference to an external secret to be injected into the environment.
+  # If set, this parameter takes precedence over "apiKey" and "apiKeyExistingSecret".
+  apiKeyExternalSecret:  # <EXTERNAL_SECRET_REFERENCE>
+
   # datadog.appKey -- Datadog APP key required to use metricsProvider
   ## If you are using clusterAgent.metricsProvider.enabled = true, you must set
   ## a Datadog application key for read access to your metrics.
@@ -28,6 +32,10 @@ datadog:
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+
+  # datadog.appKeyAvoidSecret -- Don't reference a k8s Secret for storing the APP key and avoid creating a new
+  # one. If set, this parameter takes precedence over "appKey" and "appKeyExistingSecret".
+  appKeyExternalSecret: # <EXTERNAL_SECRET_REFERENCE>
 
   # datadog.securityContext -- Allows you to overwrite the default securityContext applied to the container
   securityContext: {}

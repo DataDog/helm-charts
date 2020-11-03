@@ -112,17 +112,25 @@ spec:
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
           - name: DD_API_KEY
+          {{- if .Values.apiKeyExternalSecret }}
+            value: {{ .Values.apiKeyExternalSecret }}
+          {{- else }}
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
                 optional: true
+          {{- end }}
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_APP_KEY
+          {{- if not .Values.appKeyExternalSecret }}
+            value: {{ .Values.appKeyExternalSecret }}
+          {{- else }}
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
+          {{- end }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
@@ -132,7 +140,7 @@ spec:
           - name: DD_EXTERNAL_METRICS_PROVIDER_USE_DATADOGMETRIC_CRD
             value: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics | quote }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
-            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}            
+            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED

@@ -2,10 +2,14 @@
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
 - name: DD_API_KEY
+{{- if .Values.apiKeyExternalSecret }}
+  value: {{ .Values.apiKeyExternalSecret }}
+{{- else }}
   valueFrom:
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
+{{- end }}
 {{- if semverCompare "^1.7-0" .Capabilities.KubeVersion.GitVersion }}
 - name: DD_KUBERNETES_KUBELET_HOST
   valueFrom:
