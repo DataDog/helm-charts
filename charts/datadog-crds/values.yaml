@@ -11,5 +11,5 @@ crds:
 # nameOverride -- Override name of app
 nameOverride: ""
 
-# fullnameOverride -- Override the full qualified app name
+# fullnameOverride -- Override the fully qualified app name
 fullnameOverride: ""

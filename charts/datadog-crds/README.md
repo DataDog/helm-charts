@@ -15,8 +15,8 @@ helm repo update
 
 ## Prerequisites
 
-This chart can be use with Kubernetes `1.11+` or OpenShift `3.11+` in order to support `CustomResourcesDefinitions`.
-But the recommanded Kubernetes version are `1.16+`.
+This chart can be used with Kubernetes `1.11+` or OpenShift `3.11+` due to the requirement to support `CustomResourcesDefinitions`.
+But the recommended Kubernetes versions are `1.16+`.
 
 ## Values
 
