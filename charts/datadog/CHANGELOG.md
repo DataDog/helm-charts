@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.36
+
+* Fix incorrect link for Event Collection in `values.yaml`.
+
 ## 2.4.34
 
 * Add `datadog.networkMonitoring` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
