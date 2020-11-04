@@ -2,7 +2,7 @@
 
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
-This chart was designed to allow others "datadog" charts to share `CustomResourcesDefinitions` such as the `DatadogMetric`.
+This chart was designed to allow other "datadog" charts to share `CustomResourcesDefinitions` such as the `DatadogMetric`.
 
 ## How to use Datadog Helm repository
 
@@ -15,7 +15,7 @@ helm repo update
 
 ## Prerequisites
 
-This chart can be used with Kubernetes `1.11+` or OpenShift `3.11+` due to the requirement to support `CustomResourcesDefinitions`.
+This chart can be used with Kubernetes `1.11+` or OpenShift `3.11+` to the requirement to support `CustomResourcesDefinitions`.
 But the recommended Kubernetes versions are `1.16+`.
 
 ## Values
@@ -24,5 +24,5 @@ But the recommended Kubernetes versions are `1.16+`.
 |-----|------|---------|-------------|
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
-| fullnameOverride | string | `""` | Override the full qualified app name |
+| fullnameOverride | string | `""` | Override the fully qualified app name |
 | nameOverride | string | `""` | Override name of app |
