@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 2.4.36
+
+* Fix `should-enable-system-probe` helper function to support `helm2`.
+
+## 2.4.35
+
+* Add options to set pod and container securityContext
+
 ## 2.4.34
 
 * Add `datadog.networkMonitoring` section to allow the system-probe to be run without network performance monitoring. Deprecates `systemProbe.enabled`.
