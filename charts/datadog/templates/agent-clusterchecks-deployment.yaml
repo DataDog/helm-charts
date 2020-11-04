@@ -45,6 +45,10 @@ spec:
       dnsConfig:
 {{ toYaml .Values.clusterChecksRunner.dnsConfig | indent 8 }}
       {{- end }}
+      {{- if .Values.clusterChecksRunner.securityContext }}
+      securityContext:
+        {{ toYaml .Values.clusterChecksRunner.securityContext | nindent 8 }}
+      {{- end }}
       initContainers:
       - name: init-volume
         image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
