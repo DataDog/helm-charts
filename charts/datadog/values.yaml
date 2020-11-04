@@ -144,7 +144,7 @@ datadog:
     nonLocalTraffic: false
 
   # datadog.collectEvents -- Enables this to start event collection from the kubernetes API
-  ## ref: https://docs.datadoghq.com/agent/kubernetes/event_collection/
+  ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: false
 
   # datadog.leaderElection -- Enables leader election mechanism for event collection
