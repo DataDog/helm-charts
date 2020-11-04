@@ -28,7 +28,7 @@ Kubernetes 1.4+ or OpenShift 3.4+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://kubernetes-charts.storage.googleapis.com/ | kube-state-metrics | =2.8.11 |
+| https://charts.helm.sh/stable/ | kube-state-metrics | =2.8.11 |
 
 ## Quick start
 
