@@ -29,7 +29,7 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
-  # datadog.securityContext -- Allows you to overwrite the default securityContext applied to the container
+  # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
   securityContext: {}
   #  seLinuxOptions:
   #    user: "system_u"
@@ -343,6 +343,9 @@ clusterAgent:
     pullSecrets: []
     #   - name: "<REG_SECRET>"
 
+  # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
+  securityContext: {}
+
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
 
@@ -651,6 +654,9 @@ agents:
         successThreshold: 1
         failureThreshold: 6
 
+      # agents.containers.agent.securityContext -- Allows you to overwrite the default container SecurityContext for the agent container.
+      securityContext: {}
+
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []
@@ -667,6 +673,10 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+
+      # agents.containers.processAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the process-agent container.
+      securityContext: {}
+
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env:
@@ -689,6 +699,9 @@ agents:
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
+
+      # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
+      securityContext: {}
 
     systemProbe:
       # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
@@ -975,6 +988,9 @@ clusterChecksRunner:
   # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
   additionalLabels: {}
     # key: "value"
+
+  # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
+  securityContext: {}
 
 kube-state-metrics:
   rbac:
