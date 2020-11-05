@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.37](https://img.shields.io/badge/Version-2.4.37-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.4.38](https://img.shields.io/badge/Version-2.4.38-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -28,7 +28,7 @@ Kubernetes 1.4+ or OpenShift 3.4+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://kubernetes-charts.storage.googleapis.com/ | kube-state-metrics | =2.8.11 |
+| https://charts.helm.sh/stable | kube-state-metrics | =2.8.11 |
 
 ## Quick start
 

@@ -39,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Add default helm repo
-        run: helm repo add stable https://kubernetes-charts.storage.googleapis.com && helm repo update
+        run: helm repo add stable https://charts.helm.sh/stable && helm repo update
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}

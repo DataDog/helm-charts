@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.38
+
+* Move the kube-state-metrics subchart from google's helm registry to charts.helm.sh/stable.
+
 ## 2.4.37
 
 * Fix incorrect link for Event Collection in `values.yaml`.
