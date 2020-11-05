@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.37
+
+* Fix incorrect link for Event Collection in `values.yaml`.
+
 ## 2.4.36
 
 * Fix `should-enable-system-probe` helper function to support `helm2`.
