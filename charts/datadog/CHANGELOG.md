@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.4.39
+
+* Fixed a bug where `networkMonitoring.enabled` would not configure the process-agent correctly, causing network data to not be reported.
+
 ## 2.4.38
 
 * Move the kube-state-metrics subchart from google's helm registry to charts.helm.sh/stable.
