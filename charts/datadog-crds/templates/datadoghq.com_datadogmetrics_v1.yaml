@@ -1,7 +1,13 @@
+{{- if and .Values.crds.datadogMetrics (.Capabilities.APIVersions.Has "apiextensions.k8s.io/v1/CustomResourceDefinition") }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: datadogmetrics.datadoghq.com
+  labels:
+    helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
   group: datadoghq.com
   names:
@@ -108,3 +114,4 @@ spec:
     storage: true
     subresources:
       status: {}
+{{- end }}
