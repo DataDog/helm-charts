@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![AppVersion: 0.3.1](https://img.shields.io/badge/AppVersion-0.3.1-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![AppVersion: 0.3.1](https://img.shields.io/badge/AppVersion-0.3.1-informational?style=flat-square)
 
 ## Values
 
@@ -9,7 +9,7 @@
 | affinity | object | `{}` | Allows to specify affinity for Datadog Operator PODs |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
-| image.repository | string | `"datadog/operator"` | Repository to use for Datadog Operator image |
+| image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
 | image.tag | string | `"0.3.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |

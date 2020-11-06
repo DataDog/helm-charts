@@ -1,5 +1,16 @@
 # Datadog changelog
 
+## 2.5.0
+
+* Use `gcr.io` instead of Dockerhub
+* Change the default agent version `7.23.1`
+* Change the default cluster agent version `1.9.1`
+* Change the default cluster checks runner version `7.23.1`
+
+## 2.4.39
+
+* Fixed a bug where `networkMonitoring.enabled` would not configure the process-agent correctly, causing network data to not be reported.
+
 ## 2.4.38
 
 * Move the kube-state-metrics subchart from google's helm registry to charts.helm.sh/stable.
