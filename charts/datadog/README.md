@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.4.39](https://img.shields.io/badge/Version-2.4.39-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.5.0](https://img.shields.io/badge/Version-2.5.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -339,8 +339,8 @@ helm install --name <RELEASE_NAME> \
 | agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
-| agents.image.repository | string | `"datadog/agent"` | Datadog Agent image repository to use |
-| agents.image.tag | string | `"7.23.0"` | Define the Agent version to use |
+| agents.image.repository | string | `"gcr.io/datadoghq/agent"` | Datadog Agent image repository to use |
+| agents.image.tag | string | `"7.23.1"` | Define the Agent version to use |
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
@@ -377,8 +377,8 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.healthPort | int | `5555` | Port number to use in the Cluster Agent for the healthz endpoint |
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
-| clusterAgent.image.repository | string | `"datadog/cluster-agent"` | Cluster Agent image repository to use |
-| clusterAgent.image.tag | string | `"1.9.0"` | Cluster Agent image tag to use |
+| clusterAgent.image.repository | string | `"gcr.io/datadoghq/cluster-agent"` | Cluster Agent image repository to use |
+| clusterAgent.image.tag | string | `"1.9.1"` | Cluster Agent image tag to use |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
@@ -412,8 +412,8 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.healthPort | int | `5555` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
-| clusterChecksRunner.image.repository | string | `"datadog/agent"` | Datadog Agent image repository to use |
-| clusterChecksRunner.image.tag | string | `"7.23.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.repository | string | `"gcr.io/datadoghq/agent"` | Datadog Agent image repository to use |
+| clusterChecksRunner.image.tag | string | `"7.23.1"` | Define the Agent version to use |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
