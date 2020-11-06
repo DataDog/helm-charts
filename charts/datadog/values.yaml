@@ -330,10 +330,10 @@ clusterAgent:
   ## Define the Datadog Cluster-Agent image to work with
   image:
     # clusterAgent.image.repository -- Cluster Agent image repository to use
-    repository: datadog/cluster-agent
+    repository: gcr.io/datadoghq/cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.9.0
+    tag: 1.9.1
 
     # clusterAgent.image.pullPolicy -- Cluster Agent image pullPolicy
     pullPolicy: IfNotPresent
@@ -527,13 +527,13 @@ agents:
   ## Define the Datadog image to work with
   image:
     # agents.image.repository -- Datadog Agent image repository to use
-    ## use "datadog/agent" for Datadog Agent 7
-    ## use "datadog/dogstatsd" for Standalone Datadog Agent DogStatsD 7
-    repository: datadog/agent
+    ## use "gcr.io/datadoghq/agent" for Datadog Agent 7
+    ## use "gcr.io/datadoghq/dogstatsd" for Standalone Datadog Agent DogStatsD 7
+    repository: gcr.io/datadoghq/agent
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.23.0
+    tag: 7.23.1
 
     # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
     ## By default, the version passed in agents.image.tag is checked
@@ -851,13 +851,12 @@ clusterChecksRunner:
   ## Define the Datadog image to work with.
   image:
     # clusterChecksRunner.image.repository -- Datadog Agent image repository to use
-    ## use "datadog/agent" for Datadog Agent 7
-    ## use "datadog/dogstatsd" for Standalone Datadog Agent DogStatsD 7
-    repository: datadog/agent
+    ## use "gcr.io/datadoghq/agent" for Datadog Agent 7
+    repository: gcr.io/datadoghq/agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.23.0
+    tag: 7.23.1
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
