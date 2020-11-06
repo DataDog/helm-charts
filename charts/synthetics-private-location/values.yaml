@@ -7,7 +7,7 @@ replicaCount: 1
 
 image:
   # image.repository -- Repository to use for Datadog Synthetics Private Location image
-  repository: datadog/synthetics-private-location-worker
+  repository: gcr.io/datadoghq/synthetics-private-location-worker
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
