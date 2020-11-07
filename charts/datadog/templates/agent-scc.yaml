@@ -15,7 +15,7 @@ priority: 10
 # Allow host ports for dsd / trace intake
 allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled }}
 # Allow host PID for dogstatsd origin detection
-allowHostPID: {{ .Values.datadog.dogstatsd.useHostPID }}
+allowHostPID: {{ or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
 # Allow host network for the CRIO check to reach Prometheus through localhost
 allowHostNetwork: {{ .Values.agents.useHostNetwork }}
 # Allow hostPath for docker / process metrics
