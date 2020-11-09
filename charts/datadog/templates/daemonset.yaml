@@ -77,12 +77,8 @@ spec:
       dnsConfig:
 {{ toYaml .Values.agents.dnsConfig | indent 8 }}
       {{- end }}
-      {{- if .Values.datadog.securityAgent.compliance.enabled }}
+      {{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
       hostPID: true
-      {{- else -}}
-      {{- if .Values.datadog.dogstatsd.useHostPID }}
-      hostPID: {{ .Values.datadog.dogstatsd.useHostPID }}
-      {{- end }}
       {{- end }}
       {{- if .Values.agents.image.pullSecrets }}
       imagePullSecrets:
