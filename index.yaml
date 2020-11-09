@@ -1067,6 +1067,30 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/datadog-2.4.0/datadog-2.4.0.tgz
     version: 2.4.0
+  datadog-crds:
+  - apiVersion: v2
+    appVersion: "1"
+    created: "2020-11-09T13:55:38.864520911Z"
+    description: Datadog Kubernetes CRDs chart
+    digest: 5c7a4a94303f275de08745dd84e027d26487d0d2844f01b7ac466e1df902b8e6
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-crds
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-operator
+    - https://docs.datadoghq.com/agent/cluster_agent/external_metrics
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-crds-0.1.0/datadog-crds-0.1.0.tgz
+    version: 0.1.0
   datadog-operator:
   - apiVersion: v2
     appVersion: 0.3.1
