@@ -1,0 +1,15 @@
+# Default values for datadog-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+crds:
+  # crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+  datadogMetrics: false
+  # crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+  datadogAgents: false
+
+# nameOverride -- Override name of app
+nameOverride: ""
+
+# fullnameOverride -- Override the fully qualified app name
+fullnameOverride: ""

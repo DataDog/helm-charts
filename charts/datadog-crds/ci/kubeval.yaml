@@ -1,0 +1,3 @@
+crds:
+  datadogMetrics: true
+  datadogAgents: true
