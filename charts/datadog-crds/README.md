@@ -26,3 +26,11 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
 | nameOverride | string | `""` | Override name of app |
+
+## Developers
+
+### How to update CRDs
+
+```shell
+./update-crds.sh <datadog-operator-tag>
+```

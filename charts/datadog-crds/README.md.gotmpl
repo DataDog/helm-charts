@@ -19,3 +19,12 @@ This chart can be used with Kubernetes `1.11+` or OpenShift `3.11+` since  `Cust
 But the recommended Kubernetes versions are `1.16+`.
 
 {{ template "chart.valuesSection" . }}
+
+
+## Developers
+
+### How to update CRDs
+
+```shell
+./update-crds.sh <datadog-operator-tag>
+```
