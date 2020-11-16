@@ -19,7 +19,7 @@
 {{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
-  value: {{ .Values.datadog.tags | join " " | quote }}
+  value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
 {{- end }}
 {{- if .Values.datadog.nodeLabelsAsTags }}
 - name: DD_KUBERNETES_NODE_LABELS_AS_TAGS

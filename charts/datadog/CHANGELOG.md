@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.5.2
+* Change `datadog.tags` to a `tpl` value
+
 ## 2.5.0
 
 * Use `gcr.io` instead of Dockerhub
