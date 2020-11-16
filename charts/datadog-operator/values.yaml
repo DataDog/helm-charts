@@ -55,3 +55,14 @@ nodeSelector: {}
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
+
+
+# installCRDs -- Set to true to deploy the Datadog's CRDs
+installCRDs: true
+
+datadog-crds:
+  crds:
+    # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    datadogAgents: true
+    # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    datadogMetrics: true
