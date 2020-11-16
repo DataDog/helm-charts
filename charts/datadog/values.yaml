@@ -991,6 +991,11 @@ clusterChecksRunner:
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
 
+datadog-crds:
+  crds:
+    # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    datadogMetrics: true
+
 kube-state-metrics:
   rbac:
     # kube-state-metrics.rbac.create -- If true, create & use RBAC resources

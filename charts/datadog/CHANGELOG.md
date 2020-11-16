@@ -1,6 +1,11 @@
 # Datadog changelog
 
+## 2.5.3
+
+* Add "datadog-crds" chart as dependency. It is used to install the `DatadogMetrics` CRD if needed.
+
 ## 2.5.2
+
 * Change `datadog.tags` to a `tpl` value
 
 ## 2.5.0

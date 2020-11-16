@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.5.2](https://img.shields.io/badge/Version-2.5.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.5.3](https://img.shields.io/badge/Version-2.5.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -29,6 +29,7 @@ Kubernetes 1.4+ or OpenShift 3.4+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://charts.helm.sh/stable | kube-state-metrics | =2.8.11 |
+| https://helm.datadoghq.com | datadog-crds | =0.1.1 |
 
 ## Quick start
 
@@ -429,6 +430,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.tolerations | list | `[]` | Tolerations for pod assignment |
 | clusterChecksRunner.volumeMounts | list | `[]` | Specify additional volumes to mount in the cluster checks container |
 | clusterChecksRunner.volumes | list | `[]` | Specify additional volumes to mount in the cluster checks container |
+| datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog.apiKey | string | `"<DATADOG_API_KEY>"` | Your Datadog API key ref: https://app.datadoghq.com/account/settings#agent/kubernetes |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 |
