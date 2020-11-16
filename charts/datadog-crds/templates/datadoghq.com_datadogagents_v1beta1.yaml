@@ -1,7 +1,16 @@
+{{- if and .Values.crds.datadogAgents (not (.Capabilities.APIVersions.Has "apiextensions.k8s.io/v1/CustomResourceDefinition")) }}
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.3.0
+  creationTimestamp: null
   name: datadogagents.datadoghq.com
+  labels:
+    helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
+    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
+    app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.conditions[?(@.type=='Active')].status
@@ -1967,8 +1976,58 @@ spec:
                       properties:
                         duration:
                           type: string
-                        paused:
-                          type: boolean
+                        nodeAntiAffinityKeys:
+                          items:
+                            type: string
+                          type: array
+                        nodeSelector:
+                          description: A label selector is a label query over a set
+                            of resources. The result of matchLabels and matchExpressions
+                            are ANDed. An empty label selector matches all objects.
+                            A null label selector matches no objects.
+                          properties:
+                            matchExpressions:
+                              description: matchExpressions is a list of label selector
+                                requirements. The requirements are ANDed.
+                              items:
+                                description: A label selector requirement is a selector
+                                  that contains values, a key, and an operator that
+                                  relates the key and values.
+                                properties:
+                                  key:
+                                    description: key is the label key that the selector
+                                      applies to.
+                                    type: string
+                                  operator:
+                                    description: operator represents a key's relationship
+                                      to a set of values. Valid operators are In,
+                                      NotIn, Exists and DoesNotExist.
+                                    type: string
+                                  values:
+                                    description: values is an array of string values.
+                                      If the operator is In or NotIn, the values array
+                                      must be non-empty. If the operator is Exists
+                                      or DoesNotExist, the values array must be empty.
+                                      This array is replaced during a strategic merge
+                                      patch.
+                                    items:
+                                      type: string
+                                    type: array
+                                required:
+                                - key
+                                - operator
+                                type: object
+                              type: array
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: matchLabels is a map of {key,value} pairs.
+                                A single {key,value} in the matchLabels map is equivalent
+                                to an element of matchExpressions, whose key field
+                                is "key", the operator is "In", and the values array
+                                contains only "value". The requirements are ANDed.
+                              type: object
+                          type: object
                         replicas:
                           anyOf:
                           - type: integer
@@ -2252,6 +2311,14 @@ spec:
                         tailing the log files from the right offset Default to `/var/lib/datadog-agent/logs`
                       type: string
                   type: object
+                networkPolicy:
+                  description: Provide Agent Network Policy configuration
+                  properties:
+                    create:
+                      description: If true, create a NetworkPolicy for the current
+                        agent
+                      type: boolean
+                  type: object
                 priorityClassName:
                   description: If specified, indicates the pod's priority. "system-node-critical"
                     and "system-cluster-critical" are two special keywords which indicate
@@ -2426,8 +2493,7 @@ spec:
                       properties:
                         checkInterval:
                           description: Check interval
-                          format: int64
-                          type: integer
+                          type: string
                         configDir:
                           description: Config dir containing compliance benchmarks
                           properties:
@@ -3559,6 +3625,10 @@ spec:
                         Autodiscovery via Kube Service annotations is automatically
                         enabled'
                       type: boolean
+                    collectEvents:
+                      description: 'Enables this to start event collection from the
+                        kubernetes API ref: https://docs.datadoghq.com/agent/cluster_agent/event_collection/'
+                      type: boolean
                     confd:
                       description: Confd Provide additional cluster check configurations.
                         Each key will become a file in /conf.d see https://docs.datadoghq.com/agent/autodiscovery/
@@ -3688,6 +3758,11 @@ spec:
                           description: Enable the metricsProvider to be able to scale
                             based on metrics in Datadog
                           type: boolean
+                        endpoint:
+                          description: Override the API endpoint for the external
+                            metrics server. Defaults to .spec.agent.config.ddUrl or
+                            "https://app.datadoghq.com" if that's empty.
+                          type: string
                         port:
                           description: If specified configures the metricsProvider
                             external metrics service port
@@ -5102,6 +5177,14 @@ spec:
                       type: array
                   required:
                   - name
+                  type: object
+                networkPolicy:
+                  description: Provide Cluster Agent Network Policy configuration
+                  properties:
+                    create:
+                      description: If true, create a NetworkPolicy for the current
+                        agent
+                      type: boolean
                   type: object
                 nodeSelector:
                   additionalProperties:
@@ -7305,6 +7388,14 @@ spec:
                   required:
                   - name
                   type: object
+                networkPolicy:
+                  description: Provide Cluster Checks Runner Network Policy configuration
+                  properties:
+                    create:
+                      description: If true, create a NetworkPolicy for the current
+                        agent
+                      type: boolean
+                  type: object
                 nodeSelector:
                   additionalProperties:
                     type: string
@@ -7636,3 +7727,10 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+{{- end }}
