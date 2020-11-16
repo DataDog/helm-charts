@@ -1,3 +1,9 @@
+# Changelog
+
+## 0.2.1
+
+* Add "datadog-crds" chart as dependency. It is used to install the datadog's CRDs.
+
 ## 0.2.0
 
 * Use `gcr.io` instead of Dockerhub
