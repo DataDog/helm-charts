@@ -1,4 +1,4 @@
-{{- if $.Values.clusterAgent.networkPolicy.create -}}
+{{- if and $.Values.clusterAgent.networkPolicy.create (eq $.Values.clusterAgent.networkPolicy.flavor "kubernetes") -}}
 apiVersion: "networking.k8s.io/v1"
 kind: NetworkPolicy
 metadata:
