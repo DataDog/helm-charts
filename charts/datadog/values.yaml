@@ -526,7 +526,8 @@ clusterAgent:
   createPodDisruptionBudget: false
 
   networkPolicy:
-    # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent
+    # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
@@ -859,7 +860,8 @@ agents:
   #   # jmx_use_container_support: true
 
   networkPolicy:
-    # agents.networkPolicy.create -- If true, create a NetworkPolicy for the agents
+    # agents.networkPolicy.create -- If true, create a NetworkPolicy for the agents.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
 clusterChecksRunner:
@@ -1000,7 +1002,8 @@ clusterChecksRunner:
   #     readOnly: true
 
   networkPolicy:
-    # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners
+    # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
   # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
