@@ -1,4 +1,4 @@
-{{- if and $.Values.clusterAgent.networkPolicy.create (eq $.Values.clusterAgent.networkPolicy.flavor "cilium") -}}
+{{- if and (or $.Values.datadog.networkPolicy.create $.Values.clusterAgent.networkPolicy.create) (eq $.Values.datadog.networkPolicy.flavor "cilium") -}}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -32,7 +32,7 @@ specs:
         {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
     egress:
-      - {{ toYaml .Values.clusterAgent.networkPolicy.cilium.dnsSelector | nindent 8 }}
+      - {{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector | nindent 8 }}
         toPorts:
           - ports:
               - port: "53"

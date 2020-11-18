@@ -319,6 +319,25 @@ datadog:
         # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring.
         enabled: false
 
+  ## Manage NetworkPolicy
+  networkPolicy:
+    # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
+    create: false
+
+    # datadog.networkPolicy.flavor -- Flavor of the network policy to use.
+    # Can be:
+    # * kubernetes for networking.k8s.io/v1/NetworkPolicy
+    # * cilium     for cilium.io/v2/CiliumNetworkPolicy
+    flavor: kubernetes
+
+    cilium:
+      # datadog.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
+      dnsSelector:
+        toEndpoints:
+          - matchLabels:
+              "k8s:io.kubernetes.pod.namespace": kube-system
+              "k8s:k8s-app": kube-dns
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -509,20 +528,6 @@ clusterAgent:
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent
     create: false
-
-    # clusterAgent.networkPolicy.flavor -- Flavor of the network policy to use.
-    # Can be:
-    # * kubernetes for networking.k8s.io/v1/NetworkPolicy
-    # * cilium     for cilium.io/v2/CiliumNetworkPolicy
-    flavor: kubernetes
-
-    cilium:
-      # clusterAgent.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
-      dnsSelector:
-        toEndpoints:
-          - matchLabels:
-              "k8s:io.kubernetes.pod.namespace": kube-system
-              "k8s:k8s-app": kube-dns
 
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
   additionalLabels: {}
@@ -857,20 +862,6 @@ agents:
     # agents.networkPolicy.create -- If true, create a NetworkPolicy for the agents
     create: false
 
-    # agents.networkPolicy.flavor -- Flavor of the network policy to use.
-    # Can be:
-    # * kubernetes for networking.k8s.io/v1/NetworkPolicy
-    # * cilium     for cilium.io/v2/CiliumNetworkPolicy
-    flavor: kubernetes
-
-    cilium:
-      # agents.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
-      dnsSelector:
-        toEndpoints:
-          - matchLabels:
-              "k8s:io.kubernetes.pod.namespace": kube-system
-              "k8s:k8s-app": kube-dns
-
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
@@ -1011,20 +1002,6 @@ clusterChecksRunner:
   networkPolicy:
     # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners
     create: false
-
-    # clusterChecksRunner.networkPolicy.flavor -- Flavor of the network policy to use.
-    # Can be:
-    # * kubernetes for networking.k8s.io/v1/NetworkPolicy
-    # * cilium     for cilium.io/v2/CiliumNetworkPolicy
-    flavor: kubernetes
-
-    cilium:
-      # clusterChecksRunner.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
-      dnsSelector:
-        toEndpoints:
-          - matchLabels:
-              "k8s:io.kubernetes.pod.namespace": kube-system
-              "k8s:k8s-app": kube-dns
 
   # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
   additionalLabels: {}

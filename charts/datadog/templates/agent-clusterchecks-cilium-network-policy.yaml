@@ -1,4 +1,4 @@
-{{- if and $.Values.clusterChecksRunner.networkPolicy.create (eq $.Values.clusterChecksRunner.networkPolicy.flavor "cilium") -}}
+{{- if and (or $.Values.datadog.networkPolicy.create $.Values.clusterChecksRunner.networkPolicy.create) (eq $.Values.datadog.networkPolicy.flavor "cilium") -}}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -26,7 +26,7 @@ specs:
       matchLabels:
         app: {{ template "datadog.fullname" . }}-clusterchecks
     egress:
-      - {{ toYaml .Values.clusterChecksRunner.networkPolicy.cilium.dnsSelector | nindent 8 }}
+      - {{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector | nindent 8 }}
         toPorts:
           - ports:
               - port: "53"
