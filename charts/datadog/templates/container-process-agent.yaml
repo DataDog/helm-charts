@@ -26,10 +26,8 @@
     {{- end }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if or .Values.datadog.systemProbe.enabled .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_ENABLED
-      value: {{ true | quote }}
-    {{- end }}
+      value: {{ (or .Values.datadog.systemProbe.enabled .Values.datadog.networkMonitoring.enabled) | quote }}
     {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}

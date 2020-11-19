@@ -191,7 +191,7 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill -}}
 true
 {{- else -}}
 false
