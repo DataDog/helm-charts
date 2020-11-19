@@ -1,6 +1,6 @@
 {{- define "container-agent" -}}
 - name: agent
-  image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
   {{- if .Values.agents.containers.agent.securityContext }}

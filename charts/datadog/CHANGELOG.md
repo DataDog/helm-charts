@@ -1,5 +1,15 @@
 # Datadog changelog
 
+## 2.7.0
+
+* Changes default values to activate a maximum of built-in features to ease configuration.
+  Notable changes:
+  - Cluster Agent, cluster checks and event collection are activated by default
+  - DatadogMetrics CRD usage is activated by default if ExternalMetrics are used
+  - Dogstatsd non-local traffic is activated by default (hostPort usage is not)
+* Bump Agent version to `7.25.0` and Cluster Agent version to `1.10.0`
+* Introduce `.registry` parameter to quickly change registry for all Datadog images. Image name is retrieved from `.image.name`, however setting `.image.repository` still allows to override per image, ensuring backward compatibility
+
 ## 2.6.15
 
 * Add `ports` options to all Agent containers to allow users to add any binding they'd like for integrations

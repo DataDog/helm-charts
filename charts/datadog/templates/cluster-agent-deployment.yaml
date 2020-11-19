@@ -95,7 +95,7 @@ spec:
       {{- end }}
       containers:
       - name: cluster-agent
-        image: "{{ .Values.clusterAgent.image.repository }}:{{ .Values.clusterAgent.image.tag }}"
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
         {{- with .Values.clusterAgent.command }}
         command: {{ range . }}
           - {{ . | quote }}

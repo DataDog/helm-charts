@@ -11,6 +11,13 @@ fullnameOverride:  # ""
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
+# registry -- Registry to use for all Agent images (default gcr.io)
+## Currently we offer Datadog Agent images on:
+## GCR - use gcr.io/datadoghq (default)
+## DockerHub - use docker.io/datadog
+## AWS - use public.ecr.aws/datadog
+registry: gcr.io/datadoghq
+
 datadog:
   # datadog.apiKey -- Your Datadog API key
   # ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -75,7 +82,7 @@ datadog:
   ## Autodiscovery via Kube Service annotations is automatically enabled
   clusterChecks:
     # datadog.clusterChecks.enabled -- Enable the Cluster Checks feature on both the cluster-agents and the daemonset
-    enabled: false
+    enabled: true
 
   # datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
   nodeLabelsAsTags: {}
@@ -147,14 +154,14 @@ datadog:
 
     # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic (from outside of the pod)
     ## ref: https://github.com/DataDog/docker-dd-agent#environment-variables
-    nonLocalTraffic: false
+    nonLocalTraffic: true
 
   # datadog.collectEvents -- Enables this to start event collection from the kubernetes API
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
-  collectEvents: false
+  collectEvents: true
 
   # datadog.leaderElection -- Enables leader election mechanism for event collection
-  leaderElection: false
+  leaderElection: true
 
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
@@ -247,7 +254,6 @@ datadog:
 
     # datadog.processAgent.processCollection -- Set this to true to enable process collection in process monitoring agent
     ## Requires processAgent.enabled to be set to true to have any effect
-
     processCollection: false
 
   ## Enable systemProbe agent and provide custom configs
@@ -349,15 +355,18 @@ datadog:
 ## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
   # clusterAgent.enabled -- Set this to true to enable Datadog Cluster Agent
-  enabled: false
+  enabled: true
 
   ## Define the Datadog Cluster-Agent image to work with
   image:
-    # clusterAgent.image.repository -- Cluster Agent image repository to use
-    repository: gcr.io/datadoghq/cluster-agent
+    # clusterAgent.image.name -- Cluster Agent image name to use (relative to `registry`)
+    name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.9.1
+    tag: 1.10.0
+
+    # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
+    repository:
 
     # clusterAgent.image.pullPolicy -- Cluster Agent image pullPolicy
     pullPolicy: IfNotPresent
@@ -407,7 +416,7 @@ clusterAgent:
 
     # clusterAgent.metricsProvider.useDatadogMetrics -- Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries
     ## NOTE: You need to install the `DatadogMetric` CRD before
-    useDatadogMetrics: false
+    useDatadogMetrics: true
 
     # clusterAgent.metricsProvider.createReaderRbac -- Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent)
     createReaderRbac: true
@@ -557,14 +566,16 @@ agents:
 
   ## Define the Datadog image to work with
   image:
-    # agents.image.repository -- Datadog Agent image repository to use
-    ## use "gcr.io/datadoghq/agent" for Datadog Agent 7
-    ## use "gcr.io/datadoghq/dogstatsd" for Standalone Datadog Agent DogStatsD 7
-    repository: gcr.io/datadoghq/agent
+    # agents.image.name -- Datadog Agent image name to use (relative to `registry`)
+    ## use "dogstatsd" for Standalone Datadog Agent DogStatsD 7
+    name: agent
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.24.1
+    tag: 7.25.0
+
+    # agents.image.repository -- Override default registry + image.name for Agent
+    repository:
 
     # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
     ## By default, the version passed in agents.image.tag is checked
@@ -905,13 +916,15 @@ clusterChecksRunner:
 
   ## Define the Datadog image to work with.
   image:
-    # clusterChecksRunner.image.repository -- Datadog Agent image repository to use
-    ## use "gcr.io/datadoghq/agent" for Datadog Agent 7
-    repository: gcr.io/datadoghq/agent
+    # clusterChecksRunner.image.name -- Datadog Agent image name to use (relative to `registry`)
+    name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.24.1
+    tag: 7.25.0
+
+    # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
+    repository:
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent

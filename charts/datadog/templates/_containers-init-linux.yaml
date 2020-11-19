@@ -1,6 +1,6 @@
 {{- define "containers-init-linux" -}}
 - name: init-volume
-  image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["bash", "-c"]
   args:
@@ -11,7 +11,7 @@
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
-  image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["bash", "-c"]
   args:
