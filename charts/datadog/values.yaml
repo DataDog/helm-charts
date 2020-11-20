@@ -246,7 +246,7 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-    # datadog.systemProbe.enabled -- DEPRECATED, prefer setting .... Set this to true to enable system-probe agent
+    # datadog.systemProbe.enabled -- DEPRECATED. Set this to true to enable system-probe agent. Prefer using `networkMonitoring.enabled`, `systemProbe.enableTCPQueueLength`, `systemProbe.enableOOMKill`, or `securityAgent.runtime.enabled` to enable specific features.
     enabled: false
 
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
@@ -274,17 +274,7 @@ datadog:
 
     # datadog.systemProbe.enableOOMKill -- Enable the OOM kill eBPF-based check
     enableOOMKill: false
-
-    # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
-    collectDNSStats: false
-
-  orchestratorExplorer:
-    # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer
-    ## This requires processAgent.enabled and clusterAgent.enabled to be set to true
-    ## ref: TODO - add doc link
-    enabled: false
-
-    # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information
+# datadog.systemProbe.collectDNSStats -- Enable DNS stat collection collectDNSStats: false orchestratorExplorer: # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer ## This requires processAgent.enabled and clusterAgent.enabled to be set to true ## ref: TODO - add doc link enabled: false # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information
     ## The container scrubbing is taking significant resources during data collection.
     ## If you notice that the cluster-agent uses too much CPU in larger clusters
     ## turning this option off will improve the situation.
