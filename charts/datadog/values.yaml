@@ -962,7 +962,7 @@ clusterChecksRunner:
     successThreshold: 1
     failureThreshold: 6
 
-  # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-agents's pod(s)
+  # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-checks-runner's pod(s)
   podAnnotations: {}
   #   key: "value"
 
