@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.5.4
+
+* Supports `clusterChecksRunner` pod annotations
+
 ## 2.5.3
 
 * Add "datadog-crds" chart as dependency. It is used to install the `DatadogMetrics` CRD if needed.
