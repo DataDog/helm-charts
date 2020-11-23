@@ -492,7 +492,6 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
-| datadog.systemProbe.enabled | bool | `false` | DEPRECATED. Set this to true to enable system-probe agent. Prefer using `networkMonitoring.enabled`, `systemProbe.enableTCPQueueLength`, `systemProbe.enableOOMKill`, or `securityAgent.runtime.enabled` to enable specific features. |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
