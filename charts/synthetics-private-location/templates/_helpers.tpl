@@ -64,6 +64,6 @@ Create the name of the service account to use
 {{/*
 Determine name of the configmap
 */}}
-{{- define "synthetics-privatet-location.configMapName" -}}
+{{- define "synthetics-private-location.configMapName" -}}
 {{- default ( printf "%s-config" (include "synthetics-private-location.fullname" .)) .Values.configMap.name }}
 {{- end }}
