@@ -168,3 +168,14 @@ You are using the datadog.podSecurity.securityContext parameter, which has been 
 This version still supports datadog.podSecurity.securityContext, but it will be removed in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/46
 {{- end }}
+
+
+{{- if .Values.datadog.systemProbe }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using datadog.systemProbe.enabled which has been depreated in favor using one of networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, or securityAgent.runtime.enabled.
+More information about this change: https://github.com/DataDog/helm-charts/pull/101
+{{- end }}
