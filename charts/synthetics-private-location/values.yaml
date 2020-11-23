@@ -64,3 +64,9 @@ affinity: {}
 
 # configFile -- JSON string containing the configuration of the private location worker
 configFile: "{}"
+
+configMap:
+  # configMap.enabled -- Conditionally create configMap containing configuration for Synthetics
+  enabled: true
+  # configMap.name -- Name of the configMap. If not set name is generated using the fullname template
+  name: ""

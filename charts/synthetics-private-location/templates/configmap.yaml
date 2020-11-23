@@ -1,11 +1,12 @@
+{{- if .Values.configMap.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "synthetics-private-location.fullname" . }}-config
+  name: {{ include "synthetics-privatet-location.configMapName" . }}
   labels:
     {{- include "synthetics-private-location.labels" . | nindent 4 }}
 data:
   synthetics-check-runner.json: |-
 {{ .Values.configFile | indent 4 }}
-
+{{- end}}
 ---

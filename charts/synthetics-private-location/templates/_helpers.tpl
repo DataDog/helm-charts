@@ -60,3 +60,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Determine name of the configmap
+*/}}
+{{- define "synthetics-privatet-location.configMapName" -}}
+{{- default ( printf "%s-config" (include "synthetics-private-location.fullname" .)) .Values.configMap.name }}
+{{- end }}

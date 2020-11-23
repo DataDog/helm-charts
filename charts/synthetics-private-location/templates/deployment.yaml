@@ -61,4 +61,4 @@ spec:
       volumes:
       - name: worker-config
         configMap:
-          name: {{ include "synthetics-private-location.fullname" . }}-config
+          name: {{ include "synthetics-privatet-location.configMapName" . }}
