@@ -471,6 +471,8 @@ helm install --name <RELEASE_NAME> \
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
+| datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
+| datadog.orchestratorExplorer.enabled | bool | `false` | Set this to true to enable the orchestrator explorer |
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent |
@@ -485,7 +487,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
-| datadog.systemProbe.container_scrubbing.enabled | bool | `true` |  |
+| datadog.systemProbe.collectDNSStats | bool | `false` | Enable DNS stat collection |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
