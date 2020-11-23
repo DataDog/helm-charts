@@ -7,7 +7,6 @@
 ## 2.5.4
 
 * Supports `clusterChecksRunner` pod annotations
->>>>>>> origin/master
 
 ## 2.5.3
 
