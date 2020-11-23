@@ -33,6 +33,9 @@ spec:
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
         {{- end }}
+      {{- if .Values.clusterChecksRunner.podAnnotations }}
+{{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
+      {{- end }}
     spec:
       {{- if .Values.clusterChecksRunner.rbac.dedicated }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}-cluster-checks{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
