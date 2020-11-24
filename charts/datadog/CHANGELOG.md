@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.5.5
+
+* Add CiliumNetworkPolicy
+
 ## 2.5.4
 
 * Supports `clusterChecksRunner` pod annotations

@@ -168,3 +168,16 @@ You are using the datadog.podSecurity.securityContext parameter, which has been 
 This version still supports datadog.podSecurity.securityContext, but it will be removed in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/46
 {{- end }}
+
+{{- if or .Values.agents.networkPolicy.create .Values.clusterAgent.networkPolicy.create .Values.clusterChecksRunner.networkPolicy.create }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the agents.networkPolicy.create, the clusterAgent.networkPolicy.create or the clusterChecksRunner.networkPolicy.create parameter,
+which have been replaced by datadog.networkPolicy.create.
+This version still supports agents.networkPolicy.create, clusterAgent.networkPolicy.create and clusterChecksRunner.networkPolicy.create,
+but they will be removed in the next major version of our Helm chart.
+More information about this change: https://github.com/DataDog/helm-charts/pull/99
+{{- end }}
