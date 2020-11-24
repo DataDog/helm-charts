@@ -181,3 +181,14 @@ This version still supports agents.networkPolicy.create, clusterAgent.networkPol
 but they will be removed in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/99
 {{- end }}
+
+{{- if .Values.datadog.systemProbe.enabled }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using datadog.systemProbe.enabled which has been deprecated in favor using one of networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, or securityAgent.runtime.enabled.
+More information about this change: https://github.com/DataDog/helm-charts/pull/101
+
+{{- end }}

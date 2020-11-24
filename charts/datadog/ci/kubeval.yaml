@@ -12,8 +12,9 @@ datadog:
   processAgent:
     enabled: true
     processCollection: true
-  systemProbe:
+  networkMonitoring:
     enabled: true
+  systemProbe:
     enableConntrack: true
     enableTCPQueueLength: true
     enableOOMKill: true

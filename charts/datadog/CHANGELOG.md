@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.6.0
+
+* deprecates `systemProbe.enabled` in favor of `networkMonitoring.enabled`, `securityAgent.runtime.enabled`, `systemProbe.enableOOMKill`, and `systemProbe.enableTCPQueueLength`.
+* fixes a bug where network performance monitoring would be enabled if any systemProbe feature was enabled.
+
 ## 2.5.5
 
 * Add CiliumNetworkPolicy
