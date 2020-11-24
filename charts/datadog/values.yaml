@@ -983,6 +983,10 @@ clusterChecksRunner:
     successThreshold: 1
     failureThreshold: 6
 
+  # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-checks-runner's pod(s)
+  podAnnotations: {}
+  #   key: "value"
+
   # clusterChecksRunner.env -- Environment variables specific to Cluster Checks Runner
   ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#environment-variables
   env: []
