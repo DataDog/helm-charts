@@ -54,15 +54,7 @@
       value: {{.Values.datadog.collectEvents | quote}}
     {{- end }}
     {{- else }}
-    - name: DD_CLUSTER_AGENT_ENABLED
-      value: {{ .Values.clusterAgent.enabled | quote }}
-    - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-      value: {{ template "datadog.fullname" . }}-cluster-agent
-    - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-      valueFrom:
-        secretKeyRef:
-          name: {{ template "clusterAgent.tokenSecretName" . }}
-          key: token
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_APM_ENABLED
       value: "false"

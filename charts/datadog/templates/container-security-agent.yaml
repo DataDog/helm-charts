@@ -23,17 +23,7 @@
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
     - name: HOST_ROOT
       value: /host/root
-    - name: DD_CLUSTER_AGENT_ENABLED
-      value: {{ .Values.clusterAgent.enabled | quote }}
-    {{- if .Values.clusterAgent.enabled }}
-    - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-      value: {{ template "datadog.fullname" . }}-cluster-agent
-    - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-      valueFrom:
-        secretKeyRef:
-          name: {{ template "clusterAgent.tokenSecretName" . }}
-          key: token
-    {{- end }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}

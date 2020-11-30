@@ -91,3 +91,21 @@
 {{- end }}
 {{- end }}
 {{- end -}}
+
+
+{{/*
+Return a list of env-vars if the cluster-agent is enabled
+*/}}
+{{- define "containers-cluster-agent-env" -}}
+- name: DD_CLUSTER_AGENT_ENABLED
+  value: {{ .Values.clusterAgent.enabled | quote }}
+{{- if .Values.clusterAgent.enabled }}
+- name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+  value: {{ template "datadog.fullname" . }}-cluster-agent
+- name: DD_CLUSTER_AGENT_AUTH_TOKEN
+  valueFrom:
+    secretKeyRef:
+        name: {{ template "clusterAgent.tokenSecretName" . }}
+        key: token
+{{- end }}
+{{- end -}}
