@@ -1,5 +1,12 @@
 # Datadog changelog
 
+
+## 2.6.1
+
+* Fix `process-agent` and `trace-agent` communication with the `cluster-agent`: When the `cluster-agent` is activated,
+  the agents should communicated with the `cluster-agent` to retrived tags like `kube_service` instead of communicating
+  directly with the Kubernetes API-Server.
+
 ## 2.6.0
 
 * deprecates `systemProbe.enabled` in favor of `networkMonitoring.enabled`, `securityAgent.runtime.enabled`, `systemProbe.enableOOMKill`, and `systemProbe.enableTCPQueueLength`.
