@@ -1,0 +1,5 @@
+# Artifact Hub repository metadata file
+repositoryID: 0fc5a552-aac7-4050-a122-b1d9b91e52d9 
+owners:
+  - name: vincent.boulineau
+    email: vincent.boulineau@datadoghq.com
