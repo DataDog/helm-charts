@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.6.2
+
+* Make sure KSM deploys on Linux nodes
 
 ## 2.6.1
 
