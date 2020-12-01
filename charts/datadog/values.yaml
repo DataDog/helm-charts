@@ -330,6 +330,7 @@ datadog:
 
     cilium:
       # datadog.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
+      # @default -- kube-dns in namespace kube-system
       dnsSelector:
         toEndpoints:
           - matchLabels:
@@ -1041,3 +1042,7 @@ kube-state-metrics:
   #   limits:
   #     cpu: 200m
   #     memory: 256Mi
+
+  # kube-state-metrics.nodeSelector -- Node selector for KSM. KSM only supports Linux.
+  nodeSelector:
+    kubernetes.io/os: linux
