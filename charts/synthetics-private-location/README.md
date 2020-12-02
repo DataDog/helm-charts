@@ -27,8 +27,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
-| configMap.enabled | bool | `true` | Conditionally create configMap containing configuration for Synthetics |
-| configMap.name | string | `""` | Name of the configMap. If not set name is generated using the fullname template |
+| externalConfiguration.configMap.name | string | `""` | ConfigMap name containing `synthetics-check-runner.json` configuration file. if set, it overrides the `configFile` parameter. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |

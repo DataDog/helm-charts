@@ -1,4 +1,4 @@
-{{- if .Values.configMap.enabled }}
+{{- if eq .Values.externalConfiguration.configMap.name "" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
