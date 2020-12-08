@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.3
+
+* Add a new field `datadog.dogstatsd.tags` to configure `DD_DOGSTATSD_TAGS`.
+
 ## 2.6.2
 
 * Make sure KSM deploys on Linux nodes

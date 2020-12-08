@@ -40,6 +40,10 @@
     - name: DD_DOGSTATSD_TAG_CARDINALITY
       value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
     {{- end }}
+    {{- if .Values.datadog.dogstatsd.tags }}
+    - name: DD_DOGSTATSD_TAGS
+      value: {{ tpl (.Values.datadog.dogstatsd.tags | join " " | quote) . }}
+    {{- end }}
     {{- if not .Values.clusterAgent.enabled }}
     {{- if .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
