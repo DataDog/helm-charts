@@ -176,14 +176,14 @@ then upgrade your Datadog Helm chart:
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
 ```
 
-### Enabling System Probe Collection
+### Enabling Network Performance Monitoring
 
-The system-probe agent only runs in dedicated container environment. Update your [datadog-values.yaml](values.yaml) file with the system-probe collection configuration:
+Update your [datadog-values.yaml](values.yaml) file with the system-probe collection configuration:
 
 ```yaml
 datadog:
   # (...)
-  systemProbe:
+  networkMonitoring:
     # (...)
     enabled: true
 
