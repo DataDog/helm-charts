@@ -178,7 +178,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-po
 
 ### Enabling Network Performance Monitoring
 
-Update your [datadog-values.yaml](values.yaml) file with the system-probe collection configuration:
+Update your [datadog-values.yaml](values.yaml) file with network monitoring enabled:
 
 ```yaml
 datadog:
