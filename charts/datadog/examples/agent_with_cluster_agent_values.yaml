@@ -1,0 +1,46 @@
+# Datadog Agent with Datadog Cluster Agent and
+# OrchestratorExplorer (Live Containers), Check Runners, and
+# External Metrics Server enabled
+
+targetSystem: "linux"
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  orchestratorExplorer:
+    enabled: true
+clusterAgent:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/cluster-agent
+    tag: 1.9.1
+    pullPolicy: IfNotPresent
+  replicas: 2
+  rbac:
+    create: true
+    serviceAccountName: default
+  metricsProvider:
+    enabled: true
+    createReaderRbac: true
+    service:
+      type: ClusterIP
+      port: 8443
+agents:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/agent
+    tag: 7.23.1
+  rbac:
+    create: true
+    serviceAccountName: default
+clusterChecksRunner:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/agent
+    tag: 7.23.1
+    pullPolicy: IfNotPresent
+  rbac:
+    create: true
+    serviceAccountName: default
+  replicas: 2

@@ -1,0 +1,44 @@
+# Datadog Agent with Logs, APM, Processes, and System Probe enabled
+# with specific configurations to work on OpenShift 4.
+# When installing the chart, install onto a non-default namespace with
+# `helm install --namespace <your_ns>` due to existing SecurityContextConstraints on the default namespace.
+# To setup the SCC in the agent namespace, update "system:serviceaccount:default:datadog-agent"
+# with "system:serviceaccount:<your_ns>:<your_sa>" in
+# https://github.com/DataDog/datadog-agent/blob/master/Dockerfiles/manifests/openshift/scc.yaml and apply.
+
+targetSystem: "linux"
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  criSocketPath: /var/run/crio/crio.sock
+  env:
+    - name: "DD_KUBELET_TLS_VERIFY"
+      value: "false"
+  confd:
+    cri.yaml: |-
+      init_config:
+      instances:
+        - collect_disk: true
+  logs:
+    enabled: true
+    containerCollectAll: false
+    containerCollectUsingFiles: true
+  apm:
+    enabled: true
+    socketPath: /var/run/datadog/apm.socket
+    hostSocketPath: /var/run/datadog/
+  processAgent:
+    enabled: true
+    processCollection: false
+  systemProbe:
+    enableTCPQueueLength: false
+    enableOOMKill: true
+    collectDNSStats: false
+agents:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/agent
+    tag: 7.23.1
+    pullPolicy: IfNotPresent

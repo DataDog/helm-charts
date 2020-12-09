@@ -1,0 +1,15 @@
+# Enable Datadog Agent with Containerd container runtime
+
+targetSystem: "linux"
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  criSocketPath: /var/run/containerd/containerd.sock
+agents:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/agent
+    tag: 7.23.1
+    pullPolicy: IfNotPresent
