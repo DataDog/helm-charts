@@ -112,6 +112,12 @@ datadog:
     ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
     originDetection: false
 
+    # datadog.dogstatsd.tags -- List of static tags to attach to every custom metric, event and service check collected by Dogstatsd.
+    ## Learn more about tagging: https://docs.datadoghq.com/tagging/
+    tags: []
+    #   - "<KEY_1>:<VALUE_1>"
+    #   - "<KEY_2>:<VALUE_2>"
+
     # datadog.dogstatsd.tagCardinality -- Sets the tag cardinality relative to the origin detection
     ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
     tagCardinality: low
@@ -246,8 +252,6 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-    # datadog.systemProbe.enabled -- Set this to true to enable system-probe agent
-    enabled: false
 
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
     debugPort: 0
@@ -318,6 +322,26 @@ datadog:
       syscallMonitor:
         # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring.
         enabled: false
+
+  ## Manage NetworkPolicy
+  networkPolicy:
+    # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
+    create: false
+
+    # datadog.networkPolicy.flavor -- Flavor of the network policy to use.
+    # Can be:
+    # * kubernetes for networking.k8s.io/v1/NetworkPolicy
+    # * cilium     for cilium.io/v2/CiliumNetworkPolicy
+    flavor: kubernetes
+
+    cilium:
+      # datadog.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
+      # @default -- kube-dns in namespace kube-system
+      dnsSelector:
+        toEndpoints:
+          - matchLabels:
+              "k8s:io.kubernetes.pod.namespace": kube-system
+              "k8s:k8s-app": kube-dns
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
@@ -507,7 +531,8 @@ clusterAgent:
   createPodDisruptionBudget: false
 
   networkPolicy:
-    # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent
+    # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
@@ -840,7 +865,8 @@ agents:
   #   # jmx_use_container_support: true
 
   networkPolicy:
-    # agents.networkPolicy.create -- If true, create a NetworkPolicy for the agents
+    # agents.networkPolicy.create -- If true, create a NetworkPolicy for the agents.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
 clusterChecksRunner:
@@ -985,7 +1011,8 @@ clusterChecksRunner:
   #     readOnly: true
 
   networkPolicy:
-    # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners
+    # clusterChecksRunner.networkPolicy.create -- If true, create a NetworkPolicy for the cluster checks runners.
+    # DEPRECATED. Use datadog.networkPolicy.create instead
     create: false
 
   # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
@@ -1021,3 +1048,7 @@ kube-state-metrics:
   #   limits:
   #     cpu: 200m
   #     memory: 256Mi
+
+  # kube-state-metrics.nodeSelector -- Node selector for KSM. KSM only supports Linux.
+  nodeSelector:
+    kubernetes.io/os: linux

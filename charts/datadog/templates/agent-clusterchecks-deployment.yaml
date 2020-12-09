@@ -116,16 +116,8 @@ spec:
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
             value: {{ $healthPort | quote }}
-          # Cluster checks
-          - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-            value: {{ template "datadog.fullname" . }}-cluster-agent
-          - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "clusterAgent.tokenSecretName" . }}
-                key: token
-          - name: DD_CLUSTER_AGENT_ENABLED
-            value: {{ .Values.clusterAgent.enabled | quote }}
+          # Cluster checks (cluster-agent communication)
+          {{- include "containers-cluster-agent-env" . | nindent 10 }}
           # Safely run alongside the daemonset
           - name: DD_ENABLE_METADATA_COLLECTION
             value: "false"

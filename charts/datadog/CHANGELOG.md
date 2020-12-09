@@ -1,5 +1,28 @@
 # Datadog changelog
 
+## 2.6.3
+
+* Add a new field `datadog.dogstatsd.tags` to configure `DD_DOGSTATSD_TAGS`.
+
+## 2.6.2
+
+* Make sure KSM deploys on Linux nodes
+
+## 2.6.1
+
+* Fix `process-agent` and `trace-agent` communication with the `cluster-agent`: When the `cluster-agent` is activated,
+  the agents should communicated with the `cluster-agent` to retrived tags like `kube_service` instead of communicating
+  directly with the Kubernetes API-Server.
+
+## 2.6.0
+
+* deprecates `systemProbe.enabled` in favor of `networkMonitoring.enabled`, `securityAgent.runtime.enabled`, `systemProbe.enableOOMKill`, and `systemProbe.enableTCPQueueLength`.
+* fixes a bug where network performance monitoring would be enabled if any systemProbe feature was enabled.
+
+## 2.5.5
+
+* Add CiliumNetworkPolicy
+
 ## 2.5.4
 
 * Supports `clusterChecksRunner` pod annotations

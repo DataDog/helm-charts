@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.5.4](https://img.shields.io/badge/Version-2.5.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.6.3](https://img.shields.io/badge/Version-2.6.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -342,7 +342,7 @@ helm install --name <RELEASE_NAME> \
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `"gcr.io/datadoghq/agent"` | Datadog Agent image repository to use |
 | agents.image.tag | string | `"7.23.1"` | Define the Agent version to use |
-| agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents |
+| agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents. DEPRECATED. Use datadog.networkPolicy.create instead |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
 | agents.podLabels | object | `{}` | Sets podLabels if defined Note: These labels are also used as label selectors so they are immutable. |
@@ -388,7 +388,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.metricsProvider.service.type | string | `"ClusterIP"` | Set type of cluster-agent metrics server service |
 | clusterAgent.metricsProvider.useDatadogMetrics | bool | `false` | Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries |
 | clusterAgent.metricsProvider.wpaController | bool | `false` | Enable informer and controller of the watermark pod autoscaler |
-| clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent |
+| clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
@@ -416,7 +416,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.image.repository | string | `"gcr.io/datadoghq/agent"` | Datadog Agent image repository to use |
 | clusterChecksRunner.image.tag | string | `"7.23.1"` | Define the Agent version to use |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
-| clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners |
+| clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
@@ -455,6 +455,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.dogstatsd.port | int | `8125` | Override the Agent DogStatsD port |
 | datadog.dogstatsd.socketPath | string | `"/var/run/datadog/dsd.socket"` | Path to the DogStatsD socket |
 | datadog.dogstatsd.tagCardinality | string | `"low"` | Sets the tag cardinality relative to the origin detection |
+| datadog.dogstatsd.tags | list | `[]` | List of static tags to attach to every custom metric, event and service check collected by Dogstatsd. |
 | datadog.dogstatsd.useHostPID | bool | `false` | Run the agent in the host's PID namespace |
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
 | datadog.dogstatsd.useSocketVolume | bool | `false` | Enable dogstatsd over Unix Domain Socket |
@@ -470,6 +471,9 @@ helm install --name <RELEASE_NAME> \
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
+| datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
+| datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
+| datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.enabled | bool | `false` | Set this to true to enable the orchestrator explorer |
@@ -492,11 +496,11 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
-| datadog.systemProbe.enabled | bool | `false` | Set this to true to enable system-probe agent |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
+| kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |
 | kube-state-metrics.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | kube-state-metrics.resources | object | `{}` | Resource requests and limits for the kube-state-metrics container. |
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
