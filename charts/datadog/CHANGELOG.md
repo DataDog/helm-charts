@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.9.12
+
+* Remove the cluster-id configmap mount for process-agent
 ## 2.9.11
 
 * Allow system-probe container to send flares by adding main agent config file to container.
