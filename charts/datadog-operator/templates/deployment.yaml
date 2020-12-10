@@ -20,7 +20,7 @@ spec:
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
           [{
-            "prometheus_url": "http://%%host%%:8383/metrics",
+            "prometheus_url": "http://%%host%%:{{ .Values.metricsPort }}/metrics",
             "namespace": "datadog.operator",
             "metrics": ["*"]
           }]
@@ -43,31 +43,22 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: {{ .Chart.Name }}
           args:
-            - --zap-level={{ .Values.logLevel }}
-            - --zap-encoder=console
-            - --zap-stacktrace-level=panic
-            - "--supportExtendedDaemonset={{ .Values.supportExtendedDaemonset}}"
-            - "--probesPort={{ .Values.probesPort }}"
-            - "--metricsPort={{ .Values.metricsPort }}"
+            - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
+            - "-logEncoder=json"
+            - "-metrics-addr=:{{ .Values.metricsPort }}"
+            - "-loglevel={{ .Values.logLevel }}"
           {{- if .Values.secretBackend.command }}
-            - "--secretBackendCommand={{ .Values.secretBackend.command }}"
+            - "-secretBackendCommand={{ .Values.secretBackend.command }}"
           {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}
               protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: {{ .Values.probesPort }}
-            periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /live
-              port: {{ .Values.probesPort }}
+              path: /healthz/
+              port: 8081
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

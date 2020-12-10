@@ -6,70 +6,283 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
 - apiGroups:
-  - "security.openshift.io"
+  - security.openshift.io
+  resourceNames:
+  - restricted
   resources:
   - securitycontextconstraints
   verbs:
   - use
-  resourceNames:
-  - restricted
 - apiGroups:
-  - rbac.authorization.k8s.io
-  - roles.rbac.authorization.k8s.io
-  - authorization.k8s.io
+  - ""
   resources:
-  - clusterroles
-  - clusterrolebindings
+  - componentstatuses
   verbs:
-  - "*"
+  - get
+  - list
+  - watch
 - apiGroups:
-  - datadoghq.com
+  - ""
   resources:
-  - datadogagents
-  - datadogagents/status
-  - datadogagents/finalizers
+  - configmaps
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/metrics
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes/proxy
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes/spec
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes/stats
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - services
   verbs:
   - '*'
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
-  - secrets
   verbs:
-  - get
-  - list
-  - watch
-  - update
-  - create
-- apiGroups:
-  - apps
-  - batch
-  resources:
-  - replicasets
-  - deployments
-  - statefulsets
-  - jobs
-  - cronjobs
-  verbs:
-  - get
+  - '*'
 - apiGroups:
   - apiregistration.k8s.io
   resources:
   - apiservices
   verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - get
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - '*'
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - roles
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  verbs:
+  - get
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsets
+  verbs:
+  - '*'
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - watermarkpodautoscalers
+  verbs:
   - get
   - list
   - watch
-  - update
-  - create
-  - delete
 - apiGroups:
-  - "datadoghq.com"
+  - networking.k8s.io
   resources:
-  - "watermarkpodautoscalers"
+  - networkpolicies
   verbs:
-  - "list"
-  - "get"
-  - "watch"
+  - '*'
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - '*'
+- apiGroups:
+  - quota.openshift.io
+  resources:
+  - clusterresourcequotas
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  verbs:
+  - '*'
+- apiGroups:
+  - roles.rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - roles.rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - '*'
+- apiGroups:
+  - roles.rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - roles.rbac.authorization.k8s.io
+  resources:
+  - roles
+  verbs:
+  - '*'
 {{- end -}}
