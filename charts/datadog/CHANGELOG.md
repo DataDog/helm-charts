@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 2.6.3
+## 2.6.4
 
 * Fix agent container volumeMounts when oom kill check or tcp queue length check is enabled.
 
