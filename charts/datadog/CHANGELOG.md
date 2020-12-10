@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.4
+
+* Fix agent container volumeMounts when oom kill check or tcp queue length check is enabled.
+
 ## 2.6.3
 
 * Add a new field `datadog.dogstatsd.tags` to configure `DD_DOGSTATSD_TAGS`.
