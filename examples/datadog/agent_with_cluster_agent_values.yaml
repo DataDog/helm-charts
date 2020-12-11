@@ -26,6 +26,7 @@ clusterAgent:
   metricsProvider:
     enabled: true
     createReaderRbac: true
+    useDatadogMetrics: true
     service:
       type: ClusterIP
       port: 8443
