@@ -33,7 +33,10 @@ spec:
         {{- end }}
       name: {{ template "datadog.fullname" . }}
       annotations:
-        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/agent-secret.yaml") . | sha256sum }}
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
+        {{- end }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
         checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
