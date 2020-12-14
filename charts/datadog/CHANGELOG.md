@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.5
+
+* Make sure all agents are rolled out on API key update and the Cluster agents on Application key update.
+
 ## 2.6.4
 
 * Fix agent container volumeMounts when oom kill check or tcp queue length check is enabled.
