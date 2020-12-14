@@ -26,6 +26,8 @@ metricsPort: 8383
 secretBackend:
   # secretBackend.command -- Specifies the path to the command that implements the secret backend api
   command: ""
+  # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
+  arguments: ""
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true

@@ -57,6 +57,9 @@ spec:
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
           {{- end }}
+          {{- if .Values.secretBackend.arguments }}
+            - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
+          {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}
