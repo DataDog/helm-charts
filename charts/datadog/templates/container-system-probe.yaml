@@ -5,6 +5,7 @@
   securityContext:
     capabilities:
       add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "IPC_LOCK"]
+    privileged: {{ $.Values.agents.containers.systemProbe.securityContext.privileged }}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.datadog.envFrom }}
   envFrom:

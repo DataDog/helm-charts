@@ -744,6 +744,10 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+
+      securityContext:
+        # agents.containers.securityContext.privileged -- Set the system-probe container to run in privileged mode.
+        privileged: false
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
       env:
