@@ -3,9 +3,7 @@
   image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   securityContext:
-    capabilities:
-      add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "IPC_LOCK"]
-    privileged: {{ $.Values.agents.containers.systemProbe.securityContext.privileged }}
+{{ toYaml .Values.agents.containers.systemProbe.securityContext | indent 4 }}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.datadog.envFrom }}
   envFrom:

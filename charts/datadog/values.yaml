@@ -745,9 +745,11 @@ agents:
       #    cpu: 100m
       #    memory: 200Mi
 
+      # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
       securityContext:
-        # agents.containers.securityContext.privileged -- Set the system-probe container to run in privileged mode.
         privileged: false
+        capabilities:
+          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "IPC_LOCK"]
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
       env:

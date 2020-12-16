@@ -2,7 +2,7 @@
 
 ## 2.7.0
 
-* Add `agents.containers.systemProbe.securityContext.privileged`.
+* Add `agents.containers.systemProbe.securityContext` option.
 
 ## 2.6.5
 

@@ -329,7 +329,7 @@ helm install --name <RELEASE_NAME> \
 | agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
 | agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. |
 | agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
-| agents.containers.systemProbe.securityContext.privileged | bool | `false` |  |
+| agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","IPC_LOCK"]},"privileged":false}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
 | agents.containers.traceAgent.env | string | `nil` | Additional environment variables for the trace-agent container |
 | agents.containers.traceAgent.livenessProbe | object | Every 15s | Override default agent liveness probe settings |
 | agents.containers.traceAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |
