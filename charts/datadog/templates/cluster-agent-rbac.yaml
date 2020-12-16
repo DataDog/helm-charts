@@ -114,6 +114,7 @@ rules:
   resources:
   - deployments
   - replicasets
+  - daemonsets
   verbs:
   - list
   - get
@@ -149,7 +150,7 @@ rules:
   resources: ["jobs", "cronjobs"]
   verbs: ["get"]
 - apiGroups: ["apps"]
-  resources: ["statefulsets", "replicasets", "deployments"]
+  resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
 {{- end }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
