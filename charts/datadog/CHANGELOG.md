@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 2.7.0
+## 2.6.6
 
 * Add `agents.containers.systemProbe.securityContext` option.
 
