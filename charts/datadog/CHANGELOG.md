@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.6
+
+* Add `agents.containers.systemProbe.securityContext` option.
+
 ## 2.6.5
 
 * Make sure all agents are rolled out on API key update and the Cluster agents on Application key update.
