@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.7
+
+* Change the default agent version to `7.24.1`
+
 ## 2.6.6
 
 * Add `agents.containers.systemProbe.securityContext` option.
