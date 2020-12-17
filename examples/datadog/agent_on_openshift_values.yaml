@@ -44,5 +44,5 @@ agents:
   enabled: true
   image:
     repository: gcr.io/datadoghq/agent
-    tag: 7.23.1
+    tag: 7.24.1
     pullPolicy: IfNotPresent
