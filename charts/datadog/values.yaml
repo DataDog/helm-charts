@@ -280,7 +280,7 @@ datadog:
     enableOOMKill: false
 
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
-    collectDNSStats: false
+    collectDNSStats: true
 
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer
