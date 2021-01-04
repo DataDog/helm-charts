@@ -1,0 +1,37 @@
+# Datadog Agent with Logs, APM, Processes, and System Probe enabled
+
+targetSystem: "linux"
+datadog:
+  # apiKey: <DATADOG_API_KEY>
+  # appKey: <DATADOG_APP_KEY>
+  # If not using secrets, then use apiKey and appKey instead
+  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
+  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  env:
+    # DD_KUBELET_TLS_VERIFY should be false on Azure Kubernetes Service (AKS) and minikube
+    # to establish communication with the kubelet
+    # - name: "DD_KUBELET_TLS_VERIFY"
+    #   value: "false"
+  logs:
+    enabled: true
+    containerCollectAll: false
+    containerCollectUsingFiles: true
+  apm:
+    enabled: true
+    socketPath: /var/run/datadog/apm.socket
+    hostSocketPath: /var/run/datadog/
+  processAgent:
+    enabled: true
+    processCollection: false
+  systemProbe:
+    enableTCPQueueLength: false
+    enableOOMKill: true
+    collectDNSStats: false
+agents:
+  enabled: true
+  image:
+    repository: gcr.io/datadoghq/agent
+    tag: 7.24.1
+    pullPolicy: IfNotPresent

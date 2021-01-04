@@ -8,7 +8,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 0.3.1
+  tag: 0.4.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -21,8 +21,6 @@ fullnameOverride: ""
 logLevel: "info"
 # supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
 supportExtendedDaemonset: "false"
-# probesPort -- Port used by readiness/liveness probes
-probesPort: 9090
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:
@@ -55,7 +53,6 @@ nodeSelector: {}
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
-
 
 # installCRDs -- Set to true to deploy the Datadog's CRDs
 installCRDs: true
