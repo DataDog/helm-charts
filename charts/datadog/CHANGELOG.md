@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.6.9
+
+* Add `/tmp` in Agent POD as an emptyDir to allow VOLUME removal from Agent Dockerfile
+* Clarify documentation of `datadog.dogstatsd.nonLocalTraffic`
+
 ## 2.6.8
 
 * Fix `helm lint` by renaming YAML files lacking metadata info.

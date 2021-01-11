@@ -93,6 +93,9 @@
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

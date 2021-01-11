@@ -6,20 +6,44 @@ on:
       - "charts/**"
 
 jobs:
-  lint-chart:
+  changed:
     runs-on: ubuntu-latest
+    outputs:
+      charts: ${{ steps.list-changed.outputs.changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed)
+          if [[ -n "$changed" ]]; then
+            echo -n "Charts changed:"
+            echo "$changed"
+            echo "::set-output name=changed::$changed"
+          else
+            echo "PR without any chart changes - failing"
+            exit 1
+          fi
+
+  lint-chart:
+    runs-on: ubuntu-latest
+    needs:
+      - changed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
       - name: Run chart-testing (lint)
-        uses: helm/chart-testing-action@master
-        with:
-          image: quay.io/helmpack/chart-testing:v3.0.0
-          command: lint
-          config: .github/ct.yaml
+        run: ct lint --config .github/ct.yaml
 
   lint-docs:
     runs-on: ubuntu-latest
+    needs:
+      - changed
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -28,6 +52,8 @@ jobs:
 
   kubeval-chart:
     runs-on: ubuntu-latest
+    needs:
+      - changed
     strategy:
       matrix:
         # When changing versions here, check that the version exists at: https://github.com/instrumenta/kubernetes-json-schema
@@ -45,6 +71,7 @@ jobs:
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
+          CHANGED_CHARTS: ${{needs.changed.outputs.charts}}
         run: .github/kubeval.sh
 
   install-chart:
@@ -66,11 +93,10 @@ jobs:
         uses: helm/kind-action@master
         with:
           node_image: kindest/node:${{ matrix.k8s }}
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
       - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@v1.1.0
-        with:
-          command: install
-          config: .github/ct.yaml
+        run: ct install --config .github/ct.yaml
 
   pr-validated:
     name: pr-validated

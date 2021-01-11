@@ -145,7 +145,7 @@ datadog:
     ## See https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
     useHostPID: false
 
-    # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic
+    # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic (from outside of the pod)
     ## ref: https://github.com/DataDog/docker-dd-agent#environment-variables
     nonLocalTraffic: false
 

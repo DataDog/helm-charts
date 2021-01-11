@@ -1,4 +1,6 @@
 {{- define "daemonset-volumes-linux" -}}
+- name: tmpdir
+  emptyDir: {}
 - hostPath:
     path: /proc
   name: procdir
