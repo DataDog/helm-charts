@@ -50,6 +50,9 @@
       subPath: datadog.yaml
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false
     - name: runtimesocketdir
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

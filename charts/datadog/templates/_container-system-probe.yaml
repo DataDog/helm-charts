@@ -19,6 +19,9 @@
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false
     - name: debugfs
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

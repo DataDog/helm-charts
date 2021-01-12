@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.6.8](https://img.shields.io/badge/Version-2.6.8-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.6.9](https://img.shields.io/badge/Version-2.6.9-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -451,7 +451,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the DogStatsD socket |
-| datadog.dogstatsd.nonLocalTraffic | bool | `false` | Enable this to make each node accept non-local statsd traffic |
+| datadog.dogstatsd.nonLocalTraffic | bool | `false` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |
 | datadog.dogstatsd.originDetection | bool | `false` | Enable origin detection for container tagging |
 | datadog.dogstatsd.port | int | `8125` | Override the Agent DogStatsD port |
 | datadog.dogstatsd.socketPath | string | `"/var/run/datadog/dsd.socket"` | Path to the DogStatsD socket |
