@@ -289,10 +289,10 @@ datadog:
     collectDNSStats: false
 
   orchestratorExplorer:
-    # datadog.orchestratorExplorer.enabled -- Set this to true to enable the orchestrator explorer
+    # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
     ## This requires processAgent.enabled and clusterAgent.enabled to be set to true
     ## ref: TODO - add doc link
-    enabled: false
+    enabled: true
 
     # datadog.orchestratorExplorer.container_scrubbing -- Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information
     ## The container scrubbing is taking significant resources during data collection.
