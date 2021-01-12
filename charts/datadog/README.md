@@ -63,7 +63,12 @@ kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATA
 Now, the installation command contains the reference to the secret.
 
 ```bash
+# Helm v3+
 helm install --name <RELEASE_NAME> \
+  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
+
+# Helm v2
+helm install <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
 ```
 
