@@ -192,3 +192,13 @@ You are using datadog.systemProbe.enabled which has been deprecated in favor usi
 More information about this change: https://github.com/DataDog/helm-charts/pull/101
 
 {{- end }}
+
+{{- if (and .Values.datadog.orchestratorExplorer.enabled (not .Values.clusterAgent.enabled ))}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.orchestratorExplorer.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
+To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}

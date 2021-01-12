@@ -208,3 +208,14 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
+*/}}
+{{- define "should-enable-k8s-resource-monitoring" -}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
