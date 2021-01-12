@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.0
+
+* Enable the orchestrator explorer by default.
+
 ## 2.7.0
 
 * Changes default values to activate a maximum of built-in features to ease configuration.

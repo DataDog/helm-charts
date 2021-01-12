@@ -354,7 +354,7 @@ datadog:
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
 ## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
-  # clusterAgent.enabled -- Set this to true to enable Datadog Cluster Agent
+  # clusterAgent.enabled -- Set this to false to disable Datadog Cluster Agent
   enabled: true
 
   ## Define the Datadog Cluster-Agent image to work with
