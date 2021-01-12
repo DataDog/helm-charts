@@ -41,17 +41,8 @@ By default, the Datadog Agent runs in a DaemonSet. It can alternatively run insi
 
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datadog API key from your [Agent Installation Instructions](https://app.datadoghq.com/account/settings#agent/kubernetes) and run:
 
-For Helm v3:
-
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
-```
-
-or for Helm v2:
-
-```bash
-helm install <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
@@ -71,17 +62,8 @@ kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATA
 
 Now, the installation command contains the reference to the secret.
 
-For Helm v3:
-
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
-```
-
-or for Helm v2:
-
-```bash
-helm install <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
 ```
 
