@@ -1,0 +1,16 @@
+{{- if .Values.datadog.openmetricsd }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-openmetricsd
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+  annotations:
+    checksum/openmetricsd-config: {{ tpl (toYaml .Values.datadog.openmetricsd) . | sha256sum }}
+data:
+  {{- tpl (toYaml .Values.datadog.openmetricsd) . | nindent 2 }}
+{{- end }}

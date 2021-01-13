@@ -41,6 +41,9 @@ spec:
         checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
         checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- if .Values.datadog.openmetricsd }}
+        checksum/openmetricsd-config: {{ tpl (toYaml .Values.datadog.openmetricsd) . | sha256sum }}
+        {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
@@ -145,6 +148,11 @@ spec:
       {{- end }}
       {{- if eq .Values.targetSystem "linux" }}
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.datadog.openmetricsd }}
+      - name: {{ template "datadog.fullname" . }}-openmetricsd
+        configMap:
+          name: {{ template "datadog.fullname" . }}-openmetricsd
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
