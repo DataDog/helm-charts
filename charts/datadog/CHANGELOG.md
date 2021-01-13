@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.10
+
+* Allow cluster-agent to access apps/daemonsets when admissionController is enabled.
+
 ## 2.6.9
 
 * Add `/tmp` in Agent POD as an emptyDir to allow VOLUME removal from Agent Dockerfile
