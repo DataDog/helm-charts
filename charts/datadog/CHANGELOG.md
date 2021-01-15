@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.7
+
+* Allow cluster-agent to override metrics provider endpoint with `clusterAgent.metricsProvider.endpoint`.
+
 ## 2.9.6
 
 * Add missing `NET_RAW` capability to `System-probe` to support `CVE-2020-14386` mitigation.

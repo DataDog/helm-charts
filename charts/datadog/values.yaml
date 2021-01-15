@@ -466,6 +466,9 @@ clusterAgent:
       # clusterAgent.metricsProvider.service.port -- Set port of cluster-agent metrics server service (Kubernetes >= 1.15)
       port: 8443
 
+    # clusterAgent.metricsProvider.endpoint -- Override the external metrics provider endpoint. If not set, the cluster-agent defaults to `datadog.site`
+    endpoint:  # https://api.datadoghq.com
+
   # clusterAgent.env -- Set environment variables specific to Cluster Agent
   ## The Cluster-Agent supports many additional environment variables
   ## ref: https://docs.datadoghq.com/agent/cluster_agent/commands/#cluster-agent-options

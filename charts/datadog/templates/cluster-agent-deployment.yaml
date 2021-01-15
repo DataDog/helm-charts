@@ -141,6 +141,10 @@ spec:
             value: {{ .Values.clusterAgent.metricsProvider.wpaController | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_USE_DATADOGMETRIC_CRD
             value: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics | quote }}
+          {{- if .Values.clusterAgent.metricsProvider.endpoint }}
+          - name: DD_EXTERNAL_METRICS_PROVIDER_ENDPOINT
+            value: {{ .Values.clusterAgent.metricsProvider.endpoint | quote }}
+          {{- end }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
