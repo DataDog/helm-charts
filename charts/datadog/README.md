@@ -348,7 +348,7 @@ helm install --name <RELEASE_NAME> \
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
 | agents.podLabels | object | `{}` | Sets podLabels if defined Note: These labels are also used as label selectors so they are immutable. |
 | agents.podSecurity.apparmor.enabled | bool | `true` | If true, enable apparmor enforcement |
-| agents.podSecurity.apparmorProfiles | list | `["runtime/default"]` | Allowed apparmor profiles |
+| agents.podSecurity.apparmorProfiles | list | `["runtime/default","unconfined"]` | Allowed apparmor profiles |
 | agents.podSecurity.capabilites | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","IPC_LOCK","AUDIT_CONTROL","AUDIT_READ"]` | Allowed capabilites |
 | agents.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Agent pods |
 | agents.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
