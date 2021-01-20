@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.7.1
+
+* Add a new field `datadog.kubelet.kubelet_host` to override `DD_KUBERNETES_KUBELET_HOST`
+
 ## 2.7.0
 
 * Changes default values to activate a maximum of built-in features to ease configuration.

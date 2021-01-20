@@ -107,6 +107,11 @@ datadog:
   #   - "<KEY_1>:<VALUE_1>"
   #   - "<KEY_2>:<VALUE_2>"
 
+  # kubelet configuration
+  kubelet:
+    # datadog.kubelet.kubelet_host -- Override kubelet IP
+    kubelet_host:  # spec.nodeName
+
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
   ## To emit custom metrics from your Kubernetes application, use DogStatsD.

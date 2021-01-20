@@ -6,7 +6,12 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if semverCompare "^1.7-0" .Capabilities.KubeVersion.GitVersion }}
+{{- if .Values.datadog.kubelet.kubelet_host }}
+- name: DD_KUBERNETES_KUBELET_HOST
+  valueFrom:
+    fieldRef:
+      fieldPath: {{ .Values.datadog.kubelet.kubelet_host }}
+{{- else if semverCompare "^1.7-0" .Capabilities.KubeVersion.GitVersion }}
 - name: DD_KUBERNETES_KUBELET_HOST
   valueFrom:
     fieldRef:

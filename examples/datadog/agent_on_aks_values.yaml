@@ -1,4 +1,6 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
+# with specific configuration to work on AKS.
+
 
 targetSystem: "linux"
 datadog:
@@ -9,11 +11,8 @@ datadog:
   appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
   clusterName: <CLUSTER_NAME>
   tags: []
-  env:
-    # DD_KUBELET_TLS_VERIFY should be false on kind and minikube
-    # to establish communication with the kubelet
-    # - name: "DD_KUBELET_TLS_VERIFY"
-    #   value: "false"
+  kubelet:
+    kubelet_host: spec.nodeName
   logs:
     enabled: true
     containerCollectAll: false
