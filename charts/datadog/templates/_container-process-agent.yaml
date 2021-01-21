@@ -73,6 +73,7 @@
       readOnly: true
     - name: passwd
       mountPath: /etc/passwd
+      readOnly: true
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

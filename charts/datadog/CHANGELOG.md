@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.12
+
+* Mount `/etc/passwd` as `readOnly` in the `process-agent`.
+
 ## 2.6.11
 
 * Adds `unconfined` as a default value for `agents.podSecurity.apparmorProfiles`. It now aligns with `datadog.systemProbe.apparmor` default value.
