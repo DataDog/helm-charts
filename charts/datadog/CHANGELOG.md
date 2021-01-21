@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.6.11
+
+* Adds `unconfined` as a default value for `agents.podSecurity.apparmorProfiles`. It now aligns with `datadog.systemProbe.apparmor` default value.
+* Updates `hostPID` for PodSecurityPolicy, bringing it in line with SCC.
+
 ## 2.6.10
 
 * Allow cluster-agent to access apps/daemonsets when admissionController is enabled.
