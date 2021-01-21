@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.3
+
+* Adds `systemProbe.enableRuntimeCompiler` and `systemprobe.runtimeCompilerOutputDir` to configure eBPF runtime compiler in the system-probe.
+
 ## 2.11.2
 
 * Update `agent.customAgentConfig` config example in the `values.yaml`: removes reference to APM configuration.

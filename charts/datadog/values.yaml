@@ -327,6 +327,11 @@ datadog:
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
     conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
 
+    # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
+    enableRuntimeCompiler: false
+
+    # datadog.systemProbe.runtimeCompilerOutputDir -- Specify an output directory for the compiled assets from the eBPF runtime compiler
+    runtimeCompilerOutputDir: /var/tmp/datadog-agent/system-probe/build
 
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
