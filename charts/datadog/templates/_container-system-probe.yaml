@@ -5,6 +5,10 @@
   securityContext:
 {{ toYaml .Values.agents.containers.systemProbe.securityContext | indent 4 }}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+{{- if .Values.agents.containers.systemProbe.ports }}
+  ports:
+{{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
+{{- end }}
 {{- if .Values.datadog.envFrom }}
   envFrom:
 {{ toYaml .Values.datadog.envFrom | indent 4 }}

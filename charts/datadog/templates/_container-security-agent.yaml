@@ -8,6 +8,10 @@
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
+{{- if .Values.agents.containers.securityAgent.ports }}
+  ports:
+{{ toYaml .Values.agents.containers.securityAgent.ports | indent 2 }}
+{{- end }}
 {{- if .Values.datadog.envFrom }}
   envFrom:
 {{ toYaml .Values.datadog.envFrom | indent 4 }}

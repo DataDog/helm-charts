@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.15
+
+* Add `ports` options to all Agent containers to allow users to add any binding they'd like for integrations
+
 ## 2.6.14
 
 * Opens port 6443/TCP on kube-state-metrics netpol.

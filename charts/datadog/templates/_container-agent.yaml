@@ -16,6 +16,9 @@
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+{{- if .Values.agents.containers.agent.ports }}
+{{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
+{{- end }}
 {{- if .Values.datadog.envFrom }}
   envFrom:
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
