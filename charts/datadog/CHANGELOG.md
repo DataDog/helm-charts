@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.13
+
+* Opens ports 6443/TCP and 53/UDP for egress on cluster agent.
+
 ## 2.6.12
 
 * Mount `/etc/passwd` as `readOnly` in the `process-agent`.

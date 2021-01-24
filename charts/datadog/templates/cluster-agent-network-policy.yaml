@@ -42,6 +42,10 @@ spec:
     - # Egress to
       # * Datadog intake
       # * Kube API server
+      # * DNS
       ports:
         - port: 443
+        - port: 6443
+        - port: 53
+          protocol: UDP
 {{- end}}
