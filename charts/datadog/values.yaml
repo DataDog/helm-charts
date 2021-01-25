@@ -387,6 +387,12 @@ clusterAgent:
     # clusterAgent.rbac.create -- If true, create & use RBAC resources
     create: true
 
+  ## Provide Cluster Agent PodSecurityPolicy configuration
+  podSecurity:
+    podSecurityPolicy:
+      # clusterAgent.podSecurity.podSecurityPolicy.create -- If true, create a PodSecurityPolicy resource for Cluster Agent pods
+      create: false
+
     # clusterAgent.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
 
