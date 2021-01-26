@@ -6,16 +6,13 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if .Values.datadog.kubelet.kubelet_host }}
+{{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
-  valueFrom:
-    fieldRef:
-      fieldPath: {{ .Values.datadog.kubelet.kubelet_host }}
-{{- else if semverCompare "^1.7-0" .Capabilities.KubeVersion.GitVersion }}
-- name: DD_KUBERNETES_KUBELET_HOST
-  valueFrom:
-    fieldRef:
-      fieldPath: status.hostIP
+{{ toYaml .Values.datadog.kubelet.host | indent 2 }}
+{{- end }}
+{{- if .Values.datadog.kubelet.tlsVerify }}
+- name: DD_KUBELET_TLS_VERIFY
+  value: {{ .Values.datadog.kubelet.tlsVerify | quote }}
 {{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}

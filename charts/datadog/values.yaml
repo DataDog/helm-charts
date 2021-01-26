@@ -109,8 +109,13 @@ datadog:
 
   # kubelet configuration
   kubelet:
-    # datadog.kubelet.kubelet_host -- Override kubelet IP
-    kubelet_host:  # spec.nodeName
+    # datadog.kubelet.host -- Override kubelet IP
+    host:
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
+    tlsVerify: true
 
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/

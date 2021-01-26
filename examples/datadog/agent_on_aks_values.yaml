@@ -12,7 +12,10 @@ datadog:
   clusterName: <CLUSTER_NAME>
   tags: []
   kubelet:
-    kubelet_host: spec.nodeName
+    host:
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
   logs:
     enabled: true
     containerCollectAll: false

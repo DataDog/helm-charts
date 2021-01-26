@@ -2,7 +2,7 @@
 
 ## 2.7.1
 
-* Add a new field `datadog.kubelet.kubelet_host` to override `DD_KUBERNETES_KUBELET_HOST`
+* Add a new fields `datadog.kubelet.host` (to override `DD_KUBERNETES_KUBELET_HOST`) and `datadog.kubelet.tlsVerify` (to toggle kubelet TLS verification)
 
 ## 2.7.0
 
