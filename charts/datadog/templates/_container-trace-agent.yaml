@@ -1,6 +1,6 @@
 {{- define "container-trace-agent" -}}
 - name: trace-agent
-  image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]

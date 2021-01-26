@@ -57,7 +57,7 @@ spec:
       {{- end }}
       initContainers:
       - name: init-volume
-        image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
         command: ["bash", "-c"]
         args:
@@ -68,7 +68,7 @@ spec:
         resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
       - name: init-config
-        image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
         command: ["bash", "-c"]
         args:
@@ -85,7 +85,7 @@ spec:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
       containers:
       - name: agent
-        image: "{{ .Values.clusterChecksRunner.image.repository }}:{{ .Values.clusterChecksRunner.image.tag }}"
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
         args:
           - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run

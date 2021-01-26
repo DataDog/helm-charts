@@ -1,6 +1,6 @@
 {{- define "container-system-probe" -}}
 - name: system-probe
-  image: "{{ .Values.agents.image.repository }}:{{ .Values.agents.image.tag }}"
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   securityContext:
 {{ toYaml .Values.agents.containers.systemProbe.securityContext | indent 4 }}
