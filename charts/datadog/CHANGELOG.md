@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.6.14
+
+* Opens port 6443/TCP on kube-state-metrics netpol.
+
 ## 2.6.13
 
 * Opens ports 6443/TCP and 53/UDP for egress on cluster agent.

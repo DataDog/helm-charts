@@ -20,6 +20,7 @@ spec:
     - # Egress to Kube API server
       ports:
         - port: 443
+        - port: 6443
   ingress:
     - # Ingress from the node agents and the cluster check runners
       ports:
