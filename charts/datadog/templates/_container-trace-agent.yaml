@@ -19,6 +19,9 @@
     hostPort: {{ .Values.datadog.apm.port }}
     name: traceport
     protocol: TCP
+{{- if .Values.agents.containers.traceAgent.ports }}
+{{ toYaml .Values.agents.containers.traceAgent.ports | indent 2 }}
+{{- end }}
 {{- if .Values.datadog.envFrom }}
   envFrom:
 {{ toYaml .Values.datadog.envFrom | indent 4 }}

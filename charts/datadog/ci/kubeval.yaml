@@ -50,3 +50,9 @@ agents:
   podSecurity:
     podSecurityPolicy:
       create: true
+  containers:
+    agent:
+      ports:
+      - containerPort: 6666
+        name: testport
+        protocol: UDP

@@ -689,6 +689,9 @@ agents:
       # agents.containers.agent.securityContext -- Allows you to overwrite the default container SecurityContext for the agent container.
       securityContext: {}
 
+      # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []
@@ -708,6 +711,9 @@ agents:
 
       # agents.containers.processAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the process-agent container.
       securityContext: {}
+
+      # agents.containers.processAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
 
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
@@ -735,6 +741,9 @@ agents:
       # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
       securityContext: {}
 
+      # agents.containers.traceAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
     systemProbe:
       # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
       env: []
@@ -757,6 +766,10 @@ agents:
         privileged: false
         capabilities:
           add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "IPC_LOCK"]
+
+      # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
       env:
@@ -773,6 +786,9 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+
+      # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
 
     initContainers:
       # agents.containers.initContainers.resources -- Resource requests and limits for the init containers
@@ -1034,6 +1050,9 @@ clusterChecksRunner:
 
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
+
+  # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+  ports: []
 
 datadog-crds:
   crds:

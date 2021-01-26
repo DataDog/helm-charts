@@ -12,6 +12,10 @@
   securityContext:
     {{ toYaml .Values.agents.containers.processAgent.securityContext | nindent 4 }}
   {{- end }}
+{{- if .Values.agents.containers.processAgent.ports }}
+  ports:
+{{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}
+{{- end }}
   resources:
 {{ toYaml .Values.agents.containers.processAgent.resources | indent 4 }}
 {{- if .Values.datadog.envFrom }}

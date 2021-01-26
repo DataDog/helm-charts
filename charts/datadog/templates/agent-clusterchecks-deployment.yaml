@@ -90,6 +90,10 @@ spec:
         args:
           - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
+{{- if .Values.clusterChecksRunner.ports }}
+        ports:
+{{ toYaml .Values.clusterChecksRunner.ports | indent 10 }}
+{{- end }}
 {{- if .Values.datadog.envFrom }}
         envFrom:
 {{ toYaml .Values.datadog.envFrom | indent 10 }}
