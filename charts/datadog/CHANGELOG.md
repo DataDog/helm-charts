@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.7.1
+
+* Open port 8000/TCP for ingress on cluster agent for Admission Controller communication.
+
 ## 2.7.0
 
 * Changes default values to activate a maximum of built-in features to ease configuration.
