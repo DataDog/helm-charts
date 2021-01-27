@@ -16,6 +16,7 @@ datadog:
       valueFrom:
         fieldRef:
           fieldPath: spec.nodeName
+    tlsVerify: "false"
   logs:
     enabled: true
     containerCollectAll: false
