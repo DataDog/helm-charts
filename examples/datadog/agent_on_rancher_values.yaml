@@ -10,10 +10,9 @@ datadog:
   appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
   clusterName: <CLUSTER_NAME>
   tags: []
-  env:
-    # DD_KUBELET_TLS_VERIFY should be false to establish communication with the kubelet
-    - name: "DD_KUBELET_TLS_VERIFY"
-      value: "false"
+  # datadog.kubelet.tlsVerify should be `false` to establish communication with the kubelet
+  kubelet:
+    tlsVerify: "false"
   logs:
     enabled: true
     containerCollectAll: false
