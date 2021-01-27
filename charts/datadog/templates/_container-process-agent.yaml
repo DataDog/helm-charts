@@ -38,8 +38,8 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-      value: {{ .Values.datadog.orchestratorExplorer.enabled | quote }}
-    {{- if .Values.datadog.orchestratorExplorer.enabled }}
+      value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
+    {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
     - name: DD_ORCHESTRATOR_CLUSTER_ID
       valueFrom:
         configMapKeyRef:

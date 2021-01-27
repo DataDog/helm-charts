@@ -90,7 +90,7 @@ rules:
   - "get"
   - "watch"
 {{- end }}
-{{- if .Values.datadog.orchestratorExplorer.enabled }}
+{{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
 - apiGroups:  # to get the kube-system namespace UID and generate a cluster ID
   - ""
   resources:
