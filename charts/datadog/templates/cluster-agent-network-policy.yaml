@@ -33,6 +33,10 @@ spec:
           matchLabels:
             app: {{ template "datadog.fullname" . }}-clusterchecks
 {{- end }}
+{{- if .Values.clusterAgent.admissionController.enabled }}
+  - ports:
+      - port: 8000
+{{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - # Ingress from API server for external metrics
     ports:
