@@ -31,9 +31,3 @@ datadog:
     enableTCPQueueLength: false
     enableOOMKill: true
     collectDNSStats: false
-agents:
-  enabled: true
-  image:
-    repository: gcr.io/datadoghq/agent
-    tag: 7.24.1
-    pullPolicy: IfNotPresent

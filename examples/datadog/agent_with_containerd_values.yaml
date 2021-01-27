@@ -10,9 +10,3 @@ datadog:
   clusterName: <CLUSTER_NAME>
   tags: []
   criSocketPath: /var/run/containerd/containerd.sock
-agents:
-  enabled: true
-  image:
-    repository: gcr.io/datadoghq/agent
-    tag: 7.24.1
-    pullPolicy: IfNotPresent

@@ -14,11 +14,6 @@ datadog:
   orchestratorExplorer:
     enabled: true
 clusterAgent:
-  enabled: true
-  image:
-    repository: gcr.io/datadoghq/cluster-agent
-    tag: 1.9.1
-    pullPolicy: IfNotPresent
   replicas: 2
   rbac:
     create: true
@@ -31,10 +26,6 @@ clusterAgent:
       type: ClusterIP
       port: 8443
 agents:
-  enabled: true
-  image:
-    repository: gcr.io/datadoghq/agent
-    tag: 7.24.1
   rbac:
     create: true
     serviceAccountName: default
