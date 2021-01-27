@@ -1,5 +1,10 @@
 # Datadog changelog
 
+
+## 2.7.2
+
+* Add a new fields `datadog.kubelet.host` (to override `DD_KUBERNETES_KUBELET_HOST`) and `datadog.kubelet.tlsVerify` (to toggle kubelet TLS verification)
+
 ## 2.7.1
 
 * Open port 8000/TCP for ingress on cluster agent for Admission Controller communication.
