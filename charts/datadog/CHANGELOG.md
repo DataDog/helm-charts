@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.1
+
+* Fix `datadog.kubelet.tlsVerify` value when set to `false`
+
 ## 2.8.0
 
 * Enable the orchestrator explorer by default.

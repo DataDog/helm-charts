@@ -10,10 +10,8 @@
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
 {{- end }}
-{{- if .Values.datadog.kubelet.tlsVerify }}
 - name: DD_KUBELET_TLS_VERIFY
   value: {{ .Values.datadog.kubelet.tlsVerify | quote }}
-{{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME
