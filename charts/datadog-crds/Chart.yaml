@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 name: datadog-crds
 description: Datadog Kubernetes CRDs chart
 type: application
