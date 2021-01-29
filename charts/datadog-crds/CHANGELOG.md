@@ -1,3 +1,6 @@
+## 0.1.2
+
+* Update all the CRDs
 
 ## 0.1.1
 
