@@ -17,9 +17,10 @@ spec:
     - Ingress
     - Egress
   ingress:
-  - # Ingress from the node agents (for the metadata provider)
+  - # Ingress from the node agents (for the metadata provider and prometheus check)
     ports:
       - port: 5005
+      - port: 5000
     from:
       - podSelector:
           matchLabels:
