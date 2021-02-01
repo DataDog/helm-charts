@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.2
+
+* Open port 5000/TCP for ingress on cluster agent for Prometheus check from the agent.
+
 ## 2.8.1
 
 * Fix `datadog.kubelet.tlsVerify` value when set to `false`
