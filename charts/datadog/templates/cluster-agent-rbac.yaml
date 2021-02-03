@@ -215,7 +215,6 @@ kind: ServiceAccount
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
@@ -233,7 +232,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
