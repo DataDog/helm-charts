@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.3
+
+* Remove `chart` label from datadog-cluster-agent
+
 ## 2.8.2
 
 * Open port 5000/TCP for ingress on cluster agent for Prometheus check from the agent.
