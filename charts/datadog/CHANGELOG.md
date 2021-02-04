@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.8.3
+
+* Fix potential duplicate `DD_KUBERNETES_KUBELET_TLS_VERIFY` env var due to new parameter `kubelet.tlsVerify`. Parameter has now 3 states and env var won't be added if not set, improving backward compatibility.
+* Fix activation of Cluster Checks while Cluster Agent is disabled.
+* Change default value for `clusterAgent.metricsProvider.useDatadogMetrics` from `true` to `false` as it may trigger CRD ownership issues in several situations.
+
 ## 2.8.2
 
 * Open port 5000/TCP for ingress on cluster agent for Prometheus check from the agent.
