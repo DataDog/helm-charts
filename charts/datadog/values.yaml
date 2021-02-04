@@ -115,7 +115,8 @@ datadog:
         fieldRef:
           fieldPath: status.hostIP
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
-    tlsVerify: true
+    # @default -- true
+    tlsVerify:  # false
 
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
@@ -425,8 +426,8 @@ clusterAgent:
     wpaController: false
 
     # clusterAgent.metricsProvider.useDatadogMetrics -- Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries
-    ## NOTE: You need to install the `DatadogMetric` CRD before
-    useDatadogMetrics: true
+    ## NOTE: It will install DatadogMetrics CRD automatically (it may conflict with previous installations)
+    useDatadogMetrics: false
 
     # clusterAgent.metricsProvider.createReaderRbac -- Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent)
     createReaderRbac: true

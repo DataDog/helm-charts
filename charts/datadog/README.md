@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.8.2](https://img.shields.io/badge/Version-2.8.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.8.3](https://img.shields.io/badge/Version-2.8.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -19,10 +19,10 @@ helm repo update
 
 ## Prerequisites
 
-Kubernetes 1.4+ or OpenShift 3.4+, note that:
+Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 - the Datadog Agent supports Kubernetes 1.4+
-- The Datadog chart's defaults are tailored to Kubernetes 1.7.6+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
+- The Datadog chart's defaults are tailored to Kubernetes 1.10+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
 
 ## Requirements
 
@@ -394,7 +394,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.metricsProvider.enabled | bool | `false` | Set this to true to enable Metrics Provider |
 | clusterAgent.metricsProvider.service.port | int | `8443` | Set port of cluster-agent metrics server service (Kubernetes >= 1.15) |
 | clusterAgent.metricsProvider.service.type | string | `"ClusterIP"` | Set type of cluster-agent metrics server service |
-| clusterAgent.metricsProvider.useDatadogMetrics | bool | `true` | Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries |
+| clusterAgent.metricsProvider.useDatadogMetrics | bool | `false` | Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries |
 | clusterAgent.metricsProvider.wpaController | bool | `false` | Enable informer and controller of the watermark pod autoscaler |
 | clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
@@ -476,7 +476,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.kubeStateMetricsEnabled | bool | `true` | If true, deploys the kube-state-metrics deployment |
 | datadog.kubeStateMetricsNetworkPolicy.create | bool | `false` | If true, create a NetworkPolicy for kube state metrics |
 | datadog.kubelet.host | object | `{"valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}}` | Override kubelet IP |
-| datadog.kubelet.tlsVerify | bool | `true` | Toggle kubelet TLS verification |
+| datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
