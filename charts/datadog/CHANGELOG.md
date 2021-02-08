@@ -2,7 +2,8 @@
 
 ## 2.8.4
 
-* Grant access to the `Lease` objects
+* Grant access to the `Lease` objects.
+  `Lease` objects can be read by the `kube_scheduler` and `kube_controller_manager` checks on agent 7.27+ on Kubernetes clusters 1.14+.
 
 ## 2.8.3
 
