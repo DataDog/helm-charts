@@ -99,6 +99,12 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}
+- apiGroups:  # leader election check
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - get
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
