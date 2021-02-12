@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.8.4
+
+* Grant access to the `Lease` objects.
+  `Lease` objects can be read by the `kube_scheduler` and `kube_controller_manager` checks on agent 7.27+ on Kubernetes clusters 1.14+.
+
 ## 2.8.3
 
 * Fix potential duplicate `DD_KUBERNETES_KUBELET_TLS_VERIFY` env var due to new parameter `kubelet.tlsVerify`. Parameter has now 3 states and env var won't be added if not set, improving backward compatibility.
