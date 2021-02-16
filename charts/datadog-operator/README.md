@@ -28,4 +28,4 @@
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
-| podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs
+| podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
