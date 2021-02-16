@@ -314,7 +314,7 @@ datadog:
 
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
-    enabled: false
+    enabled: null
 
   ## Enable security agent and provide custom configs
   securityAgent:
