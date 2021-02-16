@@ -1975,6 +1975,34 @@ entries:
   datadog-operator:
   - apiVersion: v2
     appVersion: 0.4.0
+    created: "2021-02-16T13:34:09.497626975Z"
+    dependencies:
+    - condition: installCRDs
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: =0.1.1
+    description: Datadog Operator
+    digest: 17c62b75af785ad5eb14d317c5cadd91d04fbf5695c70fda7c6fe9d6bbf1763c
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-operator
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-operator-0.4.1/datadog-operator-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 0.4.0
     created: "2020-12-09T10:41:37.876966652Z"
     dependencies:
     - condition: installCRDs
