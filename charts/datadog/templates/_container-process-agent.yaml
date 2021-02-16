@@ -38,7 +38,7 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-      value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
+      value: "true"
     {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
     - name: DD_ORCHESTRATOR_CLUSTER_ID
       valueFrom:

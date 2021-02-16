@@ -389,7 +389,7 @@ datadog:
 ## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
   # clusterAgent.enabled -- Set this to false to disable Datadog Cluster Agent
-  enabled: true
+  enabled: false
 
   ## Define the Datadog Cluster-Agent image to work with
   image:
@@ -420,7 +420,9 @@ clusterAgent:
   token: ""
 
   # clusterAgent.tokenExistingSecret -- Existing secret name to use for Cluster Agent token
-  tokenExistingSecret: ""
+  tokenExistingSecret: foo-datadog-cluster-agent
+
+  existingService: foo-datadog-cluster-agent
 
   # clusterAgent.replicas -- Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode.
   replicas: 1

@@ -109,5 +109,13 @@ Return a list of env-vars if the cluster-agent is enabled
     secretKeyRef:
         name: {{ template "clusterAgent.tokenSecretName" . }}
         key: token
+{{- else if and .Values.clusterAgent.existingService .Values.clusterAgent.tokenExistingSecret }}
+- name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+  value: {{ .Values.clusterAgent.existingService | quote }}
+- name: DD_CLUSTER_AGENT_AUTH_TOKEN
+  valueFrom:
+    secretKeyRef:
+        name: {{ .Values.clusterAgent.tokenExistingSecret | quote }}
+        key: token
 {{- end }}
 {{- end -}}
