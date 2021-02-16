@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+* Added support for `podAnnotations` and `podLabels` values
+
 ## 0.4.0
 
 * BREAKING CHANGES
