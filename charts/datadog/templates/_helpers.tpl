@@ -284,7 +284,7 @@ false
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}
-{{- if and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.enabled -}}
+{{- if or (and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.enabled) (and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.existingService .Values.clusterAgent.tokenExistingSecret) -}}
 true
 {{- else -}}
 false
