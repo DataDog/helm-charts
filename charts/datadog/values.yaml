@@ -389,7 +389,7 @@ datadog:
 ## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
   # clusterAgent.enabled -- Set this to false to disable Datadog Cluster Agent
-  enabled: false
+  enabled: true
 
   ## Define the Datadog Cluster-Agent image to work with
   image:
