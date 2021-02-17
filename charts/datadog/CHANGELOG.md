@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.5
+
+* Fix bug preventing network monitoring to be disabled by setting `datadog.networkMonitoring.enabled` to `false`.
+
 ## 2.8.4
 
 * Grant access to the `Lease` objects.
