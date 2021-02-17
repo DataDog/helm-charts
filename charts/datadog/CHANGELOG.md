@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.5
+
+* Allow `namespaces` in RBAC for `kubernetes_namespace_labels_as_tags`.
+
 ## 2.8.4
 
 * Grant access to the `Lease` objects.
