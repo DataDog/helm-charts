@@ -17,6 +17,7 @@ rules:
   - endpoints
   - pods
   - nodes
+  - namespaces
   - componentstatuses
   verbs:
   - get
