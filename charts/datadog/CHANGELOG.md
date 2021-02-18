@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 2.8.5
+## 2.8.6
 
 * Fix bug preventing network monitoring to be disabled by setting `datadog.networkMonitoring.enabled` to `false`.
+
+## 2.8.5
+
+* Allow `namespaces` in RBAC for `kubernetes_namespace_labels_as_tags`.
 
 ## 2.8.4
 
