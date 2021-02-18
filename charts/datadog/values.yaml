@@ -420,10 +420,10 @@ clusterAgent:
   token: ""
 
   # clusterAgent.tokenExistingSecret -- Existing secret name to use for Cluster Agent token, useful if you have a Cluster Agent deployed outside of this chart release
-  tokenExistingSecret: # <EXISTING_DCA_SECRET_NAME>
+  tokenExistingSecret:  # <EXISTING_DCA_SECRET_NAME>
 
   # clusterAgent.existingService -- Existing service name to use for reaching the Cluster Agent, useful if you have a Cluster Agent deployed outside of this chart release
-  existingService: # <EXISTING_DCA_SERVICE_NAME>
+  existingService:  # <EXISTING_DCA_SERVICE_NAME>
 
   # clusterAgent.replicas -- Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode.
   replicas: 1
