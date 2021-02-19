@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.0
+
+* Fix typo in variable name. `agents.podSecurity.capabilities` replaces `agents.podSecurity.capabilites`.
+
 ## 2.8.5
 
 * Allow `namespaces` in RBAC for `kubernetes_namespace_labels_as_tags`.

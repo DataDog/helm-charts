@@ -26,7 +26,7 @@ spec:
   {{- end }}
   hostPID: {{ or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
   allowedCapabilities: 
-{{ toYaml .Values.agents.podSecurity.capabilites | indent 4 }}
+{{ toYaml .Values.agents.podSecurity.capabilities | indent 4 }}
   volumes:
 {{ toYaml .Values.agents.podSecurity.volumes | indent 4 }}
   fsGroup:
