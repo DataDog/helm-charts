@@ -1,7 +1,8 @@
 # Datadog changelog
 
-## 2.8.6
+## 2.9.0
 
+* Remove `systemProbe.enabled` config param in favor of `networkMonitoring.enabled`, `securityAgent.runtime.enabled`, `systemProbe.enableOOMKill`, and `systemProbe.enableTCPQueueLength`.
 * Fix bug preventing network monitoring to be disabled by setting `datadog.networkMonitoring.enabled` to `false`.
 
 ## 2.8.5
