@@ -483,7 +483,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.logs.containerCollectAll | bool | `false` | Enable this to allow log collection for all containers |
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
-| datadog.networkMonitoring.enabled | bool | `nil` | Enable network performance monitoring |
+| datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
@@ -532,7 +532,6 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.dogstatsd.useSocketVolume`      | Unix sockets not supported on Windows            |
 | `datadog.dogstatsd.socketPath`           | Unix sockets not supported on Windows            |
 | `datadog.processAgent.processCollection` | Unable to access host/other containers processes |
-| `datadog.systemProbe.enabled`            | System probe is not available for Windows        |
 | `datadog.systemProbe.seccomp`            | System probe is not available for Windows        |
 | `datadog.systemProbe.seccompRoot`        | System probe is not available for Windows        |
 | `datadog.systemProbe.debugPort`          | System probe is not available for Windows        |

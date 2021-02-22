@@ -52,7 +52,7 @@
   name: src
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.processAgent.enabled .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled }}
+{{- if or .Values.datadog.processAgent.enabled .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled }}
 - hostPath:
     path: /etc/passwd
   name: passwd

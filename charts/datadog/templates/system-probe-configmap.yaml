@@ -35,11 +35,7 @@ data:
       enable_oom_kill: {{ $.Values.datadog.systemProbe.enableOOMKill }}
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
     network_config:
-      {{- if (eq ($.Values.datadog.networkMonitoring.enabled | toString) "<nil>") }}
-      enabled: {{ $.Values.datadog.systemProbe.enabled }}
-      {{- else }}
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
-      {{- end }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       debug: false
