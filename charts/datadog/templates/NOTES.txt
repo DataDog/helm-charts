@@ -183,14 +183,7 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 {{- if .Values.datadog.systemProbe.enabled }}
-
-#################################################################
-####               WARNING: Deprecation notice               ####
-#################################################################
-
-You are using datadog.systemProbe.enabled which has been deprecated in favor using one of networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, or securityAgent.runtime.enabled.
-More information about this change: https://github.com/DataDog/helm-charts/pull/101
-
+{{- fail "You are using datadog.systemProbe.enabled which has been superseded by networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, and securityAgent.runtime.enabled. These options provide a more granular control of which features should be activated." }}
 {{- end }}
 
 {{- if (and .Values.datadog.orchestratorExplorer.enabled (not .Values.clusterAgent.enabled ))}}
