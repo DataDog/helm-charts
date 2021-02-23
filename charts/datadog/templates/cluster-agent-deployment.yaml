@@ -178,7 +178,7 @@ spec:
             value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
           - name: DD_LEADER_ELECTION
-            value: {{ default "true" .Values.datadog.leaderElection | quote}}
+            value: {{ .Values.datadog.leaderElection | quote}}
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
