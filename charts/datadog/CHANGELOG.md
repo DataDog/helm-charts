@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.8.6
+
+* Add support for Service Topology to target the Datadog Agent via a kubernetes service instead of host ports. This will allow sending traces and custom metrics without using host ports. Note: Service Topology is a new Kubernetes feature, it's still in alpha and disabled by default.
+
 ## 2.8.5
 
 * Allow `namespaces` in RBAC for `kubernetes_namespace_labels_as_tags`.
