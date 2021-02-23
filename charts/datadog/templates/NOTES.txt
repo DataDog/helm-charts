@@ -195,3 +195,14 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 You are using datadog.orchestratorExplorer.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
+
+{{- if .Values.datadog.serviceTopology.enabled }}
+
+#################################################################
+####               NOTE: Configuration notice             ####
+#################################################################
+
+datadog.serviceTopology.enabled is enabled. Please make sure the Service Topology feature is enabled in your Kubernetes cluster.
+Enabling datadog.serviceTopology.enabled without enabling the Service Topology in the cluster will result in wrong tagging for traces and custom metrics.
+Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
+{{- end }}
