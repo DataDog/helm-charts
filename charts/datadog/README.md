@@ -508,10 +508,12 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
 | datadog.systemProbe.collectDNSStats | bool | `false` | Enable DNS stat collection |
+| datadog.systemProbe.conntrackMaxStateSize | int | `131072` | the maximum size of the userspace conntrack cache |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
+| datadog.systemProbe.maxTrackedConnections | int | `65536` | the maximum number of tracked connections |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
