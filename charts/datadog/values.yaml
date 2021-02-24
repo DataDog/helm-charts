@@ -256,6 +256,22 @@ datadog:
   # datadog.criSocketPath -- Path to the container runtime socket (if different from Docker)
   criSocketPath:  # /var/run/containerd/containerd.sock
 
+  # datadog.serviceTopology -- Configure service topology to send custom metrics and traces without using host ports
+  # Important notes:
+  # - The Service Topology feature in Kubernetes is still in alpha and disabled by default, please make sure it's enabled in your cluster configuration
+  # - The environment variable DD_AGENT_HOST in your application pod template must be configured to reach the topology service
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
+  serviceTopology:
+
+    # datadog.serviceTopology.enabled -- Enabling this will allow sending custom metrics and APM traces to the Datadog Agent on the same node without using a host port
+    # Important note: Enabling this option without enabling Service Topology in the cluster will result in wrong tagging for traces and custom metrics
+    enabled: false
+
+    # datadog.serviceTopology.serviceName -- Configure the name of the service responsible for routing the custom metrics and/or traces to the Datadog Agent
+    # Important note: DD_AGENT_HOST must be configured in your app to target this service.
+    # Example using DNS record: DD_AGENT_HOST=datadog-agent.<datadog-namespace>.svc.cluster.local
+    serviceName: datadog-agent
+
   ## Enable process agent and provide custom configs
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
@@ -298,6 +314,13 @@ datadog:
 
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: false
+
+    # datadog.systemProbe.maxTrackedConnections -- the maximum number of tracked connections
+    maxTrackedConnections: 65536
+
+    # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
+    conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
+
 
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
