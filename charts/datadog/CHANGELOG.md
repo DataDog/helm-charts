@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.4
+
+* Remove uses of `systemProbe.enabled`.
+
 ## 2.9.3
 
 * Enable support for GKE Autopilot.
