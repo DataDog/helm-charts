@@ -226,6 +226,18 @@ spec:
                             https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
                           type: object
                       type: object
+                    unixDomainSocket:
+                      description: 'UnixDomainSocket socket configuration ref: https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm#agent-environment-variables'
+                      properties:
+                        enabled:
+                          description: 'Enable APM over Unix Domain Socket ref: https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm#agent-environment-variables'
+                          type: boolean
+                        hostFilepath:
+                          description: 'Define the host APM socket filepath used when
+                            APM over Unix Domain Socket is enabled (default value:
+                            /var/run/datadog/apm.sock) ref: https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm#agent-environment-variables'
+                          type: string
+                      type: object
                   type: object
                 config:
                   description: Agent configuration
@@ -241,8 +253,8 @@ spec:
                           type: string
                       type: object
                     collectEvents:
-                      description: 'nables this to start event collection from the
-                        kubernetes API ref: https://docs.datadoghq.com/agent/kubernetes/event_collection/'
+                      description: 'Enables this to start event collection from the
+                        Kubernetes API ref: https://docs.datadoghq.com/agent/kubernetes/event_collection/'
                       type: boolean
                     confd:
                       description: Confd configuration allowing to specify config
@@ -276,13 +288,23 @@ spec:
                       description: Configure Dogstatsd
                       properties:
                         dogstatsdOriginDetection:
-                          description: Enable origin detection for container tagging
-                            https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
+                          description: 'Enable origin detection for container tagging
+                            ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging'
                           type: boolean
-                        useDogStatsDSocketVolume:
-                          description: 'Enable dogstatsd over Unix Domain Socket ref:
-                            https://docs.datadoghq.com/developers/dogstatsd/unix_socket/'
-                          type: boolean
+                        unixDomainSocket:
+                          description: 'Configure the Dogstatsd Unix Domain Socket
+                            ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/'
+                          properties:
+                            enabled:
+                              description: 'Enable APM over Unix Domain Socket ref:
+                                https://docs.datadoghq.com/developers/dogstatsd/unix_socket/'
+                              type: boolean
+                            hostFilepath:
+                              description: 'Define the host APM socket filepath used
+                                when APM over Unix Domain Socket is enabled (default
+                                value: /var/run/datadog/statsd.sock) ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/'
+                              type: string
+                          type: object
                       type: object
                     env:
                       description: 'The Datadog Agent supports many environment variables
@@ -2244,9 +2266,9 @@ spec:
                   description: The container image of the Datadog Agent
                   properties:
                     name:
-                      description: Define the image to use Use "datadog/agent:latest"
+                      description: Define the image to use Use "gcr.io/datadoghq/agent:latest"
                         for Datadog Agent 6 Use "datadog/dogstatsd:latest" for Standalone
-                        Datadog Agent DogStatsD6 Use "datadog/cluster-agent:latest"
+                        Datadog Agent DogStatsD6 Use "gcr.io/datadoghq/cluster-agent:latest"
                         for Datadog Cluster Agent
                       type: string
                     pullPolicy:
@@ -2331,9 +2353,8 @@ spec:
                   description: Process Agent configuration
                   properties:
                     enabled:
-                      description: 'Enable this to activate live process monitoring.
-                        Note: /etc/passwd is automatically mounted to allow username
-                        resolution. ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset'
+                      description: 'Note: /etc/passwd is automatically mounted to
+                        allow username resolution. ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset'
                       type: boolean
                     env:
                       description: 'The Datadog Agent supports many environment variables
@@ -2446,6 +2467,10 @@ spec:
                         - name
                         type: object
                       type: array
+                    processCollectionEnabled:
+                      description: 'false (default): Only collect containers if available.
+                        true: collect process information as well'
+                      type: boolean
                     resources:
                       description: 'Datadog Process Agent resource requests and limits
                         Make sure to keep requests and limits equal to keep the pods
@@ -3626,7 +3651,7 @@ spec:
                         enabled'
                       type: boolean
                     collectEvents:
-                      description: 'Enables this to start event collection from the
+                      description: 'Enable this to start event collection from the
                         kubernetes API ref: https://docs.datadoghq.com/agent/cluster_agent/event_collection/'
                       type: boolean
                     confd:
@@ -3754,6 +3779,63 @@ spec:
                       description: ExternalMetricsConfig contains the configuration
                         of the external metrics provider in Cluster Agent
                       properties:
+                        credentials:
+                          description: Datadog credentials used by external metrics
+                            server to query Datadog. If not set, the external metrics
+                            server uses the global .spec.Credentials
+                          properties:
+                            apiKey:
+                              description: 'APIKey Set this to your Datadog API key
+                                before the Agent runs. ref: https://app.datadoghq.com/account/settings#agent/kubernetes'
+                              type: string
+                            apiKeyExistingSecret:
+                              description: APIKeyExistingSecret is DEPRECATED. In
+                                order to pass the API key through an existing secret,
+                                please consider "apiSecret" instead. If set, this
+                                parameter takes precedence over "apiKey".
+                              type: string
+                            apiSecret:
+                              description: APISecret Use existing Secret which stores
+                                API key instead of creating a new one. If set, this
+                                parameter takes precedence over "apiKey" and "apiKeyExistingSecret".
+                              properties:
+                                keyName:
+                                  description: KeyName is the key of the secret to
+                                    use
+                                  type: string
+                                secretName:
+                                  description: SecretName is the name of the secret
+                                  type: string
+                              required:
+                              - secretName
+                              type: object
+                            appKey:
+                              description: If you are using clusterAgent.metricsProvider.enabled
+                                = true, you must set a Datadog application key for
+                                read access to your metrics.
+                              type: string
+                            appKeyExistingSecret:
+                              description: AppKeyExistingSecret is DEPRECATED. In
+                                order to pass the APP key through an existing secret,
+                                please consider "appSecret" instead. If set, this
+                                parameter takes precedence over "appKey".
+                              type: string
+                            appSecret:
+                              description: APPSecret Use existing Secret which stores
+                                API key instead of creating a new one. If set, this
+                                parameter takes precedence over "apiKey" and "appKeyExistingSecret".
+                              properties:
+                                keyName:
+                                  description: KeyName is the key of the secret to
+                                    use
+                                  type: string
+                                secretName:
+                                  description: SecretName is the name of the secret
+                                  type: string
+                              required:
+                              - secretName
+                              type: object
+                          type: object
                         enabled:
                           description: Enable the metricsProvider to be able to scale
                             based on metrics in Datadog
@@ -5152,9 +5234,9 @@ spec:
                   description: The container image of the Datadog Cluster Agent
                   properties:
                     name:
-                      description: Define the image to use Use "datadog/agent:latest"
+                      description: Define the image to use Use "gcr.io/datadoghq/agent:latest"
                         for Datadog Agent 6 Use "datadog/dogstatsd:latest" for Standalone
-                        Datadog Agent DogStatsD6 Use "datadog/cluster-agent:latest"
+                        Datadog Agent DogStatsD6 Use "gcr.io/datadoghq/cluster-agent:latest"
                         for Datadog Cluster Agent
                       type: string
                     pullPolicy:
@@ -7362,9 +7444,9 @@ spec:
                   description: The container image of the Datadog Cluster Checks Runner
                   properties:
                     name:
-                      description: Define the image to use Use "datadog/agent:latest"
+                      description: Define the image to use Use "gcr.io/datadoghq/agent:latest"
                         for Datadog Agent 6 Use "datadog/dogstatsd:latest" for Standalone
-                        Datadog Agent DogStatsD6 Use "datadog/cluster-agent:latest"
+                        Datadog Agent DogStatsD6 Use "gcr.io/datadoghq/cluster-agent:latest"
                         for Datadog Cluster Agent
                       type: string
                     pullPolicy:
@@ -7474,7 +7556,8 @@ spec:
                 Checks Runner easily
               type: string
             credentials:
-              description: Configure the credentials required to run Agents
+              description: Configure the credentials needed to run Agents. If not
+                set, then the credentials set in the DatadogOperator will be used
               properties:
                 apiKey:
                   description: 'APIKey Set this to your Datadog API key before the
@@ -7534,12 +7617,78 @@ spec:
                     credential parameters will be ignored. default value is false.'
                   type: boolean
               type: object
+            features:
+              description: Features running on the Agent and Cluster Agent
+              properties:
+                kubeStateMetricsCore:
+                  description: KubeStateMetricsCore configuration
+                  properties:
+                    conf:
+                      description: To override the configuration for the default Kubernetes
+                        State Metrics Core check. Must point to a ConfigMap containing
+                        a valid cluster check configuration.
+                      properties:
+                        configData:
+                          description: ConfigData corresponds to the configuration
+                            file content
+                          type: string
+                        configMap:
+                          description: ConfigMap name of a ConfigMap used to mount
+                            the configuration file
+                          properties:
+                            fileKey:
+                              description: FileKey corresponds to the key used in
+                                the ConfigMap.Data to store the configuration file
+                                content
+                              type: string
+                            name:
+                              description: Name the ConfigMap name
+                              type: string
+                          type: object
+                      type: object
+                    enabled:
+                      description: Enable this to start the Kubernetes State Metrics
+                        Core check. Refer to https://github.com/DataDog/datadog-operator/blob/master/docs/kubernetes_state_metrics.md
+                      type: boolean
+                  type: object
+                orchestratorExplorer:
+                  description: OrchestratorExplorer configuration
+                  properties:
+                    additionalEndpoints:
+                      description: 'Additional endpoints for shipping the collected
+                        data as json in the form of {"https://process.agent.datadoghq.com":
+                        ["apikey1", ...], ...}''.'
+                      type: string
+                    ddUrl:
+                      description: Set this for the Datadog endpoint for the orchestrator
+                        explorer
+                      type: string
+                    enabled:
+                      description: 'Enable this to activate live Kubernetes monitoring.
+                        ref: https://docs.datadoghq.com/infrastructure/livecontainers/#kubernetes-resources'
+                      type: boolean
+                    extraTags:
+                      description: 'Additional tags for the collected data in the
+                        form of `a b c` Difference to DD_TAGS: this is a cluster agent
+                        option that is used to define custom cluster tags'
+                      items:
+                        type: string
+                      type: array
+                    scrubbing:
+                      description: Option to disable scrubbing of sensitive container
+                        data (passwords, tokens, etc. ).
+                      properties:
+                        containers:
+                          description: Deactivate this to stop the scrubbing of sensitive
+                            container data (passwords, tokens, etc. ).
+                          type: boolean
+                      type: object
+                  type: object
+              type: object
             site:
               description: The site of the Datadog intake to send Agent data to. Set
                 to 'datadoghq.eu' to send data to the EU site.
               type: string
-          required:
-          - credentials
           type: object
         status:
           description: DatadogAgentStatus defines the observed state of DatadogAgent

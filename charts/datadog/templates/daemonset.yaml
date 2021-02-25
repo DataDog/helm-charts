@@ -80,7 +80,7 @@ spec:
       dnsConfig:
 {{ toYaml .Values.agents.dnsConfig | indent 8 }}
       {{- end }}
-      {{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
+      {{- if or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID }}
       hostPID: true
       {{- end }}
       {{- if .Values.agents.image.pullSecrets }}
@@ -101,7 +101,7 @@ spec:
         {{- if eq (include "should-enable-system-probe" .) "true" }}
           {{- include "container-system-probe" . | nindent 6 }}
         {{- end }}
-        {{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled}}
+        {{- if eq  (include "should-enable-security-agent" .) "true" }}
           {{- include "container-security-agent" . | nindent 6 }}
         {{- end }}
       initContainers:

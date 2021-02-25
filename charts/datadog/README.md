@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.9.0](https://img.shields.io/badge/Version-2.9.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.9.5](https://img.shields.io/badge/Version-2.9.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -501,14 +501,19 @@ helm install --name <RELEASE_NAME> \
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains policies that will be used |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring. |
 | datadog.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
+| datadog.serviceTopology | object | `{"enabled":false,"serviceName":"datadog-agent"}` | Configure service topology to send custom metrics and traces without using host ports Important notes: - The Service Topology feature in Kubernetes is still in alpha and disabled by default, please make sure it's enabled in your cluster configuration - The environment variable DD_AGENT_HOST in your application pod template must be configured to reach the topology service |
+| datadog.serviceTopology.enabled | bool | `false` | Enabling this will allow sending custom metrics and APM traces to the Datadog Agent on the same node without using a host port Important note: Enabling this option without enabling Service Topology in the cluster will result in wrong tagging for traces and custom metrics |
+| datadog.serviceTopology.serviceName | string | `"datadog-agent"` | Configure the name of the service responsible for routing the custom metrics and/or traces to the Datadog Agent Important note: DD_AGENT_HOST must be configured in your app to target this service. Example using DNS record: DD_AGENT_HOST=datadog-agent.<datadog-namespace>.svc.cluster.local |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
 | datadog.systemProbe.collectDNSStats | bool | `false` | Enable DNS stat collection |
+| datadog.systemProbe.conntrackMaxStateSize | int | `131072` | the maximum size of the userspace conntrack cache |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
+| datadog.systemProbe.maxTrackedConnections | int | `65536` | the maximum number of tracked connections |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
@@ -519,6 +524,7 @@ helm install --name <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | nameOverride | string | `nil` | Override name of app |
+| providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | registry | string | `"gcr.io/datadoghq"` | Registry to use for all Agent images (default gcr.io) |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 
@@ -532,7 +538,6 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.dogstatsd.useSocketVolume`      | Unix sockets not supported on Windows            |
 | `datadog.dogstatsd.socketPath`           | Unix sockets not supported on Windows            |
 | `datadog.processAgent.processCollection` | Unable to access host/other containers processes |
-| `datadog.systemProbe.enabled`            | System probe is not available for Windows        |
 | `datadog.systemProbe.seccomp`            | System probe is not available for Windows        |
 | `datadog.systemProbe.seccompRoot`        | System probe is not available for Windows        |
 | `datadog.systemProbe.debugPort`          | System probe is not available for Windows        |
