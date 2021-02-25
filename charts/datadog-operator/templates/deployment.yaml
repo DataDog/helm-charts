@@ -50,12 +50,17 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
           args:
-            - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
+            - "-supportExtendedDaemonset={{ and .Values.supportExtendedDaemonset (not .Values.providers.gke.autopilot) }}"
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
+          {{- end }}
+          {{- if .Values.providers.gke.autopilot }}
+            - "-allowedRegistries=gcr.io/datadoghq.com"
+            - "-disallowedFeatures=system-probe,runtime-security,compliance"
+            - "-hostStoragePath=/var/autopilot/addon/datadog"
           {{- end }}
           ports:
             - name: metrics
