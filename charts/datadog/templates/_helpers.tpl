@@ -127,7 +127,11 @@ Return the container runtime socket
 */}}
 {{- define "datadog.dockerOrCriSocketPath" -}}
 {{- if eq .Values.targetSystem "linux" -}}
+{{- if .Values.providers.gke.autopilot -}}
+/var/run/containerd/containerd.sock
+{{- else -}}
 {{- .Values.datadog.dockerSocketPath | default .Values.datadog.criSocketPath | default "/var/run/docker.sock" -}}
+{{- end -}}
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 \\.\pipe\docker_engine
@@ -143,6 +147,17 @@ Return agent config path
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return agent host mount root
+*/}}
+{{- define "datadog.hostMountRoot" -}}
+{{- if .Values.providers.gke.autopilot -}}
+/var/autopilot/addon/datadog
+{{- else -}}
+/var/lib/datadog-agent
 {{- end -}}
 {{- end -}}
 
@@ -188,9 +203,20 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{- end -}}
 
 {{/*
-Return true if the system-probe container should be created.
+Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
-{{- define "should-enable-system-probe" -}}
+{{- define "image-path" -}}
+{{- if .image.repository -}}
+{{- .image.repository -}}:{{ .image.tag }}
+{{- else -}}
+{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a system-probe feature is enabled.
+*/}}
+{{- define "system-probe-feature" -}}
 {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill -}}
 true
 {{- else -}}
@@ -199,13 +225,58 @@ false
 {{- end -}}
 
 {{/*
-Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
+Return true if the system-probe container should be created.
 */}}
-{{- define "image-path" -}}
-{{- if .image.repository -}}
-{{- .image.repository -}}:{{ .image.tag }}
+{{- define "should-enable-system-probe" -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "system-probe-feature" .) "true") -}}
+true
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if a security-agent feature is enabled.
+*/}}
+{{- define "security-agent-feature" -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled  -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the security-agent container should be created.
+*/}}
+{{- define "should-enable-security-agent" -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "security-agent-feature" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance features should be enabled.
+*/}}
+{{- define "should-enable-compliance" -}}
+{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the runtime security features should be enabled.
+*/}}
+{{- define "should-enable-runtime-security" -}}
+{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 

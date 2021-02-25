@@ -205,11 +205,13 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          {{- if eq  (include "should-enable-security-agent" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
             value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
           {{- if .Values.datadog.securityAgent.compliance.enabled }}
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+          {{- end }}
           {{- end }}
 {{- if .Values.clusterAgent.env }}
 {{ toYaml .Values.clusterAgent.env | indent 10 }}
@@ -243,10 +245,12 @@ spec:
             subPath: datadog-cluster.yaml
             readOnly: true
 {{- end}}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
           - name: complianceconfigdir
             mountPath: /etc/datadog-agent/compliance.d
             readOnly: true
+{{- end}}
 {{- end}}
       volumes:
         - name: installinfo
@@ -262,10 +266,12 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-config
 {{- end}}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if  and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
         - name: complianceconfigdir
           configMap:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
+{{- end}}
 {{- end}}
 
 {{- if .Values.clusterAgent.volumes }}

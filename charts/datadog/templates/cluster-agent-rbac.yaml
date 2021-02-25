@@ -153,6 +153,7 @@ rules:
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
 {{- end }}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 - apiGroups:
   - ""
@@ -182,6 +183,7 @@ rules:
   - networkpolicies
   verbs:
   - list
+{{- end }}
 {{- end }}
 - apiGroups:
   - policy

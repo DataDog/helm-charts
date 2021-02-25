@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.3
+
+* Enable support for GKE Autopilot.
+
 ## 2.9.2
 
 * Fixed a bug where `datadog.leaderElection` would not configure the cluster-agent environment variable `DD_LEADER_ELECTION` correctly.

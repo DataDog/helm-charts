@@ -205,4 +205,23 @@ To enable it please set clusterAgent.enabled to 'true'.
 datadog.serviceTopology.enabled is enabled. Please make sure the Service Topology feature is enabled in your Kubernetes cluster.
 Enabling datadog.serviceTopology.enabled without enabling the Service Topology in the cluster will result in wrong tagging for traces and custom metrics.
 Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
+
+{{- end }}
+
+{{- if .Values.providers.gke.autopilot}}
+{{- if eq (include "system-probe-feature" .) "true" }}
+
+##################################################################################
+####               WARNING: System Probe is not supported on GKE Autopilot    ####
+##################################################################################
+
+{{- end }}
+
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
+
+###################################################################################
+####               WARNING: Security Agent is not supported on GKE Autopilot   ####
+###################################################################################
+
+{{- end }}
 {{- end }}

@@ -52,11 +52,12 @@
   name: src
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.processAgent.enabled .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled }}
+{{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
@@ -75,9 +76,10 @@
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
 {{- end }}
+{{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
-    path: "/var/lib/datadog-agent/logs"
+    path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
 - hostPath:
     path: /var/log/pods
