@@ -130,12 +130,16 @@ rules:
   - replicasets
   verbs:
   - get
+  - watch
+  - list
 - apiGroups:
   - apps
   resources:
   - statefulsets
   verbs:
   - get
+  - watch
+  - list
 - apiGroups:
   - authorization.k8s.io
   resources:
