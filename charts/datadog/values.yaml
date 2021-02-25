@@ -658,8 +658,8 @@ agents:
     # agents.podSecurity.privileged -- If true, Allow to run privileged containers
     privileged: false
 
-    # agents.podSecurity.capabilites -- Allowed capabilites
-    capabilites:
+    # agents.podSecurity.capabilities -- Allowed capabilities
+    capabilities:
       - SYS_ADMIN
       - SYS_RESOURCE
       - SYS_PTRACE

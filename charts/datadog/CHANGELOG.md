@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.5
+
+* Fix typo in variable name. `agents.podSecurity.capabilities` replaces `agents.podSecurity.capabilites`.
+
 ## 2.9.4
 
 * Remove uses of `systemProbe.enabled`.
