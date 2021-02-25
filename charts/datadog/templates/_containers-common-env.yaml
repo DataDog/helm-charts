@@ -80,9 +80,9 @@
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
-{{- if .Values.datadog.criSocketPath }}
+{{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
-  value: {{ print "/host/" .Values.datadog.criSocketPath | clean }}
+  value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
 {{- else }}
 - name: DOCKER_HOST
 {{- if eq .Values.targetSystem "linux" }}
