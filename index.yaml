@@ -3,6 +3,38 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2021-02-25T08:55:11.488620341Z"
+    dependencies:
+    - condition: clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: =0.1.1
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://charts.helm.sh/stable
+      version: =2.8.11
+    description: Datadog Agent
+    digest: d44cf2682c8f5c56dd8122182244579abe3a85e2f172665e18a1b5b5ab5c3faa
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-2.9.2/datadog-2.9.2.tgz
+    version: 2.9.2
+  - apiVersion: v1
+    appVersion: "7"
     created: "2021-02-24T17:50:29.620210533Z"
     dependencies:
     - condition: clusterAgent.metricsProvider.useDatadogMetrics
