@@ -3,3 +3,15 @@
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
 
 {{ template "chart.valuesSection" . }}
+
+## Configuration options for cloud providers
+
+Datadog Operator can be configured to enforce settings applicable to public cloud environments.
+
+The sections below document how to configure this chart to enable these features.
+
+### Google GKE
+
+To enable restrictions applicable to Google GKE Autopilot environments, please enable the `providers.gke.autopilot` setting.
+
+Note that certain Datadog Agent features are not supported on GKE Autopilot, notably the System Probe and Security Agent cannot be enabled in the `DatadogAgent` resource.

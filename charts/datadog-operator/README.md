@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![AppVersion: 0.4.0](https://img.shields.io/badge/AppVersion-0.4.0-informational?style=flat-square)
+![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![AppVersion: 0.4.0](https://img.shields.io/badge/AppVersion-0.4.0-informational?style=flat-square)
 
 ## Values
 
@@ -21,6 +21,7 @@
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
+| providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
@@ -29,3 +30,15 @@
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+
+## Configuration options for cloud providers
+
+Datadog Operator can be configured to enforce settings applicable to public cloud environments.
+
+The sections below document how to configure this chart to enable these features.
+
+### Google GKE
+
+To enable restrictions applicable to Google GKE Autopilot environments, please enable the `providers.gke.autopilot` setting.
+
+Note that certain Datadog Agent features are not supported on GKE Autopilot, notably the System Probe and Security Agent cannot be enabled in the `DatadogAgent` resource.

@@ -68,3 +68,8 @@ datadog-crds:
 podAnnotations: {}
 # podLabels -- Allows setting additional labels for for Datadog Operator PODs
 podLabels: {}
+
+providers:
+  gke:
+    # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
+    autopilot: false

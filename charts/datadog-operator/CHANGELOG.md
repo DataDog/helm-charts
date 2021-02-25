@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+* Enable operator configuration for GKE Autopilot (requires operator v0.6).
+
 ## 0.4.1
 
 * Added support for `podAnnotations` and `podLabels` values
