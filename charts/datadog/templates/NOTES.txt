@@ -9,13 +9,6 @@ that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}' which 
   {{- else if not (eq .Values.datadog.apiKey "<DATADOG_API_KEY>") }}
   {{- end }}
 
-  {{- if (and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.systemProbe.enabled)) }}
-##############################################################################
-####               NOTE: Configuration notice.                            ####
-##############################################################################
-You enabled runtime security features in the SecurityAgent but the System Probe is not explicitly enabled.
-The System Probe will be enabled as required by these features. Please make sure this is expected for your configuration.
-  {{- end }}
 {{- else }}
 ##############################################################################
 ####               ERROR: You did not set a datadog.apiKey.               ####
