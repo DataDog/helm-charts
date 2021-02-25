@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+* Update chart for Operator release `v0.5.0`
+
 ## 0.4.1
 
 * Added support for `podAnnotations` and `podLabels` values
