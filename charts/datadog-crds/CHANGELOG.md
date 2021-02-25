@@ -1,6 +1,8 @@
-## 0.1.2
+# Changelog
 
-* Update all the CRDs
+## 0.2.0
+
+* Update all the CRDs from operator v0.5.0 tag.
 
 ## 0.1.1
 
