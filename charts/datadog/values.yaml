@@ -420,7 +420,7 @@ clusterAgent:
   token: ""
 
   # clusterAgent.tokenExistingSecret -- Existing secret name to use for Cluster Agent token
-  tokenExistingSecret:  # <EXISTING_DCA_SECRET_NAME>
+  tokenExistingSecret: ""
 
   # clusterAgent.replicas -- Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode.
   replicas: 1
@@ -594,8 +594,8 @@ clusterAgent:
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
-  # existingClusterAgent.join -- set this to true if you want the agents deployed by this chart to connect to a
-  # Cluster Agent deployed independently
+  # existingClusterAgent.join -- set this to true if you want the agents deployed by this chart to
+  # connect to a Cluster Agent deployed independently
   join: false
 
   # existingClusterAgent.tokenSecretName -- Existing secret name to use for external Cluster Agent token
