@@ -284,7 +284,7 @@ false
 Return true if .Values.existingClusterAgent is fully configured
 */}}
 {{- define "existingClusterAgent-configured" -}}
-{{- if and .Values.existingClusterAgent.enabled .Values.existingClusterAgent.serviceName .Values.existingClusterAgent.tokenSecretName -}}
+{{- if and .Values.existingClusterAgent.join .Values.existingClusterAgent.serviceName .Values.existingClusterAgent.tokenSecretName -}}
 true
 {{- else -}}
 false
