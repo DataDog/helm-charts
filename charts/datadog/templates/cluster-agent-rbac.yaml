@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.rbac.create -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create -}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -229,7 +229,7 @@ metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
 {{- end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

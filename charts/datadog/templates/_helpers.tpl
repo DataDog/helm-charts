@@ -281,10 +281,45 @@ false
 {{- end -}}
 
 {{/*
+Return true if .Values.existingClusterAgent is fully configured
+*/}}
+{{- define "existingClusterAgent-configured" -}}
+{{- if and .Values.existingClusterAgent.join .Values.existingClusterAgent.serviceName .Values.existingClusterAgent.tokenSecretName -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the ClusterAgent is enabled
+*/}}
+{{- define "cluster-agent-enabled" -}}
+{{- if or (eq (include "existingClusterAgent-configured" .) "true") .Values.clusterAgent.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if the ClusterAgent needs to be deployed
+*/}}
+{{- define "should-deploy-cluster-agent" -}}
+{{- if and .Values.clusterAgent.enabled (not .Values.existingClusterAgent.join) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}
-{{- if and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.enabled -}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (include "existingClusterAgent-configured" .)) -}}
 true
 {{- else -}}
 false

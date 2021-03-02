@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.9.7](https://img.shields.io/badge/Version-2.9.7-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.9.8](https://img.shields.io/badge/Version-2.9.8-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -518,6 +518,9 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
+| existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
+| existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
+| existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
 | kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |
 | kube-state-metrics.rbac.create | bool | `true` | If true, create & use RBAC resources |
@@ -546,3 +549,28 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.systemProbe.bpfDebug`           | System probe is not available for Windows        |
 | `datadog.systemProbe.apparmor`           | System probe is not available for Windows        |
 | `agents.useHostNetwork`                  | Host network not supported by Windows Containers |
+
+### How to join a Cluster Agent from another helm chart deployment (Linux)
+
+Because the Cluster Agent can only be deployed on Linux Node, the communication between
+the Agents deployed on the Windows nodes with the a Cluster Agent need to be configured.
+
+The following `values.yaml` file contains all the parameters needed to configure this communication.
+
+```yaml
+targetSystem: windows
+
+existingClusterAgent:
+  join: true
+  serviceName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
+  tokenSecretName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+
+# Disabled datadogMetrics deployment since it should have been already deployed with the other chart release.
+datadog-crds:
+  crds:
+    datadogMetrics: false
+
+# Disable kube-state-metrics deployment
+datadog:
+  kubeStateMetricsEnabled: false
+```

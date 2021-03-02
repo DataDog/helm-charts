@@ -319,3 +319,28 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.systemProbe.bpfDebug`           | System probe is not available for Windows        |
 | `datadog.systemProbe.apparmor`           | System probe is not available for Windows        |
 | `agents.useHostNetwork`                  | Host network not supported by Windows Containers |
+
+### How to join a Cluster Agent from another helm chart deployment (Linux)
+
+Because the Cluster Agent can only be deployed on Linux Node, the communication between
+the Agents deployed on the Windows nodes with the a Cluster Agent need to be configured.
+
+The following `values.yaml` file contains all the parameters needed to configure this communication.
+
+```yaml
+targetSystem: windows
+
+existingClusterAgent:
+  join: true
+  serviceName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
+  tokenSecretName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+
+# Disabled datadogMetrics deployment since it should have been already deployed with the other chart release.
+datadog-crds:
+  crds:
+    datadogMetrics: false
+
+# Disable kube-state-metrics deployment
+datadog:
+  kubeStateMetricsEnabled: false
+```

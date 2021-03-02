@@ -47,7 +47,7 @@
     - name: DD_DOGSTATSD_TAGS
       value: {{ tpl (.Values.datadog.dogstatsd.tags | join " " | quote) . }}
     {{- end }}
-    {{- if not .Values.clusterAgent.enabled }}
+    {{- if eq (include "cluster-agent-enabled" .) "false" }}
     {{- if .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
       value: {{ .Values.datadog.leaderElection | quote}}
@@ -78,7 +78,7 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
-    {{- if and .Values.clusterAgent.enabled .Values.datadog.clusterChecks.enabled }}
+    {{- if and (eq (include "cluster-agent-enabled" .) "true") .Values.datadog.clusterChecks.enabled }}
     {{- if .Values.clusterChecksRunner.enabled }}
     - name: DD_EXTRA_CONFIG_PROVIDERS
       value: "endpointschecks"

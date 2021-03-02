@@ -1,4 +1,4 @@
-{{- if .Values.clusterAgent.enabled -}}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +19,7 @@ spec:
     protocol: TCP
 {{ end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.metricsProvider.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.metricsProvider.enabled -}}
 ---
 apiVersion: v1
 kind: Service
@@ -45,7 +45,7 @@ spec:
     protocol: TCP
 {{ end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.admissionController.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.admissionController.enabled -}}
 ---
 apiVersion: v1
 kind: Service

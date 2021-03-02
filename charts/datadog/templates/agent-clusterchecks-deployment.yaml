@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.enabled .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

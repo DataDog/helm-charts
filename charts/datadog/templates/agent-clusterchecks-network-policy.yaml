@@ -22,7 +22,7 @@ spec:
       # * Kube API server
       ports:
         - port: 443
-{{- if .Values.clusterAgent.enabled }}
+{{- if eq (include "cluster-agent-enabled" .) "true" }}
     - # Egress to cluster agent
       ports:
         - port: 5005

@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}
 rules:
-{{- if not .Values.clusterAgent.enabled }}
+{{- if eq (include "should-deploy-cluster-agent" .) "false" }}
 - apiGroups:
   - ""
   resources:
