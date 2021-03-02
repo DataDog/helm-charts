@@ -100,8 +100,8 @@ Return a list of env-vars if the cluster-agent is enabled
 */}}
 {{- define "containers-cluster-agent-env" -}}
 - name: DD_CLUSTER_AGENT_ENABLED
-  value: {{ or .Values.clusterAgent.enabled (include "existingClusterAgent-configured" .) | quote }}
-{{- if .Values.clusterAgent.enabled }}
+  value: {{ (include "clusterAgentEnabled" .) | quote }}
+{{- if eq (include "shouldDeployClusterAgent" .) "true" }}
 - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
   value: {{ template "datadog.fullname" . }}-cluster-agent
 - name: DD_CLUSTER_AGENT_AUTH_TOKEN
@@ -109,7 +109,7 @@ Return a list of env-vars if the cluster-agent is enabled
     secretKeyRef:
         name: {{ template "clusterAgent.tokenSecretName" . }}
         key: token
-{{- else if (include "existingClusterAgent-configured" .) }}
+{{- else if eq (include "existingClusterAgent-configured" .) "true" }}
 - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
   value: {{ .Values.existingClusterAgent.serviceName | quote }}
 - name: DD_CLUSTER_AGENT_AUTH_TOKEN

@@ -292,6 +292,30 @@ false
 {{- end -}}
 
 {{/*
+Return true if the ClusterAgent needs to be deployed
+*/}}
+{{- define "clusterAgentEnabled" -}}
+{{- if or (eq (include "existingClusterAgent-configured" .) "true") .Values.clusterAgent.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if the ClusterAgent needs to be deployed
+*/}}
+{{- define "shouldDeployClusterAgent" -}}
+{{- if and .Values.clusterAgent.enabled (not .Values.existingClusterAgent.join) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}
