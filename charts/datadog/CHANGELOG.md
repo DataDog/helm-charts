@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.6
+
+* Add missing `NET_RAW` capability to `System-probe` to support `CVE-2020-14386` mitigation.
+
 ## 2.9.5
 
 * Fix typo in variable name. `agents.podSecurity.capabilities` replaces `agents.podSecurity.capabilites`.
