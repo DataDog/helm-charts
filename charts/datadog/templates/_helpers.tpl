@@ -292,9 +292,9 @@ false
 {{- end -}}
 
 {{/*
-Return true if the ClusterAgent needs to be deployed
+Return true if the ClusterAgent is enabled
 */}}
-{{- define "clusterAgentEnabled" -}}
+{{- define "cluster-agent-enabled" -}}
 {{- if or (eq (include "existingClusterAgent-configured" .) "true") .Values.clusterAgent.enabled -}}
 true
 {{- else -}}
@@ -306,7 +306,7 @@ false
 {{/*
 Return true if the ClusterAgent needs to be deployed
 */}}
-{{- define "shouldDeployClusterAgent" -}}
+{{- define "should-deploy-cluster-agent" -}}
 {{- if and .Values.clusterAgent.enabled (not .Values.existingClusterAgent.join) -}}
 true
 {{- else -}}

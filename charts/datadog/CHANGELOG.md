@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.8
+
+* Make pod collection for the Kubernetes Explorer work with an external Cluster Agent deployment.
+
 ## 2.9.7
 
 * Allow cluster-agent to override metrics provider endpoint with `clusterAgent.metricsProvider.endpoint`.

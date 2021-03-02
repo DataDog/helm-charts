@@ -48,7 +48,7 @@ Node Agent liveness probe port ({{ $liveness.port }}) is different from the conf
 Node Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
-{{- if eq (include "shouldDeployClusterAgent" .) "true" }}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 
   {{- if .Values.clusterAgent.metricsProvider.enabled }}
     {{- if .Values.datadog.appKeyExistingSecret }}
@@ -179,7 +179,7 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- fail "You are using datadog.systemProbe.enabled which has been superseded by networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, and securityAgent.runtime.enabled. These options provide a more granular control of which features should be activated." }}
 {{- end }}
 
-{{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "clusterAgentEnabled" .) "false")}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
