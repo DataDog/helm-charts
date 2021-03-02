@@ -29,6 +29,13 @@
     - name: debugfs
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+    {{- if .Values.agents.useConfigMap }}
+    - name: {{ template "datadog.fullname" . }}-datadog-yaml
+      mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
+      subPath: datadog.yaml
+    {{- end }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
