@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.9.9
+
+* Update "agent" image tag to `7.26.0` and "cluster-agent" to `1.11.0`.
+* Fix nit comments
+
 ## 2.9.8
 
 * Make pod collection for the Kubernetes Explorer work with an external Cluster Agent deployment.

@@ -397,7 +397,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.10.0
+    tag: 1.11.0
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -622,7 +622,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.25.0
+    tag: 7.26.0
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -972,7 +972,7 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.25.0
+    tag: 7.26.0
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
