@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.10
+
+* Support configuring Prometheus Autodiscovery. (Requires Datadog Agent 7/6.26+ and Datadog Cluster Agent 1.11+).
+
 ## 2.9.9
 
 * Update "agent" image tag to `7.26.0` and "cluster-agent" to `1.11.0`.

@@ -87,6 +87,10 @@
       value: "clusterchecks endpointschecks"
     {{- end }}
     {{- end }}
+    {{- if .Values.datadog.prometheusScrape.enabled }}
+    - name: DD_PROMETHEUS_SCRAPE_ENABLED
+      value: "true"
+    {{- end }}
 {{- if .Values.agents.containers.agent.env }}
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
 {{- end }}
