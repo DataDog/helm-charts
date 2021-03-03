@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.9.11
+
+* Allow system-probe container to send flares by adding main agent config file to container.
+
 ## 2.9.10
 
 * Support configuring Prometheus Autodiscovery. (Requires Datadog Agent 7/6.26+ and Datadog Cluster Agent 1.11+).
