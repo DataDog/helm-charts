@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+* Support configuring the secret backend command arguments (requires Datadog Operator v0.5.0+)
+
 ## 0.5.0
 
 * Update chart for Operator release `v0.5.0`
