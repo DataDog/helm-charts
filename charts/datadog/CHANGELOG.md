@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 2.10.0
+## 2.9.12
 
 * Remove the cluster-id configmap mount for process-agent
 ## 2.9.11
