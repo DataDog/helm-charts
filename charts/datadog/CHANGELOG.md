@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.0
+
+* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
+
 ## 2.9.11
 
 * Allow system-probe container to send flares by adding main agent config file to container.
