@@ -216,6 +216,12 @@ spec:
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
           {{- end }}
+          {{- if .Values.datadog.prometheusScrape.enabled }}
+          - name: DD_PROMETHEUS_SCRAPE_ENABLED
+            value: "true"
+          - name: DD_PROMETHEUS_SCRAPE_SERVICE_ENDPOINTS
+            value: {{ .Values.datadog.prometheusScrape.serviceEndpoints | quote }}
+          {{- end }}
           {{- end }}
 {{- if .Values.clusterAgent.env }}
 {{ toYaml .Values.clusterAgent.env | indent 10 }}
