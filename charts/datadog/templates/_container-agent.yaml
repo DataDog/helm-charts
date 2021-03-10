@@ -79,7 +79,7 @@
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
     {{- if and (eq (include "cluster-agent-enabled" .) "true") .Values.datadog.clusterChecks.enabled }}
-    {{- if .Values.clusterChecksRunner.enabled }}
+    {{- if or (and (not .Values.existingClusterAgent.join) .Values.clusterChecksRunner.enabled) (and .Values.existingClusterAgent.join (not .Values.existingClusterAgent.clusterchecksEnabled)) }}
     - name: DD_EXTRA_CONFIG_PROVIDERS
       value: "endpointschecks"
     {{ else }}
