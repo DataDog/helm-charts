@@ -50,3 +50,19 @@ Create the name of the service account to use
 {{- define "datadog-operator.serviceAccountName" -}}
 {{ default (include "datadog-operator.fullname" .) .Values.serviceAccount.name }}
 {{- end -}}
+
+{{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "datadog-operator.apiKeySecretName" -}}
+{{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
+{{- default $fullName "datadog-operator-apikey" | quote -}}
+{{- end -}}
+
+{{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "datadog-operator.appKeySecretName" -}}
+{{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
+{{- default $fullName "datadog-operator-appkey" | quote -}}
+{{- end -}}

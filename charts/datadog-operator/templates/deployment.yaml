@@ -19,6 +19,12 @@ spec:
 {{ toYaml .Values.podLabels | indent 8 }}
         {{- end }}
       annotations:
+        {{- if .Values.apiKey }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret_api_key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if .Values.appKey }}
+        checksum/application_key: {{ include (print $.Template.BasePath "/secret_application_key.yaml") . | sha256sum }}
+        {{- end }}
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: '["openmetrics"]'
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
@@ -49,6 +55,20 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            {{- if .Values.apiKey }}
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.apiKeySecretName" . }}
+                  key: api-key
+            {{- end }}
+            {{- if .Values.appKey }}
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.appKeySecretName" . }}
+                  key: app-key
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"

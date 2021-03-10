@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.4
+
+* Add apiKey and appKey values to values.yaml and set their respective env vars using a Kubernetes secret
+
 ## 0.5.3
 
 * Only deploy a `PodDisruptionBudget` when `replicaCount` is greater than `1`
