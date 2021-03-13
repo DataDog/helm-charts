@@ -325,3 +325,12 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Returns provider-specific labels if any
+*/}}
+{{- define "provider-labels" -}}
+{{- if .Values.providers.gke.autopilot -}}
+env.datadoghq.com/kind: gke-autopilot
+{{- end -}}
+{{- end -}}

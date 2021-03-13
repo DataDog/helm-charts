@@ -217,4 +217,13 @@ Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
 ###################################################################################
 
 {{- end }}
+
+{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+
+###################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
+###################################################################################
+
+{{- end }}
+
 {{- end }}

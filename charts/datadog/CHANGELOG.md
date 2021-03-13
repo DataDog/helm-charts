@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.2
+
+* Add provider labels on pods, warning on dogstatsd with UDS on GKE Autopilot.
+
 ## 2.10.1
 
 * Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
