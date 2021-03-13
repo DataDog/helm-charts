@@ -12,6 +12,7 @@ metadata:
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
+{{ include "provider-labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
   strategy:
@@ -39,6 +40,7 @@ spec:
         {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 8 }}
         {{- end }}
+{{ include "provider-labels" . | indent 8 }}
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}

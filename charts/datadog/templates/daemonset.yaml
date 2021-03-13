@@ -14,6 +14,7 @@ metadata:
     {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
+{{ include "provider-labels" . | indent 4 }}
 spec:
   selector:
     matchLabels:
@@ -31,6 +32,7 @@ spec:
         {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 8 }}
         {{- end }}
+{{ (include "provider-labels" .) | indent 8 }}
       name: {{ template "datadog.fullname" . }}
       annotations:
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
