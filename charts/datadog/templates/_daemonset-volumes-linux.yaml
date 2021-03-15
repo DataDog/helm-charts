@@ -1,4 +1,6 @@
 {{- define "daemonset-volumes-linux" -}}
+- name: logdatadog
+  emptyDir: {}
 - name: tmpdir
   emptyDir: {}
 - hostPath:

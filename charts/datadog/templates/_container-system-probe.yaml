@@ -23,6 +23,8 @@
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
+    - name: logdatadog
+      mountPath: /var/log/datadog
     - name: tmpdir
       mountPath: /tmp
       readOnly: false

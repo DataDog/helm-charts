@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.2
+
+* Use an EmptyDir volume shared between all the agents for logs so that `agent flare` can gather the logs of all of them.
+
 ## 2.10.1
 
 * Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
