@@ -1,6 +1,6 @@
 chart-repos:
-  - stable=https://charts.helm.sh/stable
   - datadog=https://helm.datadoghq.com
+  - kube-state-metrics=https://kubernetes.github.io/kube-state-metrics
 helm-extra-args: --timeout 300s
 check-version-increment: true
 debug: true
