@@ -53,6 +53,8 @@
       subPath: datadog.yaml
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    - name: logdatadog
+      mountPath: /var/log/datadog
     - name: tmpdir
       mountPath: /tmp
       readOnly: false

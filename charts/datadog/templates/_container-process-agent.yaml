@@ -50,6 +50,8 @@
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    - name: logdatadog
+      mountPath: /var/log/datadog
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
