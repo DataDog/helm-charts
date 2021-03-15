@@ -2,7 +2,7 @@
 
 ## 0.5.4
 
-* Add apiKey and appKey values to values.yaml and set their respective env vars using a Kubernetes secret
+* Add apiKey, apiKeyExistingSecret, appKey, and appKeyExistingSecret values to values.yaml and set their respective env vars using a Kubernetes secret
 
 ## 0.5.3
 
