@@ -56,7 +56,7 @@ Return secret name to be used based on provided values.
 */}}
 {{- define "datadog-operator.apiKeySecretName" -}}
 {{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName "datadog-operator-apikey" | quote -}}
+{{- default $fullName .Values.apiKeyExistingSecret | quote -}}
 {{- end -}}
 
 {{/*
@@ -64,5 +64,5 @@ Return secret name to be used based on provided values.
 */}}
 {{- define "datadog-operator.appKeySecretName" -}}
 {{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName "datadog-operator-appkey" | quote -}}
+{{- default $fullName .Values.appKeyExistingSecret | quote -}}
 {{- end -}}
