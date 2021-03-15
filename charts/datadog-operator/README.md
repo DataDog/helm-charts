@@ -8,7 +8,9 @@
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Operator PODs |
 | apiKey | string | `nil` | Your Datadog API key |
+| apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
+| appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | fullnameOverride | string | `""` |  |

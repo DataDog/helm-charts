@@ -4,10 +4,18 @@
 
 # replicaCount -- Number of instances of Datadog Operator
 replicaCount: 1
+
 # apiKey -- Your Datadog API key
 apiKey:  # <DATADOG_API_KEY>
+# apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+## If set, this parameter takes precedence over "apiKey".
+apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 # appKey -- Your Datadog APP key
 appKey:  # <DATADOG_APP_KEY>
+# appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+## If set, this parameter takes precedence over "appKey".
+appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+
 image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
