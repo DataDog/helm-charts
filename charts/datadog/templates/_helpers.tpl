@@ -327,10 +327,29 @@ false
 {{- end -}}
 
 {{/*
+Returns provider kind
+*/}}
+{{- define "provider-kind" -}}
+{{- if .Values.providers.gke.autopilot -}}
+gke-autopilot
+{{- end -}}
+{{- end -}}
+
+{{/*
 Returns provider-specific labels if any
 */}}
 {{- define "provider-labels" -}}
-{{- if .Values.providers.gke.autopilot -}}
-env.datadoghq.com/kind: gke-autopilot
+{{- if include "provider-kind" .  -}}
+env.datadoghq.com/kind: {{ include "provider-kind" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns provider-specific env vars if any
+*/}}
+{{- define "provider-env" -}}
+{{- if include "provider-kind" .  -}}
+- name: DD_PROVIDER_KIND
+  value: {{ include "provider-kind" . }}
 {{- end -}}
 {{- end -}}
