@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.3
+
+* Bump version of KSM chart to get rid of `rbac.authorization.k8s.io/v1beta1 ClusterRole is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1` warnings
+
 ## 2.10.2
 
 * Use an EmptyDir volume shared between all the agents for logs so that `agent flare` can gather the logs of all of them.
