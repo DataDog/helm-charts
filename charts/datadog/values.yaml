@@ -584,6 +584,26 @@ clusterAgent:
   #         user: datadog
   #         pass: '<YOUR_CHOSEN_PASSWORD>'
 
+  # clusterAgent.advancedConfd -- Provide additional cluster check configurations
+  ## Each key is an integration containing several config files, it replaces clusterAgent.confd if set
+  ## ref: https://docs.datadoghq.com/agent/autodiscovery/
+  advancedConfd: {}
+  #  mysql:
+  #    1.yaml: |-
+  #      cluster_check: true
+  #      instances:
+  #        - server: '<EXTERNAL_IP>'
+  #          port: 3306
+  #          user: datadog
+  #          pass: '<YOUR_CHOSEN_PASSWORD>'
+  #    2.yaml:  |-
+  #      cluster_check: true
+  #      instances:
+  #        - server: '<EXTERNAL_IP>'
+  #          port: 3306
+  #          user: datadog
+  #          pass: '<YOUR_CHOSEN_PASSWORD>'
+
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
   # requests:
