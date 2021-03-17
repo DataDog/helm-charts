@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.10.3](https://img.shields.io/badge/Version-2.10.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.10.4](https://img.shields.io/badge/Version-2.10.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -382,7 +382,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
-| clusterAgent.healthPort | int | `5555` | Port number to use in the Cluster Agent for the healthz endpoint |
+| clusterAgent.healthPort | int | `5556` | Port number to use in the Cluster Agent for the healthz endpoint |
 | clusterAgent.image.name | string | `"cluster-agent"` | Cluster Agent image name to use (relative to `registry`) |
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -401,6 +401,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
+| clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify service account name to use (usually pre-existing, created if create is true) |
@@ -420,7 +421,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |
-| clusterChecksRunner.healthPort | int | `5555` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
+| clusterChecksRunner.healthPort | int | `5557` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
 | clusterChecksRunner.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |

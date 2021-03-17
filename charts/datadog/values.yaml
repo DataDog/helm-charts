@@ -441,10 +441,13 @@ clusterAgent:
     # clusterAgent.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
 
-  ## Provide Cluster Agent PodSecurityPolicy configuration
+  ## Provide Cluster Agent pod security configuration
   podSecurity:
     podSecurityPolicy:
       # clusterAgent.podSecurity.podSecurityPolicy.create -- If true, create a PodSecurityPolicy resource for Cluster Agent pods
+      create: false
+    securityContextConstraints:
+      # clusterAgent.podSecurity.securityContextConstraints.create -- If true, create a SCC resource for Cluster Agent pods
       create: false
 
   # Enable the metricsProvider to be able to scale based on metrics in Datadog
@@ -523,7 +526,7 @@ clusterAgent:
   affinity: {}
 
   # clusterAgent.healthPort -- Port number to use in the Cluster Agent for the healthz endpoint
-  healthPort: 5555
+  healthPort: 5556
 
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
@@ -1055,7 +1058,7 @@ clusterChecksRunner:
   tolerations: []
 
   # clusterChecksRunner.healthPort -- Port number to use in the Cluster Checks Runner for the healthz endpoint
-  healthPort: 5555
+  healthPort: 5557
 
   # clusterChecksRunner.livenessProbe -- Override default agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
