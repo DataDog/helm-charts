@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.5
+
+* Increase default `datadog.systemProbe.maxTrackedConnections` to 131072.
+
 ## 2.10.4
 
 * Fix several bugs with OpenShift SCC and hostNetwork.
