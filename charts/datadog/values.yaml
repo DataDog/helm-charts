@@ -316,7 +316,7 @@ datadog:
     collectDNSStats: false
 
     # datadog.systemProbe.maxTrackedConnections -- the maximum number of tracked connections
-    maxTrackedConnections: 65536
+    maxTrackedConnections: 131072
 
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
     conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
