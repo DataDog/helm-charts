@@ -60,13 +60,44 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler }}
 - hostPath:
     path: /lib/modules
   name: modules
 - hostPath:
     path: /usr/src
   name: src
+{{- end }}
+{{- if .Values.datadog.systemProbe.enableRuntimeCompiler }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
+    type: DirectoryOrCreate
+  name: runtime-compiler-output-dir
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.kernelHeadersDownloadDir }}
+    type: DirectoryOrCreate
+  name: kernel-headers-download-dir
+- hostPath:
+    path: /etc/os-release
+  name: etc-os-release
+- hostPath:
+    path: /etc/redhat-release
+  name: etc-redhat-release
+- hostPath:
+    path: /etc/apt
+  name: apt-config-dir
+- hostPath:
+    path: /etc/yum.repos.d
+  name: yum-repos-dir
+- hostPath:
+    path: /etc/pki
+  name: public-key-dir
+- hostPath:
+    path: /etc/rhsm
+  name: rhel-subscription-dir
+- hostPath:
+    path: /etc/zypp
+  name: opensuse-repos-dir
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
