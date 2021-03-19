@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.6
+
+* Add provider labels on pods, warning on dogstatsd with UDS on GKE Autopilot.
+
 ## 2.10.5
 
 * Increase default `datadog.systemProbe.maxTrackedConnections` to 131072.
