@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.7
+
+* Fix bug regarding using "Metric collection with Prometheus annotations".
+
 ## 2.10.6
 
 * Add provider labels on pods, warning on dogstatsd with UDS on GKE Autopilot.
