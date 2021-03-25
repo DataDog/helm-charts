@@ -615,6 +615,9 @@ existingClusterAgent:
   # existingClusterAgent.serviceName -- Existing service name to use for reaching the external Cluster Agent
   serviceName:  # <EXISTING_DCA_SERVICE_NAME>
 
+  # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
+  clusterchecksEnabled: true
+
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
   ## The exceptional case could be a situation when you need to run
