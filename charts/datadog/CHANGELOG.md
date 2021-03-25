@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.11.0
+
+* Bump Agent version to `7.27.0`.
+* Support configuring advanced openmetrics check parameters via `datadog.prometheusScrape.additionalConfigs`.
+
 ## 2.10.14
 
 * Add Kubelet `hostCAPath` and `agentCAPath` parameters to automatically mount and use CA cert from host filesystem for Kubelet connection.
