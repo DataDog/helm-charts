@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.10
+
+* Fix system-probe version check when using `datadog.networkMonitoring.enabled`
+
 ## 2.10.9
 
 * Add the possibility to specify a priority class name for the cluster checks runner pods.
