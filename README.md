@@ -1,3 +1,11 @@
+# Calculi users
+
+To install the chart, run:
+
+helm upgrade --install --debug --wait datadog-agent -f charts/deploy.yaml datadog/datadog
+
+See the charts/deploy.yaml.template file for the representation of the deploy.yaml
+
 # Datadog Helm Charts
 
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/datadog)](https://artifacthub.io/packages/search?repo=datadog) 

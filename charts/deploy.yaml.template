@@ -1,0 +1,19 @@
+datadog:
+  apiKey: 
+  appKey: 
+  logs:
+    enabled: true
+    containerCollectAll: true
+  processAgent:
+    processCollection: true
+  tags:
+    customer: calculi
+  dogstatsd:
+    originDetection: true
+    useHostPort: true
+    useHostPID: true
+  env:
+    - name: DD_DOGSTATSD_STATS_ENABLE
+      value: "true"
+    - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+      value: "true"
