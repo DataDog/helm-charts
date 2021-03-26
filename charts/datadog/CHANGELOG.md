@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.9
+
+* Add the possibility to specify a priority class name for the cluster checks runner pods.
+
 ## 2.10.8
 
 * When node agents are joining an existing DCA managed by another Helm release, we must control if they should be eligible to cluster checks dispatch or not depending on whether CLC have been deployed with the external DCA.

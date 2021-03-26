@@ -1050,6 +1050,9 @@ clusterChecksRunner:
   #  - name: ndots
   #    value: "1"
 
+  # clusterChecksRunner.priorityClassName -- Name of the priorityClass to apply to the Cluster checks runners
+  priorityClassName:  # system-cluster-critical
+
   # clusterChecksRunner.nodeSelector -- Allow the ClusterChecks Deployment to schedule on selected nodes
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   #
