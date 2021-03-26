@@ -2,7 +2,7 @@
 
 ## 2.10.9
 
-* Add the possibility to specify a priority class name for the CLC pods.
+* Add the possibility to specify a priority class name for the cluster checks runner pods.
 
 ## 2.10.8
 
