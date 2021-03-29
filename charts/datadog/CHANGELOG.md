@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.2
+
+* The Datadog Cluster Agent's Admission Controller now uses a `Role` to watch secrets instead of a `ClusterRole`. (Requires Datadog Cluster Agent v1.12+)
+
 ## 2.12.1
 
 * Add more kube-state-metrics core check documentation
@@ -7,7 +11,7 @@
 ## 2.12.0
 
 * Update the Cluster Agent version to `1.12.0`
-* Support kube-state-metrics core check
+* Support kube-state-metrics core check (Requires Datadog Cluster Agent v1.12+)
 
 ## 2.11.6
 
