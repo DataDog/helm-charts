@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.11
+
+* Fix RBAC needed for the external metrics provider for the future release of the DCA.
+
 ## 2.10.10
 
 * Fix system-probe version check when using `datadog.networkMonitoring.enabled`

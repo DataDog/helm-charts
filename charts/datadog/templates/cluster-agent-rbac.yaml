@@ -64,11 +64,22 @@ rules:
   - datadog-leader-election  # Leader election token
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - datadog-custom-metrics
-  - extension-apiserver-authentication
 {{- end }}
   verbs:
   - get
   - update
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - extension-apiserver-authentication
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
 - apiGroups:  # To create the leader election token and hpa events
   - ""
   resources:
