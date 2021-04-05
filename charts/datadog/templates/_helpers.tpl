@@ -93,7 +93,7 @@ Return secret name to be used based on provided values.
 Return the appropriate apiVersion for RBAC APIs.
 */}}
 {{- define "rbac.apiVersion" -}}
-{{- if semverCompare "^1.8-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1" -}}
 "rbac.authorization.k8s.io/v1"
 {{- else -}}
 "rbac.authorization.k8s.io/v1beta1"
@@ -127,7 +127,11 @@ Return the container runtime socket
 */}}
 {{- define "datadog.dockerOrCriSocketPath" -}}
 {{- if eq .Values.targetSystem "linux" -}}
+{{- if .Values.providers.gke.autopilot -}}
+/var/run/containerd/containerd.sock
+{{- else -}}
 {{- .Values.datadog.dockerSocketPath | default .Values.datadog.criSocketPath | default "/var/run/docker.sock" -}}
+{{- end -}}
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 \\.\pipe\docker_engine
@@ -143,6 +147,17 @@ Return agent config path
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return agent host mount root
+*/}}
+{{- define "datadog.hostMountRoot" -}}
+{{- if .Values.providers.gke.autopilot -}}
+/var/autopilot/addon/datadog
+{{- else -}}
+/var/lib/datadog-agent
 {{- end -}}
 {{- end -}}
 
@@ -188,17 +203,6 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{- end -}}
 
 {{/*
-Return true if the system-probe container should be created.
-*/}}
-{{- define "should-enable-system-probe" -}}
-{{- if or .Values.datadog.systemProbe.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill -}}
-true
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
@@ -210,12 +214,142 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- end -}}
 
 {{/*
-Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
+Return true if a system-probe feature is enabled.
 */}}
-{{- define "should-enable-k8s-resource-monitoring" -}}
-{{- if and .Values.datadog.orchestratorExplorer.enabled .Values.clusterAgent.enabled -}}
+{{- define "system-probe-feature" -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill -}}
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the system-probe container should be created.
+*/}}
+{{- define "should-enable-system-probe" -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "system-probe-feature" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if a security-agent feature is enabled.
+*/}}
+{{- define "security-agent-feature" -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled  -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the security-agent container should be created.
+*/}}
+{{- define "should-enable-security-agent" -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "security-agent-feature" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance features should be enabled.
+*/}}
+{{- define "should-enable-compliance" -}}
+{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the runtime security features should be enabled.
+*/}}
+{{- define "should-enable-runtime-security" -}}
+{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if .Values.existingClusterAgent is fully configured
+*/}}
+{{- define "existingClusterAgent-configured" -}}
+{{- if and .Values.existingClusterAgent.join .Values.existingClusterAgent.serviceName .Values.existingClusterAgent.tokenSecretName -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the ClusterAgent is enabled
+*/}}
+{{- define "cluster-agent-enabled" -}}
+{{- if or (eq (include "existingClusterAgent-configured" .) "true") .Values.clusterAgent.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if the ClusterAgent needs to be deployed
+*/}}
+{{- define "should-deploy-cluster-agent" -}}
+{{- if and .Values.clusterAgent.enabled (not .Values.existingClusterAgent.join) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
+*/}}
+{{- define "should-enable-k8s-resource-monitoring" -}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (include "existingClusterAgent-configured" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns provider kind
+*/}}
+{{- define "provider-kind" -}}
+{{- if .Values.providers.gke.autopilot -}}
+gke-autopilot
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns provider-specific labels if any
+*/}}
+{{- define "provider-labels" -}}
+{{- if include "provider-kind" .  -}}
+env.datadoghq.com/kind: {{ include "provider-kind" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns provider-specific env vars if any
+*/}}
+{{- define "provider-env" -}}
+{{- if include "provider-kind" .  -}}
+- name: DD_PROVIDER_KIND
+  value: {{ include "provider-kind" . }}
 {{- end -}}
 {{- end -}}

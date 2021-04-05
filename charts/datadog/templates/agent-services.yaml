@@ -1,4 +1,4 @@
-{{- if .Values.clusterAgent.enabled -}}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +19,7 @@ spec:
     protocol: TCP
 {{ end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.metricsProvider.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.metricsProvider.enabled -}}
 ---
 apiVersion: v1
 kind: Service
@@ -45,7 +45,7 @@ spec:
     protocol: TCP
 {{ end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.admissionController.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.admissionController.enabled -}}
 ---
 apiVersion: v1
 kind: Service
@@ -67,4 +67,38 @@ spec:
   ports:
   - port: 443
     targetPort: 8000
+{{ end }}
+
+{{- if .Values.datadog.serviceTopology.enabled -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.datadog.serviceTopology.serviceName | quote }}
+  labels:
+    app: "{{ template "datadog.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  selector:
+    app: {{ template "datadog.fullname" . }}
+  ports:
+    - protocol: UDP
+      port: {{ .Values.datadog.dogstatsd.port }}
+      targetPort: {{ .Values.datadog.dogstatsd.port }}
+      name: dogstatsd
+{{- if .Values.datadog.apm.enabled }}
+    - protocol: TCP
+      port: {{ .Values.datadog.apm.port }}
+      targetPort: {{ .Values.datadog.apm.port }}
+      name: apm
+{{- end }}
+  topologyKeys:
+    - "kubernetes.io/hostname"
 {{ end }}

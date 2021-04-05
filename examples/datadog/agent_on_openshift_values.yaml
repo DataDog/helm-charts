@@ -16,26 +16,43 @@ datadog:
   clusterName: <CLUSTER_NAME>
   tags: []
   criSocketPath: /var/run/crio/crio.sock
-  # datadog.kubelet.tlsVerify should be `false` to establish communication with the kubelet
+  # Depending on your DNS/SSL setup, it might not be possible to verify the Kubelet cert properly
+  # If you have proper CA, you can switch it to true
   kubelet:
-    tlsVerify: "false"
+    tlsVerify: false
   confd:
     cri.yaml: |-
       init_config:
       instances:
         - collect_disk: true
   logs:
-    enabled: true
-    containerCollectAll: false
-    containerCollectUsingFiles: true
+    enabled: false
   apm:
-    enabled: true
-    socketPath: /var/run/datadog/apm.socket
-    hostSocketPath: /var/run/datadog/
+    enabled: false
   processAgent:
     enabled: true
     processCollection: false
-  systemProbe:
-    enableTCPQueueLength: false
-    enableOOMKill: true
-    collectDNSStats: false
+agents:
+  useHostNetwork: true
+  podSecurity:
+    securityContextConstraints:
+      create: true
+  tolerations:
+  # Deploy Agents on master nodes
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+    operator: Exists
+  # Deploy Agents on infra nodes
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/infra
+    operator: Exists
+clusterAgent:
+  podSecurity:
+    securityContextConstraints:
+      create: true
+clusterChecksRunner:
+  enabled: true
+  replicas: 2
+kube-state-metrics:
+  securityContext:
+    enabled: false

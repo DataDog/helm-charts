@@ -15,7 +15,16 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+        {{- end }}
       annotations:
+        {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret_api_key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+        checksum/application_key: {{ include (print $.Template.BasePath "/secret_application_key.yaml") . | sha256sum }}
+        {{- end }}
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: '["openmetrics"]'
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
@@ -24,6 +33,9 @@ spec:
             "namespace": "datadog.operator",
             "metrics": ["*"]
           }]
+        {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -43,6 +55,20 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.apiKeySecretName" . }}
+                  key: api-key
+            {{- end }}
+            {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.appKeySecretName" . }}
+                  key: app-key
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"
@@ -50,6 +76,9 @@ spec:
             - "-loglevel={{ .Values.logLevel }}"
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
+          {{- end }}
+          {{- if .Values.secretBackend.arguments }}
+            - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
           {{- end }}
           ports:
             - name: metrics

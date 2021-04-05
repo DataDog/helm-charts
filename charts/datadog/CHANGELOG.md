@@ -1,5 +1,116 @@
 # Datadog changelog
 
+## 2.10.11
+
+* Fix RBAC needed for the external metrics provider for the future release of the DCA.
+
+## 2.10.10
+
+* Fix system-probe version check when using `datadog.networkMonitoring.enabled`
+
+## 2.10.9
+
+* Add the possibility to specify a priority class name for the cluster checks runner pods.
+
+## 2.10.8
+
+* When node agents are joining an existing DCA managed by another Helm release, we must control if they should be eligible to cluster checks dispatch or not depending on whether CLC have been deployed with the external DCA.
+
+## 2.10.7
+
+* Fix bug regarding using "Metric collection with Prometheus annotations".
+
+## 2.10.6
+
+* Add provider labels on pods, warning on dogstatsd with UDS on GKE Autopilot.
+
+## 2.10.5
+
+* Increase default `datadog.systemProbe.maxTrackedConnections` to 131072.
+
+## 2.10.4
+
+* Fix several bugs with OpenShift SCC and hostNetwork.
+
+## 2.10.3
+
+* Bump version of KSM chart to get rid of `rbac.authorization.k8s.io/v1beta1 ClusterRole is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1` warnings
+
+## 2.10.2
+
+* Use an EmptyDir volume shared between all the agents for logs so that `agent flare` can gather the logs of all of them.
+
+## 2.10.1
+
+* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
+
+## 2.10.0
+
+* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
+
+## 2.9.11
+
+* Allow system-probe container to send flares by adding main agent config file to container.
+
+## 2.9.10
+
+* Support configuring Prometheus Autodiscovery. (Requires Datadog Agent 7/6.26+ and Datadog Cluster Agent 1.11+).
+
+## 2.9.9
+
+* Update "agent" image tag to `7.26.0` and "cluster-agent" to `1.11.0`.
+* Fix nit comments
+
+## 2.9.8
+
+* Make pod collection for the Kubernetes Explorer work with an external Cluster Agent deployment.
+
+## 2.9.7
+
+* Allow cluster-agent to override metrics provider endpoint with `clusterAgent.metricsProvider.endpoint`.
+
+## 2.9.6
+
+* Add missing `NET_RAW` capability to `System-probe` to support `CVE-2020-14386` mitigation.
+
+## 2.9.5
+
+* Fix typo in variable name. `agents.podSecurity.capabilities` replaces `agents.podSecurity.capabilites`.
+
+## 2.9.4
+
+* Remove uses of `systemProbe.enabled`.
+
+## 2.9.3
+
+* Enable support for GKE Autopilot.
+
+## 2.9.2
+
+* Fixed a bug where `datadog.leaderElection` would not configure the cluster-agent environment variable `DD_LEADER_ELECTION` correctly.
+
+## 2.9.1
+
+* add `datadog.systemProbe.conntrackMaxStateSize` and  `datadog.systemProbe.maxTrackedConnections`.
+
+## 2.9.0
+
+* Remove `systemProbe.enabled` config param in favor of `networkMonitoring.enabled`, `securityAgent.runtime.enabled`, `systemProbe.enableOOMKill`, and `systemProbe.enableTCPQueueLength`.
+* Fix bug preventing network monitoring to be disabled by setting `datadog.networkMonitoring.enabled` to `false`.
+
+## 2.8.6
+
+* Add support for Service Topology to target the Datadog Agent via a kubernetes service instead of host ports. This will allow sending traces and custom metrics without using host ports. Note: Service Topology is a new Kubernetes feature, it's still in alpha and disabled by default.
+
+## 2.8.5
+
+* Allow `namespaces` in RBAC for `kubernetes_namespace_labels_as_tags`.
+
+## 2.8.4
+
+* Grant access to the `Lease` objects.
+  `Lease` objects can be read by the `kube_scheduler` and `kube_controller_manager` checks on agent 7.27+ on Kubernetes clusters 1.14+.
+
 ## 2.8.3
 
 * Fix potential duplicate `DD_KUBERNETES_KUBELET_TLS_VERIFY` env var due to new parameter `kubelet.tlsVerify`. Parameter has now 3 states and env var won't be added if not set, improving backward compatibility.

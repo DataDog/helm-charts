@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.5.4
+
+* Add apiKey, apiKeyExistingSecret, appKey, and appKeyExistingSecret values to values.yaml and set their respective env vars using a Kubernetes secret
+
+## 0.5.3
+
+* Only deploy a `PodDisruptionBudget` when `replicaCount` is greater than `1`
+
+## 0.5.2
+
+* Support configuring the secret backend command arguments (requires Datadog Operator v0.5.0+)
+
+## 0.5.1
+
+* Support configuring the secret backend command arguments (requires Datadog Operator v0.5.0+)
+
+## 0.5.0
+
+* Update chart for Operator release `v0.5.0`
+
+## 0.4.1
+
+* Added support for `podAnnotations` and `podLabels` values
+
 ## 0.4.0
 
 * BREAKING CHANGES

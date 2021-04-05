@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.rbac.create -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create -}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -17,6 +17,7 @@ rules:
   - endpoints
   - pods
   - nodes
+  - namespaces
   - componentstatuses
   verbs:
   - get
@@ -63,11 +64,22 @@ rules:
   - datadog-leader-election  # Leader election token
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - datadog-custom-metrics
-  - extension-apiserver-authentication
 {{- end }}
   verbs:
   - get
   - update
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - extension-apiserver-authentication
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
 - apiGroups:  # To create the leader election token and hpa events
   - ""
   resources:
@@ -152,6 +164,7 @@ rules:
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
 {{- end }}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 - apiGroups:
   - ""
@@ -182,10 +195,19 @@ rules:
   verbs:
   - list
 {{- end }}
+{{- end }}
 - apiGroups:
   - policy
   resources:
   - podsecuritypolicies
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-cluster-agent
+- apiGroups:
+  - "security.openshift.io"
+  resources:
+  - securitycontextconstraints
   verbs:
   - use
   resourceNames:
@@ -226,7 +248,7 @@ metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
 {{- end }}
 
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

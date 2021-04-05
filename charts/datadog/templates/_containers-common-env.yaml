@@ -80,9 +80,9 @@
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
-{{- if .Values.datadog.criSocketPath }}
+{{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
-  value: {{ print "/host/" .Values.datadog.criSocketPath | clean }}
+  value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
 {{- else }}
 - name: DOCKER_HOST
 {{- if eq .Values.targetSystem "linux" }}
@@ -92,6 +92,7 @@
   value: npipe://{{ (include "datadog.dockerOrCriSocketPath" .) | replace "\\" "/" }}
 {{- end }}
 {{- end }}
+{{ include "provider-env" . }}
 {{- end -}}
 
 
@@ -100,8 +101,8 @@ Return a list of env-vars if the cluster-agent is enabled
 */}}
 {{- define "containers-cluster-agent-env" -}}
 - name: DD_CLUSTER_AGENT_ENABLED
-  value: {{ .Values.clusterAgent.enabled | quote }}
-{{- if .Values.clusterAgent.enabled }}
+  value: {{ (include "cluster-agent-enabled" .) | quote }}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
   value: {{ template "datadog.fullname" . }}-cluster-agent
 - name: DD_CLUSTER_AGENT_AUTH_TOKEN
@@ -109,5 +110,14 @@ Return a list of env-vars if the cluster-agent is enabled
     secretKeyRef:
         name: {{ template "clusterAgent.tokenSecretName" . }}
         key: token
+{{- else if eq (include "existingClusterAgent-configured" .) "true" }}
+- name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+  value: {{ .Values.existingClusterAgent.serviceName | quote }}
+- name: DD_CLUSTER_AGENT_AUTH_TOKEN
+  valueFrom:
+    secretKeyRef:
+        name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
+        key: token
 {{- end }}
+{{ include "provider-env" . }}
 {{- end -}}

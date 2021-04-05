@@ -1,3 +1,16 @@
+{{- if .Values.datadog.networkMonitoring.enabled }}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (.Values.agents.image.tag | toString | trimSuffix "-jmx") }}
+{{- $length := len (split "." $version ) -}}
+{{- if (gt $length 1) }}
+{{- if not (semverCompare "^6.24.1-0 || ^7.24.1-0" $version) -}}
+{{- fail "datadog.networkMonitoring.enabled requires agent >= 7.24.1" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
@@ -21,10 +34,10 @@ data:
       enable_tcp_queue_length: {{ $.Values.datadog.systemProbe.enableTCPQueueLength }}
       enable_oom_kill: {{ $.Values.datadog.systemProbe.enableOOMKill }}
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
-    {{- if $.Values.datadog.networkMonitoring.enabled }}
+      max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
+      conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
     network_config:
-      enabled: true
-    {{- end }}
+      enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       debug: false

@@ -32,20 +32,13 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
-      value: {{ (or .Values.datadog.systemProbe.enabled .Values.datadog.networkMonitoring.enabled) | quote }}
+      value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
-    {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
-    - name: DD_ORCHESTRATOR_CLUSTER_ID
-      valueFrom:
-        configMapKeyRef:
-          name: datadog-cluster-id
-          key: id
-    {{- end }}
 {{- if .Values.agents.containers.processAgent.env }}
 {{ toYaml .Values.agents.containers.processAgent.env | indent 4 }}
 {{- end }}
@@ -57,6 +50,8 @@
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    - name: logdatadog
+      mountPath: /var/log/datadog
     - name: tmpdir
       mountPath: /tmp
       readOnly: false

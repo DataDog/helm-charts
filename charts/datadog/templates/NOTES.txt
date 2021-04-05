@@ -9,13 +9,6 @@ that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}' which 
   {{- else if not (eq .Values.datadog.apiKey "<DATADOG_API_KEY>") }}
   {{- end }}
 
-  {{- if (and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.systemProbe.enabled)) }}
-##############################################################################
-####               NOTE: Configuration notice.                            ####
-##############################################################################
-You enabled runtime security features in the SecurityAgent but the System Probe is not explicitly enabled.
-The System Probe will be enabled as required by these features. Please make sure this is expected for your configuration.
-  {{- end }}
 {{- else }}
 ##############################################################################
 ####               ERROR: You did not set a datadog.apiKey.               ####
@@ -55,7 +48,7 @@ Node Agent liveness probe port ({{ $liveness.port }}) is different from the conf
 Node Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
-{{- if .Values.clusterAgent.enabled }}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 
   {{- if .Values.clusterAgent.metricsProvider.enabled }}
     {{- if .Values.datadog.appKeyExistingSecret }}
@@ -183,17 +176,10 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 {{- if .Values.datadog.systemProbe.enabled }}
-
-#################################################################
-####               WARNING: Deprecation notice               ####
-#################################################################
-
-You are using datadog.systemProbe.enabled which has been deprecated in favor using one of networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, or securityAgent.runtime.enabled.
-More information about this change: https://github.com/DataDog/helm-charts/pull/101
-
+{{- fail "You are using datadog.systemProbe.enabled which has been superseded by networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, and securityAgent.runtime.enabled. These options provide a more granular control of which features should be activated." }}
 {{- end }}
 
-{{- if (and .Values.datadog.orchestratorExplorer.enabled (not .Values.clusterAgent.enabled ))}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
@@ -201,4 +187,61 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 
 You are using datadog.orchestratorExplorer.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
 To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+{{- if .Values.datadog.serviceTopology.enabled }}
+
+#################################################################
+####               NOTE: Configuration notice             ####
+#################################################################
+
+datadog.serviceTopology.enabled is enabled. Please make sure the Service Topology feature is enabled in your Kubernetes cluster.
+Enabling datadog.serviceTopology.enabled without enabling the Service Topology in the cluster will result in wrong tagging for traces and custom metrics.
+Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
+
+{{- end }}
+
+{{- if .Values.providers.gke.autopilot}}
+{{- if eq (include "system-probe-feature" .) "true" }}
+
+##################################################################################
+####               WARNING: System Probe is not supported on GKE Autopilot    ####
+##################################################################################
+
+{{- end }}
+
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
+
+###################################################################################
+####               WARNING: Security Agent is not supported on GKE Autopilot   ####
+###################################################################################
+
+{{- end }}
+
+{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+
+###################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
+###################################################################################
+
+{{- end }}
+
+{{- end }}
+
+{{- if and (not (.Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1")) .Values.datadog.kubeStateMetricsEnabled }}
+
+########################################################################################
+####  WARNING: latest version of kube-state-metrics isn’t supported on your cluster ####
+########################################################################################
+
+datadog.kubeStateMetricsEnabled is true, meaning that KSM is required.
+
+The target Kubernetes cluster {{ .Capabilities.KubeVersion }} doesn’t support API "rbac.authorization.k8s.io/v1"
+which is used by KSM.
+
+The recommended way to go forward is to disable KSM deployment from the datadog chart and to manually deploy an older version of KSM.
+The last version of the KSM chart using "rbac.authorization.k8s.io/v1beta1" is 2.9.1 which can be installed with:
+
+helm install ksm https://charts.helm.sh/stable/packages/kube-state-metrics-2.9.1.tgz
+
 {{- end }}
