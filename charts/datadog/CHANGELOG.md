@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.12
+
+* Enable `collectDNSStats` by default
+
 ## 2.10.11
 
 * Fix RBAC needed for the external metrics provider for the future release of the DCA.
