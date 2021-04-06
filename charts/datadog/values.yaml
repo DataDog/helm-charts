@@ -421,6 +421,11 @@ clusterAgent:
   # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
   securityContext: {}
 
+  containers:
+    clusterAgent:
+      # clusterAgent.containers.clusterAgent.securityContext -- Specify securityContext on the cluster-agent container.
+      securityContext: {}
+
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
 

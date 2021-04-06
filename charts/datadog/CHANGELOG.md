@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.10.12
+
+* Add the possibility to specify securityContext for cluster-agent containers
+
 ## 2.10.11
 
 * Fix RBAC needed for the external metrics provider for the future release of the DCA.
