@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.10.13
+
+* Fix `security-agent-feature` helper function to support `helm2`.
+* Fix `provider-labels` helper function to support `helm2`.
+* Fix `provider-env` helper function to support `helm2`.
+
 ## 2.10.12
 
 * Add the possibility to specify securityContext for cluster-agent containers
