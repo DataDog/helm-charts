@@ -245,3 +245,13 @@ The last version of the KSM chart using "rbac.authorization.k8s.io/v1beta1" is 2
 helm install ksm https://charts.helm.sh/stable/packages/kube-state-metrics-2.9.1.tgz
 
 {{- end }}
+
+{{- if and .Values.datadog.kubeStateMetricsCore.enabled (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.kubeStateMetricsCore.enabled but you disabled the cluster agent. This configuration is unsupported and the kube-state-metrics core check can't be configured.
+To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}

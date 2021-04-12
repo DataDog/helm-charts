@@ -95,6 +95,10 @@
       value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
     {{- end }}
     {{- end }}
+    {{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck }}
+    - name: DD_IGNORE_AUTOCONF
+      value: "kubernetes_state"
+    {{- end }}
 {{- if .Values.agents.containers.agent.env }}
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
 {{- end }}

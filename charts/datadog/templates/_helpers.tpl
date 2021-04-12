@@ -401,3 +401,14 @@ Return Kubelet volumeMount
   {{- end }}
   readOnly: true
 {{- end -}}
+
+{{/*
+Return true if the Cluster Agent needs a confd configmap
+*/}}
+{{- define "need-cluster-agent-confd" -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
