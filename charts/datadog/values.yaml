@@ -117,6 +117,12 @@ datadog:
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
     tlsVerify:  # false
+    # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
+    # @default -- None (no mount from host)
+    hostCAPath:
+    # datadog.kubelet.agentCAPath -- Path (inside Agent containers) where the Kubelet CA certificate is stored
+    # @default -- /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    agentCAPath:
 
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
@@ -571,7 +577,7 @@ clusterAgent:
   ## WARNING: Make sure that hosts using this are properly firewalled otherwise
   ## metrics and traces are accepted from any host able to connect to this host.
   #
-  useHostNetwork:  # true
+  useHostNetwork: false
 
   # clusterAgent.dnsConfig -- Specify dns configuration options for datadog cluster agent containers e.g ndots
   ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config

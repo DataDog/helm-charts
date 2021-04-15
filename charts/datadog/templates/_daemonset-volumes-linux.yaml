@@ -15,6 +15,12 @@
     type: DirectoryOrCreate
   name: dsdsocket
 {{- end }}
+{{- if .Values.datadog.kubelet.hostCAPath }}
+- hostPath:
+    path: {{ .Values.datadog.kubelet.hostCAPath }}
+    type: File
+  name: kubelet-ca
+{{- end }}
 {{- if .Values.datadog.apm.useSocketVolume }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
