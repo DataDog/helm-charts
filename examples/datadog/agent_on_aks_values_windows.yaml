@@ -1,33 +1,24 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 # with specific configuration to work on AKS.
 
-targetSystem: "linux"
+targetSystem: "windows"
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
   # If not using secrets, then use apiKey and appKey instead
   apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
   appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
-  clusterName: <CLUSTER_NAME>
   tags: []
   kubelet:
-    host:
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.nodeName
-    hostCAPath: /etc/kubernetes/certs/kubeletserver.crt
+    # On Windows, AKS uses node-name (like akswin000000) as only SAN in Kubelet certificate
+    # However, the DNS name akswin000000 is not resolvable, so cannot be used to reach Kubelet
+    tlsVerify: "false"
   logs:
     enabled: true
     containerCollectAll: false
     containerCollectUsingFiles: true
   apm:
     enabled: true
-    socketPath: /var/run/datadog/apm.socket
-    hostSocketPath: /var/run/datadog/
   processAgent:
     enabled: true
     processCollection: false
-  systemProbe:
-    enableTCPQueueLength: false
-    enableOOMKill: true
-    collectDNSStats: false

@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.10.14
+
+* Add Kubelet `hostCAPath` and `agentCAPath` parameters to automatically mount and use CA cert from host filesystem for Kubelet connection.
+* Fix default value for DCA hostNetwork
+
 ## 2.10.13
 
 * Fix `security-agent-feature` helper function to support `helm2`.
