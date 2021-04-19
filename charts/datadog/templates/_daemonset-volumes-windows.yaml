@@ -1,4 +1,10 @@
 {{- define "daemonset-volumes-windows" -}}
+{{- if .Values.datadog.kubelet.hostCAPath }}
+- hostPath:
+    path: {{ dir .Values.datadog.kubelet.hostCAPath }}
+    type: Directory
+  name: kubelet-ca
+{{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: C:/var/log

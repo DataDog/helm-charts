@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 2.10.12
+## 2.11.1
 
 * Enable `collectDNSStats` by default
+
+## 2.11.0
+
+* Bump Agent version to `7.27.0`.
+* Support configuring advanced openmetrics check parameters via `datadog.prometheusScrape.additionalConfigs`.
+
+## 2.10.14
+
+* Add Kubelet `hostCAPath` and `agentCAPath` parameters to automatically mount and use CA cert from host filesystem for Kubelet connection.
+* Fix default value for DCA hostNetwork
+
+## 2.10.13
+
+* Fix `security-agent-feature` helper function to support `helm2`.
+* Fix `provider-labels` helper function to support `helm2`.
+* Fix `provider-env` helper function to support `helm2`.
+
+## 2.10.12
+
+* Add the possibility to specify securityContext for cluster-agent containers
 
 ## 2.10.11
 

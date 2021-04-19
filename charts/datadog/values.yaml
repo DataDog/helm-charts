@@ -117,6 +117,12 @@ datadog:
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
     tlsVerify:  # false
+    # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
+    # @default -- None (no mount from host)
+    hostCAPath:
+    # datadog.kubelet.agentCAPath -- Path (inside Agent containers) where the Kubelet CA certificate is stored
+    # @default -- /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    agentCAPath:
 
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
@@ -390,6 +396,20 @@ datadog:
     enabled: false
     # datadog.prometheusScrape.serviceEndpoints -- Enable generating dedicated checks for service endpoints.
     serviceEndpoints: false
+    # datadog.prometheusScrape.additionalConfigs -- Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+)
+    additionalConfigs: []
+      # -
+      #   autodiscovery:
+      #     kubernetes_annotations:
+      #       include:
+      #         custom_include_label: 'true'
+      #       exclude:
+      #         custom_exclude_label: 'true'
+      #     kubernetes_container_names:
+      #     - my-app
+      #   configurations:
+      #   - send_distribution_buckets: true
+      #     timeout: 5
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
@@ -420,6 +440,11 @@ clusterAgent:
 
   # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
   securityContext: {}
+
+  containers:
+    clusterAgent:
+      # clusterAgent.containers.clusterAgent.securityContext -- Specify securityContext on the cluster-agent container.
+      securityContext: {}
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -566,7 +591,7 @@ clusterAgent:
   ## WARNING: Make sure that hosts using this are properly firewalled otherwise
   ## metrics and traces are accepted from any host able to connect to this host.
   #
-  useHostNetwork:  # true
+  useHostNetwork: false
 
   # clusterAgent.dnsConfig -- Specify dns configuration options for datadog cluster agent containers e.g ndots
   ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
@@ -636,7 +661,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.26.0
+    tag: 7.27.0
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -986,7 +1011,7 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.26.0
+    tag: 7.27.0
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:

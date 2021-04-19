@@ -240,7 +240,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled  -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled -}}
 true
 {{- else -}}
 false
@@ -339,7 +339,7 @@ gke-autopilot
 Returns provider-specific labels if any
 */}}
 {{- define "provider-labels" -}}
-{{- if include "provider-kind" .  -}}
+{{- if include "provider-kind" . -}}
 env.datadoghq.com/kind: {{ include "provider-kind" . }}
 {{- end -}}
 {{- end -}}
@@ -348,8 +348,37 @@ env.datadoghq.com/kind: {{ include "provider-kind" . }}
 Returns provider-specific env vars if any
 */}}
 {{- define "provider-env" -}}
-{{- if include "provider-kind" .  -}}
+{{- if include "provider-kind" . -}}
 - name: DD_PROVIDER_KIND
   value: {{ include "provider-kind" . }}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return Kubelet CA path inside Agent containers
+*/}}
+{{- define "datadog.kubelet.mountPath" -}}
+{{- if .Values.datadog.kubelet.agentCAPath -}}
+{{- .Values.datadog.kubelet.agentCAPath -}}
+{{- else if .Values.datadog.kubelet.hostCAPath -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/var/kubelet-ca/{{ base .Values.datadog.kubelet.hostCAPath }}
+{{- else -}}
+/var/run/kubelet-ca/{{ base .Values.datadog.kubelet.hostCAPath }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return Kubelet volumeMount
+*/}}
+{{- define "datadog.kubelet.volumeMount" -}}
+- name: kubelet-ca
+  {{- if eq .Values.targetSystem "linux" }}
+  mountPath: {{ include "datadog.kubelet.mountPath" . }}
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  mountPath: {{ dir (include "datadog.kubelet.mountPath" .) }}
+  {{- end }}
+  readOnly: true
 {{- end -}}
