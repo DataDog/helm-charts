@@ -90,6 +90,10 @@
     {{- if .Values.datadog.prometheusScrape.enabled }}
     - name: DD_PROMETHEUS_SCRAPE_ENABLED
       value: "true"
+    {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+    - name: DD_PROMETHEUS_SCRAPE_CHECKS
+      value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+    {{- end }}
     {{- end }}
 {{- if .Values.agents.containers.agent.env }}
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
