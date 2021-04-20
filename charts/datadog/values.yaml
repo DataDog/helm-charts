@@ -319,7 +319,7 @@ datadog:
     enableOOMKill: false
 
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
-    collectDNSStats: false
+    collectDNSStats: true
 
     # datadog.systemProbe.maxTrackedConnections -- the maximum number of tracked connections
     maxTrackedConnections: 131072

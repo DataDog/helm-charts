@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.1
+
+* Enable `collectDNSStats` by default
+
 ## 2.11.0
 
 * Bump Agent version to `7.27.0`.
