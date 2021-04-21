@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.2
+
+* Update `agent.customAgentConfig` config example in the `values.yaml`: removes reference to APM configuration.
+
 ## 2.11.1
 
 * Enable `collectDNSStats` by default
