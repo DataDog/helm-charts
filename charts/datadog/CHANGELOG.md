@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.4
+
+* Add missing system calls to system-probe `seccomp` profile.
+
 ## 2.11.3
 
 * Update the documentation with the new path of the `kube-state-metrics` chart
