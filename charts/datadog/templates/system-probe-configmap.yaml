@@ -210,6 +210,7 @@ data:
             "stat64",
             "statfs",
             "sysinfo",
+            "tgkill",
             "umask",
             "uname",
             "unlink",
@@ -217,7 +218,11 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            # The following system calls are only necessary for kubectl exec
+            "getgroups",
+            "getpgrp",
+            "setpgid"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
