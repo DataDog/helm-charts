@@ -70,7 +70,7 @@ datadog:
   logLevel: INFO
 
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
-  ## ref: https://github.com/kubernetes/charts/tree/master/stable/kube-state-metrics
+  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics
   kubeStateMetricsEnabled: true
 
   kubeStateMetricsNetworkPolicy:

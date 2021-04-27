@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.3
+
+* Update the documentation with the new path of the `kube-state-metrics` chart
+
 ## 2.11.2
 
 * Update `agent.customAgentConfig` config example in the `values.yaml`: removes reference to APM configuration.
