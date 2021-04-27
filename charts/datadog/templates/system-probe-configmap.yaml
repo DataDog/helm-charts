@@ -117,9 +117,7 @@ data:
             "getegid",
             "geteuid",
             "getgid",
-            "getgroups",
             "getpeername",
-            "getpgrp",
             "getpid",
             "getppid",
             "getpriority",
@@ -198,7 +196,6 @@ data:
             "setgroups",
             "setgroups32",
             "setns",
-            "setpgid",
             "setrlimit",
             "setsid",
             "setsidaccept4",
@@ -221,7 +218,11 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            # The following system calls are only necessary for kubectl exec
+            "getgroups",
+            "getpgrp",
+            "setpgid"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
