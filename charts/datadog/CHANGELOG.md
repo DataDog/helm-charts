@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.6
+
+* Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
+
 ## 2.11.5
 
 * Remove comment in the `seccomp` json profile, which is break the json parsing.
