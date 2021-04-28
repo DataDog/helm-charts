@@ -219,7 +219,6 @@ data:
             "waitid",
             "waitpid",
             "write",
-            # The following system calls are only necessary for kubectl exec
             "getgroups",
             "getpgrp",
             "setpgid"

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.11.5
+
+* Remove comment in the `seccomp` json profile, which is break the json parsing.
+
 ## 2.11.4
 
 * Add missing system calls to system-probe `seccomp` profile.
