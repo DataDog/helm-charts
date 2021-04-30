@@ -23,7 +23,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 0.5.0
+  tag: 0.6.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -43,6 +43,9 @@ secretBackend:
   command: ""
   # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
   arguments: ""
+datadogMonitor:
+  # datadogMonitor.enabled -- Enables the Datadog Monitor controller
+  enabled: false
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
@@ -80,6 +83,8 @@ datadog-crds:
     datadogAgents: true
     # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
+    # datadog-crds.crds.datadogMonitor -- Set to true to deploy the DatadogMonitors CRD
+    datadogMonitor: true
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

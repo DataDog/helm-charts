@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+* Update chart for Operator release `v0.6.0`
+* Support Datadog Monitors controller
+
 ## 0.5.4
 
 * Add apiKey, apiKeyExistingSecret, appKey, and appKeyExistingSecret values to values.yaml and set their respective env vars using a Kubernetes secret
