@@ -83,8 +83,8 @@ datadog-crds:
     datadogAgents: true
     # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
-    # datadog-crds.crds.datadogMonitor -- Set to true to deploy the DatadogMonitors CRD
-    datadogMonitor: true
+    # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+    datadogMonitors: true
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

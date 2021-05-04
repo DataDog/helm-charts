@@ -17,7 +17,7 @@ maintainers:
   email: support@datadoghq.com
 dependencies:
 - name: datadog-crds
-  version: "=0.2.0" # TODO: update this to include DatadogMonitor
+  version: "=0.3.0"
   repository: https://helm.datadoghq.com
   condition: installCRDs
   tags:
