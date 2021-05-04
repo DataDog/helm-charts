@@ -3,7 +3,6 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
   name: {{ template "datadog.fullname" . }}
-  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
