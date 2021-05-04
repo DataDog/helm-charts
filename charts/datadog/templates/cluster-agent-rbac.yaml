@@ -314,6 +314,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
 {{- end }}
 
 {{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
@@ -351,6 +352,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: "{{ template "datadog.fullname" . }}-cluster-agent"
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

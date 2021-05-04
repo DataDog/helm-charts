@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
@@ -25,6 +26,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent-metrics-api
+  namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
@@ -51,6 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
+  namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
@@ -75,6 +78,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.datadog.serviceTopology.serviceName | quote }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
