@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.1
+
+* Fix missing namespaces in chart templates
+
 ## 2.12.0
 
 * Update the Cluster Agent version to `1.12.0`
