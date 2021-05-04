@@ -2,7 +2,7 @@
 
 ## 0.3.0
 
-* Update all the CRDs from operator v0.56.0 tag.
+* Update all the CRDs from operator v0.6.0 tag.
 
 ## 0.2.0
 
