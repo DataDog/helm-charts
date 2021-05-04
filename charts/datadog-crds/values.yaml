@@ -7,6 +7,8 @@ crds:
   datadogMetrics: false
   # crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
   datadogAgents: false
+  # crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+  datadogMonitors: false
 
 # nameOverride -- Override name of app
 nameOverride: ""
