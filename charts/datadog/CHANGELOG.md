@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.1
+
+* Add more kube-state-metrics core check documentation
+
 ## 2.12.0
 
 * Update the Cluster Agent version to `1.12.0`
