@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.2
+
+* Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.
+
 ## 2.12.1
 
 * Add more kube-state-metrics core check documentation
