@@ -3,6 +3,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
