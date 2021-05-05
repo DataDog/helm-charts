@@ -1,0 +1,21 @@
+{{- if .Values.datadogMonitor.enabled }}
+    {{- if (and ( not .Values.apiKeyExistingSecret) (not .Values.apiKey)) }}
+##############################################################################
+####               ERROR: You did not set a apiKey value.                 ####
+##############################################################################
+
+This deployment will be incomplete until you get your API key from Datadog.
+One can sign up for a free Datadog trial at https://app.datadoghq.com/signup
+
+Once registered you can request an API key at https://app.datadoghq.com/account/settings#agent/kubernetes
+    {{- end }}
+
+    {{- if (and ( not .Values.appKeyExistingSecret) (not .Values.appKey)) }}
+##############################################################################
+####               ERROR: You did not set a appKey value.                 ####
+##############################################################################
+
+This deployment will be incomplete until you get your APP key from Datadog.
+Create an application key at https://app.datadoghq.com/account/settings#api
+    {{- end }}
+{{- end }}
