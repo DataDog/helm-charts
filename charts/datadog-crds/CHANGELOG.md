@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+* Fix typo in DatadogMetrics CRD
+
 ## 0.3.0
 
 * Update all the CRDs from operator v0.6.0 tag.
