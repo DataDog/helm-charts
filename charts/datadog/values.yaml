@@ -77,6 +77,13 @@ datadog:
     # datadog.kubeStateMetricsNetworkPolicy.create -- If true, create a NetworkPolicy for kube state metrics
     create: false
 
+  kubeStateMetricsCore:
+    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+    enabled: false
+
+    # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of lagacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
+    ignoreLegacyKSMCheck: true
+
   ## Manage Cluster checks feature
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   ## Autodiscovery via Kube Service annotations is automatically enabled
@@ -425,7 +432,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.11.0
+    tag: 1.12.0
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:

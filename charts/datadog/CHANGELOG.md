@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.12.0
+
+* Update the Cluster Agent version to `1.12.0`
+* Support kube-state-metrics core check
+
 ## 2.11.6
 
 * Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
