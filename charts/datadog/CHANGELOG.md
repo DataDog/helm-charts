@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.11.6
+
+* Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
+Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
+
 ## 2.11.5
 
 * Remove comment in the `seccomp` json profile, which is break the json parsing.

@@ -84,6 +84,26 @@
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
+{{- if eq (include "agent-has-env-ad" .) "true" }}
+{{- if .Values.datadog.dockerSocketPath }}
+- name: DOCKER_HOST
+{{- if eq .Values.targetSystem "linux" }}
+  value:  unix://{{ print "/host/" .Values.datadog.dockerSocketPath | clean }}
+{{- end }}
+{{- if eq .Values.targetSystem "windows" }}
+  value: npipe://{{ .Values.datadog.dockerSocketPath | replace "\\" "/" }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.criSocketPath }}
+- name: DD_CRI_SOCKET_PATH
+{{- if eq .Values.targetSystem "linux" }}
+  value: {{ print "/host/" .Values.datadog.criSocketPath | clean }}
+{{- end }}
+{{- if eq .Values.targetSystem "windows" }}
+  value: {{ .Values.datadog.criSocketPath }}
+{{- end }}
+{{- end }}
+{{- else }} # No support for env AD
 {{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
   value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
@@ -94,6 +114,7 @@
 {{- end }}
 {{- if eq .Values.targetSystem "windows" }}
   value: npipe://{{ (include "datadog.dockerOrCriSocketPath" .) | replace "\\" "/" }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ include "provider-env" . }}
