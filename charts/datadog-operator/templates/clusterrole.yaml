@@ -11,6 +11,29 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - ""
+  resources:
+  - nodes/metrics
+  - nodes/proxy
+  - nodes/spec
+  - nodes/stats
+  verbs:
+  - get
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - security.openshift.io
   resourceNames:
   - restricted
@@ -165,17 +188,29 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  - selfsubjectaccessreviews
+  - selfsubjectrulesreviews
+  verbs:
+  - create
+- apiGroups:
   - batch
   resources:
   - cronjobs
   verbs:
   - get
+  - list
+  - watch
 - apiGroups:
   - batch
   resources:
   - jobs
   verbs:
   - get
+  - list
+  - watch
 - apiGroups:
   - datadoghq.com
   resources:
@@ -289,4 +324,23 @@ rules:
   - roles
   verbs:
   - '*'
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics
+  - datadogmonitors
+  verbs:
+  - list
+  - get
+  - watch
+  - create
+  - delete
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics/status
+  - datadogmonitors/status
+  verbs:
+  - update
 {{- end -}}
