@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.3
+
+* Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.
+
 ## 2.12.2
 
 * The Datadog Cluster Agent's Admission Controller now uses a `Role` to watch secrets instead of a `ClusterRole`. (Requires Datadog Cluster Agent v1.12+)

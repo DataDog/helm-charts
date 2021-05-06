@@ -421,6 +421,12 @@ datadog:
       #   - send_distribution_buckets: true
       #     timeout: 5
 
+  # datadog.ignoreAutoConfig -- List of integration to ignore auto_conf.yaml.
+  ## ref: https://docs.datadoghq.com/agent/faq/auto_conf/
+  ignoreAutoConfig: []
+  #  - redisdb
+  #  - kubernetes_state
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
