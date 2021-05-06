@@ -64,3 +64,6 @@ affinity: {}
 
 # configFile -- JSON string containing the configuration of the private location worker
 configFile: "{}"
+
+# configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
+configConfigMap: ""

@@ -1,11 +1,17 @@
+{{- if ne .Values.configFile "{}" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
+{{- if .Values.configConfigMap }}
+  name: {{ .Values.configConfigMap | quote }}
+{{- else }}
   name: {{ include "synthetics-private-location.fullname" . }}-config
+{{- end }}
   labels:
     {{- include "synthetics-private-location.labels" . | nindent 4 }}
 data:
   synthetics-check-runner.json: |-
 {{ .Values.configFile | indent 4 }}
-
 ---
+{{- end }}
+
