@@ -422,6 +422,7 @@ datadog:
       #     timeout: 5
 
   # datadog.ignoreAutoConfig -- List of integration to ignore auto_conf.yaml.
+  ## ref: https://docs.datadoghq.com/agent/faq/auto_conf/
   ignoreAutoConfig: []
   #  - redisdb
   #  - kubernetes_state
