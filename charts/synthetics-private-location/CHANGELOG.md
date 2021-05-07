@@ -3,6 +3,7 @@
 ### 0.3.0
 
 * Added `configConfigMap` to support passing the json config using a Config Map.
+* Update the Synthetics Private Location version to `1.10.0`
 
 ### 0.2.0
 
