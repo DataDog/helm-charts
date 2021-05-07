@@ -1,0 +1,8 @@
+{{- if and ( ne .Values.configFile "{}" ) .Values.configConfigMap }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configConfigMap and configFile. The config map provided by configConfigMap takes precedence over configFile, so configFile was ignored.
+{{- end }}
