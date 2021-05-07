@@ -79,9 +79,12 @@ datadog:
 
   kubeStateMetricsCore:
     # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+    ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
     enabled: false
 
-    # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of lagacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
+    # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
+    ## Disabling this field is not recommended as it results in enabling both checks, it can be useful though during the migration phase.
+    ## Migration guide: https://docs.datadoghq.com/integrations/kubernetes_state_core/?tab=helm#migration-from-kubernetes_state-to-kubernetes_state_core
     ignoreLegacyKSMCheck: true
 
   ## Manage Cluster checks feature
@@ -417,6 +420,12 @@ datadog:
       #   configurations:
       #   - send_distribution_buckets: true
       #     timeout: 5
+
+  # datadog.ignoreAutoConfig -- List of integration to ignore auto_conf.yaml.
+  ## ref: https://docs.datadoghq.com/agent/faq/auto_conf/
+  ignoreAutoConfig: []
+  #  - redisdb
+  #  - kubernetes_state
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
