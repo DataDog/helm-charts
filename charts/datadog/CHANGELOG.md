@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.4
+
+* Fix missing namespaces in chart templates
+
 ## 2.12.3
 
 * Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.

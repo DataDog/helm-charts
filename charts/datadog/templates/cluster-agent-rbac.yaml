@@ -311,8 +311,9 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
----
+  namespace: {{ .Release.Namespace }}
 {{- if .Values.clusterAgent.admissionController.enabled }}
+---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: Role
 metadata:
@@ -323,6 +324,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -338,6 +340,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: "{{ template "datadog.fullname" . }}-cluster-agent"
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -384,6 +387,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: "{{ template "datadog.fullname" . }}-cluster-agent-apiserver"
+  namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
