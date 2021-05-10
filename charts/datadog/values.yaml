@@ -214,7 +214,16 @@ datadog:
 
   ## Enable apm agent and provide custom configs
   apm:
+    # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
+    ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
+    socketEnabled: true
+
+    # datadog.apm.portEnabled -- Enable APM over TCP communication (port 8216 by default
+    ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
+    portEnabled: false
+
     # datadog.apm.enabled -- Enable this to enable APM and tracing, on port 8126
+    # DEPRECATED. Use datadog.apm.portEnabled instead
     ## ref: https://github.com/DataDog/docker-dd-agent#tracing-from-the-host
     enabled: false
 
@@ -223,6 +232,7 @@ datadog:
     port: 8126
 
     # datadog.apm.useSocketVolume -- Enable APM over Unix Domain Socket
+    # DEPRECATED. Use datadog.apm.socketEnabled instead
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     useSocketVolume: false
 

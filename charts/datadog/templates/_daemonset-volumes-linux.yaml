@@ -24,7 +24,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if .Values.datadog.apm.useSocketVolume }}
+{{- if or .Values.datadog.apm.useSocketVolume .Values.datadog.apm.socketEnabled }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate

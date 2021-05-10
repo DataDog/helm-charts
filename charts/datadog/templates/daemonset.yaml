@@ -101,7 +101,7 @@ spec:
       {{- end }}
       containers:
         {{- include "container-agent" . | nindent 6 }}
-        {{- if .Values.datadog.apm.enabled }}
+        {{- if eq (include "should-enable-trace-agent" .) "true" }}
           {{- include "container-trace-agent" . | nindent 6 }}
         {{- end }}
         {{- if .Values.datadog.processAgent.enabled }}

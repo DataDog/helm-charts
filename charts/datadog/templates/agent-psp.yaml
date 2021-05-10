@@ -15,7 +15,7 @@ metadata:
 spec:
   privileged: {{ .Values.agents.podSecurity.privileged }}
   hostNetwork: {{ .Values.agents.useHostNetwork }}
-  {{- if or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled }}
+  {{- if or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
   hostPorts:
   - min: 8125
     max: 8126

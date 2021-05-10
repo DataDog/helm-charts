@@ -354,6 +354,17 @@ false
 
 
 {{/*
+Return true if a trace-agent needs to be deployed.
+*/}}
+{{- define "should-enable-trace-agent" -}}
+{{- if or .Values.datadog.apm.enabled .Values.datadog.apm.socketEnabled .Values.datadog.apm.portEnabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}

@@ -110,7 +110,7 @@ Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different 
     {{- end }}
   {{- end }}
 {{- end }}
-{{- if .Values.datadog.apm.enabled }}
+{{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
   {{- $apmPort := .Values.datadog.apm.port }}
   {{- with $liveness := .Values.agents.containers.traceAgent.livenessProbe.tcpSocket }}
   {{- if and $liveness.port (ne $apmPort $liveness.port) }}
@@ -124,6 +124,27 @@ Trace Agent liveness probe port ({{ $liveness.port }}) is different from the con
   {{- end }}
 
 The Datadog Agent is listening on port {{ $apmPort }} for APM service.
+{{- end }}
+
+{{- if .Values.datadog.apm.enabled }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.apm.enabled` is deprecated, please use `datadog.apm.portEnabled` to enable TCP communication to the trace-agent.
+Or `datadog.apm.socketEnabled` to enable unix or name-pipe communication.
+
+{{- end }}
+
+{{- if .Values.datadog.apm.useSocketVolume }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.apm.useSocketVolume` is deprecated, please use `datadog.apm.socketEnabled` instead.
+
 {{- end }}
 
 {{- if .Values.datadog.autoconf }}

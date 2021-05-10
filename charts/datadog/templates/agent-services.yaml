@@ -81,7 +81,7 @@ spec:
       port: {{ .Values.datadog.dogstatsd.port }}
       targetPort: {{ .Values.datadog.dogstatsd.port }}
       name: dogstatsd
-{{- if .Values.datadog.apm.enabled }}
+{{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}
       targetPort: {{ .Values.datadog.apm.port }}

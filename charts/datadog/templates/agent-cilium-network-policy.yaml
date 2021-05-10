@@ -124,7 +124,7 @@ specs:
               - port: "{{ $.Values.datadog.dogstatsd.port }}"
                 protocol: UDP
 {{- end }}
-{{- if $.Values.datadog.apm.enabled }}
+{{- if or $.Values.datadog.apm.enabled $.Values.datadog.apm.portEnabled }}
   - description: "Ingress for APM trace"
     endpointSelector:
       matchLabels:

@@ -9,7 +9,7 @@ users:
 - system:serviceaccount:{{ .Release.Namespace }}:{{ template "datadog.fullname" . }}
 priority: 10
 # Allow host ports for dsd / trace intake
-allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled .Values.agents.useHostNetwork }}
+allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled .Values.agents.useHostNetwork }}
 # Allow host PID for dogstatsd origin detection
 allowHostPID: {{ or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
 # Allow host network for the CRIO check to reach Prometheus through localhost

@@ -142,6 +142,28 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
 
+### Enabling APM and Trace
+
+APM is enabled by default thrue socket communication; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
+
+Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication thanks to a `hostPort`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    portEnabled: true
+```
+
+To disable the socket communication, update you [datadog-values.yaml](values.yaml) file with the following configration:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    socketEnabled: true
+```
+
 ### Enabling Log Collection
 
 Update your [datadog-values.yaml](values.yaml) file with the following log collection configuration:
