@@ -6,6 +6,6 @@ dependencies:
     tags:
     - install-crds
   - name: kube-state-metrics
-    version: "=2.13.0"
+    version: "=2.13.2"
     repository: https://kubernetes.github.io/kube-state-metrics
     condition: datadog.kubeStateMetricsEnabled

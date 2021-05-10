@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.13.0
+
+* Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
+
 ## 2.12.4
 
 * Fix missing namespaces in chart templates
