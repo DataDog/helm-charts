@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.12.4
+
+* Add RBAC rules for the Cluster Agent in order to collect daemonsets in the Orchestrator Explorer.
+
 ## 2.12.3
 
 * Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.
