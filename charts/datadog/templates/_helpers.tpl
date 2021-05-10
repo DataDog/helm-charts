@@ -19,6 +19,25 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "agent-has-env-ad" -}}
+{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "6") -}}
+{{- $version = "6.27.0" -}}
+{{- end -}}
+{{- if and (eq $length 1) (eq $version "7") -}}
+{{- $version = "7.27.0" -}}
+{{- end -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.27.0" -}}
+{{- end -}}
+{{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "check-cluster-name" }}
 {{- $length := len .Values.datadog.clusterName -}}
 {{- if (gt $length 80)}}
@@ -381,4 +400,15 @@ Return Kubelet volumeMount
   mountPath: {{ dir (include "datadog.kubelet.mountPath" .) }}
   {{- end }}
   readOnly: true
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent needs a confd configmap
+*/}}
+{{- define "need-cluster-agent-confd" -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
 {{- end -}}

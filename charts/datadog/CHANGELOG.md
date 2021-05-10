@@ -1,8 +1,34 @@
 # Datadog changelog
 
-## 2.11.6
+## 2.13.0
 
 * Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
+
+## 2.12.4
+
+* Fix missing namespaces in chart templates
+
+## 2.12.3
+
+* Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.
+
+## 2.12.2
+
+* The Datadog Cluster Agent's Admission Controller now uses a `Role` to watch secrets instead of a `ClusterRole`. (Requires Datadog Cluster Agent v1.12+)
+
+## 2.12.1
+
+* Add more kube-state-metrics core check documentation
+
+## 2.12.0
+
+* Update the Cluster Agent version to `1.12.0`
+* Support kube-state-metrics core check (Requires Datadog Cluster Agent v1.12+)
+
+## 2.11.6
+
+* Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
+Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
 
 ## 2.11.5
 

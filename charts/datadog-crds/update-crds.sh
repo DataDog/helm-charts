@@ -39,3 +39,5 @@ download_crd "$TAG" datadogmetrics datadogMetrics v1beta1
 download_crd "$TAG" datadogmetrics datadogMetrics v1
 download_crd "$TAG" datadogagents datadogAgents v1beta1
 download_crd "$TAG" datadogagents datadogAgents v1
+download_crd "$TAG" datadogmonitors datadogMonitors v1beta1
+download_crd "$TAG" datadogmonitors datadogMonitors v1

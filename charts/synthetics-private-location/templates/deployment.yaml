@@ -61,4 +61,8 @@ spec:
       volumes:
       - name: worker-config
         configMap:
+        {{- if .Values.configConfigMap }}
+          name: {{ .Values.configConfigMap | quote }}
+        {{- else }}
           name: {{ include "synthetics-private-location.fullname" . }}-config
+        {{- end }}

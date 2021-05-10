@@ -1,3 +1,4 @@
+{{- if not .Values.configConfigMap }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,5 +8,6 @@ metadata:
 data:
   synthetics-check-runner.json: |-
 {{ .Values.configFile | indent 4 }}
-
 ---
+{{- end }}
+
