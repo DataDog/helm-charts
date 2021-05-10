@@ -93,8 +93,6 @@ The Leader Election is enabled by default in the chart for the Cluster Agent. On
 
 You can specify the Datadog Cluster Agent token used to secure the communication between the Cluster Agent(s) and the Agents with `clusterAgent.token`.
 
-**If you don't specify a token, a random one is generated at each deployment so you must use `--recreate-pods` to ensure all pod use the same token.** see[Datadog Chart notes](https://github.com/helm/charts/blob/57d3030941ad2ec2d6f97c86afdf36666658a884/datadog/datadog/templates/NOTES.txt#L49-L59) to learn more.
-
 ### Upgrading
 
 #### From 1.x to 2.x
