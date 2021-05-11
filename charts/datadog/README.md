@@ -133,7 +133,7 @@ As a best practice, a YAML file that specifies the values for the chart paramete
 3. Upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
@@ -153,7 +153,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Process Collection
@@ -171,7 +171,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling System Probe Collection
@@ -191,7 +191,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Kubernetes event collection
@@ -234,7 +234,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 For more details, please refer to [the documentation](https://docs.datadoghq.com/agent/kubernetes/integrations/).
@@ -263,7 +263,7 @@ podLabelsAsTags:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### CRI integration
