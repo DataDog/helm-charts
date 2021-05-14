@@ -11,6 +11,24 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 specs:
+  - description: "Egress ntp and port 51678"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "51678"
+      - toFQDNs:
+          - matchPattern: "*.datadog.pool.ntp.org"
+        toPorts:
+          - ports:
+              - port: "123"
   - description: "Egress to metadata server"
     endpointSelector:
       matchLabels:
@@ -50,12 +68,16 @@ specs:
         {{- end }}
     egress:
       - toFQDNs:
-          {{- if $.Values.datadog.dd_url}}
-          - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- if $.Values.datadog.site}}
+          - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "agent-intake.logs.{{ $.Values.datadog.site }}"
+          - matchName: "process.{{ $.Values.datadog.site }}"
+          - matchName: "orchestrator.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "agent-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
+          - matchName: "orchestrator.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:
@@ -90,7 +112,7 @@ specs:
           - {}
         toPorts:
           - ports:
-              - port: {{ $.Values.datadog.dogstatsd.port }}
+              - port: "{{ $.Values.datadog.dogstatsd.port }}"
                 protocol: UDP
 {{- end }}
 {{- if $.Values.datadog.apm.enabled }}
