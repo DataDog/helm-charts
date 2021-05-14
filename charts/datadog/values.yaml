@@ -140,7 +140,7 @@ datadog:
   dogstatsd:
     # datadog.dogstatsd.port -- Override the Agent DogStatsD port
     ## Note: Make sure your client is sending to the same UDP port.
-    port: "8125"
+    port: 8125
 
     # datadog.dogstatsd.originDetection -- Enable origin detection for container tagging
     ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
