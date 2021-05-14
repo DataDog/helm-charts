@@ -61,10 +61,10 @@ specs:
             {{- if .Values.clusterAgent.podLabels }}
             {{ toYaml .Values.clusterAgent.podLabels | indent 12 }}
             {{- end }}
-          toPorts:
-            - ports:
-                - port: "5005"
-                  protocol: TCP
+        toPorts:
+          - ports:
+              - port: "5005"
+                protocol: TCP
 # The cluster check runners are susceptible to connect to any service
 # that would be annotated with auto-discovery annotations.
 #
