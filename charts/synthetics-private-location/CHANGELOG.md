@@ -1,6 +1,7 @@
 # Datadog changelog
 
 ### 0.4.0
+
 * Add 'envFrom' and 'env' to support configuration via environment variables
 
 ### 0.3.0
