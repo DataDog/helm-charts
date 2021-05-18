@@ -18,6 +18,10 @@
 - name: DD_KUBELET_CLIENT_CA
   value: {{ include "datadog.kubelet.mountPath" . }}
 {{- end }}
+{{- if .Values.providers.gke.autopilot -}}
+- name: DD_KUBERNETES_HTTPS_KUBELET_PORT
+  value: "0"
+{{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME

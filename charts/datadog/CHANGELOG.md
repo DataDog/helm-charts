@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.13.1
+
+* Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
+
 ## 2.13.0
 
 * Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
