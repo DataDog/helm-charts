@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 specs:
-  - description: "Egress ntp and port 51678"
+- description: "Egress ECS agent port 51678"
     endpointSelector:
       matchLabels:
         app: {{ template "datadog.fullname" . }}
@@ -19,16 +19,26 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     egress:
-      - toEntities:
-          - world
+      - toCIDR:
+          - 169.254.0.0/16
         toPorts:
           - ports:
               - port: "51678"
+                protocol: TCP
+  - description: "Egress to ntp"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
       - toFQDNs:
           - matchPattern: "*.datadog.pool.ntp.org"
         toPorts:
           - ports:
               - port: "123"
+                protocol: UDP
   - description: "Egress to metadata server"
     endpointSelector:
       matchLabels:
@@ -68,6 +78,9 @@ specs:
         {{- end }}
     egress:
       - toFQDNs:
+          {{- if $.Values.datadog.dd_url}}
+          - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
           {{- if $.Values.datadog.site}}
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           - matchName: "agent-intake.logs.{{ $.Values.datadog.site }}"

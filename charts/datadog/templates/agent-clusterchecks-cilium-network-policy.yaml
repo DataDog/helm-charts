@@ -41,6 +41,9 @@ specs:
         app: {{ template "datadog.fullname" . }}-clusterchecks
     egress:
       - toFQDNs:
+          {{- if $.Values.datadog.dd_url}}
+          - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
           {{- if $.Values.datadog.site}}
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           {{- else}}
