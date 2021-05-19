@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.13.1
+
+* Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
+
 ## 2.13.0
 
 * Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
@@ -112,7 +116,7 @@ Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocket
 
 ## 2.10.1
 
-* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
+* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.25+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
 
 ## 2.10.0
 
