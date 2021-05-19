@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 specs:
-- description: "Egress ECS agent port 51678"
+  - description: "Egress ECS agent port 51678"
     endpointSelector:
       matchLabels:
         app: {{ template "datadog.fullname" . }}
