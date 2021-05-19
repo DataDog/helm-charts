@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.13.2
+
+* Fix Cilium network policys: wrong format toEndpoint entry in ingress rule.
+* Added sitename variable to cilium policys for toFQDN rules and added additional FQDNs.
+
 ## 2.13.1
 
 * Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
