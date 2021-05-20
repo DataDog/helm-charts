@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.14.0
+
+* Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
+
 ## 2.13.1
 
 * Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
