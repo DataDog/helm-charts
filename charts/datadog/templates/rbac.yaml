@@ -2,15 +2,15 @@
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
+  name: {{ template "datadog.fullname" . }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-  name: {{ template "datadog.fullname" . }}
 rules:
-{{- if not .Values.clusterAgent.enabled }}
+{{- if eq (include "should-deploy-cluster-agent" .) "false" }}
 - apiGroups:
   - ""
   resources:
@@ -19,6 +19,7 @@ rules:
   - endpoints
   - pods
   - nodes
+  - namespaces
   - componentstatuses
   verbs:
   - get
@@ -91,17 +92,31 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}
+- apiGroups:
+  - "security.openshift.io"
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}
+- apiGroups:  # leader election check
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - get
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
+  name: {{ template "datadog.fullname" . }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-  name: {{ template "datadog.fullname" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -114,11 +129,12 @@ subjects:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  name: {{ template "datadog.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-  name: {{ template "datadog.fullname" . }}
 {{- end -}}

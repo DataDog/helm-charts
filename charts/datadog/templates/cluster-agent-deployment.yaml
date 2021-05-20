@@ -1,14 +1,19 @@
-{{- if .Values.clusterAgent.enabled }}
+{{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- if .Values.clusterAgent.additionalLabels }}
+{{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
+    {{- end }}
+{{ include "provider-labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
   strategy:
@@ -33,8 +38,19 @@ spec:
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
+        {{- if .Values.clusterAgent.additionalLabels }}
+{{ toYaml .Values.clusterAgent.additionalLabels | indent 8 }}
+        {{- end }}
+{{ include "provider-labels" . | indent 8 }}
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if not .Values.datadog.appKeyExistingSecret }}
+        checksum/application_key: {{ include (print $.Template.BasePath "/secret-application-key.yaml") . | sha256sum }}
+        {{- end }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         checksum/clusteragent-config: {{ tpl (toYaml .Values.clusterAgent.datadog_cluster_yaml) . | sha256sum }}
@@ -76,9 +92,13 @@ spec:
       dnsConfig:
 {{ toYaml .Values.clusterAgent.dnsConfig | indent 8 }}
       {{- end }}
+      {{- if .Values.clusterAgent.securityContext }}
+      securityContext:
+        {{ toYaml .Values.clusterAgent.securityContext | nindent 8 }}
+      {{- end }}
       containers:
       - name: cluster-agent
-        image: "{{ .Values.clusterAgent.image.repository }}:{{ .Values.clusterAgent.image.tag }}"
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
         {{- with .Values.clusterAgent.command }}
         command: {{ range . }}
           - {{ . | quote }}
@@ -96,9 +116,14 @@ spec:
           name: metricsapi
           protocol: TCP
         {{- end }}
+{{- if .Values.datadog.envFrom }}
+        envFrom:
+{{ toYaml .Values.datadog.envFrom | indent 10 }}
+{{- end }}
         env:
           - name: DD_HEALTH_PORT
-            value: {{ .Values.clusterAgent.healthPort | quote }}
+          {{- $healthPort := .Values.clusterAgent.healthPort }}
+            value: {{ $healthPort | quote }}
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
@@ -119,6 +144,12 @@ spec:
             value: {{ .Values.clusterAgent.metricsProvider.wpaController | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_USE_DATADOGMETRIC_CRD
             value: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics | quote }}
+          {{- if .Values.clusterAgent.metricsProvider.endpoint }}
+          - name: DD_EXTERNAL_METRICS_PROVIDER_ENDPOINT
+            value: {{ .Values.clusterAgent.metricsProvider.endpoint | quote }}
+          {{- end }}
+          - name: DD_EXTERNAL_METRICS_AGGREGATOR
+            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
@@ -137,9 +168,7 @@ spec:
             value: "kube_endpoints kube_services"
           {{- end }}
           {{- if .Values.datadog.clusterName }}
-          {{- if not (regexMatch "^([a-z]([a-z0-9\\-]{0,38}[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]{0,38}[a-z0-9])?)$" .Values.datadog.clusterName) }}
-          {{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by up to 39 lowercase letters, numbers, or hyphens and cannot end with a hyphen."}}
-          {{- end}}
+          {{- template "check-cluster-name" . }}
           - name: DD_CLUSTER_NAME
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
@@ -156,7 +185,7 @@ spec:
             value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
           - name: DD_LEADER_ELECTION
-            value: {{ default "true" .Values.datadog.leaderElection | quote}}
+            value: {{ .Values.datadog.leaderElection | quote}}
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
@@ -178,24 +207,42 @@ spec:
           - name: DD_KUBE_RESOURCES_NAMESPACE
             value: {{ .Release.Namespace }}
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-            value: {{ .Values.datadog.orchestratorExplorer.enabled | quote }}
-          {{- if  .Values.datadog.orchestratorExplorer.enabled }}
+            value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
+          {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          {{- if eq  (include "should-enable-security-agent" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
             value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
           {{- if .Values.datadog.securityAgent.compliance.enabled }}
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
           {{- end }}
+          {{- end }}
+          {{- if .Values.datadog.prometheusScrape.enabled }}
+          - name: DD_PROMETHEUS_SCRAPE_ENABLED
+            value: "true"
+          - name: DD_PROMETHEUS_SCRAPE_SERVICE_ENDPOINTS
+            value: {{ .Values.datadog.prometheusScrape.serviceEndpoints | quote }}
+          {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+          - name: DD_PROMETHEUS_SCRAPE_CHECKS
+            value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+          {{- end }}
+          {{- end }}
 {{- if .Values.clusterAgent.env }}
 {{ toYaml .Values.clusterAgent.env | indent 10 }}
 {{- end }}
         livenessProbe:
-{{ toYaml .Values.clusterAgent.livenessProbe | indent 10 }}
+{{- $live := .Values.clusterAgent.livenessProbe }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}
         readinessProbe:
-{{ toYaml .Values.clusterAgent.readinessProbe | indent 10 }}
+{{- $ready := .Values.clusterAgent.readinessProbe }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 10 }}
+{{- if .Values.clusterAgent.containers.clusterAgent.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: installinfo
             subPath: install_info
@@ -208,7 +255,7 @@ spec:
 {{- if .Values.clusterAgent.volumeMounts }}
 {{ toYaml .Values.clusterAgent.volumeMounts | indent 10 }}
 {{- end }}
-{{- if .Values.clusterAgent.confd }}
+{{- if eq (include "need-cluster-agent-confd" .) "true" }}
           - name: confd
             mountPath: /conf.d
             readOnly: true
@@ -219,16 +266,18 @@ spec:
             subPath: datadog-cluster.yaml
             readOnly: true
 {{- end}}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
           - name: complianceconfigdir
             mountPath: /etc/datadog-agent/compliance.d
             readOnly: true
 {{- end}}
+{{- end}}
       volumes:
         - name: installinfo
           configMap:
             name: {{ template "datadog.fullname" . }}-installinfo
-{{- if .Values.clusterAgent.confd }}
+{{- if eq (include "need-cluster-agent-confd" .) "true" }}
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
@@ -238,10 +287,12 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-config
 {{- end}}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if  and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
         - name: complianceconfigdir
           configMap:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
+{{- end}}
 {{- end}}
 
 {{- if .Values.clusterAgent.volumes }}

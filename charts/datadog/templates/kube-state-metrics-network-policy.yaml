@@ -1,0 +1,33 @@
+{{- if and (or $.Values.datadog.networkPolicy.create $.Values.datadog.kubeStateMetricsNetworkPolicy.create) (eq $.Values.datadog.networkPolicy.flavor "kubernetes") -}}
+apiVersion: "networking.k8s.io/v1"
+kind: NetworkPolicy
+metadata:
+  name: {{ template "datadog.fullname" . }}-kube-state-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - # Egress to Kube API server
+      ports:
+        - port: 443
+        - port: 6443
+  ingress:
+    - # Ingress from the node agents and the cluster check runners
+      ports:
+        - port: 8080
+      from:
+          - podSelector:
+              matchExpressions:
+                - {key: app, operator: In, values: [ {{ template "datadog.fullname" . }}, {{ template "datadog.fullname" . }}-clusterchecks ]}
+{{- end }}
