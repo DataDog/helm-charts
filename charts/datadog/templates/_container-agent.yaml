@@ -164,7 +164,7 @@
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    - name: logcontainerspath
+    - name: logsymlinkspath
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
