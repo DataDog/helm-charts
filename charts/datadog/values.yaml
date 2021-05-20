@@ -244,7 +244,8 @@ datadog:
   #     value: <ENV_VAR_VALUE>
 
   # datadog.confd -- Provide additional check configurations (static and Autodiscovery)
-  ## Each key becomes a file in /conf.d
+  ## Each top level key becomes a directory in /conf.d with subkeys becoming files.
+  ## Allows ability to overwrite existing conf.d files that are part of the image.
   ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#optional-volumes
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}

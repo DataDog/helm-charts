@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.13.2
+
+* Add functionality to overwrite existing autoconf and confd settings which are packaged in the image.
+See datadog.confd section in values.yaml for example.
+
 ## 2.13.1
 
 * Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.

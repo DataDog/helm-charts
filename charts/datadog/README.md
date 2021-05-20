@@ -204,33 +204,43 @@ Alternatively set the `datadog.leaderElection`, `datadog.collectEvents` and `rba
 
 ### conf.d and checks.d
 
-The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/master/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
+The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/master/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files(and directories containing files) with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
 
 The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your [datadog-values.yaml](values.yaml) file with the check configurations:
 
 ```yaml
 datadog:
   confd:
-    redisdb.yaml: |-
-      ad_identifiers:
-        - redis
-        - bitnami/redis
-      init_config:
-      instances:
-        - host: "%%host%%"
-          port: "%%port%%"
-    jmx.yaml: |-
-      ad_identifiers:
-        - openjdk
-      instance_config:
-      instances:
-        - host: "%%host%%"
-          port: "%%port_0%%"
-    redisdb.yaml: |-
-      init_config:
-      instances:
-        - host: "outside-k8s.example.com"
-          port: 6379
+    redisdb.d:
+      conf.yaml: !-
+        ad_identifiers:
+          - redis
+          - bitnami/redis
+        init_config:
+        instances:
+          - host: "%%host%%"
+            port: "%%port%%"
+      external.yaml: |-
+        init_config:
+        instances:
+          - host: "outside-k8s.example.com"
+            port: 6379
+    kube_apiserver_metrics.d:
+      auto_conf.yaml: --- # null existing auto_conf file
+      conf.yaml: |-
+        ad_identifiers:
+          - kube-state-metrics
+        init_config:
+        instances:
+          - kube_state_url: http://%%host%%:8080/metrics
+    jmx.d:
+      conf.yaml: |-
+        ad_identifiers:
+          - openjdk
+        instance_config:
+        instances:
+          - host: "%%host%%"
+            port: "%%port_0%%"
 ```
 
 then upgrade your Datadog Helm chart:

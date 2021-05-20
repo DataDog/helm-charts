@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "datadog.fullname" $ }}-confd-{{ regexReplaceAll "[^-a-z0-9]+" $key "-" }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     app.kubernetes.io/name: "{{ template "datadog.fullname" $ }}"
