@@ -1,0 +1,15 @@
+{{- if .Values.rbac.create -}}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "datadog-operator.fullname" . }}
+roleRef:
+  kind: Role
+  name: {{ include "datadog-operator.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end -}}

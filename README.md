@@ -1,5 +1,7 @@
 # Datadog Helm Charts
 
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/datadog)](https://artifacthub.io/packages/search?repo=datadog) 
+
 Official Helm charts for Datadog products. Currently supported:
 - [Datadog Agents](charts/datadog/README.md) (datadog/datadog)
 

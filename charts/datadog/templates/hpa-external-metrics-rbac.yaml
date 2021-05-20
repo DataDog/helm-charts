@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.enabled .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.createReaderRbac -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.createReaderRbac -}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- if contains "-gke." .Capabilities.KubeVersion.GitVersion }}
+{{- if eq (include "is-gke-without-external-metrics" .) "true" }}
   name: external-metrics-reader
 {{- else }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-external-metrics-reader
@@ -32,7 +32,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- if contains "-gke." .Capabilities.KubeVersion.GitVersion }}
+{{- if eq (include "is-gke-without-external-metrics" .) "true" }}
   name: external-metrics-reader
 {{- else }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-external-metrics-reader
@@ -40,7 +40,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-{{- if contains "-gke." .Capabilities.KubeVersion.GitVersion }}
+{{- if eq (include "is-gke-without-external-metrics" .) "true" }}
   name: external-metrics-reader
 {{- else }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-external-metrics-reader

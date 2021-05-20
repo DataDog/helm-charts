@@ -13,9 +13,9 @@ users:
 - system:serviceaccount:{{ .Release.Namespace }}:{{ template "datadog.fullname" . }}
 priority: 10
 # Allow host ports for dsd / trace intake
-allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled }}
+allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled .Values.agents.useHostNetwork }}
 # Allow host PID for dogstatsd origin detection
-allowHostPID: {{ .Values.datadog.dogstatsd.useHostPID }}
+allowHostPID: {{ or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.dogstatsd.useHostPID }}
 # Allow host network for the CRIO check to reach Prometheus through localhost
 allowHostNetwork: {{ .Values.agents.useHostNetwork }}
 # Allow hostPath for docker / process metrics
@@ -24,13 +24,17 @@ volumes:
 # Use the `spc_t` selinux type to access the
 # docker/cri socket + proc and cgroup stats
 seLinuxContext:
-  type: MustRunAs
+{{- if .Values.agents.podSecurity.securityContext }}
+    rule: MustRunAs
 {{ toYaml .Values.agents.podSecurity.securityContext | indent 2 }}
+{{- else if .Values.agents.podSecurity.seLinuxContext }}
+{{ toYaml .Values.agents.podSecurity.seLinuxContext | replace "rule:" "type:" | indent 2 }}
+{{- end }}
 # system-probe requires some specific seccomp and capabilities
 seccompProfiles:
 {{ toYaml .Values.agents.podSecurity.seccompProfiles | indent 2 }}
 allowedCapabilities:
-{{ toYaml .Values.agents.podSecurity.capabilites | indent 2 }}
+{{ toYaml .Values.agents.podSecurity.capabilities | indent 2 }}
 #
 # The rest is copied from restricted SCC
 #

@@ -1,0 +1,69 @@
+# Default values for synthetics-private-location.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of Datadog Synthetics Private Location
+replicaCount: 1
+
+image:
+  # image.repository -- Repository to use for Datadog Synthetics Private Location image
+  repository: gcr.io/datadoghq/synthetics-private-location-worker
+  # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
+  pullPolicy: IfNotPresent
+  # image.tag -- Define the Datadog Synthetics Private Location version to use
+  tag: 1.10.0
+
+# imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
+imagePullSecrets: []
+# nameOverride -- Override name of app
+nameOverride: ""
+# fullnameOverride -- Override the full qualified app name
+fullnameOverride: ""
+
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: true
+  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
+  name: ""
+
+# podAnnotations -- Annotations to set to Datadog Synthetics Private Location PODs
+podAnnotations: {}
+
+# podSecurityContext -- Security context to set to Datadog Synthetics Private Location PODs
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# securityContext -- Security context to set to the Datadog Synthetics Private Location container
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# resources -- Set resources requests/limits for Datadog Synthetics Private Location PODs
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# nodeSelector -- Allows to schedule Datadog Synthetics Private Location on specific nodes
+nodeSelector: {}
+# tolerations -- Allows to schedule Datadog Synthetics Private Location on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for Datadog Synthetics Private Location PODs
+affinity: {}
+
+# configFile -- JSON string containing the configuration of the private location worker
+configFile: "{}"
+
+# configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
+configConfigMap: ""
