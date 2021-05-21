@@ -354,6 +354,27 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
+
+{{/*
+Common template labels
+*/}}
+{{- define "datadog.template-labels" -}}
+app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "datadog.labels" -}}
+helm.sh/chart: '{{ include "datadog.chart" . }}'
+{{ include "datadog.template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+{{- end -}}
+
 {{/*
 Returns provider-specific labels if any
 */}}

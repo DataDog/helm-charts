@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.14.0
+
+* Improve resources labels with kubermetes/helm standard labels.
+
 ## 2.13.3
 
 * Add `datadog.checksCardinality` field to configure `DD_CHECKS_TAG_CARDINALITY`.
