@@ -46,6 +46,14 @@ spec:
             name: worker-config
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+{{- if .Values.envFrom }}
+          envFrom:
+{{ toYaml .Values.envFrom | indent 12 }}
+{{- end }}
+{{- if .Values.env  }}
+          env:
+{{ toYaml .Values.env | indent 12 }}
+{{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
