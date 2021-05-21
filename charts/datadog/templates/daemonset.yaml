@@ -7,11 +7,8 @@ metadata:
   name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+    app.kubernetes.io/component: agent
     {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
@@ -26,6 +23,8 @@ spec:
   template:
     metadata:
       labels:
+{{ include "datadog.template-labels" . | indent 8 }}
+        app.kubernetes.io/component: agent
         app: {{ template "datadog.fullname" . }}
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
