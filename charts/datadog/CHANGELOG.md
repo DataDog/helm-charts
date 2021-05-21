@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.13.2
+
+* Fix `YAML parse error on datadog/templates/daemonset.yaml` when autopilot is enabled.
+* Fix "README.md" generation.
+
 ## 2.13.1
 
 * Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
