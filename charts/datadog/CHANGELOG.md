@@ -3,6 +3,7 @@
 ## 2.13.3
 
 * Add `datadog.checksCardinality` field to configure `DD_CHECKS_TAG_CARDINALITY`.
+* Add a reminder to set the `datadog.site` field if needed.
 
 ## 2.13.2
 

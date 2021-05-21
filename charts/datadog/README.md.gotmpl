@@ -44,6 +44,15 @@ helm install --name <RELEASE_NAME> \
 By default, this Chart creates a Secret and puts an API key in that Secret.
 However, you can use manually created secret by setting the `datadog.apiKeyExistingSecret` value. After a few minutes, you should see hosts and metrics being reported in Datadog.
 
+**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
+
+```bash
+helm install --name <RELEASE_NAME> \
+    --set datadog.appKey=<DATADOG_APP_KEY> \
+    --set datadog.site=<DATADOG_SITE> \
+    datadog/datadog
+```
+
 #### Create and provide a secret that contains your Datadog API Key
 
 To create a secret that contains your Datadog API key, replace the <DATADOG_API_KEY> below with the API key for your organization. This secret is used in the manifest to deploy the Datadog Agent.
