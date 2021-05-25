@@ -117,6 +117,10 @@ datadog:
   #   - "<KEY_1>:<VALUE_1>"
   #   - "<KEY_2>:<VALUE_2>"
 
+  # datadog.checksCardinality -- Sets the tag cardinality for the checks run by the Agent.
+  ## https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
+  checksCardinality:  # low, orchestrator or high (not set by default to avoid overriding existing DD_CHECKS_TAG_CARDINALITY configurations, the default value in the Agent is low)
+
   # kubelet configuration
   kubelet:
     # datadog.kubelet.host -- Override kubelet IP
