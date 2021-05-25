@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations).
 
@@ -28,6 +28,8 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worked for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
+| env | list | `[]` | Set environment variables |
+| envFrom | list | `[]` | Set environment variables from configMaps and/or secrets |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |

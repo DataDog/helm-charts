@@ -4,11 +4,7 @@ apiVersion: security.openshift.io/v1
 metadata:
   name: {{ template "datadog.fullname" . }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 users:
 - system:serviceaccount:{{ .Release.Namespace }}:{{ template "datadog.fullname" . }}
 priority: 10

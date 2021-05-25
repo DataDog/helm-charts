@@ -4,11 +4,7 @@ kind: APIService
 metadata:
   name: v1beta1.external.metrics.k8s.io
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 spec:
   service:
     name: {{ template "datadog.fullname" . }}-cluster-agent-metrics-api
