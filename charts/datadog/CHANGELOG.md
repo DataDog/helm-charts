@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.14.1
+
+* Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
+* Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
+* Support template expansion for `agents.podAnnotations`
+
 ## 2.14.0
 
 * Improve resources labels with kubermetes/helm standard labels.

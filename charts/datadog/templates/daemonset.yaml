@@ -53,7 +53,7 @@ spec:
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
-{{ toYaml .Values.agents.podAnnotations | indent 8 }}
+{{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
     spec:
       {{- if .Values.datadog.securityContext }}
