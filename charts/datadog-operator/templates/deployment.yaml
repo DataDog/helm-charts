@@ -69,6 +69,10 @@ spec:
                   name: {{ template "datadog-operator.appKeySecretName" . }}
                   key: app-key
             {{- end }}
+            {{- if .Values.dataDogUrl }}
+            - name: DD_URL
+              value: {{ .Values.dataDogUrl }}
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"
