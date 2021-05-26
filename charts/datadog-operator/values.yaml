@@ -15,7 +15,8 @@ apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 # appKey -- Your Datadog APP key
 appKey:  # <DATADOG_APP_KEY>
 
-# dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
+# dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL  
+## Overrides the site setting defined in "site".
 dd_url: #<DATADOG_API_ENDPOINT>
 
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
