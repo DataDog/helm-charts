@@ -11,11 +11,11 @@
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
-| dataDogUrl | string | `nil` |  |
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
+| dd_url | string | `nil` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
