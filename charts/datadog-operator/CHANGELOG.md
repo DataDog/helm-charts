@@ -3,7 +3,7 @@
 ## 0.6.1
 
 * Update chart for operator release `v0.6.1`
-* Support for Datadog API endpoint can change to multiple regions, `dd_url`
+* Support for Datadog API endpoint can change to different region, `dd_url`
 
 ## 0.6.0
 
