@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.15.0
+
+* Bump Agent version to `7.28.0`.
+
 ## 2.14.0
 
 * Improve resources labels with kubermetes/helm standard labels.
