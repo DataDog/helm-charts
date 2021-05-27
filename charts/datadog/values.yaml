@@ -716,7 +716,6 @@ agents:
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
 
-
   ## Provide Daemonset PodSecurityPolicy configuration
   podSecurity:
     podSecurityPolicy:
