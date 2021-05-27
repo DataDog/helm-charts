@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 2.14.1
+## 2.15.1
 
 * Fix Cilium network policys.
+
+## 2.15.0
+
+* Bump Agent version to `7.28.0`.
 
 ## 2.14.0
 
