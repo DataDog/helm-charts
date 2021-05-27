@@ -19,7 +19,6 @@ appKey:  # <DATADOG_APP_KEY>
 ## Overrides the site setting defined in "site".
 dd_url:  # <DATADOG_API_ENDPOINT>
 
-
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
 ## If set, this parameter takes precedence over "appKey".
 appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
