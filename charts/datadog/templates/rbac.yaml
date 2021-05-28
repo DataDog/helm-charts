@@ -123,6 +123,9 @@ kind: ServiceAccount
 metadata:
   name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  {{- if .Values.agents.rbac.serviceAccountAnnotations }}
+  annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
+  {{- end }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 {{- end -}}

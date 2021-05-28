@@ -486,6 +486,9 @@ clusterAgent:
     # clusterAgent.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
 
+    # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
+    serviceAccountAnnotations: {}
+
   ## Provide Cluster Agent pod security configuration
   podSecurity:
     podSecurityPolicy:
@@ -709,6 +712,9 @@ agents:
 
     # agents.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
+
+    # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
+    serviceAccountAnnotations: {}
 
   ## Provide Daemonset PodSecurityPolicy configuration
   podSecurity:

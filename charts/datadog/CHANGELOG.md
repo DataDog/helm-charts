@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.15.1
+* Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
+* Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
+* Support template expansion for `agents.podAnnotations`
+
 ## 2.15.0
 
 * Bump Agent version to `7.28.0`.
