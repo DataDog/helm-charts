@@ -255,3 +255,27 @@ helm install ksm https://charts.helm.sh/stable/packages/kube-state-metrics-2.9.1
 You are using datadog.kubeStateMetricsCore.enabled but you disabled the cluster agent. This configuration is unsupported and the kube-state-metrics core check can't be configured.
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
+
+{{- $hasContainerInclude := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
+    {{- $hasContainerInclude = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerExclude := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_EXCLUDE" }}
+    {{- $hasContainerExclude = true }}
+  {{- end }}
+{{- end }}
+
+{{- if and $hasContainerInclude (not $hasContainerExclude) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.containerInclude but you haven't exlude any container. The default behavior is to include everything, if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+
+{{- end }}
