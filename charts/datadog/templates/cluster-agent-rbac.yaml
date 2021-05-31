@@ -205,6 +205,7 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}-cluster-agent
+  - hostnetwork
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
 - apiGroups:
   - ""
