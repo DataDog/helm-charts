@@ -2,7 +2,7 @@
 
 ### 0.5.0
 
-* Update image version to `1.11.0`.
+* Update private location image version to `1.11.0`.
 
 ### 0.4.0
 
