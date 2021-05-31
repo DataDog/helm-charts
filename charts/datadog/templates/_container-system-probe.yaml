@@ -57,10 +57,16 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if .Values.datadog.securityAgent.runtime.enabled }}
+    - name: os-release
+      mountPath: /host/etc/os-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
       readOnly: true
+{{- end }}
 {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}

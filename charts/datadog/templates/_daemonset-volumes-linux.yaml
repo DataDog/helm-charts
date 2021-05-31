@@ -82,10 +82,15 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if .Values.datadog.securityAgent.runtime.enabled }}
+- hostPath:
+    path: /etc/os-release
+  name: os-release
+{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
