@@ -2,7 +2,7 @@
 
 ## 2.15.3
 
-* Fix Cilium network policys.
+* Fix Cilium network policies.
 
 ## 2.15.2
 
