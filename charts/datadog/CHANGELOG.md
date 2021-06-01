@@ -1,9 +1,15 @@
 # Datadog changelog
 
-## 2.15.2
+## 2.15.3
+
 * Fix Cilium network policys.
 
+## 2.15.2
+
+* OpenShift: Automatically use built-in SCCs instead of failing if create SCC option is not used
+
 ## 2.15.1
+
 * Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
 * Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
 * Support template expansion for `agents.podAnnotations`

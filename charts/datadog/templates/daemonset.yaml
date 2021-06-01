@@ -73,6 +73,13 @@ spec:
 {{ toYaml .Values.agents.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
       {{- end }}
       {{- end }}
+      {{- else if eq  (include "is-openshift" .) "true"}}
+      securityContext:
+        seLinuxOptions:
+          user: "system_u"
+          role: "system_r"
+          type: "spc_t"
+          level: "s0"
       {{- end }}
       {{- if .Values.agents.useHostNetwork }}
       hostNetwork: {{ .Values.agents.useHostNetwork }}
