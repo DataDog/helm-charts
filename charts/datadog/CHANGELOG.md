@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.15.3
+
+* Fix Cilium network policies.
+
 ## 2.15.2
 
 * OpenShift: Automatically use built-in SCCs instead of failing if create SCC option is not used

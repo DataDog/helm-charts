@@ -39,6 +39,9 @@ specs:
       - toFQDNs:
           {{- if $.Values.datadog.dd_url}}
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
+          {{- if $.Values.datadog.site}}
+          - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           {{- end}}
@@ -57,10 +60,10 @@ specs:
             {{- if .Values.clusterAgent.podLabels }}
             {{ toYaml .Values.clusterAgent.podLabels | indent 12 }}
             {{- end }}
-          toPorts:
-            - ports:
-                - port: "5005"
-                  protocol: TCP
+        toPorts:
+          - ports:
+              - port: "5005"
+                protocol: TCP
 # The cluster check runners are susceptible to connect to any service
 # that would be annotated with auto-discovery annotations.
 #
