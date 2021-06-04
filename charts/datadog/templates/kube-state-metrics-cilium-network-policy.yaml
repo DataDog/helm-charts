@@ -33,21 +33,32 @@ specs:
       matchLabels:
         app.kubernetes.io/name: kube-state-metrics
     ingress:
-    -
       {{- if $.Values.agents.useHostNetwork }}
-      fromEntities:
-      - host
-      - remote-node
+      - fromEntities:
+        - host
+        - remote-node
       {{- else }}
-      fromEndpoints:
-        - matchLabels:
-            app: {{ template "datadog.fullname" . }}
-            {{- if .Values.agents.podLabels }}
-            {{ toYaml .Values.agents.podLabels | indent 10 }}
-            {{- end }}
-      {{- end }}
-      toPorts:
-      - ports:
-        - port: "8080"
-          protocol: TCP
+      - fromEndpoints:
+          - matchLabels:
+              app: {{ template "datadog.fullname" . }}
+              {{- if .Values.agents.podLabels }}
+              {{ toYaml .Values.agents.podLabels | indent 10 }}
+              {{- end }}
+        {{- end }}
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+  - description: Ingress from Datadog agent-clusterchecks
+    endpointSelector:
+      matchLabels:
+        app.kubernetes.io/name: kube-state-metrics
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              app:  {{ template "datadog.fullname" . }}-clusterchecks
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
 {{- end }}

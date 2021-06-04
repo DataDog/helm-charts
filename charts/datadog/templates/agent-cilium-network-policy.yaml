@@ -35,6 +35,12 @@ specs:
           - ports:
               - port: "123"
                 protocol: UDP
+      - toCIDR:
+          - 169.254.169.123/32
+        toPorts:
+          - ports:
+              - port: "123"
+                protocol: UDP
   - description: "Egress to metadata server"
     endpointSelector:
       matchLabels:
@@ -57,7 +63,8 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     egress:
-      - {{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector | nindent 8 }}
+      - toEndpoints:
+{{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector.toEndpoints | indent 10 }}
         toPorts:
           - ports:
               - port: "53"
@@ -107,6 +114,40 @@ specs:
         toPorts:
           - ports:
               - port: "10250"
+                protocol: TCP
+              - port: "9090"
+                protocol: "TCP"
+              - port: "6942"
+                protocol: "TCP"
+  - description: "Egress to cluster agent"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              app: {{ template "datadog.fullname" . }}-cluster-agent
+        toPorts:
+          - ports:
+              - port: "5005"
+                protocol: TCP
+  - description: "Egress to kube-state-metrics"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              name: kube-state-metrics
+        toPorts:
+          - ports:
+              - port: "8080"
                 protocol: TCP
 {{- if $.Values.datadog.dogstatsd.port }}
   - description: "Ingress for dogstatsd"

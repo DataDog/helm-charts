@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.15.6
+
+* More fixes for the cilium network policies and additional rules for metrics
+
 ## 2.15.5
 
 * Add RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.

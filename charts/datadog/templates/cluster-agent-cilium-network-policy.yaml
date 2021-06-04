@@ -29,7 +29,8 @@ specs:
         {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
     egress:
-      - {{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector | nindent 8 }}
+      - toEndpoints:
+{{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector.toEndpoints | indent 10 }}
         toPorts:
           - ports:
               - port: "53"
@@ -58,8 +59,8 @@ specs:
           {{- end}}
         toPorts:
           - ports:
-            - port: "443"
-              protocol: TCP
+              - port: "443"
+                protocol: TCP
   - description: "Egress to Kube API server"
     endpointSelector:
       matchLabels:
@@ -93,25 +94,24 @@ specs:
         {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
     ingress:
-    -
       {{- if $.Values.agents.useHostNetwork }}
-      fromEntities:
-      - host
-      - remote-node
+      - fromEntities:
+        - host
+        - remote-node
       {{- else }}
-      fromEndpoints:
-        - matchLabels:
-            app: {{ template "datadog.fullname" . }}
-            {{- if .Values.agents.podLabels }}
-            {{ toYaml .Values.agents.podLabels | indent 10 }}
-            {{- end }}
+      - fromEndpoints:
+          - matchLabels:
+              app: {{ template "datadog.fullname" . }}
+              {{- if .Values.agents.podLabels }}
+              {{ toYaml .Values.agents.podLabels | indent 10 }}
+              {{- end }}
       {{- end }}
-      toPorts:
-      - ports:
-        - port: "5000"
-          protocol: TCP
-        - port: "5005"
-          protocol: TCP
+        toPorts:
+          - ports:
+              - port: "5000"
+                protocol: TCP
+              - port: "5005"
+                protocol: TCP
 {{- end }}
 {{- if $.Values.clusterChecksRunner.enabled }}
   - description: "Ingress from cluster workers"
@@ -127,8 +127,8 @@ specs:
               app: {{ template "datadog.fullname" . }}-clusterchecks
         toPorts:
           - ports:
-            - port: "5005"
-              protocol: TCP
+              - port: "5005"
+                protocol: TCP
 {{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - description: "Ingress from API server for external metrics"

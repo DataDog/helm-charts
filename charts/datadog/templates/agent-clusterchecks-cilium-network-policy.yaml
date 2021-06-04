@@ -23,7 +23,8 @@ specs:
       matchLabels:
         app: {{ template "datadog.fullname" . }}-clusterchecks
     egress:
-      - {{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector | nindent 8 }}
+      - toEndpoints:
+{{ toYaml .Values.datadog.networkPolicy.cilium.dnsSelector.toEndpoints | indent 10 }}
         toPorts:
           - ports:
               - port: "53"
@@ -42,8 +43,10 @@ specs:
           {{- end}}
           {{- if $.Values.datadog.site}}
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "api.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
+          - matchName: "api.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:
@@ -63,6 +66,18 @@ specs:
         toPorts:
           - ports:
               - port: "5005"
+                protocol: TCP
+  - description: "Egress to kube-state-metrics"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}-clusterchecks
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              name: kube-state-metrics
+        toPorts:
+          - ports:
+              - port: "8080"
                 protocol: TCP
 # The cluster check runners are susceptible to connect to any service
 # that would be annotated with auto-discovery annotations.
