@@ -1,8 +1,11 @@
 # Datadog changelog
 
-## 2.15.6
+## 2.15.7
 
 * More fixes for the cilium network policies and additional rules for metrics
+## 2.15.6
+
+* Set `GODEBUG=x509ignoreCN=0` to revert Agent SSL certificates validation to behaviour to Golang <= 1.14. Notably it fixes issues with Kubelet certificates on AKS with Agent >= 7.28.
 
 ## 2.15.5
 
