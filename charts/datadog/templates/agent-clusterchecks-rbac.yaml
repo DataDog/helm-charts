@@ -3,11 +3,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-checks
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -22,16 +18,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
+{{ include "datadog.labels" . | indent 4 }}
     app: "{{ template "datadog.fullname" . }}"
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}-cluster-checks
+  namespace: {{ .Release.Namespace }}
   {{- if .Values.clusterChecksRunner.rbac.serviceAccountAnnotations }}
   annotations: {{ toYaml .Values.clusterChecksRunner.rbac.serviceAccountAnnotations | nindent 4 }}
   {{- end }}

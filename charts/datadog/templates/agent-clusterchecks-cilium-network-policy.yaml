@@ -3,12 +3,9 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
+  namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 specs:
   - description: "Egress to metadata server"
     endpointSelector:
@@ -42,6 +39,9 @@ specs:
       - toFQDNs:
           {{- if $.Values.datadog.dd_url}}
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
+          {{- if $.Values.datadog.site}}
+          - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           {{- end}}
@@ -60,10 +60,10 @@ specs:
             {{- if .Values.clusterAgent.podLabels }}
             {{ toYaml .Values.clusterAgent.podLabels | indent 12 }}
             {{- end }}
-          toPorts:
-            - ports:
-                - port: "5005"
-                  protocol: TCP
+        toPorts:
+          - ports:
+              - port: "5005"
+                protocol: TCP
 # The cluster check runners are susceptible to connect to any service
 # that would be annotated with auto-discovery annotations.
 #

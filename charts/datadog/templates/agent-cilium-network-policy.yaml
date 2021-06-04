@@ -3,13 +3,38 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: {{ template "datadog.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 specs:
+  - description: "Egress ECS agent port 51678"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toCIDR:
+          - 169.254.0.0/16
+        toPorts:
+          - ports:
+              - port: "51678"
+                protocol: TCP
+  - description: "Egress to ntp"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toFQDNs:
+          - matchPattern: "*.datadog.pool.ntp.org"
+        toPorts:
+          - ports:
+              - port: "123"
+                protocol: UDP
   - description: "Egress to metadata server"
     endpointSelector:
       matchLabels:
@@ -51,10 +76,17 @@ specs:
       - toFQDNs:
           {{- if $.Values.datadog.dd_url}}
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
+          {{- if $.Values.datadog.site}}
+          - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "agent-intake.logs.{{ $.Values.datadog.site }}"
+          - matchName: "process.{{ $.Values.datadog.site }}"
+          - matchName: "orchestrator.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "agent-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
+          - matchName: "orchestrator.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:
@@ -85,11 +117,12 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     ingress:
-      - toEndpoints:
-          - toPorts:
-              - ports:
-                  - port: {{ $.Values.datadog.dogstatsd.port }}
-                    protocol: UDP
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: "{{ $.Values.datadog.dogstatsd.port }}"
+                protocol: UDP
 {{- end }}
 {{- if $.Values.datadog.apm.enabled }}
   - description: "Ingress for APM trace"
@@ -100,11 +133,12 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     ingress:
-      - toEndpoints:
-          - toPorts:
-              - ports:
-                  - port: {{ $.Values.datadog.apm.port }}
-                    protocol: TCP
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: {{ $.Values.datadog.apm.port }}
+                protocol: TCP
 {{- end }}
 # The agents are susceptible to connect to any pod
 # that would be annotated with auto-discovery annotations.

@@ -3,12 +3,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "datadog.fullname" . }}-datadog-yaml
+  namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   annotations:
     {{- if .Values.agents.customAgentConfig }}
     checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}

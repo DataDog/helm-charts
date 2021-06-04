@@ -3,12 +3,9 @@ apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 specs:
   - description: "Egress to metadata server"
     endpointSelector:
@@ -51,8 +48,13 @@ specs:
       - toFQDNs:
           {{- if $.Values.datadog.dd_url}}
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
+          {{- end}}
+          {{- if $.Values.datadog.site}}
+          - matchPattern: "*-app.agent.{{  $.Values.datadog.site }}"
+          - matchName: "orchestrator.{{  $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
+          - matchName: "orchestrator.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:

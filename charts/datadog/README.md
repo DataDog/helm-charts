@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.12.4](https://img.shields.io/badge/Version-2.12.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.15.7](https://img.shields.io/badge/Version-2.15.7-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -29,7 +29,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | =0.1.1 |
-| https://kubernetes.github.io/kube-state-metrics | kube-state-metrics | =2.13.0 |
+| https://kubernetes.github.io/kube-state-metrics | kube-state-metrics | =2.13.2 |
 
 ## Quick start
 
@@ -48,6 +48,15 @@ helm install --name <RELEASE_NAME> \
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
 However, you can use manually created secret by setting the `datadog.apiKeyExistingSecret` value. After a few minutes, you should see hosts and metrics being reported in Datadog.
+
+**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
+
+```bash
+helm install --name <RELEASE_NAME> \
+    --set datadog.appKey=<DATADOG_APP_KEY> \
+    --set datadog.site=<DATADOG_SITE> \
+    datadog/datadog
+```
 
 #### Create and provide a secret that contains your Datadog API Key
 
@@ -93,8 +102,6 @@ The Leader Election is enabled by default in the chart for the Cluster Agent. On
 
 You can specify the Datadog Cluster Agent token used to secure the communication between the Cluster Agent(s) and the Agents with `clusterAgent.token`.
 
-**If you don't specify a token, a random one is generated at each deployment so you must use `--recreate-pods` to ensure all pod use the same token.** see[Datadog Chart notes](https://github.com/helm/charts/blob/57d3030941ad2ec2d6f97c86afdf36666658a884/datadog/datadog/templates/NOTES.txt#L49-L59) to learn more.
-
 ### Upgrading
 
 #### From 1.x to 2.x
@@ -135,7 +142,7 @@ As a best practice, a YAML file that specifies the values for the chart paramete
 3. Upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
@@ -155,7 +162,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Process Collection
@@ -173,7 +180,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling System Probe Collection
@@ -193,7 +200,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Kubernetes event collection
@@ -236,7 +243,7 @@ datadog:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 For more details, please refer to [the documentation](https://docs.datadoghq.com/agent/kubernetes/integrations/).
@@ -265,7 +272,7 @@ podLabelsAsTags:
 then upgrade your Datadog Helm chart:
 
 ```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog --recreate-pods
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### CRI integration
@@ -348,7 +355,7 @@ helm install --name <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.27.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.28.1"` | Define the Agent version to use |
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents. DEPRECATED. Use datadog.networkPolicy.create instead |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
@@ -364,6 +371,7 @@ helm install --name <RELEASE_NAME> \
 | agents.podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
 | agents.priorityClassName | string | `nil` | Sets PriorityClassName if defineds |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify service account name to use (usually pre-existing, created if create is true) |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
@@ -405,6 +413,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify service account name to use (usually pre-existing, created if create is true) |
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
 | clusterAgent.replicas | int | `1` | Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode. |
@@ -427,7 +436,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.27.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.28.1"` | Define the Agent version to use |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
@@ -456,6 +465,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
+| datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
 | datadog.clusterChecks.enabled | bool | `true` | Enable the Cluster Checks feature on both the cluster-agents and the daemonset |
 | datadog.clusterName | string | `nil` | Set a unique cluster name to allow scoping hosts and Cluster Checks easily |

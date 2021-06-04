@@ -2,13 +2,9 @@
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
-  labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
 rules:
 {{- if eq (include "should-deploy-cluster-agent" .) "false" }}
 - apiGroups:
@@ -100,6 +96,8 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}
+  - hostaccess
+  - privileged
 - apiGroups:  # leader election check
   - "coordination.k8s.io"
   resources:
@@ -110,13 +108,9 @@ rules:
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
-  labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -129,11 +123,11 @@ subjects:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
   name: {{ template "datadog.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.agents.rbac.serviceAccountAnnotations }}
+  annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
+  {{- end }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
 {{- end -}}
