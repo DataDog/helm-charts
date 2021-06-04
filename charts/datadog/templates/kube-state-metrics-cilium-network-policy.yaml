@@ -35,8 +35,8 @@ specs:
     ingress:
       {{- if $.Values.agents.useHostNetwork }}
       - fromEntities:
-        - host
-        - remote-node
+          - host
+          - remote-node
       {{- else }}
       - fromEndpoints:
           - matchLabels:
