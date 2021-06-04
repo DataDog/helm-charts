@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.15.6
+
+* Set `GODEBUG=x509ignoreCN=0` to revert Agent SSL certificates validation to behaviour to Golang <= 1.14. Notably it fixes issues with Kubelet certificates on AKS with Agent >= 7.28.
+
 ## 2.15.5
 
 * Add RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
