@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.16.2
+
+* Document Autodiscovery management parameters: `datadog.containerExclude`, `datadog.containerInclude`, `datadog.containerExcludeMetrics`, `datadog.containerIncludeMetrics`, `datadog.containerExcludeLogs` and `datadog.containerIncludeLogs`.
+* Introduce `datadog.includePauseContainer` to control autodiscovery of pause containers.
+* Introduce a deprecation noticed for the undocumented and long deprecated `datadog.acInclude` and `datadog.acExclude`.
+
 ## 2.16.1
 
 * Use the pod name as cluster check runner ID to allow deploying multiple cluster check runners on the same node. (Requires agent 7.27.0+)
