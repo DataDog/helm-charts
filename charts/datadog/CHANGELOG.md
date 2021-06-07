@@ -1,8 +1,22 @@
 # Datadog changelog
 
-## 2.15.7
+## 2.16.3
 
 * Add Daemonsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.16.2
+
+* Document Autodiscovery management parameters: `datadog.containerExclude`, `datadog.containerInclude`, `datadog.containerExcludeMetrics`, `datadog.containerIncludeMetrics`, `datadog.containerExcludeLogs` and `datadog.containerIncludeLogs`.
+* Introduce `datadog.includePauseContainer` to control autodiscovery of pause containers.
+* Introduce a deprecation noticed for the undocumented and long deprecated `datadog.acInclude` and `datadog.acExclude`.
+
+## 2.16.1
+
+* Use the pod name as cluster check runner ID to allow deploying multiple cluster check runners on the same node. (Requires agent 7.27.0+)
+
+## 2.16.0
+
+* Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
 
 ## 2.15.6
 
