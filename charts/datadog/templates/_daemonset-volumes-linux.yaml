@@ -94,7 +94,7 @@
   name: logpodpath
 - hostPath:
     path: /var/log/containers
-  name: logsymlinkspath
+  name: logscontainerspath
 {{- if not .Values.datadog.criSocketPath }}
 - hostPath:
     path: /var/lib/docker/containers
