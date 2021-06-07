@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.16.1
+
+* Use the pod name as cluster check runner ID to allow deploying multiple cluster check runners on the same node. (Requires agent 7.27.0+)
+
 ## 2.16.0
 
 * Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
