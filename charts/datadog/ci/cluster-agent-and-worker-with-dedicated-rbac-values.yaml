@@ -7,6 +7,10 @@ datadog:
 
 clusterAgent:
   enabled: true
+  rbac:
+    create: true
+    serviceAccountAnnotations:
+      "eks.amazonaws.com/role-arn": "arn:aws:iam::123456789012:role/datadog-cluster-agent"
 
 clusterChecksRunner:
   enabled: true

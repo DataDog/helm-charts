@@ -3,11 +3,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
 rules:
 - apiGroups:
@@ -130,6 +126,15 @@ rules:
   - list
   - get
   - watch
+- apiGroups:
+  - "batch"
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - list
+  - get
+  - watch
 {{- end }}
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
 - apiGroups:
@@ -209,6 +214,7 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}-cluster-agent
+  - hostnetwork
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
 - apiGroups:
   - ""
@@ -282,11 +288,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -305,11 +307,10 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
+  annotations: {{ toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations | nindent 4}}
+{{- end }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
 {{- if .Values.clusterAgent.admissionController.enabled }}
@@ -318,11 +319,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: Role
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
 rules:
@@ -334,11 +331,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: RoleBinding
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: "{{ template "datadog.fullname" . }}-cluster-agent"
   namespace: {{ .Release.Namespace }}
 roleRef:
@@ -362,11 +355,7 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-system-auth-delegator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -381,11 +370,7 @@ apiVersion: {{ template "rbac.apiVersion" . }}
 kind: RoleBinding
 metadata:
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
   name: "{{ template "datadog.fullname" . }}-cluster-agent-apiserver"
   namespace: {{ .Release.Namespace }}
 roleRef:

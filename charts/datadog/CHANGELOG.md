@@ -1,8 +1,52 @@
 # Datadog changelog
 
-## 2.14.0
+## 2.16.0
 
 * Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
+
+## 2.15.6
+
+* Set `GODEBUG=x509ignoreCN=0` to revert Agent SSL certificates validation to behaviour to Golang <= 1.14. Notably it fixes issues with Kubelet certificates on AKS with Agent >= 7.28.
+
+## 2.15.5
+
+* Add RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.15.4
+
+* Bump Agent version to `7.28.1`.
+
+## 2.15.3
+
+* Fix Cilium network policies.
+
+## 2.15.2
+
+* OpenShift: Automatically use built-in SCCs instead of failing if create SCC option is not used
+
+## 2.15.1
+
+* Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
+* Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
+* Support template expansion for `agents.podAnnotations`
+
+## 2.15.0
+
+* Bump Agent version to `7.28.0`.
+
+## 2.14.0
+
+* Improve resources labels with kubermetes/helm standard labels.
+
+## 2.13.3
+
+* Add `datadog.checksCardinality` field to configure `DD_CHECKS_TAG_CARDINALITY`.
+* Add a reminder to set the `datadog.site` field if needed.
+
+## 2.13.2
+
+* Fix `YAML parse error on datadog/templates/daemonset.yaml` when autopilot is enabled.
+* Fix "README.md" generation.
 
 ## 2.13.1
 

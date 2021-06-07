@@ -4,11 +4,7 @@ kind: ClusterRole
 metadata:
   name: {{ template "datadog.fullname" . }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 rules:
 {{- if eq (include "should-deploy-cluster-agent" .) "false" }}
 - apiGroups:
@@ -100,6 +96,8 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}
+  - hostaccess
+  - privileged
 - apiGroups:  # leader election check
   - "coordination.k8s.io"
   resources:
@@ -112,11 +110,7 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ template "datadog.fullname" . }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -131,10 +125,9 @@ kind: ServiceAccount
 metadata:
   name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  {{- if .Values.agents.rbac.serviceAccountAnnotations }}
+  annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
+  {{- end }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
 {{- end -}}

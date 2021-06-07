@@ -11,7 +11,7 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.10.0
+  tag: 1.11.0
 
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
@@ -67,3 +67,15 @@ configFile: "{}"
 
 # configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
 configConfigMap: ""
+
+# envFrom -- Set environment variables from configMaps and/or secrets
+envFrom: []
+#   - configMapRef:
+#       name: <CONFIGMAP_NAME>
+#   - secretRef:
+#       name: <SECRET_NAME>
+
+# env -- Set environment variables
+env: []
+#   - name: <ENV_VAR_NAME>
+#     value: <ENV_VAR_VALUE>

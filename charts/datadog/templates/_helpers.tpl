@@ -19,6 +19,19 @@
 {{- end -}}
 {{- end -}}
 
+{{/*
+Check if target cluster is running OpenShift.
+*/}}
+{{- define "is-openshift" -}}
+{{- if .Capabilities.APIVersions.Has "quota.openshift.io/v1/ClusterResourceQuota" -}}
+true
+{{- else if (lookup "v1" "Service" "default" "openshift") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "agent-has-env-ad" -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
@@ -352,6 +365,27 @@ Returns provider kind
 {{- if .Values.providers.gke.autopilot -}}
 gke-autopilot
 {{- end -}}
+{{- end -}}
+
+
+{{/*
+Common template labels
+*/}}
+{{- define "datadog.template-labels" -}}
+app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "datadog.labels" -}}
+helm.sh/chart: '{{ include "datadog.chart" . }}'
+{{ include "datadog.template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
 {{- end -}}
 
 {{/*

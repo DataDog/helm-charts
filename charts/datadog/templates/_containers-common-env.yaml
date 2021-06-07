@@ -1,6 +1,9 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
+# Needs to be removed when Agent N-2 is built with Golang 1.17
+- name: GODEBUG
+  value: x509ignoreCN=0
 - name: DD_API_KEY
   valueFrom:
     secretKeyRef:
@@ -18,7 +21,7 @@
 - name: DD_KUBELET_CLIENT_CA
   value: {{ include "datadog.kubelet.mountPath" . }}
 {{- end }}
-{{- if .Values.providers.gke.autopilot -}}
+{{- if .Values.providers.gke.autopilot }}
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}

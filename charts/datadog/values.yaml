@@ -117,6 +117,10 @@ datadog:
   #   - "<KEY_1>:<VALUE_1>"
   #   - "<KEY_2>:<VALUE_2>"
 
+  # datadog.checksCardinality -- Sets the tag cardinality for the checks run by the Agent.
+  ## https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
+  checksCardinality:  # low, orchestrator or high (not set by default to avoid overriding existing DD_CHECKS_TAG_CARDINALITY configurations, the default value in the Agent is low)
+
   # kubelet configuration
   kubelet:
     # datadog.kubelet.host -- Override kubelet IP
@@ -482,6 +486,9 @@ clusterAgent:
     # clusterAgent.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
 
+    # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
+    serviceAccountAnnotations: {}
+
   ## Provide Cluster Agent pod security configuration
   podSecurity:
     podSecurityPolicy:
@@ -677,7 +684,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.27.0
+    tag: 7.28.1
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -705,6 +712,9 @@ agents:
 
     # agents.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
     serviceAccountName: default
+
+    # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
+    serviceAccountAnnotations: {}
 
   ## Provide Daemonset PodSecurityPolicy configuration
   podSecurity:
@@ -1022,7 +1032,7 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.27.0
+    tag: 7.28.1
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
