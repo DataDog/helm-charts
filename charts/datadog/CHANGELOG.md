@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.17.0
+
+* Update `apiVersion` in `Chart.yaml` to `v2` .
+
 ## 2.16.4
 
 * Rename the `Role` and `RoleBinding` of the Datadog Cluster Agent to avoid edge cases where `helm upgrade` can fail because of object name conflict.
