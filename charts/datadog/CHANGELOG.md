@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.16.3
+
+* Add Daemonsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
 ## 2.16.2
 
 * Document Autodiscovery management parameters: `datadog.containerExclude`, `datadog.containerInclude`, `datadog.containerExcludeMetrics`, `datadog.containerIncludeMetrics`, `datadog.containerExcludeLogs` and `datadog.containerIncludeLogs`.
