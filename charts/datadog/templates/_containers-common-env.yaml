@@ -91,6 +91,10 @@
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
+{{- if not .Values.datadog.excludePauseContainer }}
+- name: DD_EXCLUDE_PAUSE_CONTAINER
+  value: "false"
+{{- end }}
 {{- if eq (include "agent-has-env-ad" .) "true" }}
 {{- if .Values.datadog.dockerSocketPath }}
 - name: DOCKER_HOST

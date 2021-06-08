@@ -140,6 +140,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          - name: DD_CLC_RUNNER_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           # Remove unused features
           - name: DD_USE_DOGSTATSD
             value: "false"
@@ -196,13 +200,16 @@ spec:
 {{- if .Values.clusterChecksRunner.affinity }}
 {{ toYaml .Values.clusterChecksRunner.affinity | indent 8 }}
 {{- else }}
-        # Ensure we only run one worker per node, to avoid name collisions
+        # Prefer scheduling the runners on different nodes if possible
+        # for better checks stability in case of node failure.
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app: {{ template "datadog.fullname" . }}-clusterchecks
-            topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 50
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ template "datadog.fullname" . }}-clusterchecks
+              topologyKey: kubernetes.io/hostname
 {{- end }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
