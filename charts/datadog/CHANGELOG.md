@@ -1,5 +1,19 @@
 # Datadog changelog
 
+## 2.16.2
+
+* Document Autodiscovery management parameters: `datadog.containerExclude`, `datadog.containerInclude`, `datadog.containerExcludeMetrics`, `datadog.containerIncludeMetrics`, `datadog.containerExcludeLogs` and `datadog.containerIncludeLogs`.
+* Introduce `datadog.includePauseContainer` to control autodiscovery of pause containers.
+* Introduce a deprecation noticed for the undocumented and long deprecated `datadog.acInclude` and `datadog.acExclude`.
+
+## 2.16.1
+
+* Use the pod name as cluster check runner ID to allow deploying multiple cluster check runners on the same node. (Requires agent 7.27.0+)
+
+## 2.16.0
+
+* Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
+
 ## 2.15.6
 
 * Set `GODEBUG=x509ignoreCN=0` to revert Agent SSL certificates validation to behaviour to Golang <= 1.14. Notably it fixes issues with Kubelet certificates on AKS with Agent >= 7.28.

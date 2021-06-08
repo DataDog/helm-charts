@@ -431,6 +431,38 @@ datadog:
   #  - redisdb
   #  - kubernetes_state
 
+  # datadog.containerExclude -- Exclude containers from the Agent
+  # Autodiscovery, as a space-sepatered list
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # datadog.containerInclude -- Include containers in the Agent Autodiscovery,
+  # as a space-separated list.  If a container matches an include rule, it’s
+  # always included in the Autodiscovery
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
+
+  # datadog.containerExcludeLogs -- Exclude logs from the Agent Autodiscovery,
+  # as a space-separated list
+  containerExcludeLogs:
+
+  # datadog.containerIncludeLogs -- Include logs in the Agent Autodiscovery, as
+  # a space-separated list
+  containerIncludeLogs:
+
+  # datadog.containerExcludeMetrics -- Exclude metrics from the Agent
+  # Autodiscovery, as a space-separated list
+  containerExcludeMetrics:
+
+  # datadog.containerIncludeMetrics -- Include metrics in the Agent
+  # Autodiscovery, as a space-separated list
+  containerIncludeMetrics:
+
+  # datadog.excludePauseContainer -- Exclude pause containers from the Agent
+  # Autodiscovery.
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
+  excludePauseContainer: true
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
