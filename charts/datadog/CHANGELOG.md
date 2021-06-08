@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.16.4
+
+* Rename the `Role` and `RoleBinding` of the Datadog Cluster Agent to avoid edge cases where `helm upgrade` can fail because of object name conflict.
+
 ## 2.16.3
 
 * Add Daemonsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
