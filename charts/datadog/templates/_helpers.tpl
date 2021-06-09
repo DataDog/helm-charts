@@ -25,8 +25,6 @@ Check if target cluster is running OpenShift.
 {{- define "is-openshift" -}}
 {{- if .Capabilities.APIVersions.Has "quota.openshift.io/v1/ClusterResourceQuota" -}}
 true
-{{- else if (lookup "v1" "Service" "default" "openshift") -}}
-true
 {{- else -}}
 false
 {{- end -}}
