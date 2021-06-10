@@ -1,5 +1,9 @@
 # Datadog changelog
 
+
+## 2.16.6
+
+* More fixes for the cilium network policies and additional rules for metrics
 ## 2.16.5
 
 * Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
