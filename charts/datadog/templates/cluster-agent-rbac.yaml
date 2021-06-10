@@ -122,6 +122,7 @@ rules:
   resources:
   - deployments
   - replicasets
+  - daemonsets
   verbs:
   - list
   - get
@@ -320,7 +321,7 @@ kind: Role
 metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
-  name: {{ template "datadog.fullname" . }}-cluster-agent
+  name: {{ template "datadog.fullname" . }}-cluster-agent-main
   namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups: [""]
@@ -332,12 +333,12 @@ kind: RoleBinding
 metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
-  name: "{{ template "datadog.fullname" . }}-cluster-agent"
+  name: "{{ template "datadog.fullname" . }}-cluster-agent-main"
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "datadog.fullname" . }}-cluster-agent
+  name: {{ template "datadog.fullname" . }}-cluster-agent-main
 subjects:
   - kind: ServiceAccount
     name: {{ template "datadog.fullname" . }}-cluster-agent
