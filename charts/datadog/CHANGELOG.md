@@ -1,8 +1,16 @@
 # Datadog changelog
 
+## 2.16.5
+
+* Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
+
+## 2.16.4
+
+* Rename the `Role` and `RoleBinding` of the Datadog Cluster Agent to avoid edge cases where `helm upgrade` can fail because of object name conflict.
+
 ## 2.16.3
 
-* More fixes for the cilium network policies and additional rules for metrics
+* Add Daemonsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
 
 ## 2.16.2
 
