@@ -115,9 +115,21 @@ specs:
           - ports:
               - port: "10250"
                 protocol: TCP
-              - port: "9090"
-                protocol: "TCP"
               - port: "6942"
+                protocol: "TCP"
+  - description: "Egress to Prometheus metrics"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toEntities:
+          - host
+        toPorts:
+          - ports:
+              - port: "9090"
                 protocol: "TCP"
   - description: "Egress to cluster agent"
     endpointSelector:
