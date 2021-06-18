@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.16.6
+
+* Add missing 80 port to cluster agent network policy egress rules
+
 ## 2.16.5
 
 * Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
