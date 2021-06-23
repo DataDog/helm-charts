@@ -71,7 +71,7 @@ spec:
             ]
           }]
       {{- if .Values.clusterAgent.podAnnotations }}
-{{ toYaml .Values.clusterAgent.podAnnotations | indent 8 }}
+{{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
       {{- end }}
 
     spec:

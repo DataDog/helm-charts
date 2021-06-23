@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.16.6
+
+* Support template expansion for `clusterAgent.podAnnotations`
+* Support template expansion for `clusterAgent.rbac.serviceAccountAnnotations`
+
 ## 2.16.5
 
 * Remove other way of detecting OpenShift cluster as it's not supported by Helm2.

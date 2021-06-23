@@ -310,7 +310,7 @@ metadata:
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
-  annotations: {{ toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations | nindent 4}}
+  annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
