@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.17.0
+
+* Add lifecycle hook to agent pod to support custom actions.
+
 ## 2.16.5
 
 * Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
