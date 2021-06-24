@@ -2,7 +2,7 @@
 
 ## 2.17.0
 
-* Add lifecycle hook to agent pod to support custom actions.
+* Add lifecycle hook to agent container to support custom actions.
 
 ## 2.16.5
 
