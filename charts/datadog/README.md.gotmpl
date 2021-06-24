@@ -142,11 +142,27 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
 
+### Configuring Dogstatsd in the agent
+<a name="dsd-config"></a>
+The agent will start a server running Dogstatsd in order to process custom metrics sent from your applications. Check out the [official documentation on Dogstatsd](https://docs.datadoghq.com/developers/dogstatsd/?tab=hostagent) for more details. 
+
+By default the agent will create a unix domain socket to process the datagrams (not supported on Windows, see [below](#windows-config)).
+
+To disable the socket in favor of the hostPort, use the following configuration:
+
+```yaml
+datadog:
+  #(...)
+  dogstatsd:
+    useSocketVolume: false
+    useHostPort: true
+```
+
 ### Enabling APM and Trace
 
-APM is enabled by default thrue socket communication; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
+APM is enabled by default using a socket for communication; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
 
-Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication thanks to a `hostPort`:
+Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication using a `hostPort`:
 
 ```yaml
 datadog:
@@ -155,13 +171,13 @@ datadog:
     portEnabled: true
 ```
 
-To disable the socket communication, update you [datadog-values.yaml](values.yaml) file with the following configration:
+To disable the socket , update you [datadog-values.yaml](values.yaml) file with the following configration:
 
 ```yaml
 datadog:
   # (...)
   apm:
-    socketEnabled: true
+    socketEnabled: false
 ```
 
 ### Enabling Log Collection
@@ -332,7 +348,7 @@ helm install --name <RELEASE_NAME> \
 {{ template "chart.valuesSection" . }}
 
 ## Configuration options for Windows deployments
-
+<a name="windows-config"></a>
 Some options above are not working/not available on Windows, here is the list of **unsupported** options:
 
 | Parameter                                | Reason                                           |
