@@ -320,14 +320,13 @@ helm install --name <RELEASE_NAME> \
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
 | agents.containers.agent.healthPort | int | `5555` | Port number to use in the node agent for the healthz endpoint |
-| agents.containers.agent.lifecycle | object | `{}` | allow to run lifecycle hooks with agent pod |
+| agents.containers.agent.lifecycle | object | `{}` | allow to run lifecycle hooks with agent container |
 | agents.containers.agent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | agents.containers.agent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |
 | agents.containers.agent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.agent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
 | agents.containers.agent.resources | object | `{}` | Resource requests and limits for the agent container. |
 | agents.containers.agent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the agent container. |
-| agents.containers.agent.lifecycle | object | `{}` | Allows you to specify lifecycle hook to agent container. |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |

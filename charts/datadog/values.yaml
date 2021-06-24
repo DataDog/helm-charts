@@ -851,7 +851,7 @@ agents:
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
-      # agents.containers.agent.lifecycle -- allow to run lifecycle hooks with agent pod
+      # agents.containers.agent.lifecycle -- allow to run lifecycle hooks with agent container
       lifecycle: {}
 
     processAgent:
