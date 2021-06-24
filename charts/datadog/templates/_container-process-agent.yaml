@@ -2,12 +2,6 @@
 - name: process-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  {{- if eq .Values.targetSystem "linux" }}
-  command: ["process-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
-  {{- end }}
-  {{- if eq .Values.targetSystem "windows" }}
-  command: ["process-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
-  {{- end }}
   {{- if .Values.agents.containers.processAgent.securityContext }}
   securityContext:
     {{ toYaml .Values.agents.containers.processAgent.securityContext | nindent 4 }}
@@ -23,6 +17,8 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    - name: ENTRYPOINT
+      value: process-agent
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- if .Values.datadog.processAgent.processCollection }}

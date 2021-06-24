@@ -64,9 +64,9 @@ spec:
       - name: init-volume
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-        command: ["bash", "-c"]
-        args:
-          - cp -r /etc/datadog-agent /opt
+        env:
+          - name: ENTRYPOINT
+            value: init-volume
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
@@ -75,9 +75,10 @@ spec:
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-        command: ["bash", "-c"]
-        args:
-          - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+        env:
+          - name: ENTRYPOINT
+            value: init-config
+          {{- include "containers-common-env" . | nindent 10 }}
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -91,9 +92,6 @@ spec:
       containers:
       - name: agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
-        command: ["bash", "-c"]
-        args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
@@ -104,6 +102,8 @@ spec:
 {{ toYaml .Values.datadog.envFrom | indent 10 }}
 {{- end }}
         env:
+          - name: ENTRYPOINT
+            value: clusterchecks-agent
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
