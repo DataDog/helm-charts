@@ -5,7 +5,6 @@
   securityContext:
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
-  command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
 {{- if .Values.agents.containers.securityAgent.ports }}
@@ -17,6 +16,8 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    - name: ENTRYPOINT
+      value: security-agent
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}

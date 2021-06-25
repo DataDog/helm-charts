@@ -2,7 +2,6 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  command: ["agent", "run"]
   {{- if .Values.agents.containers.agent.securityContext }}
   securityContext:
     {{ toYaml .Values.agents.containers.agent.securityContext | nindent 4 }}
@@ -24,6 +23,8 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    - name: ENTRYPOINT
+      value: agent
     {{- include "containers-common-env" . | nindent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL

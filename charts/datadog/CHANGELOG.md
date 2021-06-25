@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.17.0
+
+* Use a single entrypoint for the all agents containers.
+
 ## 2.16.5
 
 * Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
