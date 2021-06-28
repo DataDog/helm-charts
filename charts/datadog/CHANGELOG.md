@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.17.0
+
+* Update `agent` image tag to `7.29.0`.
+* Update `cluster-agent` image tag to `1.13.0`.
+
 ## 2.16.6
 
 * Support template expansion for `clusterAgent.podAnnotations`
