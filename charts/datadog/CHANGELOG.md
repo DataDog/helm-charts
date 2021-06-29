@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.16.7
+
+* Support template expansion for `agents.containers.agent.lifecycle`
+
 ## 2.16.6
 
 * Support template expansion for `clusterAgent.podAnnotations`

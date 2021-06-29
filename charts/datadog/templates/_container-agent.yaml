@@ -2,6 +2,10 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.containers.agent.lifecycle }}
+  lifecycle:
+    {{ toYaml .Values.agents.containers.agent.lifecycle | nindent 4 }}
+  {{- end }}
   command: ["agent", "run"]
   {{- if .Values.agents.containers.agent.securityContext }}
   securityContext:
