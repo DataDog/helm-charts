@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 2.17.0
+## 2.16.7
 
-* Add lifecycle hook to agent container to support custom actions.
+* Support template expansion for `agents.containers.agent.lifecycle`
+
+## 2.16.6
+
+* Support template expansion for `clusterAgent.podAnnotations`
+* Support template expansion for `clusterAgent.rbac.serviceAccountAnnotations`
 
 ## 2.16.5
 
