@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.5
+
+* Support template expansion for `agents.containers.initContainers.additional`
+
 ## 2.19.4
 
 * Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
