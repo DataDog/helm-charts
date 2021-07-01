@@ -94,3 +94,6 @@ datadog-crds:
 podAnnotations: {}
 # podLabels -- Allows setting additional labels for for Datadog Operator PODs
 podLabels: {}
+
+# collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
+collectOperatorMetrics: true
