@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+
+* Add a configuration field `collectOperatorMetrics` to disable/enable collecting operator metrics
+
 ## 0.6.1
 
 * Update chart for operator release `v0.6.1`

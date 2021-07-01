@@ -25,6 +25,7 @@ spec:
         {{- if or .Values.appKey .Values.appKeyExistingSecret }}
         checksum/application_key: {{ include (print $.Template.BasePath "/secret_application_key.yaml") . | sha256sum }}
         {{- end }}
+        {{- if .Values.collectOperatorMetrics }}
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: '["openmetrics"]'
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
@@ -33,6 +34,7 @@ spec:
             "namespace": "datadog.operator",
             "metrics": ["*"]
           }]
+        {{- end }}
         {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | indent 8 }}
         {{- end }}
