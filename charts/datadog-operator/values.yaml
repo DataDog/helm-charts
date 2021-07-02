@@ -6,22 +6,22 @@
 replicaCount: 1
 
 # apiKey -- Your Datadog API key
-apiKey:  # <DATADOG_API_KEY>
+apiKey: # <DATADOG_API_KEY>
 
 # apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
 ## If set, this parameter takes precedence over "apiKey".
-apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+apiKeyExistingSecret: # <DATADOG_API_KEY_SECRET>
 
 # appKey -- Your Datadog APP key
-appKey:  # <DATADOG_APP_KEY>
+appKey: # <DATADOG_APP_KEY>
 
 # dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
 ## Overrides the site setting defined in "site".
-dd_url:  # <DATADOG_API_ENDPOINT>
+dd_url: # <DATADOG_API_ENDPOINT>
 
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
 ## If set, this parameter takes precedence over "appKey".
-appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+appKeyExistingSecret: # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
@@ -97,3 +97,6 @@ podLabels: {}
 
 # collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
 collectOperatorMetrics: true
+
+# containerSecurityContext -- A security context defines privilege and access control settings for a Container.
+containerSecurityContext: {}

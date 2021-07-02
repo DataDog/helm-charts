@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4
+
+* Add a configuration field `containerSecurityContext` to configure a security context for a Container
+
 ## 0.6.3
 
 * Add missing `poddisruptionbudgets` RBAC when the compliance feature is enabled.
