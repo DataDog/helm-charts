@@ -17,3 +17,10 @@ datadog:
       value: "true"
     - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
       value: "true"
+  agents:
+    volumes: 
+      - name: empty-dir
+        emptyDir: {}
+    volumeMounts:
+      - name: empty-dir
+        mountPath: /etc/datadog-agent/conf.d/consul.d
