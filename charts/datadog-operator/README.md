@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.6.1](https://img.shields.io/badge/Version-0.6.1-informational?style=flat-square) ![AppVersion: 0.6.0](https://img.shields.io/badge/AppVersion-0.6.0-informational?style=flat-square)
+![Version: 0.6.2](https://img.shields.io/badge/Version-0.6.2-informational?style=flat-square) ![AppVersion: 0.6.0](https://img.shields.io/badge/AppVersion-0.6.0-informational?style=flat-square)
 
 ## Values
 
@@ -11,6 +11,7 @@
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
+| collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
