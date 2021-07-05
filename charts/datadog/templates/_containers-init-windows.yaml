@@ -2,9 +2,18 @@
 - name: init-volume
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+  command: ["pwsh", "-Command"]
+  args:
+    - |
+      Copy-Item -Recurse -Force {{ template "datadog.confPath" . }} C:/Temp
+      Copy-Item -Force C:/Temp/install_info/install_info C:/Temp/Datadog/install_info
+  {{- end }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
   env:
     - name: ENTRYPOINT
       value: init-volume
+  {{- end }}
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
@@ -15,6 +24,11 @@
 - name: init-config
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+  command: ["pwsh", "-Command"]
+  args:
+    - Get-ChildItem 'entrypoint-ps1' | ForEach-Object { & $_.FullName if (-Not $?) { exit 1 } }
+  {{- end }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -31,8 +45,10 @@
     - name: runtimesocket
       mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
   env:
+    {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
     - name: ENTRYPOINT
       value: init-config
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}

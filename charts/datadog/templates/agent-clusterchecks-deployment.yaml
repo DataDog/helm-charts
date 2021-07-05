@@ -64,9 +64,16 @@ spec:
       - name: init-volume
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+        {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+        command: ["bash", "-c"]
+        args:
+          - cp -r /etc/datadog-agent /opt
+        {{- end }}
+        {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
         env:
           - name: ENTRYPOINT
             value: init-volume
+        {{- end }}
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
@@ -75,9 +82,16 @@ spec:
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+        {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+        command: ["bash", "-c"]
+        args:
+          - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+        {{- end }}
         env:
+          {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
           - name: ENTRYPOINT
             value: init-config
+          {{- end }}
           {{- include "containers-common-env" . | nindent 10 }}
         volumeMounts:
           - name: config
@@ -92,6 +106,11 @@ spec:
       containers:
       - name: agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
+        {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+        command: ["bash", "-c"]
+        args:
+          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+        {{- end }}
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
@@ -102,8 +121,10 @@ spec:
 {{ toYaml .Values.datadog.envFrom | indent 10 }}
 {{- end }}
         env:
+          {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
           - name: ENTRYPOINT
             value: clusterchecks-agent
+          {{- end }}
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:

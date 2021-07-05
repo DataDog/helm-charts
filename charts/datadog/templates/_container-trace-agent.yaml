@@ -2,6 +2,14 @@
 - name: trace-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
+  {{- end }}
   {{- if .Values.agents.containers.traceAgent.securityContext }}
   securityContext:
     {{ toYaml .Values.agents.containers.traceAgent.securityContext | nindent 4 }}
@@ -21,8 +29,10 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
     - name: ENTRYPOINT
       value: trace-agent
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL

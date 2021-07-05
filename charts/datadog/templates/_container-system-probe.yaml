@@ -4,6 +4,9 @@
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   securityContext:
 {{ toYaml .Values.agents.containers.systemProbe.securityContext | indent 4 }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+  command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+  {{- end }}
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
@@ -13,8 +16,10 @@
 {{ toYaml .Values.datadog.envFrom | indent 4 }}
 {{- end }}
   env:
+    {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
     - name: ENTRYPOINT
       value: system-probe
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}

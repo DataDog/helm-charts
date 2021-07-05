@@ -1,9 +1,17 @@
 {{- define "system-probe-init" -}}
 - name: seccomp-setup
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  {{- if eq (include "agent-has-single-entrypoint" .) "false" }}
+  command:
+  - cp
+  - /etc/config/system-probe-seccomp.json
+  - /host/var/lib/kubelet/seccomp/system-probe
+  {{- end }}
+  {{- if eq (include "agent-has-single-entrypoint" .) "true" }}
   env:
     - name: ENTRYPOINT
       value: seccomp-setup
+  {{- end }}
   volumeMounts:
   - name: datadog-agent-security
     mountPath: /etc/config
