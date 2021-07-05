@@ -160,7 +160,7 @@ datadog:
     ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
     tagCardinality: low
 
-    # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket
+    # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket with an HostVolume
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
     useSocketVolume: false
 

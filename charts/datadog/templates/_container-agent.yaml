@@ -74,10 +74,8 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if .Values.datadog.dogstatsd.useSocketVolume }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
-    {{- end }}
     {{- if and (eq (include "cluster-agent-enabled" .) "true") .Values.datadog.clusterChecks.enabled }}
     {{- if or (and (not .Values.existingClusterAgent.join) .Values.clusterChecksRunner.enabled) (and .Values.existingClusterAgent.join (not .Values.existingClusterAgent.clusterchecksEnabled)) }}
     - name: DD_EXTRA_CONFIG_PROVIDERS

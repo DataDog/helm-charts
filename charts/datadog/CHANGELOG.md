@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.18.0
+
+* Configure and activate the Dogstatsd UDS socket in an "emptyDir" volume by default. It will allow JMX-Fetch to use UDS by default.
+
 ## 2.17.0
 
 * Update `agent` image tag to `7.29.0`.
