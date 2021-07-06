@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.17.1](https://img.shields.io/badge/Version-2.17.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.18.0](https://img.shields.io/badge/Version-2.18.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -489,7 +489,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.dogstatsd.tags | list | `[]` | List of static tags to attach to every custom metric, event and service check collected by Dogstatsd. |
 | datadog.dogstatsd.useHostPID | bool | `false` | Run the agent in the host's PID namespace |
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
-| datadog.dogstatsd.useSocketVolume | bool | `false` | Enable dogstatsd over Unix Domain Socket |
+| datadog.dogstatsd.useSocketVolume | bool | `false` | Enable dogstatsd over Unix Domain Socket with an HostVolume |
 | datadog.env | list | `[]` | Set environment variables for all Agents |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from the Agent Autodiscovery. |
