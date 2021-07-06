@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.17.1
+
+* Update `cluster-agent` image tag to `1.13.1`.
+
 ## 2.17.0
 
 * Update `agent` image tag to `7.29.0`.
