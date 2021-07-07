@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.18.2
+
+* Update `kube-state-metrics` requirement chart documentation.
+* Add missing `DD_TAGS` envvar in `cluster-agent` deployment (Fix #304).
+
 ## 2.18.1
 
 * Honor `doNotCheckTag` in Env AD detection, preventing install failures with custom images using non semver tags.

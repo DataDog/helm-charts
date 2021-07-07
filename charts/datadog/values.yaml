@@ -70,7 +70,7 @@ datadog:
   logLevel: INFO
 
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
-  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics
+  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
   kubeStateMetricsEnabled: true
 
   kubeStateMetricsNetworkPolicy:
@@ -1243,6 +1243,15 @@ kube-state-metrics:
   # kube-state-metrics.nodeSelector -- Node selector for KSM. KSM only supports Linux.
   nodeSelector:
     kubernetes.io/os: linux
+
+  # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
+  # image:
+  #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
+  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+  #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
+  #  tag: v1.9.8
+  #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
+  #  pullPolicy: IfNotPresent
 
 providers:
   gke:
