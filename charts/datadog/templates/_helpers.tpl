@@ -31,6 +31,7 @@ false
 {{- end -}}
 
 {{- define "agent-has-env-ad" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
@@ -46,6 +47,9 @@ false
 true
 {{- else -}}
 false
+{{- end -}}
+{{- else -}}
+true
 {{- end -}}
 {{- end -}}
 
