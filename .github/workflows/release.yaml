@@ -20,7 +20,7 @@ jobs:
       - name: Add repo
         run: |
           helm repo add datadog https://helm.datadoghq.com
-          helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+          helm repo add kube-state-metrics https://prometheus-community.github.io/helm-charts
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.0
         env:
