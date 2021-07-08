@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.1
+
+* Fix chart release process after updating the `kube-state-metrics` chart registry.
+
 ## 2.19.0
 
 * Move to the new `kube-state-metrics` chart registry, but keep the version `2.13.2`.
