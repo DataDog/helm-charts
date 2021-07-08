@@ -270,6 +270,14 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - quota.openshift.io
   resources:
   - clusterresourcequotas

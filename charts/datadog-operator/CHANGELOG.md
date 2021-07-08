@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3
+
+* Add missing `poddisruptionbudgets` RBAC when the compliance feature is enabled.
+
 ## 0.6.2
 
 * Add a configuration field `collectOperatorMetrics` to disable/enable collecting operator metrics
