@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.2
+
+* Fix `dsdsocket` volumeMount for the `trace-agent` on windows deployment.
+
 ## 2.19.1
 
 * Fix chart release process after updating the `kube-state-metrics` chart registry.
