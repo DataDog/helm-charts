@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.3
+
+* Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
 ## 2.19.2
 
 * Fix `dsdsocket` volumeMount for the `trace-agent` on windows deployment.
