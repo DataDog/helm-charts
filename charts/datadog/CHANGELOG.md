@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.3
+
+* Fix `dsdsocket` volumeMount for the `trace-agent` on linux deployment
+.
 ## 2.19.2
 
 * Fix `dsdsocket` volumeMount for the `trace-agent` on windows deployment.
