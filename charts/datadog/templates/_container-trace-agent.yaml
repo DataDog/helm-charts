@@ -73,6 +73,8 @@
     - name: runtimesocket
       mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
     {{- end }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
     {{- if not .Values.datadog.apm.useSocketVolume }}
       readOnly: true
     {{- else if and .Values.datadog.apm.useSocketVolume (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
