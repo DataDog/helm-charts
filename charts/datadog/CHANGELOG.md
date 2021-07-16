@@ -2,7 +2,7 @@
 
 ## 2.19.3
 
-* Fix condition defining `should-enable-k8s-resource-monitoring`.
+* Fix condition defining `should-enable-k8s-resource-monitoring`, which toggles the orchestrator explorer feature.
 
 ## 2.19.2
 
