@@ -64,17 +64,23 @@
       readOnly: false
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+    {{- if not .Values.datadog.apm.useSocketVolume }}
+      readOnly: true
+    {{- else if and .Values.datadog.apm.useSocketVolume (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
+      readOnly: true
+    {{- end }}
     - name: runtimesocketdir
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if .Values.datadog.apm.useSocketVolume }}
+    - name: apmsocket
+      mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
+    {{- end }}
     {{- end }}
     {{- if eq .Values.targetSystem "windows" }}
     - name: runtimesocket
       mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
-    - name: apmsocket
-      mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
