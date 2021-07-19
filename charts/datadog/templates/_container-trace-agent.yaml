@@ -64,7 +64,7 @@
       readOnly: false
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-    {{- if .Values.datadog.apm.useSocketVolume }}
+    {{- if and .Values.datadog.apm.useSocketVolume (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
     - name: apmsocket
       mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}
