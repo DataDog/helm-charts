@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.4
+
+* Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
+
 ## 2.19.3
 
 * Fix condition defining `should-enable-k8s-resource-monitoring`, which toggles the orchestrator explorer feature.
