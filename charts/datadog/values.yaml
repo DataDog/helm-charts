@@ -950,7 +950,7 @@ agents:
       ports: []
 
     initContainers:
-      # agents.containers.initContainers.resources -- Resource requests and limits for the init containers
+      # agents.containers.initContainers.resources -- Resource requests and limits for the default init containers
       resources: {}
       #  requests:
       #    cpu: 100m
@@ -958,6 +958,12 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+
+      # agents.containers.initContainers.additional -- Additional initContainers to execute before agent containers run
+      additional: []
+      #   - name: busybox
+      #     image: busybox:1.31.1
+      #     command: ["sh", "-c", "echo"]
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []
