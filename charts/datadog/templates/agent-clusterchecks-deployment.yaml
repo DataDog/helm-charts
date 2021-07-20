@@ -88,7 +88,9 @@ spec:
           {{- end }}
         resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- if .Values.agents.containers.initContainers.additional }}
 {{ toYaml .Values.agents.containers.initContainers.additional | indent 8 }}
+{{- end }}
       containers:
       - name: agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"

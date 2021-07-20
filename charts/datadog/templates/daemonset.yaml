@@ -123,7 +123,9 @@ spec:
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
-{{ toYaml .Values.agents.containers.initContainers.additional | indent 8 }}
+        {{- if .Values.agents.containers.initContainers.additional }}
+          {{ toYaml .Values.agents.containers.initContainers.additional | nindent 6 }}
+        {{- end }}
       volumes:
       - name: installinfo
         configMap:
