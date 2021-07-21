@@ -70,7 +70,7 @@ datadog:
   logLevel: INFO
 
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
-  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics
+  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
   kubeStateMetricsEnabled: true
 
   kubeStateMetricsNetworkPolicy:
@@ -160,7 +160,7 @@ datadog:
     ## https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
     tagCardinality: low
 
-    # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket
+    # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket with an HostVolume
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
     useSocketVolume: false
 
@@ -477,7 +477,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.12.0
+    tag: 1.13.1
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -515,7 +515,7 @@ clusterAgent:
     # clusterAgent.rbac.create -- If true, create & use RBAC resources
     create: true
 
-    # clusterAgent.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
+    # clusterAgent.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false
     serviceAccountName: default
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
@@ -716,7 +716,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.28.1
+    tag: 7.29.0
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -742,7 +742,7 @@ agents:
     # agents.rbac.create -- If true, create & use RBAC resources
     create: true
 
-    # agents.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
+    # agents.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if agents.rbac.create is false
     serviceAccountName: default
 
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
@@ -1064,7 +1064,7 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.28.1
+    tag: 7.29.0
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
@@ -1091,7 +1091,7 @@ clusterChecksRunner:
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
 
-    # clusterChecksRunner.rbac.serviceAccountName -- Specify service account name to use (usually pre-existing, created if create is true)
+    # clusterChecksRunner.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false
     serviceAccountName: default
 
   # clusterChecksRunner.replicas -- Number of Cluster Checks Runner instances
@@ -1243,6 +1243,15 @@ kube-state-metrics:
   # kube-state-metrics.nodeSelector -- Node selector for KSM. KSM only supports Linux.
   nodeSelector:
     kubernetes.io/os: linux
+
+  # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
+  # image:
+  #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
+  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+  #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
+  #  tag: v1.9.8
+  #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
+  #  pullPolicy: IfNotPresent
 
 providers:
   gke:

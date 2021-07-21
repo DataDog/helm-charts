@@ -39,6 +39,10 @@
     - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
     {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+    {{- end }}
   {{- range $value := .Values.agents.containers.securityAgent.env }}
     - name: {{ $value.name }}
       value: {{ $value.value | quote }}
@@ -54,6 +58,9 @@
       readOnly: false
     - name: runtimesocketdir
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
+      readOnly: true
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "windows" }}

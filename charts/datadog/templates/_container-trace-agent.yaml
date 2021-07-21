@@ -41,6 +41,10 @@
     - name: DD_APM_RECEIVER_SOCKET
       value: {{ .Values.datadog.apm.socketPath | quote }}
   {{- end }}
+  {{- if eq .Values.targetSystem "linux" }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+  {{- end }}
 {{- if .Values.agents.containers.traceAgent.env }}
 {{ toYaml .Values.agents.containers.traceAgent.env | indent 4 }}
 {{- end }}
@@ -58,6 +62,12 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+    {{- if and .Values.datadog.apm.useSocketVolume (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
+    - name: apmsocket
+      mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
+    {{- end }}
     - name: runtimesocketdir
       mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -66,10 +76,6 @@
     {{- if eq .Values.targetSystem "windows" }}
     - name: runtimesocket
       mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
-    {{- if .Values.datadog.apm.useSocketVolume }}
-    - name: apmsocket
-      mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}

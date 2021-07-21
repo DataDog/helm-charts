@@ -1,5 +1,47 @@
 # Datadog changelog
 
+## 2.19.4
+
+* Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
+
+## 2.19.3
+
+* Fix condition defining `should-enable-k8s-resource-monitoring`, which toggles the orchestrator explorer feature.
+
+## 2.19.2
+
+* Fix `dsdsocket` volumeMount for the `trace-agent` on windows deployment.
+
+## 2.19.1
+
+* Fix chart release process after updating the `kube-state-metrics` chart registry.
+
+## 2.19.0
+
+* Move to the new `kube-state-metrics` chart registry, but keep the version `2.13.2`.
+
+## 2.18.2
+
+* Update `kube-state-metrics` requirement chart documentation.
+* Add missing `DD_TAGS` envvar in `cluster-agent` deployment (Fix #304).
+
+## 2.18.1
+
+* Honor `doNotCheckTag` in Env AD detection, preventing install failures with custom images using non semver tags.
+
+## 2.18.0
+
+* Configure and activate the Dogstatsd UDS socket in an "emptyDir" volume by default. It will allow JMX-Fetch to use UDS by default.
+
+## 2.17.1
+
+* Update `cluster-agent` image tag to `1.13.1`.
+
+## 2.17.0
+
+* Update `agent` image tag to `7.29.0`.
+* Update `cluster-agent` image tag to `1.13.0`.
+
 ## 2.16.6
 
 * Support template expansion for `clusterAgent.podAnnotations`
