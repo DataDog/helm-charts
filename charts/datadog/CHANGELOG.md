@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.5
+
+* Bump default datadog agent container version to 7.29.1 in values.yaml
+
 ## 2.19.4
 
 * Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
