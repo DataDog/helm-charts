@@ -2,7 +2,8 @@
 
 ## 2.19.5
 
-* Bump default datadog agent container version to 7.29.1 in values.yaml
+* Update `agent` image tag to `7.29.1`.
+* Update `clusterChecksRunner` image tag to `7.29.1`.
 
 ## 2.19.4
 
