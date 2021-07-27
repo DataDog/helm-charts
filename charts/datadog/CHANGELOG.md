@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.19.5
+
+* Update `agent` image tag to `7.29.1`.
+* Update `clusterChecksRunner` image tag to `7.29.1`.
+
 ## 2.19.4
 
 * Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
