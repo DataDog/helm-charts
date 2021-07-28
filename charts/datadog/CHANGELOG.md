@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.8
+
+* Update `datadog-crds` to `0.3.2`.
+
 ## 2.19.7
 
 * Fix test value files in datadog/ci directory.
