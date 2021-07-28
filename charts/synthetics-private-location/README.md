@@ -28,6 +28,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worked for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
+| configSecret | string | `""` | Secret that stores the configuration of the private location worker for the deployment |
 | env | list | `[]` | Set environment variables |
 | envFrom | list | `[]` | Set environment variables from configMaps and/or secrets |
 | fullnameOverride | string | `""` | Override the full qualified app name |

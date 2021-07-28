@@ -68,6 +68,9 @@ configFile: "{}"
 # configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
 configConfigMap: ""
 
+# configSecret -- Secret that stores the configuration of the private location worker for the deployment
+configSecret: ""
+
 # envFrom -- Set environment variables from configMaps and/or secrets
 envFrom: []
 #   - configMapRef:
