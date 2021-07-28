@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.7
+
+* Fix test value files in datadog/ci directory.
+
 ## 2.19.5
 
 * Update `agent` image tag to `7.29.1`.
