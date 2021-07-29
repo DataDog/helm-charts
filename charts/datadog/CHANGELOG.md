@@ -1,8 +1,33 @@
 # Datadog changelog
 
-## 2.19.3
+## 2.19.9
 
 * Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.19.8
+
+* Update `datadog-crds` to `0.3.2`.
+
+## 2.19.7
+
+* Fix test value files in datadog/ci directory.
+
+## 2.19.6
+
+* Update `agent` image tag to `7.29.1`.
+* Update `clusterChecksRunner` image tag to `7.29.1`.
+
+## 2.19.5
+
+* Update link toe `kube-state-metrics` in README.md.
+
+## 2.19.4
+
+* Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
+
+## 2.19.3
+
+* Fix condition defining `should-enable-k8s-resource-monitoring`, which toggles the orchestrator explorer feature.
 
 ## 2.19.2
 
