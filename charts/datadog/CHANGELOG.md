@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.9
+
+* Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
+
 ## 2.19.8
 
 * Update `datadog-crds` to `0.3.2`.
