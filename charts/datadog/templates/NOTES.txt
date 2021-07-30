@@ -264,3 +264,38 @@ To enable it please set clusterAgent.enabled to 'true'.
 
 You are using the datadog.acInclude or datadog.acExclude parameters, which have been deprecated since Datadog Agent 7.20. Please use datadog.containerInclude and datadog.containerExclude instead.
 {{- end }}
+
+
+{{- $hasContainerIncludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
+    {{- $hasContainerIncludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerInclude := false }}
+{{- if or .Values.datadog.containerInclude $hasContainerIncludeEnv }}
+  {{- $hasContainerInclude = true }}
+{{- end }}
+
+{{- $hasContainerExcludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_EXCLUDE" }}
+    {{- $hasContainerExcludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerExclude := false }}
+{{- if or .Values.datadog.containerExclude $hasContainerExcludeEnv }}
+  {{- $hasContainerExclude = true }}
+{{- end }}
+
+{{- if and $hasContainerInclude (not $hasContainerExclude) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+
+{{- end }}
