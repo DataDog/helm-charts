@@ -1,0 +1,15 @@
+{{- if .Values.rbac.create -}}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "extendeddaemonset.fullname" . }}
+  labels:
+{{ include "extendeddaemonset.labels" . | indent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "extendeddaemonset.serviceAccountName" . }}
+roleRef:
+  kind: Role
+  name: {{ include "extendeddaemonset.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end -}}
