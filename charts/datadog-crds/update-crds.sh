@@ -9,17 +9,22 @@ if [[ $# -eq 1 ]] ; then
 fi
 
 download_crd() {
-    inFile=datadoghq.com_$2.yaml
+    tag=$1
+    name=$2
+    camelCaseName=$3
     version=$4
-    outFile=datadoghq.com_$2_$version.yaml
+
+    inFile=datadoghq.com_$name.yaml
+    # shellcheck disable=SC2154
+    outFile=datadoghq.com_"$name"_"$version".yaml
     path=$ROOT/charts/datadog-crds/templates/$outFile
     echo "Download CRD \"$inFile\" version \"$version\" from tag \"$1\""
-    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/DataDog/datadog-operator/$1/config/crd/bases/$version/$inFile"
+    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/DataDog/datadog-operator/$tag/config/crd/bases/$version/$inFile"
 
-    ifCondition="{{- if and .Values.crds.$3 (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+    ifCondition="{{- if and .Values.crds.$camelCaseName (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
     if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.crds.$3 (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
-        cp "$path" "$ROOT/crds/datadoghq.com_$2.yaml"
+        ifCondition="{{- if and .Values.crds.$camelCaseName (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
+        cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
     fi
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
