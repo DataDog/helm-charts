@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+* Set `apiVersion` to `v1` for compatibility with helm 2.
+
 ## 0.3.1
 
 * Fix typo in DatadogMetrics CRD

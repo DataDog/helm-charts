@@ -1,6 +1,6 @@
 dependencies:
   - name: datadog-crds
-    version: "=0.1.1"
+    version: "=0.3.2"
     repository: https://helm.datadoghq.com
     condition: clusterAgent.metricsProvider.useDatadogMetrics
     tags:

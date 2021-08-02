@@ -1,9 +1,25 @@
 # Datadog changelog
 
-## 2.19.5
+## 2.19.9
+
+* Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
+
+## 2.19.8
+
+* Update `datadog-crds` to `0.3.2`.
+
+## 2.19.7
+
+* Fix test value files in datadog/ci directory.
+
+## 2.19.6
 
 * Update `agent` image tag to `7.29.1`.
 * Update `clusterChecksRunner` image tag to `7.29.1`.
+
+## 2.19.5
+
+* Update link toe `kube-state-metrics` in README.md.
 
 ## 2.19.4
 
