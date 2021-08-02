@@ -6,12 +6,12 @@ ROOT=$(git rev-parse --show-toplevel)
 DATADOG_OPERATOR_REPO=Datadog/datadog-operator
 DATADOG_EXTENDED_DAEMON_SET_REPO=Datadog/extendeddaemonset
 
-DATADOG_OPERATOR_TAG=master
+DATADOG_OPERATOR_TAG=main
 if [[ $# -eq 1 ]] || [[ $# -eq 2 ]]; then
     DATADOG_OPERATOR_TAG=$1
 fi
 
-DATADOG_EXTENDED_DAEMON_SET_TAG=master
+DATADOG_EXTENDED_DAEMON_SET_TAG=main
 if [[ $# -eq 2 ]] ; then
    DATADOG_EXTENDED_DAEMON_SET_TAG=$2
 fi
