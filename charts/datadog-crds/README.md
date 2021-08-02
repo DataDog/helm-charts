@@ -1,6 +1,6 @@
 # Datadog CRDs
 
-![Version: 0.3.2](https://img.shields.io/badge/Version-0.3.2-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
 This chart was designed to allow other "datadog" charts to share `CustomResourceDefinitions` such as the `DatadogMetric`.
 
@@ -33,5 +33,5 @@ But the recommended Kubernetes versions are `1.16+`.
 ### How to update CRDs
 
 ```shell
-./update-crds.sh <datadog-operator-tag>
+./update-crds.sh <datadog-operator-tag> <datadog-extended-daemonset-tag>
 ```

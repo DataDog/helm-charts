@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+* Add CRDs from Extended Daemon Set v0.6.0 tag.
+
 ## 0.3.2
 
 * Set `apiVersion` to `v1` for compatibility with helm 2.
