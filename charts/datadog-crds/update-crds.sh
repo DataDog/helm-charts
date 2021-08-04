@@ -20,7 +20,7 @@ download_crd() {
     repo=$1
     tag=$2
     name=$3
-    camelCaseName=$4
+    installOption=$4 # Name of the option to install the CRD (defined in values.yaml)
     version=$5
 
     inFile=datadoghq.com_$name.yaml
@@ -34,14 +34,14 @@ download_crd() {
     # Once they are, the EDS case should be handled as the operator is now.
     case "$repo" in
       "$DATADOG_OPERATOR_REPO")
-        ifCondition="{{- if and .Values.crds.$camelCaseName (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+        ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
         if [ "$version" = "v1" ]; then
-            ifCondition="{{- if and .Values.crds.$camelCaseName (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
+            ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
             cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
         fi
         ;;
       "$DATADOG_EXTENDED_DAEMON_SET_REPO")
-        ifCondition="{{- if .Values.crds.$camelCaseName }}"
+        ifCondition="{{- if .Values.crds.$installOption }}"
         cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
         ;;
     esac
