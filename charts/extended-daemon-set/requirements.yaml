@@ -1,0 +1,7 @@
+dependencies:
+  - name: datadog-crds
+    version: "=0.3.4"
+    repository: https://helm.datadoghq.com
+    condition: true
+    tags:
+    - install-crds

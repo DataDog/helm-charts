@@ -9,6 +9,9 @@ crds:
   datadogAgents: false
   # crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
   datadogMonitors: false
+  # crds.extendedDaemonSets -- Set to true to deploy all the EDS CRDs
+  # (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
+  extendedDaemonSets: false
 
 # nameOverride -- Override name of app
 nameOverride: ""

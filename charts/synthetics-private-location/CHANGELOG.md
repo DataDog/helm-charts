@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.7.0
+
+* Update private location image version to `1.13.0`.
+
 ### 0.6.0
 
 * Use secret instead of Config Map for `configFile`.

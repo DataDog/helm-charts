@@ -3,24 +3,48 @@ set -euo pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
 
-TAG=master
-if [[ $# -eq 1 ]] ; then
-    TAG=$1
+DATADOG_OPERATOR_REPO=Datadog/datadog-operator
+DATADOG_EXTENDED_DAEMON_SET_REPO=Datadog/extendeddaemonset
+
+DATADOG_OPERATOR_TAG=main
+if [[ $# -eq 1 ]] || [[ $# -eq 2 ]]; then
+    DATADOG_OPERATOR_TAG=$1
+fi
+
+DATADOG_EXTENDED_DAEMON_SET_TAG=main
+if [[ $# -eq 2 ]] ; then
+   DATADOG_EXTENDED_DAEMON_SET_TAG=$2
 fi
 
 download_crd() {
-    inFile=datadoghq.com_$2.yaml
-    version=$4
-    outFile=datadoghq.com_$2_$version.yaml
-    path=$ROOT/charts/datadog-crds/templates/$outFile
-    echo "Download CRD \"$inFile\" version \"$version\" from tag \"$1\""
-    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/DataDog/datadog-operator/$1/config/crd/bases/$version/$inFile"
+    repo=$1
+    tag=$2
+    name=$3
+    installOption=$4 # Name of the option to install the CRD (defined in values.yaml)
+    version=$5
 
-    ifCondition="{{- if and .Values.crds.$3 (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
-    if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.crds.$3 (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
-        cp "$path" "$ROOT/crds/datadoghq.com_$2.yaml"
-    fi
+    inFile=datadoghq.com_$name.yaml
+    # shellcheck disable=SC2154
+    outFile=datadoghq.com_"$name"_"$version".yaml
+    path=$ROOT/charts/datadog-crds/templates/$outFile
+    echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
+    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
+
+    # This case is needed because v1 CRDs are not present in any released version of the EDS yet.
+    # Once they are, the EDS case should be handled as the operator is now.
+    case "$repo" in
+      "$DATADOG_OPERATOR_REPO")
+        ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+        if [ "$version" = "v1" ]; then
+            ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
+            cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
+        fi
+        ;;
+      "$DATADOG_EXTENDED_DAEMON_SET_REPO")
+        ifCondition="{{- if .Values.crds.$installOption }}"
+        cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
+        ;;
+    esac
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
     yq eval '.metadata.labels."helm.sh/chart" = env(VALUE)'                              -i "$path"
@@ -35,9 +59,16 @@ download_crd() {
 }
 
 mkdir -p "$ROOT/crds"
-download_crd "$TAG" datadogmetrics datadogMetrics v1beta1
-download_crd "$TAG" datadogmetrics datadogMetrics v1
-download_crd "$TAG" datadogagents datadogAgents v1beta1
-download_crd "$TAG" datadogagents datadogAgents v1
-download_crd "$TAG" datadogmonitors datadogMonitors v1beta1
-download_crd "$TAG" datadogmonitors datadogMonitors v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmetrics datadogMetrics v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmetrics datadogMetrics v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents datadogAgents v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents datadogAgents v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1
+
+# v1 CRDs are not present in any released version yet. Add them here when they are.
+eds_crds=(extendeddaemonsetreplicasets extendeddaemonsets extendeddaemonsetsettings)
+for eds_crd in "${eds_crds[@]}"
+do
+  download_crd "$DATADOG_EXTENDED_DAEMON_SET_REPO" "$DATADOG_EXTENDED_DAEMON_SET_TAG" "$eds_crd" extendedDaemonSets v1beta1
+done
