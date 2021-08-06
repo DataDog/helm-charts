@@ -362,7 +362,7 @@ datadog:
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
-      # datadog.securityAgent.compliance.enabled -- Set this to true to enable compliance checks
+      # datadog.securityAgent.compliance.enabled -- Set this to true to enable the Cloud Security Posture Management (CSPM) product
       enabled: false
 
       # datadog.securityAgent.compliance.configMap -- Contains compliance benchmarks that will be used
@@ -372,7 +372,7 @@ datadog:
       checkInterval: 20m
 
     runtime:
-      # datadog.securityAgent.runtime.enabled -- Set to true to enable the Security Runtime Module
+      # datadog.securityAgent.runtime.enabled -- Set to true to enable the Cloud Workload Security (CWS) product
       enabled: false
 
       policies:
@@ -380,7 +380,7 @@ datadog:
         configMap:
 
       syscallMonitor:
-        # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring.
+        # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring (recommended for troubleshooting only)
         enabled: false
 
   ## Manage NetworkPolicy
