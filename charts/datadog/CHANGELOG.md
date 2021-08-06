@@ -5,7 +5,6 @@
 
 ## 2.19.9
 
-* Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
 * Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
 
 ## 2.19.8
