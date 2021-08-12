@@ -1,4 +1,5 @@
 # Datadog changelog
+
 ## 2.20.0
 
 * Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
