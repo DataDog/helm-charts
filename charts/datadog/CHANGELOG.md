@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.19.10
+
+* Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
 ## 2.19.9
 
 * Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
