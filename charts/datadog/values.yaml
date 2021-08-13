@@ -249,7 +249,7 @@ datadog:
 
   # datadog.confd -- Provide additional check configurations (static and Autodiscovery)
   ## Each key becomes a file in /conf.d
-  ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#optional-volumes
+  ## ref: https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#optional-volumes
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}
   #   redisdb.yaml: |-
@@ -266,7 +266,7 @@ datadog:
 
   # datadog.checksd -- Provide additional custom checks as python code
   ## Each key becomes a file in /checks.d
-  ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#optional-volumes
+  ## ref: https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#optional-volumes
   checksd: {}
   #   service.py: |-
 
@@ -1025,7 +1025,7 @@ agents:
 
   # agents.customAgentConfig -- Specify custom contents for the datadog agent config (datadog.yaml)
   ## ref: https://docs.datadoghq.com/agent/guide/agent-configuration-files/?tab=agentv6
-  ## ref: https://github.com/DataDog/datadog-agent/blob/master/pkg/config/config_template.yaml
+  ## ref: https://github.com/DataDog/datadog-agent/blob/main/pkg/config/config_template.yaml
   ## Note the `agents.useConfigMap` needs to be set to `true` for this parameter to be taken into account.
   customAgentConfig: {}
   #   # Autodiscovery for Kubernetes
@@ -1181,7 +1181,7 @@ clusterChecksRunner:
   #   key: "value"
 
   # clusterChecksRunner.env -- Environment variables specific to Cluster Checks Runner
-  ## ref: https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#environment-variables
+  ## ref: https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#environment-variables
   env: []
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>

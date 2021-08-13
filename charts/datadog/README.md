@@ -22,7 +22,7 @@ helm repo update
 Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 - the Datadog Agent supports Kubernetes 1.4+
-- The Datadog chart's defaults are tailored to Kubernetes 1.10+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
+- The Datadog chart's defaults are tailored to Kubernetes 1.10+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
 
 ## Requirements
 
@@ -94,7 +94,7 @@ helm install --name datadog-monitoring \
 ```
 
 **Note**: Specifying `clusterAgent.metricsProvider.enabled=true` enables the External Metrics Server.
-If you want to learn to use this feature, you can check out this [Datadog Cluster Agent walkthrough](https://github.com/DataDog/datadog-agent/blob/master/docs/cluster-agent/CUSTOM_METRICS_SERVER.md).
+If you want to learn to use this feature, you can check out this [Datadog Cluster Agent walkthrough](https://github.com/DataDog/datadog-agent/blob/main/docs/cluster-agent/CUSTOM_METRICS_SERVER.md).
 
 The Leader Election is enabled by default in the chart for the Cluster Agent. Only the Cluster Agent(s) participate in the election, in case you have several replicas configured (using `clusterAgent.replicas`.
 
@@ -109,7 +109,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 ⚠️ Migrating from 1.x to 2.x requires a manual action.
 
 The `datadog` chart has been refactored to regroup the `values.yaml` parameters in a more logical way.
-Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/master/charts/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
+Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
 
 #### From 1.19.0 onwards
 
@@ -211,7 +211,7 @@ Alternatively set the `datadog.leaderElection`, `datadog.collectEvents` and `rba
 
 ### conf.d and checks.d
 
-The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/master/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
+The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/main/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
 
 The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your [datadog-values.yaml](values.yaml) file with the check configurations:
 
