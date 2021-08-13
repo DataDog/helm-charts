@@ -13,8 +13,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
+        uses: helm/chart-testing-action@v2.1.0
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
@@ -35,8 +38,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
+        uses: helm/chart-testing-action@v2.1.0
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
@@ -93,8 +99,11 @@ jobs:
         uses: helm/kind-action@main
         with:
           node_image: kindest/node:${{ matrix.k8s }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
+        uses: helm/chart-testing-action@v2.1.0
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
 
