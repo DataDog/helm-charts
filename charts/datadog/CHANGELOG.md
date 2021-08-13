@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.20.0
+
+* Update default Agent image tag to `7.30.0`
+* Update default Cluster-Agent image tag to `1.14.0`
+
 ## 2.19.9
 
 * Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
