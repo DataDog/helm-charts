@@ -123,6 +123,7 @@ rules:
   - deployments
   - replicasets
   - daemonsets
+  - statefulsets
   verbs:
   - list
   - get
