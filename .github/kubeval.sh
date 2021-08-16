@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-KUBEVAL_VERSION="0.15.0"
+KUBEVAL_VERSION="v0.16.1"
 SCHEMA_LOCATION="https://kubernetesjsonschema.dev/"
 OS=$(uname)
 
