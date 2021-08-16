@@ -3,4 +3,5 @@ chart-repos:
   - kube-state-metrics=https://prometheus-community.github.io/helm-charts
 helm-extra-args: --timeout 300s
 check-version-increment: true
+target-branch: main
 debug: true
