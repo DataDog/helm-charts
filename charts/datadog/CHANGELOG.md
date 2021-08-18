@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.20.2
+
+* Adds missing configuration option for `DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS`
+
 ## 2.20.1
 
 * Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
