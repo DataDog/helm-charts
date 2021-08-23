@@ -53,7 +53,7 @@ spec:
             description: DatadogMetricSpec defines the desired state of DatadogMetric
             properties:
               externalMetricName:
-                description: ExternalMetricName is reversed for internal use
+                description: ExternalMetricName is reserved for internal use
                 type: string
               maxAge:
                 description: MaxAge provides the max age for the metric query (overrides
