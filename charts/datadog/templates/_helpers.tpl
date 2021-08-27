@@ -240,10 +240,14 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
+{{- $tagSuffix := "" -}}
+{{- if .image.tagSuffix -}}
+{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
+{{- end -}}
 {{- if .image.repository -}}
-{{- .image.repository -}}:{{ .image.tag }}
+{{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
+{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
 
