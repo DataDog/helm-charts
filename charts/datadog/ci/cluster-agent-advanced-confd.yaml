@@ -7,7 +7,7 @@ datadog:
 clusterAgent:
   enabled: true
   advancedConfd:
-    orchestrator:
+    orchestrator.d:
       1.yaml: |-
         cluster_check: true
         init_config:

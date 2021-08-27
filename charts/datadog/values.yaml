@@ -588,7 +588,7 @@ clusterAgent:
   ## Each key is an integration containing several config files, it replaces clusterAgent.confd if set
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   advancedConfd: {}
-  #  mysql:
+  #  mysql.d:
   #    1.yaml: |-
   #      cluster_check: true
   #      instances:

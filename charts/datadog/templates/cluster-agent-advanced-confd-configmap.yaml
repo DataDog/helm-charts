@@ -14,7 +14,7 @@ metadata:
 data:
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
-  {{ printf "%s.d--%s: |" $integration $name }}
+  {{ printf "%s--%s: |" $integration $name }}
     {{ $config | indent 4 | trim }}
 {{- end }}
 {{- end }}
