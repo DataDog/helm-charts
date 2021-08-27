@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.20.2
+
+* Add an additional way to configure cluster check allowing multiple configs for the same check.
+
 ## 2.20.1
 
 * Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
