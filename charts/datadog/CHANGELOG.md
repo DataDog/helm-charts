@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.20.4
+
+* Skip KSM network policy creation when KSM creation is disabled.
+
 ## 2.20.3
 
 * Add `agents.image.tagSuffix` and `clusterChecksRunner.image.tagSuffix` to be able to request JMX or Windows servercore images without having to explicitly specify the full version.

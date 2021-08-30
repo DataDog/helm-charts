@@ -1,4 +1,4 @@
-{{- if and (or $.Values.datadog.networkPolicy.create $.Values.datadog.kubeStateMetricsNetworkPolicy.create) (eq $.Values.datadog.networkPolicy.flavor "cilium") -}}
+{{- if and $.Values.datadog.kubeStateMetricsEnabled (or $.Values.datadog.networkPolicy.create $.Values.datadog.kubeStateMetricsNetworkPolicy.create) (eq $.Values.datadog.networkPolicy.flavor "cilium") -}}
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
