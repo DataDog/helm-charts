@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.20.3
+
+* Add `agents.image.tagSuffix` and `clusterChecksRunner.image.tagSuffix` to be able to request JMX or Windows servercore images without having to explicitly specify the full version.
+
 ## 2.20.2
 
 * Add an additional way to configure cluster check allowing multiple configs for the same check.

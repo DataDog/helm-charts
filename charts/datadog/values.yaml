@@ -735,8 +735,13 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    ## Use 7-jmx to enable jmx fetch collection
     tag: 7.30.0
+
+    # agents.image.tagSuffix -- Suffix to append to Agent tag
+    ## Ex:
+    ##  jmx        to enable jmx fetch collection
+    ##  servercore to get Windows images based on servercore
+    tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -1083,8 +1088,13 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    ## Use 7-jmx to enable jmx fetch collection
     tag: 7.30.0
+
+    # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
+    ## Ex:
+    ##  jmx        to enable jmx fetch collection
+    ##  servercore to get Windows images based on servercore
+    tagSuffix: ""
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
