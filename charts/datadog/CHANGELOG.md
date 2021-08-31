@@ -1,8 +1,13 @@
 # Datadog changelog
 
+## 2.21.4
+
+* Update descriptions for securityAgent configuration
+
 ## 2.21.3
 
 * Default Datadog Agent image to 7.30.1.
+
 ## 2.21.2
 
 * Fix Dogstatsd UDS socket configuration with a HostVolume when `useSocketVolume: true`.
