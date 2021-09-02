@@ -247,6 +247,16 @@ Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
 
 {{- end }}
 
+{{- if .Values.datadog.apm.socketEnabled }}
+
+##############################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
+##############################################################################
+
+{{- end }}
+
+{{- end }}
+
 {{- if and (.Values.datadog.dogstatsd.useSocketVolume) (eq .Values.targetSystem "windows") }}
 
 ###################################################################################
@@ -255,16 +265,6 @@ Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
 
 Refer to the Dogstatsd configuration section of the documentation for more details.
 https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
-
-{{- end }}
-
-{{- if .Values.datadog.apm.socketEnabled }}
-
-##############################################################################
-####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
-##############################################################################
-
-{{- end }}
 
 {{- end }}
 

@@ -109,7 +109,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 ⚠️ Migrating from 1.x to 2.x requires a manual action.
 
 The `datadog` chart has been refactored to regroup the `values.yaml` parameters in a more logical way.
-Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
+Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update your `values.yaml` file.
 
 #### From 1.19.0 onwards
 
@@ -163,10 +163,9 @@ datadog:
     useHostPort: true
 ```
 
-### Enabling APM and Trace
+### Enabling APM and Tracing
 
-APM is enabled by default using a socket for communication; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
-
+APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
 Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication using a `hostPort`:
 
 ```yaml
@@ -176,7 +175,7 @@ datadog:
     portEnabled: true
 ```
 
-To disable the socket , update you [datadog-values.yaml](values.yaml) file with the following configration:
+To disable the socket , update your [datadog-values.yaml](values.yaml) file with the following configration:
 
 ```yaml
 datadog:
