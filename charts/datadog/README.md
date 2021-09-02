@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.20.4](https://img.shields.io/badge/Version-2.20.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.21.0](https://img.shields.io/badge/Version-2.21.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -109,7 +109,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 ⚠️ Migrating from 1.x to 2.x requires a manual action.
 
 The `datadog` chart has been refactored to regroup the `values.yaml` parameters in a more logical way.
-Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
+Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update your `values.yaml` file.
 
 #### From 1.19.0 onwards
 
@@ -146,6 +146,43 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
+
+### Configuring Dogstatsd in the agent
+<a name="dsd-config"></a>
+The agent will start a server running Dogstatsd in order to process custom metrics sent from your applications. Check out the [official documentation on Dogstatsd](https://docs.datadoghq.com/developers/dogstatsd/?tab=hostagent) for more details.
+
+By default the agent will create a unix domain socket to process the datagrams (not supported on Windows, see [below](#windows-config)).
+
+To disable the socket in favor of the hostPort, use the following configuration:
+
+```yaml
+datadog:
+  #(...)
+  dogstatsd:
+    useSocketVolume: false
+    useHostPort: true
+```
+
+### Enabling APM and Tracing
+
+APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
+Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication using a `hostPort`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    portEnabled: true
+```
+
+To disable the socket , update your [datadog-values.yaml](values.yaml) file with the following configration:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    socketEnabled: false
+```
 
 ### Enabling Log Collection
 
@@ -461,11 +498,13 @@ helm install --name <RELEASE_NAME> \
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog.apiKey | string | `"<DATADOG_API_KEY>"` | Your Datadog API key ref: https://app.datadoghq.com/account/settings#agent/kubernetes |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
-| datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 |
+| datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
+| datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (port 8216 by default |
+| datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |
 | datadog.apm.socketPath | string | `"/var/run/datadog/apm.socket"` | Path to the trace-agent socket |
-| datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket |
+| datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
@@ -492,7 +531,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.dogstatsd.tags | list | `[]` | List of static tags to attach to every custom metric, event and service check collected by Dogstatsd. |
 | datadog.dogstatsd.useHostPID | bool | `false` | Run the agent in the host's PID namespace |
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
-| datadog.dogstatsd.useSocketVolume | bool | `false` | Enable dogstatsd over Unix Domain Socket with an HostVolume |
+| datadog.dogstatsd.useSocketVolume | bool | `true` | Enable dogstatsd over Unix Domain Socket with an HostVolume |
 | datadog.env | list | `[]` | Set environment variables for all Agents |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from the Agent Autodiscovery. |
@@ -565,7 +604,7 @@ helm install --name <RELEASE_NAME> \
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 
 ## Configuration options for Windows deployments
-
+<a name="windows-config"></a>
 Some options above are not working/not available on Windows, here is the list of **unsupported** options:
 
 | Parameter                                | Reason                                           |

@@ -354,6 +354,40 @@ false
 
 
 {{/*
+Return true if a trace-agent needs to be deployed.
+*/}}
+{{- define "should-enable-trace-agent" -}}
+{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a APM over UDS is configured.
+*/}}
+{{- define "trace-agent-use-uds" -}}
+{{- if or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a traffic over TCP is configured for APM.
+*/}}
+{{- define "trace-agent-use-tcp-port" -}}
+{{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}

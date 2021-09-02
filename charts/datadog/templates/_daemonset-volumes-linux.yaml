@@ -24,7 +24,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if .Values.datadog.apm.useSocketVolume }}
+{{- if eq  (include "trace-agent-use-uds" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate

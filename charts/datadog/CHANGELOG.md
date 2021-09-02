@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.21.0
+
+* Enable APM by default with using a Unix Domain socket for communication.
+
 ## 2.20.4
 
 * Skip KSM network policy creation when KSM creation is disabled.
