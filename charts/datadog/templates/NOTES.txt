@@ -258,6 +258,14 @@ https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
 
 {{- end }}
 
+{{- if .Values.datadog.apm.socketEnabled }}
+
+##############################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
+##############################################################################
+
+{{- end }}
+
 {{- end }}
 
 {{- if and (not (.Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1")) .Values.datadog.kubeStateMetricsEnabled }}
