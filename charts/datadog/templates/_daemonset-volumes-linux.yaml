@@ -9,7 +9,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+{{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
     type: DirectoryOrCreate
@@ -24,7 +24,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if eq  (include "trace-agent-use-uds" .) "true" }}
+{{- if eq (include "trace-agent-use-uds" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
