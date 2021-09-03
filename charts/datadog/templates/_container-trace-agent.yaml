@@ -37,7 +37,7 @@
       value: "true"
     - name: DD_APM_RECEIVER_PORT
       value: {{ .Values.datadog.apm.port | quote }}
-  {{- if eq  (include "trace-agent-use-uds" .) "true" }}
+  {{- if eq (include "trace-agent-use-uds" .) "true" }}
     - name: DD_APM_RECEIVER_SOCKET
       value: {{ .Values.datadog.apm.socketPath | quote }}
   {{- end }}
@@ -64,7 +64,7 @@
       readOnly: false
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-    {{- if and .Values.datadog.apm.useSocketVolume (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
+    {{- if and (eq (include "trace-agent-use-uds" .) "true") (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
     - name: apmsocket
       mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
     {{- end }}

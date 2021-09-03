@@ -365,9 +365,26 @@ false
 {{- end -}}
 
 {{/*
-Return true if a APM over UDS is configured.
+Return true hostPath should be use for DSD socket. Return always false on GKE autopilot.
+*/}}
+{{- define "should-mount-hostPath-for-dsd-socket" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
+{{- if .Values.datadog.dogstatsd.useSocketVolume -}}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a APM over UDS is configured. Return always false on GKE autopilot.
 */}}
 {{- define "trace-agent-use-uds" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
 {{- if or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume -}}
 true
 {{- else -}}
