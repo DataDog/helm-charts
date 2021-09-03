@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.21.1
+
+* Disable by default UDS socket for dogstastd and apm on GKE autopilot.
+
 ## 2.21.0
 
 * Enable APM by default with using a Unix Domain socket for communication.
