@@ -372,9 +372,9 @@ Return true hostPath should be use for DSD socket. Return always false on GKE au
 false
 {{- end -}}
 {{- if .Values.datadog.dogstatsd.useSocketVolume -}}
-false
-{{- else -}}
 true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 
