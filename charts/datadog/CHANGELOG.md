@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.21.2
+
+* Fix Dogstatsd UDS socket configuration with a HostVolume when `useSocketVolume: true`.
+
 ## 2.21.1
 
 * Disable by default UDS socket for dogstastd and apm on GKE autopilot.
