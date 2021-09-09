@@ -80,8 +80,6 @@ helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME --set datadog.appKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
 ```
 
-**Note**: Provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
-
 ### Enabling the Datadog Cluster Agent
 
 Read about the Datadog Cluster Agent in the [official documentation](https://docs.datadoghq.com/agent/kubernetes/cluster/).
