@@ -47,7 +47,7 @@ helm install --name <RELEASE_NAME> \
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
-However, you can use manually created secret by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-keys), below).
+However, you can use manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-keys), below).
 
 **Note:** When creating the secret(s), be sure to name the key fields `api-key` and `app-key`.
 
