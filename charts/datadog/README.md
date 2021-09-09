@@ -71,14 +71,14 @@ DATADOG_SECRET_NAME=datadog-secret
 kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --from-literal app-key="<DATADOG_APP_KEY>" --namespace="default"
 ```
 
-**Note**: This creates a secret in the default namespace. If you are in a custom namespace, update the namespace parameter of the command before running it.
-
 Now, the installation command contains the reference to the secret.
 
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME --set datadog.appKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
 ```
+
+**Note**: This creates a secret in the default namespace. If you are in a custom namespace, update the namespace parameter of the command before running it.
 
 ### Enabling the Datadog Cluster Agent
 
