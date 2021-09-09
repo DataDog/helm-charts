@@ -5180,6 +5180,33 @@ entries:
     version: 0.1.0
   extendeddaemonset:
   - apiVersion: v1
+    appVersion: v0.7.0
+    created: "2021-09-09T11:38:38.819897658Z"
+    dependencies:
+    - condition: "true"
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: =0.3.5
+    description: Extended Daemonset Controller
+    digest: 11036fbe46c4b51b9867ce68744dd7b5c95ae77fe05b7c5d030565b560ed4c3b
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: extendeddaemonset
+    sources:
+    - https://github.com/DataDog/extendeddaemonset
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/extendeddaemonset-v0.2.0/extendeddaemonset-v0.2.0.tgz
+    version: v0.2.0
+  - apiVersion: v1
     appVersion: v0.6.0
     created: "2021-08-04T12:05:32.920555816Z"
     dependencies:
@@ -5367,4 +5394,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2021-09-09T10:56:27.581846617Z"
+generated: "2021-09-09T11:38:38.822420071Z"
