@@ -1,6 +1,6 @@
 # Extended DaemonSet
 
-![Version: v0.1.0](https://img.shields.io/badge/Version-v0.1.0-informational?style=flat-square) ![AppVersion: v0.6.0](https://img.shields.io/badge/AppVersion-v0.6.0-informational?style=flat-square)
+![Version: v0.2.0](https://img.shields.io/badge/Version-v0.2.0-informational?style=flat-square) ![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
 
 This chart installs the Extended DaemonSet (EDS). It aims to provide a new implementation of the Kubernetes DaemonSet resource with key features:
 - Canary Deployment: Deploy a new DaemonSet version with only a few nodes.
@@ -27,7 +27,7 @@ helm repo update
 | fullnameOverride | string | `""` | Overrides the full qualified app name |
 | image.pullPolicy | string | `"IfNotPresent"` | Defines the pullPolicy for the Extended DaemonSet image |
 | image.repository | string | `"datadog/extendeddaemonset"` | Repository to use for the Extended DaemonSet image |
-| image.tag | string | `"v0.6.0"` | Defines the Extended DaemonSet version to use |
+| image.tag | string | `"v0.7.0"` | Defines the Extended DaemonSet version to use |
 | imagePullSecrets | list | `[]` | Extended DaemonSet image repository pullSecret (ex: specify docker registry credentials) |
 | logLevel | string | `"info"` | Sets the log level (debug, info, error, panic, fatal) |
 | nameOverride | string | `""` | Overrides name of app |
