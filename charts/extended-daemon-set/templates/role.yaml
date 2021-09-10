@@ -35,6 +35,18 @@ rules:
   - get
   - watch
 - apiGroups:
+    - ""
+  resources:
+    - podtemplates
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
   - ""
   resources:
   - services

@@ -1,6 +1,6 @@
 dependencies:
   - name: datadog-crds
-    version: "=0.3.4"
+    version: "=0.3.5"
     repository: https://helm.datadoghq.com
     condition: true
     tags:

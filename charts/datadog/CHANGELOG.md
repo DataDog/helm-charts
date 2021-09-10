@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 2.21.4
+## 2.21.5
 
 * Update descriptions for securityAgent configuration
+
+## 2.21.4
+
+* Fix condition for including `sysprobe-socket-dir` and `sysprobe-config` volume mounts for `agent`.
 
 ## 2.21.3
 

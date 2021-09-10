@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.5
+
+* Add CRDs from Extended Daemon Set v0.7.0.
+
 ## 0.3.4
 
 * Include only `v1beta1` CRDs from the EDS v0.6.0 tag.

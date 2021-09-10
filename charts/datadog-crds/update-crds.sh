@@ -30,21 +30,11 @@ download_crd() {
     echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
     curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
 
-    # This case is needed because v1 CRDs are not present in any released version of the EDS yet.
-    # Once they are, the EDS case should be handled as the operator is now.
-    case "$repo" in
-      "$DATADOG_OPERATOR_REPO")
-        ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
-        if [ "$version" = "v1" ]; then
-            ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
-            cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
-        fi
-        ;;
-      "$DATADOG_EXTENDED_DAEMON_SET_REPO")
-        ifCondition="{{- if .Values.crds.$installOption }}"
+    ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+    if [ "$version" = "v1" ]; then
+        ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
         cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
-        ;;
-    esac
+    fi
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
     yq eval '.metadata.labels."helm.sh/chart" = env(VALUE)'                              -i "$path"
@@ -66,9 +56,9 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents data
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1beta1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1
 
-# v1 CRDs are not present in any released version yet. Add them here when they are.
 eds_crds=(extendeddaemonsetreplicasets extendeddaemonsets extendeddaemonsetsettings)
 for eds_crd in "${eds_crds[@]}"
 do
   download_crd "$DATADOG_EXTENDED_DAEMON_SET_REPO" "$DATADOG_EXTENDED_DAEMON_SET_TAG" "$eds_crd" extendedDaemonSets v1beta1
+  download_crd "$DATADOG_EXTENDED_DAEMON_SET_REPO" "$DATADOG_EXTENDED_DAEMON_SET_TAG" "$eds_crd" extendedDaemonSets v1
 done
