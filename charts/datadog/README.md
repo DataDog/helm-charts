@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.21.4](https://img.shields.io/badge/Version-2.21.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.21.5](https://img.shields.io/badge/Version-2.21.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -566,11 +566,11 @@ helm install --name <RELEASE_NAME> \
 | datadog.prometheusScrape.enabled | bool | `false` | Enable autodiscovering pods and services exposing prometheus metrics. |
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
-| datadog.securityAgent.compliance.configMap | string | `nil` | Contains compliance benchmarks that will be used |
-| datadog.securityAgent.compliance.enabled | bool | `false` | Set this to true to enable compliance checks |
-| datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable the Security Runtime Module |
-| datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains policies that will be used |
-| datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring. |
+| datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
+| datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
+| datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
+| datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
+| datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
 | datadog.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceTopology | object | `{"enabled":false,"serviceName":"datadog-agent"}` | Configure service topology to send custom metrics and traces without using host ports Important notes: - The Service Topology feature in Kubernetes is still in alpha and disabled by default, please make sure it's enabled in your cluster configuration - The environment variable DD_AGENT_HOST in your application pod template must be configured to reach the topology service |
 | datadog.serviceTopology.enabled | bool | `false` | Enabling this will allow sending custom metrics and APM traces to the Datadog Agent on the same node without using a host port Important note: Enabling this option without enabling Service Topology in the cluster will result in wrong tagging for traces and custom metrics |
