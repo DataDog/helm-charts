@@ -19,7 +19,7 @@ targetSystem: "linux"
 registry: gcr.io/datadoghq
 
 datadog:
-  # datadog.apiKey -- Your Datadog API key
+  # datadog.apiKey -- Your Datadog API key 
   # ref: https://app.datadoghq.com/account/settings#agent/kubernetes
   apiKey: <DATADOG_API_KEY>
 
