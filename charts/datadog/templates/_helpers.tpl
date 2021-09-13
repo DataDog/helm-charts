@@ -503,3 +503,14 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if we can enable Service Internal Traffic Policy
+*/}}
+{{- define "enable-service-internal-traffic-policy" -}}
+{{- if semverCompare "^1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

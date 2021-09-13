@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.22.8
+
+* Add a service with local [internal traffic policy](https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/) for traces and dogstatsd.
+  This works only on Kubernetes 1.22 or more recent. 
+
 ## 2.22.7
 
 * Add a default required pod anti-affinity for the cluster agent.
