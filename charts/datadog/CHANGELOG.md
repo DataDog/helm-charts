@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.22.0
+
+* Default Datadog Agent image to 7.31.0.
+* Default Datadog Cluster Agent image to 1.15.0.
+
 ## 2.21.5
 
 * Update descriptions for securityAgent configuration
