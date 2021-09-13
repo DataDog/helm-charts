@@ -137,7 +137,7 @@ specs:
           - {}
         toPorts:
           - ports:
-              - port: {{ $.Values.datadog.apm.port }}
+              - port: "{{ $.Values.datadog.apm.port }}"
                 protocol: TCP
 {{- end }}
 # The agents are susceptible to connect to any pod

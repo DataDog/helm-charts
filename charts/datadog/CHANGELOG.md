@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.1
+
+* Fix CiliumNetworkPolicy `port` field
+
 ## 2.22.0
 
 * Default Datadog Agent image to 7.31.0.
