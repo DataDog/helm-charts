@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+* Update all CRDs from the Operator v0.7.0 tag.
+
 ## 0.3.5
 
 * Add CRDs from Extended Daemon Set v0.7.0.
