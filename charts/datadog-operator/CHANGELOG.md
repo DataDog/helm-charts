@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+* Update chart for Operator release `v0.7.0`
+
 ## 0.6.3
 
 * Add missing `poddisruptionbudgets` RBAC when the compliance feature is enabled.
