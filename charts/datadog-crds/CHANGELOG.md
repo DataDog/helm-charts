@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1
+
+* Cleanup `update-crds.sh` script.
+
+## 0.4.0
+
+* Update CRDs from Datadog Operator v0.7.0.
+* Remove Extended Daemon Set CRDs from this chart. They will be direclty located in the ExtendedDaemonset chart.
+
 ## 0.3.5
 
 * Add CRDs from Extended Daemon Set v0.7.0.
