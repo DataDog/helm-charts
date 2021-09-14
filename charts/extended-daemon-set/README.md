@@ -28,6 +28,7 @@ helm repo update
 | image.repository | string | `"datadog/extendeddaemonset"` | Repository to use for the Extended DaemonSet image |
 | image.tag | string | `"v0.7.0"` | Defines the Extended DaemonSet version to use |
 | imagePullSecrets | list | `[]` | Extended DaemonSet image repository pullSecret (ex: specify docker registry credentials) |
+| installCRDs | bool | `true` | Set to true to deploy all the ExtendedDaemonSet CRDs (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings) |
 | logLevel | string | `"info"` | Sets the log level (debug, info, error, panic, fatal) |
 | nameOverride | string | `""` | Overrides name of app |
 | nodeSelector | object | `{}` | Allows to schedule on specific nodes |
@@ -40,3 +41,11 @@ helm repo update
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | tolerations | list | `[]` | Allows to schedule on tainted nodes |
+
+## Developers
+
+### How to update CRDs
+
+```shell
+./update-crds.sh <extendeddaemonset-tag>
+```

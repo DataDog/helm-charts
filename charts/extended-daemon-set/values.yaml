@@ -65,3 +65,7 @@ nodeSelector: {}
 tolerations: []
 # affinity -- Allows to specify affinity for the Extended DaemonSet PODs
 affinity: {}
+
+# installCRDs -- Set to true to deploy all the ExtendedDaemonSet CRDs
+# (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
+installCRDs: true
