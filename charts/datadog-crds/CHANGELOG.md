@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+* Cleanup `update-crds.sh` script.
+
 ## 0.4.0
 
 * Update CRDs from Datadog Operator v0.7.0.
