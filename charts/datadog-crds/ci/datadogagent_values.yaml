@@ -1,0 +1,3 @@
+crds:
+  extendedDaemonSets: true
+  datadogAgents: true
