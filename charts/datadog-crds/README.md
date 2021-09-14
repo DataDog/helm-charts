@@ -1,6 +1,6 @@
 # Datadog CRDs
 
-![Version: 0.3.5](https://img.shields.io/badge/Version-0.3.5-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
 This chart was designed to allow other "datadog" charts to share `CustomResourceDefinitions` such as the `DatadogMetric`.
 
@@ -25,7 +25,6 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
-| crds.extendedDaemonSets | bool | `false` | Set to true to deploy all the EDS CRDs (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings) |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
 | nameOverride | string | `""` | Override name of app |
 
