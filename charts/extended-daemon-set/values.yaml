@@ -65,9 +65,3 @@ nodeSelector: {}
 tolerations: []
 # affinity -- Allows to specify affinity for the Extended DaemonSet PODs
 affinity: {}
-
-datadog-crds:
-  crds:
-    # datadog-crds.crds.extendedDaemonSets -- Set to true to deploy all the EDS CRDs
-    # (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
-    extendedDaemonSets: true
