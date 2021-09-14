@@ -5,3 +5,6 @@ Datadog CRD(s) installed:
 {{- if .Values.crds.datadogAgents }}
 * DatadogAgent
 {{- end }}
+{{- if .Values.crds.datadogMonitors }}
+* DatadogMonitor
+{{- end }}
