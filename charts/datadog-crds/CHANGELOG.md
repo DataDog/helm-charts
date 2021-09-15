@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.3
+
+* Cleanup `update-crds.sh` script.
+
+## 0.4.2
+
+* Fixed instructions to run the `update-crds.sh` script.
+
 ## 0.4.1
 
 * Cleanup `update-crds.sh` script.
