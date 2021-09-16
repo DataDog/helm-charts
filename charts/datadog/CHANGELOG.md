@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.2
+
+* Bind mount host /etc/os-release in system probe container
+
 ## 2.22.1
 
 * Fix CiliumNetworkPolicy `port` field
