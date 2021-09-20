@@ -33,6 +33,7 @@ data:
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
       enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
+      runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilerOutputDir }}
       kernel_headers_download_dir: {{ $.Values.datadog.systemProbe.kernelHeadersDownloadDir }}
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}

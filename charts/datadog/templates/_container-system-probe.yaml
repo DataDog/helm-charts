@@ -80,7 +80,7 @@
 {{- end }}
 {{- if .Values.datadog.systemProbe.enableRuntimeCompiler }}
     - name: runtime-compiler-output-dir
-      mountPath: /var/tmp/datadog-agent/system-probe/build
+      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
     - name: kernel-headers-download-dir
       mountPath: {{ .Values.datadog.systemProbe.kernelHeadersDownloadDir }}
