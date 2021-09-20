@@ -525,3 +525,14 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if runtime compilation is enabled in the system-probe
+*/}}
+{{- define "runtime-compilation-enabled" -}}
+{{- if .Values.datadog.systemProbe.enableRuntimeCompiler -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

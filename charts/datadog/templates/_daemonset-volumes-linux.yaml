@@ -60,7 +60,7 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler }}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill (eq (include "runtime-compilation-enabled" .) "true") }}
 - hostPath:
     path: /lib/modules
   name: modules
@@ -68,7 +68,7 @@
     path: /usr/src
   name: src
 {{- end }}
-{{- if .Values.datadog.systemProbe.enableRuntimeCompiler }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
     type: DirectoryOrCreate

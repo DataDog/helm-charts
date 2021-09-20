@@ -58,7 +58,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler }}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill (eq (include "runtime-compilation-enabled" .) "true") }}
     - name: modules
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -78,7 +78,7 @@
       mountPath: /etc/datadog-agent/runtime-security.d
       readOnly: true
 {{- end }}
-{{- if .Values.datadog.systemProbe.enableRuntimeCompiler }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
     - name: runtime-compiler-output-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
