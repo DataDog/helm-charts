@@ -80,10 +80,10 @@
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
     - name: runtime-compiler-output-dir
-      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
+      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
     - name: kernel-headers-download-dir
-      mountPath: {{ .Values.datadog.systemProbe.kernelHeadersDownloadDir }}
+      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       readOnly: false
     - name: etc-os-release
       mountPath: /etc/os-release

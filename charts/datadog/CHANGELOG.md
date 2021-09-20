@@ -1,7 +1,7 @@
 # Datadog changelog
 ## 2.27.9
 
-* Adds `systemProbe.enableRuntimeCompiler`, `systemprobe.runtimeCompilerOutputDir` and `systemprobe.kernelHeadersDownloadDir` to configure eBPF runtime compiler in the system-probe.
+* Adds `systemProbe.enableRuntimeCompiler` and `systemprobe.runtimeCompilationAssetDir` to configure eBPF runtime compiler in the system-probe.
 * Bind various mounts in the `system-probe` which are required for kernel header downloading.
 
 ## 2.27.8

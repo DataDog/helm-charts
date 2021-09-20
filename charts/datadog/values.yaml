@@ -372,11 +372,8 @@ datadog:
     # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
     enableRuntimeCompiler: false
 
-    # datadog.systemProbe.runtimeCompilerOutputDir -- Specify an output directory for the compiled assets from the eBPF runtime compiler
-    runtimeCompilerOutputDir: /var/tmp/datadog-agent/system-probe/build
-
-    # datadog.systemProbe.kernelHeadersDownloadDir -- Specify a directory for the system probe to download kernel headers for runtime compilation
-    kernelHeadersDownloadDir: /var/tmp/datadog-agent/system-probe/kernel-headers
+    # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
+    runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
 
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: true

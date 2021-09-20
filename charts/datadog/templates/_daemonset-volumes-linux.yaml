@@ -70,11 +70,11 @@
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.runtimeCompilerOutputDir }}
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
     type: DirectoryOrCreate
   name: runtime-compiler-output-dir
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.kernelHeadersDownloadDir }}
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
     type: DirectoryOrCreate
   name: kernel-headers-download-dir
 - hostPath:
