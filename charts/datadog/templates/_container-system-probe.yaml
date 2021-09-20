@@ -85,6 +85,7 @@
     - name: kernel-headers-download-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       readOnly: false
+{{- if .Values.datadog.systemProbe.mountPackageManagementDirs }}
     - name: etc-os-release
       mountPath: /etc/os-release
       readOnly: true
@@ -106,6 +107,7 @@
     - name: opensuse-repos-dir
       mountPath: /etc/zypp
       readOnly: true
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if .Values.agents.volumeMounts }}

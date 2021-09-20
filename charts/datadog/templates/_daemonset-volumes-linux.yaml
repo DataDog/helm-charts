@@ -77,6 +77,7 @@
     path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
     type: DirectoryOrCreate
   name: kernel-headers-download-dir
+{{- if .Values.datadog.systemProbe.mountPackageManagementDirs }}
 - hostPath:
     path: /etc/os-release
   name: etc-os-release
@@ -98,6 +99,7 @@
 - hostPath:
     path: /etc/zypp
   name: opensuse-repos-dir
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}

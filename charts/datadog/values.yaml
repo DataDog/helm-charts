@@ -372,6 +372,9 @@ datadog:
     # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
     enableRuntimeCompiler: false
 
+    # datadog.systemProbe.mountPackageManagementDirs -- Enables mounting of various package management directories when runtime compilation is enabled
+    mountPackageManagementDirs: true
+
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
 

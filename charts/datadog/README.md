@@ -703,6 +703,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.enableRuntimeCompiler | bool | `false` | Enable the runtime compiler for eBPF probes |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
 | datadog.systemProbe.maxTrackedConnections | int | `131072` | the maximum number of tracked connections |
+| datadog.systemProbe.mountPackageManagementDirs | bool | `true` | Enables mounting of various package management directories when runtime compilation is enabled |
 | datadog.systemProbe.runtimeCompilationAssetDir | string | `"/var/tmp/datadog-agent/system-probe"` | Specify a directory for runtime compilation assets to live in |
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
