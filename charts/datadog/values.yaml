@@ -96,6 +96,21 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
+    # datadog.kubeStateMetricsCore.labelsAsTags -- Extra labels to collect from resources and to turn into datadog tag.
+    ## It has the following structure:
+    ## labelsAsTags:
+    ##   <resource1>:        # can be pod, deployment, node, etc.
+    ##     <label1>: <tag1>  # where <label1> is the kubernetes label and <tag1> is the datadog tag
+    ##     <label2>: <tag2>
+    ##   <resource2>:
+    ##     <label3>: <tag3>
+    labelsAsTags: {}
+    #  pod:
+    #    app: app
+    #  node:
+    #    zone: zone
+    #    team: team
+
   ## Manage Cluster checks feature
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   ## Autodiscovery via Kube Service annotations is automatically enabled

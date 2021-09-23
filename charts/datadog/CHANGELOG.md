@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.27.2
+
+* Expose the `labels_as_tags` parameter of the KSM core check.
+  This parameter exists only in agent 7.32.0 and above and cluster-agent 1.16.0 and above.
+
 # 2.27.1
 
 * Update README.md to clarify Helm 2 vs. Helm 3 instructions.
