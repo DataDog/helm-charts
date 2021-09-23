@@ -115,9 +115,9 @@ spec:
           name: metricsapi
           protocol: TCP
         {{- end }}
-{{- if .Values.datadog.envFrom }}
+{{- if or (.Values.datadog.envFrom) (.Values.clusterAgent.envFrom) }}
         envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 10 }}
+{{ toYaml (concat .Values.datadog.envFrom .Values.clusterAgent.envFrom) | indent 10 }}
 {{- end }}
         env:
           - name: DD_HEALTH_PORT
