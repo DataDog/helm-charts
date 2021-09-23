@@ -1,12 +1,16 @@
 # Datadog changelog
 
+## 2.22.3
+
+* CiliumNetworkPolicy: Grant access to the agent to ECS container agent via localhost.
+
 ## 2.22.2
 
-* Bind mount host /etc/os-release in system probe container
+* Bind mount host /etc/os-release in system probe container.
 
 ## 2.22.1
 
-* Fix CiliumNetworkPolicy `port` field
+* Fix CiliumNetworkPolicy `port` field.
 
 ## 2.22.0
 
@@ -15,7 +19,7 @@
 
 ## 2.21.5
 
-* Update descriptions for securityAgent configuration
+* Update descriptions for securityAgent configuration.
 
 ## 2.21.4
 

@@ -15,6 +15,12 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     egress:
+      - toEntities:
+          - host
+        toPorts:
+          - ports:
+              - port: "51678"
+                protocol: TCP
       - toCIDR:
           - 169.254.0.0/16
         toPorts:
