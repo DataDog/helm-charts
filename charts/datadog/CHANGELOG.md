@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.4
+
+* Cluster Agent: `DD_TAGS` are included even when Datadog is not set as metrics provider.
+
 ## 2.22.3
 
 * CiliumNetworkPolicy: Grant access to the agent to ECS container agent via localhost.
