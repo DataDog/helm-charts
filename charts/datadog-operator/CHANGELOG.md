@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1
+
+* Add missing RBAC to the operator to enable the admission controller in the cluster-agent.
+
+## 0.7.0
+
+* Update chart to support the operation version `v0.7.0`
+
 ## 0.6.3
 
 * Add missing `poddisruptionbudgets` RBAC when the compliance feature is enabled.
