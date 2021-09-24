@@ -1270,7 +1270,7 @@ clusterChecksRunner:
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
 
-  # clusterChecksRunner.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
+  # clusterChecksRunner.envFrom -- Set environment variables for the Cluster Checks Runner directly from configMaps and/or secrets
   ## envFrom to pass configmaps or secrets as environment
   ## ref: https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#environment-variables
   envFrom: []
