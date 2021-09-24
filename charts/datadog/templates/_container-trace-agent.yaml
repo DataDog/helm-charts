@@ -22,9 +22,9 @@
 {{- if .Values.agents.containers.traceAgent.ports }}
 {{ toYaml .Values.agents.containers.traceAgent.ports | indent 2 }}
 {{- end }}
-{{- if or (.Values.datadog.envFrom) (.Values.agents.containers.traceAgent.envFrom) }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
   envFrom:
-{{ toYaml (concat .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom) | indent 4 }}
+{{ concat .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom | toYaml  | indent 4 }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}

@@ -99,9 +99,9 @@ spec:
         ports:
 {{ toYaml .Values.clusterChecksRunner.ports | indent 10 }}
 {{- end }}
-{{- if or (.Values.datadog.envFrom) (.Values.clusterChecksRunner.envFrom)  }}
+{{- if or .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom  }}
         envFrom:
-{{ toYaml (concat .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom) | indent 10 }}
+{{ concat .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom | toYaml  | indent 10 }}
 {{- end }}
         env:
           - name: DD_API_KEY
