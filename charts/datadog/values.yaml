@@ -114,7 +114,7 @@ datadog:
   # datadog.namespaceLabelsAsTags -- Provide a mapping of Kubernetes Namespace Labels to Datadog Tags
   namespaceLabelsAsTags: {}
   #   env: environment
-  #   <NAMESPACE_LABEL>: <TAG_KEY>
+  #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
   # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/
