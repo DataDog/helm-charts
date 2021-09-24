@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.5
+
+* Add support for using `envFrom` on all container definitions
+
 ## 2.22.4
 
 * Cluster Agent: `DD_TAGS` are included even when Datadog is not set as metrics provider.

@@ -18,9 +18,9 @@
 {{- end }}
   resources:
 {{ toYaml .Values.agents.containers.processAgent.resources | indent 4 }}
-{{- if .Values.datadog.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom }}
   envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 4 }}
+{{ concat .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom | toYaml | indent 4 }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
