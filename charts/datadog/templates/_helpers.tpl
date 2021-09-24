@@ -240,10 +240,14 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
+{{- $tagSuffix := "" -}}
+{{- if .image.tagSuffix -}}
+{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
+{{- end -}}
 {{- if .image.repository -}}
-{{- .image.repository -}}:{{ .image.tag }}
+{{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
+{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
 
@@ -342,6 +346,57 @@ Return true if the ClusterAgent needs to be deployed
 */}}
 {{- define "should-deploy-cluster-agent" -}}
 {{- if and .Values.clusterAgent.enabled (not .Values.existingClusterAgent.join) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if a trace-agent needs to be deployed.
+*/}}
+{{- define "should-enable-trace-agent" -}}
+{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true hostPath should be use for DSD socket. Return always false on GKE autopilot.
+*/}}
+{{- define "should-mount-hostPath-for-dsd-socket" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
+{{- if .Values.datadog.dogstatsd.useSocketVolume -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a APM over UDS is configured. Return always false on GKE autopilot.
+*/}}
+{{- define "trace-agent-use-uds" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
+{{- if or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a traffic over TCP is configured for APM.
+*/}}
+{{- define "trace-agent-use-tcp-port" -}}
+{{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
 true
 {{- else -}}
 false

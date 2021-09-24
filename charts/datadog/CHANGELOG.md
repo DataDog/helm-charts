@@ -1,8 +1,69 @@
 # Datadog changelog
 
-## 2.20.2
+## 2.22.6
 
 * Adds missing configuration option for `DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS`
+
+## 2.22.5
+
+* Add support for using `envFrom` on all container definitions
+
+## 2.22.4
+
+* Cluster Agent: `DD_TAGS` are included even when Datadog is not set as metrics provider.
+
+## 2.22.3
+
+* CiliumNetworkPolicy: Grant access to the agent to ECS container agent via localhost.
+
+## 2.22.2
+
+* Bind mount host /etc/os-release in system probe container.
+
+## 2.22.1
+
+* Fix CiliumNetworkPolicy `port` field.
+
+## 2.22.0
+
+* Default Datadog Agent image to 7.31.0.
+* Default Datadog Cluster Agent image to 1.15.0.
+
+## 2.21.5
+
+* Update descriptions for securityAgent configuration.
+
+## 2.21.4
+
+* Fix condition for including `sysprobe-socket-dir` and `sysprobe-config` volume mounts for `agent`.
+
+## 2.21.3
+
+* Default Datadog Agent image to 7.30.1.
+
+## 2.21.2
+
+* Fix Dogstatsd UDS socket configuration with a HostVolume when `useSocketVolume: true`.
+
+## 2.21.1
+
+* Disable by default UDS socket for dogstastd and apm on GKE autopilot.
+
+## 2.21.0
+
+* Enable APM by default with using a Unix Domain socket for communication.
+
+## 2.20.4
+
+* Skip KSM network policy creation when KSM creation is disabled.
+
+## 2.20.3
+
+* Add `agents.image.tagSuffix` and `clusterChecksRunner.image.tagSuffix` to be able to request JMX or Windows servercore images without having to explicitly specify the full version.
+
+## 2.20.2
+
+* Add an additional way to configure cluster check allowing multiple configs for the same check.
 
 ## 2.20.1
 

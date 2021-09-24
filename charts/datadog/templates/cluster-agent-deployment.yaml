@@ -115,9 +115,9 @@ spec:
           name: metricsapi
           protocol: TCP
         {{- end }}
-{{- if .Values.datadog.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.clusterAgent.envFrom }}
         envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 10 }}
+{{ concat .Values.datadog.envFrom .Values.clusterAgent.envFrom | toYaml | indent 10 }}
 {{- end }}
         env:
           - name: DD_HEALTH_PORT
@@ -129,16 +129,16 @@ spec:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
                 optional: true
+          {{- if .Values.datadog.tags }}
+          - name: DD_TAGS
+            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
+          {{- end }}
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_APP_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
-          {{- if .Values.datadog.tags }}
-          - name: DD_TAGS
-            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
-          {{- end }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
@@ -263,6 +263,11 @@ spec:
             mountPath: /conf.d
             readOnly: true
 {{- end }}
+{{- if .Values.clusterAgent.advancedConfd }}
+          - name: advanced-confd
+            mountPath: /conf.d
+            readOnly: true
+{{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
           - name: cluster-agent-yaml
             mountPath: /etc/datadog-agent/datadog-cluster.yaml
@@ -284,6 +289,18 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
+{{- end }}
+{{- if .Values.clusterAgent.advancedConfd }}
+        - name: advanced-confd
+          configMap:
+            name: {{ template "datadog.fullname" . }}-cluster-agent-advanced-confd
+            items:
+{{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
+{{- range $name, $config := $configs }}
+            - key: {{ printf "%s--%s" $integration $name | quote }}
+              path: {{ printf "%s/%s" $integration $name | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         - name: cluster-agent-yaml

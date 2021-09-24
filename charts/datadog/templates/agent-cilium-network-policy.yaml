@@ -15,6 +15,12 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     egress:
+      - toEntities:
+          - host
+        toPorts:
+          - ports:
+              - port: "51678"
+                protocol: TCP
       - toCIDR:
           - 169.254.0.0/16
         toPorts:
@@ -124,7 +130,7 @@ specs:
               - port: "{{ $.Values.datadog.dogstatsd.port }}"
                 protocol: UDP
 {{- end }}
-{{- if $.Values.datadog.apm.enabled }}
+{{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
   - description: "Ingress for APM trace"
     endpointSelector:
       matchLabels:
@@ -137,7 +143,7 @@ specs:
           - {}
         toPorts:
           - ports:
-              - port: {{ $.Values.datadog.apm.port }}
+              - port: "{{ $.Values.datadog.apm.port }}"
                 protocol: TCP
 {{- end }}
 # The agents are susceptible to connect to any pod

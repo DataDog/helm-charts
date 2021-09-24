@@ -8,7 +8,7 @@ image:
   # image.repository -- Repository to use for the Extended DaemonSet image
   repository: datadog/extendeddaemonset
   # image.tag -- Defines the Extended DaemonSet version to use
-  tag: v0.6.0
+  tag: v0.7.0
   # image.pullPolicy -- Defines the pullPolicy for the Extended DaemonSet image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Extended DaemonSet image repository pullSecret (ex: specify docker registry credentials)
@@ -66,8 +66,6 @@ tolerations: []
 # affinity -- Allows to specify affinity for the Extended DaemonSet PODs
 affinity: {}
 
-datadog-crds:
-  crds:
-    # datadog-crds.crds.extendedDaemonSets -- Set to true to deploy all the EDS CRDs
-    # (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
-    extendedDaemonSets: true
+# installCRDs -- Set to true to deploy all the ExtendedDaemonSet CRDs
+# (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
+installCRDs: true

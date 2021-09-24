@@ -167,7 +167,7 @@ datadog:
 
     # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket with an HostVolume
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
-    useSocketVolume: false
+    useSocketVolume: true
 
     # datadog.dogstatsd.socketPath -- Path to the DogStatsD socket
     socketPath: /var/run/datadog/dsd.socket
@@ -219,7 +219,16 @@ datadog:
 
   ## Enable apm agent and provide custom configs
   apm:
+    # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
+    ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
+    socketEnabled: true
+
+    # datadog.apm.portEnabled -- Enable APM over TCP communication (port 8216 by default
+    ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
+    portEnabled: false
+
     # datadog.apm.enabled -- Enable this to enable APM and tracing, on port 8126
+    # DEPRECATED. Use datadog.apm.portEnabled instead
     ## ref: https://github.com/DataDog/docker-dd-agent#tracing-from-the-host
     enabled: false
 
@@ -228,6 +237,7 @@ datadog:
     port: 8126
 
     # datadog.apm.useSocketVolume -- Enable APM over Unix Domain Socket
+    # DEPRECATED. Use datadog.apm.socketEnabled instead
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     useSocketVolume: false
 
@@ -367,25 +377,25 @@ datadog:
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
-      # datadog.securityAgent.compliance.enabled -- Set this to true to enable compliance checks
+      # datadog.securityAgent.compliance.enabled -- Set to true to enable Cloud Security Posture Management (CSPM)
       enabled: false
 
-      # datadog.securityAgent.compliance.configMap -- Contains compliance benchmarks that will be used
+      # datadog.securityAgent.compliance.configMap -- Contains CSPM compliance benchmarks that will be used
       configMap:
 
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
     runtime:
-      # datadog.securityAgent.runtime.enabled -- Set to true to enable the Security Runtime Module
+      # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
       enabled: false
 
       policies:
-        # datadog.securityAgent.runtime.policies.configMap -- Contains policies that will be used
+        # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
         configMap:
 
       syscallMonitor:
-        # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring.
+        # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring (recommended for troubleshooting only)
         enabled: false
 
   ## Manage NetworkPolicy
@@ -482,7 +492,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.14.0
+    tag: 1.15.0
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -570,6 +580,15 @@ clusterAgent:
   ## ref: https://docs.datadoghq.com/agent/cluster_agent/commands/#cluster-agent-options
   env: []
 
+  # clusterAgent.envFrom --  Set environment variables specific to Cluster Agent from configMaps and/or secrets
+  ## The Cluster-Agent supports many additional environment variables
+  ## ref: https://docs.datadoghq.com/agent/cluster_agent/commands/#cluster-agent-options
+  envFrom: []
+  #   - configMapRef:
+  #       name: <CONFIGMAP_NAME>
+  #   - secretRef:
+  #       name: <SECRET_NAME>
+
   admissionController:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: false
@@ -588,6 +607,26 @@ clusterAgent:
   #         port: 3306
   #         user: datadog
   #         pass: '<YOUR_CHOSEN_PASSWORD>'
+
+  # clusterAgent.advancedConfd -- Provide additional cluster check configurations
+  ## Each key is an integration containing several config files, it replaces clusterAgent.confd if set
+  ## ref: https://docs.datadoghq.com/agent/autodiscovery/
+  advancedConfd: {}
+  #  mysql.d:
+  #    1.yaml: |-
+  #      cluster_check: true
+  #      instances:
+  #        - server: '<EXTERNAL_IP>'
+  #          port: 3306
+  #          user: datadog
+  #          pass: '<YOUR_CHOSEN_PASSWORD>'
+  #    2.yaml:  |-
+  #      cluster_check: true
+  #      instances:
+  #        - server: '<EXTERNAL_IP>'
+  #          port: 3306
+  #          user: datadog
+  #          pass: '<YOUR_CHOSEN_PASSWORD>'
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
@@ -720,8 +759,13 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.30.0
+    tag: 7.31.0
+
+    # agents.image.tagSuffix -- Suffix to append to Agent tag
+    ## Ex:
+    ##  jmx        to enable jmx fetch collection
+    ##  servercore to get Windows images based on servercore
+    tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
@@ -816,6 +860,13 @@ agents:
       # agents.containers.agent.env -- Additional environment variables for the agent container
       env: []
 
+      # agents.containers.agent.envFrom -- Set environment variables specific to agent container from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
       ## If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -860,6 +911,13 @@ agents:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []
 
+      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
       ## If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -882,6 +940,13 @@ agents:
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env:
+
+      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
 
       # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
       logLevel:  # INFO
@@ -912,6 +977,13 @@ agents:
       # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
       env: []
 
+      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       ## If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -937,6 +1009,13 @@ agents:
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
       env:
+
+      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
       ## If not set, fall back to the value of datadog.logLevel.
@@ -1068,8 +1147,13 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    ## Use 7-jmx to enable jmx fetch collection
-    tag: 7.30.0
+    tag: 7.31.0
+
+    # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
+    ## Ex:
+    ##  jmx        to enable jmx fetch collection
+    ##  servercore to get Windows images based on servercore
+    tagSuffix: ""
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
@@ -1190,6 +1274,15 @@ clusterChecksRunner:
   env: []
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
+
+  # clusterChecksRunner.envFrom -- Set environment variables specific to Cluster Checks Runner from configMaps and/or secrets
+  ## envFrom to pass configmaps or secrets as environment
+  ## ref: https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#environment-variables
+  envFrom: []
+  #   - configMapRef:
+  #       name: <CONFIGMAP_NAME>
+  #   - secretRef:
+  #       name: <SECRET_NAME>
 
   # clusterChecksRunner.volumes -- Specify additional volumes to mount in the cluster checks container
   volumes: []
