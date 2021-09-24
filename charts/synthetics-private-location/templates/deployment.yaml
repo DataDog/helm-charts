@@ -50,7 +50,7 @@ spec:
           envFrom:
 {{ toYaml .Values.envFrom | indent 12 }}
 {{- end }}
-{{- if .Values.env  }}
+{{- if .Values.env }}
           env:
 {{ toYaml .Values.env | indent 12 }}
 {{- end }}

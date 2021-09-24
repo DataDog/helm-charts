@@ -99,7 +99,7 @@ spec:
         ports:
 {{ toYaml .Values.clusterChecksRunner.ports | indent 10 }}
 {{- end }}
-{{- if or .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom  }}
+{{- if or .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom }}
         envFrom:
 {{ concat .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom | toYaml  | indent 10 }}
 {{- end }}
