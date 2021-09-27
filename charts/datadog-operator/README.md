@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![AppVersion: 0.7.0](https://img.shields.io/badge/AppVersion-0.7.0-informational?style=flat-square)
+![Version: 0.7.2](https://img.shields.io/badge/Version-0.7.2-informational?style=flat-square) ![AppVersion: 0.7.0](https://img.shields.io/badge/AppVersion-0.7.0-informational?style=flat-square)
 
 ## Values
 
@@ -38,3 +38,23 @@
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
+
+## How to configure which namespaces are watched by the Operator.
+
+By default, the Operator only watches resources (`DatadogAgent`, `DatadogMonitor`) that are present in the same namespace.
+
+It is possible to configure the Operator to watch resources that are present in one or several specific namespaces.
+
+```yaml
+watchNamespaces:
+- "default"
+- "datadog"
+```
+
+To watch all namespaces, the following configuration needs to be used:
+
+```yaml
+watchNamespaces:
+- ""
+```
