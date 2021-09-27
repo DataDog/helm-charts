@@ -1,12 +1,16 @@
 # Datadog changelog
 
+## 2.22.7
+
+* Add a default required pod anti-affinity for the cluster agent.
+
 ## 2.22.6
 
-* Adds missing configuration option for `DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS`
+* Adds missing configuration option for `DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS`.
 
 ## 2.22.5
 
-* Add support for using `envFrom` on all container definitions
+* Add support for using `envFrom` on all container definitions.
 
 ## 2.22.4
 

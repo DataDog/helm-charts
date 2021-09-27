@@ -322,10 +322,19 @@ spec:
       tolerations:
 {{ toYaml .Values.clusterAgent.tolerations | indent 8 }}
       {{- end }}
-      {{- if .Values.clusterAgent.affinity }}
       affinity:
+{{- if .Values.clusterAgent.affinity }}
 {{ toYaml .Values.clusterAgent.affinity | indent 8 }}
-      {{- end }}
+{{- else }}
+        # Force scheduling the cluster agents on different nodes
+        # to guarantee that the standby instance can immediately take the lead from a leader running of a faulty node.
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: {{ template "datadog.fullname" . }}-cluster-agent
+            topologyKey: kubernetes.io/hostname
+{{- end }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.clusterAgent.nodeSelector }}

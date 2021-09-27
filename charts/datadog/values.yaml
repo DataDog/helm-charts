@@ -646,6 +646,7 @@ clusterAgent:
   nodeSelector: {}
 
   # clusterAgent.affinity -- Allow the Cluster Agent Deployment to schedule using affinity rules
+  ## By default, Cluster Agent Deployment Pods are forced to run on different Nodes.
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
@@ -1198,7 +1199,7 @@ clusterChecksRunner:
   #   memory: 500Mi
 
   # clusterChecksRunner.affinity -- Allow the ClusterChecks Deployment to schedule using affinity rules.
-  ## By default, ClusterChecks Deployment Pods are forced to run on different Nodes.
+  ## By default, ClusterChecks Deployment Pods are preferred to run on different Nodes.
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
