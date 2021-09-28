@@ -32,9 +32,9 @@ data:
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
-      conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
+      conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       debug: false
