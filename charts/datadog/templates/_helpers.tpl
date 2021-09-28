@@ -168,7 +168,7 @@ Return the container runtime socket
 {{- end -}}
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
-\\.\pipe\docker_engine
+{{- .Values.datadog.dockerSocketPath | default .Values.datadog.criSocketPath | default `\\.\pipe\docker_engine` -}}
 {{- end -}}
 {{- end -}}
 

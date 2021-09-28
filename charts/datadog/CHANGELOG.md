@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.9
+
+* Makes the runtime socket configurable when running on Windows instead of defaulting to `\\.\pipe\docker_engine`.
+
 ## 2.22.8
 
 * Add a service with local [internal traffic policy](https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/) for traces and dogstatsd.
