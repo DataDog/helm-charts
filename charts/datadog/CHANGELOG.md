@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.22.10
+
+* Default Datadog Agent image to `7.31.1`.
+* Default Datadog Cluster Agent image to `1.15.1`.
+
 ## 2.22.9
 
 * Makes the runtime socket configurable when running on Windows instead of defaulting to `\\.\pipe\docker_engine`.
