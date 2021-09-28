@@ -60,12 +60,13 @@ spec:
     targetPort: 8000
 {{ end }}
 
-{{- if .Values.datadog.serviceTopology.enabled -}}
+{{- if eq (include "enable-service-internal-traffic-policy" .) "true" }}
 ---
 apiVersion: v1
 kind: Service
+
 metadata:
-  name: {{ .Values.datadog.serviceTopology.serviceName | quote }}
+  name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
@@ -87,6 +88,5 @@ spec:
       targetPort: {{ .Values.datadog.apm.port }}
       name: apm
 {{- end }}
-  topologyKeys:
-    - "kubernetes.io/hostname"
+  internalTrafficPolicy: Local
 {{ end }}
