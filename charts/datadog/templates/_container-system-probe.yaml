@@ -93,19 +93,19 @@
       mountPath: /etc/redhat-release
       readOnly: true
     - name: apt-config-dir
-      mountPath: /etc/apt
+      mountPath: /host/etc/apt
       readOnly: true
     - name: yum-repos-dir
-      mountPath: /etc/yum.repos.d
+      mountPath: /host/etc/yum.repos.d
+      readOnly: true
+    - name: opensuse-repos-dir
+      mountPath: /host/etc/zypp
       readOnly: true
     - name: public-key-dir
       mountPath: /etc/pki
       readOnly: true
     - name: rhel-subscription-dir
       mountPath: /etc/rhsm
-      readOnly: true
-    - name: opensuse-repos-dir
-      mountPath: /etc/zypp
       readOnly: true
 {{- end }}
 {{- end }}

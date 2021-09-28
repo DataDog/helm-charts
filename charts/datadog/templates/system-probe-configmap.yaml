@@ -35,6 +35,9 @@ data:
       enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
+      apt_config_dir: /host/etc/apt
+      yum_repos_dir: /host/etc/yum.repos.d
+      zypper_repos_dir: /host/etc/zypp/repos.d
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}

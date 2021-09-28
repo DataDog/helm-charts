@@ -91,14 +91,14 @@
     path: /etc/yum.repos.d
   name: yum-repos-dir
 - hostPath:
+    path: /etc/zypp
+  name: opensuse-repos-dir
+- hostPath:
     path: /etc/pki
   name: public-key-dir
 - hostPath:
     path: /etc/rhsm
   name: rhel-subscription-dir
-- hostPath:
-    path: /etc/zypp
-  name: opensuse-repos-dir
 {{- end }}
 {{- end }}
 {{- end }}
