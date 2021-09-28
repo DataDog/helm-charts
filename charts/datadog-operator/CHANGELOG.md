@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+* Add `watchNamespaces` option to configure the namespaces watched by the operator.
+
 ## 0.7.1
 
 * Add missing RBAC to the operator to enable the admission controller in the cluster-agent.

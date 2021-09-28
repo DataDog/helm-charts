@@ -97,3 +97,14 @@ podLabels: {}
 
 # collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
 collectOperatorMetrics: true
+
+# watchNamespaces -- Restrics the Operator to watch its managed resources on specific namespaces
+watchNamespaces: []
+# example: watch only two namespaces:
+# watchNamespaces:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespaces:
+# - ""
