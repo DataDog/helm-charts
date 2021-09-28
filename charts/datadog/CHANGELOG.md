@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.22.11
+
+* Add configurable conntrack_init_timeout to sysprobe config.
+
 ## 2.22.10
 
 * Default Datadog Agent image to `7.31.1`.

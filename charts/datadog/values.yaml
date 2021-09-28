@@ -340,6 +340,8 @@ datadog:
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
     conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
 
+    # datadog.systemProbe.conntrackInitTimeout -- the time to wait in seconds for conntrack to initialize before failing
+    conntrackInitTimeout: 10
 
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
