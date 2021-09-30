@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.22.11
+
+* Adds missing configuration option `DD_STRIP_PROCESS_ARGS` for the process agent.
+
 ## 2.22.10
 
 * Default Datadog Agent image to `7.31.1`.
