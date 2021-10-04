@@ -57,19 +57,6 @@ spec:
         {{- if .Values.clusterAgent.confd }}
         checksum/confd-config: {{ tpl (toYaml .Values.clusterAgent.confd) . | sha256sum }}
         {{- end }}
-        ad.datadoghq.com/cluster-agent.check_names: '["prometheus"]'
-        ad.datadoghq.com/cluster-agent.init_configs: '[{}]'
-        ad.datadoghq.com/cluster-agent.instances: |
-          [{
-            "prometheus_url": "http://%%host%%:5000/metrics",
-            "namespace": "datadog.cluster_agent",
-            "metrics": [
-              "go_goroutines", "go_memstats_*", "process_*",
-              "api_requests",
-              "datadog_requests", "external_metrics", "rate_limit_queries_*",
-              "cluster_checks_*"
-            ]
-          }]
       {{- if .Values.clusterAgent.podAnnotations }}
 {{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
       {{- end }}
