@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.22.13
+
+* Add configurable conntrack_init_timeout to sysprobe config.
+
 ## 2.22.12
 
 * Replace the `prometheus` check targetting the Datadog Cluster Agent by the new `datadog_cluster_agent` integration. (Requires Datadog Agent 7.31+)
