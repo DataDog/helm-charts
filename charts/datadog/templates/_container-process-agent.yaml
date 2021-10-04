@@ -29,6 +29,10 @@
     - name: DD_PROCESS_AGENT_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.processAgent.stripProcessArguments }}
+    - name: DD_STRIP_PROCESS_ARGS
+      value: "true"
+    {{- end }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
