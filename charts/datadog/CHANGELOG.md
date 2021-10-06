@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.22.14
+
+* Apply security context capabilities to security-agent only if compliance is enabled.
+
 # 2.22.13
 
 * Add configurable conntrack_init_timeout to sysprobe config.

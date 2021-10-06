@@ -2,9 +2,11 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.datadog.securityAgent.compliance.enabled }}
   securityContext:
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
+  {{- end }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
