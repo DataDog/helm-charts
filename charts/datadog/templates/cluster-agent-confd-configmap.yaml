@@ -17,7 +17,9 @@ data:
     init_config:
     instances:
       - collectors:
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
         - secrets
+{{- end }}
         - nodes
         - pods
         - services
