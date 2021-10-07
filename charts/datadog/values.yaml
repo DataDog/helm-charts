@@ -87,6 +87,10 @@ datadog:
     ## Migration guide: https://docs.datadoghq.com/integrations/kubernetes_state_core/?tab=helm#migration-from-kubernetes_state-to-kubernetes_state_core
     ignoreLegacyKSMCheck: true
 
+    # datadog.kubeStateMetricsCore.collectSecretMetrics -- Enable watching secret objects and collecting their corresponding metrics kubernetes_state.secret.*
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectSecretMetrics: true
+
   ## Manage Cluster checks feature
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   ## Autodiscovery via Kube Service annotations is automatically enabled
