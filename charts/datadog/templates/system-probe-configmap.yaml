@@ -34,6 +34,7 @@ data:
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
+      conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       debug: false

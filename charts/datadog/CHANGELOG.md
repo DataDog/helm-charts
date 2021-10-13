@@ -1,5 +1,21 @@
 # Datadog changelog
 
+# 2.22.15
+
+* Add a new configuration field `datadog.kubeStateMetricsCore.collectSecretMetrics` to allow disabling the collection of `kubernetes_state.secret.*` metrics by the `kubernetes_state_core` check.
+
+# 2.22.14
+
+* Apply security context capabilities to security-agent only if compliance is enabled.
+
+# 2.22.13
+
+* Add configurable conntrack_init_timeout to sysprobe config.
+
+## 2.22.12
+
+* Replace the `prometheus` check targetting the Datadog Cluster Agent by the new `datadog_cluster_agent` integration. (Requires Datadog Agent 7.31+)
+
 ## 2.22.11
 
 * Adds missing configuration option `DD_STRIP_PROCESS_ARGS` for the process agent.

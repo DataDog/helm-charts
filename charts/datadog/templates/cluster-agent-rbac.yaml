@@ -221,7 +221,9 @@ rules:
 - apiGroups:
   - ""
   resources:
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
   - secrets
+{{- end }}
   - nodes
   - pods
   - services
