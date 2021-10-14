@@ -33,8 +33,7 @@
       mountPath: C:/checks.d
       readOnly: true
     {{- end }}
-    - name: runtimesocket
-      mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
   resources:

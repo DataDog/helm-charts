@@ -58,17 +58,11 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      readOnly: true
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
     {{- end }}
-    {{- if eq .Values.targetSystem "windows" }}
-    - name: runtimesocket
-      mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: {{ template "datadog.fullname" . }}-datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
@@ -88,11 +82,6 @@
     - name: hostroot
       mountPath: /host/root
       readOnly: true
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/root" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      readOnly: true
-    {{- end }}
     - name: procdir
       mountPath: /host/proc
       readOnly: true

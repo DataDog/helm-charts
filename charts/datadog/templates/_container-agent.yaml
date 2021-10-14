@@ -124,16 +124,7 @@
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
-    {{- end }}
-    {{- if eq .Values.targetSystem "windows" }}
-    - name: runtimesocket
-      mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: {{ template "datadog.fullname" . }}-datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
@@ -186,7 +177,7 @@
       mountPath: C:/var/log/pods
       readOnly: true
     - name: logdockercontainerpath
-      mountPath: C:/ProgramData/docker/containers
+      mountPath: C:/ProgramData
       readOnly: true
     {{- end }}
     {{- end }}
