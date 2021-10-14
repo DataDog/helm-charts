@@ -165,7 +165,7 @@ datadog:
 
 ### Enabling APM and Tracing
 
-APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm)
+APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
 Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication using a `hostPort`:
 
 ```yaml
@@ -175,13 +175,23 @@ datadog:
     portEnabled: true
 ```
 
-To disable the socket , update your [datadog-values.yaml](values.yaml) file with the following configration:
+To disable the socket, update your [datadog-values.yaml](values.yaml) file with the following configration:
 
 ```yaml
 datadog:
   # (...)
   apm:
     socketEnabled: false
+```
+
+To disable APM, set both and `socketEnabled` and `portEnabled` to `false`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    socketEnabled: false
+    portEnabled: false
 ```
 
 ### Enabling Log Collection
