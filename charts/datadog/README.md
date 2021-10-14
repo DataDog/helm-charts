@@ -135,17 +135,30 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-As a best practice, a YAML file that specifies the values for the chart parameters should be provided to configure the chart:
+As a best practice, a YAML file that specifies the values for the chart parameters should be used to configure the chart. Any parameters not specified in this file will default to those set in [values.yaml](values.yaml).
 
-1. **Copy the default [`datadog-values.yaml`](values.yaml) value file.**
-2. Set the `apiKey` parameter with your [Datadog API key](https://app.datadoghq.com/account/settings#api).
-3. Upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
+1. Create an empty `datadog-values.yaml` file.
+2. Set the `apiKey` and `appKey` parameters with your [Datadog API key](https://app.datadoghq.com/organization-settings/api-keys) and [App key](https://app.datadoghq.com/organization-settings/application-keys).
+
+```yaml
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+```
+
+3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
+
+```bash
+helm install -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
+```
+
+OR
 
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
+See the [All configuration options](#all-configuration-options) section to discover all configuration possibilities in the Datadog chart.
 
 ### Configuring Dogstatsd in the agent
 <a name="dsd-config"></a>
@@ -165,8 +178,8 @@ datadog:
 
 ### Enabling APM and Tracing
 
-APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about the applications configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
-Update your [datadog-values.yaml](values.yaml) file with the following configration to enabled TCP communication using a `hostPort`:
+APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about application configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
+Update your `datadog-values.yaml` file with the following configration to enable TCP communication using a `hostPort`:
 
 ```yaml
 datadog:
@@ -175,7 +188,7 @@ datadog:
     portEnabled: true
 ```
 
-To disable the socket, update your [datadog-values.yaml](values.yaml) file with the following configration:
+To disable the socket, update your `datadog-values.yaml` file with the following configration:
 
 ```yaml
 datadog:
@@ -184,19 +197,18 @@ datadog:
     socketEnabled: false
 ```
 
-To disable APM, set both and `socketEnabled` and `portEnabled` to `false`:
+To disable APM completely, set `socketEnabled` to `false` in your `datadog-values.yaml` file (`portEnabled` is `false` by default):
 
 ```yaml
 datadog:
   # (...)
   apm:
     socketEnabled: false
-    portEnabled: false
 ```
 
 ### Enabling Log Collection
 
-Update your [datadog-values.yaml](values.yaml) file with the following log collection configuration:
+Update your `datadog-values.yaml` file with the following log collection configuration:
 
 ```yaml
 datadog:
@@ -214,7 +226,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 ### Enabling Process Collection
 
-Update your [datadog-values.yaml](values.yaml) file with the process collection configuration:
+Update your `datadog-values.yaml` file with the process collection configuration:
 
 ```yaml
 datadog:
@@ -232,7 +244,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 ### Enabling System Probe Collection
 
-The system-probe agent only runs in dedicated container environment. Update your [datadog-values.yaml](values.yaml) file with the system-probe collection configuration:
+The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the system-probe collection configuration:
 
 ```yaml
 datadog:
@@ -260,7 +272,7 @@ Alternatively set the `datadog.leaderElection`, `datadog.collectEvents` and `rba
 
 The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/main/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
 
-The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your [datadog-values.yaml](values.yaml) file with the check configurations:
+The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your `datadog-values.yaml` file with the check configurations:
 
 ```yaml
 datadog:
@@ -297,7 +309,7 @@ For more details, please refer to [the documentation](https://docs.datadoghq.com
 
 ### Kubernetes Labels and Annotations
 
-To map Kubernetes node labels and pod labels and annotations to Datadog tags, provide a dictionary with kubernetes labels/annotations as keys and Datadog tags key as values in your [datadog-values.yaml](values.yaml) file:
+To map Kubernetes node labels and pod labels and annotations to Datadog tags, provide a dictionary with kubernetes labels/annotations as keys and Datadog tags key as values in your `datadog-values.yaml` file:
 
 ```yaml
 nodeLabelsAsTags:
@@ -335,7 +347,7 @@ Standard paths are:
 
 Amazon Linux 2 does not support apparmor profile enforcement.
 Amazon Linux 2 is the default operating system for AWS Elastic Kubernetes Service (EKS) based clusters.
-Update your [datadog-values.yaml](values.yaml) file to disable apparmor enforcement:
+Update your `datadog-values.yaml` file to disable apparmor enforcement:
 
 ```yaml
 agents:
@@ -644,7 +656,7 @@ Some options above are not working/not available on Windows, here is the list of
 Because the Cluster Agent can only be deployed on Linux Node, the communication between
 the Agents deployed on the Windows nodes with the a Cluster Agent need to be configured.
 
-The following `values.yaml` file contains all the parameters needed to configure this communication.
+The following `datadog-values.yaml` file contains all the parameters needed to configure this communication.
 
 ```yaml
 targetSystem: windows
