@@ -133,12 +133,18 @@ The command removes all the Kubernetes components associated with the chart and 
 As a best practice, a YAML file that specifies the values for the chart parameters should be used to configure the chart. Any parameters not specified in this file will default to those set in [values.yaml](values.yaml).
 
 1. Create an empty `datadog-values.yaml` file.
-2. Set the `apiKey` and `appKey` parameters with your [Datadog API key](https://app.datadoghq.com/organization-settings/api-keys) and [App key](https://app.datadoghq.com/organization-settings/application-keys).
+2. Create a Kubernetes `secret` to store your [Datadog API key](https://app.datadoghq.com/organization-settings/api-keys) and [App key](https://app.datadoghq.com/organization-settings/application-keys)
+
+```bash
+kubectl create secret generic datadog-secret --from-literal api-key=$DD_API_KEY --from-literal app-key=$DD_APP_KEY
+```
+
+3. Set the following parameters in your `datadog-values.yaml` file to reference the secret:
 
 ```yaml
 datadog:
-  apiKey: <DATADOG_API_KEY>
-  appKey: <DATADOG_APP_KEY>
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
 ```
 
 3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
@@ -173,7 +179,7 @@ datadog:
 
 ### Enabling APM and Tracing
 
-APM is enabled by default using a socket for communication in the out of the box [values.yaml](values.yaml) file; more details about application configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
+APM is enabled by default using a socket for communication in the out-of-the-box [values.yaml](values.yaml) file; more details about application configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
 Update your `datadog-values.yaml` file with the following configration to enable TCP communication using a `hostPort`:
 
 ```yaml
@@ -183,7 +189,7 @@ datadog:
     portEnabled: true
 ```
 
-To disable the socket, update your `datadog-values.yaml` file with the following configration:
+To disable APM, set `socketEnabled` to `false` in your `datadog-values.yaml` file (`portEnabled` is `false` by default):
 
 ```yaml
 datadog:
@@ -191,16 +197,6 @@ datadog:
   apm:
     socketEnabled: false
 ```
-
-To disable APM completely, set `socketEnabled` to `false` in your `datadog-values.yaml` file (`portEnabled` is `false` by default):
-
-```yaml
-datadog:
-  # (...)
-  apm:
-    socketEnabled: false
-```
-
 
 ### Enabling Log Collection
 
