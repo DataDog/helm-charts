@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.22.16
+
+* Support containerd on windows node with logs enabled.
+
 # 2.22.15
 
 * Add a new configuration field `datadog.kubeStateMetricsCore.collectSecretMetrics` to allow disabling the collection of `kubernetes_state.secret.*` metrics by the `kubernetes_state_core` check.
