@@ -1368,3 +1368,11 @@ providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
     autopilot: false
+
+  eks:
+    ec2:
+      # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
+      ## When deploying to EC2-backed EKS infrastructure, there are situations where the
+      ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
+      ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
+      useHostnameFromFile: false

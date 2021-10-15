@@ -30,6 +30,10 @@
 - name: DD_CLUSTER_NAME
   value: {{ .Values.datadog.clusterName | quote }}
 {{- end }}
+{{- if .Values.providers.eks.ec2.useHostnameFromFile }}
+- name: DD_HOSTNAME_FILE
+  value: /var/lib/cloud/data/instance-id
+{{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
   value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
