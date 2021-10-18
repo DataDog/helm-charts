@@ -1,8 +1,12 @@
 # Datadog changelog
 
-# 2.22.16
+# 2.22.17
 
 * Update general installation documentation and add how to disable APM.
+
+# 2.22.16
+
+* Support containerd on windows node with logs enabled.
 
 # 2.22.15
 
