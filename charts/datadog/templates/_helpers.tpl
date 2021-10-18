@@ -416,6 +416,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Cluster Check Workers have to be deployed
+*/}}
+{{- define "should-enable-cluster-check-workers" -}}
+{{- if or .Values.datadog.kubeStateMetricsCore.useClusterCheckWorkers (and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Returns provider kind
 */}}
 {{- define "provider-kind" -}}
