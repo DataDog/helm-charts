@@ -14,7 +14,7 @@ data:
 {{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
   kubernetes_state_core.yaml.default: |-
-{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckWorkers }}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
     cluster_checks: true
 {{- end }}
     init_config:

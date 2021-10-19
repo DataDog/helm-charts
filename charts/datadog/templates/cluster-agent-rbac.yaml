@@ -233,23 +233,6 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 ---
-{{- if and .Values.datadog.kubeStateMetricsCore.enabled (not .Values.datadog.kubeStateMetricsCore.useClusterCheckWorkers) }}
-apiVersion: {{ template "rbac.apiVersion" . }}
-kind: ClusterRoleBinding
-metadata:
-  labels:
-{{ include "datadog.labels" . | indent 4 }}
-  name: {{ template "datadog.fullname" . }}-cluster-agent-ksm-core
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: {{ template "datadog.fullname" . }}-ksm-core
-subjects:
-  - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-agent
-    namespace: {{ .Release.Namespace }}
----
-{{- end }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:

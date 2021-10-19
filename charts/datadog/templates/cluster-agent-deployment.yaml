@@ -149,9 +149,9 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
           {{- end }}
-          {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
+          {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
-            value: "true"
+            value: {{ .Values.datadog.clusterChecks.enabled | quote }}
           - name: DD_EXTRA_CONFIG_PROVIDERS
             value: "kube_endpoints kube_services"
           - name: DD_EXTRA_LISTENERS

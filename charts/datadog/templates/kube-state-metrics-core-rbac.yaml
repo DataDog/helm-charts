@@ -74,4 +74,24 @@ rules:
   verbs:
   - list
   - watch
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-ksm-core
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-ksm-core
+subjects:
+  - kind: ServiceAccount
+    {{- if  .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+    name: {{ template "datadog.fullname" . }}-cluster-checks
+    {{- else }}
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    {{- end }}
+    namespace: {{ .Release.Namespace }}
+---
 {{- end }}
