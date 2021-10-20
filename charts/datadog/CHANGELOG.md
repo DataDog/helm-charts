@@ -1,22 +1,26 @@
 # Datadog changelog
 
-# 2.22.17
+## 2.22.18
+
+* Do not configure `trace-agent` hostPort if `datadog.apm.portEnabled: false`.
+
+## 2.22.17
 
 * Update general installation documentation and add how to disable APM.
 
-# 2.22.16
+## 2.22.16
 
 * Support containerd on windows node with logs enabled.
 
-# 2.22.15
+## 2.22.15
 
 * Add a new configuration field `datadog.kubeStateMetricsCore.collectSecretMetrics` to allow disabling the collection of `kubernetes_state.secret.*` metrics by the `kubernetes_state_core` check.
 
-# 2.22.14
+## 2.22.14
 
 * Apply security context capabilities to security-agent only if compliance is enabled.
 
-# 2.22.13
+## 2.22.13
 
 * Add configurable conntrack_init_timeout to sysprobe config.
 
