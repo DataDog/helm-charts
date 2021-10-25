@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3
+
+* Add `site` option to change the Datadog intake site.
+
 ## 0.7.2
 
 * Add `watchNamespaces` option to configure the namespaces watched by the operator.
