@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.23.0
+
+* Add new option to the Kubernetes State Metrics Core feature to run the Cluster Check on Cluster Check Workers. This option is meant to be leveraged in large clusters.
+
 ## 2.22.18
 
 * Do not configure `trace-agent` hostPort if `datadog.apm.portEnabled: false`.

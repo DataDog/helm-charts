@@ -179,7 +179,7 @@ spec:
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
-          {{- else if .Values.datadog.clusterChecks.enabled }}
+          {{- else if (eq (include "should-enable-cluster-check-workers" .) "true") }}
           - name: DD_LEADER_LEASE_DURATION
             value: "15"
           {{- end }}

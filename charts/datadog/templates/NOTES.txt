@@ -86,7 +86,7 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
-  {{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
+  {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
     {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
     {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
     {{- if and $liveness.port (ne $healthPort $liveness.port) }}
