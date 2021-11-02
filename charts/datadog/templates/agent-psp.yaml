@@ -8,7 +8,7 @@ metadata:
   annotations:
     {{- if .Values.agents.podSecurity.apparmor.enabled }}
     apparmor.security.beta.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.apparmorProfiles | quote }}
-    apparmor.security.beta.kubernetes.io/defaultProfileName: "runtime/default"
+    apparmor.security.beta.kubernetes.io/defaultProfileName: {{ .Values.agents.podSecurity.defaultApparmor | default "runtime/default" }}
     {{- end }}
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.seccompProfiles | quote }}
     seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"

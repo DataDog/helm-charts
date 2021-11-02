@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.23.2
+
+* Add an `agents.podSecurity.defaultApparmor` setting to allow customizing the default AppArmor profile used by all containers but `system-probe`.
+
 # 2.23.1
 
 * Fix APM reporting via `trace-agent` hostPort if `datadog.apm.enabled: true`.
