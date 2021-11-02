@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.23.3
+
+* Add `agents.localService` parameters to customize the internal traffic policy service name and force its creation of Kubernetes 1.21.
+
 # 2.23.2
 
 * Add an `agents.podSecurity.defaultApparmor` setting to allow customizing the default AppArmor profile used by all containers but `system-probe`.
