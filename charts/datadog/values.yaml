@@ -846,15 +846,18 @@ agents:
       - "runtime/default"
       - "localhost/system-probe"
 
+    apparmor:
+      # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
+      ## see: https://kubernetes.io/docs/tutorials/clusters/apparmor/
+      enabled: true
+
     # agents.podSecurity.apparmorProfiles -- Allowed apparmor profiles
     apparmorProfiles:
       - "runtime/default"
       - "unconfined"
 
-    apparmor:
-      # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
-      ## see: https://kubernetes.io/docs/tutorials/clusters/apparmor/
-      enabled: true
+    # agents.podSecurity.defaultApparmor -- Default AppArmor profile for all containers but system-probe
+    defaultApparmor: runtime/default
 
   containers:
     agent:
