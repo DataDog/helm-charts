@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.23.4
+
+* Add a new configuration field `datadog.providers.eks.ec2.useHostnameFromFile` to allow use of host's `/var/lib/cloud/data/instance-id` for hostname detection.
+
 # 2.23.3
 
 * Add `agents.localService` parameters to customize the internal traffic policy service name and force its creation of Kubernetes 1.21.

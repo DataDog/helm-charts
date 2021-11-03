@@ -18,6 +18,12 @@
 - emptyDir: {}
   name: dsdsocket
 {{- end }}
+{{- if .Values.providers.eks.ec2.useHostnameFromFile }}
+- hostPath:
+    path: /var/lib/cloud/data/instance-id
+    type: File
+  name: cloudinit-instance-id-file
+{{- end }}
 {{- if .Values.datadog.kubelet.hostCAPath }}
 - hostPath:
     path: {{ .Values.datadog.kubelet.hostCAPath }}
