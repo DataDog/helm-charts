@@ -1,5 +1,10 @@
 # Datadog changelog
 
+# 2.23.6
+
+* Add `datadog.expvarPort` parameter to customize the default expvar default port to not conflict with the default clusteragent metrics port if running in hostNetwork mode.
+* Defined cluster-agent containerPort `agentmetrics` to expose the default port, which is set to 5000 and already defined in the `NetworkPolicy` for the cluster-agent.
+
 # 2.23.5
 
 Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift Auth operator.
@@ -68,7 +73,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.22.8
 
 * Add a service with local [internal traffic policy](https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/) for traces and dogstatsd.
-  This works only on Kubernetes 1.22 or more recent. 
+  This works only on Kubernetes 1.22 or more recent.
 
 ## 2.22.7
 

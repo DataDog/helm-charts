@@ -97,6 +97,9 @@ spec:
         - containerPort: 5005
           name: agentport
           protocol: TCP
+        - containerPort: 5000
+          name: agentmetrics
+          protocol: TCP
         {{- if .Values.clusterAgent.metricsProvider.enabled }}
         - containerPort: {{ template "clusterAgent.metricsProvider.port" . }}
           name: metricsapi

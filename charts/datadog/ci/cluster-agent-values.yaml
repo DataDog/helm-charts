@@ -5,6 +5,7 @@ datadog:
   kubeStateMetricsEnabled: false
   clusterChecks:
     enabled: true
+  expvarPort: 6001
 
 clusterAgent:
   enabled: true
