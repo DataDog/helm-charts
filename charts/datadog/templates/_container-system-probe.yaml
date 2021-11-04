@@ -17,6 +17,10 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
+{{- if .Values.datadog.systemProbe.enableUSM }}
+    - name: HOST_ROOT
+      value: "/host/root"
+{{- end }}
 {{- if .Values.agents.containers.systemProbe.env }}
 {{ toYaml .Values.agents.containers.systemProbe.env | indent 4 }}
 {{- end }}
