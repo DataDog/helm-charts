@@ -35,6 +35,8 @@ data:
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
+    service_monitoring_config:
+      enabled: {{ $.Values.datadog.systemProbe.enableUSM }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       debug: false

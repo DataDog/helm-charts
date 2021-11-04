@@ -74,14 +74,16 @@
     path: /etc/passwd
   name: passwd
 {{- end }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.systemProbe.enableUSM) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+- hostPath:
+    path: /
+  name: hostroot
+{{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
   name: group
-- hostPath:
-    path: /
-  name: hostroot
 {{- if .Values.datadog.securityAgent.compliance.configMap }}
 - name: complianceconfigdir
   configMap:
