@@ -17,7 +17,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-{{- if .Values.datadog.systemProbe.enableUSM }}
+{{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
 {{- end }}
@@ -52,7 +52,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if .Values.datadog.systemProbe.enableUSM }}
+{{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
