@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.23.6
+
+* Update API/APP keys secret management documentation.
+
 # 2.23.5
 
 Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift Auth operator.
