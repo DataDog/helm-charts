@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.9.1
+
+* added extra mount (`extraVolumes` and `extraVolumeMounts` ) for supporting private root CA certificates. As described in https://docs.datadoghq.com/synthetics/private_locations/configuration/#private-root-certificates  
+ 
 ### 0.9.0
 
 * Update private location image version to `1.16.0`.
