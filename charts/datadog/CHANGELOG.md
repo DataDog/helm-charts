@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.23.5
+
+Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift Auth operator.
+
 # 2.23.4
 
 * Add a new configuration field `datadog.providers.eks.ec2.useHostnameFromFile` to allow use of host's `/var/lib/cloud/data/instance-id` for hostname detection.
