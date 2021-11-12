@@ -1147,10 +1147,10 @@ agents:
     # agents.localService.overrideName -- Name of the internal traffic service to target the agent running on the local node
     overrideName: ""
 
-    # agents.localService.forceLocalServiceEnable -- Force the creation of the internal traffic policy service to target the agent running on the local node.
+    # agents.localService.forceLocalServiceEnabled -- Force the creation of the internal traffic policy service to target the agent running on the local node.
     # By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default.
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
-    forceLocalServiceEnable: false
+    forceLocalServiceEnabled: false
 
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.

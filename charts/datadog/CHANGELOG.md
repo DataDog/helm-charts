@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.24.1
+
+* Fix typo in variable name : `agents.localService.forceLocalServiceEnabled`
+
 # 2.24.0
 
 * Default Datadog Agent image to `7.32.0`.
