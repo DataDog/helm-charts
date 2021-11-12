@@ -31,7 +31,7 @@
     {{- end }}
     {{- if .Values.datadog.processAgent.processDiscovery }}
     - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-      value: {{ .Values.datadog.processAgent.processDiscovery }}
+      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
     {{- end}}
     {{- if .Values.datadog.processAgent.stripProcessArguments }}
     - name: DD_STRIP_PROCESS_ARGS
