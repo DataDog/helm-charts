@@ -1,5 +1,10 @@
 # Datadog changelog
 
+# 2.24.0
+
+* Default Datadog Agent image to `7.32.0`.
+* Default Datadog Cluster Agent image to `1.16.0`.
+
 # 2.23.6
 
 * Add `datadog.expvarPort` parameter to customize the default expvar default port to not conflict with the default clusteragent metrics port if running in hostNetwork mode.
