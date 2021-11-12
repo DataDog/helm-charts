@@ -319,6 +319,9 @@ datadog:
     ## ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing
     stripProcessArguments: false
 
+    # datadog.processAgent.processDiscovery -- Set this false to disable autodiscovery of integrations
+    processDiscovery: true
+
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
 
