@@ -3,6 +3,7 @@
 # 2.25.0 
 
 * Introduce `process_agent.process_discovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
+
 # 2.24.0
 
 * Default Datadog Agent image to `7.32.0`.
