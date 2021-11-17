@@ -1,8 +1,26 @@
 # Datadog changelog
 
-## 2.23.6
+## 2.25.1
 
 * Update API/APP keys secret management documentation.
+
+# 2.25.0
+
+* Adding the following `agents.daemonsetAnnotations`, `clusterAgent.deploymentAnnotation` and `clusterChecksRunner.deploymentAnnotations` parameters to allow custom annotations on the agent's deployments/daemonsets to be setup
+
+# 2.24.1
+
+* Fix typo in variable name : `agents.localService.forceLocalServiceEnabled`
+
+# 2.24.0
+
+* Default Datadog Agent image to `7.32.0`.
+* Default Datadog Cluster Agent image to `1.16.0`.
+
+# 2.23.6
+
+* Add `datadog.expvarPort` parameter to customize the default expvar default port to not conflict with the default clusteragent metrics port if running in hostNetwork mode.
+* Defined cluster-agent containerPort `agentmetrics` to expose the default port, which is set to 5000 and already defined in the `NetworkPolicy` for the cluster-agent.
 
 # 2.23.5
 
@@ -72,7 +90,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.22.8
 
 * Add a service with local [internal traffic policy](https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/) for traces and dogstatsd.
-  This works only on Kubernetes 1.22 or more recent. 
+  This works only on Kubernetes 1.22 or more recent.
 
 ## 2.22.7
 

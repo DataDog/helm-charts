@@ -11,6 +11,9 @@ metadata:
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.clusterChecksRunner.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.clusterChecksRunner.replicas }}
   strategy:

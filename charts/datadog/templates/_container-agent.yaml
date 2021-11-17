@@ -107,6 +107,8 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
+    - name: DD_EXPVAR_PORT
+      value: {{ .Values.datadog.expvarPort | quote }}
 {{- if .Values.agents.containers.agent.env }}
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
 {{- end }}

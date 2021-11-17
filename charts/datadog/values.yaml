@@ -152,6 +152,9 @@ datadog:
     # @default -- /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     agentCAPath:
 
+  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000
+  expvarPort: 6000
+
   ## dogstatsd configuration
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
   ## To emit custom metrics from your Kubernetes application, use DogStatsD.
@@ -492,7 +495,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.15.1
+    tag: 1.16.0
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -679,6 +682,10 @@ clusterAgent:
       maxSurge: 1
       maxUnavailable: 0
 
+  # clusterAgent.deploymentAnnotations -- Annotations to add to the cluster-agents's deployment
+  deploymentAnnotations: {}
+  #   key: "value"
+
   # clusterAgent.podAnnotations -- Annotations to add to the cluster-agents's pod(s)
   podAnnotations: {}
   #   key: "value"
@@ -760,7 +767,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.31.1
+    tag: 7.32.0
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -1075,6 +1082,10 @@ agents:
   #  - name: ndots
   #    value: "1"
 
+  # agents.daemonsetAnnotations -- Annotations to add to the DaemonSet
+  daemonsetAnnotations: {}
+  #   key: "value"
+
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
   #   <POD_ANNOTATION>: '[{"key": "<KEY>", "value": "<VALUE>"}]'
@@ -1144,10 +1155,10 @@ agents:
     # agents.localService.overrideName -- Name of the internal traffic service to target the agent running on the local node
     overrideName: ""
 
-    # agents.localService.forceLocalServiceEnable -- Force the creation of the internal traffic policy service to target the agent running on the local node.
+    # agents.localService.forceLocalServiceEnabled -- Force the creation of the internal traffic policy service to target the agent running on the local node.
     # By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default.
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
-    forceLocalServiceEnable: false
+    forceLocalServiceEnabled: false
 
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
@@ -1277,6 +1288,10 @@ clusterChecksRunner:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 6
+
+  # clusterChecksRunner.deploymentAnnotations -- Annotations to add to the cluster-checks-runner's Deployment
+  deploymentAnnotations: {}
+  #   key: "value"
 
   # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-checks-runner's pod(s)
   podAnnotations: {}
