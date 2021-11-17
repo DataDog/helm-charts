@@ -682,6 +682,10 @@ clusterAgent:
       maxSurge: 1
       maxUnavailable: 0
 
+  # clusterAgent.deploymentAnnotations -- Annotations to add to the cluster-agents's deployment
+  deploymentAnnotations: {}
+  #   key: "value"
+
   # clusterAgent.podAnnotations -- Annotations to add to the cluster-agents's pod(s)
   podAnnotations: {}
   #   key: "value"
@@ -1078,6 +1082,10 @@ agents:
   #  - name: ndots
   #    value: "1"
 
+  # agents.daemonsetAnnotations -- Annotations to add to the DaemonSet
+  daemonsetAnnotations: {}
+  #   key: "value"
+
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
   #   <POD_ANNOTATION>: '[{"key": "<KEY>", "value": "<VALUE>"}]'
@@ -1280,6 +1288,10 @@ clusterChecksRunner:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 6
+
+  # clusterChecksRunner.deploymentAnnotations -- Annotations to add to the cluster-checks-runner's Deployment
+  deploymentAnnotations: {}
+  #   key: "value"
 
   # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-checks-runner's pod(s)
   podAnnotations: {}
