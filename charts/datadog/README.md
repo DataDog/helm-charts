@@ -374,7 +374,6 @@ helm install --name <RELEASE_NAME> \
 |-----|------|---------|-------------|
 | agents.additionalLabels | object | `{}` | Adds labels to the Agent daemonset and pods |
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
-| agents.annotations | object | `{}` | Custom annotations for the agent daemonset to be set |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
 | agents.containers.agent.envFrom | list | `[]` | Set environment variables specific to agent container from configMaps and/or secrets |
 | agents.containers.agent.healthPort | int | `5555` | Port number to use in the node agent for the healthz endpoint |
@@ -410,6 +409,7 @@ helm install --name <RELEASE_NAME> \
 | agents.containers.traceAgent.resources | object | `{}` | Resource requests and limits for the trace-agent container |
 | agents.containers.traceAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the trace-agent container. |
 | agents.customAgentConfig | object | `{}` | Specify custom contents for the datadog agent config (datadog.yaml) |
+| agents.daemonsetAnnotations | object | `{}` | Custom annotations for the agent daemonset to be set |
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
@@ -450,12 +450,12 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
-| clusterAgent.annotations | object | `{}` | Custom annotations for the Cluster Agent deployment to be set |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations |
 | clusterAgent.containers.clusterAgent.securityContext | object | `{}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
+| clusterAgent.deploymentAnnotations | object | `{}` | Custom annotations for the Cluster Agent deployment to be set |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
@@ -497,6 +497,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
+| clusterChecksRunner.deploymentAnnotations | object | `{}` | Custom annotations for the ClusterChecks deployment to be set |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |
