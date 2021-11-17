@@ -13,6 +13,9 @@ metadata:
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.agents.annotations }}
+  annotations: {{ toYaml .Values.agents.annotations | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
