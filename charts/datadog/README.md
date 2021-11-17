@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.24.1](https://img.shields.io/badge/Version-2.24.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.25.0](https://img.shields.io/badge/Version-2.25.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -409,7 +409,7 @@ helm install --name <RELEASE_NAME> \
 | agents.containers.traceAgent.resources | object | `{}` | Resource requests and limits for the trace-agent container |
 | agents.containers.traceAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the trace-agent container. |
 | agents.customAgentConfig | object | `{}` | Specify custom contents for the datadog agent config (datadog.yaml) |
-| agents.daemonsetAnnotations | object | `{}` | Custom annotations for the agent daemonset to be set |
+| agents.daemonsetAnnotations | object | `{}` | Annotations to add to the DaemonSet |
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
@@ -455,7 +455,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.containers.clusterAgent.securityContext | object | `{}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
-| clusterAgent.deploymentAnnotations | object | `{}` | Custom annotations for the Cluster Agent deployment to be set |
+| clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
@@ -497,7 +497,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
-| clusterChecksRunner.deploymentAnnotations | object | `{}` | Custom annotations for the ClusterChecks deployment to be set |
+| clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |

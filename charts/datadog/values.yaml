@@ -1289,7 +1289,7 @@ clusterChecksRunner:
     successThreshold: 1
     failureThreshold: 6
 
-  # clusterChecksRunner.deploymentAnnotation -- Annotations to add to the cluster-checks-runner's Deployment
+  # clusterChecksRunner.deploymentAnnotations -- Annotations to add to the cluster-checks-runner's Deployment
   deploymentAnnotations: {}
   #   key: "value"
 

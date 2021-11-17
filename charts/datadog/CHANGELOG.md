@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.25.0
+
+* Adding the following `agents.daemonsetAnnotations`, `clusterAgent.deploymentAnnotation` and `clusterChecksRunner.deploymentAnnotations` parameters to allow custom annotations on the agent's deployments/daemonsets to be setup
+
 # 2.24.1
 
 * Fix typo in variable name : `agents.localService.forceLocalServiceEnabled`
