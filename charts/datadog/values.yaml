@@ -682,6 +682,10 @@ clusterAgent:
       maxSurge: 1
       maxUnavailable: 0
 
+  # clusterAgent.annotations -- Annotations to add to the cluster-agents's deployment
+  annotations: {}
+  #   key: "value"
+
   # clusterAgent.podAnnotations -- Annotations to add to the cluster-agents's pod(s)
   podAnnotations: {}
   #   key: "value"
@@ -1077,6 +1081,10 @@ agents:
   #  options:
   #  - name: ndots
   #    value: "1"
+
+  # agents.annotations -- Annotations to add to the DaemonSet
+  annotations: {}
+  #   key: "value"
 
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
