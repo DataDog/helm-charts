@@ -17,6 +17,10 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
+{{- if .Values.datadog.serviceMonitoring.enabled }}
+    - name: HOST_ROOT
+      value: "/host/root"
+{{- end }}
 {{- if .Values.agents.containers.systemProbe.env }}
 {{ toYaml .Values.agents.containers.systemProbe.env | indent 4 }}
 {{- end }}
@@ -48,6 +52,12 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if .Values.datadog.serviceMonitoring.enabled }}
+    - name: hostroot
+      mountPath: /host/root
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
 {{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
     - name: modules
       mountPath: /lib/modules

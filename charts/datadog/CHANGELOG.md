@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.26.2
+
+* Add support for Universal Service Monitoring (currently under private Beta)
+
 ## 2.26.1
 
 * Update CRDs version to `0.4.4`
