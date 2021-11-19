@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.26.1
+
+* Update CRDs version to `0.4.4`
+
 # 2.26.0
 
 * Default Datadog Agent image to `7.32.1`.
