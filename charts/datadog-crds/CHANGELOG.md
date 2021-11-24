@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5
+
+Reduce DatadogAgent CRD size by removing description.
+
 ## 0.4.4
 
 Update CRDs from Datadog Operator v0.7.2.
