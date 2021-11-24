@@ -1,6 +1,10 @@
 # Datadog changelog
 
-# 2.26.2
+## 2.26.3
+
+* Update CRDs version to `0.4.5` (reduced size)
+
+## 2.26.2
 
 * Add support for Universal Service Monitoring (currently under private Beta)
 
@@ -8,45 +12,45 @@
 
 * Update CRDs version to `0.4.4`
 
-# 2.26.0
+## 2.26.0
 
 * Default Datadog Agent image to `7.32.1`.
 
-# 2.25.0
+## 2.25.0
 
 * Adding the following `agents.daemonsetAnnotations`, `clusterAgent.deploymentAnnotation` and `clusterChecksRunner.deploymentAnnotations` parameters to allow custom annotations on the agent's deployments/daemonsets to be setup
 
-# 2.24.1
+## 2.24.1
 
 * Fix typo in variable name : `agents.localService.forceLocalServiceEnabled`
 
-# 2.24.0
+## 2.24.0
 
 * Default Datadog Agent image to `7.32.0`.
 * Default Datadog Cluster Agent image to `1.16.0`.
 
-# 2.23.6
+## 2.23.6
 
 * Add `datadog.expvarPort` parameter to customize the default expvar default port to not conflict with the default clusteragent metrics port if running in hostNetwork mode.
 * Defined cluster-agent containerPort `agentmetrics` to expose the default port, which is set to 5000 and already defined in the `NetworkPolicy` for the cluster-agent.
 
-# 2.23.5
+## 2.23.5
 
 Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift Auth operator.
 
-# 2.23.4
+## 2.23.4
 
 * Add a new configuration field `datadog.providers.eks.ec2.useHostnameFromFile` to allow use of host's `/var/lib/cloud/data/instance-id` for hostname detection.
 
-# 2.23.3
+## 2.23.3
 
 * Add `agents.localService` parameters to customize the internal traffic policy service name and force its creation of Kubernetes 1.21.
 
-# 2.23.2
+## 2.23.2
 
 * Add an `agents.podSecurity.defaultApparmor` setting to allow customizing the default AppArmor profile used by all containers but `system-probe`.
 
-# 2.23.1
+## 2.23.1
 
 * Fix APM reporting via `trace-agent` hostPort if `datadog.apm.enabled: true`.
 
