@@ -47,7 +47,7 @@ helm install --name <RELEASE_NAME> \
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
-However, you can use manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-keys), below).
+However, you can use manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
 
 **Note:** When creating the secret(s), be sure to name the key fields `api-key` and `app-key`.
 
@@ -68,7 +68,7 @@ To create a secret that contains your Datadog API key, replace the <DATADOG_API_
 
 ```bash
 DATADOG_API_SECRET_NAME=datadog-api-secret
-kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --namespace="default"
+kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>"
 ```
 
 **Note**: This creates a secret in the default namespace. If you are in a custom namespace, update the namespace parameter of the command before running it.
@@ -88,18 +88,18 @@ Read about the Datadog Cluster Agent in the [official documentation](https://doc
 
 #### Custom Metrics Server
 
-If your plan to use the [Custom Metrics Server](https://docs.datadoghq.com/agent/cluster_agent/external_metrics/?tab=helm) feature, Provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
+If you plan to use the [Custom Metrics Server](https://docs.datadoghq.com/agent/cluster_agent/external_metrics/?tab=helm) feature, provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
 
 ```bash
 DATADOG_APP_SECRET_NAME=datadog-app-secret
-kubectl create secret generic $DATADOG_APP_SECRET_NAME --from-literal app-key="<DATADOG_APP_KEY>" --namespace="default"
+kubectl create secret generic $DATADOG_APP_SECRET_NAME --from-literal app-key="<DATADOG_APP_KEY>"
 ```
 
 **Note**: the same secret can store the API and APP keys
 
 ```bash
 DATADOG_SECRET_NAME=datadog-secret
-kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --from-literal app-key="<DATADOG_APP_KEY>" --namespace="default"
+kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --from-literal app-key="<DATADOG_APP_KEY>"
 ```
 
 Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
@@ -108,6 +108,7 @@ Run the following if you want to deploy the chart with the Custom Metrics Server
 helm install --name datadog-monitoring \
     --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
     --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
+    --set clusterAgent.metricsProvider.enabled=true \
     --set clusterAgent.metricsProvider.enabled=true \
     datadog/datadog
 ```
