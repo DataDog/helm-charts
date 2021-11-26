@@ -320,7 +320,7 @@ datadog:
     stripProcessArguments: false
 
     # datadog.processAgent.processDiscovery -- Set this to false to disable autodiscovery of integrations
-    processDiscovery: true
+    processDiscovery: false
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
