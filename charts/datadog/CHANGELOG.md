@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.26.4
+
+* Update API/APP keys secret management documentation.
+
 ## 2.26.3
 
 * Update CRDs version to `0.4.5` (reduced size)

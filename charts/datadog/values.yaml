@@ -23,7 +23,7 @@ datadog:
   # ref: https://app.datadoghq.com/account/settings#agent/kubernetes
   apiKey: <DATADOG_API_KEY>
 
-  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
   ## If set, this parameter takes precedence over "apiKey".
   apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 
@@ -32,7 +32,7 @@ datadog:
   ## a Datadog application key for read access to your metrics.
   appKey:  # <DATADOG_APP_KEY>
 
-  # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+  # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
