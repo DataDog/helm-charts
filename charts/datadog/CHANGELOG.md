@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.26.5
+
+* Add `verticalpodautoscalers` RBACs when `datadog.kubeStateMetricsCore.enabled` is `true`
+
 ## 2.26.4
 
 * Update API/APP keys secret management documentation.
