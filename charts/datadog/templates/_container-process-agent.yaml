@@ -29,6 +29,8 @@
     - name: DD_PROCESS_AGENT_ENABLED
       value: "true"
     {{- end }}
+    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
     {{- if .Values.datadog.processAgent.stripProcessArguments }}
     - name: DD_STRIP_PROCESS_ARGS
       value: "true"

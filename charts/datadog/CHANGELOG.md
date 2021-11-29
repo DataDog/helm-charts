@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.27.0 
+
+* Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
+
 ## 2.26.5
 
 * Add `verticalpodautoscalers` RBACs when `datadog.kubeStateMetricsCore.enabled` is `true`
