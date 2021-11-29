@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4
+
+* Update chart to Datadog CRDs `0.4.5`
+
+## 0.7.3
+
+* Update chart to Datadog Operator `0.7.2` and CRDs `0.4.4`
+
 ## 0.7.2
 
 * Add `watchNamespaces` option to configure the namespaces watched by the operator.

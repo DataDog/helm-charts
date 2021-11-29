@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euo pipefail
+
+set -euox pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
 
@@ -23,6 +24,11 @@ download_crd() {
     path=$ROOT/charts/datadog-crds/templates/$outFile
     echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
     curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
+
+    if [ "$name" = "datadogagents" ]; then
+        yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
+        yq -i eval 'del(.. | select(has("description")).description)' "$path"
+    fi
 
     ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
     if [ "$version" = "v1" ]; then

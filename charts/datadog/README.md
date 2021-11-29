@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.25.0](https://img.shields.io/badge/Version-2.25.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.27.0](https://img.shields.io/badge/Version-2.25.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -28,8 +28,8 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | =0.3.2 |
-| https://prometheus-community.github.io/helm-charts | kube-state-metrics | =2.13.2 |
+| https://helm.datadoghq.com | datadog-crds | 0.4.5 |
+| https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
 
@@ -47,7 +47,11 @@ helm install --name <RELEASE_NAME> \
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
-However, you can use manually created secret by setting the `datadog.apiKeyExistingSecret` value. After a few minutes, you should see hosts and metrics being reported in Datadog.
+However, you can use manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
+
+**Note:** When creating the secret(s), be sure to name the key fields `api-key` and `app-key`.
+
+After a few minutes, you should see hosts and metrics being reported in Datadog.
 
 **Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
 
@@ -58,13 +62,13 @@ helm install --name <RELEASE_NAME> \
     datadog/datadog
 ```
 
-#### Create and provide a secret that contains your Datadog API Key
+#### Create and provide a secret that contains your Datadog API and APP Keys
 
 To create a secret that contains your Datadog API key, replace the <DATADOG_API_KEY> below with the API key for your organization. This secret is used in the manifest to deploy the Datadog Agent.
 
 ```bash
-DATADOG_SECRET_NAME=datadog-secret
-kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --namespace="default"
+DATADOG_API_SECRET_NAME=datadog-api-secret
+kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>"
 ```
 
 **Note**: This creates a secret in the default namespace. If you are in a custom namespace, update the namespace parameter of the command before running it.
@@ -73,27 +77,42 @@ Now, the installation command contains the reference to the secret.
 
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
+  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
 ```
-
-**Note**: Provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
 
 ### Enabling the Datadog Cluster Agent
 
+The Datadog Cluster Agent is now enabled by default.
+
 Read about the Datadog Cluster Agent in the [official documentation](https://docs.datadoghq.com/agent/kubernetes/cluster/).
 
-Run the following if you want to deploy the chart with the Datadog Cluster Agent:
+#### Custom Metrics Server
+
+If you plan to use the [Custom Metrics Server](https://docs.datadoghq.com/agent/cluster_agent/external_metrics/?tab=helm) feature, provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
+
+```bash
+DATADOG_APP_SECRET_NAME=datadog-app-secret
+kubectl create secret generic $DATADOG_APP_SECRET_NAME --from-literal app-key="<DATADOG_APP_KEY>"
+```
+
+**Note**: the same secret can store the API and APP keys
+
+```bash
+DATADOG_SECRET_NAME=datadog-secret
+kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --from-literal app-key="<DATADOG_APP_KEY>"
+```
+
+Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
 
 ```bash
 helm install --name datadog-monitoring \
-    --set datadog.apiKey=<DATADOG_API_KEY> \
-    --set datadog.appKey=<DATADOG_APP_KEY> \
-    --set clusterAgent.enabled=true \
+    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
+    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
+    --set clusterAgent.metricsProvider.enabled=true \
     --set clusterAgent.metricsProvider.enabled=true \
     datadog/datadog
 ```
 
-**Note**: Specifying `clusterAgent.metricsProvider.enabled=true` enables the External Metrics Server.
 If you want to learn to use this feature, you can check out this [Datadog Cluster Agent walkthrough](https://github.com/DataDog/datadog-agent/blob/main/docs/cluster-agent/CUSTOM_METRICS_SERVER.md).
 
 The Leader Election is enabled by default in the chart for the Cluster Agent. Only the Cluster Agent(s) participate in the election, in case you have several replicas configured (using `clusterAgent.replicas`.
@@ -409,6 +428,7 @@ helm install --name <RELEASE_NAME> \
 | agents.containers.traceAgent.resources | object | `{}` | Resource requests and limits for the trace-agent container |
 | agents.containers.traceAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the trace-agent container. |
 | agents.customAgentConfig | object | `{}` | Specify custom contents for the datadog agent config (datadog.yaml) |
+| agents.daemonsetAnnotations | object | `{}` | Annotations to add to the DaemonSet |
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
@@ -416,9 +436,9 @@ helm install --name <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.32.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.32.1"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
-| agents.localService.forceLocalServiceEnable | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
+| agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents. DEPRECATED. Use datadog.networkPolicy.create instead |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
@@ -454,6 +474,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.containers.clusterAgent.securityContext | object | `{}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
+| clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
@@ -495,6 +516,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
+| clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |
@@ -504,7 +526,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.31.1"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.32.1"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -526,7 +548,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.volumes | list | `[]` | Specify additional volumes to mount in the cluster checks container |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog.apiKey | string | `"<DATADOG_API_KEY>"` | Your Datadog API key ref: https://app.datadoghq.com/account/settings#agent/kubernetes |
-| datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
+| datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
@@ -535,7 +557,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.apm.socketPath | string | `"/var/run/datadog/apm.socket"` | Path to the trace-agent socket |
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
-| datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
+| datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
 | datadog.clusterChecks.enabled | bool | `true` | Enable the Cluster Checks feature on both the cluster-agents and the daemonset |
@@ -607,6 +629,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
 | datadog.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
+| datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |

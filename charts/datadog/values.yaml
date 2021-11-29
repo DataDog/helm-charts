@@ -23,7 +23,7 @@ datadog:
   # ref: https://app.datadoghq.com/account/settings#agent/kubernetes
   apiKey: <DATADOG_API_KEY>
 
-  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
   ## If set, this parameter takes precedence over "apiKey".
   apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 
@@ -32,7 +32,7 @@ datadog:
   ## a Datadog application key for read access to your metrics.
   appKey:  # <DATADOG_APP_KEY>
 
-  # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+  # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
@@ -380,6 +380,12 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
+  ## Universal Service Monitoring is currently in private beta.
+  ## See https://www.datadoghq.com/blog/universal-service-monitoring-datadog/ for more details and private beta signup.
+  serviceMonitoring:
+    # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
+    enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -685,6 +691,10 @@ clusterAgent:
       maxSurge: 1
       maxUnavailable: 0
 
+  # clusterAgent.deploymentAnnotations -- Annotations to add to the cluster-agents's deployment
+  deploymentAnnotations: {}
+  #   key: "value"
+
   # clusterAgent.podAnnotations -- Annotations to add to the cluster-agents's pod(s)
   podAnnotations: {}
   #   key: "value"
@@ -766,7 +776,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.32.0
+    tag: 7.32.1
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -1081,6 +1091,10 @@ agents:
   #  - name: ndots
   #    value: "1"
 
+  # agents.daemonsetAnnotations -- Annotations to add to the DaemonSet
+  daemonsetAnnotations: {}
+  #   key: "value"
+
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
   #   <POD_ANNOTATION>: '[{"key": "<KEY>", "value": "<VALUE>"}]'
@@ -1150,10 +1164,10 @@ agents:
     # agents.localService.overrideName -- Name of the internal traffic service to target the agent running on the local node
     overrideName: ""
 
-    # agents.localService.forceLocalServiceEnable -- Force the creation of the internal traffic policy service to target the agent running on the local node.
+    # agents.localService.forceLocalServiceEnabled -- Force the creation of the internal traffic policy service to target the agent running on the local node.
     # By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default.
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
-    forceLocalServiceEnable: false
+    forceLocalServiceEnabled: false
 
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
@@ -1166,7 +1180,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.31.1
+    tag: 7.32.1
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -1283,6 +1297,10 @@ clusterChecksRunner:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 6
+
+  # clusterChecksRunner.deploymentAnnotations -- Annotations to add to the cluster-checks-runner's Deployment
+  deploymentAnnotations: {}
+  #   key: "value"
 
   # clusterChecksRunner.podAnnotations -- Annotations to add to the cluster-checks-runner's pod(s)
   podAnnotations: {}
