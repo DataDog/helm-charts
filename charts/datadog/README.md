@@ -617,7 +617,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection in process monitoring agent |
-| datadog.processAgent.processDiscovery | bool | `false` | Set this to false to disable autodiscovery of integrations |
+| datadog.processAgent.processDiscovery | bool | `false` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
 | datadog.prometheusScrape.enabled | bool | `false` | Enable autodiscovering pods and services exposing prometheus metrics. |
