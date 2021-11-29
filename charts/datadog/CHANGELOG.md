@@ -2,7 +2,7 @@
 
 # 2.27.0 
 
-* Introduce `process_agent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
+* Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
 
 ## 2.26.5
 
