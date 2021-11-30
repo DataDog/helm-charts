@@ -750,8 +750,8 @@ targetSystem: windows
 
 existingClusterAgent:
   join: true
-  serviceName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
-  tokenSecretName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+  serviceName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+  tokenSecretName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
 
 # Disabled datadogMetrics deployment since it should have been already deployed with the other chart release.
 datadog-crds:

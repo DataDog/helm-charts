@@ -3,6 +3,7 @@
 # 2.27.1
 
 * Update README.md to clarify Helm 2 vs. Helm 3 instructions
+* Fix typos in README.md in `How to join a Cluster Agent from another helm chart deployment (Linux)`
 
 # 2.27.0 
 
