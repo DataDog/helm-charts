@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 2.27.1
+
+* Update README.md to clarify Helm 2 vs. Helm 3 instructions
+
 # 2.27.0 
 
 * Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`

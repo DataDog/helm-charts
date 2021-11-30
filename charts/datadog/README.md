@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.27.0](https://img.shields.io/badge/Version-2.27.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.27.1](https://img.shields.io/badge/Version-2.27.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -41,9 +41,16 @@ By default, the Datadog Agent runs in a DaemonSet. It can alternatively run insi
 
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datadog API key from your [Agent Installation Instructions](https://app.datadoghq.com/account/settings#agent/kubernetes) and run:
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
+    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
@@ -55,6 +62,15 @@ After a few minutes, you should see hosts and metrics being reported in Datadog.
 
 **Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+    --set datadog.appKey=<DATADOG_APP_KEY> \
+    --set datadog.site=<DATADOG_SITE> \
+    datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
     --set datadog.appKey=<DATADOG_APP_KEY> \
@@ -75,6 +91,13 @@ kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<
 
 Now, the installation command contains the reference to the secret.
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
@@ -104,11 +127,22 @@ kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATA
 
 Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
 
+For Helm 3:
+```bash
+helm install datadog-monitoring \
+    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
+    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
+    --set clusterAgent.enabled=true \
+    --set clusterAgent.metricsProvider.enabled=true \
+    datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name datadog-monitoring \
     --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
     --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
-    --set clusterAgent.metricsProvider.enabled=true \
+    --set clusterAgent.enabled=true \
     --set clusterAgent.metricsProvider.enabled=true \
     datadog/datadog
 ```
@@ -173,14 +207,26 @@ datadog:
 
 3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
+For Helm 3:
 ```bash
 helm install -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
+For Helm 2:
+```bash
+helm install -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
+```
+
 OR
 
+For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
+```
+
+For Helm 2:
+```bash
+helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all configuration possibilities in the Datadog chart.
@@ -236,8 +282,14 @@ datadog:
 
 then upgrade your Datadog Helm chart:
 
+For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
+```
+
+For Helm 2:
+```bash
+helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Process Collection
@@ -381,6 +433,14 @@ agents:
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+  --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
+  datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
