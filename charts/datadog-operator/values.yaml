@@ -15,7 +15,7 @@ apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 # appKey -- Your Datadog APP key
 appKey:  # <DATADOG_APP_KEY>
 
-# site -- The site of the Datadog intake to send data to
+# site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
 ## Set to 'datadoghq.com' to send data to the US1 site (default).
 ## Set to 'datadoghq.eu' to send data to the EU site.
 ## Set to 'us3.datadoghq.com' to send data to the US3 site.
