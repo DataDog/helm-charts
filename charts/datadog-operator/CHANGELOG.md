@@ -3,6 +3,7 @@
 ## 0.7.5
 
 * Add a configuration field `containerSecurityContext` to configure a security context for a Container
+* Add `site` option to change the Datadog intake site.
 
 ## 0.7.4
 

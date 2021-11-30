@@ -75,6 +75,10 @@ spec:
                   name: {{ template "datadog-operator.appKeySecretName" . }}
                   key: app-key
             {{- end }}
+            {{- if .Values.site }}
+            - name: DD_SITE
+              value: {{ .Values.site }}
+            {{- end }}
             {{- if .Values.dd_url }}
             - name: DD_URL
               value: {{ .Values.dd_url }}
