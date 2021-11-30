@@ -108,3 +108,6 @@ watchNamespaces: []
 # to watch all namespaces
 # watchNamespaces:
 # - ""
+
+# containerSecurityContext -- A security context defines privileges and access control settings for a container.
+containerSecurityContext: {}
