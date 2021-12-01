@@ -104,6 +104,9 @@ datadog:
     ##     <label2>: <tag2>
     ##   <resource2>:
     ##     <label3>: <tag3>
+    ##
+    ## Warning: the label must match the transformation done by kube-state-metrics,
+    ## example:  tags.datadoghq.com/version becomes label_tags_datadoghq_com_version 
     labelsAsTags: {}
     #  pod:
     #    app: app
