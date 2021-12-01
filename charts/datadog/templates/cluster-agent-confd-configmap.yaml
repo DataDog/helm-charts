@@ -43,5 +43,7 @@ data:
         - poddisruptionbudgets
         - storageclasses
         - volumeattachments
+        labels_as_tags:
+{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
 {{- end }}
 {{- end -}}
