@@ -94,6 +94,7 @@ specs:
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "api.datadoghq.com"
           - matchName: "agent-intake.logs.datadoghq.com"
+          - matchName: "agent-http-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
           {{- end}}
