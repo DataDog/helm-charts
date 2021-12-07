@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.27.3
+
+* Fix CiliumNetworkPolicy: Update toFQDNs policy to include `agent-http-intake` endpoint.
+* Fix CiliumNetworkPolicy: Update toFQDNs to include `api` endpoint.
+
 ## 2.27.2
 
 * Expose the `labels_as_tags` parameter of the KSM core check.
