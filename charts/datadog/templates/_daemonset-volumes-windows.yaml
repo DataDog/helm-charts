@@ -5,6 +5,11 @@
     type: Directory
   name: kubelet-ca
 {{- end }}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+- name: confd
+  configMap:
+    name: {{ template "datadog.fullname" . }}-confd
+{{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: C:/var/log

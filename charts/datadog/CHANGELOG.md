@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.27.4
+
+* Do not allow unsupported configs with the security agent in windows environments. 
+* Ensure autoconf/extra config files are mounted in windows environments.
+
 ## 2.27.3
 
 * Fix CiliumNetworkPolicy: Update toFQDNs policy to include `agent-http-intake` endpoint.

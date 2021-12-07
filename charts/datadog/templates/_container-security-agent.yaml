@@ -2,7 +2,7 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  {{- if .Values.datadog.securityAgent.compliance.enabled }}
+  {{- if eq  (include "should-enable-compliance" .) "true" }}
   securityContext:
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
