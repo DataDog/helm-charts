@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.0
+
+* Create priority Class to better support environments such as GKE Autopilot.
+
 ## 2.27.8
 
 * Default Datadog Agent image to `7.32.3`.
