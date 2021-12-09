@@ -530,7 +530,7 @@ false
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if .Values.datadog.systemProbe.enableRuntimeCompiler -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler -}}
 true
 {{- else -}}
 false
