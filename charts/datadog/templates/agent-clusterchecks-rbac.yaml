@@ -1,4 +1,4 @@
-{{- if and .Values.clusterChecksRunner.rbac.create (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated -}}
+{{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated -}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:

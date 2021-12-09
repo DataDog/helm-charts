@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.27.5
+
+* Fix bugs that prevented running the ksm core check as a cluster check.
+
 ## 2.27.4
 
 * Do not allow unsupported configs with the security agent in windows environments. 

@@ -15,7 +15,7 @@ data:
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
   kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
-    cluster_checks: true
+    cluster_check: true
 {{- end }}
     init_config:
     instances:
@@ -43,6 +43,9 @@ data:
         - poddisruptionbudgets
         - storageclasses
         - volumeattachments
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+        skip_leader_election: true
+{{- end }}
         labels_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
 {{- end }}

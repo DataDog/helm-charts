@@ -45,7 +45,7 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.clusterChecksRunner.rbac.dedicated }}
+      {{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}-cluster-checks{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
       {{- else }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
