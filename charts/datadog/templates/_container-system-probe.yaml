@@ -108,10 +108,10 @@
       mountPath: /host/etc/zypp
       readOnly: true
     - name: public-key-dir
-      mountPath: /etc/pki
+      mountPath: /host/etc/pki
       readOnly: true
     - name: rhel-subscription-dir
-      mountPath: /etc/rhsm
+      mountPath: /host/etc/rhsm
       readOnly: true
 {{- end }}
 {{- end }}
