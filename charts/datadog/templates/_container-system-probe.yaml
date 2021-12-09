@@ -87,10 +87,16 @@
       readOnly: false
 {{- if .Values.datadog.systemProbe.mountPackageManagementDirs }}
     - name: etc-os-release
-      mountPath: /etc/os-release
+      mountPath: /host/etc/os-release
       readOnly: true
     - name: etc-redhat-release
-      mountPath: /etc/redhat-release
+      mountPath: /host/etc/redhat-release
+      readOnly: true
+    - name: etc-fedora-release
+      mountPath: /host/etc/fedora-release
+      readOnly: true
+    - name: etc-lsb-release
+      mountPath: /host/etc/lsb-release
       readOnly: true
     - name: apt-config-dir
       mountPath: /host/etc/apt

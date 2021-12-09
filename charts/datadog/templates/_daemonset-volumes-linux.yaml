@@ -85,6 +85,12 @@
     path: /etc/redhat-release
   name: etc-redhat-release
 - hostPath:
+    path: /etc/fedora-release
+  name: etc-fedora-release
+- hostPath:
+    path: /etc/lsb-release
+  name: etc-lsb-release
+- hostPath:
     path: /etc/apt
   name: apt-config-dir
 - hostPath:
