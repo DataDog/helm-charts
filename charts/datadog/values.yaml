@@ -118,7 +118,7 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   ## Autodiscovery via Kube Service annotations is automatically enabled
   clusterChecks:
-    # datadog.clusterChecks.enabled -- Enable the Cluster Checks feature on both the cluster-agents and the daemonset
+    # datadog.clusterChecks.enabled -- Enable the Cluster Checks feature on the daemonset. Daemonset agents will participate in cluster checks.
     enabled: true
 
   # datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
