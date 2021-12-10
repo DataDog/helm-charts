@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.27.6
+
+* Fix deprecation warning in examples caused by the `datadog.apm.enabled` parameter
+
 ## 2.27.5
 
 * Fix bugs that prevented running the ksm core check as a cluster check.
