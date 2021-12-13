@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+* Nothing
+
 ## 0.2.1
 
 * Add ExtendedDaemonset CRDs directly inside this chart.

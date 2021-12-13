@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.6
+
+* Nothing
+
 ## 0.7.5
 
 * Add a configuration field `containerSecurityContext` to configure a security context for a Container

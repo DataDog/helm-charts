@@ -2,7 +2,7 @@ apiVersion: v1
 appVersion: v0.7.0
 description: Extended Daemonset Controller
 name: extendeddaemonset
-version: v0.2.1
+version: v0.2.2
 keywords:
 - monitoring
 - alerting
