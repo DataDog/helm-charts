@@ -1,6 +1,6 @@
 # Extended DaemonSet
 
-![Version: v0.2.1](https://img.shields.io/badge/Version-v0.2.1-informational?style=flat-square) ![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
+![Version: v0.2.2](https://img.shields.io/badge/Version-v0.2.2-informational?style=flat-square) ![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
 
 This chart installs the Extended DaemonSet (EDS). It aims to provide a new implementation of the Kubernetes DaemonSet resource with key features:
 - Canary Deployment: Deploy a new DaemonSet version with only a few nodes.
