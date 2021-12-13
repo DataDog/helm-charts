@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.27.6
+
+* Default Datadog Agent image to `7.32.2`.
+
 ## 2.27.5
 
 * Fix bugs that prevented running the ksm core check as a cluster check.
