@@ -9,6 +9,18 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
+- hostPath:
+    path: /etc/os-release
+  name: etc-os-release
+- hostPath:
+    path: /etc/redhat-release
+  name: etc-redhat-release
+- hostPath:
+    path: /etc/fedora-release
+  name: etc-fedora-release
+- hostPath:
+    path: /etc/lsb-release
+  name: etc-lsb-release
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
@@ -79,18 +91,6 @@
   name: kernel-headers-download-dir
 {{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
 - hostPath:
-    path: /etc/os-release
-  name: etc-os-release
-- hostPath:
-    path: /etc/redhat-release
-  name: etc-redhat-release
-- hostPath:
-    path: /etc/fedora-release
-  name: etc-fedora-release
-- hostPath:
-    path: /etc/lsb-release
-  name: etc-lsb-release
-- hostPath:
     path: /etc/apt
   name: apt-config-dir
 - hostPath:
@@ -135,15 +135,10 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
-- hostPath:
-    path: /etc/os-release
-  name: os-release
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
@@ -166,3 +161,4 @@
     path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
   name: runtimesocketdir
 {{- end -}}
+

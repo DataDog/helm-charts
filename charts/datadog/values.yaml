@@ -374,12 +374,8 @@ datadog:
 
     # datadog.systemProbe.mountPackageManagementDirs -- Enables mounting of specific package management directories when runtime compilation is enabled
     mountPackageManagementDirs: []
-    ## For runtime compilation to be able to download kernel headers, the host's OS release file & package
-    ## management folders must be mounted to the /host directory. For example, for Ubuntu & Debian the 
-    ## following mounts would be necessary:
-    # - name: "etc-os-release"
-    #   hostPath: /etc/os-release
-    #   mountPath: /host/etc/os-release
+    ## For runtime compilation to be able to download kernel headers, the host's package management folders
+    ## must be mounted to the /host directory. For example, for Ubuntu & Debian the following mount would be necessary:
     # - name: "apt-config-dir"
     #   hostPath: /etc/apt
     #   mountPath: /host/etc/apt
