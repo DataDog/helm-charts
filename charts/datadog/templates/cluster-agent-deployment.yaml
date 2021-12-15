@@ -279,9 +279,6 @@ spec:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
 {{- end }}
 {{- if .Values.clusterAgent.advancedConfd }}
-        - name: advanced-confd
-          configMap:
-            name: {{ template "datadog.fullname" . }}-cluster-agent-advanced-confd
             items:
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
