@@ -256,11 +256,6 @@ spec:
             mountPath: /conf.d
             readOnly: true
 {{- end }}
-{{- if .Values.clusterAgent.advancedConfd }}
-          - name: advanced-confd
-            mountPath: /conf.d
-            readOnly: true
-{{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
           - name: cluster-agent-yaml
             mountPath: /etc/datadog-agent/datadog-cluster.yaml
