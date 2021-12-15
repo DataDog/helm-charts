@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.27.8
+
+- Default Datadog Agent image to `7.32.3` to fully address CVE-2021-44228 and CVE-2021-45046.
+
 ## 2.27.7
 
 * Nothing
