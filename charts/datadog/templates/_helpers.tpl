@@ -508,7 +508,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+{{- if (and (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) (not .Values.clusterAgent.advancedConfd)) -}}
 true
 {{- else -}}
 false

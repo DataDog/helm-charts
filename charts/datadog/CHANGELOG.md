@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.27.9
+
+* Fix bug that prevented using advancedConfd and kubeStateMetricsCore together.
+
 ## 2.27.8
 
 * Default Datadog Agent image to `7.32.3`.

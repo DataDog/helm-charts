@@ -288,6 +288,10 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-advanced-confd
             items:
+{{- if .Values.datadog.kubeStateMetricsCore.enabled }}            
+            - key: "kubernetes_state_core.yaml.default"
+              path: "kubernetes_state_core.yaml.default"
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
