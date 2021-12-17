@@ -381,7 +381,7 @@ datadog:
     #   mountPath: /host/etc/apt
     ## If this list is empty, then all necessary package management directories (for all supported OSs) will be mounted.
 
-    # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want all os-releases mounted by default
+    # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want all `/etc/*-release` file mounts attempted by default
     osReleasePath:
 
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
