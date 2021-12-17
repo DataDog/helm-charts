@@ -1153,8 +1153,15 @@ agents:
     rollingUpdate:
       maxUnavailable: "10%"
 
-  # agents.priorityClassName -- Sets PriorityClassName if defineds
+  # agents.priorityClassCreate -- Creates a priorityClass for the Datadog Agent's Daemonset pods.
+  priorityClassCreate: false
+
+  # agents.priorityClassName -- Sets PriorityClassName if defined
   priorityClassName:
+
+  # agents.priorityClassValue -- Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods.
+  ## The PriorityClass uses PreemptLowerPriority.
+  priorityClassValue: 1000000000
 
   # agents.podLabels -- Sets podLabels if defined
   # Note: These labels are also used as label selectors so they are immutable.

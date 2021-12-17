@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.0
+
+* Create priority Class to better support environments such as GKE Autopilot.
+
 ## 2.27.10
 
 * Add `CAP_CHOWN` to the list of capabilities for system-probe.
