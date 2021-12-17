@@ -9,6 +9,24 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
+{{- if .Values.datadog.systemProbe.osReleasePath }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.osReleasePath }}
+  name: os-release-file
+{{- else }}
+- hostPath:
+    path: /etc/os-release
+  name: etc-os-release
+- hostPath:
+    path: /etc/redhat-release
+  name: etc-redhat-release
+- hostPath:
+    path: /etc/fedora-release
+  name: etc-fedora-release
+- hostPath:
+    path: /etc/lsb-release
+  name: etc-lsb-release
+{{- end -}}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
@@ -68,6 +86,39 @@
     path: /usr/src
   name: src
 {{- end }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
+    type: DirectoryOrCreate
+  name: runtime-compiler-output-dir
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
+    type: DirectoryOrCreate
+  name: kernel-headers-download-dir
+{{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
+- hostPath:
+    path: /etc/apt
+  name: apt-config-dir
+- hostPath:
+    path: /etc/yum.repos.d
+  name: yum-repos-dir
+- hostPath:
+    path: /etc/zypp
+  name: opensuse-repos-dir
+- hostPath:
+    path: /etc/pki
+  name: public-key-dir
+- hostPath:
+    path: /etc/rhsm
+  name: rhel-subscription-dir
+{{- else }}
+{{- range .Values.datadog.systemProbe.mountPackageManagementDirs }}
+- hostPath:
+    path: {{ .hostPath }}
+  name: {{ .name }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:
@@ -90,15 +141,10 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
-- hostPath:
-    path: /etc/os-release
-  name: os-release
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
@@ -121,3 +167,4 @@
     path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
   name: runtimesocketdir
 {{- end -}}
+
