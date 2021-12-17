@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.1
+
+* Fix `CAP_CHOWN` capability configuration for system-probe.
+
 ## 2.28.0
 
 * Create priority Class to better support environments such as GKE Autopilot.
