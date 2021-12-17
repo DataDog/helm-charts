@@ -1,4 +1,10 @@
 # Datadog changelog
+## 2.27.9
+
+* Adds `systemProbe.enableRuntimeCompiler`, `systemProbe.mountPackageManagementDirs` and `systemprobe.runtimeCompilationAssetDir` to configure eBPF runtime compiler in the system-probe.
+* Adds `systemProbe.mountPackageManagementDirs` to configure what volumes are mounted in the system-probe for runtime compilation.
+* Adds `systemProbe.osReleasePath` to configure what volume is mounted in the system-probe for host OS detection.
+* Adds renameat, symlinkat and flock to the allow syscalls in the system-probe's seccomp profile.
 
 ## 2.27.8
 
