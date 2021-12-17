@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.2
+
+* Fix conflict between `clusterAgent.confd` and `clusterAgent.advancedConfd`: merge the 2 ConfigMaps.
+
 ## 2.28.1
 
 * Fix `CAP_CHOWN` capability configuration for system-probe.

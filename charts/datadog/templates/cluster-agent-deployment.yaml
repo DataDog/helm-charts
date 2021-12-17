@@ -256,11 +256,6 @@ spec:
             mountPath: /conf.d
             readOnly: true
 {{- end }}
-{{- if .Values.clusterAgent.advancedConfd }}
-          - name: advanced-confd
-            mountPath: /conf.d
-            readOnly: true
-{{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
           - name: cluster-agent-yaml
             mountPath: /etc/datadog-agent/datadog-cluster.yaml
@@ -282,12 +277,15 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-{{- end }}
-{{- if .Values.clusterAgent.advancedConfd }}
-        - name: advanced-confd
-          configMap:
-            name: {{ template "datadog.fullname" . }}-cluster-agent-advanced-confd
             items:
+{{- range $file, $configs := $.Values.clusterAgent.confd }}
+            - key: {{ $file | quote }}
+              path: {{ $file | quote }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+            - key: kubernetes_state_core.yaml.default
+              path: kubernetes_state_core.yaml.default
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
