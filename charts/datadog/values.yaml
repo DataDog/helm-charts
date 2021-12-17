@@ -382,7 +382,7 @@ datadog:
     ## If this list is empty, then all necessary package management directories (for all supported OSs) will be mounted.
 
     # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want all os-releases mounted by default
-    osReleasePath: # /etc/os-release
+    osReleasePath:
 
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
