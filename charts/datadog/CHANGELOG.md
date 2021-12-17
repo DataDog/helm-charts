@@ -1,4 +1,9 @@
 # Datadog changelog
+
+## 2.27.10
+
+* Add `CAP_CHOWN` to the list of capabilities for system-probe.
+
 ## 2.27.9
 
 * Adds `systemProbe.enableRuntimeCompiler`, `systemProbe.mountPackageManagementDirs` and `systemprobe.runtimeCompilationAssetDir` to configure eBPF runtime compiler in the system-probe.
