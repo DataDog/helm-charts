@@ -1057,7 +1057,7 @@ agents:
       securityContext:
         privileged: false
         capabilities:
-          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK"]
+          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "SYS_CHOWN"]
 
       # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
