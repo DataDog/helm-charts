@@ -644,8 +644,7 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-  # clusterAgent.confd -- Provide additional cluster check configurations
-  ## Each key will become a file in /conf.d
+  # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}
   #   mysql.yaml: |-
@@ -656,8 +655,7 @@ clusterAgent:
   #         user: datadog
   #         pass: '<YOUR_CHOSEN_PASSWORD>'
 
-  # clusterAgent.advancedConfd -- Provide additional cluster check configurations
-  ## Each key is an integration containing several config files, it replaces clusterAgent.confd if set
+  # clusterAgent.advancedConfd -- Provide additional cluster check configurations. Each key is an integration containing several config files.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   advancedConfd: {}
   #  mysql.d:

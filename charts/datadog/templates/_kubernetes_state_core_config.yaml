@@ -1,0 +1,37 @@
+{{- define "kubeStateMetricsCore-config" -}}
+kubernetes_state_core.yaml.default: |-
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+  cluster_check: true
+{{- end }}
+  init_config:
+  instances:
+    - collectors:
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
+      - secrets
+{{- end }}
+      - nodes
+      - pods
+      - services
+      - resourcequotas
+      - replicationcontrollers
+      - limitranges
+      - persistentvolumeclaims
+      - persistentvolumes
+      - namespaces
+      - endpoints
+      - daemonsets
+      - deployments
+      - replicasets
+      - statefulsets
+      - cronjobs
+      - jobs
+      - horizontalpodautoscalers
+      - poddisruptionbudgets
+      - storageclasses
+      - volumeattachments
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+      skip_leader_election: true
+{{- end }}
+      labels_as_tags:
+{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
+{{- end -}}
