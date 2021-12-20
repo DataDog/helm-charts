@@ -872,6 +872,7 @@ agents:
     privileged: false
 
     # agents.podSecurity.capabilities -- Allowed capabilities
+    ## capabilities must contain all agents.containers.*.securityContext.capabilities.
     capabilities:
       - SYS_ADMIN
       - SYS_RESOURCE
@@ -880,6 +881,7 @@ agents:
       - NET_BROADCAST
       - NET_RAW
       - IPC_LOCK
+      - CHOWN
       - AUDIT_CONTROL
       - AUDIT_READ
 
@@ -1052,6 +1054,7 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
+      ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
       securityContext:
         privileged: false
         capabilities:

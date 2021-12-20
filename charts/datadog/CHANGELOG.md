@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.3
+
+* Update `agents.podSecurity.capabilities` to contain all `agents.containers.systemProbe.securityContext.capabilities`.
+
 ## 2.28.2
 
 * Fix conflict between `clusterAgent.confd` and `clusterAgent.advancedConfd`: merge the 2 ConfigMaps.
