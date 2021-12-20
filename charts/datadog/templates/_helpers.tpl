@@ -549,3 +549,19 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+Returns env vars correctly quoted and valueFrom respected
+*/}}
+{{- define "additional-env-entries" -}}
+{{- if . -}}
+{{- range . }}
+- name: {{ .name }}
+{{- if .value }}
+  value: {{ .value | quote }}
+{{- else }}
+  valueFrom:
+{{ toYaml .valueFrom | indent 4 }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}

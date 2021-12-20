@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.7
+
+* Fix environment variables to be quoted correct with a loop and `quote` instead of `toYaml`.
+
 ## 2.28.6
 
 * Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
@@ -58,7 +62,7 @@
 
 ## 2.27.4
 
-* Do not allow unsupported configs with the security agent in windows environments. 
+* Do not allow unsupported configs with the security agent in windows environments.
 * Ensure autoconf/extra config files are mounted in windows environments.
 
 ## 2.27.3
@@ -77,7 +81,7 @@
 * Fix typos in README.md in `How to join a Cluster Agent from another helm chart deployment (Linux)`.
 * Fixes a port number typo for the `datadog.apm.portEnabled` option from 8216 to 8126.
 
-# 2.27.0 
+# 2.27.0
 
 * Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
 
