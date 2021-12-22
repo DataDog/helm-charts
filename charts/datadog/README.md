@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.28.3](https://img.shields.io/badge/Version-2.28.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.28.4](https://img.shields.io/badge/Version-2.28.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -685,6 +685,9 @@ helm install --name <RELEASE_NAME> \
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
 | datadog.prometheusScrape.enabled | bool | `false` | Enable autodiscovering pods and services exposing prometheus metrics. |
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
+| datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
+| datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
+| datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |

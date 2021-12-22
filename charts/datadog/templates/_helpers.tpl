@@ -536,3 +536,16 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if secret RBACs are needed for secret backend.
+*/}}
+{{- define "need-secret-permissions" -}}
+{{- if .Values.datadog.secretBackend.command -}}
+{{- if eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

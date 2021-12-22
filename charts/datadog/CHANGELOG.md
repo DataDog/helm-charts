@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.28.4
+
+* Add a new configuration section `datadog.secretBackend`.
+* Configuring `datadog.secretBackend.command="/readsecret_multiple_providers.sh"` will add the secret permissions required by the `/readsecret_multiple_providers.sh` helper.
+
 ## 2.28.3
 
 * Update `agents.podSecurity.capabilities` to contain all `agents.containers.systemProbe.securityContext.capabilities`.
