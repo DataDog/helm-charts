@@ -122,6 +122,18 @@ spec:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
                 optional: true
+          {{- if .Values.datadog.secretBackend.command }}
+          - name: DD_SECRET_BACKEND_COMMAND
+            value: {{ .Values.datadog.secretBackend.command | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.arguments }}
+          - name: DD_SECRET_BACKEND_ARGUMENTS
+            value: {{ .Values.datadog.secretBackend.arguments | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.timeout }}
+          - name: DD_SECRET_BACKEND_TIMEOUT
+            value: {{ .Values.datadog.secretBackend.timeout | quote }}
+          {{- end }}
           {{- if .Values.datadog.tags }}
           - name: DD_TAGS
             value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
