@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.5
+
+* Default Datadog Agent image to `7.32.4`.
+
 ## 2.28.4
 
 * Add a new configuration section `datadog.secretBackend`.
