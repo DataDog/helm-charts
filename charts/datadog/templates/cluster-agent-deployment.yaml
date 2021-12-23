@@ -238,9 +238,7 @@ spec:
             value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
           {{- end }}
           {{- end }}
-{{- if .Values.clusterAgent.env }}
-{{ toYaml .Values.clusterAgent.env | indent 10 }}
-{{- end }}
+          {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
         livenessProbe:
 {{- $live := .Values.clusterAgent.livenessProbe }}
 {{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}
