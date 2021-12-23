@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
 ## 0.7.6
 
 * Nothing
