@@ -172,9 +172,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-{{- if .Values.clusterChecksRunner.env }}
-{{ toYaml .Values.clusterChecksRunner.env | indent 10 }}
-{{- end }}
+          {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
         volumeMounts:

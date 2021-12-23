@@ -17,13 +17,11 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-{{- if .Values.datadog.serviceMonitoring.enabled }}
+    {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
-{{- end }}
-{{- if .Values.agents.containers.systemProbe.env }}
-{{ toYaml .Values.agents.containers.systemProbe.env | indent 4 }}
-{{- end }}
+    {{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
