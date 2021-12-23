@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.7
+
+* Update the default value of `datadog.kubelet.host` to use `spec.nodeName` instead of `status.hostIP`
+
 ## 2.28.6
 
 * Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
