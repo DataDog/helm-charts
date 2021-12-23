@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.6
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
 ## 2.28.5
 
 * Default Datadog Agent image to `7.32.4`.
