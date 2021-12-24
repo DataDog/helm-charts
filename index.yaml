@@ -3,6 +3,38 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2021-12-24T12:33:01.681874474Z"
+    dependencies:
+    - condition: clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 0.4.5
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    description: Datadog Agent
+    digest: a91f15afde5cc2f6d7f32104574f73fc6200f28a0849d473c096c6728dc164d5
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-2.28.8/datadog-2.28.8.tgz
+    version: 2.28.8
+  - apiVersion: v1
+    appVersion: "7"
     created: "2021-12-23T16:30:48.584998284Z"
     dependencies:
     - condition: clusterAgent.metricsProvider.useDatadogMetrics
@@ -6702,6 +6734,34 @@ entries:
   datadog-operator:
   - apiVersion: v2
     appVersion: 0.7.2
+    created: "2021-12-24T12:33:01.902533706Z"
+    dependencies:
+    - condition: installCRDs
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: =0.4.5
+    description: Datadog Operator
+    digest: 01154c6e3530d8707bda40b1037e691e3587ccf93ed92bfcb1abe50e6b555671
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-operator
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-operator-0.7.8/datadog-operator-0.7.8.tgz
+    version: 0.7.8
+  - apiVersion: v2
+    appVersion: 0.7.2
     created: "2021-12-23T09:49:06.948789924Z"
     dependencies:
     - condition: installCRDs
@@ -7632,4 +7692,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2021-12-23T16:30:48.587989707Z"
+generated: "2021-12-24T12:33:01.906137456Z"
