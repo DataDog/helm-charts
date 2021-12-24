@@ -1,9 +1,5 @@
 {{- if .Values.clusterChecksRunner.createPodDisruptionBudget -}}
-{{- if .Capabilities.APIVersions.Has "policy/v1" }}
-apiVersion: policy/v1
-{{- else }}
-apiVersion: policy/v1beta1
-{{- end }}
+apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
