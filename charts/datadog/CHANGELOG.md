@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.8
+
+* Fix `PodDisruptionBudget` api version definition when using `helm template`.
+
 ## 2.28.7
 
 * Fix environment variables to be quoted correct with a loop and `quote` instead of `toYaml`.
