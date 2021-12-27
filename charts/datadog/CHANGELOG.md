@@ -1,7 +1,12 @@
 # Datadog changelog
 
 ## 2.28.10
+
 * Update confd examples for the mysql integration
+
+## 2.28.9
+
+* Fix Cluster-Agent SCC creation on openshift 3.x. : remove unset parameters.
 
 ## 2.28.8
 
