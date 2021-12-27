@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.28.9
+* Update confd examples for the mysql integration
+
 ## 2.28.8
 
 * Fix `PodDisruptionBudget` api version definition when using `helm template`.
