@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 2.28.9
+## 2.28.10
 * Update confd examples for the mysql integration
 
 ## 2.28.8
