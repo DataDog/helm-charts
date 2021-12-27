@@ -17,8 +17,6 @@ allowHostIPC: false
 allowHostPID: false
 allowPrivilegeEscalation: false
 allowPrivilegedContainer: false
-allowedCapabilities: null
-defaultAddCapabilities: null
 fsGroup:
   type: MustRunAs
 readOnlyRootFilesystem: false
