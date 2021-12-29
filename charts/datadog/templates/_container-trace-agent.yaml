@@ -39,17 +39,15 @@
       value: "true"
     - name: DD_APM_RECEIVER_PORT
       value: {{ .Values.datadog.apm.port | quote }}
-  {{- if eq (include "trace-agent-use-uds" .) "true" }}
+    {{- if eq (include "trace-agent-use-uds" .) "true" }}
     - name: DD_APM_RECEIVER_SOCKET
       value: {{ .Values.datadog.apm.socketPath | quote }}
-  {{- end }}
-  {{- if eq .Values.targetSystem "linux" }}
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
-  {{- end }}
-{{- if .Values.agents.containers.traceAgent.env }}
-{{ toYaml .Values.agents.containers.traceAgent.env | indent 4 }}
-{{- end }}
+    {{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

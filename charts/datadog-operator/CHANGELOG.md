@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.8
+
+* Fix `PodDisruptionBudget` api version definition when using `helm template`.
+
+## 0.7.7
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
+## 0.7.6
+
+* Nothing
+
 ## 0.7.5
 
 * Add a configuration field `containerSecurityContext` to configure a security context for a Container

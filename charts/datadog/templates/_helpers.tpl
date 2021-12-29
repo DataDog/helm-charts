@@ -508,7 +508,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd)) -}}
 true
 {{- else -}}
 false
@@ -523,5 +523,56 @@ Return true if we can enable Service Internal Traffic Policy
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if runtime compilation is enabled in the system-probe
+*/}}
+{{- define "runtime-compilation-enabled" -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if secret RBACs are needed for secret backend.
+*/}}
+{{- define "need-secret-permissions" -}}
+{{- if .Values.datadog.secretBackend.command -}}
+{{- if eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+Returns env vars correctly quoted and valueFrom respected
+*/}}
+{{- define "additional-env-entries" -}}
+{{- if . -}}
+{{- range . }}
+- name: {{ .name }}
+{{- if .value }}
+  value: {{ .value | quote }}
+{{- else }}
+  valueFrom:
+{{ toYaml .valueFrom | indent 4 }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
+*/}}
+{{- define "policy.poddisruptionbudget.apiVersion" -}}
+{{- if or (.Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget") (semverCompare ">=1.21" .Capabilities.KubeVersion.Version) -}}
+"policy/v1"
+{{- else -}}
+"policy/v1beta1"
 {{- end -}}
 {{- end -}}

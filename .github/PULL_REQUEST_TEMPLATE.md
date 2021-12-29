@@ -10,5 +10,5 @@
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
 - [ ] Documentation has been updated with helm-docs (run: `.github/helm-docs.sh`)
 - [ ] Chart Version bumped
-- [ ] `CHANGELOG.md` has beed updated
+- [ ] `CHANGELOG.md` has been updated
 - [ ] Variables are documented in the `README.md`

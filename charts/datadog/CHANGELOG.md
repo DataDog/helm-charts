@@ -1,8 +1,76 @@
 # Datadog changelog
 
-## 2.27.6
+## 2.28.11
 
 * Fix deprecation warning in examples caused by the `datadog.apm.enabled` parameter
+
+## 2.28.10
+
+* Update confd examples for the mysql integration
+
+## 2.28.9
+
+* Fix Cluster-Agent SCC creation on openshift 3.x. : remove unset parameters.
+
+## 2.28.8
+
+* Fix `PodDisruptionBudget` api version definition when using `helm template`.
+
+## 2.28.7
+
+* Fix environment variables to be quoted correct with a loop and `quote` instead of `toYaml`.
+
+## 2.28.6
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
+## 2.28.5
+
+* Default Datadog Agent image to `7.32.4`.
+
+## 2.28.4
+
+* Add a new configuration section `datadog.secretBackend`.
+* Configuring `datadog.secretBackend.command="/readsecret_multiple_providers.sh"` will add the secret permissions required by the `/readsecret_multiple_providers.sh` helper.
+
+## 2.28.3
+
+* Update `agents.podSecurity.capabilities` to contain all `agents.containers.systemProbe.securityContext.capabilities`.
+
+## 2.28.2
+
+* Fix conflict between `clusterAgent.confd` and `clusterAgent.advancedConfd`: merge the 2 ConfigMaps.
+
+## 2.28.1
+
+* Fix `CAP_CHOWN` capability configuration for system-probe.
+
+## 2.28.0
+
+* Create priority Class to better support environments such as GKE Autopilot.
+
+## 2.27.10
+
+* Add `CAP_CHOWN` to the list of capabilities for system-probe.
+
+## 2.27.9
+
+* Adds `systemProbe.enableRuntimeCompiler`, `systemProbe.mountPackageManagementDirs` and `systemprobe.runtimeCompilationAssetDir` to configure eBPF runtime compiler in the system-probe.
+* Adds `systemProbe.mountPackageManagementDirs` to configure what volumes are mounted in the system-probe for runtime compilation.
+* Adds `systemProbe.osReleasePath` to configure what volume is mounted in the system-probe for host OS detection.
+* Adds renameat, symlinkat and flock to the allow syscalls in the system-probe's seccomp profile.
+
+## 2.27.8
+
+* Default Datadog Agent image to `7.32.3`.
+
+## 2.27.7
+
+* Nothing
+
+## 2.27.6
+
+* Default Datadog Agent image to `7.32.2`.
 
 ## 2.27.5
 
@@ -10,7 +78,7 @@
 
 ## 2.27.4
 
-* Do not allow unsupported configs with the security agent in windows environments. 
+* Do not allow unsupported configs with the security agent in windows environments.
 * Ensure autoconf/extra config files are mounted in windows environments.
 
 ## 2.27.3
@@ -29,7 +97,7 @@
 * Fix typos in README.md in `How to join a Cluster Agent from another helm chart deployment (Linux)`.
 * Fixes a port number typo for the `datadog.apm.portEnabled` option from 8216 to 8126.
 
-# 2.27.0 
+# 2.27.0
 
 * Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
 

@@ -17,13 +17,11 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-{{- if .Values.datadog.serviceMonitoring.enabled }}
+    {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
-{{- end }}
-{{- if .Values.agents.containers.systemProbe.env }}
-{{ toYaml .Values.agents.containers.systemProbe.env | indent 4 }}
-{{- end }}
+    {{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
@@ -52,6 +50,28 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if .Values.datadog.systemProbe.osReleasePath }}
+    - name: os-release-file
+      mountPath: /host{{ .Values.datadog.systemProbe.osReleasePath }}
+      readOnly: true
+{{- else }}
+    - name: etc-os-release
+      mountPath: /host/etc/os-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: etc-redhat-release
+      mountPath: /host/etc/redhat-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: etc-fedora-release
+      mountPath: /host/etc/fedora-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: etc-lsb-release
+      mountPath: /host/etc/lsb-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
 {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
@@ -68,15 +88,40 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
-    - name: os-release
-      mountPath: /host/etc/os-release
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
       readOnly: true
+{{- end }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
+    - name: runtime-compiler-output-dir
+      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    - name: kernel-headers-download-dir
+      mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
+      readOnly: false
+{{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
+    - name: apt-config-dir
+      mountPath: /host/etc/apt
+      readOnly: true
+    - name: yum-repos-dir
+      mountPath: /host/etc/yum.repos.d
+      readOnly: true
+    - name: opensuse-repos-dir
+      mountPath: /host/etc/zypp
+      readOnly: true
+    - name: public-key-dir
+      mountPath: /host/etc/pki
+      readOnly: true
+    - name: rhel-subscription-dir
+      mountPath: /host/etc/rhsm
+      readOnly: true
+{{- else }}
+{{- range .Values.datadog.systemProbe.mountPackageManagementDirs }}
+    - name: {{ .name }}
+      mountPath: {{ .mountPath }}
+      readOnly: true
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if .Values.agents.volumeMounts }}

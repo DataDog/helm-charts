@@ -36,6 +36,20 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
+  ## Configure the secret backend feature https://docs.datadoghq.com/agent/guide/secrets-management
+  ## Examples: https://docs.datadoghq.com/agent/guide/secrets-management/#setup-examples-1
+  secretBackend:
+    # datadog.secretBackend.command -- Configure the secret backend command, path to the secret backend binary.
+    ## Note: If the command value is "/readsecret_multiple_providers.sh" the agents will have permissions to get secret objects.
+    ## Read more about "/readsecret_multiple_providers.sh": https://docs.datadoghq.com/agent/guide/secrets-management/#script-for-reading-from-multiple-secret-providers-readsecret_multiple_providerssh
+    command:  # "/readsecret.sh" or "/readsecret_multiple_providers.sh" or any custom binary path
+
+    # datadog.secretBackend.arguments -- Configure the secret backend command arguments (space-separated strings).
+    arguments:  # "/etc/secret-volume" or any other custom arguments
+
+    # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
+    timeout:  # 30
+
   # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
   securityContext: {}
   #  seLinuxOptions:
@@ -369,6 +383,24 @@ datadog:
     # datadog.systemProbe.enableOOMKill -- Enable the OOM kill eBPF-based check
     enableOOMKill: false
 
+    # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
+    enableRuntimeCompiler: false
+
+    # datadog.systemProbe.mountPackageManagementDirs -- Enables mounting of specific package management directories when runtime compilation is enabled
+    mountPackageManagementDirs: []
+    ## For runtime compilation to be able to download kernel headers, the host's package management folders
+    ## must be mounted to the /host directory. For example, for Ubuntu & Debian the following mount would be necessary:
+    # - name: "apt-config-dir"
+    #   hostPath: /etc/apt
+    #   mountPath: /host/etc/apt
+    ## If this list is empty, then all necessary package management directories (for all supported OSs) will be mounted.
+
+    # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` file by default
+    osReleasePath:
+
+    # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
+    runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
+
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: true
 
@@ -626,37 +658,35 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-  # clusterAgent.confd -- Provide additional cluster check configurations
-  ## Each key will become a file in /conf.d
+  # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}
   #   mysql.yaml: |-
   #     cluster_check: true
   #     instances:
-  #       - server: '<EXTERNAL_IP>'
+  #       - host: <EXTERNAL_IP>
   #         port: 3306
-  #         user: datadog
-  #         pass: '<YOUR_CHOSEN_PASSWORD>'
+  #         username: datadog
+  #         password: <YOUR_CHOSEN_PASSWORD>
 
-  # clusterAgent.advancedConfd -- Provide additional cluster check configurations
-  ## Each key is an integration containing several config files, it replaces clusterAgent.confd if set
+  # clusterAgent.advancedConfd -- Provide additional cluster check configurations. Each key is an integration containing several config files.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   advancedConfd: {}
   #  mysql.d:
   #    1.yaml: |-
   #      cluster_check: true
   #      instances:
-  #        - server: '<EXTERNAL_IP>'
+  #        - host: <EXTERNAL_IP>
   #          port: 3306
-  #          user: datadog
-  #          pass: '<YOUR_CHOSEN_PASSWORD>'
+  #          username: datadog
+  #          password: <YOUR_CHOSEN_PASSWORD>
   #    2.yaml:  |-
   #      cluster_check: true
   #      instances:
-  #        - server: '<EXTERNAL_IP>'
+  #        - host: <EXTERNAL_IP>
   #          port: 3306
-  #          user: datadog
-  #          pass: '<YOUR_CHOSEN_PASSWORD>'
+  #          username: datadog
+  #          password: <YOUR_CHOSEN_PASSWORD>
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
@@ -794,7 +824,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.32.1
+    tag: 7.32.4
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -856,6 +886,7 @@ agents:
     privileged: false
 
     # agents.podSecurity.capabilities -- Allowed capabilities
+    ## capabilities must contain all agents.containers.*.securityContext.capabilities.
     capabilities:
       - SYS_ADMIN
       - SYS_RESOURCE
@@ -864,6 +895,7 @@ agents:
       - NET_BROADCAST
       - NET_RAW
       - IPC_LOCK
+      - CHOWN
       - AUDIT_CONTROL
       - AUDIT_READ
 
@@ -1036,10 +1068,11 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
+      ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
       securityContext:
         privileged: false
         capabilities:
-          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK"]
+          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN"]
 
       # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -1135,8 +1168,15 @@ agents:
     rollingUpdate:
       maxUnavailable: "10%"
 
-  # agents.priorityClassName -- Sets PriorityClassName if defineds
+  # agents.priorityClassCreate -- Creates a priorityClass for the Datadog Agent's Daemonset pods.
+  priorityClassCreate: false
+
+  # agents.priorityClassName -- Sets PriorityClassName if defined
   priorityClassName:
+
+  # agents.priorityClassValue -- Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods.
+  ## The PriorityClass uses PreemptLowerPriority.
+  priorityClassValue: 1000000000
 
   # agents.podLabels -- Sets podLabels if defined
   # Note: These labels are also used as label selectors so they are immutable.
@@ -1198,7 +1238,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.32.1
+    tag: 7.32.4
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:

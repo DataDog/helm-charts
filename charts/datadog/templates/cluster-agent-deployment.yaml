@@ -122,6 +122,18 @@ spec:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
                 optional: true
+          {{- if .Values.datadog.secretBackend.command }}
+          - name: DD_SECRET_BACKEND_COMMAND
+            value: {{ .Values.datadog.secretBackend.command | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.arguments }}
+          - name: DD_SECRET_BACKEND_ARGUMENTS
+            value: {{ .Values.datadog.secretBackend.arguments | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.timeout }}
+          - name: DD_SECRET_BACKEND_TIMEOUT
+            value: {{ .Values.datadog.secretBackend.timeout | quote }}
+          {{- end }}
           {{- if .Values.datadog.tags }}
           - name: DD_TAGS
             value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
@@ -226,9 +238,7 @@ spec:
             value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
           {{- end }}
           {{- end }}
-{{- if .Values.clusterAgent.env }}
-{{ toYaml .Values.clusterAgent.env | indent 10 }}
-{{- end }}
+          {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
         livenessProbe:
 {{- $live := .Values.clusterAgent.livenessProbe }}
 {{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}
@@ -256,11 +266,6 @@ spec:
             mountPath: /conf.d
             readOnly: true
 {{- end }}
-{{- if .Values.clusterAgent.advancedConfd }}
-          - name: advanced-confd
-            mountPath: /conf.d
-            readOnly: true
-{{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
           - name: cluster-agent-yaml
             mountPath: /etc/datadog-agent/datadog-cluster.yaml
@@ -282,12 +287,15 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-{{- end }}
-{{- if .Values.clusterAgent.advancedConfd }}
-        - name: advanced-confd
-          configMap:
-            name: {{ template "datadog.fullname" . }}-cluster-agent-advanced-confd
             items:
+{{- range $file, $configs := $.Values.clusterAgent.confd }}
+            - key: {{ $file | quote }}
+              path: {{ $file | quote }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+            - key: kubernetes_state_core.yaml.default
+              path: kubernetes_state_core.yaml.default
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
