@@ -525,6 +525,10 @@ datadog:
       #   configurations:
       #   - send_distribution_buckets: true
       #     timeout: 5
+    # datadog.prometheusScrape.version -- Version of the openmetrics check to schedule by default.
+    # See https://datadoghq.dev/integrations-core/legacy/prometheus/#config-changes-between-versions for the differences between the two versions.
+    # (Version 2 requires Agent version 7.34+)
+    version: 2
 
   # datadog.ignoreAutoConfig -- List of integration to ignore auto_conf.yaml.
   ## ref: https://docs.datadoghq.com/agent/faq/auto_conf/
