@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.29.0
+
+* Add `agents.podSecurity.allowedUnsafeSysctls` parameter
+
 ## 2.28.11
 
 * Fix deprecation warning in examples caused by the `datadog.apm.enabled` parameter
