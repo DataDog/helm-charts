@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.28.13
+
+* Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
+  Only the `system-probe` container mounts them.
+
 ## 2.28.12
 
 * Fix some typos in comments
