@@ -9,6 +9,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
+{{- if eq (include "should-enable-system-probe" .) "true" }}
 {{- if .Values.datadog.systemProbe.osReleasePath }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath }}
@@ -26,6 +27,7 @@
 - hostPath:
     path: /etc/lsb-release
   name: etc-lsb-release
+{{- end -}}
 {{- end -}}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
