@@ -575,3 +575,4 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 {{- else -}}
 "policy/v1beta1"
 {{- end -}}
+{{- end -}}
