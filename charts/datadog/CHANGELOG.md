@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.14
+
+* Update the default value of `datadog.kubelet.host` to use `spec.nodeName` instead of `status.hostIP`
+
 ## 2.28.13
 
 * Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
