@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.14
+
+* Update cluster-agent's podAntiAffinity from required to preferred 
+
 ## 2.28.13
 
 * Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
