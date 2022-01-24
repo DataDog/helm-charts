@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.15
+
+* clusterAgent.tolerations documented in values.yaml
+
 ## 2.28.14
 
 * Update cluster-agent's podAntiAffinity from required to preferred 
