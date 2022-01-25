@@ -111,6 +111,8 @@ rules:
   - ""
   resources:
   - configmaps
+  - persistentvolumes
+  - persistentvolumeclaims
   resourceNames:
   - "datadog-cluster-id"
   verbs:

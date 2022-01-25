@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 2.28.15
+
+* Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
 ## 2.28.14
 
-* Update cluster-agent's podAntiAffinity from required to preferred 
+* Update cluster-agent's podAntiAffinity from required to preferred
 
 ## 2.28.13
 
