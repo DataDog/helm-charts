@@ -111,14 +111,21 @@ rules:
   - ""
   resources:
   - configmaps
-  - persistentvolumes
-  - persistentvolumeclaims
   resourceNames:
   - "datadog-cluster-id"
   verbs:
   - create
   - get
   - update
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - persistentvolumeclaims
+  verbs:
+  - list
+  - get
+  - watch
 - apiGroups:
   - "apps"
   resources:
