@@ -4,6 +4,23 @@
 
 * Add `agents.podSecurity.allowedUnsafeSysctls` parameter
 
+## 2.28.15
+
+* Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
+
+## 2.28.14
+
+* Update cluster-agent's podAntiAffinity from required to preferred 
+
+## 2.28.13
+
+* Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
+  Only the `system-probe` container mounts them.
+
+## 2.28.12
+
+* Fix some typos in comments
+
 ## 2.28.11
 
 * Fix deprecation warning in examples caused by the `datadog.apm.enabled` parameter

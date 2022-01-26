@@ -1,5 +1,13 @@
 # Datadog changelog
 
+### 0.12.1
+
+* Update private location image version to `1.19.0`.
+
+### 0.12.0
+
+* Add support for adding HostAliases to private location pods.
+
 ### 0.11.1
 
 * Update private location image version to `1.18.1`.
