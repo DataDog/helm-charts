@@ -899,6 +899,9 @@ agents:
       - AUDIT_CONTROL
       - AUDIT_READ
 
+    # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
+    allowedUnsafeSysctls: []
+
     # agents.podSecurity.volumes -- Allowed volumes types
     volumes:
       - configMap

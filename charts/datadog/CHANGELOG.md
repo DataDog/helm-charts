@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.29.0
+
+* Add `agents.podSecurity.allowedUnsafeSysctls` parameter
+
 ## 2.28.15
 
 * Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
