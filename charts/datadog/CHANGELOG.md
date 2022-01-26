@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.28.15
+
+* Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
+
 ## 2.28.14
 
 * Update cluster-agent's podAntiAffinity from required to preferred 
