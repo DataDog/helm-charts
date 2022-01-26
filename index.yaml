@@ -3,6 +3,38 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2022-01-26T16:00:59.893193184Z"
+    dependencies:
+    - condition: clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 0.4.5
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    description: Datadog Agent
+    digest: d16025c3809d7da325426ef69e74443b6653b64552a40fc263d85534760d8d9d
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-2.28.15/datadog-2.28.15.tgz
+    version: 2.28.15
+  - apiVersion: v1
+    appVersion: "7"
     created: "2022-01-24T11:25:22.746711482Z"
     dependencies:
     - condition: clusterAgent.metricsProvider.useDatadogMetrics
@@ -7964,4 +7996,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2022-01-24T11:25:22.749194615Z"
+generated: "2022-01-26T16:00:59.89643443Z"
