@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.30.0
+
+* Default Datadog Agent image to `7.33.0`.
+* Default Datadog Cluster-Agent image to `1.17.0`.
+
 ## 2.29.0
 
 * Add `agents.podSecurity.allowedUnsafeSysctls` parameter
