@@ -427,6 +427,45 @@ false
 {{- end -}}
 
 {{/*
+Return ServiceAccount name for the Agent (DaemonSet)
+If "agent.rbac.serviceAccountName" is null, return the default value,
+otherwise, return the value or "agent.rbac.serviceAccountName"
+*/}}
+{{- define "agents.serviceAccountName" -}}
+{{- if .Values.agents.rbac.serviceAccountName -}}
+{{ .Values.agents.rbac.serviceAccountName }}
+{{- else -}}
+{{ template "datadog.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return ServiceAccount name for the Cluster Agent
+If "clusterAgent.rbac.serviceAccountName" is null, return the default value,
+otherwise, return the value or "clusterAgent.rbac.serviceAccountName"
+*/}}
+{{- define "clusterAgent.serviceAccountName" -}}
+{{- if .Values.clusterAgent.rbac.serviceAccountName -}}
+{{ .Values.clusterAgent.rbac.serviceAccountName }}
+{{- else -}}
+{{ template "datadog.fullname" . }}-cluster-agent
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return ServiceAccount name for the Cluster Check Workers
+If "clusterChecksRunner.rbac.serviceAccountName" is null, return the default
+value, otherwise, return the value or "clusterChecksRunner.rbac.serviceAccountName"
+*/}}
+{{- define "clusterChecksRunner.serviceAccountName" -}}
+{{- if .Values.clusterChecksRunner.rbac.serviceAccountName -}}
+{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}
+{{- else -}}
+{{ template "datadog.fullname" . }}-cluster-checks
+{{- end -}}
+{{- end -}}
+
+{{/*
 Returns provider kind
 */}}
 {{- define "provider-kind" -}}

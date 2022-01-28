@@ -592,8 +592,11 @@ clusterAgent:
     # clusterAgent.rbac.create -- If true, create & use RBAC resources
     create: true
 
-    # clusterAgent.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false
-    serviceAccountName: default
+    # clusterAgent.rbac.serviceAccountCreate -- If true, create ServiceAccount for the Cluster Agents, otherwise assume it exists
+    serviceAccountCreate: true
+
+    # clusterAgent.rbac.serviceAccountName -- Specify a ServiceAccount name to use by the Cluster Agents. If unset (null) use computed default ServiceAccount name. If clusterAgent.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name.
+    serviceAccountName: null
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
     serviceAccountAnnotations: {}
@@ -856,8 +859,11 @@ agents:
     # agents.rbac.create -- If true, create & use RBAC resources
     create: true
 
-    # agents.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if agents.rbac.create is false
-    serviceAccountName: default
+    # agents.rbac.serviceAccountCreate -- If true, create ServiceAccount for the Agents, otherwise assume it exists
+    serviceAccountCreate: true
+
+    # agents.rbac.serviceAccountName -- Specify a ServiceAccount name to use by the Agents. If unset (null) use computed default ServiceAccount name. If agents.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name.
+    serviceAccountName: null
 
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
@@ -1271,11 +1277,14 @@ clusterChecksRunner:
     # clusterChecksRunner.rbac.dedicated -- If true, use a dedicated RBAC resource for the cluster checks agent(s)
     dedicated: false
 
+    # clusterChecksRunner.rbac.serviceAccountCreate -- If true, create ServiceAccount, otherwise assume it exists
+    serviceAccountCreate: false
+
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
 
-    # clusterChecksRunner.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false
-    serviceAccountName: default
+    # clusterChecksRunner.rbac.serviceAccountName -- Specify a ServiceAccount name to use by the Cluster Check Runners clusterChecksRunner.rbac.dedicated is true. If unset (null) use computed default ServiceAccount name. If clusterChecksRunner.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name.
+    serviceAccountName: null
 
   # clusterChecksRunner.replicas -- Number of Cluster Checks Runner instances
   ## If you want to deploy the clusterChecks agent in HA, keep at least clusterChecksRunner.replicas set to 2.

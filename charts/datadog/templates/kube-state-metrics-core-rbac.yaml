@@ -96,9 +96,9 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     {{- if  .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
-    name: {{ template "datadog.fullname" . }}-cluster-checks
+    name: {{ template "clusterChecksRunner.serviceAccountName" . }}
     {{- else }}
-    name: {{ template "datadog.fullname" . }}-cluster-agent
+    name: {{ template "clusterAgent.serviceAccountName" . }}
     {{- end }}
     namespace: {{ .Release.Namespace }}
 ---
