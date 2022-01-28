@@ -1,8 +1,21 @@
 # Datadog changelog
 
-## 2.28.15
+## 2.30.1
 
 * Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.30.0
+
+* Default Datadog Agent image to `7.33.0`.
+* Default Datadog Cluster-Agent image to `1.17.0`.
+
+## 2.29.0
+
+* Add `agents.podSecurity.allowedUnsafeSysctls` parameter
+
+## 2.28.15
+
+* Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
 
 ## 2.28.14
 
