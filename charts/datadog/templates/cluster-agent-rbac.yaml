@@ -235,9 +235,10 @@ roleRef:
   name: {{ template "datadog.fullname" . }}-cluster-agent
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-agent
+    name: {{ template "clusterAgent.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
+{{- if .Values.clusterAgent.rbac.serviceAccountCreate -}}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -250,8 +251,10 @@ metadata:
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
-  name: {{ template "datadog.fullname" . }}-cluster-agent
+  name: {{ template "clusterAgent.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
+{{- end -}}
+
 {{- if .Values.clusterAgent.admissionController.enabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
@@ -279,7 +282,7 @@ roleRef:
   name: {{ template "datadog.fullname" . }}-cluster-agent-main
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-agent
+    name: {{ template "clusterAgent.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
 {{- end }}
@@ -302,7 +305,7 @@ roleRef:
   name: system:auth-delegator
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-agent
+    name: {{ template "clusterAgent.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
@@ -318,6 +321,6 @@ roleRef:
   name: extension-apiserver-authentication-reader
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-agent
+    name: {{ template "clusterAgent.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end -}}

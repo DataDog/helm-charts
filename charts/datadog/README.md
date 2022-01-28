@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.30.0](https://img.shields.io/badge/Version-2.30.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.31.0](https://img.shields.io/badge/Version-2.31.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -520,7 +520,8 @@ helm install --name <RELEASE_NAME> \
 | agents.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods. |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
-| agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
+| agents.rbac.serviceAccountCreate | bool | `true` | If true, create ServiceAccount for the Agents, otherwise assume it exists |
+| agents.rbac.serviceAccountName | string | `nil` | Specify a ServiceAccount name to use by the Agents. If unset (null) use computed default ServiceAccount name. If agents.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name. |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
 | agents.useConfigMap | string | `nil` | Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter. |
@@ -565,7 +566,8 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
-| clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false |
+| clusterAgent.rbac.serviceAccountCreate | bool | `true` | If true, create ServiceAccount for the Cluster Agents, otherwise assume it exists |
+| clusterAgent.rbac.serviceAccountName | string | `nil` | Specify a ServiceAccount name to use by the Cluster Agents. If unset (null) use computed default ServiceAccount name. If clusterAgent.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name. |
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
 | clusterAgent.replicas | int | `1` | Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode. |
 | clusterAgent.resources | object | `{}` | Datadog cluster-agent resource requests and limits. |
@@ -600,7 +602,8 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterChecksRunner.rbac.dedicated | bool | `false` | If true, use a dedicated RBAC resource for the cluster checks agent(s) |
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
-| clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
+| clusterChecksRunner.rbac.serviceAccountCreate | bool | `false` | If true, create ServiceAccount, otherwise assume it exists |
+| clusterChecksRunner.rbac.serviceAccountName | string | `nil` | Specify a ServiceAccount name to use by the Cluster Check Runners clusterChecksRunner.rbac.dedicated is true. If unset (null) use computed default ServiceAccount name. If clusterChecksRunner.rbac.create is false, assume it exists, otherwise create ServiceAccount with specified name. |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
 | clusterChecksRunner.replicas | int | `2` | Number of Cluster Checks Runner instances |
 | clusterChecksRunner.resources | object | `{}` | Datadog clusterchecks-agent resource requests and limits. |

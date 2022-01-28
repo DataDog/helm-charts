@@ -1,4 +1,5 @@
 {{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated -}}
+---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
 metadata:
@@ -11,8 +12,10 @@ roleRef:
   name: {{ template "datadog.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}-cluster-checks
+    name: {{ template "clusterChecksRunner.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
+
+{{- if and .Values.clusterChecksRunner.rbac.serviceAccountCreate (ne (include "clusterChecksRunner.serviceAccountName" .) "default") }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -23,9 +26,10 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
-  name: {{ template "datadog.fullname" . }}-cluster-checks
+  name: {{ template "clusterChecksRunner.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
   {{- if .Values.clusterChecksRunner.rbac.serviceAccountAnnotations }}
   annotations: {{ toYaml .Values.clusterChecksRunner.rbac.serviceAccountAnnotations | nindent 4 }}
   {{- end }}
+{{- end -}}
 {{- end -}}

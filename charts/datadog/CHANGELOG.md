@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.31.0
+
+* Separate creation of ServiceAccount for dedicated Cluster Check Agents by
+introducing `clusterChecksRunner.rbac.serviceAccountCreate`
+
 ## 2.30.0
 
 * Default Datadog Agent image to `7.33.0`.
@@ -15,7 +20,7 @@
 
 ## 2.28.14
 
-* Update cluster-agent's podAntiAffinity from required to preferred 
+* Update cluster-agent's podAntiAffinity from required to preferred
 
 ## 2.28.13
 

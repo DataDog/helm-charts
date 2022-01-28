@@ -163,7 +163,7 @@ spec:
       {{- end }}
       affinity:
 {{ toYaml .Values.agents.affinity | indent 8 }}
-      serviceAccountName: {{ if .Values.agents.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.agents.rbac.serviceAccountName }}"{{ end }}
+      serviceAccountName: {{ template "agents.serviceAccountName" . }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.agents.nodeSelector }}
