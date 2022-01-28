@@ -21,8 +21,10 @@ spec:
     max: 8126
   {{- end }}
   hostPID: {{ or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID }}
-  allowedCapabilities: 
+  allowedCapabilities:
 {{ toYaml .Values.agents.podSecurity.capabilities | indent 4 }}
+  allowedUnsafeSysctls:
+{{ toYaml .Values.agents.podSecurity.allowedUnsafeSysctls | indent 4 }}
   volumes:
 {{ toYaml .Values.agents.podSecurity.volumes | indent 4 }}
   fsGroup:
