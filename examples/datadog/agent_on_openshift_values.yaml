@@ -28,7 +28,7 @@ datadog:
   logs:
     enabled: false
   apm:
-    enabled: false
+    portEnabled: false
   processAgent:
     enabled: true
     processCollection: false

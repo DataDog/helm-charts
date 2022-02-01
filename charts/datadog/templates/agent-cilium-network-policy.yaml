@@ -85,12 +85,16 @@ specs:
           {{- end}}
           {{- if $.Values.datadog.site}}
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "api.{{ $.Values.datadog.site }}"
           - matchName: "agent-intake.logs.{{ $.Values.datadog.site }}"
+          - matchName: "agent-http-intake.logs.{{ $.Values.datadog.site }}"
           - matchName: "process.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
+          - matchName: "api.datadoghq.com"
           - matchName: "agent-intake.logs.datadoghq.com"
+          - matchName: "agent-http-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
           {{- end}}

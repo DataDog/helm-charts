@@ -29,6 +29,8 @@
     - name: DD_PROCESS_AGENT_ENABLED
       value: "true"
     {{- end }}
+    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
     {{- if .Values.datadog.processAgent.stripProcessArguments }}
     - name: DD_STRIP_PROCESS_ARGS
       value: "true"
@@ -47,9 +49,7 @@
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
-{{- if .Values.agents.containers.processAgent.env }}
-{{ toYaml .Values.agents.containers.processAgent.env | indent 4 }}
-{{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

@@ -9,6 +9,18 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
+{{- if .Values.datadog.secretBackend.command }}
+- name: DD_SECRET_BACKEND_COMMAND
+  value: {{ .Values.datadog.secretBackend.command | quote }}
+{{- end }}
+{{- if .Values.datadog.secretBackend.arguments }}
+- name: DD_SECRET_BACKEND_ARGUMENTS
+  value: {{ .Values.datadog.secretBackend.arguments | quote }}
+{{- end }}
+{{- if .Values.datadog.secretBackend.timeout }}
+- name: DD_SECRET_BACKEND_TIMEOUT
+  value: {{ .Values.datadog.secretBackend.timeout | quote }}
+{{- end }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
@@ -66,9 +78,7 @@
 - name: DD_DD_URL
   value: {{ .Values.datadog.dd_url | quote }}
 {{- end }}
-{{- if .Values.datadog.env }}
-{{ toYaml .Values.datadog.env }}
-{{- end }}
+{{- include "additional-env-entries" .Values.datadog.env }}
 {{- if .Values.datadog.acInclude }}
 - name: DD_AC_INCLUDE
   value: {{ .Values.datadog.acInclude | quote }}

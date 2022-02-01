@@ -217,6 +217,11 @@ rules:
   resourceNames:
   - {{ template "datadog.fullname" . }}-cluster-agent
   - hostnetwork
+{{- if eq (include "need-secret-permissions" .) "true" }}
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

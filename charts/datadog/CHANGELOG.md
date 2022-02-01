@@ -1,18 +1,199 @@
 # Datadog changelog
 
-# 2.23.4
+## 2.30.2
+
+* rename the APM port in the local traffic policy service from `apm` to `traceport`
+
+## 2.30.1
+
+* clusterAgent.tolerations documented in values.yaml
+
+## 2.30.0
+
+* Default Datadog Agent image to `7.33.0`.
+* Default Datadog Cluster-Agent image to `1.17.0`.
+
+## 2.29.0
+
+* Add `agents.podSecurity.allowedUnsafeSysctls` parameter
+
+## 2.28.15
+
+* Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
+
+## 2.28.14
+
+* Update cluster-agent's podAntiAffinity from required to preferred 
+
+## 2.28.13
+
+* Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
+  Only the `system-probe` container mounts them.
+
+## 2.28.12
+
+* Fix some typos in comments
+
+## 2.28.11
+
+* Fix deprecation warning in examples caused by the `datadog.apm.enabled` parameter
+
+## 2.28.10
+
+* Update confd examples for the mysql integration
+
+## 2.28.9
+
+* Fix Cluster-Agent SCC creation on openshift 3.x. : remove unset parameters.
+
+## 2.28.8
+
+* Fix `PodDisruptionBudget` api version definition when using `helm template`.
+
+## 2.28.7
+
+* Fix environment variables to be quoted correct with a loop and `quote` instead of `toYaml`.
+
+## 2.28.6
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
+## 2.28.5
+
+* Default Datadog Agent image to `7.32.4`.
+
+## 2.28.4
+
+* Add a new configuration section `datadog.secretBackend`.
+* Configuring `datadog.secretBackend.command="/readsecret_multiple_providers.sh"` will add the secret permissions required by the `/readsecret_multiple_providers.sh` helper.
+
+## 2.28.3
+
+* Update `agents.podSecurity.capabilities` to contain all `agents.containers.systemProbe.securityContext.capabilities`.
+
+## 2.28.2
+
+* Fix conflict between `clusterAgent.confd` and `clusterAgent.advancedConfd`: merge the 2 ConfigMaps.
+
+## 2.28.1
+
+* Fix `CAP_CHOWN` capability configuration for system-probe.
+
+## 2.28.0
+
+* Create priority Class to better support environments such as GKE Autopilot.
+
+## 2.27.10
+
+* Add `CAP_CHOWN` to the list of capabilities for system-probe.
+
+## 2.27.9
+
+* Adds `systemProbe.enableRuntimeCompiler`, `systemProbe.mountPackageManagementDirs` and `systemprobe.runtimeCompilationAssetDir` to configure eBPF runtime compiler in the system-probe.
+* Adds `systemProbe.mountPackageManagementDirs` to configure what volumes are mounted in the system-probe for runtime compilation.
+* Adds `systemProbe.osReleasePath` to configure what volume is mounted in the system-probe for host OS detection.
+* Adds renameat, symlinkat and flock to the allow syscalls in the system-probe's seccomp profile.
+
+## 2.27.8
+
+* Default Datadog Agent image to `7.32.3`.
+
+## 2.27.7
+
+* Nothing
+
+## 2.27.6
+
+* Default Datadog Agent image to `7.32.2`.
+
+## 2.27.5
+
+* Fix bugs that prevented running the ksm core check as a cluster check.
+
+## 2.27.4
+
+* Do not allow unsupported configs with the security agent in windows environments.
+* Ensure autoconf/extra config files are mounted in windows environments.
+
+## 2.27.3
+
+* Fix CiliumNetworkPolicy: Update toFQDNs policy to include `agent-http-intake` endpoint.
+* Fix CiliumNetworkPolicy: Update toFQDNs to include `api` endpoint.
+
+## 2.27.2
+
+* Expose the `labels_as_tags` parameter of the KSM core check.
+  This parameter exists only in agent 7.32.0 and above and cluster-agent 1.16.0 and above.
+
+# 2.27.1
+
+* Update README.md to clarify Helm 2 vs. Helm 3 instructions.
+* Fix typos in README.md in `How to join a Cluster Agent from another helm chart deployment (Linux)`.
+* Fixes a port number typo for the `datadog.apm.portEnabled` option from 8216 to 8126.
+
+# 2.27.0
+
+* Introduce `processAgent.processDiscovery` to configure `DD_PROCESS_AGENT_DISCOVERY_ENABLED`
+
+## 2.26.5
+
+* Add `verticalpodautoscalers` RBACs when `datadog.kubeStateMetricsCore.enabled` is `true`
+
+## 2.26.4
+
+* Update API/APP keys secret management documentation.
+
+## 2.26.3
+
+* Update CRDs version to `0.4.5` (reduced size)
+
+## 2.26.2
+
+* Add support for Universal Service Monitoring (currently under private Beta)
+
+## 2.26.1
+
+* Update CRDs version to `0.4.4`
+
+## 2.26.0
+
+* Default Datadog Agent image to `7.32.1`.
+
+## 2.25.0
+
+* Adding the following `agents.daemonsetAnnotations`, `clusterAgent.deploymentAnnotation` and `clusterChecksRunner.deploymentAnnotations` parameters to allow custom annotations on the agent's deployments/daemonsets to be setup
+
+## 2.24.1
+
+* Fix typo in variable name : `agents.localService.forceLocalServiceEnabled`
+
+## 2.24.0
+
+* Default Datadog Agent image to `7.32.0`.
+* Default Datadog Cluster Agent image to `1.16.0`.
+
+## 2.23.6
+
+* Add `datadog.expvarPort` parameter to customize the default expvar default port to not conflict with the default clusteragent metrics port if running in hostNetwork mode.
+* Defined cluster-agent containerPort `agentmetrics` to expose the default port, which is set to 5000 and already defined in the `NetworkPolicy` for the cluster-agent.
+
+## 2.23.5
+
+Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift Auth operator.
+
+## 2.23.4
 
 * Add a new configuration field `datadog.providers.eks.ec2.useHostnameFromFile` to allow use of host's `/var/lib/cloud/data/instance-id` for hostname detection.
 
-# 2.23.3
+## 2.23.3
 
 * Add `agents.localService` parameters to customize the internal traffic policy service name and force its creation of Kubernetes 1.21.
 
-# 2.23.2
+## 2.23.2
 
 * Add an `agents.podSecurity.defaultApparmor` setting to allow customizing the default AppArmor profile used by all containers but `system-probe`.
 
-# 2.23.1
+## 2.23.1
 
 * Fix APM reporting via `trace-agent` hostPort if `datadog.apm.enabled: true`.
 
@@ -64,7 +245,7 @@
 ## 2.22.8
 
 * Add a service with local [internal traffic policy](https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/) for traces and dogstatsd.
-  This works only on Kubernetes 1.22 or more recent. 
+  This works only on Kubernetes 1.22 or more recent.
 
 ## 2.22.7
 
