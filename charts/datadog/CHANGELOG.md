@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 2.30.2
+
+* rename the APM port in the local traffic policy service from `apm` to `traceport`
+
+## 2.30.1
+
+* clusterAgent.tolerations documented in values.yaml
+
 ## 2.30.0
 
 * Default Datadog Agent image to `7.33.0`.
