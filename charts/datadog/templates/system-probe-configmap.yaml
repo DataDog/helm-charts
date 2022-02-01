@@ -45,7 +45,6 @@ data:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
-      debug: false
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d

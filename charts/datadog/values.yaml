@@ -554,7 +554,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.16.0
+    tag: 1.17.0
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -705,6 +705,10 @@ clusterAgent:
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
 
+  # clusterAgent.tolerations -- Allow the Cluster Agent Deployment to schedule on tainted nodes ((requires Kubernetes >= 1.6))
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
   # clusterAgent.affinity -- Allow the Cluster Agent Deployment to schedule using affinity rules
   ## By default, Cluster Agent Deployment Pods are forced to run on different Nodes.
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -824,7 +828,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.32.4
+    tag: 7.33.0
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -898,6 +902,9 @@ agents:
       - CHOWN
       - AUDIT_CONTROL
       - AUDIT_READ
+
+    # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
+    allowedUnsafeSysctls: []
 
     # agents.podSecurity.volumes -- Allowed volumes types
     volumes:
@@ -1238,7 +1245,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.32.4
+    tag: 7.33.0
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:

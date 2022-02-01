@@ -1,5 +1,30 @@
 # Datadog changelog
 
+## 2.30.2
+
+* rename the APM port in the local traffic policy service from `apm` to `traceport`
+
+## 2.30.1
+
+* clusterAgent.tolerations documented in values.yaml
+
+## 2.30.0
+
+* Default Datadog Agent image to `7.33.0`.
+* Default Datadog Cluster-Agent image to `1.17.0`.
+
+## 2.29.0
+
+* Add `agents.podSecurity.allowedUnsafeSysctls` parameter
+
+## 2.28.15
+
+* Remove unused configuration option from system_probe.yaml to address error message: `Unknown key in config file: runtime_security_config.debug`
+
+## 2.28.14
+
+* Update cluster-agent's podAntiAffinity from required to preferred 
+
 ## 2.28.13
 
 * Do not declare the volumes for `/etc/*-release` if there is no `system-probe`.
