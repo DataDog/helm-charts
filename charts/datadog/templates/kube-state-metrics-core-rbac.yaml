@@ -22,6 +22,7 @@ rules:
   - persistentvolumes
   - namespaces
   - endpoints
+  - events
   verbs:
   - list
   - watch
@@ -71,6 +72,13 @@ rules:
   resources:
   - storageclasses
   - volumeattachments
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - autoscaling.k8s.io
+  resources:
+  - verticalpodautoscalers
   verbs:
   - list
   - watch

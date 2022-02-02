@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.7.8
+
+* Fix `PodDisruptionBudget` api version definition when using `helm template`.
+
+## 0.7.7
+
+* Update `PodDisruptionBudget` api version to get rid of `policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget` warning.
+
+## 0.7.6
+
+* Nothing
+
+## 0.7.5
+
+* Add a configuration field `containerSecurityContext` to configure a security context for a Container
+* Add `site` option to change the Datadog intake site.
+
+## 0.7.4
+
+* Update chart to Datadog CRDs `0.4.5`
+
+## 0.7.3
+
+* Update chart to Datadog Operator `0.7.2` and CRDs `0.4.4`
+
 ## 0.7.2
 
 * Add `watchNamespaces` option to configure the namespaces watched by the operator.

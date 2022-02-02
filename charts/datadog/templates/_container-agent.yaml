@@ -107,9 +107,9 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
-{{- if .Values.agents.containers.agent.env }}
-{{ toYaml .Values.agents.containers.agent.env | indent 4 }}
-{{- end }}
+    - name: DD_EXPVAR_PORT
+      value: {{ .Values.datadog.expvarPort | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
   volumeMounts:
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo

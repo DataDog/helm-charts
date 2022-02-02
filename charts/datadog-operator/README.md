@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.7.2](https://img.shields.io/badge/Version-0.7.2-informational?style=flat-square) ![AppVersion: 0.7.0](https://img.shields.io/badge/AppVersion-0.7.0-informational?style=flat-square)
+![Version: 0.7.8](https://img.shields.io/badge/Version-0.7.8-informational?style=flat-square) ![AppVersion: 0.7.2](https://img.shields.io/badge/AppVersion-0.7.2-informational?style=flat-square)
 
 ## Values
 
@@ -12,6 +12,7 @@
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
+| containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
@@ -20,7 +21,7 @@
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"0.7.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"0.7.2"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
@@ -36,6 +37,7 @@
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
+| site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
