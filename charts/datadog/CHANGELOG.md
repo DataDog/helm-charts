@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.4
+
+* Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
 ## 2.30.3
 
 * Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
@@ -29,7 +33,7 @@
 
 ## 2.28.14
 
-* Update cluster-agent's podAntiAffinity from required to preferred 
+* Update cluster-agent's podAntiAffinity from required to preferred
 
 ## 2.28.13
 

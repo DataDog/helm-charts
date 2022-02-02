@@ -118,6 +118,15 @@ rules:
   - get
   - update
 - apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - persistentvolumeclaims
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
   - "apps"
   resources:
   - deployments
