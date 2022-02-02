@@ -261,6 +261,10 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/#log-collection-setup
     containerCollectUsingFiles: true
 
+    # datadog.logs.autoMultiLineDetection -- Allows the Agent to detect common multi-line patterns automatically.
+    ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+    autoMultiLineDetection: false
+
   ## Enable apm agent and provide custom configs
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)

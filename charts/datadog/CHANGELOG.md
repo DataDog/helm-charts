@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.30.3
+
+* Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
+  See https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+  This new option requires an agent 7.32+.
+
 ## 2.30.2
 
 * rename the APM port in the local traffic policy service from `apm` to `traceport`
