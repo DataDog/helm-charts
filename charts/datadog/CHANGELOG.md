@@ -1,8 +1,22 @@
 # Datadog changelog
 
-## 2.30.1
+## 2.30.4
 
 * Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.30.3
+
+* Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
+  See https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+  This new option requires an agent 7.32+.
+
+## 2.30.2
+
+* rename the APM port in the local traffic policy service from `apm` to `traceport`
+
+## 2.30.1
+
+* clusterAgent.tolerations documented in values.yaml
 
 ## 2.30.0
 

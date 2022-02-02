@@ -90,7 +90,7 @@ spec:
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}
       targetPort: {{ .Values.datadog.apm.port }}
-      name: apm
+      name: traceport
 {{- end }}
   internalTrafficPolicy: Local
 {{ end }}
