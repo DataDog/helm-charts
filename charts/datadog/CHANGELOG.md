@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.5
+
+* Add a new note to recommand to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
+
 ## 2.30.4
 
 * Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
