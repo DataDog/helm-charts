@@ -256,6 +256,30 @@ https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
 
 {{- end }}
 
+
+{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) }}
+
+###################################################################################
+####   WARNING: Cluster-Agent should be deployed in high availability mode     ####
+###################################################################################
+
+The Cluster-Agent should be in high availability mode because the following features
+are enabled:
+{{- if .Values.clusterAgent.admissionController.enabled }}
+* Admission Controller
+{{- end }}
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+* External Metrics Provider
+{{- end }}
+
+To run in high availability mode, our recommandation is to update the chart
+configuration with:
+* set `clusterAgent.replicas` value to `2` replicas .
+* set `clusterAgent.createPodDisruptionBudget` to `true`.
+
+{{- end }}
+
+
 {{- if and (not (.Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1")) .Values.datadog.kubeStateMetricsEnabled }}
 
 ########################################################################################
