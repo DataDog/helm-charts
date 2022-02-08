@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.9
+
+* Add missing `datadogmetrics` RBACs.
+
 ## 0.7.8
 
 * Fix `PodDisruptionBudget` api version definition when using `helm template`.
