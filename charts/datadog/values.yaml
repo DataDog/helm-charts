@@ -173,7 +173,7 @@ datadog:
     host:
       valueFrom:
         fieldRef:
-          fieldPath: status.hostIP
+          fieldPath: spec.nodeName
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
     tlsVerify:  # false

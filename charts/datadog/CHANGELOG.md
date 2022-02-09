@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.6
+
+* Update the default value of `datadog.kubelet.host` to use `spec.nodeName` instead of `status.hostIP`
+
 ## 2.30.5
 
 * Add a new note to recommand to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
