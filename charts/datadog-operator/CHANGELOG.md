@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.10
+
+* Sync operator RBACs from `datadog-operator` repo to add missing `verticalpodautoscalers` RBACs.
+
 ## 0.7.9
 
 * Add missing `datadogmetrics` RBACs.
