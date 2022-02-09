@@ -331,6 +331,13 @@ rules:
   - list
   - watch
 - apiGroups:
+  - autoscaling.k8s.io
+  resources:
+  - verticalpodautoscalers
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - batch
   resources:
   - cronjobs
@@ -352,6 +359,18 @@ rules:
   - certificatesigningrequests
   verbs:
   - list
+  - watch
+- apiGroups:
+  - cilium.io
+  resources:
+  - ciliumnetworkpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
   - watch
 - apiGroups:
   - coordination.k8s.io
@@ -400,6 +419,21 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogmetrics
+  verbs:
+  - create
+  - delete
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics/status
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
   - datadogmonitors
   verbs:
   - create
@@ -432,18 +466,9 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
-  - datadogmetrics
+  - extendeddaemonsetreplicasets
   verbs:
-  - create
-  - delete
-  - list
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogmetrics/status
-  verbs:
-  - update
+  - get
 - apiGroups:
   - datadoghq.com
   resources:
@@ -455,14 +480,6 @@ rules:
   - list
   - patch
   - update
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - extendeddaemonsetreplicasets
-  verbs:
-  - get
-  - list
   - watch
 - apiGroups:
   - datadoghq.com
