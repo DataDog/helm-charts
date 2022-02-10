@@ -73,6 +73,11 @@ datadog:
   ## https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#Cluster.FIELDS.name
   clusterName:  # <CLUSTER_NAME>
 
+
+  # datadog.disableClusterNameTagKey -- Disable using the 'cluster_name' tag key to submit the orchestrator cluster name tag.
+  ## The Agent will continue sending the cluster name tag with 'kube|ecs_cluster_name' key regardless of the value of this parameter.
+  disableClusterNameTagKey: false
+
   # datadog.site -- The site of the Datadog intake to send Agent data to
   ## Set to 'datadoghq.eu' to send data to the EU site.
   site:  # datadoghq.com

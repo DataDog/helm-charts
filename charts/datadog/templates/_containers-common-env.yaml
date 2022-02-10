@@ -42,6 +42,10 @@
 - name: DD_CLUSTER_NAME
   value: {{ .Values.datadog.clusterName | quote }}
 {{- end }}
+{{- if .Values.datadog.disableClusterNameTagKey }}
+- name: DD_DISABLE_CLUSTER_NAME_TAG_KEY
+  value: "true"
+{{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
 - name: DD_HOSTNAME_FILE

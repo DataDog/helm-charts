@@ -1,10 +1,14 @@
 # Datadog changelog
 
+## 2.31.1
+
+* Add `datadog.disableClusterNameTagKey` parameter to chose wether to not add tag key `cluster_name` to submit the orchestrator cluster name tag.
+
 ## 2.31.0
 
-* Add `datadog.prometheusScrape.version` parameter to choose the version of the openmetrics check that the Prometheus auto-discovery should instantiate by default.
+* Add `datadog.prometheusScrape.version` parameter to choose the version of the OpenMetrics check that the Prometheus auto-discovery should instantiate by default.
   It now defaults to `2`, which requires an agent 7.34+.
-  It can be explicitely set to `1` to restore the behaviour of previous versions.
+  It can be explicitly set to `1` to restore the behaviour of previous versions.
 
 ## 2.30.21
 
@@ -73,7 +77,7 @@
 
 ## 2.30.5
 
-* Add a new note to recommand to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
+* Add a new note to recommend to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
 
 ## 2.30.4
 
