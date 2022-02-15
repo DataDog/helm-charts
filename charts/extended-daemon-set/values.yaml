@@ -1,0 +1,71 @@
+# Default values for extendeddaemonset.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of the Extended DaemonSet
+replicaCount: 1
+image:
+  # image.repository -- Repository to use for the Extended DaemonSet image
+  repository: datadog/extendeddaemonset
+  # image.tag -- Defines the Extended DaemonSet version to use
+  tag: v0.7.0
+  # image.pullPolicy -- Defines the pullPolicy for the Extended DaemonSet image
+  pullPolicy: IfNotPresent
+# imagePullSecrets -- Extended DaemonSet image repository pullSecret (ex: specify docker registry credentials)
+imagePullSecrets: []
+# nameOverride -- Overrides name of app
+nameOverride: ""
+# fullnameOverride -- Overrides the full qualified app name
+fullnameOverride: ""
+# logLevel -- Sets the log level (debug, info, error, panic, fatal)
+logLevel: "info"
+# clusterScope -- Allows ExtendedDaemonset controller to watch all namespaces
+clusterScope: false
+pprof:
+  # pprof.enabled -- Set to true to enable pprof
+  enabled: false
+rbac:
+  # rbac.create -- Specifies whether the RBAC resources should be created
+  create: true
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: true
+  # serviceAccount.name -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+# podSecurityContext -- Sets the pod security context
+podSecurityContext: {}
+# fsGroup: 2000
+
+# securityContext -- Sets the security context
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+# resources -- Sets resources requests/limits for Datadog Operator PODs
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+# nodeSelector -- Allows to schedule on specific nodes
+nodeSelector: {}
+# tolerations -- Allows to schedule on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for the Extended DaemonSet PODs
+affinity: {}
+
+# installCRDs -- Set to true to deploy all the ExtendedDaemonSet CRDs
+# (ExtendedDaemonSet, ExtendedDaemonSetReplicaSet, ExtendedDaemonSettings)
+installCRDs: true

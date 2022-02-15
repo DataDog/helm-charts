@@ -25,6 +25,8 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "synthetics-private-location.serviceAccountName" . }}
+      hostAliases:
+        {{- .Values.hostAliases | toYaml | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -50,7 +52,7 @@ spec:
           envFrom:
 {{ toYaml .Values.envFrom | indent 12 }}
 {{- end }}
-{{- if .Values.env  }}
+{{- if .Values.env }}
           env:
 {{ toYaml .Values.env | indent 12 }}
 {{- end }}
@@ -68,9 +70,14 @@ spec:
       {{- end }}
       volumes:
       - name: worker-config
-        configMap:
         {{- if .Values.configConfigMap }}
+        configMap:
           name: {{ .Values.configConfigMap | quote }}
         {{- else }}
-          name: {{ include "synthetics-private-location.fullname" . }}-config
+        secret:
+        {{- if .Values.configSecret }}
+          secretName: {{ .Values.configSecret | quote }}
+        {{- else }}
+          secretName: {{ include "synthetics-private-location.fullname" . }}-config
+        {{- end }}
         {{- end }}

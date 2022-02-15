@@ -19,9 +19,9 @@
 {{- if .Values.agents.containers.agent.ports }}
 {{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
 {{- end }}
-{{- if .Values.datadog.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.agent.envFrom }}
   envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 4 }}
+{{ concat .Values.datadog.envFrom .Values.agents.containers.agent.envFrom | toYaml | indent 4 }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -71,10 +71,12 @@
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
+      value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if .Values.datadog.dogstatsd.useSocketVolume }}
+    {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -107,9 +109,9 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
-{{- if .Values.agents.containers.agent.env }}
-{{ toYaml .Values.agents.containers.agent.env | indent 4 }}
-{{- end }}
+    - name: DD_EXPVAR_PORT
+      value: {{ .Values.datadog.expvarPort | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
   volumeMounts:
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
@@ -124,27 +126,17 @@
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
-    {{- end }}
-    {{- if eq .Values.targetSystem "windows" }}
-    - name: runtimesocket
-      mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: {{ template "datadog.fullname" . }}-datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if .Values.datadog.dogstatsd.useSocketVolume }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-    {{- end }}
-    {{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
+    {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
       readOnly: true
@@ -188,7 +180,7 @@
       mountPath: C:/var/log/pods
       readOnly: true
     - name: logdockercontainerpath
-      mountPath: C:/ProgramData/docker/containers
+      mountPath: C:/ProgramData
       readOnly: true
     {{- end }}
     {{- end }}

@@ -1,25 +1,39 @@
 #!/bin/bash
-set -euo pipefail
+
+set -euox pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
 
-TAG=master
-if [[ $# -eq 1 ]] ; then
-    TAG=$1
+DATADOG_OPERATOR_REPO=Datadog/datadog-operator
+
+DATADOG_OPERATOR_TAG=main
+if [[ $# -eq 1 ]]; then
+    DATADOG_OPERATOR_TAG=$1
 fi
 
 download_crd() {
-    inFile=datadoghq.com_$2.yaml
-    version=$4
-    outFile=datadoghq.com_$2_$version.yaml
-    path=$ROOT/charts/datadog-crds/templates/$outFile
-    echo "Download CRD \"$inFile\" version \"$version\" from tag \"$1\""
-    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/DataDog/datadog-operator/$1/config/crd/bases/$version/$inFile"
+    repo=$1
+    tag=$2
+    name=$3
+    installOption=$4 # Name of the option to install the CRD (defined in values.yaml)
+    version=$5
 
-    ifCondition="{{- if and .Values.crds.$3 (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+    inFile=datadoghq.com_$name.yaml
+    # shellcheck disable=SC2154
+    outFile=datadoghq.com_"$name"_"$version".yaml
+    path=$ROOT/charts/datadog-crds/templates/$outFile
+    echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
+    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
+
+    if [ "$name" = "datadogagents" ]; then
+        yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
+        yq -i eval 'del(.. | select(has("description")).description)' "$path"
+    fi
+
+    ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
     if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.crds.$3 (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
-        cp "$path" "$ROOT/crds/datadoghq.com_$2.yaml"
+        ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
+        cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
     fi
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
@@ -35,9 +49,9 @@ download_crd() {
 }
 
 mkdir -p "$ROOT/crds"
-download_crd "$TAG" datadogmetrics datadogMetrics v1beta1
-download_crd "$TAG" datadogmetrics datadogMetrics v1
-download_crd "$TAG" datadogagents datadogAgents v1beta1
-download_crd "$TAG" datadogagents datadogAgents v1
-download_crd "$TAG" datadogmonitors datadogMonitors v1beta1
-download_crd "$TAG" datadogmonitors datadogMonitors v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmetrics datadogMetrics v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmetrics datadogMetrics v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents datadogAgents v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents datadogAgents v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1beta1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1

@@ -2,9 +2,11 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if eq  (include "should-enable-compliance" .) "true" }}
   securityContext:
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
+  {{- end }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
@@ -12,9 +14,9 @@
   ports:
 {{ toYaml .Values.agents.containers.securityAgent.ports | indent 2 }}
 {{- end }}
-{{- if .Values.datadog.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom }}
   envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 4 }}
+{{ concat .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom | toYaml  | indent 4 }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -39,10 +41,11 @@
     - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
     {{- end }}
-  {{- range $value := .Values.agents.containers.securityAgent.env }}
-    - name: {{ $value.name }}
-      value: {{ $value.value | quote }}
-  {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+    {{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.securityAgent.env | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -52,14 +55,12 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
     {{- end }}
-    {{- if eq .Values.targetSystem "windows" }}
-    - name: runtimesocket
-      mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: {{ template "datadog.fullname" . }}-datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
@@ -79,11 +80,6 @@
     - name: hostroot
       mountPath: /host/root
       readOnly: true
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/root" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      readOnly: true
-    {{- end }}
     - name: procdir
       mountPath: /host/proc
       readOnly: true

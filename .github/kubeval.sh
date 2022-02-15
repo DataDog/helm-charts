@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-KUBEVAL_VERSION="0.15.0"
+KUBEVAL_VERSION="v0.16.1"
 SCHEMA_LOCATION="https://kubernetesjsonschema.dev/"
 OS=$(uname)
 
@@ -20,5 +20,5 @@ tar -xf /tmp/kubeval.tar.gz kubeval
 # validate charts
 for CHART_DIR in ${CHART_DIRS}; do
   echo "Running kubeval for folder: '$CHART_DIR'"
-  helm dep up "${CHART_DIR}" && helm template --values "${CHART_DIR}"/ci/kubeval.yaml "${CHART_DIR}" | ./kubeval --strict --ignore-missing-schemas --kubernetes-version "${KUBERNETES_VERSION#v}" --schema-location "${SCHEMA_LOCATION}"
+  helm dep up "${CHART_DIR}" && helm template --kube-version "${KUBERNETES_VERSION#v}" --values "${CHART_DIR}"/ci/kubeval.yaml "${CHART_DIR}" | ./kubeval --strict --ignore-missing-schemas --kubernetes-version "${KUBERNETES_VERSION#v}" --schema-location "${SCHEMA_LOCATION}"
 done

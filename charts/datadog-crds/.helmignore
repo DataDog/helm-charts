@@ -15,6 +15,9 @@
 *.bak
 *.tmp
 *.orig
+*.zip
+*.tar.gz
+*.tgz
 *~
 # Various IDEs
 .project

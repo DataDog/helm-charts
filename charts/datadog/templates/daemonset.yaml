@@ -13,6 +13,9 @@ metadata:
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.agents.daemonsetAnnotations }}
+  annotations: {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
@@ -96,12 +99,12 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.agents.image.pullSecrets | indent 8 }}
       {{- end }}
-      {{- if .Values.agents.priorityClassName }}
-      priorityClassName: {{ .Values.agents.priorityClassName }}
+      {{- if or .Values.agents.priorityClassCreate .Values.agents.priorityClassName }}
+      priorityClassName: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
       {{- end }}
       containers:
         {{- include "container-agent" . | nindent 6 }}
-        {{- if .Values.datadog.apm.enabled }}
+        {{- if eq (include "should-enable-trace-agent" .) "true" }}
           {{- include "container-trace-agent" . | nindent 6 }}
         {{- end }}
         {{- if .Values.datadog.processAgent.enabled }}
@@ -129,16 +132,6 @@ spec:
           name: {{ template "datadog.fullname" . }}-installinfo
       - name: config
         emptyDir: {}
-      {{- if eq .Values.targetSystem "linux" }}
-      - hostPath:
-          path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
-        name: runtimesocketdir
-      {{- end }}
-      {{- if eq .Values.targetSystem "windows" }}
-      - hostPath:
-          path: {{ template "datadog.dockerOrCriSocketPath" . }}
-        name: runtimesocket
-      {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:

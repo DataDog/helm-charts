@@ -1,0 +1,32 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubeStateMetricsCore:
+    enabled: true
+  orchestratorExplorer:
+    enabled: true
+clusterAgent:
+  enabled: true
+  confd:
+    redisdb.yaml: |-
+      cluster_check: true
+      init_config:
+      instances:
+        - host: "name"
+          port: "6379"
+  advancedConfd:
+    orchestrator.d:
+      1.yaml: |-
+        cluster_check: true
+        init_config:
+        instances:
+          - collectors:
+            - nodes
+            skip_leader_election: true
+      2.yaml: |-
+        cluster_check: true
+        init_config:
+        instances:
+          - collectors:
+            - deployments
+            skip_leader_election: true

@@ -8,21 +8,23 @@ metadata:
   annotations:
     {{- if .Values.agents.podSecurity.apparmor.enabled }}
     apparmor.security.beta.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.apparmorProfiles | quote }}
-    apparmor.security.beta.kubernetes.io/defaultProfileName: "runtime/default"
+    apparmor.security.beta.kubernetes.io/defaultProfileName: {{ .Values.agents.podSecurity.defaultApparmor | default "runtime/default" }}
     {{- end }}
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: {{ join "," .Values.agents.podSecurity.seccompProfiles | quote }}
     seccomp.security.alpha.kubernetes.io/defaultProfileName: "runtime/default"
 spec:
   privileged: {{ .Values.agents.podSecurity.privileged }}
   hostNetwork: {{ .Values.agents.useHostNetwork }}
-  {{- if or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled }}
+  {{- if or .Values.datadog.dogstatsd.useHostPort (eq  (include "trace-agent-use-tcp-port" .) "true") }}
   hostPorts:
   - min: 8125
     max: 8126
   {{- end }}
   hostPID: {{ or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID }}
-  allowedCapabilities: 
+  allowedCapabilities:
 {{ toYaml .Values.agents.podSecurity.capabilities | indent 4 }}
+  allowedUnsafeSysctls:
+{{ toYaml .Values.agents.podSecurity.allowedUnsafeSysctls | indent 4 }}
   volumes:
 {{ toYaml .Values.agents.podSecurity.volumes | indent 4 }}
   fsGroup:

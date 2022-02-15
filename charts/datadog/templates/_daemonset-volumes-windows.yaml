@@ -5,6 +5,11 @@
     type: Directory
   name: kubelet-ca
 {{- end }}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+- name: confd
+  configMap:
+    name: {{ template "datadog.fullname" . }}-confd
+{{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: C:/var/log
@@ -13,7 +18,18 @@
     path: C:/var/log/pods
   name: logpodpath
 - hostPath:
-    path: C:/ProgramData/docker/containers
+    path: C:/ProgramData
   name: logdockercontainerpath
+{{- end }}
+- hostPath:
+    path: {{ template "datadog.dockerOrCriSocketPath" . }}
+  name: runtimesocket
+{{- if not .Values.datadog.criSocketPath }}
+# If the CRI is not provided, try to mount the default containerd pipe.
+# By default, "datadog.dockerOrCriSocketPath" mounts the Docker pipe.
+# So with this additional hostPath, by default, both are mounted.
+- hostPath:
+    path: \\.\pipe\containerd-containerd
+  name: containerdsocket
 {{- end }}
 {{- end -}}

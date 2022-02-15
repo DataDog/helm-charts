@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'charts/**'
 
@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: 0
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -20,8 +22,8 @@ jobs:
       - name: Add repo
         run: |
           helm repo add datadog https://helm.datadoghq.com
-          helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+          helm repo add kube-state-metrics https://prometheus-community.github.io/helm-charts
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.0
+        uses: helm/chart-releaser-action@v1.3.0
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

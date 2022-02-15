@@ -11,7 +11,7 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.11.0
+  tag: 1.19.0
 
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
@@ -68,6 +68,9 @@ configFile: "{}"
 # configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
 configConfigMap: ""
 
+# configSecret -- Secret that stores the configuration of the private location worker for the deployment
+configSecret: ""
+
 # envFrom -- Set environment variables from configMaps and/or secrets
 envFrom: []
 #   - configMapRef:
@@ -79,3 +82,9 @@ envFrom: []
 env: []
 #   - name: <ENV_VAR_NAME>
 #     value: <ENV_VAR_VALUE>
+
+# hostAliases -- Add entries to Datadog Synthetics Private Location PODs' /etc/hosts
+hostAliases: []
+#  - ip: "10.0.0.1"
+#    hostnames:
+#    - "host.domain.com"

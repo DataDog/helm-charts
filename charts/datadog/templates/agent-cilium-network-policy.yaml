@@ -15,6 +15,12 @@ specs:
         {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
     egress:
+      - toEntities:
+          - host
+        toPorts:
+          - ports:
+              - port: "51678"
+                protocol: TCP
       - toCIDR:
           - 169.254.0.0/16
         toPorts:
@@ -79,12 +85,16 @@ specs:
           {{- end}}
           {{- if $.Values.datadog.site}}
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "api.{{ $.Values.datadog.site }}"
           - matchName: "agent-intake.logs.{{ $.Values.datadog.site }}"
+          - matchName: "agent-http-intake.logs.{{ $.Values.datadog.site }}"
           - matchName: "process.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
+          - matchName: "api.datadoghq.com"
           - matchName: "agent-intake.logs.datadoghq.com"
+          - matchName: "agent-http-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
           {{- end}}
@@ -124,7 +134,7 @@ specs:
               - port: "{{ $.Values.datadog.dogstatsd.port }}"
                 protocol: UDP
 {{- end }}
-{{- if $.Values.datadog.apm.enabled }}
+{{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
   - description: "Ingress for APM trace"
     endpointSelector:
       matchLabels:
@@ -137,7 +147,7 @@ specs:
           - {}
         toPorts:
           - ports:
-              - port: {{ $.Values.datadog.apm.port }}
+              - port: "{{ $.Values.datadog.apm.port }}"
                 protocol: TCP
 {{- end }}
 # The agents are susceptible to connect to any pod

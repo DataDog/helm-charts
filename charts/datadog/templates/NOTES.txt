@@ -86,7 +86,7 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
-  {{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
+  {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
     {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
     {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
     {{- if and $liveness.port (ne $healthPort $liveness.port) }}
@@ -110,7 +110,7 @@ Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different 
     {{- end }}
   {{- end }}
 {{- end }}
-{{- if .Values.datadog.apm.enabled }}
+{{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
   {{- $apmPort := .Values.datadog.apm.port }}
   {{- with $liveness := .Values.agents.containers.traceAgent.livenessProbe.tcpSocket }}
   {{- if and $liveness.port (ne $apmPort $liveness.port) }}
@@ -124,6 +124,27 @@ Trace Agent liveness probe port ({{ $liveness.port }}) is different from the con
   {{- end }}
 
 The Datadog Agent is listening on port {{ $apmPort }} for APM service.
+{{- end }}
+
+{{- if .Values.datadog.apm.enabled }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.apm.enabled` is deprecated, please use `datadog.apm.portEnabled` to enable TCP communication to the trace-agent.
+The option `datadog.apm.socketEnabled` is enabled by default and can be used to rely on unix socket or name-pipe communication.
+
+{{- end }}
+
+{{- if .Values.datadog.apm.useSocketVolume }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.apm.useSocketVolume` is deprecated, please use `datadog.apm.socketEnabled` instead.
+
 {{- end }}
 
 {{- if .Values.datadog.autoconf }}
@@ -189,18 +210,6 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if .Values.datadog.serviceTopology.enabled }}
-
-#################################################################
-####               NOTE: Configuration notice             ####
-#################################################################
-
-datadog.serviceTopology.enabled is enabled. Please make sure the Service Topology feature is enabled in your Kubernetes cluster.
-Enabling datadog.serviceTopology.enabled without enabling the Service Topology in the cluster will result in wrong tagging for traces and custom metrics.
-Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
-
-{{- end }}
-
 {{- if .Values.providers.gke.autopilot}}
 {{- if eq (include "system-probe-feature" .) "true" }}
 
@@ -226,7 +235,50 @@ Ref: https://kubernetes.io/docs/concepts/services-networking/service-topology/
 
 {{- end }}
 
+{{- if .Values.datadog.apm.socketEnabled }}
+
+##############################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
+##############################################################################
+
 {{- end }}
+
+{{- end }}
+
+{{- if and (.Values.datadog.dogstatsd.useSocketVolume) (eq .Values.targetSystem "windows") }}
+
+###################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on Windows         ####
+###################################################################################
+
+Refer to the Dogstatsd configuration section of the documentation for more details.
+https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
+
+{{- end }}
+
+
+{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) }}
+
+###################################################################################
+####   WARNING: Cluster-Agent should be deployed in high availability mode     ####
+###################################################################################
+
+The Cluster-Agent should be in high availability mode because the following features
+are enabled:
+{{- if .Values.clusterAgent.admissionController.enabled }}
+* Admission Controller
+{{- end }}
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+* External Metrics Provider
+{{- end }}
+
+To run in high availability mode, our recommandation is to update the chart
+configuration with:
+* set `clusterAgent.replicas` value to `2` replicas .
+* set `clusterAgent.createPodDisruptionBudget` to `true`.
+
+{{- end }}
+
 
 {{- if and (not (.Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1")) .Values.datadog.kubeStateMetricsEnabled }}
 
@@ -263,4 +315,39 @@ To enable it please set clusterAgent.enabled to 'true'.
 #################################################################
 
 You are using the datadog.acInclude or datadog.acExclude parameters, which have been deprecated since Datadog Agent 7.20. Please use datadog.containerInclude and datadog.containerExclude instead.
+{{- end }}
+
+
+{{- $hasContainerIncludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
+    {{- $hasContainerIncludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerInclude := false }}
+{{- if or .Values.datadog.containerInclude $hasContainerIncludeEnv }}
+  {{- $hasContainerInclude = true }}
+{{- end }}
+
+{{- $hasContainerExcludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_EXCLUDE" }}
+    {{- $hasContainerExcludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerExclude := false }}
+{{- if or .Values.datadog.containerExclude $hasContainerExcludeEnv }}
+  {{- $hasContainerExclude = true }}
+{{- end }}
+
+{{- if and $hasContainerInclude (not $hasContainerExclude) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+
 {{- end }}

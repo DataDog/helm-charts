@@ -31,6 +31,7 @@ false
 {{- end -}}
 
 {{- define "agent-has-env-ad" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
@@ -46,6 +47,9 @@ false
 true
 {{- else -}}
 false
+{{- end -}}
+{{- else -}}
+true
 {{- end -}}
 {{- end -}}
 
@@ -164,7 +168,7 @@ Return the container runtime socket
 {{- end -}}
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
-\\.\pipe\docker_engine
+{{- .Values.datadog.dockerSocketPath | default .Values.datadog.criSocketPath | default `\\.\pipe\docker_engine` -}}
 {{- end -}}
 {{- end -}}
 
@@ -236,10 +240,14 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
+{{- $tagSuffix := "" -}}
+{{- if .image.tagSuffix -}}
+{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
+{{- end -}}
 {{- if .image.repository -}}
-{{- .image.repository -}}:{{ .image.tag }}
+{{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}
+{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
 
@@ -247,7 +255,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -258,7 +266,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (not .Values.providers.gke.autopilot) (eq (include "system-probe-feature" .) "true") -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
 true
 {{- else -}}
 false
@@ -281,7 +289,7 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not .Values.providers.gke.autopilot) (eq (include "security-agent-feature" .) "true") -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
 true
 {{- else -}}
 false
@@ -292,7 +300,7 @@ false
 Return true if the compliance features should be enabled.
 */}}
 {{- define "should-enable-compliance" -}}
-{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.compliance.enabled -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
 true
 {{- else -}}
 false
@@ -346,10 +354,72 @@ false
 
 
 {{/*
+Return true if a trace-agent needs to be deployed.
+*/}}
+{{- define "should-enable-trace-agent" -}}
+{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true hostPath should be use for DSD socket. Return always false on GKE autopilot.
+*/}}
+{{- define "should-mount-hostPath-for-dsd-socket" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
+{{- if .Values.datadog.dogstatsd.useSocketVolume -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a APM over UDS is configured. Return always false on GKE autopilot.
+*/}}
+{{- define "trace-agent-use-uds" -}}
+{{- if or .Values.providers.gke.autopilot (eq .Values.targetSystem "windows") -}}
+false
+{{- end -}}
+{{- if or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a traffic over TCP is configured for APM.
+*/}}
+{{- define "trace-agent-use-tcp-port" -}}
+{{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}
-{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (include "existingClusterAgent-configured" .)) -}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (eq (include "existingClusterAgent-configured" .) "true")) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Check Workers have to be deployed
+*/}}
+{{- define "should-enable-cluster-check-workers" -}}
+{{- if or .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners (and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled) -}}
 true
 {{- else -}}
 false
@@ -438,9 +508,71 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd)) -}}
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if we can enable Service Internal Traffic Policy
+*/}}
+{{- define "enable-service-internal-traffic-policy" -}}
+{{- if or (semverCompare "^1.22-0" .Capabilities.KubeVersion.GitVersion) .Values.agents.localService.forceLocalServiceEnabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if runtime compilation is enabled in the system-probe
+*/}}
+{{- define "runtime-compilation-enabled" -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if secret RBACs are needed for secret backend.
+*/}}
+{{- define "need-secret-permissions" -}}
+{{- if .Values.datadog.secretBackend.command -}}
+{{- if eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+Returns env vars correctly quoted and valueFrom respected
+*/}}
+{{- define "additional-env-entries" -}}
+{{- if . -}}
+{{- range . }}
+- name: {{ .name }}
+{{- if .value }}
+  value: {{ .value | quote }}
+{{- else }}
+  valueFrom:
+{{ toYaml .valueFrom | indent 4 }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
+*/}}
+{{- define "policy.poddisruptionbudget.apiVersion" -}}
+{{- if or (.Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget") (semverCompare ">=1.21" .Capabilities.KubeVersion.Version) -}}
+"policy/v1"
+{{- else -}}
+"policy/v1beta1"
 {{- end -}}
 {{- end -}}

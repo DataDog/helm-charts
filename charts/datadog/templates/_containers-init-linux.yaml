@@ -35,10 +35,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    - name: runtimesocketdir
-      mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml

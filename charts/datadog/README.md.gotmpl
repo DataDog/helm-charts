@@ -2,7 +2,7 @@
 
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
 
-[Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
+[Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
 Datadog [offers two variants](https://hub.docker.com/r/datadog/agent/tags/), switch to a `-jmx` tag if you need to run JMX/java integrations. The chart also supports running [the standalone dogstatsd image](https://hub.docker.com/r/datadog/dogstatsd/tags/).
 
@@ -22,7 +22,7 @@ helm repo update
 Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 - the Datadog Agent supports Kubernetes 1.4+
-- The Datadog chart's defaults are tailored to Kubernetes 1.10+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/master/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
+- The Datadog chart's defaults are tailored to Kubernetes 1.10+, see [Datadog Agent legacy Kubernetes versions documentation](https://github.com/DataDog/datadog-agent/tree/main/Dockerfiles/agent#legacy-kubernetes-versions) for adjustments you might need to make for older versions
 
 {{ template "chart.requirementsSection" . }}
 
@@ -36,16 +36,36 @@ By default, the Datadog Agent runs in a DaemonSet. It can alternatively run insi
 
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datadog API key from your [Agent Installation Instructions](https://app.datadoghq.com/account/settings#agent/kubernetes) and run:
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
+    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
 By default, this Chart creates a Secret and puts an API key in that Secret.
-However, you can use manually created secret by setting the `datadog.apiKeyExistingSecret` value. After a few minutes, you should see hosts and metrics being reported in Datadog.
+However, you can use manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
+
+**Note:** When creating the secret(s), be sure to name the key fields `api-key` and `app-key`.
+
+After a few minutes, you should see hosts and metrics being reported in Datadog.
 
 **Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+    --set datadog.appKey=<DATADOG_APP_KEY> \
+    --set datadog.site=<DATADOG_SITE> \
+    datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
     --set datadog.appKey=<DATADOG_APP_KEY> \
@@ -53,43 +73,76 @@ helm install --name <RELEASE_NAME> \
     datadog/datadog
 ```
 
-#### Create and provide a secret that contains your Datadog API Key
+#### Create and provide a secret that contains your Datadog API and APP Keys
 
 To create a secret that contains your Datadog API key, replace the <DATADOG_API_KEY> below with the API key for your organization. This secret is used in the manifest to deploy the Datadog Agent.
 
 ```bash
-DATADOG_SECRET_NAME=datadog-secret
-kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --namespace="default"
+DATADOG_API_SECRET_NAME=datadog-api-secret
+kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>"
 ```
 
 **Note**: This creates a secret in the default namespace. If you are in a custom namespace, update the namespace parameter of the command before running it.
 
 Now, the installation command contains the reference to the secret.
 
+For Helm 3:
 ```bash
-helm install --name <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME datadog/datadog
+helm install <RELEASE_NAME> \
+  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
 ```
 
-**Note**: Provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
+For Helm 2:
+```bash
+helm install --name <RELEASE_NAME> \
+  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
+```
 
 ### Enabling the Datadog Cluster Agent
 
+The Datadog Cluster Agent is now enabled by default.
+
 Read about the Datadog Cluster Agent in the [official documentation](https://docs.datadoghq.com/agent/kubernetes/cluster/).
 
-Run the following if you want to deploy the chart with the Datadog Cluster Agent:
+#### Custom Metrics Server
+
+If you plan to use the [Custom Metrics Server](https://docs.datadoghq.com/agent/cluster_agent/external_metrics/?tab=helm) feature, provide a secret for the application key (AppKey) using the `datadog.appKeyExistingSecret` chart variable.
 
 ```bash
-helm install --name datadog-monitoring \
-    --set datadog.apiKey=<DATADOG_API_KEY> \
-    --set datadog.appKey=<DATADOG_APP_KEY> \
+DATADOG_APP_SECRET_NAME=datadog-app-secret
+kubectl create secret generic $DATADOG_APP_SECRET_NAME --from-literal app-key="<DATADOG_APP_KEY>"
+```
+
+**Note**: the same secret can store the API and APP keys
+
+```bash
+DATADOG_SECRET_NAME=datadog-secret
+kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATADOG_API_KEY>" --from-literal app-key="<DATADOG_APP_KEY>"
+```
+
+Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
+
+For Helm 3:
+```bash
+helm install datadog-monitoring \
+    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
+    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
     --set clusterAgent.enabled=true \
     --set clusterAgent.metricsProvider.enabled=true \
     datadog/datadog
 ```
 
-**Note**: Specifying `clusterAgent.metricsProvider.enabled=true` enables the External Metrics Server.
-If you want to learn to use this feature, you can check out this [Datadog Cluster Agent walkthrough](https://github.com/DataDog/datadog-agent/blob/master/docs/cluster-agent/CUSTOM_METRICS_SERVER.md).
+For Helm 2:
+```bash
+helm install --name datadog-monitoring \
+    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
+    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
+    --set clusterAgent.enabled=true \
+    --set clusterAgent.metricsProvider.enabled=true \
+    datadog/datadog
+```
+
+If you want to learn to use this feature, you can check out this [Datadog Cluster Agent walkthrough](https://github.com/DataDog/datadog-agent/blob/main/docs/cluster-agent/CUSTOM_METRICS_SERVER.md).
 
 The Leader Election is enabled by default in the chart for the Cluster Agent. Only the Cluster Agent(s) participate in the election, in case you have several replicas configured (using `clusterAgent.replicas`.
 
@@ -104,7 +157,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 ⚠️ Migrating from 1.x to 2.x requires a manual action.
 
 The `datadog` chart has been refactored to regroup the `values.yaml` parameters in a more logical way.
-Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/master/charts/datadog/docs/Migration_1.x_to_2.x.md) to update you `values.yaml` file.
+Please follow the [migration guide](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/Migration_1.x_to_2.x.md) to update your `values.yaml` file.
 
 #### From 1.19.0 onwards
 
@@ -130,21 +183,89 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-As a best practice, a YAML file that specifies the values for the chart parameters should be provided to configure the chart:
+As a best practice, a YAML file that specifies the values for the chart parameters should be used to configure the chart. Any parameters not specified in this file will default to those set in [values.yaml](values.yaml).
 
-1. **Copy the default [`datadog-values.yaml`](values.yaml) value file.**
-2. Set the `apiKey` parameter with your [Datadog API key](https://app.datadoghq.com/account/settings#api).
-3. Upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
+1. Create an empty `datadog-values.yaml` file.
+2. Create a Kubernetes `secret` to store your [Datadog API key](https://app.datadoghq.com/organization-settings/api-keys) and [App key](https://app.datadoghq.com/organization-settings/application-keys)
 
+```bash
+kubectl create secret generic datadog-secret --from-literal api-key=$DD_API_KEY --from-literal app-key=$DD_APP_KEY
+```
+
+3. Set the following parameters in your `datadog-values.yaml` file to reference the secret:
+
+```yaml
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+```
+
+3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
+
+For Helm 3:
+```bash
+helm install -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
+```
+
+For Helm 2:
+```bash
+helm install -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
+```
+
+OR
+
+For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-See the [All configuration options](#all-configuration-options) section to discover all possibilities offered by the Datadog chart.
+For Helm 2:
+```bash
+helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
+```
+
+See the [All configuration options](#all-configuration-options) section to discover all configuration possibilities in the Datadog chart.
+
+### Configuring Dogstatsd in the agent
+<a name="dsd-config"></a>
+The agent will start a server running Dogstatsd in order to process custom metrics sent from your applications. Check out the [official documentation on Dogstatsd](https://docs.datadoghq.com/developers/dogstatsd/?tab=hostagent) for more details.
+
+By default the agent will create a unix domain socket to process the datagrams (not supported on Windows, see [below](#windows-config)).
+
+To disable the socket in favor of the hostPort, use the following configuration:
+
+```yaml
+datadog:
+  #(...)
+  dogstatsd:
+    useSocketVolume: false
+    useHostPort: true
+```
+
+### Enabling APM and Tracing
+
+APM is enabled by default using a socket for communication in the out-of-the-box [values.yaml](values.yaml) file; more details about application configuration are available on the [official documentation](https://docs.datadoghq.com/agent/kubernetes/apm/?tab=helm).
+Update your `datadog-values.yaml` file with the following configration to enable TCP communication using a `hostPort`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    portEnabled: true
+```
+
+To disable APM, set `socketEnabled` to `false` in your `datadog-values.yaml` file (`portEnabled` is `false` by default):
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    socketEnabled: false
+```
 
 ### Enabling Log Collection
 
-Update your [datadog-values.yaml](values.yaml) file with the following log collection configuration:
+Update your `datadog-values.yaml` file with the following log collection configuration:
 
 ```yaml
 datadog:
@@ -156,13 +277,19 @@ datadog:
 
 then upgrade your Datadog Helm chart:
 
+For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
+For Helm 2:
+```bash
+helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
+```
+
 ### Enabling Process Collection
 
-Update your [datadog-values.yaml](values.yaml) file with the process collection configuration:
+Update your `datadog-values.yaml` file with the process collection configuration:
 
 ```yaml
 datadog:
@@ -180,7 +307,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 ### Enabling System Probe Collection
 
-The system-probe agent only runs in dedicated container environment. Update your [datadog-values.yaml](values.yaml) file with the system-probe collection configuration:
+The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the system-probe collection configuration:
 
 ```yaml
 datadog:
@@ -206,9 +333,9 @@ Alternatively set the `datadog.leaderElection`, `datadog.collectEvents` and `rba
 
 ### conf.d and checks.d
 
-The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/master/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
+The Datadog [entrypoint](https://github.com/DataDog/datadog-agent/blob/main/Dockerfiles/agent/entrypoint/89-copy-customfiles.sh) copies files with a `.yaml` extension found in `/conf.d` and files with `.py` extension in `/checks.d` to `/etc/datadog-agent/conf.d` and `/etc/datadog-agent/checks.d` respectively.
 
-The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your [datadog-values.yaml](values.yaml) file with the check configurations:
+The keys for `datadog.confd` and `datadog.checksd` should mirror the content found in their respective ConfigMaps. Update your `datadog-values.yaml` file with the check configurations:
 
 ```yaml
 datadog:
@@ -245,7 +372,7 @@ For more details, please refer to [the documentation](https://docs.datadoghq.com
 
 ### Kubernetes Labels and Annotations
 
-To map Kubernetes node labels and pod labels and annotations to Datadog tags, provide a dictionary with kubernetes labels/annotations as keys and Datadog tags key as values in your [datadog-values.yaml](values.yaml) file:
+To map Kubernetes node labels and pod labels and annotations to Datadog tags, provide a dictionary with kubernetes labels/annotations as keys and Datadog tags key as values in your `datadog-values.yaml` file:
 
 ```yaml
 nodeLabelsAsTags:
@@ -283,7 +410,7 @@ Standard paths are:
 
 Amazon Linux 2 does not support apparmor profile enforcement.
 Amazon Linux 2 is the default operating system for AWS Elastic Kubernetes Service (EKS) based clusters.
-Update your [datadog-values.yaml](values.yaml) file to disable apparmor enforcement:
+Update your `datadog-values.yaml` file to disable apparmor enforcement:
 
 ```yaml
 agents:
@@ -301,6 +428,14 @@ agents:
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
+For Helm 3:
+```bash
+helm install <RELEASE_NAME> \
+  --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
+  datadog/datadog
+```
+
+For Helm 2:
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
@@ -310,7 +445,7 @@ helm install --name <RELEASE_NAME> \
 {{ template "chart.valuesSection" . }}
 
 ## Configuration options for Windows deployments
-
+<a name="windows-config"></a>
 Some options above are not working/not available on Windows, here is the list of **unsupported** options:
 
 | Parameter                                | Reason                                           |
@@ -332,15 +467,15 @@ Some options above are not working/not available on Windows, here is the list of
 Because the Cluster Agent can only be deployed on Linux Node, the communication between
 the Agents deployed on the Windows nodes with the a Cluster Agent need to be configured.
 
-The following `values.yaml` file contains all the parameters needed to configure this communication.
+The following `datadog-values.yaml` file contains all the parameters needed to configure this communication.
 
 ```yaml
 targetSystem: windows
 
 existingClusterAgent:
   join: true
-  serviceName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
-  tokenSecretName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+  serviceName: "<EXISTING_DCA_SERVICE_NAME>" # from the other datadog helm chart release
+  tokenSecretName: "<EXISTING_DCA_SECRET_NAME>" # from the other datadog helm chart release
 
 # Disabled datadogMetrics deployment since it should have been already deployed with the other chart release.
 datadog-crds:

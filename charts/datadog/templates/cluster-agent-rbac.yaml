@@ -118,11 +118,21 @@ rules:
   - get
   - update
 - apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - persistentvolumeclaims
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
   - "apps"
   resources:
   - deployments
   - replicasets
   - daemonsets
+  - statefulsets
   verbs:
   - list
   - get
@@ -216,73 +226,10 @@ rules:
   resourceNames:
   - {{ template "datadog.fullname" . }}-cluster-agent
   - hostnetwork
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  - nodes
-  - pods
-  - services
-  - resourcequotas
-  - replicationcontrollers
-  - limitranges
-  - persistentvolumeclaims
-  - persistentvolumes
-  - namespaces
-  - endpoints
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - extensions
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - statefulsets
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - batch
-  resources:
-  - cronjobs
-  - jobs
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - policy
-  resources:
-  - poddisruptionbudgets
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - storage.k8s.io
-  resources:
-  - storageclasses
-  - volumeattachments
-  verbs:
-  - list
-  - watch
+{{- if eq (include "need-secret-permissions" .) "true" }}
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
 {{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
@@ -310,7 +257,7 @@ metadata:
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
-  annotations: {{ toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations | nindent 4}}
+  annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}

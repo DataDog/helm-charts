@@ -32,11 +32,19 @@ data:
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
+      enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
+      runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
+      kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
+      apt_config_dir: /host/etc/apt
+      yum_repos_dir: /host/etc/yum.repos.d
+      zypper_repos_dir: /host/etc/zypp/repos.d
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
+      conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
+    service_monitoring_config:
+      enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
-      debug: false
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
@@ -98,6 +106,7 @@ data:
             "fchownat",
             "fcntl",
             "fcntl64",
+            "flock",
             "fstat",
             "fstat64",
             "fstatfs",
@@ -162,6 +171,7 @@ data:
             "recvmmsg",
             "recvmsg",
             "rename",
+            "renameat",
             "restart_syscall",
             "rmdir",
             "rt_sigaction",
@@ -202,6 +212,7 @@ data:
             "stat64",
             "statfs",
             "sysinfo",
+            "symlinkat",
             "tgkill",
             "umask",
             "uname",

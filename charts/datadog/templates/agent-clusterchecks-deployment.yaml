@@ -1,4 +1,4 @@
-{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "should-enable-cluster-check-workers" .) "true") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,6 +11,9 @@ metadata:
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.clusterChecksRunner.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.clusterChecksRunner.replicas }}
   strategy:
@@ -42,7 +45,7 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.clusterChecksRunner.rbac.dedicated }}
+      {{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}-cluster-checks{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
       {{- else }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
@@ -99,9 +102,9 @@ spec:
         ports:
 {{ toYaml .Values.clusterChecksRunner.ports | indent 10 }}
 {{- end }}
-{{- if .Values.datadog.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom }}
         envFrom:
-{{ toYaml .Values.datadog.envFrom | indent 10 }}
+{{ concat .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom | toYaml  | indent 10 }}
 {{- end }}
         env:
           - name: DD_API_KEY
@@ -109,6 +112,18 @@ spec:
               secretKeyRef:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
+          {{- if .Values.datadog.secretBackend.command }}
+          - name: DD_SECRET_BACKEND_COMMAND
+            value: {{ .Values.datadog.secretBackend.command | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.arguments }}
+          - name: DD_SECRET_BACKEND_ARGUMENTS
+            value: {{ .Values.datadog.secretBackend.arguments | quote }}
+          {{- end }}
+          {{- if .Values.datadog.secretBackend.timeout }}
+          - name: DD_SECRET_BACKEND_TIMEOUT
+            value: {{ .Values.datadog.secretBackend.timeout | quote }}
+          {{- end }}
           - name: KUBERNETES
             value: "yes"
           {{- if .Values.datadog.site }}
@@ -157,9 +172,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-{{- if .Values.clusterChecksRunner.env }}
-{{ toYaml .Values.clusterChecksRunner.env | indent 10 }}
-{{- end }}
+          {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
         volumeMounts:

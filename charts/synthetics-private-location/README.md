@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
+![Version: 0.12.1](https://img.shields.io/badge/Version-0.12.1-informational?style=flat-square) ![AppVersion: 1.19.0](https://img.shields.io/badge/AppVersion-1.19.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations).
 
@@ -28,12 +28,14 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worked for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
+| configSecret | string | `""` | Secret that stores the configuration of the private location worker for the deployment |
 | env | list | `[]` | Set environment variables |
 | envFrom | list | `[]` | Set environment variables from configMaps and/or secrets |
 | fullnameOverride | string | `""` | Override the full qualified app name |
+| hostAliases | list | `[]` | Add entries to Datadog Synthetics Private Location PODs' /etc/hosts |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
-| image.tag | string | `"1.11.0"` | Define the Datadog Synthetics Private Location version to use |
+| image.tag | string | `"1.19.0"` | Define the Datadog Synthetics Private Location version to use |
 | imagePullSecrets | list | `[]` | Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials) |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Synthetics Private Location on specific nodes |

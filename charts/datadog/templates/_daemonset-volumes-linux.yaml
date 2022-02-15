@@ -9,11 +9,40 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+{{- if eq (include "should-enable-system-probe" .) "true" }}
+{{- if .Values.datadog.systemProbe.osReleasePath }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.osReleasePath }}
+  name: os-release-file
+{{- else }}
+- hostPath:
+    path: /etc/os-release
+  name: etc-os-release
+- hostPath:
+    path: /etc/redhat-release
+  name: etc-redhat-release
+- hostPath:
+    path: /etc/fedora-release
+  name: etc-fedora-release
+- hostPath:
+    path: /etc/lsb-release
+  name: etc-lsb-release
+{{- end -}}
+{{- end -}}
+{{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
     type: DirectoryOrCreate
   name: dsdsocket
+{{- else }}
+- emptyDir: {}
+  name: dsdsocket
+{{- end }}
+{{- if .Values.providers.eks.ec2.useHostnameFromFile }}
+- hostPath:
+    path: /var/lib/cloud/data/instance-id
+    type: File
+  name: cloudinit-instance-id-file
 {{- end }}
 {{- if .Values.datadog.kubelet.hostCAPath }}
 - hostPath:
@@ -21,7 +50,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if .Values.datadog.apm.useSocketVolume }}
+{{- if eq (include "trace-agent-use-uds" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
@@ -59,20 +88,55 @@
     path: /usr/src
   name: src
 {{- end }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
+    type: DirectoryOrCreate
+  name: runtime-compiler-output-dir
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
+    type: DirectoryOrCreate
+  name: kernel-headers-download-dir
+{{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
+- hostPath:
+    path: /etc/apt
+  name: apt-config-dir
+- hostPath:
+    path: /etc/yum.repos.d
+  name: yum-repos-dir
+- hostPath:
+    path: /etc/zypp
+  name: opensuse-repos-dir
+- hostPath:
+    path: /etc/pki
+  name: public-key-dir
+- hostPath:
+    path: /etc/rhsm
+  name: rhel-subscription-dir
+{{- else }}
+{{- range .Values.datadog.systemProbe.mountPackageManagementDirs }}
+- hostPath:
+    path: {{ .hostPath }}
+  name: {{ .name }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.serviceMonitoring.enabled) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+- hostPath:
+    path: /
+  name: hostroot
+{{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
   name: group
-- hostPath:
-    path: /
-  name: hostroot
 {{- if .Values.datadog.securityAgent.compliance.configMap }}
 - name: complianceconfigdir
   configMap:
@@ -101,4 +165,8 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
+- hostPath:
+    path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
+  name: runtimesocketdir
 {{- end -}}
+

@@ -60,12 +60,17 @@ spec:
     targetPort: 8000
 {{ end }}
 
-{{- if .Values.datadog.serviceTopology.enabled -}}
+{{- if eq (include "enable-service-internal-traffic-policy" .) "true" }}
 ---
 apiVersion: v1
 kind: Service
+
 metadata:
-  name: {{ .Values.datadog.serviceTopology.serviceName | quote }}
+  {{- if ne .Values.agents.localService.overrideName "" }}
+  name: {{ .Values.agents.localService.overrideName }}
+  {{- else }}
+  name: {{ template "datadog.fullname" . }}
+  {{- end }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
@@ -81,12 +86,11 @@ spec:
       port: {{ .Values.datadog.dogstatsd.port }}
       targetPort: {{ .Values.datadog.dogstatsd.port }}
       name: dogstatsd
-{{- if .Values.datadog.apm.enabled }}
+{{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}
       targetPort: {{ .Values.datadog.apm.port }}
-      name: apm
+      name: traceport
 {{- end }}
-  topologyKeys:
-    - "kubernetes.io/hostname"
+  internalTrafficPolicy: Local
 {{ end }}
