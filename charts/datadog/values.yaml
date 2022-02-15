@@ -1061,7 +1061,7 @@ agents:
       # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
-      #       name: <CONFIGMAP_NAME>
+      #      name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
@@ -1159,7 +1159,7 @@ agents:
 
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
-  #   <POD_ANNOTATION>: '[{"key": "<KEY>", "value": "<VALUE>"}]'
+  #   key: "value"
 
   # agents.tolerations -- Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6)
   tolerations: []
