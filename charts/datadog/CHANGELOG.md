@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.6
+
+* Fix syntax of agents.podAnnotations to be aligned with other podAnnotations setting.
+
 ## 2.30.5
 
 * Add a new note to recommand to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
