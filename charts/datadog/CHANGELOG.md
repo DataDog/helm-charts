@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.7
+
+* Add ingress RBAC rules for the Cluster Agent to collect ingress resources in the Orchestrator Explorer. (Feature available starting Cluster Agent v1.19)
+
 ## 2.30.6
 
 * Fix syntax of agents.podAnnotations to be aligned with other podAnnotations setting.
