@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.8
+
+* Add option to enable Helm Check (requires Agent 7.35.0+ and Cluster Agent 1.19.0+).
+
 ## 2.30.7
 
 * Add ingress RBAC rules for the Cluster Agent to collect ingress resources in the Orchestrator Explorer. (Feature available starting Cluster Agent v1.19)
