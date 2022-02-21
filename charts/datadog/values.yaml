@@ -430,6 +430,11 @@ datadog:
     container_scrubbing:
       enabled: true
 
+  helmCheck:
+    # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
+    # This requires clusterAgent.enabled to be set to true
+    enabled: false
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false

@@ -15,6 +15,9 @@ data:
 {{- if .Values.datadog.kubeStateMetricsCore.enabled -}}
 {{ include "kubeStateMetricsCore-config" . | nindent 2 }}
 {{- end -}}
+{{- if .Values.datadog.helmCheck.enabled -}}
+{{ include "helmCheck-config" . | nindent 2 }}
+{{- end -}}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
   {{ printf "%s--%s: |" $integration $name }}

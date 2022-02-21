@@ -1,0 +1,9 @@
+{{- define "helmCheck-config" -}}
+helm.yaml: |-
+{{- if .Values.datadog.clusterChecks.enabled }}
+  cluster_check: true
+{{- end }}
+  init_config:
+  instances:
+    -
+{{- end -}}
