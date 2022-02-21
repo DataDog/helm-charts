@@ -109,17 +109,6 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
-{{- if .Values.datadog.helmCheck.enabled}}
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
