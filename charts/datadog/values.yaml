@@ -339,6 +339,11 @@ datadog:
   # datadog.criSocketPath -- Path to the container runtime socket (if different from Docker)
   criSocketPath:  # /var/run/containerd/containerd.sock
 
+  # datadog.openmetrics -- Provide multiple additional OpenMetrics checks
+  # Each key becomes a file in /conf.d/openmetrics.d
+  openmetricsd: {}
+  #   custom-openmetrics-check: |-
+
   ## Enable process agent and provide custom configs
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
