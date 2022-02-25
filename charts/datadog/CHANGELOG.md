@@ -1,5 +1,31 @@
 # Datadog changelog
 
+## 2.30.8
+
+* Add option to enable Helm Check (requires Agent 7.35.0+ and Cluster Agent 1.19.0+).
+
+## 2.30.7
+
+* Add ingress RBAC rules for the Cluster Agent to collect ingress resources in the Orchestrator Explorer. (Feature available starting Cluster Agent v1.19)
+
+## 2.30.6
+
+* Fix syntax of agents.podAnnotations to be aligned with other podAnnotations setting.
+
+## 2.30.5
+
+* Add a new note to recommand to the Cluster Agent in HA mode when the `admission-controller` or the `metrics provider` are enabled.
+
+## 2.30.4
+
+* Add PV and PVC RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.30.3
+
+* Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
+  See https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+  This new option requires an agent 7.32+.
+
 ## 2.30.2
 
 * rename the APM port in the local traffic policy service from `apm` to `traceport`
@@ -23,7 +49,7 @@
 
 ## 2.28.14
 
-* Update cluster-agent's podAntiAffinity from required to preferred 
+* Update cluster-agent's podAntiAffinity from required to preferred
 
 ## 2.28.13
 

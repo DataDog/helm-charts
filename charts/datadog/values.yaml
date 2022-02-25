@@ -261,6 +261,10 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/#log-collection-setup
     containerCollectUsingFiles: true
 
+    # datadog.logs.autoMultiLineDetection -- Allows the Agent to detect common multi-line patterns automatically.
+    ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+    autoMultiLineDetection: false
+
   ## Enable apm agent and provide custom configs
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
@@ -425,6 +429,11 @@ datadog:
     ## turning this option off will improve the situation.
     container_scrubbing:
       enabled: true
+
+  helmCheck:
+    # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
+    # This requires clusterAgent.enabled to be set to true
+    enabled: false
 
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
@@ -1155,7 +1164,7 @@ agents:
 
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
-  #   <POD_ANNOTATION>: '[{"key": "<KEY>", "value": "<VALUE>"}]'
+  #   key: "value"
 
   # agents.tolerations -- Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6)
   tolerations: []

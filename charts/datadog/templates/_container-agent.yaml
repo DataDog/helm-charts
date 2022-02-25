@@ -71,6 +71,8 @@
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
+      value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}

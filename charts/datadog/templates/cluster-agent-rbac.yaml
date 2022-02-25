@@ -118,6 +118,15 @@ rules:
   - get
   - update
 - apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - persistentvolumeclaims
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
   - "apps"
   resources:
   - deployments
@@ -136,6 +145,13 @@ rules:
   verbs:
   - list
   - get
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - list
   - watch
 {{- end }}
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
