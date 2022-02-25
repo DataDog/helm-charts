@@ -1,6 +1,6 @@
 {{- define "helmCheck-config" -}}
 helm.yaml: |-
-{{- if .Values.datadog.clusterChecks.enabled }}
+{{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
   cluster_check: true
 {{- end }}
   init_config:
