@@ -2,7 +2,7 @@
 
 ### 0.13.0
 
-* added extra mount (`extraVolumes` and `extraVolumeMounts` ) for supporting private root CA certificates. As described in https://docs.datadoghq.com/synthetics/private_locations/configuration/#private-root-certificates  
+* Add extra mount (`extraVolumes` and `extraVolumeMounts` ) for supporting private root CA certificates as described in <https://docs.datadoghq.com/synthetics/private_locations/configuration/#private-root-certificates>.
  
 ### 0.12.1
 
