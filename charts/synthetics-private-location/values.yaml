@@ -30,14 +30,14 @@ serviceAccount:
 # Then add it as an extra volume mounted on /etc/datadog/certs/
 # extraVolumes -- Optionally specify extra list of additional volumes to mount into the pod
 extraVolumes: []
-# extraVolumes: 
+# extraVolumes:
 # - name: capem-volume
 #   configMap:
 #     name: ca-pemstore-cm
 
 # extraVolumeMounts -- Optionally specify extra list of additional volumeMounts for container
 extraVolumeMounts: []
-# extraVolumeMounts: 
+# extraVolumeMounts:
 # - name: capem-volume
 #   mountPath: /etc/datadog/certs/
 #   readOnly: true
