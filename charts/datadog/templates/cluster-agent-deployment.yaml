@@ -65,6 +65,7 @@ spec:
       {{- end }}
 
     spec:
+      shareProcessNamespace: {{ .Values.clusterAgent.shareProcessNamespace | default true }}
       {{- if .Values.clusterAgent.priorityClassName }}
       priorityClassName: "{{ .Values.clusterAgent.priorityClassName }}"
       {{- end }}
