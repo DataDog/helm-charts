@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.11
+
+* Fix CiliumNetworkPolicy: Allow sending support flares.
+
 ## 2.30.10
 
 * Fix scheduling of Helm check. It's no longer scheduled on a daemonset agent.
