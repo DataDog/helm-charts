@@ -165,8 +165,11 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.containerRuntimeSupport.enabled }}
 - hostPath:
     path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
   name: runtimesocketdir
+{{- end }}
 {{- end -}}
+
 

@@ -339,6 +339,11 @@ datadog:
   # datadog.criSocketPath -- Path to the container runtime socket (if different from Docker)
   criSocketPath:  # /var/run/containerd/containerd.sock
 
+  # Configure how the agent interact with the host's container runtime
+  containerRuntimeSupport:
+    # datadog.containerRuntimeSupport.enabled -- Set this to false to disable agent access to container runtime.
+    enabled: true
+
   ## Enable process agent and provide custom configs
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
