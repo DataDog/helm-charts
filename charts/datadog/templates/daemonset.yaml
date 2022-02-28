@@ -131,7 +131,7 @@ spec:
       volumes:
       - name: installinfo
         configMap:
-          name: {{ template "datadog.fullname" . }}-installinfo
+          name: {{ include "agents.installInfo-configmap-name" . }}
       - name: config
         emptyDir: {}
       {{- if .Values.datadog.checksd }}
@@ -165,7 +165,7 @@ spec:
       {{- end }}
       affinity:
 {{ toYaml .Values.agents.affinity | indent 8 }}
-      serviceAccountName: {{ if .Values.agents.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.agents.rbac.serviceAccountName }}"{{ end }}
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.agents.nodeSelector }}

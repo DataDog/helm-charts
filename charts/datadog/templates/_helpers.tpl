@@ -435,6 +435,26 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
+Return the container runtime socket
+*/}}
+{{- define "agents.serviceAccountName" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent
+{{- else if .Values.agents.rbac.create -}}
+{{ template "datadog.fullname" . }}
+{{- else -}}
+{{ .Values.agents.rbac.serviceAccountName }}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "agents.installInfo-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-installinfo
+{{- else -}}
+{{ template "datadog.fullname" . }}-installinfo
+{{- end -}}
+{{- end -}}
 
 {{/*
 Common template labels

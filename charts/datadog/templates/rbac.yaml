@@ -122,13 +122,13 @@ roleRef:
   name: {{ template "datadog.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}
+    name: {{ include "agents.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ template "datadog.fullname" . }}
+  name: {{ include "agents.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
   {{- if .Values.agents.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
