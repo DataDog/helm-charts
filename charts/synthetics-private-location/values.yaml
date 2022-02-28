@@ -26,6 +26,22 @@ serviceAccount:
   # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
   name: ""
 
+# Create a ConfigMap containing the PEM files of your custom CA Root certificate
+# Then add it as an extra volume mounted on /etc/datadog/certs/
+# extraVolumes -- Optionally specify extra list of additional volumes to mount into the pod
+extraVolumes: []
+# extraVolumes:
+# - name: capem-volume
+#   configMap:
+#     name: ca-pemstore-cm
+
+# extraVolumeMounts -- Optionally specify extra list of additional volumeMounts for container
+extraVolumeMounts: []
+# extraVolumeMounts:
+# - name: capem-volume
+#   mountPath: /etc/datadog/certs/
+#   readOnly: true
+
 # podAnnotations -- Annotations to set to Datadog Synthetics Private Location PODs
 podAnnotations: {}
 
