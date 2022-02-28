@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 2.30.10
+
+* Fix scheduling of Helm check. It's no longer scheduled on a daemonset agent.
+
+## 2.30.9
+
+* Add RBAC rules for Roles, RoleBindings, ClusterRoles, ClusterRoleBindings and ServiceAccounts in order to collect them in the Orchestrator Explorer from the Cluster-agent.
+
 ## 2.30.8
 
 * Add option to enable Helm Check (requires Agent 7.35.0+ and Cluster Agent 1.19.0+).

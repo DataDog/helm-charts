@@ -122,6 +122,7 @@ rules:
   resources:
   - persistentvolumes
   - persistentvolumeclaims
+  - serviceaccounts
   verbs:
   - list
   - get
@@ -152,6 +153,18 @@ rules:
   - ingresses
   verbs:
   - list
+  - get
+  - watch
+- apiGroups:
+  - "rbac.authorization.k8s.io"
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - list
+  - get
   - watch
 {{- end }}
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
