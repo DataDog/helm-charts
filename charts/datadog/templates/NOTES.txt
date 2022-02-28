@@ -213,16 +213,16 @@ To enable it please set clusterAgent.enabled to 'true'.
 {{- if .Values.providers.gke.autopilot}}
 
 #######################################################################################################
-####               WARNING: only one datadog chart release allows by namespace on GKE autopilot    ####
+####               WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot    ####
 #######################################################################################################
 
 {{- if not .Values.agents.rbac.create }}
 
 ####################################################################################
-####               WARNING: agents.rbac.create must be true on GKE autopilot    ####
+####               WARNING: agents.rbac.create must be true on GKE Autopilot    ####
 ####################################################################################
 
-{{- fail "On GKE autopilot environment, the option 'agents.rbac.create' must be set to 'true'" }}
+{{- fail "On GKE Autopilot environments, the option 'agents.rbac.create' must be set to 'true'" }}
 
 {{- end }}
 
@@ -241,7 +241,7 @@ To enable it please set clusterAgent.enabled to 'true'.
 ####               WARNING: Cloud Workload Security (CWS) is not supported on GKE Autopilot   ####
 ##################################################################################################
 
-{{- fail "On GKE autopilot environment, Cloud Workload Security (CWS) is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
+{{- fail "On GKE Autopilot environments, Cloud Workload Security (CWS) is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -251,7 +251,7 @@ To enable it please set clusterAgent.enabled to 'true'.
 ####               WARNING: Cloud Security Posture Management (CSPM) is not supported on GKE Autopilot   ####
 #############################################################################################################
 
-{{- fail "On GKE autopilot environment, Cloud Security Posture Management (CSPM) is not supported. The option 'datadog.securityAgent.compliance.enabled' must be set to 'false'" }}
+{{- fail "On GKE autopilot environments, Cloud Security Posture Management (CSPM) is not supported. The option 'datadog.securityAgent.compliance.enabled' must be set to 'false'" }}
 
 {{- end }}
 
@@ -277,7 +277,7 @@ To enable it please set clusterAgent.enabled to 'true'.
 ####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
 #######################################################################################
 
-{{- fail "On GKE autopilot environment, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
 
 {{- end }}
 

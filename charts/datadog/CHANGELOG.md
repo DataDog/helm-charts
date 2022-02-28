@@ -2,9 +2,9 @@
 
 ## 2.33.0
 
-***Warning:*** From this version, on GKE Autopilot, only one "datadog" helm chart release is allow by Kubernetes namespace due to the following new constraints:
-* On GKE autopilot, make the "Agent" Daemonset serviceaccountName immutable.
-* On GKE autopilot, make the "Install Info" ConfigMap name immutable.
+***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by the Kubernetes namespace due to the following new constraints:
+* On GKE Autopilot, make the "Agent" DaemonSet serviceAccountName immutable.
+* On GKE Autopilot, make the "Install Info" ConfigMap name immutable.
 
 ## 2.32.5
 
