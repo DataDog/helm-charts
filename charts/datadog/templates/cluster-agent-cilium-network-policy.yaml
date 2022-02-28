@@ -50,9 +50,11 @@ specs:
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
           {{- end}}
           {{- if $.Values.datadog.site}}
-          - matchPattern: "*-app.agent.{{  $.Values.datadog.site }}"
+          - matchName: "app.{{ $.Values.datadog.site }}"
+          - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{  $.Values.datadog.site }}"
           {{- else}}
+          - matchName: "app.datadoghq.com"
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
           {{- end}}
