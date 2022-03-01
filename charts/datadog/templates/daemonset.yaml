@@ -131,18 +131,18 @@ spec:
       volumes:
       - name: installinfo
         configMap:
-          name: {{ include "agents.installInfo-configmap-name" . }}
+          name: {{ include "agents-install-info-configmap-name" . }}
       - name: config
         emptyDir: {}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:
-          name: {{ template "datadog.fullname" . }}-checksd
+          name: {{ include "datadog-checksd-configmap-name" . }}
       {{- end }}
       {{- if .Values.agents.useConfigMap }}
-      - name: {{ template "datadog.fullname" . }}-datadog-yaml
+      - name: datadog-yaml
         configMap:
-          name: {{ template "datadog.fullname" . }}-datadog-yaml
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
       {{- end }}
       {{- if eq .Values.targetSystem "windows" }}
         {{ include "daemonset-volumes-windows" . | nindent 6 }}

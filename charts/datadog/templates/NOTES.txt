@@ -216,19 +216,16 @@ To enable it please set clusterAgent.enabled to 'true'.
 ####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
 ###########################################################################################
 
-{{- if not .Values.agents.rbac.create }}
-
-########################################################################
-####   WARNING: agents.rbac.create must be true on GKE Autopilot   ####
-########################################################################
-
-{{- fail "On GKE Autopilot environments, the option 'agents.rbac.create' must be set to 'true'" }}
+On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints on the Agent DaemonSet:
+* The serviceAccountName must be "datadog-agent".
+* All ConfigMap names mounted must be hardcode.
 
 {{- if eq (include "system-probe-feature" .) "true" }}
 
 #####################################################################
 ####   WARNING: System Probe is not supported on GKE Autopilot   ####
 #####################################################################
+{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
 
 {{- end }}
 

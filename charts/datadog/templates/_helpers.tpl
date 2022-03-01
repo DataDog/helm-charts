@@ -435,6 +435,7 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
+{{/*
 Return the service account name
 */}}
 {{- define "agents.serviceAccountName" -}}
@@ -447,12 +448,35 @@ datadog-agent
 {{- end -}}
 {{- end -}}
 
+{{- define "agents-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-datadog-yaml
+{{- else -}}
+{{ template "datadog.fullname" . }}-datadog-yaml
+{{- end -}}
+{{- end -}}
 
-{{- define "agents.installInfo-configmap-name" -}}
+{{- define "agents-install-info-configmap-name" -}}
 {{- if .Values.providers.gke.autopilot -}}
 datadog-agent-installinfo
 {{- else -}}
 {{ template "datadog.fullname" . }}-installinfo
+{{- end -}}
+{{- end -}}
+
+{{- define "agents.confd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-confd
+{{- else -}}
+{{ template "datadog.fullname" . }}-confd
+{{- end -}}
+{{- end -}}
+
+{{- define "datadog-checksd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-checksd
+{{- else -}}
+{{ template "datadog.fullname" . }}-checksd
 {{- end -}}
 {{- end -}}
 
