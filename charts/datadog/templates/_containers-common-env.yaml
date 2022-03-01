@@ -135,6 +135,7 @@
 {{- end }}
 {{- end }}
 {{- else }} # No support for env AD
+{{- if .Values.datadog.containerRuntimeSupport.enabled }}
 {{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
   value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
@@ -145,6 +146,7 @@
 {{- end }}
 {{- if eq .Values.targetSystem "windows" }}
   value: npipe://{{ (include "datadog.dockerOrCriSocketPath" .) | replace "\\" "/" }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

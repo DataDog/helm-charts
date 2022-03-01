@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.12
+
+* Add an option to remove the container runtime socket access.
+
 ## 2.30.11
 
 * Fix CiliumNetworkPolicy: Allow sending support flares.
