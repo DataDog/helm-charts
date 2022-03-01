@@ -59,6 +59,9 @@ spec:
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
     spec:
+      {{- if .Values.agents.shareProcessNamespace }}
+      shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
+      {{- end }}
       {{- if .Values.datadog.securityContext }}
       securityContext:
 {{ toYaml .Values.datadog.securityContext| indent 8 }}

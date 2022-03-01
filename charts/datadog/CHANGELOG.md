@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.13
+
+* Feat: Add `shareProcessNamespace` parameter.
+
 ## 2.30.12
 
 * Add an option to remove the container runtime socket access.
