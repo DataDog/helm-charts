@@ -206,7 +206,7 @@ spec:
       volumes:
         - name: installinfo
           configMap:
-            name: {{ template "datadog.fullname" . }}-installinfo
+            name: {{ include "agents.installInfo-configmap-name" . }}
 {{- if .Values.clusterChecksRunner.volumes }}
 {{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
 {{- end }}

@@ -6,7 +6,7 @@ datadog:
   logs:
     enabled: true
   apm:
-    enabled: true
+    portEnabled: true
 
   kubeStateMetricsEnabled: false
   kubeStateMetricsCore:
