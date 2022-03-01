@@ -37,6 +37,8 @@ func main() {
 		PatchPath:    removePaths,
 	}
 
+	fmt.Printf("Options: %#v", options)
+
 	if err := run(options); err != nil {
 		fmt.Fprintf(os.Stderr, "%v", err)
 		os.Exit(1)

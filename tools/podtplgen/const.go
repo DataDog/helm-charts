@@ -1,5 +1,20 @@
 package main
 
+const (
+	confdValue = `
+redisdb.yaml: |-
+  init_config:
+  instances:
+    - host: "name"
+	  port: "6379"
+`
+
+	checksdValue = `
+	service.py: |-
+
+`
+)
+
 var allowOptions = []string{
 	"datadog.kubeStateMetricsCore.enabled=true",
 	"datadog.logs.enabled=true",
@@ -7,6 +22,10 @@ var allowOptions = []string{
 	"datadog.apm.portEnabled=true",
 	"clusterAgent.metricsProvider.enabled=true",
 	"datadog.processAgent.enabled=true",
+	"datadog.containerRuntimeSupport.enabled=false",
+	"agents.useConfigMap=true",
+	"datadog.confd=" + confdValue,
+	"datadog.checksd=" + checksdValue,
 }
 
 var removePaths = []string{
