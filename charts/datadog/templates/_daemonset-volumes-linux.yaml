@@ -171,5 +171,3 @@
   name: runtimesocketdir
 {{- end }}
 {{- end -}}
-
-

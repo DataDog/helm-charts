@@ -21,6 +21,7 @@
     path: C:/ProgramData
   name: logdockercontainerpath
 {{- end }}
+{{- if .Values.datadog.containerRuntimeSupport.enabled }}
 - hostPath:
     path: {{ template "datadog.dockerOrCriSocketPath" . }}
   name: runtimesocket
@@ -31,5 +32,6 @@
 - hostPath:
     path: \\.\pipe\containerd-containerd
   name: containerdsocket
+{{- end }}
 {{- end }}
 {{- end -}}
