@@ -135,7 +135,7 @@ datadog:
     # datadog.clusterChecks.enabled -- Enable the Cluster Checks feature on both the cluster-agents and the daemonset
     enabled: true
     # datadog.clusterChecks.shareProcessNamespace -- Set the process namespace sharing on the cluster checks agent
-    shareProcessNamespace: true
+    shareProcessNamespace: false
 
   # datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
   nodeLabelsAsTags: {}
@@ -565,7 +565,7 @@ clusterAgent:
   enabled: true
 
   # clusterAgent.shareProcessNamespace -- Set the process namespace sharing on the Datadog Cluster Agent
-  shareProcessNamespace: true
+  shareProcessNamespace: false
 
   ## Define the Datadog Cluster-Agent image to work with
   image:
@@ -841,7 +841,7 @@ agents:
   enabled: true
 
   # agents.shareProcessNamespace -- Set the process namespace sharing on the Datadog Daemonset
-  shareProcessNamespace: true
+  shareProcessNamespace: false
 
   ## Define the Datadog image to work with
   image:
