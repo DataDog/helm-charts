@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/DataDog/helm-chart/tools/podtplgen/pkg/csv"
 	"github.com/DataDog/helm-chart/tools/podtplgen/pkg/helm"
 	"github.com/DataDog/helm-chart/tools/podtplgen/pkg/utils"
 	"github.com/DataDog/helm-chart/tools/podtplgen/pkg/yq"
@@ -63,13 +62,12 @@ func run(opts options) error {
 	// add default install
 	combinations = append([][]string{{""}}, combinations...)
 
-	csvfile, err := os.Create(fmt.Sprintf("%s/result.csv", opts.OutputPath))
+	csvReporter, err := csv.NewReport(fmt.Sprintf("%s/result.csv", opts.OutputPath), true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer csvfile.Close()
+	defer csvReporter.Close()
 
-	csvWriter := csv.NewWriter(csvfile)
 	uniqueFiles := make(map[string]string)
 
 	for id, combination := range combinations {
@@ -90,13 +88,12 @@ func run(opts options) error {
 				return fmt.Errorf("unable to copy file, err: %w", err)
 			}
 		}
-		csvLine := []string{outputFile, md5result, strings.Join(combination, "|")}
-		if err = csvWriter.Write(csvLine); err != nil {
+
+		if err = csvReporter.Add(outputFile, md5result, combination); err != nil {
 			return fmt.Errorf("unable to write in csv file, err: %w", err)
 		}
-		fmt.Println(csvLine)
 	}
-	csvWriter.Flush()
+	csvReporter.Flush()
 
 	cleanup(opts.TmpPath)
 	return nil
