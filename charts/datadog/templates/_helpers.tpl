@@ -435,7 +435,7 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
-Return the container runtime socket
+Return the service account name
 */}}
 {{- define "agents.serviceAccountName" -}}
 {{- if .Values.providers.gke.autopilot -}}

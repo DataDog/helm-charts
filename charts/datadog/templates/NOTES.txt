@@ -224,8 +224,6 @@ To enable it please set clusterAgent.enabled to 'true'.
 
 {{- fail "On GKE Autopilot environments, the option 'agents.rbac.create' must be set to 'true'" }}
 
-{{- end }}
-
 {{- if eq (include "system-probe-feature" .) "true" }}
 
 #####################################################################
