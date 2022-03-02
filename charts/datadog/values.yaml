@@ -850,7 +850,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.33.0
+    tag: 7.33.1
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -1267,7 +1267,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.33.0
+    tag: 7.33.1
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
