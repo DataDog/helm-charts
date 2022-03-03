@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.14
+
+* Default Datadog Agent image to `7.33.1`.
+
 ## 2.30.13
 
 * Feat: Add `shareProcessNamespace` parameter.
