@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.7
+
+* Fix Capabilities.APIVersions check
+
 ## 0.4.6
 
 * Nothing
