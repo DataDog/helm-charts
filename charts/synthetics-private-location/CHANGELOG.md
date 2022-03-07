@@ -3,6 +3,7 @@
 ### 0.13.1
 
 * Update private location image version to `1.20.0`.
+
 ### 0.13.0
 
 * Add extra mount (`extraVolumes` and `extraVolumeMounts` ) for supporting private root CA certificates as described in <https://docs.datadoghq.com/synthetics/private_locations/configuration/#private-root-certificates>.
