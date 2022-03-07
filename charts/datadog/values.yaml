@@ -83,6 +83,11 @@ datadog:
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
   logLevel: INFO
 
+  additionalEndpoints: {}
+    # "https://app.datadoghq.com":
+    # - api_key_1
+    # - api_key_2
+
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
   kubeStateMetricsEnabled: true
@@ -267,6 +272,13 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
     autoMultiLineDetection: false
 
+    useHttp: true
+    additionalEndpoints: []
+    # - api_key: <DATADOG_API_KEY>
+    #   Host: <HOST_ADDRESS>
+    #   Port: 1234
+    #   is_reliable: true
+
   ## Enable apm agent and provide custom configs
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
@@ -295,7 +307,12 @@ datadog:
     socketPath: /var/run/datadog/apm.socket
 
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
-    hostSocketPath: /var/run/datadog/
+    hostSocketPath: /var/run/datadog/ 
+
+    additionalEndpoints: {}
+    # "https://app.datadoghq.com":
+    # - api_key_1
+    # - api_key_2
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
   ## envFrom to pass configmaps or secrets as environment
@@ -435,7 +452,12 @@ datadog:
     ## If you notice that the cluster-agent uses too much CPU in larger clusters
     ## turning this option off will improve the situation.
     container_scrubbing:
-      enabled: true
+      enabled: true 
+
+    additionalEndpoints: {}
+      # "https://app.datadoghq.com":
+      # - api_key_1
+      # - api_key_2
 
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
@@ -462,7 +484,14 @@ datadog:
       configMap:
 
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
-      checkInterval: 20m
+      checkInterval: 20m 
+
+      useHttp: true
+      additionalEndpoints: []
+      # - api_key: <DATADOG_API_KEY>
+      #   Host: <HOST_ADDRESS>
+      #   Port: 1234
+      #   is_reliable: true
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -474,7 +503,14 @@ datadog:
 
       syscallMonitor:
         # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring (recommended for troubleshooting only)
-        enabled: false
+        enabled: false 
+      
+      useHttp: true
+      additionalEndpoints: []
+      # - api_key: <DATADOG_API_KEY>
+      #   Host: <HOST_ADDRESS>
+      #   Port: 1234
+      #   is_reliable: true
 
   ## Manage NetworkPolicy
   networkPolicy:

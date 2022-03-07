@@ -28,7 +28,11 @@
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
     - name: HOST_ROOT
-      value: /host/root
+      value: /host/root 
+    - name: DD_COMPLIANCE_CONFIG_ENDPOINTS_USE_HTTP
+      value: {{ .Values.datadog.logs.useHttp | quote }} 
+    - name: DD_COMPLIANCE_CONFIG_ENDPOINTS_ADDITIONAL_ENDPOINTS 
+      value: {{ toJson .Values.datadog.securityAgent.compliance.additionalEndpoints | quote }} 
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
@@ -40,6 +44,10 @@
       value: /var/run/sysprobe/runtime-security.sock
     - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_ENDPOINTS_USE_HTTP
+      value: {{ .Values.datadog.logs.useHttp | quote }} 
+    - name: DD_RUNTIME_SECURITY_CONFIG_ENDPOINTS_ADDITIONAL_ENDPOINTS 
+      value: {{ toJson .Values.datadog.securityAgent.runtime.additionalEndpoints | quote }} 
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
