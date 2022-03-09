@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 2.30.15
+## 2.30.16
 
 * Default Datadog CRD chart to `0.4.7`.
 
