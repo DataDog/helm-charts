@@ -2,6 +2,10 @@
 
 ## 2.30.15
 
+* Default Datadog CRD chart to `0.4.7`.
+
+## 2.30.15
+
 * Default Datadog Agent image to `7.34.0`.
 * Default Datadog Cluster-Agent image to `1.18.0`.
 
