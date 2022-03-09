@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 2.30.15
+
+* Default Datadog Agent image to `7.34.0`.
+* Default Datadog Cluster-Agent image to `1.18.0`.
+
+## 2.30.14
+
+* Default Datadog Agent image to `7.33.1`.
+
 ## 2.30.13
 
 * Feat: Add `shareProcessNamespace` parameter.
