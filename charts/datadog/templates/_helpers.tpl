@@ -519,7 +519,7 @@ false
 Return true if we can enable Service Internal Traffic Policy
 */}}
 {{- define "enable-service-internal-traffic-policy" -}}
-{{- if or (semverCompare "^1.22-0" .Capabilities.KubeVersion.GitVersion) .Values.agents.localService.forceLocalServiceEnabled -}}
+{{- if and (semverCompare "^1.22-0" .Capabilities.KubeVersion.Version) .Values.agents.localService.forceLocalServiceEnabled -}}
 true
 {{- else -}}
 false
