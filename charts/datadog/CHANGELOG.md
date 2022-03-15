@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.17
+
+* Fix the function `should-enable-cluster-check-workers` to not require `datadog.kubeStateMetricsCore.useClusterCheckRunners:true` to enable the `ClusterCheckRunners`.
+
 ## 2.30.16
 
 * Default Datadog CRD chart to `0.4.7`.

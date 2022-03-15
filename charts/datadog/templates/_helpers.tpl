@@ -419,7 +419,7 @@ false
 Return true if the Cluster Check Workers have to be deployed
 */}}
 {{- define "should-enable-cluster-check-workers" -}}
-{{- if or .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners (and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled) -}}
+{{- if or .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled -}}
 true
 {{- else -}}
 false
