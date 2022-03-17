@@ -442,6 +442,10 @@ datadog:
     # This requires clusterAgent.enabled to be set to true
     enabled: false
 
+    # datadog.helmCheck.collectEvents -- Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+)
+    # This requires datadog.HelmCheck.enabled to be set to true
+    collectEvents: false
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false

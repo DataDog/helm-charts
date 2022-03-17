@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.17
+
+* Add `datadog.helmCheck.collectEvents` to enable event collection in the Helm check.
+
 ## 2.30.16
 
 * Default Datadog CRD chart to `0.4.7`.
