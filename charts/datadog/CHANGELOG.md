@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.30.20
+
+* Ensure system-probe communication functions properly by enabling two-way communication between containers through a writable socket (not readOnly).
+* Ensure system-probe communication functions properly by instructing the proccess agent to use its external system probe configuration.
+
 ## 2.30.19
 
 * Update documentation for enabling NPM.
