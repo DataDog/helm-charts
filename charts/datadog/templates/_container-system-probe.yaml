@@ -46,6 +46,7 @@
       subPath: system-probe.yaml
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
+      readOnly: false
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

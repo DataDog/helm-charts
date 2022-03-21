@@ -139,7 +139,7 @@
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
-      readOnly: true
+      readOnly: false
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
