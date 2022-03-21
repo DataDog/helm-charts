@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.YY.XX (TODO: update this)
+
+* Add `clusterAgent.admissionController.configInjectionMode` to configure the admission controller injection mode (requires Cluster Agent 1.20.0+)
+
 ## 2.30.17
 
 * Add `datadog.helmCheck.collectEvents` to enable event collection in the Helm check.

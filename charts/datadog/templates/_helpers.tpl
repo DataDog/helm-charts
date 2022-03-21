@@ -576,3 +576,14 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1beta1"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the Agent's local service name.
+*/}}
+{{- define "agent-local-service-name" -}}
+{{- if ne .Values.agents.localService.overrideName "" }}
+{{- .Values.agents.localService.overrideName -}}
+{{- else -}}
+{{ template "datadog.fullname" . }}
+{{- end -}}
+{{- end -}}

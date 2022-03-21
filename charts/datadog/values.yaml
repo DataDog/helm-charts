@@ -681,6 +681,9 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
+    # clusterAgent.admissionController.configInjectionMode -- The kind of configuration to be injected, it can be "hostip", "service" or "socket".
+    configInjectionMode: # hostip, service or socket
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}
