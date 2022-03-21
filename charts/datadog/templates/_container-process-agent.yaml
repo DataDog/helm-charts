@@ -39,6 +39,10 @@
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
+    {{- if eq (include "should-enable-system-probe" .) "true" }}
+    - name: DD_SYSTEM_PROBE_EXTERNAL
+      value: "true"
+    {{- end }}
     {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
