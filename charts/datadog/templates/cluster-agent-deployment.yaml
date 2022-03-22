@@ -16,6 +16,7 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
+  revisionHistoryLimit: {{ .Values.clusterAgent.revisionHistoryLimit }}
   strategy:
 {{- if .Values.clusterAgent.strategy }}
 {{ toYaml .Values.clusterAgent.strategy | indent 4 }}

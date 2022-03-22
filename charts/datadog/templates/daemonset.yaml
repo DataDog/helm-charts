@@ -17,6 +17,7 @@ metadata:
   annotations: {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}
   {{- end }}
 spec:
+  revisionHistoryLimit: {{ .Values.agents.revisionHistoryLimit }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}

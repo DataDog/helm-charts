@@ -610,6 +610,9 @@ clusterAgent:
   # clusterAgent.replicas -- Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode.
   replicas: 1
 
+  # clusterAgent.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
+  revisionHistoryLimit: 10
+
   ## Provide Cluster Agent Deployment pod(s) RBAC configuration
   rbac:
     # clusterAgent.rbac.create -- If true, create & use RBAC resources
@@ -846,6 +849,9 @@ agents:
 
   # agents.shareProcessNamespace -- Set the process namespace sharing on the Datadog Daemonset
   shareProcessNamespace: false
+
+  # agents.revisionHistoryLimit -- The number of ControllerRevision to keep in this DaemonSet.
+  revisionHistoryLimit: 10
 
   ## Define the Datadog image to work with
   image:
