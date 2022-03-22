@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.30.17](https://img.shields.io/badge/Version-2.30.17-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.30.18](https://img.shields.io/badge/Version-2.30.18-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -521,6 +521,7 @@ helm install --name <RELEASE_NAME> \
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
+| agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
 | agents.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Daemonset |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
@@ -570,6 +571,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
 | clusterAgent.replicas | int | `1` | Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode. |
 | clusterAgent.resources | object | `{}` | Datadog cluster-agent resource requests and limits. |
+| clusterAgent.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | clusterAgent.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the cluster-agent pods. |
 | clusterAgent.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Cluster Agent |
 | clusterAgent.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the Cluster Agent deployment to perform a rolling update on helm update |
