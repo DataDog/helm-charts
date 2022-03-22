@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.18
+
+* Add `clusterAgent.revisionHistoryLimit` and `agents.revisionHistoryLimit`
+
 ## 2.30.17
 
 * Add `datadog.helmCheck.collectEvents` to enable event collection in the Helm check.
