@@ -1318,6 +1318,9 @@ clusterChecksRunner:
   ## And increase the clusterChecksRunner.replicas according to the number of Cluster Checks.
   replicas: 2
 
+  # clusterChecksRunner.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
+  revisionHistoryLimit: 10
+
   # clusterChecksRunner.resources -- Datadog clusterchecks-agent resource requests and limits.
   resources: {}
   # requests:

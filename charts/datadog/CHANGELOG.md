@@ -2,7 +2,7 @@
 
 ## 2.30.18
 
-* Add `clusterAgent.revisionHistoryLimit` and `agents.revisionHistoryLimit`
+* Add `revisionHistoryLimit` to set the number of old ReplicaSets in the Deployment.
 
 ## 2.30.17
 
