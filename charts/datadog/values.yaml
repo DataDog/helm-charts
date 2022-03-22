@@ -51,7 +51,8 @@ datadog:
     timeout:  # 30
 
   # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
-  securityContext: {}
+  securityContext:
+    runAsUser: 0
   #  seLinuxOptions:
   #    user: "system_u"
   #    role: "system_r"
