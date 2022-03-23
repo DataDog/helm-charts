@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.19
+
+* Update documentation for enabling NPM.
+
 ## 2.30.18
 
 * Enforce use of `root` user for the node agent.
