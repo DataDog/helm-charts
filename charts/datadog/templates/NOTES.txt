@@ -304,7 +304,7 @@ are enabled:
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 * External Metrics Provider
 {{- end }}
-{{- if eq .Values.clusterAgent.metricsProvider.failurePolicy "Fail" }}
+{{- if eq .Values.clusterAgent.admissionController.failurePolicy "Fail" }}
 * Failure policy is set to "Fail"
 {{- end }}
 
