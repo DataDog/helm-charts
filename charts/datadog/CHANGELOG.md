@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 2.30.18
+## 2.30.20
 
 * Add `revisionHistoryLimit` to set the number of old ReplicaSets in the Deployment.
+
+## 2.30.19
+
+* Update documentation for enabling NPM.
+
+## 2.30.18
+
+* Enforce use of `root` user for the node agent.
 
 ## 2.30.17
 

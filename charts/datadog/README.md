@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.30.18](https://img.shields.io/badge/Version-2.30.18-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.30.20](https://img.shields.io/badge/Version-2.30.20-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -310,14 +310,14 @@ then upgrade your Datadog Helm chart:
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-### Enabling System Probe Collection
+### Enabling NPM Collection
 
-The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the system-probe collection configuration:
+The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the NPM collection configuration:
 
 ```yaml
 datadog:
   # (...)
-  systemProbe:
+  networkMonitoring:
     # (...)
     enabled: true
 
@@ -706,7 +706,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
-| datadog.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
+| datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
