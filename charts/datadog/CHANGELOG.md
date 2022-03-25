@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.20
+
+* Revert: Enforce use of `root` user for the node agent.
+
 ## 2.30.19
 
 * Update documentation for enabling NPM.
@@ -512,7 +516,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 
 ## 2.15.1
 
-* Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
+* Add parameter `clustersAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
 * Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
 * Support template expansion for `agents.podAnnotations`
 
