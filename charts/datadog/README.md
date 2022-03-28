@@ -505,11 +505,11 @@ helm install --name <RELEASE_NAME> \
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
 | agents.podLabels | object | `{}` | Sets podLabels if defined Note: These labels are also used as label selectors so they are immutable. |
 | agents.podSecurity.allowedUnsafeSysctls | list | `[]` | Allowed unsafe sysclts |
-| agents.podSecurity.apparmor.enabled | bool | `true` | If true, enable apparmor enforcement |
+| agents.podSecurity.apparmor.enabled | bool | `false` | If true, enable apparmor enforcement |
 | agents.podSecurity.apparmorProfiles | list | `["runtime/default","unconfined"]` | Allowed apparmor profiles |
 | agents.podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ"]` | Allowed capabilities |
 | agents.podSecurity.defaultApparmor | string | `"runtime/default"` | Default AppArmor profile for all containers but system-probe |
-| agents.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Agent pods |
+| agents.podSecurity.podSecurityPolicy.create | bool | `true` | If true, create a PodSecurityPolicy resource for Agent pods |
 | agents.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
 | agents.podSecurity.seLinuxContext | object | Must run as spc_t | Provide seLinuxContext configuration for PSP/SCC |
 | agents.podSecurity.seccompProfiles | list | `["runtime/default","localhost/system-probe"]` | Allowed seccomp profiles |
@@ -561,7 +561,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
-| clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
+| clusterAgent.podSecurity.podSecurityPolicy.create | bool | `true` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
@@ -669,7 +669,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.kubelet.agentCAPath | string | /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | Path (inside Agent containers) where the Kubelet CA certificate is stored |
 | datadog.kubelet.host | object | `{"valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}}` | Override kubelet IP |
 | datadog.kubelet.hostCAPath | string | None (no mount from host) | Path (on host) where the Kubelet CA certificate is stored |
-| datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
+| datadog.kubelet.tlsVerify | bool | true | Toggle kubelet TLS verification |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
