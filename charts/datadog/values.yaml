@@ -179,7 +179,7 @@ datadog:
           fieldPath: status.hostIP
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
-    tlsVerify:  # false
+    tlsVerify: false
     # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
     # @default -- None (no mount from host)
     hostCAPath:
@@ -626,7 +626,7 @@ clusterAgent:
   podSecurity:
     podSecurityPolicy:
       # clusterAgent.podSecurity.podSecurityPolicy.create -- If true, create a PodSecurityPolicy resource for Cluster Agent pods
-      create: false
+      create: true
     securityContextConstraints:
       # clusterAgent.podSecurity.securityContextConstraints.create -- If true, create a SCC resource for Cluster Agent pods
       create: false
@@ -897,7 +897,7 @@ agents:
   podSecurity:
     podSecurityPolicy:
       # agents.podSecurity.podSecurityPolicy.create -- If true, create a PodSecurityPolicy resource for Agent pods
-      create: false
+      create: true
 
     securityContextConstraints:
       # agents.podSecurity.securityContextConstraints.create -- If true, create a SecurityContextConstraints resource for Agent pods
@@ -949,7 +949,7 @@ agents:
     apparmor:
       # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
       ## see: https://kubernetes.io/docs/tutorials/clusters/apparmor/
-      enabled: true
+      enabled: false
 
     # agents.podSecurity.apparmorProfiles -- Allowed apparmor profiles
     apparmorProfiles:
