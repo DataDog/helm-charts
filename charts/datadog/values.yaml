@@ -907,11 +907,11 @@ agents:
     # @default -- Must run as spc_t
     seLinuxContext:
       rule: MustRunAs
-      seLinuxOptions:
-        user: system_u
-        role: system_r
-        type: spc_t
-        level: s0
+      seLinuxOptions: {}
+    #    user: system_u
+    #    role: system_r
+    #    type: spc_t
+    #    level: s0
 
     # agents.podSecurity.privileged -- If true, Allow to run privileged containers
     privileged: false
