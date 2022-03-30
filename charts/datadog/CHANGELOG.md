@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.20
+
+* Add enableKernelHeaderDownload configuration option to system-probe.
+
 ## 2.30.19
 
 * Update documentation for enabling NPM.
