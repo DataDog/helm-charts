@@ -1,7 +1,7 @@
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (not (eq .Values.datadog.apiKey "<DATADOG_API_KEY>"))) }}
 Datadog agents are spinning up on each node in your cluster. After a few
 minutes, you should see your agents starting in your event stream:
-    https://app.datadoghq.com/event/stream
+    https://app.datadoghq.com/event/explorer
 
   {{- if .Values.datadog.apiKeyExistingSecret }}
 You disabled creation of Secret containing API key, therefore it is expected
