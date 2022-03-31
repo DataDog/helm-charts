@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.20
+
+* Update "agents are spinning up" message to point towards the new Events Explorer
+
 ## 2.30.19
 
 * Update documentation for enabling NPM.
