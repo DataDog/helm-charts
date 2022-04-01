@@ -15,7 +15,7 @@
     path: C:/var/log
   name: pointerdir
 - hostPath:
-    path: C:/var/log/pods
+    path: {{ .Values.datadog.kubelet.podLogsPath | default "C:/var/log/pods" }}
   name: logpodpath
 - hostPath:
     path: C:/ProgramData
