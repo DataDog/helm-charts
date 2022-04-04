@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.31.0
+
+* Add `datadog.prometheusScrape.version` parameter to choose the version of the openmetrics check that the Prometheus auto-discovery should instantiate by default.
+  It now defaults to `2`, which requires an agent 7.34+.
+  It can be explicitely set to `1` to restore the behaviour of previous versions.
+
 ## 2.30.21
 
 * Add `datadog.kubelet.podLogsPath` to customize hostPath mounted in to get Kubernetes PODs logs.

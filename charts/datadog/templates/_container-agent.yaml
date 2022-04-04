@@ -96,6 +96,10 @@
     - name: DD_PROMETHEUS_SCRAPE_CHECKS
       value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
     {{- end }}
+    {{- if .Values.datadog.prometheusScrape.version }}
+    - name: DD_PROMETHEUS_SCRAPE_VERSION
+      value: {{ .Values.datadog.prometheusScrape.version | quote }}
+    {{- end }}
     {{- end }}
     {{- $ignoreAutoConfig := .Values.datadog.ignoreAutoConfig }}
     {{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck }}
