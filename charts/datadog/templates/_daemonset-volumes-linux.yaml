@@ -154,7 +154,7 @@
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
 - hostPath:
-    path: /var/log/pods
+    path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
     path: /var/log/containers

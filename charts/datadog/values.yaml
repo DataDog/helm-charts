@@ -186,6 +186,9 @@ datadog:
     # datadog.kubelet.agentCAPath -- Path (inside Agent containers) where the Kubelet CA certificate is stored
     # @default -- /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     agentCAPath:
+    # datadog.kubelet.podLogsPath -- Path (on host) where the PODs logs are located
+    # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
+    podLogsPath:
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000

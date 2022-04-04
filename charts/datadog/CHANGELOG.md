@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.30.21
+
+* Add `datadog.kubelet.podLogsPath` to customize hostPath mounted in to get Kubernetes PODs logs.
+
 ## 2.30.20
 
 * Update "agents are spinning up" message to point towards the new Events Explorer
