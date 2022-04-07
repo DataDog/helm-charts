@@ -582,7 +582,7 @@ Returns securityContext depending of the OS
 */}}
 {{- define "generate-security-context" -}}
 {{- if .securityContext -}}
-{{- if and (eq .targetSystem "windows") -}}
+{{- if eq .targetSystem "windows" -}}
   {{- if .securityContext.windowsOptions }}
 securityContext:
   windowsOptions:
