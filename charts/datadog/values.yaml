@@ -2,6 +2,9 @@
 ## See Datadog helm documentation to learn more:
 ## https://docs.datadoghq.com/agent/kubernetes/helm/
 
+## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
+## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
+
 # nameOverride -- Override name of app
 nameOverride:  # ""
 

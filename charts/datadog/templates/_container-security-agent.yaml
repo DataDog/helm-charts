@@ -16,7 +16,12 @@
 {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom }}
   envFrom:
-{{ concat .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom | toYaml  | indent 4 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.securityAgent.envFrom }}
+{{ .Values.agents.containers.securityAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}

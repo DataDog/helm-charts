@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.1
+
+* Remove usage of `concat` to restore compatibility with Helm2.
+
 ## 2.32.0
 
 * Default Datadog Agent image to `7.35.0`.
@@ -7,7 +11,6 @@
 ## 2.31.1
 
 * Improves how securityContext are set depending on the `targetSystem` option (fix #590).
-
 ## 2.31.0
 
 * Add `datadog.prometheusScrape.version` parameter to choose the version of the openmetrics check that the Prometheus auto-discovery should instantiate by default.
