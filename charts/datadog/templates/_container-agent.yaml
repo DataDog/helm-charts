@@ -3,10 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
-  {{- if .Values.agents.containers.agent.securityContext }}
-  securityContext:
-    {{ toYaml .Values.agents.containers.agent.securityContext | nindent 4 }}
-  {{- end }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
   ports:

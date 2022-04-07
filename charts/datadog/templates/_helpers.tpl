@@ -576,3 +576,21 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1beta1"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Returns securityContext depending of the OS
+*/}}
+{{- define "generate-security-context" -}}
+{{- if .securityContext -}}
+{{- if eq .targetSystem "windows" -}}
+  {{- if .securityContext.windowsOptions }}
+securityContext:
+  windowsOptions:
+    {{ toYaml .securityContext.windowsOptions }}
+  {{- end -}}
+{{- else }}
+securityContext:
+{{ toYaml .securityContext | indent 2 }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
