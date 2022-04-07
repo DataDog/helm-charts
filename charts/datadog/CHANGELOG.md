@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.31.2
+
+* Improves help message when only `.datadog.containerInclude` is defined but no `.datadog.containerExclude`
+
 ## 2.31.1
 
 * Improves how securityContext are set depending on the `targetSystem` option (fix #590).
