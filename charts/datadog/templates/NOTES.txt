@@ -348,6 +348,6 @@ You are using the datadog.acInclude or datadog.acExclude parameters, which have 
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to 'name:.*' .
 
 {{- end }}
