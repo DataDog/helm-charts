@@ -304,6 +304,10 @@ spec:
             - key: kubernetes_state_core.yaml.default
               path: kubernetes_state_core.yaml.default
 {{- end }}
+{{- if .Values.datadog.helmCheck.enabled }}
+            - key: helm.yaml
+              path: helm.yaml
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
