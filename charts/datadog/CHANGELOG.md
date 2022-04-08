@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.2
+
+* Fix scheduling of Helm check due to missing `helm.yaml` in Cluster Agent `confd`.
+
 ## 2.32.1
 
 * Remove usage of `concat` to restore compatibility with Helm2.
