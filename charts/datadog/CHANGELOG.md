@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.31.2
+
+* Default Datadog Agent image to `7.35.0`.
+
 ## 2.31.1
 
 * Improves how securityContext are set depending on the `targetSystem` option (fix #590).
@@ -86,7 +90,7 @@
 ## 2.30.3
 
 * Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
-  See https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
+  See <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation>
   This new option requires an agent 7.32+.
 
 ## 2.30.2
@@ -767,9 +771,9 @@ Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocket
 
 * Changes default values to activate a maximum of built-in features to ease configuration.
   Notable changes:
-  - Cluster Agent, cluster checks and event collection are activated by default
-  - DatadogMetrics CRD usage is activated by default if ExternalMetrics are used
-  - Dogstatsd non-local traffic is activated by default (hostPort usage is not)
+  * Cluster Agent, cluster checks and event collection are activated by default
+  * DatadogMetrics CRD usage is activated by default if ExternalMetrics are used
+  * Dogstatsd non-local traffic is activated by default (hostPort usage is not)
 * Bump Agent version to `7.25.0` and Cluster Agent version to `1.10.0`
 * Introduce `.registry` parameter to quickly change registry for all Datadog images. Image name is retrieved from `.image.name`, however setting `.image.repository` still allows to override per image, ensuring backward compatibility
 
@@ -1236,7 +1240,7 @@ variables, instead of passing one by one.
 ## 2.2.11
 
 * Add documentations around secret management in the datadog helm chart. It is to upstream
-  requested changes in the IBM charts repository: https://github.com/IBM/charts/pull/690#discussion_r411702458
+  requested changes in the IBM charts repository: <https://github.com/IBM/charts/pull/690#discussion_r411702458>
 * update `kube-state-metrics` dependency
 * uncomment every values.yaml parameters for IBM chart compliancy
 
@@ -1314,6 +1318,7 @@ config to this environment variable.
 
 * Fix `system-probe` startup on latest versions of containerd.
   Here is the error that this change fixes:
+
   ```    State:          Waiting
       Reason:       CrashLoopBackOff
     Last State:     Terminated
