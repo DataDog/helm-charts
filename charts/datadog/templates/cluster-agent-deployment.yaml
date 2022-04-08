@@ -113,7 +113,12 @@ spec:
         {{- end }}
 {{- if or .Values.datadog.envFrom .Values.clusterAgent.envFrom }}
         envFrom:
-{{ concat .Values.datadog.envFrom .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.clusterAgent.envFrom }}
+{{ .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- end }}
 {{- end }}
         env:
           - name: DD_HEALTH_PORT
