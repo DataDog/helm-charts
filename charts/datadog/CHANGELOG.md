@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.5
+
+* Fix process detection, by adding `kill` syscall with signal `0` to system-probe seccomp profile.
+
 ## 2.32.4
 
 * Update `cluster-agent` image to the latest stable version: `1.19.0`
