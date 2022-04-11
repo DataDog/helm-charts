@@ -197,6 +197,7 @@ data:
             "setgid32",
             "setgroups",
             "setgroups32",
+            "setitimer",
             "setns",
             "setrlimit",
             "setsid",

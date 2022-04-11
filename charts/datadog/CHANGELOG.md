@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.3
+
+* Fix Go CPU profiling, by adding `setitimer` to system-probe seccomp profile.
+
 ## 2.32.2
 
 * Fix scheduling of Helm check due to missing `helm.yaml` in Cluster Agent `confd`.
