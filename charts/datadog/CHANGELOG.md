@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.4
+
+* Update `cluster-agent` image to the latest stable version: `1.19.0`
+
 ## 2.32.3
 
 * Fix Go CPU profiling, by adding `setitimer` to system-probe seccomp profile.
@@ -19,6 +23,7 @@
 ## 2.31.1
 
 * Improves how securityContext are set depending on the `targetSystem` option (fix #590).
+
 ## 2.31.0
 
 * Add `datadog.prometheusScrape.version` parameter to choose the version of the openmetrics check that the Prometheus auto-discovery should instantiate by default.
