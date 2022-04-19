@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.4
+
+* Update `cluster-agent` image to the latest stable version: `1.19.0`
+
 ## 2.32.3
 
 * Fix Go CPU profiling, by adding `setitimer` to system-probe seccomp profile.
