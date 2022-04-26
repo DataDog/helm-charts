@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.32.6
+
+* Add `verticalpodautoscalers` in `kubernetes_state_core.yaml.default` to enable collection in KSM Core by default
+
 ## 2.32.5
 
 * Fix process detection, by adding `kill` syscall with signal `0` to system-probe seccomp profile.
