@@ -290,7 +290,7 @@ spec:
       volumes:
         - name: installinfo
           configMap:
-            name: {{ template "datadog.fullname" . }}-installinfo
+            name: {{ include "agents-install-info-configmap-name" . }}
 {{- if eq (include "need-cluster-agent-confd" .) "true" }}
         - name: confd
           configMap:

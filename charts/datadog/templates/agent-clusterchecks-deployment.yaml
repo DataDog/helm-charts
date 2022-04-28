@@ -206,7 +206,7 @@ spec:
       volumes:
         - name: installinfo
           configMap:
-            name: {{ template "datadog.fullname" . }}-installinfo
+            name: {{ include "agents-install-info-configmap-name" . }}
 {{- if .Values.clusterChecksRunner.volumes }}
 {{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
 {{- end }}
@@ -215,7 +215,7 @@ spec:
 {{- if .Values.datadog.checksd }}
         - name: checksd
           configMap:
-            name: {{ template "datadog.fullname" . }}-checksd
+            name: {{ include "agents.checksd-configmap-name" . }}
 {{- end }}
       affinity:
 {{- if .Values.clusterChecksRunner.affinity }}

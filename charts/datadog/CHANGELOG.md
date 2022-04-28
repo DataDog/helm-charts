@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.33.0
+
+***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
+* On GKE Autopilot, hardcode the "Agent" DaemonSet serviceAccountName.
+* On GKE Autopilot, hardcode the "Install Info" ConfigMap name.
+
 ## 2.32.6
 
 * Add `verticalpodautoscalers` in `kubernetes_state_core.yaml.default` to enable collection in KSM Core by default
