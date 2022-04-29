@@ -66,6 +66,8 @@ serviceAccount:
   create: true
   # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
   name:
+  # serviceAccount.annotations -- Allows setting additional annotations for service account
+  annotations: {}
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
