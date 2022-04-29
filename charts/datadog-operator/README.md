@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.7.10](https://img.shields.io/badge/Version-0.7.10-informational?style=flat-square) ![AppVersion: 0.7.2](https://img.shields.io/badge/AppVersion-0.7.2-informational?style=flat-square)
+![Version: 0.7.11](https://img.shields.io/badge/Version-0.7.11-informational?style=flat-square) ![AppVersion: 0.7.2](https://img.shields.io/badge/AppVersion-0.7.2-informational?style=flat-square)
 
 ## Values
 
@@ -35,6 +35,7 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
