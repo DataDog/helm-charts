@@ -17,7 +17,12 @@
 {{ toYaml .Values.agents.containers.processAgent.resources | indent 4 }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom }}
   envFrom:
-{{ concat .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom | toYaml | indent 4 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.envFrom }}
+{{ .Values.agents.containers.processAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -60,7 +65,7 @@
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
-    - name: {{ template "datadog.fullname" . }}-datadog-yaml
+    - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
     {{- end }}

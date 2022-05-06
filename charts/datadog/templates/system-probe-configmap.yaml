@@ -33,6 +33,7 @@ data:
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
       enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
+      enable_kernel_header_download: {{ $.Values.datadog.systemProbe.enableKernelHeaderDownload }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       apt_config_dir: /host/etc/apt
@@ -197,6 +198,7 @@ data:
             "setgid32",
             "setgroups",
             "setgroups32",
+            "setitimer",
             "setns",
             "setrlimit",
             "setsid",
@@ -243,6 +245,22 @@ data:
             }
           ],
           "comment": "",
+          "includes": {},
+          "excludes": {}
+        },
+        {
+          "names": [
+            "kill"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": [
+            {
+              "index": 1,
+              "value": 0,
+              "op": "SCMP_CMP_EQ"
+            }
+          ],
+          "comment": "allow process detection via kill",
           "includes": {},
           "excludes": {}
         }
