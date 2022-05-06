@@ -113,7 +113,12 @@ spec:
         {{- end }}
 {{- if or .Values.datadog.envFrom .Values.clusterAgent.envFrom }}
         envFrom:
-{{ concat .Values.datadog.envFrom .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.clusterAgent.envFrom }}
+{{ .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- end }}
 {{- end }}
         env:
           - name: DD_HEALTH_PORT
@@ -285,7 +290,7 @@ spec:
       volumes:
         - name: installinfo
           configMap:
-            name: {{ template "datadog.fullname" . }}-installinfo
+            name: {{ include "agents-install-info-configmap-name" . }}
 {{- if eq (include "need-cluster-agent-confd" .) "true" }}
         - name: confd
           configMap:
@@ -298,6 +303,10 @@ spec:
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
             - key: kubernetes_state_core.yaml.default
               path: kubernetes_state_core.yaml.default
+{{- end }}
+{{- if .Values.datadog.helmCheck.enabled }}
+            - key: helm.yaml
+              path: helm.yaml
 {{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}

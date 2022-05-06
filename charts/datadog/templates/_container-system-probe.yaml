@@ -2,8 +2,7 @@
 - name: system-probe
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  securityContext:
-{{ toYaml .Values.agents.containers.systemProbe.securityContext | indent 4 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
@@ -11,7 +10,12 @@
 {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.systemProbe.envFrom }}
   envFrom:
-{{ concat .Values.datadog.envFrom .Values.agents.containers.systemProbe.envFrom | toYaml  | indent 4 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.envFrom }}
+{{ .Values.agents.containers.systemProbe.envFrom | toYaml | indent 4 }}
+{{- end }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -37,7 +41,7 @@
       mountPath: {{ template "datadog.confPath" . }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
-    - name: {{ template "datadog.fullname" . }}-datadog-yaml
+    - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
     {{- end }}

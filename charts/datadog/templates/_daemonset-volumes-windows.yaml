@@ -8,14 +8,14 @@
 {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
 - name: confd
   configMap:
-    name: {{ template "datadog.fullname" . }}-confd
+    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: C:/var/log
   name: pointerdir
 - hostPath:
-    path: C:/var/log/pods
+    path: {{ .Values.datadog.kubelet.podLogsPath | default "C:/var/log/pods" }}
   name: logpodpath
 - hostPath:
     path: C:/ProgramData
