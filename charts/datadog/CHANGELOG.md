@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.4
+
+* Improves help message when only `.datadog.containerInclude` is defined but no `.datadog.containerExclude`
+
 ## 2.33.3
 
 * Add enableKernelHeaderDownload configuration option to system-probe.
