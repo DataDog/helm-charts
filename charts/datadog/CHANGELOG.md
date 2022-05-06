@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.1
+
+* Default Datadog Agent image to `7.35.2`.
+
 ## 2.33.0
 
 ***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
