@@ -2,7 +2,7 @@
 
 ## 0.7.11
 
-* Allows aditional service account annotations.
+* Allow additional service account annotations.
 
 ## 0.7.10
 
