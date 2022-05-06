@@ -1,5 +1,31 @@
 # Datadog changelog
 
+## 2.33.1
+
+* Default Datadog Agent image to `7.35.2`.
+
+## 2.33.0
+
+***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
+* On GKE Autopilot, hardcode the "Agent" DaemonSet serviceAccountName.
+* On GKE Autopilot, hardcode the "Install Info" ConfigMap name.
+
+## 2.32.6
+
+* Add `verticalpodautoscalers` in `kubernetes_state_core.yaml.default` to enable collection in KSM Core by default
+
+## 2.32.5
+
+* Fix process detection, by adding `kill` syscall with signal `0` to system-probe seccomp profile.
+
+## 2.32.4
+
+* Update `cluster-agent` image to the latest stable version: `1.19.0`
+
+## 2.32.3
+
+* Fix Go CPU profiling, by adding `setitimer` to system-probe seccomp profile.
+
 ## 2.32.2
 
 * Fix scheduling of Helm check due to missing `helm.yaml` in Cluster Agent `confd`.
@@ -15,6 +41,7 @@
 ## 2.31.1
 
 * Improves how securityContext are set depending on the `targetSystem` option (fix #590).
+
 ## 2.31.0
 
 * Add `datadog.prometheusScrape.version` parameter to choose the version of the openmetrics check that the Prometheus auto-discovery should instantiate by default.

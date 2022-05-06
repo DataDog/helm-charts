@@ -61,7 +61,7 @@
 {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
 - name: confd
   configMap:
-    name: {{ template "datadog.fullname" . }}-confd
+    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
