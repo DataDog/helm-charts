@@ -1506,3 +1506,128 @@ providers:
       ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
       ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
       useHostnameFromFile: false
+
+observabilityPipelines:
+  enabled: false
+  customConfig:
+    data_dir: /vector-data-dir
+    api:
+      enabled: true
+      address: 0.0.0.0:8686
+      playground: false
+    sources:
+      datadog_agent:
+        address: 0.0.0.0:8282
+        type: datadog_agent
+        multiple_outputs: true
+      internal_metrics:
+        type: internal_metrics
+    transforms:
+      remap_logs:
+        type: remap
+        inputs:
+          - datadog_agent.logs
+        source: |
+          # Parse the received .ddtags field so we can more easily access the contained tags
+          .ddtags = parse_key_value!(.ddtags, key_value_delimiter: ":", field_delimiter: ",")
+          .ddtags.sender = "vector"
+          .ddtags.vector_aggregator = get_hostname!()
+          # Re-encode Datadog tags as a string for the `datadog_logs` sink
+          .ddtags = encode_key_value(.ddtags, key_value_delimiter: ":", field_delimiter: ",")
+          # Datadog Agents pass a "status" field that is stripped when ingested
+          del(.status)
+    sinks:
+      datadog_logs:
+        type: datadog_logs
+        inputs:
+          - remap_logs
+        default_api_key: ${DATADOG_API_KEY}
+        compression: gzip
+      datadog_metrics:
+        type: datadog_metrics
+        inputs:
+          - datadog_agent.metrics
+          - internal_metrics
+        default_api_key: ${DATADOG_API_KEY}
+      # TODO: soon!
+      # datadog_traces:
+      #   type: datadog_traces
+  # livenessProbe -- Override default liveness probe settings, if customConfig is used requires customConfig.api.enabled true
+  ## Requires Vector's API to be enabled
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: api
+
+  # readinessProbe -- Override default readiness probe settings, if customConfig is used requires customConfig.api.enabled true
+  ## Requires Vector's API to be enabled
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: api
+  # nameOverride -- Override name of app
+  fullnameOverride: vector
+
+  ## Configure a HorizontalPodAutoscaler for Vector
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    ## The provided HAProxy config is limited to 10 backends
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+  # env -- Set environment variables in Vector containers
+  ## The examples below leverage examples from secrets.generic and assume no name overrides with a Release name of "vector"
+  env:
+    - name: DATADOG_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: datadog
+          key: api-key
+    - name: VECTOR_LOG_FORMAT
+      value: json
+
+  # resources -- Set Vector resource requests and limits.
+  resources:
+    ## Required for HPA to function
+    requests:
+      cpu: 1000m
+      memory: 512Mi
+    # limits:
+    #   cpu: 200m
+    #   memory: 256Mi
+
+  # affinity -- Allow Vector to schedule using affinity rules
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity:
+    ## Scale across different AZs by default.
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - vector
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - Aggregator
+            topologyKey: topology.kubernetes.io/zone
+
+  service:
+    enabled: true
+    type: "LoadBalancer"
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true" # Deprecated
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+      networking.gke.io/load-balancer-type: "Internal"
+      cloud.google.com/load-balancer-type: "Internal" # for older GKE versions
+      networking.gke.io/internal-load-balancer-allow-global-access: "true"
