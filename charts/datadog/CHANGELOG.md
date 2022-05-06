@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.2
+
+* Add `revisionHistoryLimit` to set the number of old ReplicaSets in the Deployment.
+
 ## 2.33.1
 
 * Default Datadog Agent image to `7.35.2`.
