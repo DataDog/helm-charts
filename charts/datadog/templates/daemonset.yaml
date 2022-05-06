@@ -17,6 +17,7 @@ metadata:
   annotations: {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}
   {{- end }}
 spec:
+  revisionHistoryLimit: {{ .Values.agents.revisionHistoryLimit }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}
@@ -62,9 +63,8 @@ spec:
       {{- if .Values.agents.shareProcessNamespace }}
       shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
       {{- end }}
-      {{- if .Values.datadog.securityContext }}
-      securityContext:
-{{ toYaml .Values.datadog.securityContext| indent 8 }}
+      {{- if .Values.datadog.securityContext -}}
+      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem) | nindent 6 }}
       {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
       {{- if .Values.agents.podSecurity.securityContext }}
       {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}
@@ -132,18 +132,18 @@ spec:
       volumes:
       - name: installinfo
         configMap:
-          name: {{ template "datadog.fullname" . }}-installinfo
+          name: {{ include "agents-install-info-configmap-name" . }}
       - name: config
         emptyDir: {}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:
-          name: {{ template "datadog.fullname" . }}-checksd
+          name: {{ include "datadog-checksd-configmap-name" . }}
       {{- end }}
       {{- if .Values.agents.useConfigMap }}
-      - name: {{ template "datadog.fullname" . }}-datadog-yaml
+      - name: datadog-yaml
         configMap:
-          name: {{ template "datadog.fullname" . }}-datadog-yaml
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
       {{- end }}
       {{- if eq .Values.targetSystem "windows" }}
         {{ include "daemonset-volumes-windows" . | nindent 6 }}
@@ -166,7 +166,7 @@ spec:
       {{- end }}
       affinity:
 {{ toYaml .Values.agents.affinity | indent 8 }}
-      serviceAccountName: {{ if .Values.agents.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.agents.rbac.serviceAccountName }}"{{ end }}
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.agents.nodeSelector }}

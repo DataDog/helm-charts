@@ -435,6 +435,50 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return the service account name
+*/}}
+{{- define "agents.serviceAccountName" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent
+{{- else if .Values.agents.rbac.create -}}
+{{ template "datadog.fullname" . }}
+{{- else -}}
+{{ .Values.agents.rbac.serviceAccountName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "agents-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-datadog-yaml
+{{- else -}}
+{{ template "datadog.fullname" . }}-datadog-yaml
+{{- end -}}
+{{- end -}}
+
+{{- define "agents-install-info-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-installinfo
+{{- else -}}
+{{ template "datadog.fullname" . }}-installinfo
+{{- end -}}
+{{- end -}}
+
+{{- define "agents.confd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-confd
+{{- else -}}
+{{ template "datadog.fullname" . }}-confd
+{{- end -}}
+{{- end -}}
+
+{{- define "datadog-checksd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-checksd
+{{- else -}}
+{{ template "datadog.fullname" . }}-checksd
+{{- end -}}
+{{- end -}}
 
 {{/*
 Common template labels
@@ -574,5 +618,23 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1"
 {{- else -}}
 "policy/v1beta1"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns securityContext depending of the OS
+*/}}
+{{- define "generate-security-context" -}}
+{{- if .securityContext -}}
+{{- if eq .targetSystem "windows" -}}
+  {{- if .securityContext.windowsOptions }}
+securityContext:
+  windowsOptions:
+    {{ toYaml .securityContext.windowsOptions }}
+  {{- end -}}
+{{- else }}
+securityContext:
+{{ toYaml .securityContext | indent 2 }}
+{{- end -}}
 {{- end -}}
 {{- end -}}

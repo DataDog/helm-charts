@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "datadog.fullname" . }}-datadog-yaml
+  name: {{ include "agents-useConfigMap-configmap-name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
