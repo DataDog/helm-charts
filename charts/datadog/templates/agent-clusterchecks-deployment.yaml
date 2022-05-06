@@ -16,6 +16,7 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.clusterChecksRunner.replicas }}
+  revisionHistoryLimit: {{ .Values.clusterChecksRunner.revisionHistoryLimit }}
   strategy:
 {{ toYaml .Values.clusterChecksRunner.strategy | indent 4 }}
   selector:

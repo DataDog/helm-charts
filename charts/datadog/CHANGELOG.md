@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 2.33.4
+
+* Improves help message when only `.datadog.containerInclude` is defined but no `.datadog.containerExclude`
+
+## 2.33.3
+
+* Add enableKernelHeaderDownload configuration option to system-probe.
+
+## 2.33.2
+
+* Add `revisionHistoryLimit` to set the number of old ReplicaSets in the Deployment.
+
+## 2.33.1
+
+* Default Datadog Agent image to `7.35.2`.
+
 ## 2.33.0
 
 ***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:

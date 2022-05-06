@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.33.0](https://img.shields.io/badge/Version-2.33.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 2.33.4](https://img.shields.io/badge/Version-2.33.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -496,7 +496,7 @@ helm install --name <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.35.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.35.2"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
@@ -521,6 +521,7 @@ helm install --name <RELEASE_NAME> \
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
+| agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
 | agents.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Daemonset |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
@@ -570,6 +571,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
 | clusterAgent.replicas | int | `1` | Specify the of cluster agent replicas, if > 1 it allow the cluster agent to work in HA mode. |
 | clusterAgent.resources | object | `{}` | Datadog cluster-agent resource requests and limits. |
+| clusterAgent.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | clusterAgent.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the cluster-agent pods. |
 | clusterAgent.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Cluster Agent |
 | clusterAgent.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the Cluster Agent deployment to perform a rolling update on helm update |
@@ -592,7 +594,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.35.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.35.2"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -607,6 +609,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
 | clusterChecksRunner.replicas | int | `2` | Number of Cluster Checks Runner instances |
 | clusterChecksRunner.resources | object | `{}` | Datadog clusterchecks-agent resource requests and limits. |
+| clusterChecksRunner.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | clusterChecksRunner.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the clusterchecks pods. |
 | clusterChecksRunner.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the ClusterChecks deployment to perform a rolling update on helm update |
 | clusterChecksRunner.tolerations | list | `[]` | Tolerations for pod assignment |
@@ -716,6 +719,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.systemProbe.conntrackMaxStateSize | int | `131072` | the maximum size of the userspace conntrack cache |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
+| datadog.systemProbe.enableKernelHeaderDownload | bool | `false` | Enable the downloading of kernel headers for runtime compilation of eBPF probes |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableRuntimeCompiler | bool | `false` | Enable the runtime compiler for eBPF probes |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
