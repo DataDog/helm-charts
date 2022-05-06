@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.3
+
+* Add enableKernelHeaderDownload configuration option to system-probe.
+
 ## 2.33.2
 
 * Add `revisionHistoryLimit` to set the number of old ReplicaSets in the Deployment.
