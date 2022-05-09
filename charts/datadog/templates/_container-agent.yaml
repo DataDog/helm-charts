@@ -13,6 +13,48 @@
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+  {{- if .Values.datadog.otlp }}
+  {{- if .Values.datadog.otlp.receiver }}
+  {{- if .Values.datadog.otlp.receiver.protocols }}
+  {{- with .Values.datadog.otlp.receiver.protocols }}
+
+  {{- if .grpc }}
+  {{- if .grpc.endpoint }}
+  # gRPC supports several naming schemes: https://github.com/grpc/grpc/blob/master/doc/naming.md
+  # The Datadog Agent Helm Chart currently only supports 'host:port' (usually '0.0.0.0:port').
+  {{- if hasPrefix "unix:" .grpc.endpoint }}
+  {{ fail "'unix' protocol is not currently supported on OTLP/gRPC endpoint" }}
+  {{- end }}
+  {{- if hasPrefix "unix-abstract:" .grpc.endpoint }}
+  {{ fail "'unix-abstract' protocol is not currently supported on OTLP/gRPC endpoint" }}
+  {{- end }}
+  {{- if not ( mustRegexMatch ":[0-9]+$" .grpc.endpoint ) }}
+  {{ fail "port must be set explicitly on OTLP/gRPC endpoint" }}
+  {{- end }}
+  - containerPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    name: otlpgrpcport
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+
+  {{- if .http }}
+  {{- if .http.endpoint }}
+  # Check that later port regexp will have a match.
+  {{- if not ( mustRegexMatch ":[0-9]+$" .http.endpoint ) }}
+  {{ fail  "port must be set explicitly on OTLP/HTTP endpoint"}}
+  {{- end }}
+  - containerPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    name: otlphttpport
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 {{- if .Values.agents.containers.agent.ports }}
 {{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
 {{- end }}

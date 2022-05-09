@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.5
+
+* Add `datadog.otlp` section to configure OTLP ingest.
+
 ## 2.33.4
 
 * Improves help message when only `.datadog.containerInclude` is defined but no `.datadog.containerExclude`
