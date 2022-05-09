@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.5
+
+* Make the DCA leader election ConfigMap name depend on the Helm release name.
+
 ## 2.33.4
 
 * Improves help message when only `.datadog.containerInclude` is defined but no `.datadog.containerExclude`
