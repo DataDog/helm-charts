@@ -309,7 +309,7 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
   # datadog.otlp -- OTLP ingest related configuration
-  # Set a protocol section to enable its default endpoint.
+  ## Set a protocol section to enable its default endpoint.
   otlp: {}
   #  receiver:
   #    protocols:
