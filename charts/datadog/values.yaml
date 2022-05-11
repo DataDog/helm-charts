@@ -309,17 +309,19 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
   # datadog.otlp -- OTLP ingest related configuration
-  ## Set OTLP/gRPC or OTLP/HTTP endpoint to enable OTLP ingest.
+  # Set a protocol section to enable its default endpoint.
   otlp: {}
   #  receiver:
   #    protocols:
+  #      # datadog.otlp.receiver.protocols.grpc - OTLP/gRPC configuration
+  #      # If this section is present, the OTLP/gRPC endpoint will be enabled.
   #      grpc:
   #        # datadog.otlp.receiver.procotols.grpc.endpoint -- OTLP/gRPC endpoint
-  #        ## Set explicitly to enable OTLP/gRPC for all supported datatypes.
   #        # endpoint: "0.0.0.0:4317"
+  #      # datadog.otlp.receiver.protocols.http - OTLP/HTTP configuration
+  #      # If this section is present, the OTLP/HTTP endpoint will be enabled.
   #      http:
   #        # datadog.otlp.receiver.procotols.http.endpoint -- OTLP/HTTP endpoint
-  #        ## Set explicitly to enable OTLP/HTTP for all supported datatypes.
   #        # endpoint: "0.0.0.0:4318"
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
