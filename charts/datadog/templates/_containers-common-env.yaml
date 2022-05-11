@@ -120,18 +120,25 @@
 {{- if .Values.datadog.otlp.receiver.protocols }}
 {{- with .Values.datadog.otlp.receiver.protocols }}
 
-{{- if .grpc }}
-{{- if .grpc.endpoint }}
+# To check if the protocols sections are set but empty,
+# transform the 'protocols' section into JSON and check
+# if '"grpc":null' or '"http":null' are in the resulting string.
+{{- $jsonProtocols := toJson . -}}
+
+{{- if (and .grpc .grpc.endpoint) }}
 - name: DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_GRPC_ENDPOINT
   value: {{ .grpc.endpoint | quote }}
-{{- end }}
+{{- else if (or .grpc (contains "\"grpc\":null" $jsonProtocols)) }}
+- name: DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_GRPC_ENDPOINT
+  value: "0.0.0.0:4317"
 {{- end }}
 
-{{- if .http }}
-{{- if .http.endpoint }}
+{{- if (and .http .http.endpoint) }}
 - name: DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT
   value: {{ .http.endpoint | quote }}
-{{- end }}
+{{- else if (or .http (contains "\"http\":null" $jsonProtocols)) }}
+- name: DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT
+  value: "0.0.0.0:4318"
 {{- end }}
 
 {{- end }}
