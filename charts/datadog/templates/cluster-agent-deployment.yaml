@@ -210,7 +210,7 @@ spec:
           - name: DD_LEADER_LEASE_DURATION
             value: "15"
           {{- end }}
-          - name: DD_LEASE_NAME
+          - name: DD_LEADER_LEASE_NAME
             value: {{ template "datadog.fullname" . }}-leader-election
           - name: DD_CLUSTER_AGENT_TOKEN_NAME
             value: {{ template "datadog.fullname" . }}token
