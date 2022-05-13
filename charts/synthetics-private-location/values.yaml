@@ -81,7 +81,7 @@ affinity: {}
 # configFile -- JSON string containing the configuration of the private location worker
 configFile: "{}"
 
-# configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
+# configConfigMap -- Config Map that stores the configuration of the private location worker for the deployment
 configConfigMap: ""
 
 # configSecret -- Secret that stores the configuration of the private location worker for the deployment
@@ -104,3 +104,7 @@ hostAliases: []
 #  - ip: "10.0.0.1"
 #    hostnames:
 #    - "host.domain.com"
+
+# enableStatusProbes -- Enable both liveness and readiness probes
+enableStatusProbes: false
+  # Requires to be in sync with `enableStatusProbes` in the configuration of the private location worker

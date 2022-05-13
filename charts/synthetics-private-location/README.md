@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.13.4](https://img.shields.io/badge/Version-0.13.4-informational?style=flat-square) ![AppVersion: 1.23.0](https://img.shields.io/badge/AppVersion-1.23.0-informational?style=flat-square)
+![Version: 0.14.0](https://img.shields.io/badge/Version-0.14.0-informational?style=flat-square) ![AppVersion: 1.23.0](https://img.shields.io/badge/AppVersion-1.23.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations).
 
@@ -26,9 +26,10 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
-| configConfigMap | string | `""` | Config Map that stores the configuration of the private location worked for the deployment |
+| configConfigMap | string | `""` | Config Map that stores the configuration of the private location worker for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
 | configSecret | string | `""` | Secret that stores the configuration of the private location worker for the deployment |
+| enableStatusProbes | bool | `false` | Enable both liveness and readiness probes |
 | env | list | `[]` | Set environment variables |
 | envFrom | list | `[]` | Set environment variables from configMaps and/or secrets |
 | extraVolumeMounts | list | `[]` | Optionally specify extra list of additional volumeMounts for container |
