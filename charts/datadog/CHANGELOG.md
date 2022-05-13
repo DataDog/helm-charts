@@ -2,7 +2,7 @@
 
 ## 2.33.5
 
-* Make the DCA leader election ConfigMap name depend on the Helm release name.
+* Make the DCA leader election ConfigMap name depend on the Helm release name. (Requires DCA 1.21+)
 
 ## 2.33.4
 
