@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.6
+
+* Update kube-state-metrics dependency to version 4.7.0
+
 ## 2.33.5
 
 * Make the DCA leader election ConfigMap name depend on the Helm release name. (Requires DCA 1.21+)
