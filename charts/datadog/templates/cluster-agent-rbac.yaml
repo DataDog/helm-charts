@@ -47,7 +47,8 @@ rules:
   resources:
   - configmaps
   resourceNames:
-  - datadogtoken  # Kubernetes event collection state
+  - {{ template "datadog.fullname" . }}token  # Kubernetes event collection state
+  - datadogtoken  # Kept for backward compatibility with agent <7.37.0
   verbs:
   - get
   - update
@@ -57,7 +58,8 @@ rules:
   resources:
   - configmaps
   resourceNames:
-  - datadog-leader-election  # Leader election token
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  - datadog-leader-election  # Kept for backward compatibility with agent <7.37.0
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - datadog-custom-metrics
 {{- end }}
