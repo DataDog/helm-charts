@@ -29,7 +29,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worker for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
 | configSecret | string | `""` | Secret that stores the configuration of the private location worker for the deployment |
-| enableStatusProbes | bool | `false` | Enable both liveness and readiness probes |
+| enableStatusProbes | bool | `false` | Enable both liveness and readiness probes (minimal private location image version required: 1.12.0) |
 | env | list | `[]` | Set environment variables |
 | envFrom | list | `[]` | Set environment variables from configMaps and/or secrets |
 | extraVolumeMounts | list | `[]` | Optionally specify extra list of additional volumeMounts for container |

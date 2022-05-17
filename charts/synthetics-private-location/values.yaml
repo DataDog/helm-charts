@@ -105,6 +105,6 @@ hostAliases: []
 #    hostnames:
 #    - "host.domain.com"
 
-# enableStatusProbes -- Enable both liveness and readiness probes
+# enableStatusProbes -- Enable both liveness and readiness probes (minimal private location image version required: 1.12.0)
 enableStatusProbes: false
   # Requires to be in sync with `enableStatusProbes` in the configuration of the private location worker
