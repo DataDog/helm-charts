@@ -20,7 +20,6 @@ spec:
     shortNames:
       - dd
     singular: datadogagent
-  preserveUnknownFields: false
   scope: Namespaced
   validation:
     openAPIV3Schema:
