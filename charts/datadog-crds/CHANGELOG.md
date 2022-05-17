@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+* Update CRDs from Datadog Operator v0.8.0.
+
 ## 0.4.7
 
 * Fix Capabilities.APIVersions check
