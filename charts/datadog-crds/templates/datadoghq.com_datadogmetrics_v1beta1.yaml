@@ -34,7 +34,6 @@ spec:
     listKind: DatadogMetricList
     plural: datadogmetrics
     singular: datadogmetric
-  preserveUnknownFields: false
   scope: Namespaced
   subresources:
     status: {}
