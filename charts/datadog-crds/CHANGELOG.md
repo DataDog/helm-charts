@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+* Remove `preserveUnknownFields` to maintain compatibility with Kubernetes versions <1.15.
+
 ## 0.5.0
 
 * Update CRDs from Datadog Operator v0.8.0.
