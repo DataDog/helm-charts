@@ -30,6 +30,10 @@ download_crd() {
         yq -i eval 'del(.. | select(has("description")).description)' "$path"
     fi
 
+    if [ "$version" = "v1beta1" ]; then
+        yq -i eval 'del(.spec.preserveUnknownFields)' "$path"
+    fi
+
     ifCondition="{{- if and .Values.crds.$installOption (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
     if [ "$version" = "v1" ]; then
         ifCondition="{{- if and .Values.crds.$installOption (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0
+
+* Update chart to Datadog Operator `0.8.0`.
+
 ## 0.7.11
 
 * Allow additional service account annotations.
