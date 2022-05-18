@@ -1,5 +1,11 @@
 # Datadog changelog
 
+### 0.14.0
+
+* Replace deprecated liveness probe mechanism with the HTTP-based one.
+* Add readiness probe using the HTTP-based mechanism.
+* Add `enableStatusProbes` value to enable/disable both liveness and readiness probes. Minimal private location image version required: `1.12.0`.
+
 ### 0.13.4
 
 * Update private location image version to `1.23.0`.
