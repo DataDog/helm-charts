@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.6
+
+* Add `renameat2` to system-probe seccomp profile to fix issues with renaming files.
+
 ## 2.33.5
 
 * Make the DCA leader election ConfigMap name depend on the Helm release name. (Requires DCA 1.21+)
