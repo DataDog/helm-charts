@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.7
+
+* Fix inaccurate documentation example for `datadog.kubeStateMetricsCore.labelsAsTags`.
+
 ## 2.33.6
 
 * Add `renameat2` to system-probe seccomp profile to fix issues with renaming files.
