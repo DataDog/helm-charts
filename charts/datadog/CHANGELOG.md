@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.8
+
+* Fix duplicate resources in RBAC policy (`datadogtoken`, `datadog-leader-election`) when default Helm release name is used.
+
 ## 2.33.7
 
 * Fix inaccurate documentation example for `datadog.kubeStateMetricsCore.labelsAsTags`.
