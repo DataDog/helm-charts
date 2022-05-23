@@ -1,7 +1,7 @@
 apiVersion: v1
 name: datadog-crds
 description: Datadog Kubernetes CRDs chart
-version: 0.4.7
+version: 0.5.1
 appVersion: "1"
 keywords:
 - monitoring

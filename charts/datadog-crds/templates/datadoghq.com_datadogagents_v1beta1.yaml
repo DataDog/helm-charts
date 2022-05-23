@@ -1,9 +1,9 @@
-{{- if and .Values.crds.datadogAgents (not (.Capabilities.APIVersions.Has "apiextensions.k8s.io/v1")) }}
+{{- if and .Values.crds.datadogAgents (not (.Capabilities.APIVersions.Has "apiextensions.k8s.io/v1/CustomResourceDefinition")) }}
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.4.1
+    controller-gen.kubebuilder.io/version: v0.6.1
   creationTimestamp: null
   name: datadogagents.datadoghq.com
   labels:
@@ -12,22 +12,6 @@ metadata:
     app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
     app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
-  additionalPrinterColumns:
-    - JSONPath: .status.conditions[?(@.type=='Active')].status
-      name: active
-      type: string
-    - JSONPath: .status.agent.status
-      name: agent
-      type: string
-    - JSONPath: .status.clusterAgent.status
-      name: cluster-agent
-      type: string
-    - JSONPath: .status.clusterChecksRunner.status
-      name: cluster-checks-runner
-      type: string
-    - JSONPath: .metadata.creationTimestamp
-      name: age
-      type: date
   group: datadoghq.com
   names:
     kind: DatadogAgent
@@ -37,8 +21,6 @@ spec:
       - dd
     singular: datadogagent
   scope: Namespaced
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:
@@ -183,6 +165,29 @@ spec:
                                           type: string
                                         type: object
                                     type: object
+                                  namespaceSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
                                   namespaces:
                                     items:
                                       type: string
@@ -204,6 +209,29 @@ spec:
                           items:
                             properties:
                               labelSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaceSelector:
                                 properties:
                                   matchExpressions:
                                     items:
@@ -267,6 +295,29 @@ spec:
                                           type: string
                                         type: object
                                     type: object
+                                  namespaceSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
                                   namespaces:
                                     items:
                                       type: string
@@ -288,6 +339,29 @@ spec:
                           items:
                             properties:
                               labelSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaceSelector:
                                 properties:
                                   matchExpressions:
                                     items:
@@ -455,6 +529,9 @@ spec:
                           required:
                             - port
                           type: object
+                        terminationGracePeriodSeconds:
+                          format: int64
+                          type: integer
                         timeoutSeconds:
                           format: int32
                           type: integer
@@ -772,12 +849,23 @@ spec:
                           required:
                             - port
                           type: object
+                        terminationGracePeriodSeconds:
+                          format: int64
+                          type: integer
                         timeoutSeconds:
                           format: int32
                           type: integer
                       type: object
                     logLevel:
                       type: string
+                    namespaceLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    nodeLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
                     podAnnotationsAsTags:
                       additionalProperties:
                         type: string
@@ -845,6 +933,9 @@ spec:
                           required:
                             - port
                           type: object
+                        terminationGracePeriodSeconds:
+                          format: int64
+                          type: integer
                         timeoutSeconds:
                           format: int32
                           type: integer
@@ -1151,8 +1242,6 @@ spec:
                             type: object
                           ephemeral:
                             properties:
-                              readOnly:
-                                type: boolean
                               volumeClaimTemplate:
                                 properties:
                                   metadata:
@@ -1842,6 +1931,13 @@ spec:
                   type: string
                 keepLabels:
                   type: string
+                localService:
+                  properties:
+                    forceLocalServiceEnable:
+                      type: boolean
+                    overrideName:
+                      type: string
+                  type: object
                 log:
                   properties:
                     containerCollectUsingFiles:
@@ -1866,6 +1962,33 @@ spec:
                   properties:
                     create:
                       type: boolean
+                    dnsSelectorEndpoints:
+                      items:
+                        properties:
+                          matchExpressions:
+                            items:
+                              properties:
+                                key:
+                                  type: string
+                                operator:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                                - key
+                                - operator
+                              type: object
+                            type: array
+                          matchLabels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        type: object
+                      type: array
+                    flavor:
+                      type: string
                   type: object
                 priorityClassName:
                   type: string
@@ -2488,68 +2611,7 @@ spec:
                                           type: string
                                         type: object
                                     type: object
-                                  namespaces:
-                                    items:
-                                      type: string
-                                    type: array
-                                  topologyKey:
-                                    type: string
-                                required:
-                                  - topologyKey
-                                type: object
-                              weight:
-                                format: int32
-                                type: integer
-                            required:
-                              - podAffinityTerm
-                              - weight
-                            type: object
-                          type: array
-                        requiredDuringSchedulingIgnoredDuringExecution:
-                          items:
-                            properties:
-                              labelSelector:
-                                properties:
-                                  matchExpressions:
-                                    items:
-                                      properties:
-                                        key:
-                                          type: string
-                                        operator:
-                                          type: string
-                                        values:
-                                          items:
-                                            type: string
-                                          type: array
-                                      required:
-                                        - key
-                                        - operator
-                                      type: object
-                                    type: array
-                                  matchLabels:
-                                    additionalProperties:
-                                      type: string
-                                    type: object
-                                type: object
-                              namespaces:
-                                items:
-                                  type: string
-                                type: array
-                              topologyKey:
-                                type: string
-                            required:
-                              - topologyKey
-                            type: object
-                          type: array
-                      type: object
-                    podAntiAffinity:
-                      properties:
-                        preferredDuringSchedulingIgnoredDuringExecution:
-                          items:
-                            properties:
-                              podAffinityTerm:
-                                properties:
-                                  labelSelector:
+                                  namespaceSelector:
                                     properties:
                                       matchExpressions:
                                         items:
@@ -2615,6 +2677,159 @@ spec:
                                       type: string
                                     type: object
                                 type: object
+                              namespaceSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaces:
+                                items:
+                                  type: string
+                                type: array
+                              topologyKey:
+                                type: string
+                            required:
+                              - topologyKey
+                            type: object
+                          type: array
+                      type: object
+                    podAntiAffinity:
+                      properties:
+                        preferredDuringSchedulingIgnoredDuringExecution:
+                          items:
+                            properties:
+                              podAffinityTerm:
+                                properties:
+                                  labelSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
+                                  namespaceSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
+                                  namespaces:
+                                    items:
+                                      type: string
+                                    type: array
+                                  topologyKey:
+                                    type: string
+                                required:
+                                  - topologyKey
+                                type: object
+                              weight:
+                                format: int32
+                                type: integer
+                            required:
+                              - podAffinityTerm
+                              - weight
+                            type: object
+                          type: array
+                        requiredDuringSchedulingIgnoredDuringExecution:
+                          items:
+                            properties:
+                              labelSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaceSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
                               namespaces:
                                 items:
                                   type: string
@@ -2631,6 +2846,8 @@ spec:
                   properties:
                     admissionController:
                       properties:
+                        agentCommunicationMode:
+                          type: string
                         enabled:
                           type: boolean
                         mutateUnlabelled:
@@ -2792,6 +3009,68 @@ spec:
                               - type: integer
                               - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          type: object
+                      type: object
+                    securityContext:
+                      properties:
+                        fsGroup:
+                          format: int64
+                          type: integer
+                        fsGroupChangePolicy:
+                          type: string
+                        runAsGroup:
+                          format: int64
+                          type: integer
+                        runAsNonRoot:
+                          type: boolean
+                        runAsUser:
+                          format: int64
+                          type: integer
+                        seLinuxOptions:
+                          properties:
+                            level:
+                              type: string
+                            role:
+                              type: string
+                            type:
+                              type: string
+                            user:
+                              type: string
+                          type: object
+                        seccompProfile:
+                          properties:
+                            localhostProfile:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                            - type
+                          type: object
+                        supplementalGroups:
+                          items:
+                            format: int64
+                            type: integer
+                          type: array
+                        sysctls:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                              - name
+                              - value
+                            type: object
+                          type: array
+                        windowsOptions:
+                          properties:
+                            gmsaCredentialSpec:
+                              type: string
+                            gmsaCredentialSpecName:
+                              type: string
+                            runAsUserName:
+                              type: string
                           type: object
                       type: object
                     volumeMounts:
@@ -2997,8 +3276,6 @@ spec:
                             type: object
                           ephemeral:
                             properties:
-                              readOnly:
-                                type: boolean
                               volumeClaimTemplate:
                                 properties:
                                   metadata:
@@ -3522,6 +3799,33 @@ spec:
                   properties:
                     create:
                       type: boolean
+                    dnsSelectorEndpoints:
+                      items:
+                        properties:
+                          matchExpressions:
+                            items:
+                              properties:
+                                key:
+                                  type: string
+                                operator:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                                - key
+                                - operator
+                              type: object
+                            type: array
+                          matchLabels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        type: object
+                      type: array
+                    flavor:
+                      type: string
                   type: object
                 nodeSelector:
                   additionalProperties:
@@ -3689,6 +3993,29 @@ spec:
                                           type: string
                                         type: object
                                     type: object
+                                  namespaceSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
                                   namespaces:
                                     items:
                                       type: string
@@ -3710,6 +4037,29 @@ spec:
                           items:
                             properties:
                               labelSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaceSelector:
                                 properties:
                                   matchExpressions:
                                     items:
@@ -3773,6 +4123,29 @@ spec:
                                           type: string
                                         type: object
                                     type: object
+                                  namespaceSelector:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                      matchLabels:
+                                        additionalProperties:
+                                          type: string
+                                        type: object
+                                    type: object
                                   namespaces:
                                     items:
                                       type: string
@@ -3794,6 +4167,29 @@ spec:
                           items:
                             properties:
                               labelSelector:
+                                properties:
+                                  matchExpressions:
+                                    items:
+                                      properties:
+                                        key:
+                                          type: string
+                                        operator:
+                                          type: string
+                                        values:
+                                          items:
+                                            type: string
+                                          type: array
+                                      required:
+                                        - key
+                                        - operator
+                                      type: object
+                                    type: array
+                                  matchLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                type: object
+                              namespaceSelector:
                                 properties:
                                   matchExpressions:
                                     items:
@@ -3959,6 +4355,9 @@ spec:
                           required:
                             - port
                           type: object
+                        terminationGracePeriodSeconds:
+                          format: int64
+                          type: integer
                         timeoutSeconds:
                           format: int32
                           type: integer
@@ -4024,6 +4423,9 @@ spec:
                           required:
                             - port
                           type: object
+                        terminationGracePeriodSeconds:
+                          format: int64
+                          type: integer
                         timeoutSeconds:
                           format: int32
                           type: integer
@@ -4043,6 +4445,68 @@ spec:
                               - type: integer
                               - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          type: object
+                      type: object
+                    securityContext:
+                      properties:
+                        fsGroup:
+                          format: int64
+                          type: integer
+                        fsGroupChangePolicy:
+                          type: string
+                        runAsGroup:
+                          format: int64
+                          type: integer
+                        runAsNonRoot:
+                          type: boolean
+                        runAsUser:
+                          format: int64
+                          type: integer
+                        seLinuxOptions:
+                          properties:
+                            level:
+                              type: string
+                            role:
+                              type: string
+                            type:
+                              type: string
+                            user:
+                              type: string
+                          type: object
+                        seccompProfile:
+                          properties:
+                            localhostProfile:
+                              type: string
+                            type:
+                              type: string
+                          required:
+                            - type
+                          type: object
+                        supplementalGroups:
+                          items:
+                            format: int64
+                            type: integer
+                          type: array
+                        sysctls:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                              - name
+                              - value
+                            type: object
+                          type: array
+                        windowsOptions:
+                          properties:
+                            gmsaCredentialSpec:
+                              type: string
+                            gmsaCredentialSpecName:
+                              type: string
+                            runAsUserName:
+                              type: string
                           type: object
                       type: object
                     volumeMounts:
@@ -4248,8 +4712,6 @@ spec:
                             type: object
                           ephemeral:
                             properties:
-                              readOnly:
-                                type: boolean
                               volumeClaimTemplate:
                                 properties:
                                   metadata:
@@ -4769,6 +5231,33 @@ spec:
                   properties:
                     create:
                       type: boolean
+                    dnsSelectorEndpoints:
+                      items:
+                        properties:
+                          matchExpressions:
+                            items:
+                              properties:
+                                key:
+                                  type: string
+                                operator:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                                - key
+                                - operator
+                              type: object
+                            type: array
+                          matchLabels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                        type: object
+                      type: array
+                    flavor:
+                      type: string
                   type: object
                 nodeSelector:
                   additionalProperties:
@@ -5052,8 +5541,6 @@ spec:
                   - type
                 type: object
               type: array
-            defaultOverride:
-              type: object
           type: object
       type: object
   version: v1alpha1
@@ -5061,6 +5548,9 @@ spec:
     - name: v1alpha1
       served: true
       storage: true
+    - name: v2alpha1
+      served: false
+      storage: false
 status:
   acceptedNames:
     kind: ""

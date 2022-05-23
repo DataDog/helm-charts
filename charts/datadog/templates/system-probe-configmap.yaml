@@ -173,6 +173,7 @@ data:
             "recvmsg",
             "rename",
             "renameat",
+            "renameat2",
             "restart_syscall",
             "rmdir",
             "rt_sigaction",
