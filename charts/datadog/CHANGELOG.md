@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.0
+
+* Default Datadog Agent image to `7.36.1`.
+
 ## 2.33.8
 
 * Add `datadog.securityAgent.runtime.network.enabled` configuration to enable CWS network events.
