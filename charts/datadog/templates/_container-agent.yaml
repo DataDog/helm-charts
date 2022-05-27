@@ -18,12 +18,7 @@
   {{- if .Values.datadog.otlp.receiver.protocols }}
   {{- with .Values.datadog.otlp.receiver.protocols }}
 
-  # To check if the protocols sections are set but empty,
-  # transform the 'protocols' section into JSON and check
-  # if '"grpc":null' or '"http":null' are in the resulting string.
-  {{- $jsonProtocols := toJson . -}}
-
-  {{- if (and .grpc .grpc.endpoint) }}
+  {{- if (and .grpc .grpc.enabled) }}
   # gRPC supports several naming schemes: https://github.com/grpc/grpc/blob/master/doc/naming.md
   # The Datadog Agent Helm Chart currently only supports 'host:port' (usually '0.0.0.0:port').
   {{- if hasPrefix "unix:" .grpc.endpoint }}
@@ -39,27 +34,15 @@
     hostPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     name: otlpgrpcport
     protocol: TCP
-  {{- else if (or .grpc (contains "\"grpc\":null" $jsonProtocols)) }}
-  # .grpc section is set (possibly empty); .grpc.endpoint is not set
-  - containerPort: 4317
-    hostPort: 4317
-    name: otlpgrpcport
-    protocol: TCP
   {{- end }}
 
-  {{- if (and .http .http.endpoint) }}
+  {{- if (and .http .http.enabled) }}
   # Check that later port regexp will have a match.
   {{- if not ( mustRegexMatch ":[0-9]+$" .http.endpoint ) }}
   {{ fail  "port must be set explicitly on OTLP/HTTP endpoint"}}
   {{- end }}
   - containerPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     hostPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
-    name: otlphttpport
-    protocol: TCP
-  {{- else if (or .http (contains "\"http\":null" $jsonProtocols)) }}
-  # .http section is set (possibly empty); .http.endpoint is not set
-  - containerPort: 4318
-    hostPort: 4318
     name: otlphttpport
     protocol: TCP
   {{- end }}
