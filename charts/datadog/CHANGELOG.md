@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.33.8
+
+* Add `datadog.securityAgent.runtime.network.enabled` configuration to enable CWS network events.
+
 ## 2.33.7
 
 * Fix inaccurate documentation example for `datadog.kubeStateMetricsCore.labelsAsTags`.

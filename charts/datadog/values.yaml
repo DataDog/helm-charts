@@ -494,6 +494,10 @@ datadog:
         # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring (recommended for troubleshooting only)
         enabled: false
 
+      network:
+        # datadog.securityAgent.runtime.network.enabled -- Set to true to enable the collection of CWS network events
+        enabled: false
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components

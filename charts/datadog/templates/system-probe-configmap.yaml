@@ -51,6 +51,8 @@ data:
         dir: /etc/datadog-agent/runtime-security.d
       syscall_monitor:
         enabled: {{ $.Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
+      network:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
