@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.33.8
+
+* Added new value `datadog.secretBackend.enableGlobalPermissions` which when set to `false` will not allow Datadog agents to read all secrets in all clusters - defaults to `true` (current behaviour)
+* Added new value `datadog.secretBackend.roles` which will create `Role` and `RoleBinding` for each namespace defined - allowing for opt-in read permissions for secrets in those namespaces
+
 ## 2.33.7
 
 * Fix inaccurate documentation example for `datadog.kubeStateMetricsCore.labelsAsTags`.

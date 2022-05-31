@@ -53,6 +53,16 @@ datadog:
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
     timeout:  # 30
 
+    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets
+    enableGlobalPermissions: true
+
+    # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets
+    roles: []
+    # - namespace: secret-location-namespace
+    #   secrets:
+    #     - secret-1
+    #     - secret-2
+
   # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
   securityContext:
     runAsUser: 0
