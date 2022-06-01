@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.2
+
+* Default Cluster Agent image to `1.20.0`.
+
 ## 2.34.1
 
 * Add the `datadog.secretBackend.enableGlobalPermissions` value, which when set to `false`, does not allow Datadog agents to read all secrets in all clusters. Defaults to `true`.
