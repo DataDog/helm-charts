@@ -702,8 +702,8 @@ helm install --name <RELEASE_NAME> \
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. See https://datadoghq.dev/integrations-core/legacy/prometheus/#config-changes-between-versions for the differences between the two versions. (Version 2 requires Agent version 7.34+) |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
-| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when datadog.secretBackend.command is set to "/readsecret_multiple_providers.sh" |
-| datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replaces datadog.secretBackend.enableGlobalPermissions |
+| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
+| datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`. |
 | datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |

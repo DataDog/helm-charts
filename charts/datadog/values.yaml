@@ -53,10 +53,10 @@ datadog:
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
     timeout:  # 30
 
-    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when datadog.secretBackend.command is set to "/readsecret_multiple_providers.sh"
+    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
     enableGlobalPermissions: true
 
-    # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets - replaces datadog.secretBackend.enableGlobalPermissions
+    # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`.
     roles: []
     # - namespace: secret-location-namespace
     #   secrets:
