@@ -504,6 +504,10 @@ datadog:
         # datadog.securityAgent.runtime.syscallMonitor.enabled -- Set to true to enable the Syscall monitoring (recommended for troubleshooting only)
         enabled: false
 
+      network:
+        # datadog.securityAgent.runtime.network.enabled -- Set to true to enable the collection of CWS network events
+        enabled: false
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
@@ -888,7 +892,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.35.2
+    tag: 7.36.1
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:
@@ -1305,7 +1309,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.35.2
+    tag: 7.36.1
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
     ## Ex:

@@ -45,6 +45,8 @@
       value: /var/run/sysprobe/runtime-security.sock
     - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED
+      value: {{ .Values.datadog.securityAgent.runtime.network.enabled | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
