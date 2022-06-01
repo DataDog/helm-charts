@@ -7,6 +7,7 @@
 ## 2.34.2
 
 * Default Cluster Agent image to `1.20.0`.
+* Add `clusterAgent.admission_controller.failurePolicy` configuration to set the failure policy for dynamic admission control
 
 ## 2.34.1
 
