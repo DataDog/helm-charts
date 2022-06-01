@@ -43,7 +43,7 @@ datadog:
   ## Examples: https://docs.datadoghq.com/agent/guide/secrets-management/#setup-examples-1
   secretBackend:
     # datadog.secretBackend.command -- Configure the secret backend command, path to the secret backend binary.
-    ## Note: If the command value is "/readsecret_multiple_providers.sh" the agents will have permissions to get secret objects.
+    ## Note: If the command value is "/readsecret_multiple_providers.sh", and datadog.secretBackend.enableGlobalPermissions is enabled below, the agents will have permissions to get secret objects across the cluster.
     ## Read more about "/readsecret_multiple_providers.sh": https://docs.datadoghq.com/agent/guide/secrets-management/#script-for-reading-from-multiple-secret-providers-readsecret_multiple_providerssh
     command:  # "/readsecret.sh" or "/readsecret_multiple_providers.sh" or any custom binary path
 
@@ -52,6 +52,16 @@ datadog:
 
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
     timeout:  # 30
+
+    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
+    enableGlobalPermissions: true
+
+    # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`.
+    roles: []
+    # - namespace: secret-location-namespace
+    #   secrets:
+    #     - secret-1
+    #     - secret-2
 
   # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
   securityContext:
