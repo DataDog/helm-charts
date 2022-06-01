@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 2.33.8
+## 2.33.9
 
 * Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.33.8
+
+* Add `datadog.securityAgent.runtime.network.enabled` configuration to enable CWS network events.
 
 ## 2.33.7
 
