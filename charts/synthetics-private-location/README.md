@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.14.0](https://img.shields.io/badge/Version-0.14.0-informational?style=flat-square) ![AppVersion: 1.23.0](https://img.shields.io/badge/AppVersion-1.23.0-informational?style=flat-square)
+![Version: 0.14.0](https://img.shields.io/badge/Version-0.14.0-informational?style=flat-square) ![AppVersion: 1.23.1](https://img.shields.io/badge/AppVersion-1.23.1-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations).
 

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.3
+
+* If set allow arbitrary podlabels on pods.
+
 ## 2.34.2
 
 * Default Cluster Agent image to `1.20.0`.

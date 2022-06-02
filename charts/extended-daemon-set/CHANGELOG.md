@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+* If set allow arbitrary podlabels on pods.
+
 ## 0.2.2
 
 * Nothing

@@ -40,6 +40,9 @@ helm.sh/chart: {{ include "synthetics-private-location.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.podLabels}}
+{{ toYaml .Values.podLabels }}
+{{- end}}
 {{- end }}
 
 {{/*
