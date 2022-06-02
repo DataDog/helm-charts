@@ -1,8 +1,21 @@
 # Datadog changelog
 
-## 2.33.9
+## 2.34.3
 
 * Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.34.2
+
+* Default Cluster Agent image to `1.20.0`.
+
+## 2.34.1
+
+* Add the `datadog.secretBackend.enableGlobalPermissions` value, which when set to `false`, does not allow Datadog agents to read all secrets in all clusters. Defaults to `true`.
+* Add the `datadog.secretBackend.roles` value,  which creates `Role` and `RoleBinding` for each namespace defined. Allows for opt-in read permissions for secrets in those namespaces.
+
+## 2.34.0
+
+* Default Datadog Agent image to `7.36.1`.
 
 ## 2.33.8
 

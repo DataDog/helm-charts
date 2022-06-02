@@ -137,4 +137,41 @@ metadata:
   {{- end }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+{{- range $role := .Values.datadog.secretBackend.roles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    resourceNames: {{ toYaml $role.secrets | nindent 6 }}
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "datadog.fullname" $ }}-read-secrets-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" $ }}
+    apiGroup: ""
+    namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  apiGroup: ""
+{{- end }} # end range $role := .Values.datadog.secretBackend.roles
 {{- end -}}
