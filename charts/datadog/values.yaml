@@ -496,6 +496,9 @@ datadog:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
       enabled: false
 
+      # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
+      fimEnabled: false
+
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
         configMap:

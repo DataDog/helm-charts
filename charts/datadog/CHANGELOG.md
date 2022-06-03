@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.5
+
+* Add `datadog.securityAgent.runtime.fimEnabled` configuration to enable CWS File Integrity Monitoring.
+
 ## 2.34.4
 
 * Add `clusterAgent.admissionController.failurePolicy` configuration to set the failure policy for dynamic admission control
