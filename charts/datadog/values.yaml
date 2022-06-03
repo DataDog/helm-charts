@@ -716,6 +716,12 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+    ## If clusterAgent.admissionController.configMode is not set, the Admission Controller defaults to hostip.
+    ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
+    configMode:  # "hostip", "socket" or "service"
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
   confd: {}

@@ -571,6 +571,17 @@ false
 {{- end -}}
 
 {{/*
+Return the local service name
+*/}}
+{{- define "localService.name" -}}
+{{- if ne .Values.agents.localService.overrideName "" }}
+{{- .Values.agents.localService.overrideName -}}
+{{- else -}}
+{{ template "datadog.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
