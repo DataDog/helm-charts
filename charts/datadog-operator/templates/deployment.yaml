@@ -85,7 +85,7 @@ spec:
             {{- end }}
             {{- range .Values.env }}
             - name: {{ .name }}
-              value: {{ .value }}
+              value: {{ .value | quote }}
             {{- end }} 
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
