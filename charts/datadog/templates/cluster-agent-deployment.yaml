@@ -184,7 +184,7 @@ spec:
             value: {{ template "localService.name" . }}
           {{- end }}
           - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
-            value: {{ .Values.clusterAgent.admission_controller.failurePolicy | quote }}
+            value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
