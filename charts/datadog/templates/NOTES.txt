@@ -304,6 +304,9 @@ are enabled:
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 * External Metrics Provider
 {{- end }}
+{{- if eq .Values.clusterAgent.admissionController.failurePolicy "Fail" }}
+* Failure policy of the Admission Controller is set to "Fail"
+{{- end }}
 
 To run in high availability mode, our recommandation is to update the chart
 configuration with:
