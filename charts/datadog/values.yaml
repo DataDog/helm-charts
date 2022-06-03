@@ -998,6 +998,11 @@ agents:
 
   containers:
     agent:
+      # agents.containers.agent.command -- Command to run in the Datadog Agent container as entrypoint
+      command:
+        - "agent"
+        - "run"
+
       # agents.containers.agent.env -- Additional environment variables for the agent container
       env: []
 

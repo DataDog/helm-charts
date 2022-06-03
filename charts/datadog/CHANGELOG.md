@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.3
+Introduce `agents.containers.agent.command`, which allows overriding the agent
+entrypoint with a custom command. Defaults to `agent run`.
+
 ## 2.34.2
 
 * Default Cluster Agent image to `1.20.0`.

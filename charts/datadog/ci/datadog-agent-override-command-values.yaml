@@ -1,0 +1,7 @@
+agents:
+  containers:
+    agent:
+      command: 
+        - "time"
+        - "agent"
+        - "run"
