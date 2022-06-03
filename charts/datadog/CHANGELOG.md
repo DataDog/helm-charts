@@ -1,7 +1,7 @@
 # Datadog changelog
 
 ## 2.34.3
-Introduce `agents.containers.agent.command`, which allows overriding the agent
+Introduce `agents.containers.agent.command`, which allows overriding the Agent
 entrypoint with a custom command. Defaults to `agent run`.
 
 ## 2.34.2
