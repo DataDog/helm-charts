@@ -2,7 +2,7 @@
 
 ## 2.34.4
 
-* Add `clusterAgent.admission_controller.failurePolicy` configuration to set the failure policy for dynamic admission control
+* Add `clusterAgent.admissionController.failurePolicy` configuration to set the failure policy for dynamic admission control
 
 ## 2.34.3
 
