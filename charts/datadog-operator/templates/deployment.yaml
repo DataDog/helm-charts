@@ -83,6 +83,10 @@ spec:
             - name: DD_URL
               value: {{ .Values.dd_url }}
             {{- end }}
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }} 
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"

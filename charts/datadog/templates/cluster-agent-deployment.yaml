@@ -175,6 +175,16 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.mutateUnlabelled | quote }}
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
+          {{- if .Values.clusterAgent.admissionController.configMode }}
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+            value: {{ .Values.clusterAgent.admissionController.configMode | quote }}
+          {{- end }}
+          {{- if eq .Values.clusterAgent.admissionController.configMode "service" }}
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
+            value: {{ template "localService.name" . }}
+          {{- end }}
+          - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
+            value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
