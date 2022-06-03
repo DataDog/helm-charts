@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1
+
+* Add arbitrary environment variable definition.
+
 ## 0.8.0
 
 * Update chart to Datadog Operator `0.8.0`.
