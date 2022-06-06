@@ -2,7 +2,7 @@
 
 ## 0.2.3
 
-* If set allow arbitrary podlabels on pods.
+* Allow optional arbitrary podlabels on pods by setting the `podLabels` configuration.  Otherwise no podLabels are required.
 
 ## 0.2.2
 
