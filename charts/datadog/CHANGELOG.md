@@ -1,8 +1,22 @@
 # Datadog changelog
 
-## 2.34.3
+
+## 2.34.6
 
 * Allow optional arbitrary podlabels on pods by setting the `podLabels` configuration.
+
+## 2.34.5
+
+* Add `datadog.securityAgent.runtime.fimEnabled` configuration to enable CWS File Integrity Monitoring.
+
+## 2.34.4
+
+* Add `clusterAgent.admissionController.failurePolicy` configuration to set the failure policy for dynamic admission control
+
+## 2.34.3
+
+* Introduce `clusterAgent.admissionController.configMode` (requires Cluster Agent `1.20+`). It allows choosing the kind of configuration to be injected ("hostip", "service", or "socket").
+
 
 ## 2.34.2
 
