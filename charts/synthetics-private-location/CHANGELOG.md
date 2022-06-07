@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.14.1
+
+* Update private location image version to `1.24.0`.
+
 ### 0.14.0
 
 * Replace deprecated liveness probe mechanism with the HTTP-based one.
