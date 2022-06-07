@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 2.34.7
+
+* Allow optional arbitrary podlabels on pods by setting the `podLabels` configuration.
 
 ## 2.34.6
 
-* Allow optional arbitrary podlabels on pods by setting the `podLabels` configuration.
+* Avoid the error `<eq .Values.clusterAgent.admissionController.configMode "service">: error calling eq: incompatible types for comparison` that can happen in older helm versions.
 
 ## 2.34.5
 

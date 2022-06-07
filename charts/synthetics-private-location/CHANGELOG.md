@@ -1,8 +1,12 @@
 # Datadog changelog
 
-### 0.14.1
+### 0.14.2
 
 * Allow optional arbitrary podlabels on pods by setting the `podLabels` configuration.  Otherwise no podLabels are required.
+
+### 0.14.1
+
+* Update private location image version to `1.24.0`.
 
 ### 0.14.0
 
