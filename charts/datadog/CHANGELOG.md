@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.35.3
+
+* Add `openat2` to system-probe seccomp profile to fix issues with opening files.
+
 ## 2.35.2
 
 * Update RBACs and the default check configuration to collect ingress metrics in Kube State Metrics Core.
