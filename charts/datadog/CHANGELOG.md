@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.35.1
+
+* Fix Cluster-Agent SCC creation on openshift 3.x.
+
 ## 2.35.0
 
 * The Admission Controller is now enabled by default.
