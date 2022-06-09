@@ -84,6 +84,13 @@ rules:
   - list
   - watch
 {{- end }}    
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - list
+  - watch
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
