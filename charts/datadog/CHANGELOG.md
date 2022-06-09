@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.34.7
+
+* Fix Cluster-Agent SCC creation on openshift 3.x.
+
 ## 2.34.6
 
 * Avoid the error `<eq .Values.clusterAgent.admissionController.configMode "service">: error calling eq: incompatible types for comparison` that can happen in older helm versions.
