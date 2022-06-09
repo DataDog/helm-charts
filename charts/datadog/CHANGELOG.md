@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.35.2
+
+* Update RBACs and the default check configuration to collect ingress metrics in Kube State Metrics Core.
+  Note: Ingress metrics collection requires Cluster Agent 1.21+.
+
 ## 2.35.1
 
 * Fix Cluster-Agent SCC creation on openshift 3.x.
