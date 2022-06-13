@@ -14,6 +14,10 @@ fullnameOverride:  # ""
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
+# commonLabels -- Labels to apply to all resources
+commonLabels: {}
+# team_name: dev
+
 # registry -- Registry to use for all Agent images (default gcr.io)
 ## Currently we offer Datadog Agent images on:
 ## GCR - use gcr.io/datadoghq (default)
