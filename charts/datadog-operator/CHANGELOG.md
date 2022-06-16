@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2
+
+* Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
+
 ## 0.8.1
 
 * Add arbitrary environment variable definition.
