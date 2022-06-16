@@ -46,6 +46,7 @@ data:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
+      fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
@@ -157,6 +158,7 @@ data:
             "newfstatat",
             "open",
             "openat",
+            "openat2",
             "pause",
             "perf_event_open",
             "pipe",

@@ -230,13 +230,13 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 {{- end }}
 
 
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
 
 ######################################################################################
 ####   WARNING: Cloud Workload Security (CWS) is not supported on GKE Autopilot   ####
 ######################################################################################
 
-{{- fail "On GKE Autopilot environments, Cloud Workload Security (CWS) is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
+{{- fail "On GKE Autopilot environments, Cloud Workload Security (CWS) is not supported. The options 'datadog.securityAgent.runtime.enabled' and 'datadog.securityAgent.runtime.fimEnabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -303,6 +303,9 @@ are enabled:
 {{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 * External Metrics Provider
+{{- end }}
+{{- if eq .Values.clusterAgent.admissionController.failurePolicy "Fail" }}
+* Failure policy of the Admission Controller is set to "Fail"
 {{- end }}
 
 To run in high availability mode, our recommandation is to update the chart

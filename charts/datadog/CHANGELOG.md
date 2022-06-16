@@ -1,8 +1,41 @@
 # Datadog changelog
 
-## 2.34.3
+## 2.35.4
 
 * Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.35.3
+
+* Add `openat2` to system-probe seccomp profile to fix issues with opening files.
+
+## 2.35.2
+
+* Update RBACs and the default check configuration to collect ingress metrics in Kube State Metrics Core.
+  Note: Ingress metrics collection requires Cluster Agent 1.21+.
+
+## 2.35.1
+
+* Fix Cluster-Agent SCC creation on openshift 3.x.
+
+## 2.35.0
+
+* The Admission Controller is now enabled by default.
+
+## 2.34.6
+
+* Avoid the error `<eq .Values.clusterAgent.admissionController.configMode "service">: error calling eq: incompatible types for comparison` that can happen in older helm versions.
+
+## 2.34.5
+
+* Add `datadog.securityAgent.runtime.fimEnabled` configuration to enable CWS File Integrity Monitoring.
+
+## 2.34.4
+
+* Add `clusterAgent.admissionController.failurePolicy` configuration to set the failure policy for dynamic admission control
+
+## 2.34.3
+
+* Introduce `clusterAgent.admissionController.configMode` (requires Cluster Agent `1.20+`). It allows choosing the kind of configuration to be injected ("hostip", "service", or "socket").
 
 ## 2.34.2
 
