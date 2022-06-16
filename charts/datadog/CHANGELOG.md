@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.35.4
+
+* Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
+
 ## 2.35.3
 
 * Add `openat2` to system-probe seccomp profile to fix issues with opening files.
