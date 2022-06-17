@@ -2,7 +2,7 @@
 
 ### 0.14.2
 
-* Added ability to template the config secret name.
+* Add ability to template the ConfigMap/Secret name.
 
 ### 0.14.1
 
