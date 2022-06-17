@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.14.2
+
+* Added ability to template the config secret name.
+
 ### 0.14.1
 
 * Update private location image version to `1.24.0`.
