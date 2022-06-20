@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 2.35.4
+## 2.35.6
 
 * Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.35.5
+
+* Allow cross-DCA communication in DCA `NetworkPolicy` and `CiliumNetworkPolicy`
+
+## 2.35.4
+
+* Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
 
 ## 2.35.3
 

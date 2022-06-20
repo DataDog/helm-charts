@@ -14,33 +14,45 @@ spec:
     - Ingress
     - Egress
   ingress:
-  - # Ingress from the node agents (for the metadata provider and prometheus check)
-    ports:
-      - port: 5005
-      - port: 5000
-    from:
-      - podSelector:
-          matchLabels:
-            app: {{ template "datadog.fullname" . }}
+    - # Ingress from the node agents (for the prometheus check)
+      ports:
+        - port: 5000
+      from:
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}
+    - # Ingress from node agents (for the metadata provider), other cluster agents and from cluster checks runner
+      ports:
+        - port: 5005
+      from:
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}-cluster-agent
 {{- if $.Values.clusterChecksRunner.enabled }}
-  - # Ingress from cluster checks runner
-    ports:
-      - port: 5005
-    from:
-      - podSelector:
-          matchLabels:
-            app: {{ template "datadog.fullname" . }}-clusterchecks
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}-clusterchecks
 {{- end }}
 {{- if .Values.clusterAgent.admissionController.enabled }}
-  - ports:
-      - port: 8000
+    - ports:
+        - port: 8000
 {{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
-  - # Ingress from API server for external metrics
-    ports:
-      - port: {{ template "clusterAgent.metricsProvider.port" . }}
+    - # Ingress from API server for external metrics
+      ports:
+        - port: {{ template "clusterAgent.metricsProvider.port" . }}
 {{- end }}
   egress:
+    - # Egress to other cluster agents
+      ports:
+        - port: 5005
+      to:
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}-cluster-agent
     - # Egress to
       # * Datadog intake
       # * Kube API server
