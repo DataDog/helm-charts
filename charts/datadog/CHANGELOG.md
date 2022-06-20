@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.35.6
+
+* Fix `include` in clusterchecks deployment template.
+
 ## 2.35.5
 
 * Allow cross-DCA communication in DCA `NetworkPolicy` and `CiliumNetworkPolicy`
