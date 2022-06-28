@@ -19,17 +19,8 @@
   {{- with .Values.datadog.otlp.receiver.protocols }}
 
   {{- if (and .grpc .grpc.enabled) }}
-  # gRPC supports several naming schemes: https://github.com/grpc/grpc/blob/master/doc/naming.md
-  # The Datadog Agent Helm Chart currently only supports 'host:port' (usually '0.0.0.0:port').
-  {{- if hasPrefix "unix:" .grpc.endpoint }}
-  {{ fail "'unix' protocol is not currently supported on OTLP/gRPC endpoint" }}
-  {{- end }}
-  {{- if hasPrefix "unix-abstract:" .grpc.endpoint }}
-  {{ fail "'unix-abstract' protocol is not currently supported on OTLP/gRPC endpoint" }}
-  {{- end }}
-  {{- if not ( mustRegexMatch ":[0-9]+$" .grpc.endpoint ) }}
-  {{ fail "port must be set explicitly on OTLP/gRPC endpoint" }}
-  {{- end }}
+  {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
+  {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
   - containerPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     hostPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     name: otlpgrpcport
@@ -37,10 +28,7 @@
   {{- end }}
 
   {{- if (and .http .http.enabled) }}
-  # Check that later port regexp will have a match.
-  {{- if not ( mustRegexMatch ":[0-9]+$" .http.endpoint ) }}
-  {{ fail  "port must be set explicitly on OTLP/HTTP endpoint"}}
-  {{- end }}
+  {{- include "verify-otlp-endpoint-port" .http.endpoint }}
   - containerPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     hostPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
     name: otlphttpport
