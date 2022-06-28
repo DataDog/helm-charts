@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.8.2
+
+* Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
+
+## 0.8.1
+
+* Add arbitrary environment variable definition.
+
+## 0.8.0
+
+* Update chart to Datadog Operator `0.8.0`.
+
+## 0.7.11
+
+* Allow additional service account annotations.
+
 ## 0.7.10
 
 * Sync operator RBACs from `datadog-operator` repo to add missing `verticalpodautoscalers` RBACs.

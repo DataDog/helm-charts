@@ -6,7 +6,7 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 users:
-- system:serviceaccount:{{ .Release.Namespace }}:{{ template "datadog.fullname" . }}
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "agents.serviceAccountName" . }}
 priority: 8
 # Allow host ports for dsd / trace intake
 allowHostPorts: {{ or .Values.datadog.dogstatsd.useHostPort .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled .Values.agents.useHostNetwork }}

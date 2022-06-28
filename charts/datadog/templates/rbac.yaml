@@ -33,7 +33,8 @@ rules:
   resources:
   - configmaps
   resourceNames:
-  - datadogtoken  # Kubernetes event collection state
+  - {{ template "datadog.fullname" . }}token  # Kubernetes event collection state
+  - datadogtoken  # Kept for backward compatibility with agent <7.37.0
   verbs:
   - get
   - update
@@ -44,7 +45,8 @@ rules:
   resources:
   - configmaps
   resourceNames:
-  - datadog-leader-election  # Leader election token
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  - datadog-leader-election  # Kept for backward compatibility with agent <7.37.0
   verbs:
   - get
   - update
@@ -122,17 +124,54 @@ roleRef:
   name: {{ template "datadog.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" . }}
+    name: {{ include "agents.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ template "datadog.fullname" . }}
+  name: {{ include "agents.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
   {{- if .Values.agents.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
   {{- end }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+{{- range $role := .Values.datadog.secretBackend.roles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    resourceNames: {{ toYaml $role.secrets | nindent 6 }}
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "datadog.fullname" $ }}-read-secrets-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" $ }}
+    apiGroup: ""
+    namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  apiGroup: ""
+{{- end }} # end range $role := .Values.datadog.secretBackend.roles
 {{- end -}}

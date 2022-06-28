@@ -1,5 +1,27 @@
 # Datadog changelog
 
+### 0.14.2
+
+* Add ability to template the ConfigMap/Secret name.
+
+### 0.14.1
+
+* Update private location image version to `1.24.0`.
+
+### 0.14.0
+
+* Replace deprecated liveness probe mechanism with the HTTP-based one.
+* Add readiness probe using the HTTP-based mechanism.
+* Add `enableStatusProbes` value to enable/disable both liveness and readiness probes. Minimal private location image version required: `1.12.0`.
+
+### 0.13.4
+
+* Update private location image version to `1.23.0`.
+
+### 0.13.3
+
+* Update private location image version to `1.22.0`.
+
 ### 0.13.2
 
 * Update private location image version to `1.21.0`.

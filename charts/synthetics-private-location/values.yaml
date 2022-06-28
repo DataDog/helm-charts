@@ -11,7 +11,7 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.21.0
+  tag: 1.24.0
 
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
@@ -81,7 +81,7 @@ affinity: {}
 # configFile -- JSON string containing the configuration of the private location worker
 configFile: "{}"
 
-# configConfigMap -- Config Map that stores the configuration of the private location worked for the deployment
+# configConfigMap -- Config Map that stores the configuration of the private location worker for the deployment
 configConfigMap: ""
 
 # configSecret -- Secret that stores the configuration of the private location worker for the deployment
@@ -104,3 +104,7 @@ hostAliases: []
 #  - ip: "10.0.0.1"
 #    hostnames:
 #    - "host.domain.com"
+
+# enableStatusProbes -- Enable both liveness and readiness probes (minimal private location image version required: 1.12.0)
+enableStatusProbes: false
+  # Requires to be in sync with `enableStatusProbes` in the configuration of the private location worker

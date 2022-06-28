@@ -9,6 +9,7 @@ replicaCount: 1
 apiKey:  # <DATADOG_API_KEY>
 
 # apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+
 ## If set, this parameter takes precedence over "apiKey".
 apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 
@@ -16,6 +17,7 @@ apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 appKey:  # <DATADOG_APP_KEY>
 
 # site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
+
 ## Set to 'datadoghq.com' to send data to the US1 site (default).
 ## Set to 'datadoghq.eu' to send data to the EU site.
 ## Set to 'us3.datadoghq.com' to send data to the US3 site.
@@ -24,10 +26,15 @@ appKey:  # <DATADOG_APP_KEY>
 site:  # datadoghq.com
 
 # dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
+
 ## Overrides the site setting defined in "site".
 dd_url:  # <DATADOG_API_ENDPOINT>
 
+# env -- Define any environment variables to be passed to the operator.
+env: []
+
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+
 ## If set, this parameter takes precedence over "appKey".
 appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
@@ -35,7 +42,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 0.7.2
+  tag: 0.8.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -66,6 +73,8 @@ serviceAccount:
   create: true
   # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
   name:
+  # serviceAccount.annotations -- Allows setting additional annotations for service account
+  annotations: {}
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious

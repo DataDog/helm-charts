@@ -16,7 +16,12 @@
 {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom }}
   envFrom:
-{{ concat .Values.datadog.envFrom .Values.agents.containers.securityAgent.envFrom | toYaml  | indent 4 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.securityAgent.envFrom }}
+{{ .Values.agents.containers.securityAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -33,13 +38,17 @@
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
-    {{- if .Values.datadog.securityAgent.runtime.enabled }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_FIM_ENABLED
+      value:  {{ .Values.datadog.securityAgent.runtime.fimEnabled | quote }}
+    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
       value: /var/run/sysprobe/runtime-security.sock
     - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED
+      value: {{ .Values.datadog.securityAgent.runtime.network.enabled | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
@@ -62,7 +71,7 @@
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
-    - name: {{ template "datadog.fullname" . }}-datadog-yaml
+    - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
     {{- end }}
@@ -89,7 +98,7 @@
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.securityAgent.runtime.enabled }}
+    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     {{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d

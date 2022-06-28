@@ -86,8 +86,46 @@ specs:
           - ports:
               - port: "443"
                 protocol: TCP
+  - description: Ingress from cluster agent
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}-cluster-agent
+        {{- if .Values.clusterAgent.podLabels }}
+        {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
+        {{- end }}
+    ingress:
+    -
+      fromEndpoints:
+        - matchLabels:
+            app: {{ template "datadog.fullname" . }}
+            {{- if .Values.clusterAgent.podLabels }}
+            {{ toYaml .Values.clusterAgent.podLabels | indent 10 }}
+            {{- end }}
+      toPorts:
+      - ports:
+        - port: "5005"
+          protocol: TCP
+  - description: Egress to cluster agent
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}-cluster-agent
+        {{- if .Values.clusterAgent.podLabels }}
+        {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+    -
+      toEndpoints:
+        - matchLabels:
+            app: {{ template "datadog.fullname" . }}
+            {{- if .Values.clusterAgent.podLabels }}
+            {{ toYaml .Values.clusterAgent.podLabels | indent 10 }}
+            {{- end }}
+      toPorts:
+      - ports:
+        - port: "5005"
+          protocol: TCP
 {{- if $.Values.agents.enabled }}
-  - description: Ingress from agent
+  - description: "Ingress from agent"
     endpointSelector:
       matchLabels:
         app: {{ template "datadog.fullname" . }}-cluster-agent

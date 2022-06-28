@@ -16,6 +16,7 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
+  revisionHistoryLimit: {{ .Values.clusterAgent.revisionHistoryLimit }}
   strategy:
 {{- if .Values.clusterAgent.strategy }}
 {{ toYaml .Values.clusterAgent.strategy | indent 4 }}
@@ -113,7 +114,12 @@ spec:
         {{- end }}
 {{- if or .Values.datadog.envFrom .Values.clusterAgent.envFrom }}
         envFrom:
-{{ concat .Values.datadog.envFrom .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.clusterAgent.envFrom }}
+{{ .Values.clusterAgent.envFrom | toYaml | indent 10 }}
+{{- end }}
 {{- end }}
         env:
           - name: DD_HEALTH_PORT
@@ -169,6 +175,16 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.mutateUnlabelled | quote }}
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
+          {{- if .Values.clusterAgent.admissionController.configMode }}
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+            value: {{ .Values.clusterAgent.admissionController.configMode | quote }}
+          {{- if eq .Values.clusterAgent.admissionController.configMode "service" }}
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
+            value: {{ template "localService.name" . }}
+          {{- end }}
+          {{- end }}
+          - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
+            value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -204,6 +220,10 @@ spec:
           - name: DD_LEADER_LEASE_DURATION
             value: "15"
           {{- end }}
+          - name: DD_LEADER_LEASE_NAME
+            value: {{ template "datadog.fullname" . }}-leader-election
+          - name: DD_CLUSTER_AGENT_TOKEN_NAME
+            value: {{ template "datadog.fullname" . }}token
           {{- if .Values.datadog.collectEvents }}
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote}}
@@ -285,7 +305,7 @@ spec:
       volumes:
         - name: installinfo
           configMap:
-            name: {{ template "datadog.fullname" . }}-installinfo
+            name: {{ include "agents-install-info-configmap-name" . }}
 {{- if eq (include "need-cluster-agent-confd" .) "true" }}
         - name: confd
           configMap:
@@ -298,6 +318,10 @@ spec:
 {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
             - key: kubernetes_state_core.yaml.default
               path: kubernetes_state_core.yaml.default
+{{- end }}
+{{- if .Values.datadog.helmCheck.enabled }}
+            - key: helm.yaml
+              path: helm.yaml
 {{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}

@@ -61,7 +61,7 @@
 {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
 - name: confd
   configMap:
-    name: {{ template "datadog.fullname" . }}-confd
+    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
@@ -143,7 +143,7 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
@@ -154,7 +154,7 @@
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
 - hostPath:
-    path: /var/log/pods
+    path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
     path: /var/log/containers

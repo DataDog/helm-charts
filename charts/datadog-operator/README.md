@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.7.10](https://img.shields.io/badge/Version-0.7.10-informational?style=flat-square) ![AppVersion: 0.7.2](https://img.shields.io/badge/AppVersion-0.7.2-informational?style=flat-square)
+![Version: 0.8.2](https://img.shields.io/badge/Version-0.8.2-informational?style=flat-square) ![AppVersion: 0.8.0](https://img.shields.io/badge/AppVersion-0.8.0-informational?style=flat-square)
 
 ## Values
 
@@ -18,10 +18,11 @@
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
+| env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"0.7.2"` | Define the Datadog Operator version to use |
+| image.tag | string | `"0.8.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
@@ -35,6 +36,7 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |

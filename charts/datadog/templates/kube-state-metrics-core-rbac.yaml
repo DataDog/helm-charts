@@ -75,10 +75,19 @@ rules:
   verbs:
   - list
   - watch
+{{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
 - apiGroups:
   - autoscaling.k8s.io
   resources:
   - verticalpodautoscalers
+  verbs:
+  - list
+  - watch
+{{- end }}    
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
   verbs:
   - list
   - watch

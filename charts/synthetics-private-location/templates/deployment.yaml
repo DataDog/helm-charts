@@ -33,16 +33,22 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.enableStatusProbes }}
           livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - '[ $(expr $(cat /tmp/liveness.date) + 300000) -gt $(date +%s%3N) ]'
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+            httpGet:
+              path: /liveness
+              port: 8080
+          readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 2
-            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: 8080
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/datadog
             name: worker-config
@@ -75,11 +81,11 @@ spec:
       - name: worker-config
         {{- if .Values.configConfigMap }}
         configMap:
-          name: {{ .Values.configConfigMap | quote }}
+          name: {{ tpl .Values.configConfigMap . | quote }}
         {{- else }}
         secret:
         {{- if .Values.configSecret }}
-          secretName: {{ .Values.configSecret | quote }}
+          secretName: {{ tpl .Values.configSecret . | quote }}
         {{- else }}
           secretName: {{ include "synthetics-private-location.fullname" . }}-config
         {{- end }}

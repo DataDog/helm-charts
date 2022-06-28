@@ -4,14 +4,11 @@
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
-  {{- end }}
+  {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
-  {{- end }}
-  {{- if .Values.agents.containers.traceAgent.securityContext }}
-  securityContext:
-    {{ toYaml .Values.agents.containers.traceAgent.securityContext | nindent 4 }}
-  {{- end }}
+  {{- end -}}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
   ports:
@@ -26,7 +23,12 @@
 {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
   envFrom:
-{{ concat .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom | toYaml  | indent 4 }}
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.envFrom }}
+{{ .Values.agents.containers.traceAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
@@ -52,7 +54,7 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if .Values.agents.useConfigMap }}
-    - name: {{ template "datadog.fullname" . }}-datadog-yaml
+    - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
     {{- end }}

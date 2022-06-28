@@ -1,7 +1,7 @@
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (not (eq .Values.datadog.apiKey "<DATADOG_API_KEY>"))) }}
 Datadog agents are spinning up on each node in your cluster. After a few
 minutes, you should see your agents starting in your event stream:
-    https://app.datadoghq.com/event/stream
+    https://app.datadoghq.com/event/explorer
 
   {{- if .Values.datadog.apiKeyExistingSecret }}
 You disabled creation of Secret containing API key, therefore it is expected
@@ -211,19 +211,42 @@ To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
 {{- if .Values.providers.gke.autopilot}}
+
+###########################################################################################
+####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
+###########################################################################################
+
+On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints on the Agent DaemonSet:
+* The serviceAccountName must be "datadog-agent".
+* All ConfigMap names mounted must be hardcode.
+
 {{- if eq (include "system-probe-feature" .) "true" }}
 
-##################################################################################
-####               WARNING: System Probe is not supported on GKE Autopilot    ####
-##################################################################################
+#####################################################################
+####   WARNING: System Probe is not supported on GKE Autopilot   ####
+#####################################################################
+{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
 
 {{- end }}
 
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
 
-###################################################################################
-####               WARNING: Security Agent is not supported on GKE Autopilot   ####
-###################################################################################
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
+
+######################################################################################
+####   WARNING: Cloud Workload Security (CWS) is not supported on GKE Autopilot   ####
+######################################################################################
+
+{{- fail "On GKE Autopilot environments, Cloud Workload Security (CWS) is not supported. The options 'datadog.securityAgent.runtime.enabled' and 'datadog.securityAgent.runtime.fimEnabled' must be set 'false'" }}
+
+{{- end }}
+
+{{- if .Values.datadog.securityAgent.compliance.enabled }}
+
+#################################################################################################
+####   WARNING: Cloud Security Posture Management (CSPM) is not supported on GKE Autopilot   ####
+#################################################################################################
+
+{{- fail "On GKE autopilot environments, Cloud Security Posture Management (CSPM) is not supported. The option 'datadog.securityAgent.compliance.enabled' must be set to 'false'" }}
 
 {{- end }}
 
@@ -240,6 +263,16 @@ To enable it please set clusterAgent.enabled to 'true'.
 ##############################################################################
 ####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
 ##############################################################################
+
+{{- end }}
+
+{{- if .Values.datadog.networkMonitoring.enabled }}
+
+#######################################################################################
+####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
 
 {{- end }}
 
@@ -270,6 +303,9 @@ are enabled:
 {{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 * External Metrics Provider
+{{- end }}
+{{- if eq .Values.clusterAgent.admissionController.failurePolicy "Fail" }}
+* Failure policy of the Admission Controller is set to "Fail"
 {{- end }}
 
 To run in high availability mode, our recommandation is to update the chart
@@ -348,6 +384,6 @@ You are using the datadog.acInclude or datadog.acExclude parameters, which have 
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to 'name:.*' .
 
 {{- end }}

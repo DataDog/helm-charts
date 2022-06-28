@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Helm
-        uses: azure/setup-helm@v3.0
+        uses: azure/setup-helm@v2.1
         with:
           version: v3.6.3
       - uses: actions/setup-python@v4
@@ -105,16 +105,16 @@ jobs:
       matrix:
         k8s:
           - v1.14.10
-          - v1.16.9
-          - v1.18.4
-          - v1.22.4
+          - v1.16.15
+          - v1.18.20
+          - v1.22.9
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@main
+        uses: helm/kind-action@v1.3.0
         with:
           node_image: kindest/node:${{ matrix.k8s }}
       - uses: actions/setup-python@v4

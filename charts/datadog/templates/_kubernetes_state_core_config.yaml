@@ -9,6 +9,9 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
       - secrets
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
+      - verticalpodautoscalers
+{{- end }}
       - nodes
       - pods
       - services
@@ -29,6 +32,7 @@ kubernetes_state_core.yaml.default: |-
       - poddisruptionbudgets
       - storageclasses
       - volumeattachments
+      - ingresses
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
