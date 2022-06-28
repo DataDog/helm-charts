@@ -216,7 +216,7 @@ spec:
 {{- if .Values.datadog.checksd }}
         - name: checksd
           configMap:
-            name: {{ include "agents.checksd-configmap-name" . }}
+            name: {{ include "datadog-checksd-configmap-name" . }}
 {{- end }}
       affinity:
 {{- if .Values.clusterChecksRunner.affinity }}

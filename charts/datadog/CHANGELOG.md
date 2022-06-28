@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 2.35.6
+## 2.35.7
 
 * Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.35.6
+
+* Fix `include` in clusterchecks deployment template.
 
 ## 2.35.5
 
