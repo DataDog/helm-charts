@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.36.0
+
+* Default Datadog Agent image to `7.37.1`.
+* Default Datadog Cluster Agent image to `1.21.0`.
+
 ## 2.35.6
 
 * Fix `include` in clusterchecks deployment template.
