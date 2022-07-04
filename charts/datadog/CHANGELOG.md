@@ -1,8 +1,25 @@
 # Datadog changelog
 
-## 2.35.4
+## 2.36.1
 
 * Support `commonlabels` configuration to be able to add common labels on all resources created by the chart.
+
+## 2.36.0
+
+* Default Datadog Agent image to `7.37.1`.
+* Default Datadog Cluster Agent image to `1.21.0`.
+
+## 2.35.6
+
+* Fix `include` in clusterchecks deployment template.
+
+## 2.35.5
+
+* Allow cross-DCA communication in DCA `NetworkPolicy` and `CiliumNetworkPolicy`
+
+## 2.35.4
+
+* Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
 
 ## 2.35.3
 
