@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.1
+
+* Add `datadog.otlp` section to configure OTLP ingest.
+
 ## 2.36.0
 
 * Default Datadog Agent image to `7.37.1`.

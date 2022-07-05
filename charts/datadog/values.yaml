@@ -362,6 +362,24 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+  ## OTLP ingest related configuration
+  otlp:
+    receiver:
+      protocols:
+        # datadog.otlp.receiver.protocols.grpc - OTLP/gRPC configuration
+        grpc:
+          # datadog.otlp.receiver.protocols.grpc.enabled -- Enable the OTLP/gRPC endpoint
+          enabled: false
+          # datadog.otlp.receiver.procotols.grpc.endpoint -- OTLP/gRPC endpoint
+          endpoint: "0.0.0.0:4317"
+
+        # datadog.otlp.receiver.protocols.http - OTLP/HTTP configuration
+        http:
+          # datadog.otlp.receiver.protocols.http.enabled -- Enable the OTLP/HTTP endpoint
+          enabled: false
+          # datadog.otlp.receiver.protocols.http.endpoint -- OTLP/HTTP endpoint
+          endpoint: "0.0.0.0:4318"
+
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
   ## envFrom to pass configmaps or secrets as environment

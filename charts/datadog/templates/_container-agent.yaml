@@ -13,6 +13,32 @@
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+  {{- if .Values.datadog.otlp }}
+  {{- if .Values.datadog.otlp.receiver }}
+  {{- if .Values.datadog.otlp.receiver.protocols }}
+  {{- with .Values.datadog.otlp.receiver.protocols }}
+
+  {{- if (and .grpc .grpc.enabled) }}
+  {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
+  {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
+  - containerPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    name: otlpgrpcport
+    protocol: TCP
+  {{- end }}
+
+  {{- if (and .http .http.enabled) }}
+  {{- include "verify-otlp-endpoint-port" .http.endpoint }}
+  - containerPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+    name: otlphttpport
+    protocol: TCP
+  {{- end }}
+
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 {{- if .Values.agents.containers.agent.ports }}
 {{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
 {{- end }}
