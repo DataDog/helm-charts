@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.3
+
+* Update chart to Datadog Operator tag `0.8.1`.
+
 ## 0.8.2
 
 * Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
