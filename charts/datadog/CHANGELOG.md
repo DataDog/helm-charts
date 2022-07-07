@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.2
+
+* Add `tolerations` field to kube-state-metrics in values.yaml.
+
 ## 2.36.1
 
 * Add `datadog.otlp` section to configure OTLP ingest.
