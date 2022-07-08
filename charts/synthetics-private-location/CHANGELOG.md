@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.14.4
+
+* Add `configVolume` to pass in a custom volume mount for the configuration directory
+
 ### 0.14.3
 
 * Update private location image version to `1.25.0`.

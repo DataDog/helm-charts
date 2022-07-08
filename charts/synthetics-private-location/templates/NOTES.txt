@@ -24,3 +24,21 @@ You provided configSecret and configFile. The secret provided by configSecret ta
 
 You provided configConfigMap and configSecret. The config map provided by configConfigMap takes precedence over configSecret, so configSecret was ignored.
 {{- end }}
+
+{{- if and .Values.configConfigMap .Values.configVolume }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configConfigMap and configVolume. The config map provided by configConfigMap takes precedence over configVolume, so configVolume was ignored.
+{{- end }}
+
+{{- if and .Values.configVolume .Values.configSecret }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configVolume and configSecret. The config map provided by configVolume takes precedence over configSecret, so configSecret was ignored.
+{{- end }}

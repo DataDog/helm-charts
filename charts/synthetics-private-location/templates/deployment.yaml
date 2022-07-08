@@ -83,11 +83,15 @@ spec:
         configMap:
           name: {{ tpl .Values.configConfigMap . | quote }}
         {{- else }}
+        {{- if .Values.configVolume }}
+          {{- toYaml .Values.configVolume | nindent 10 }}
+        {{- else }}
         secret:
         {{- if .Values.configSecret }}
           secretName: {{ tpl .Values.configSecret . | quote }}
         {{- else }}
           secretName: {{ include "synthetics-private-location.fullname" . }}-config
+        {{- end }}
         {{- end }}
         {{- end }}
       {{- if .Values.extraVolumes }}
