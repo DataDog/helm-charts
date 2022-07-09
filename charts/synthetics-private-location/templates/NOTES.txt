@@ -24,5 +24,3 @@ You provided configSecret and configFile. The secret provided by configSecret ta
 
 You provided configConfigMap and configSecret. The config map provided by configConfigMap takes precedence over configSecret, so configSecret was ignored.
 {{- end }}
-
-{{- if and .Values.configConfigMap .Values.configVolume }}
