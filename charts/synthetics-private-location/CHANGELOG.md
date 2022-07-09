@@ -2,7 +2,7 @@
 
 ### 0.14.4
 
-* Add `configVolume` to pass in a custom volume mount for the configuration directory
+* Do not default to `configFile` value for configuration to allow using `extraVolumes` to mount configuration files
 
 ### 0.14.3
 

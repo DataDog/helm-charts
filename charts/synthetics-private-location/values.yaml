@@ -87,9 +87,6 @@ configConfigMap: ""
 # configSecret -- Secret that stores the configuration of the private location worker for the deployment
 configSecret: ""
 
-# configVolume -- Custom volume mount block for the configuration of the private location worker
-configVolume: {}
-
 # envFrom -- Set environment variables from configMaps and/or secrets
 envFrom: []
 #   - configMapRef:
