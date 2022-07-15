@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.3
+
+* Fix usage of deprecated command flags in the process-agent.
+
 ## 2.36.2
 
 * Documentation updates to comments in some agent templates
