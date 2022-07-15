@@ -673,4 +673,20 @@ Verifies that an OTLP endpoint has a port explicitly set.
 {{- end }}
 {{- end -}}
 
-
+{{/*
+Returns the flag used to specify the config file for the process-agent.
+In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
+*/}}
+{{- define "process-agent-config-file-flag" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $length := len (split "." $version ) -}}
+{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+--config
+{{- else -}}
+--cfgpath
+{{- end -}}
+{{- else -}}
+--config
+{{- end -}}
+{{- end -}}
