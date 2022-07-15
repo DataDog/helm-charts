@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.4
+
+* Support `commonlabels` configuration to be able to add common labels on all resources created by the chart.
+
 ## 2.36.3
 
 * Fix usage of deprecated command flags in the process-agent.
