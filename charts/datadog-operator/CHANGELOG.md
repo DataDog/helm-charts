@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.4
+
+* Update dependency on CRD chards to `0.5.2` to allow deployment on Google marketplace.
+
+## 0.8.3
+
+* Update chart to Datadog Operator tag `0.8.1`.
+
 ## 0.8.2
 
 * Fix comments in `values.yaml` to allow a seamless `helm-docs` update.
