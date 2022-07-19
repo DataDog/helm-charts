@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5
+
+* Updating dependency to CRD chart.
+
 ## 0.8.4
 
 * Update dependency on CRD chards to `0.5.2` to allow deployment on Google marketplace.
