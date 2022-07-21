@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.5
+
+* Use `regexFind` in favor of `mustRegexFind` to support helm2.
+
 ## 2.36.4
 
 * Support `commonlabels` configuration to be able to add common labels on all resources created by the chart.

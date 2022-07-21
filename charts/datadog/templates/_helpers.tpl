@@ -671,7 +671,7 @@ The Datadog Agent Helm Chart currently only supports 'host:port' (usually '0.0.0
 Verifies that an OTLP endpoint has a port explicitly set.
 */}}
 {{- define "verify-otlp-endpoint-port" -}}
-{{- if not ( mustRegexMatch ":[0-9]+$" . ) }}
+{{- if not ( regexMatch ":[0-9]+$" . ) }}
 {{ fail "port must be set explicitly on OTLP endpoints" }}
 {{- end }}
 {{- end -}}
