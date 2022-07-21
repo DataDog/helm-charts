@@ -21,16 +21,16 @@
   {{- if (and .grpc .grpc.enabled) }}
   {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
   {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
-  - containerPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
-    hostPort: {{ .grpc.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+  - containerPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
     name: otlpgrpcport
     protocol: TCP
   {{- end }}
 
   {{- if (and .http .http.enabled) }}
   {{- include "verify-otlp-endpoint-port" .http.endpoint }}
-  - containerPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
-    hostPort: {{ .http.endpoint | mustRegexFind ":[0-9]+$" | trimPrefix ":" }}
+  - containerPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    hostPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
     name: otlphttpport
     protocol: TCP
   {{- end }}
