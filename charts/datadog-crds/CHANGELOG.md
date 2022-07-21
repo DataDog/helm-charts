@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.4
+
+* Fix semver comparison for minor version corner case.
+* Upadte charts.
+
 ## 0.5.3
 
 * Fix the semver comparison so v1beta1 is used on 1.21.

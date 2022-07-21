@@ -34,9 +34,9 @@ download_crd() {
         yq -i eval 'del(.spec.preserveUnknownFields)' "$path"
     fi
 
-    ifCondition="{{- if and .Values.crds.$installOption (semverCompare \"<=21\" .Capabilities.KubeVersion.Minor) }}"
+    ifCondition="{{- if and .Values.crds.$installOption (semverCompare \"<=1.21.x\" .Capabilities.KubeVersion.Version ) }}"
     if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.crds.$installOption (semverCompare \">21\" .Capabilities.KubeVersion.Minor) }}"
+        ifCondition="{{- if and .Values.crds.$installOption (semverCompare \">1.21.x\" .Capabilities.KubeVersion.Version ) }}"
         cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
     fi
 
