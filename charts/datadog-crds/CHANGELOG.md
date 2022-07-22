@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.3
+
+* Fix the semver comparison so v1beta1 is used on 1.21.
+
+## 0.5.2
+
+* Rely on the Kubernetes version to deploy the CRD v1 or v1beta1.
+
 ## 0.5.1
 
 * Remove `preserveUnknownFields` to maintain compatibility with Kubernetes versions <1.15.
