@@ -50,7 +50,7 @@ spec:
               port: 8080
           {{- end }}
           volumeMounts:
-          {{- if or (.Values.configFile) (.Values.configConfigMap) (.Values.configSecret) }}
+          {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
           - mountPath: /etc/datadog
             name: worker-config
           {{- end }}
@@ -80,7 +80,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- if or (.Values.configFile) (.Values.configConfigMap) (.Values.configSecret) }}
+      {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
       - name: worker-config
         {{- if .Values.configConfigMap }}
         configMap:

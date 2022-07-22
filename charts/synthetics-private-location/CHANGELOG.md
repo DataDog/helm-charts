@@ -1,6 +1,6 @@
 # Datadog changelog
 
-### 0.14.4
+### 0.15.0
 
 * Do not default to `configFile` value for configuration to allow using `extraVolumes` to mount configuration files
 
