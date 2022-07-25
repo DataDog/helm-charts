@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 2.36.6
+
+* Fix GKE Autopilot installation. The `process-agent` command must
+  use the `-config` argument to be compliant with the Datadog Agent's
+  GKE Autopilot security profile.
+
 ## 2.36.5
 
 * Use `regexFind` in favor of `mustRegexFind` to support helm2.
