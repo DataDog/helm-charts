@@ -50,8 +50,10 @@ spec:
               port: 8080
           {{- end }}
           volumeMounts:
+          {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
           - mountPath: /etc/datadog
             name: worker-config
+          {{- end }}
           {{- if .Values.extraVolumeMounts }}
           {{- toYaml .Values.extraVolumeMounts | nindent 10 }}
           {{- end }}
@@ -78,6 +80,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
       - name: worker-config
         {{- if .Values.configConfigMap }}
         configMap:
@@ -90,6 +93,7 @@ spec:
           secretName: {{ include "synthetics-private-location.fullname" . }}-config
         {{- end }}
         {{- end }}
+      {{- end }}
       {{- if .Values.extraVolumes }}
       {{- toYaml .Values.extraVolumes | nindent 6 }}
       {{- end }}
