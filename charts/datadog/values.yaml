@@ -1369,6 +1369,9 @@ agents:
   # agents.priorityClassName -- Sets PriorityClassName if defined
   priorityClassName:
 
+  # agents.priorityPreemptionPolicyValue -- Set to "Never" to change the PriorityClass to non-preempting
+  priorityPreemptionPolicyValue: PreemptLowerPriority
+
   # agents.priorityClassValue -- Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods.
 
   ## The PriorityClass uses PreemptLowerPriority.

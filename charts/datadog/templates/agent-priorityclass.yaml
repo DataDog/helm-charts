@@ -4,6 +4,6 @@ description: Used for Datadog Agent Components to be scheduled with higher prior
 kind: PriorityClass
 metadata:
   name: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
-preemptionPolicy: PreemptLowerPriority
+preemptionPolicy: {{ .Values.agents.priorityPreemptionPolicyValue }}
 value: {{ .Values.agents.priorityClassValue }}
 {{- end }}

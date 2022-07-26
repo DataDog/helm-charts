@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.36.7
+* Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
+
 ## 2.36.6
 
 * Fix GKE Autopilot installation. The `process-agent` command must
