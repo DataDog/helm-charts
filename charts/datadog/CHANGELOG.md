@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.36.8
+* Add `datadog.clusterName` on clusterCheckRunner pods
+
 ## 2.36.7
 * Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
 
