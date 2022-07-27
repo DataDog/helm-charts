@@ -181,6 +181,11 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          {{- if .Values.datadog.clusterName }}
+          {{- template "check-cluster-name" . }}
+          - name: DD_CLUSTER_NAME
+            value: {{ .Values.datadog.clusterName | quote }}
+          {{- end }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
