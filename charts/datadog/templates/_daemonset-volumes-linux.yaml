@@ -111,6 +111,12 @@
     path: /etc/pki
   name: public-key-dir
 - hostPath:
+    path: /etc/yum/vars
+  name: yum-vars-dir
+- hostPath:
+    path: /etc/dnf/vars
+  name: dnf-vars-dir
+- hostPath:
     path: /etc/rhsm
   name: rhel-subscription-dir
 {{- else }}

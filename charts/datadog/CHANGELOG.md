@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.36.8
+
+* Add `/etc/dnf/vars` and `/etc/yum/vars` to the default package management directories mounted for kernel header downloading.
+
 ## 2.36.7
 * Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
 
