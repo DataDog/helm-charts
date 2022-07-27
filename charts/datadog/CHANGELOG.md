@@ -1,6 +1,11 @@
 # Datadog changelog
 
+## 2.36.9
+
+* Add `/etc/dnf/vars` and `/etc/yum/vars` to the default package management directories mounted for kernel header downloading.
+
 ## 2.36.8
+
 * Add `datadog.clusterName` on clusterCheckRunner pods
 
 ## 2.36.7

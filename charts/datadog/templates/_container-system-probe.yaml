@@ -117,6 +117,12 @@
     - name: public-key-dir
       mountPath: /host/etc/pki
       readOnly: true
+    - name: yum-vars-dir
+      mountPath: /host/etc/yum/vars
+      readOnly: true
+    - name: dnf-vars-dir
+      mountPath: /host/etc/dnf/vars
+      readOnly: true
     - name: rhel-subscription-dir
       mountPath: /host/etc/rhsm
       readOnly: true
