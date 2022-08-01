@@ -3,7 +3,7 @@
 ## 0.5.4
 
 * Fix semver comparison for minor version corner case.
-* Upadte charts.
+* Update charts.
 
 ## 0.5.3
 
