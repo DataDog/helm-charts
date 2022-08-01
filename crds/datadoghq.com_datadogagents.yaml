@@ -6152,38 +6152,10 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        ddUrl:
+                          type: string
                         enabled:
                           type: boolean
-                        endpoint:
-                          properties:
-                            credentials:
-                              properties:
-                                apiKey:
-                                  type: string
-                                apiSecret:
-                                  properties:
-                                    keyName:
-                                      type: string
-                                    secretName:
-                                      type: string
-                                  required:
-                                    - secretName
-                                  type: object
-                                appKey:
-                                  type: string
-                                appSecret:
-                                  properties:
-                                    keyName:
-                                      type: string
-                                    secretName:
-                                      type: string
-                                  required:
-                                    - secretName
-                                  type: object
-                              type: object
-                            url:
-                              type: string
-                          type: object
                         extraTags:
                           items:
                             type: string
