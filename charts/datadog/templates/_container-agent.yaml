@@ -92,7 +92,7 @@
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_APM_ENABLED
-      value: "false"
+      value: {{  (default false (or .Values.datadog.apm.enabled .Values.datadog.apmEnabled)) | quote }}
     - name: DD_LOGS_ENABLED
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
