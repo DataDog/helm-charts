@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.1
+
+* Default Datadog Agent image to `7.38.1`.
+
 ## 2.37.0
 
 * Default Datadog Agent image to `7.38.0`.
