@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.2
+
+* Set traced_cgroups_count default value to 0 in the system-config file for CWS.
+
 ## 2.37.1
 
 * Default Datadog Agent image to `7.38.1`.
