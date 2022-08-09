@@ -54,6 +54,8 @@ data:
         enabled: {{ $.Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
       network:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
+      activity_dump:
+        traced_cgroups_count: 0
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
