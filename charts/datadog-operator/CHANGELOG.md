@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.6
+
+* Updating dependency to CRD chart.
+
 ## 0.8.5
 
 * Updating dependency to CRD chart.
