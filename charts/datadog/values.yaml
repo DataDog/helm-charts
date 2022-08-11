@@ -701,7 +701,7 @@ clusterAgent:
     digest: ""
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
-    repository: 
+    repository:
 
     # clusterAgent.image.pullPolicy -- Cluster Agent image pullPolicy
     pullPolicy: IfNotPresent
@@ -1021,7 +1021,7 @@ agents:
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
-    repository: 
+    repository:
 
     # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
 
@@ -1459,7 +1459,7 @@ clusterChecksRunner:
     tagSuffix: ""
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
-    repository: 
+    repository:
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
