@@ -239,7 +239,15 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
+
 {{- define "image-path" -}}
+{{- if .image.digest -}}
+{{- if .image.repository -}}
+{{- .image.repository -}}@{{ .image.digest }}
+{{- else -}}
+{{ .root.registry }}/{{ .image.name }}@{{ .image.digest }}
+{{- end -}}
+{{- else -}}
 {{- $tagSuffix := "" -}}
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
@@ -250,7 +258,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
-
+{{- end -}}
 {{/*
 Return true if a system-probe feature is enabled.
 */}}

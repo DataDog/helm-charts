@@ -491,6 +491,7 @@ helm install --name <RELEASE_NAME> \
 | agents.daemonsetAnnotations | object | `{}` | Annotations to add to the DaemonSet |
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
+| agents.image.digest | string | `""` | Define Agent image digest to use |
 | agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
 | agents.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
@@ -548,6 +549,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
 | clusterAgent.envFrom | list | `[]` | Set environment variables specific to Cluster Agent from configMaps and/or secrets |
 | clusterAgent.healthPort | int | `5556` | Port number to use in the Cluster Agent for the healthz endpoint |
+| clusterAgent.image.digest | string | `""` | Cluster Agent image digest to use |
 | clusterAgent.image.name | string | `"cluster-agent"` | Cluster Agent image name to use (relative to `registry`) |
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -593,6 +595,7 @@ helm install --name <RELEASE_NAME> \
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |
 | clusterChecksRunner.envFrom | list | `[]` | Set environment variables specific to Cluster Checks Runner from configMaps and/or secrets |
 | clusterChecksRunner.healthPort | int | `5557` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
+| clusterChecksRunner.image.digest | string | `""` | Define Agent image digest to use |
 | clusterChecksRunner.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
