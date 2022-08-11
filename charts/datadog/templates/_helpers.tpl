@@ -239,7 +239,6 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
-
 {{- define "image-path" -}}
 {{- if .image.digest -}}
 {{- if .image.repository -}}
