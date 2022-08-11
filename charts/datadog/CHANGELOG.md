@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 2.37.3
+* Add `digest` as a configurable value for all datadog images used
+
 ## 2.37.2
 
 * Set traced_cgroups_count default value to 0 in the system-config file for CWS.
