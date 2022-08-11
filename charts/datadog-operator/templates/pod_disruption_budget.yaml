@@ -3,6 +3,7 @@ apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "datadog-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:
