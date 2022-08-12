@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.37.3
+
+* Update default agent image version tag to `7.38.2`.
+* Rename view CI values.yaml files to be executed by the CI.
+
 ## 2.37.2
 
 * Set traced_cgroups_count default value to 0 in the system-config file for CWS.
