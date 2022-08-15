@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.5
+
+* Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).
+
 ## 2.37.4
 
 * Add `digest` as a configurable value for all datadog images used

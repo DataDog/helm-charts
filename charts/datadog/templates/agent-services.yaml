@@ -81,7 +81,7 @@ spec:
     - protocol: UDP
       port: {{ .Values.datadog.dogstatsd.port }}
       targetPort: {{ .Values.datadog.dogstatsd.port }}
-      name: dogstatsd
+      name: dogstatsdport
 {{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}
