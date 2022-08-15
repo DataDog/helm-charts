@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.7.2
+
+* Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).
+
 ## 3.7.1
 
 * Add required capability to system-probe in order to make the `auth_token` file readable.
