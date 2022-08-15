@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.4
+
+* Add `digest` as a configurable value for all datadog images used
+
 ## 2.37.3
 
 * Update default agent image version tag to `7.38.2`.

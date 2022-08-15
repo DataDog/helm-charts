@@ -697,6 +697,9 @@ clusterAgent:
     # clusterAgent.image.tag -- Cluster Agent image tag to use
     tag: 1.22.0
 
+    # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
+    digest: ""
+
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
 
@@ -1006,6 +1009,9 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     tag: 7.38.2
+
+    # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
+    digest: ""
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
 
@@ -1441,6 +1447,9 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
     tag: 7.38.2
+
+    # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
+    digest: ""
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
 
