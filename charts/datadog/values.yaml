@@ -459,6 +459,9 @@ datadog:
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
     processDiscovery: false
 
+  # datadog.osReleasePath -- Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` file by default
+  osReleasePath:
+
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
 
@@ -504,9 +507,6 @@ datadog:
     #   hostPath: /etc/apt
     #   mountPath: /host/etc/apt
     ## If this list is empty, then all necessary package management directories (for all supported OSs) will be mounted.
-
-    # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` file by default
-    osReleasePath:
 
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
