@@ -353,6 +353,17 @@ To enable it please set clusterAgent.enabled to 'true'.
 You are using the datadog.acInclude or datadog.acExclude parameters, which have been deprecated since Datadog Agent 7.20. Please use datadog.containerInclude and datadog.containerExclude instead.
 {{- end }}
 
+{{- if and .Values.datadog.systemProbe.osReleasePath (eq (include "system-probe-feature" .) "true") }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the datadog.systemProbe.osReleasePath parameter, which has been renamed datadog.osReleasePath.
+This version still supports datadog.systemProbe.osReleasePath parameter, but it will be removed in the next major version of our Helm chart.
+More information about this change: https://github.com/DataDog/helm-charts/pull/717
+{{- end }}
+
 
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
