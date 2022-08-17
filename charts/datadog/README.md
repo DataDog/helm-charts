@@ -697,7 +697,7 @@ helm install --name <RELEASE_NAME> \
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
-| datadog.osReleasePath | string | `nil` | Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` file by default |
+| datadog.osReleasePath | string | `nil` | Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` files by default |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` |  |
 | datadog.otlp.receiver.protocols.http.enabled | bool | `false` | Enable the OTLP/HTTP endpoint |
