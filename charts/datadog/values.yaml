@@ -119,7 +119,7 @@ datadog:
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
-  kubeStateMetricsEnabled: true
+  kubeStateMetricsEnabled: false
 
   kubeStateMetricsNetworkPolicy:
     # datadog.kubeStateMetricsNetworkPolicy.create -- If true, create a NetworkPolicy for kube state metrics
@@ -129,7 +129,7 @@ datadog:
     # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
-    enabled: false
+    enabled: true
 
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
