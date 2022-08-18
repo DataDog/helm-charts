@@ -1,3 +1,4 @@
+{{- template "check-dca-version" . }}
 {{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -374,4 +375,5 @@ spec:
       {{- if .Values.clusterAgent.nodeSelector }}
 {{ toYaml .Values.clusterAgent.nodeSelector | indent 8 }}
       {{- end }}
+{{ end }}
 {{ end }}
