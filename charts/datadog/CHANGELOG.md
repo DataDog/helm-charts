@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.5
+
+* Add namespaces to all namespace scoped objects using the HELM standard `Release.namespace`.
+
 ## 2.37.4
 
 * Add `digest` as a configurable value for all datadog images used
