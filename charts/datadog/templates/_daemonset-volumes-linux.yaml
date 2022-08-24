@@ -10,7 +10,7 @@
     path: /sys/fs/cgroup
   name: cgroups
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath | default "/etc/os-release" }}
+    path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - hostPath:
