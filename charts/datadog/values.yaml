@@ -459,8 +459,8 @@ datadog:
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
     processDiscovery: false
 
-  # datadog.osReleasePath -- Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` files by default
-  osReleasePath:
+  # datadog.osReleasePath -- Specify the path to your os-release file
+  osReleasePath: /etc/os-release
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
