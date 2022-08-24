@@ -70,7 +70,8 @@
     - name: etc-lsb-release
       mountPath: /host/etc/lsb-release
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true{{- if .Values.datadog.serviceMonitoring.enabled }}
+      readOnly: true
+{{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
