@@ -2,7 +2,7 @@
 
 ## 2.37.5
 
-* Add namespaces to all namespace scoped objects using the HELM standard `Release.namespace`.
+* Add namespaces to all namespace-scoped objects using the HELM standard `Release.namespace`.
 
 ## 2.37.4
 
