@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.6
+
+* Add `chmod` to allowed actions in system-probe seccomp profile
+
 ## 2.37.5
 
 * Mount host release files for proper host OS detection
