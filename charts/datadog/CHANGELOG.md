@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.5
+
+* Mount host release files for proper host OS detection
+
 ## 2.37.4
 
 * Add `digest` as a configurable value for all datadog images used

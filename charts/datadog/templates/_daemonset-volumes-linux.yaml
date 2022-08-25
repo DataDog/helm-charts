@@ -9,15 +9,10 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if eq (include "should-enable-system-probe" .) "true" }}
-{{- if .Values.datadog.systemProbe.osReleasePath }}
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.osReleasePath }}
+    path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
-{{- else }}
-- hostPath:
-    path: /etc/os-release
-  name: etc-os-release
+{{- if eq (include "should-enable-system-probe" .) "true" }}
 - hostPath:
     path: /etc/redhat-release
   name: etc-redhat-release
@@ -27,7 +22,6 @@
 - hostPath:
     path: /etc/lsb-release
   name: etc-lsb-release
-{{- end -}}
 {{- end -}}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:

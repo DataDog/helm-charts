@@ -1,0 +1,13 @@
+{{- define "container-host-release-volumemounts" -}}
+{{- if eq (include "should-enable-system-probe" .) "true" }}
+- name: os-release-file
+  mountPath: /host{{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
+  mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+  readOnly: true
+{{- else }}
+- name: os-release-file
+  mountPath: /host{{ .Values.datadog.osReleasePath }}
+  mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+  readOnly: true
+{{- end }}
+{{- end }}
