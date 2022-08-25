@@ -82,6 +82,7 @@ data:
             "capget",
             "capset",
             "chdir",
+            "chmod",
             "clock_gettime",
             "clone",
             "close",

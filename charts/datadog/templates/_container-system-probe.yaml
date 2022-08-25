@@ -54,15 +54,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if .Values.datadog.systemProbe.osReleasePath }}
-    - name: os-release-file
-      mountPath: /host{{ .Values.datadog.systemProbe.osReleasePath }}
-      readOnly: true
-{{- else }}
-    - name: etc-os-release
-      mountPath: /host/etc/os-release
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
+    {{- include "container-host-release-volumemounts" . | nindent 4 }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -75,7 +67,6 @@
       mountPath: /host/etc/lsb-release
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- end }}
 {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
