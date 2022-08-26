@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.7
+
+* Add namespaces to all namespace-scoped objects using the HELM standard `Release.namespace`.
+
 ## 0.8.6
 
 * Updating dependency to CRD chart.

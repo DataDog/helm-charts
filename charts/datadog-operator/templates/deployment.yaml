@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "datadog-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:
@@ -86,7 +87,7 @@ spec:
             {{- range .Values.env }}
             - name: {{ .name }}
               value: {{ .value | quote }}
-            {{- end }} 
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"
