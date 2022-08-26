@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 2.37.7
-
-* Add namespaces to all namespace-scoped objects using the HELM standard `Release.namespace`.
-
 ## 2.37.6
 
 * Add `chmod` to allowed actions in system-probe seccomp profile
