@@ -29,3 +29,14 @@ Create chart name and version as used by the chart label.
 {{- define "datadog-crds.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{/*
+Set value for comparison of Kubernetes Version
+*/}}
+{{- define "datadog-crds.kubeVersion" -}}
+{{- if .Values.kubeVersionOverride }}
+{{- semver .Values.kubeVersionOverride }}
+{{- else }}
+{{- .Capabilities.KubeVersion.GitVersion }}
+{{- end }}
+{{- end }}

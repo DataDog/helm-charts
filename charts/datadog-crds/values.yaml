@@ -15,3 +15,6 @@ nameOverride: ""
 
 # fullnameOverride -- Override the fully qualified app name
 fullnameOverride: ""
+
+# kubeVersionOverride -- Override the detected Kubernetes version
+kubeVersionOverride: ""
