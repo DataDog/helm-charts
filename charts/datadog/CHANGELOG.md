@@ -2,9 +2,9 @@
 
 ## 2.37.8
 
-* Fix: avoid volumeMount duplication in `system-probe` container if `datadog.osReleasePath` value
-  correspond to one of the default os-release-paths mounted automatically.
-* Feat: add the possibility to disable the default os-release path mount linked to `system-probe` container.
+* Fix the volumeMount duplication in `system-probe` container if `datadog.osReleasePath` value
+  corresponds to one of the default os-release-paths automatically mounted.
+* Add the option to disable the default os-release path mount linked to `system-probe` container.
 
 ## 2.37.7
 
