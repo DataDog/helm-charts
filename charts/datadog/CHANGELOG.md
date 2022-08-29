@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.37.7
+
+* Fix Windows nodes deployment: do not mount `container-host-release-volumemounts` if
+  the `targetSystem` is "Windows".
+
 ## 2.37.6
 
 * Add `chmod` to allowed actions in system-probe seccomp profile

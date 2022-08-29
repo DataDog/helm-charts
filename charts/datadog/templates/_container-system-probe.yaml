@@ -54,7 +54,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- include "container-host-release-volumemounts" . | nindent 4 }}
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
