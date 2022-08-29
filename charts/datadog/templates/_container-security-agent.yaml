@@ -61,10 +61,10 @@
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-    {{- include "container-host-release-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
