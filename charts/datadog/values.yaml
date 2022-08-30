@@ -523,6 +523,9 @@ datadog:
     # datadog.systemProbe.conntrackInitTimeout -- the time to wait for conntrack to initialize before failing
     conntrackInitTimeout: 10s
 
+    # datadog.systemProbe.enableDefaultOsReleasePaths -- enable default os-release files mount
+    enableDefaultOsReleasePaths: true
+
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
 
