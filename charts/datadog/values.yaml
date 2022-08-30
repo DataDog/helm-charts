@@ -715,13 +715,13 @@ clusterAgent:
     pullSecrets: []
     #   - name: "<REG_SECRET>"
 
-    # clusterAgent.image.doNotCheckTag -- Skip the version<>chart compatibility check
+    # clusterAgent.image.doNotCheckTag -- Skip the version and chart compatibility check
 
     ## By default, the version passed in clusterAgent.image.tag is checked
     ## for compatibility with the version of the chart.
-    ## This boolean permits to completely skip this check.
+    ## This boolean permits completely skipping this check.
     ## This is useful, for example, for custom tags that are not
-    ## respecting semantic versioning
+    ## respecting semantic versioning.
     doNotCheckTag:  # false
 
   # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
@@ -1035,7 +1035,7 @@ agents:
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
 
-    # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
+    # agents.image.doNotCheckTag -- Skip the version and chart compatibility check
 
     ## By default, the version passed in agents.image.tag is checked
     ## for compatibility with the version of the chart.

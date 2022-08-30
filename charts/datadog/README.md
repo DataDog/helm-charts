@@ -126,7 +126,7 @@ You can specify the Datadog Cluster Agent token used to secure the communication
 
 The migration from 2.x to 3.x does not require manual action.
 As per the Changelog, we do not be guaranteeing support of Helm 2 moving forward.
-If you already have the Legacy Kubernetes State Metrics Check enabled, migrating will only show you the deprecation notifice.
+If you already have the legacy Kubernetes State Metrics Check enabled, migrating will only show you the deprecation notice.
 
 #### From 1.x to 2.x
 
@@ -437,7 +437,7 @@ helm install <RELEASE_NAME> \
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
-| agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
+| agents.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | agents.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -495,7 +495,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.envFrom | list | `[]` | Set environment variables specific to Cluster Agent from configMaps and/or secrets |
 | clusterAgent.healthPort | int | `5556` | Port number to use in the Cluster Agent for the healthz endpoint |
 | clusterAgent.image.digest | string | `""` | Cluster Agent image digest to use, takes precedence over tag if specified |
-| clusterAgent.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
+| clusterAgent.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | clusterAgent.image.name | string | `"cluster-agent"` | Cluster Agent image name to use (relative to `registry`) |
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
