@@ -316,7 +316,7 @@ configuration with:
 {{- end }}
 
 
-{{- if and not .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetrics.enabled )}}
+{{- if and .Values.datadog.kubeStateMetricsEnabled (not .Values.datadog.kubeStateMetricsCore.enabled)}}
 
 #################################################################
 ####               WARNING: Deprecation notice               ####

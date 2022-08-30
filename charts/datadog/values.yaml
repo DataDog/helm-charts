@@ -119,6 +119,7 @@ datadog:
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
+  # The kubeStateMetricsEnabled option will be removed in the 4.0 version of the Datadog Agent chart.
   kubeStateMetricsEnabled: false
 
   kubeStateMetricsNetworkPolicy:
