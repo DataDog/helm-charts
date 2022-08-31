@@ -260,6 +260,10 @@ spec:
           - name: DD_PROMETHEUS_SCRAPE_CHECKS
             value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.prometheusScrape.version }}
+          - name: DD_PROMETHEUS_SCRAPE_VERSION
+            value: {{ .Values.datadog.prometheusScrape.version | quote }}
+          {{- end }}
           {{- end }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
         livenessProbe:

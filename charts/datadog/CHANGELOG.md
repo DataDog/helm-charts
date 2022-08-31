@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 2.37.9
+
+* Add `DD_PROMETHEUS_SCRAPE_VERSION` to Cluster Agent to match Agent version
+
 ## 2.37.8
 
 * Fix the volumeMount duplication in `system-probe` container if `datadog.osReleasePath` value
