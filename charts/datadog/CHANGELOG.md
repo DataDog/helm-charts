@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.0.3
+
+* Add `faccessat2` to allowed actions in system-probe seccomp profile
+
 ## 3.0.1
 
 * Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
