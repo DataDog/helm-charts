@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.15.1
+
+* Update private location image version to `1.27.0`.
+
 ### 0.15.0
 
 * Do not default to `configFile` value for configuration to allow using `extraVolumes` to mount configuration files
