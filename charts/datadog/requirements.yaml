@@ -9,3 +9,8 @@ dependencies:
     version: 2.13.2
     repository: https://prometheus-community.github.io/helm-charts
     condition: datadog.kubeStateMetricsEnabled
+  - name: vector
+    version: 0.10.2
+    repository: https://helm.vector.dev
+    condition: observabilityPipelines.enabled
+    alias: observabilityPipelines
