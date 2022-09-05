@@ -38,4 +38,6 @@ kubernetes_state_core.yaml.default: |-
 {{- end }}
       labels_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
+         node:
+{{ .Values.datadog.nodeLabelsAsTags | toYaml | indent 12 }}
 {{- end -}}
