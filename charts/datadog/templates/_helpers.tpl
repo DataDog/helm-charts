@@ -5,16 +5,29 @@
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.19.0" -}}
+{{- $version = "6.36.0" -}}
 {{- end -}}
 {{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.19.0" -}}
+{{- $version = "7.36.0" -}}
 {{- end -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.19.0" -}}
+{{- $version = "7.36.0" -}}
 {{- end -}}
-{{- if not (semverCompare "^6.19.0-0 || ^7.19.0-0" $version) -}}
-{{- fail "This version of the chart requires an agent image 7.19.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
+{{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
+{{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "check-dca-version" -}}
+{{- if not .Values.clusterAgent.image.doNotCheckTag -}}
+{{- $version := .Values.clusterAgent.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "1.20.0" -}}
+{{- end -}}
+{{- if not (semverCompare "^1.20.0-0" $version) -}}
+{{- fail "This version of the chart requires a cluster agent image 1.20.0 or greater. If you want to force and skip this check, use `--set clusterAgent.image.doNotCheckTag=true`" -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

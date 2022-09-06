@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.0.0
+
+* Minimum version of the Agent supported is 7.36.0 and minimum version of the Cluster Agent supported is 1.20.0.
+* Disable the legacy KSM check and enable the KSM core check by default.
+* Drop support for Helm 2.
+
 ## 2.37.9
 
 * Add `DD_PROMETHEUS_SCRAPE_VERSION` to Cluster Agent to match Agent version

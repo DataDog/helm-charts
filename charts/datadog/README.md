@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 2.37.9](https://img.shields.io/badge/Version-2.37.9-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -41,15 +41,8 @@ By default, the Datadog Agent runs in a DaemonSet. It can alternatively run insi
 
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datadog API key from your [Agent Installation Instructions](https://app.datadoghq.com/account/settings#agent/kubernetes) and run:
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
     --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
@@ -62,17 +55,8 @@ After a few minutes, you should see hosts and metrics being reported in Datadog.
 
 **Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-    --set datadog.appKey=<DATADOG_APP_KEY> \
-    --set datadog.site=<DATADOG_SITE> \
-    datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
     --set datadog.appKey=<DATADOG_APP_KEY> \
     --set datadog.site=<DATADOG_SITE> \
     datadog/datadog
@@ -91,15 +75,8 @@ kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<
 
 Now, the installation command contains the reference to the secret.
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
 ```
 
@@ -127,19 +104,8 @@ kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATA
 
 Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
 
-For Helm 3:
 ```bash
 helm install datadog-monitoring \
-    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
-    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
-    --set clusterAgent.enabled=true \
-    --set clusterAgent.metricsProvider.enabled=true \
-    datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name datadog-monitoring \
     --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
     --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
     --set clusterAgent.enabled=true \
@@ -156,6 +122,12 @@ The Leader Election is enabled by default in the chart for the Cluster Agent. On
 You can specify the Datadog Cluster Agent token used to secure the communication between the Cluster Agent(s) and the Agents with `clusterAgent.token`.
 
 ### Upgrading
+
+#### From 2.x to 3.x
+
+The migration from 2.x to 3.x does not require manual action.
+As per the Changelog, we do not be guaranteeing support of Helm 2 moving forward.
+If you already have the legacy Kubernetes State Metrics Check enabled, migrating will only show you the deprecation notice.
 
 #### From 1.x to 2.x
 
@@ -207,26 +179,14 @@ datadog:
 
 3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
-For Helm 3:
 ```bash
 helm install -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-For Helm 2:
-```bash
-helm install -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
-```
-
 OR
 
-For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
 ```
 
 See the [All configuration options](#all-configuration-options) section to discover all configuration possibilities in the Datadog chart.
@@ -282,14 +242,8 @@ datadog:
 
 then upgrade your Datadog Helm chart:
 
-For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Process Collection
@@ -433,16 +387,8 @@ agents:
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
-  datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
   datadog/datadog
 ```
@@ -492,7 +438,7 @@ helm install --name <RELEASE_NAME> \
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
-| agents.image.doNotCheckTag | string | `nil` | Skip the version<>chart compatibility check |
+| agents.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | agents.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -550,6 +496,7 @@ helm install --name <RELEASE_NAME> \
 | clusterAgent.envFrom | list | `[]` | Set environment variables specific to Cluster Agent from configMaps and/or secrets |
 | clusterAgent.healthPort | int | `5556` | Port number to use in the Cluster Agent for the healthz endpoint |
 | clusterAgent.image.digest | string | `""` | Cluster Agent image digest to use, takes precedence over tag if specified |
+| clusterAgent.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | clusterAgent.image.name | string | `"cluster-agent"` | Cluster Agent image name to use (relative to `registry`) |
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -671,11 +618,11 @@ helm install --name <RELEASE_NAME> \
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.kubeStateMetricsCore.collectSecretMetrics | bool | `true` | Enable watching secret objects and collecting their corresponding metrics kubernetes_state.secret.* |
 | datadog.kubeStateMetricsCore.collectVpaMetrics | bool | `false` | Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.* |
-| datadog.kubeStateMetricsCore.enabled | bool | `false` | Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+) |
+| datadog.kubeStateMetricsCore.enabled | bool | `true` | Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+) |
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |
-| datadog.kubeStateMetricsEnabled | bool | `true` | If true, deploys the kube-state-metrics deployment |
+| datadog.kubeStateMetricsEnabled | bool | `false` | If true, deploys the kube-state-metrics deployment |
 | datadog.kubeStateMetricsNetworkPolicy.create | bool | `false` | If true, create a NetworkPolicy for kube state metrics |
 | datadog.kubelet.agentCAPath | string | /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | Path (inside Agent containers) where the Kubelet CA certificate is stored |
 | datadog.kubelet.host | object | `{"valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}}` | Override kubelet IP |

@@ -36,15 +36,8 @@ By default, the Datadog Agent runs in a DaemonSet. It can alternatively run insi
 
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Datadog API key from your [Agent Installation Instructions](https://app.datadoghq.com/account/settings#agent/kubernetes) and run:
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-    --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
     --set datadog.apiKey=<DATADOG_API_KEY> datadog/datadog
 ```
 
@@ -57,17 +50,8 @@ After a few minutes, you should see hosts and metrics being reported in Datadog.
 
 **Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-    --set datadog.appKey=<DATADOG_APP_KEY> \
-    --set datadog.site=<DATADOG_SITE> \
-    datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
     --set datadog.appKey=<DATADOG_APP_KEY> \
     --set datadog.site=<DATADOG_SITE> \
     datadog/datadog
@@ -86,15 +70,8 @@ kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key="<
 
 Now, the installation command contains the reference to the secret.
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-  --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME datadog/datadog
 ```
 
@@ -122,19 +99,8 @@ kubectl create secret generic $DATADOG_SECRET_NAME --from-literal api-key="<DATA
 
 Run the following if you want to deploy the chart with the Custom Metrics Server enabled in the Cluster Agent:
 
-For Helm 3:
 ```bash
 helm install datadog-monitoring \
-    --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
-    --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
-    --set clusterAgent.enabled=true \
-    --set clusterAgent.metricsProvider.enabled=true \
-    datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name datadog-monitoring \
     --set datadog.apiKeyExistingSecret=$DATADOG_API_SECRET_NAME  \
     --set datadog.appKeyExistingSecret=$DATADOG_APP_SECRET_NAME \
     --set clusterAgent.enabled=true \
@@ -151,6 +117,12 @@ The Leader Election is enabled by default in the chart for the Cluster Agent. On
 You can specify the Datadog Cluster Agent token used to secure the communication between the Cluster Agent(s) and the Agents with `clusterAgent.token`.
 
 ### Upgrading
+
+#### From 2.x to 3.x
+
+The migration from 2.x to 3.x does not require manual action.
+As per the Changelog, we do not be guaranteeing support of Helm 2 moving forward.
+If you already have the legacy Kubernetes State Metrics Check enabled, migrating will only show you the deprecation notice.
 
 #### From 1.x to 2.x
 
@@ -202,27 +174,16 @@ datadog:
 
 3. Install or upgrade the Datadog Helm chart with the new `datadog-values.yaml` file:
 
-For Helm 3:
 ```bash
 helm install -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-For Helm 2:
-```bash
-helm install -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
-```
-
 OR
 
-For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-For Helm 2:
-```bash
-helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
-```
 
 See the [All configuration options](#all-configuration-options) section to discover all configuration possibilities in the Datadog chart.
 
@@ -277,14 +238,8 @@ datadog:
 
 then upgrade your Datadog Helm chart:
 
-For Helm 3:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm upgrade -f datadog-values.yaml --name <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Process Collection
@@ -428,16 +383,8 @@ agents:
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
-For Helm 3:
 ```bash
 helm install <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
-  datadog/datadog
-```
-
-For Helm 2:
-```bash
-helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
   datadog/datadog
 ```

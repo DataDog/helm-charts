@@ -316,6 +316,17 @@ configuration with:
 {{- end }}
 
 
+{{- if and .Values.datadog.kubeStateMetricsEnabled (not .Values.datadog.kubeStateMetricsCore.enabled)}}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The legacy option to run the Kubernetes States Metrics check is deprecated and will be removed in the next major version update of the Chart.
+Use the Kubernetes State Metrics Core option instead, find the documentation here: https://docs.datadoghq.com/integrations/kubernetes_state_core.
+
+{{- end }}
+
 {{- if and (not (.Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1")) .Values.datadog.kubeStateMetricsEnabled }}
 
 ########################################################################################

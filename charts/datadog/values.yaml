@@ -119,7 +119,8 @@ datadog:
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
-  kubeStateMetricsEnabled: true
+  # The kubeStateMetricsEnabled option will be removed in the 4.0 version of the Datadog Agent chart.
+  kubeStateMetricsEnabled: false
 
   kubeStateMetricsNetworkPolicy:
     # datadog.kubeStateMetricsNetworkPolicy.create -- If true, create a NetworkPolicy for kube state metrics
@@ -129,7 +130,7 @@ datadog:
     # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
-    enabled: false
+    enabled: true
 
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
@@ -715,6 +716,15 @@ clusterAgent:
     pullSecrets: []
     #   - name: "<REG_SECRET>"
 
+    # clusterAgent.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version passed in clusterAgent.image.tag is checked
+    ## for compatibility with the version of the chart.
+    ## This boolean permits completely skipping this check.
+    ## This is useful, for example, for custom tags that are not
+    ## respecting semantic versioning.
+    doNotCheckTag:  # false
+
   # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
   securityContext: {}
 
@@ -1026,7 +1036,7 @@ agents:
     # agents.image.repository -- Override default registry + image.name for Agent
     repository:
 
-    # agents.image.doNotCheckTag -- Skip the version<>chart compatibility check
+    # agents.image.doNotCheckTag -- Skip the version and chart compatibility check
 
     ## By default, the version passed in agents.image.tag is checked
     ## for compatibility with the version of the chart.
