@@ -37,13 +37,16 @@ kubernetes_state_core.yaml.default: |-
       skip_leader_election: true
 {{- end }}
       labels_as_tags:
-{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
 {{- $resourcesList := list "pod" "node" "namespace" -}}
 {{- range $resource := $resourcesList }}
 {{- if (get $.Values.datadog (printf "%sLabelsAsTags" $resource)) }}
           {{ $resource }}:
 {{ (get $.Values.datadog (printf "%sLabelsAsTags" $resource)) | toYaml | indent 12 }}
 {{ (get $.Values.datadog.kubeStateMetricsCore.labelsAsTags (printf $resource)) | toYaml | indent 12 }}
+{{- $_ := (unset $.Values.datadog.kubeStateMetricsCore.labelsAsTags (printf $resource)) }}
 {{- end }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.labelsAsTags }}
+{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
 {{- end }}
 {{- end -}}
