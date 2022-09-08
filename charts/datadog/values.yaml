@@ -132,6 +132,10 @@ datadog:
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
     enabled: true
 
+    rbac:
+    # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
+      create: true
+
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
     ## Disabling this field is not recommended as it results in enabling both checks, it can be useful though during the migration phase.
