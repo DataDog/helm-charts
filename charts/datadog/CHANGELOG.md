@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.1.0
+
+* Default Agent image to `7.39.0`.
+* Default Cluster-Agent image to `7.39.0`. Cluster-Agent versioning is now aligned with the Agent.
+
 ## 3.0.1
 
 * Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
@@ -65,6 +70,7 @@
 * Add `datadog.clusterName` on clusterCheckRunner pods
 
 ## 2.36.7
+
 * Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
 
 ## 2.36.6
@@ -191,6 +197,7 @@
 ## 2.33.0
 
 ***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
+
 * On GKE Autopilot, hardcode the "Agent" DaemonSet serviceAccountName.
 * On GKE Autopilot, hardcode the "Install Info" ConfigMap name.
 
