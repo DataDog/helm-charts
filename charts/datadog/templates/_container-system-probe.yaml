@@ -81,7 +81,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
+{{- if and (or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill) .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

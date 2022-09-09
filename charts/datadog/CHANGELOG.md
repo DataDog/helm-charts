@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.0.1
+
+* Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
+  to choose whether to mount the default kernel headers paths.
+
 ## 3.0.0
 
 * Minimum version of the Agent supported is 7.36.0 and minimum version of the Cluster Agent supported is 1.20.0.

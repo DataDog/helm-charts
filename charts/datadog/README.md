@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.0.1](https://img.shields.io/badge/Version-3.0.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -619,6 +619,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.collectSecretMetrics | bool | `true` | Enable watching secret objects and collecting their corresponding metrics kubernetes_state.secret.* |
 | datadog.kubeStateMetricsCore.collectVpaMetrics | bool | `false` | Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.* |
 | datadog.kubeStateMetricsCore.enabled | bool | `true` | Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+) |
+| datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |
@@ -682,6 +683,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.conntrackMaxStateSize | int | `131072` | the maximum size of the userspace conntrack cache |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
+| datadog.systemProbe.enableDefaultKernelHeadersPaths | bool | `true` | Enable mount of default paths where kernel headers are stored |
 | datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |
 | datadog.systemProbe.enableKernelHeaderDownload | bool | `false` | Enable the downloading of kernel headers for runtime compilation of eBPF probes |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
