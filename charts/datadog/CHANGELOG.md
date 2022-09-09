@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.0.2
+
+* Fix preventing mounting os-release in GKE autopilot for all containers.
+
 ## 3.0.1
 
 * Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
