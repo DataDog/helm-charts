@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.0.2
+
+* Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
+
 ## 3.0.1
 
 * Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
