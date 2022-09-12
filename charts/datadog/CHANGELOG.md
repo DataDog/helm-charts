@@ -5,6 +5,18 @@
 * Default Agent image to `7.39.0`.
 * Default Cluster-Agent image to `7.39.0`. Cluster-Agent versioning is now aligned with the Agent.
 
+## 3.0.4
+
+* Fix preventing mounting os-release in GKE autopilot for all containers.
+
+## 3.0.3
+
+* Add `faccessat2` to allowed actions in system-probe seccomp profile.
+
+## 3.0.2
+
+* Allow disabling kubeStateMetricsCore rbac creation.
+
 ## 3.0.1
 
 * Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
