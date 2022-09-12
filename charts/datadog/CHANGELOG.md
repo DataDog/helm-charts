@@ -11,7 +11,7 @@
 
 ## 3.0.2
 
-* aAllow disabling kubeStateMetricsCore rbac creation.
+* Allow disabling kubeStateMetricsCore rbac creation.
 
 ## 3.0.1
 
