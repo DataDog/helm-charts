@@ -26,7 +26,7 @@
 {{- if and (eq $length 1) (eq $version "latest") -}}
 {{- $version = "1.20.0" -}}
 {{- end -}}
-{{- if not (semverCompare "^1.20.0-0" $version) -}}
+{{- if not (semverCompare ">=1.20.0-0" $version) -}}
 {{- fail "This version of the chart requires a cluster agent image 1.20.0 or greater. If you want to force and skip this check, use `--set clusterAgent.image.doNotCheckTag=true`" -}}
 {{- end -}}
 {{- end -}}
