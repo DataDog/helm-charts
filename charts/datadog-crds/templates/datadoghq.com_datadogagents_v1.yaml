@@ -929,6 +929,10 @@ spec:
                           additionalProperties:
                             type: string
                           type: object
+                        containerEnvAsTags:
+                          additionalProperties:
+                            type: string
+                          type: object
                         nodeLabelsAsTags:
                           additionalProperties:
                             type: string

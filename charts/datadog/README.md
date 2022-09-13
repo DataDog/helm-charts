@@ -638,6 +638,7 @@ helm install <RELEASE_NAME> \
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
+| datadog.containerEnvAsTags | object | `{}` | Provide a mapping of Kubernetes Containers Environment Variables to Datadog Tags |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
