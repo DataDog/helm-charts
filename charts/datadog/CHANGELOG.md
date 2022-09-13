@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.1
+
+* Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
+
 ## 3.1.0
 
 * Default Agent image to `7.39.0`.
