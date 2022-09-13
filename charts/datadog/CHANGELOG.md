@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.2
+
+* Add `datadog.securityAgent.runtime.activityDump.enabled` configuration to enable CWS activity dumps.
+
 ## 3.1.1
 
 * Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
