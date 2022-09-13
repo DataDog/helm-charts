@@ -1,4 +1,4 @@
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+{{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.rbac.create }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:

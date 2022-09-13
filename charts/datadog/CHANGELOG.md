@@ -1,5 +1,37 @@
 # Datadog changelog
 
+## 3.1.1
+
+* Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
+
+## 3.1.0
+
+* Default Agent image to `7.39.0`.
+* Default Cluster-Agent image to `7.39.0`. Cluster-Agent versioning is now aligned with the Agent.
+
+## 3.0.4
+
+* Fix preventing mounting os-release in GKE autopilot for all containers.
+
+## 3.0.3
+
+* Add `faccessat2` to allowed actions in system-probe seccomp profile.
+
+## 3.0.2
+
+* Allow disabling kubeStateMetricsCore rbac creation.
+
+## 3.0.1
+
+* Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
+  to choose whether to mount the default kernel headers paths.
+
+## 3.0.0
+
+* Minimum version of the Agent supported is 7.36.0 and minimum version of the Cluster Agent supported is 1.20.0.
+* Disable the legacy KSM check and enable the KSM core check by default.
+* Drop support for Helm 2.
+
 ## 2.37.9
 
 * Add `DD_PROMETHEUS_SCRAPE_VERSION` to Cluster Agent to match Agent version
@@ -54,6 +86,7 @@
 * Add `datadog.clusterName` on clusterCheckRunner pods
 
 ## 2.36.7
+
 * Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
 
 ## 2.36.6
@@ -180,6 +213,7 @@
 ## 2.33.0
 
 ***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
+
 * On GKE Autopilot, hardcode the "Agent" DaemonSet serviceAccountName.
 * On GKE Autopilot, hardcode the "Install Info" ConfigMap name.
 

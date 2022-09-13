@@ -9,7 +9,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath }}
+{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath) }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
@@ -78,7 +78,7 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
+{{- if and (or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill) .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
 - hostPath:
     path: /lib/modules
   name: modules

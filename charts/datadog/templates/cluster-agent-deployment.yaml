@@ -1,3 +1,4 @@
+{{- template "check-dca-version" . }}
 {{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 apiVersion: apps/v1
 kind: Deployment
