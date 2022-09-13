@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.2
+
+* Adds configuration `datadog.containerEnvAsTags` to be able to map specific containers environment variables with datadog tags (https://docs.datadoghq.com/containers/kubernetes/tag/?tab=containerizedagent#container-environment-variables-as-tags).
+
 ## 3.1.1
 
 * Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
