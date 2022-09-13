@@ -132,6 +132,10 @@ datadog:
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
     enabled: true
 
+    rbac:
+    # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
+      create: true
+
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
     ## Disabling this field is not recommended as it results in enabling both checks, it can be useful though during the migration phase.
@@ -702,7 +706,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.22.0
+    tag: 7.39.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1024,7 +1028,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.38.2
+    tag: 7.39.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1462,7 +1466,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.38.2
+    tag: 7.39.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

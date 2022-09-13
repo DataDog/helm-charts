@@ -106,6 +106,7 @@ data:
             "execveat",
             "exit",
             "exit_group",
+            "faccessat2",
             "fchmod",
             "fchmodat",
             "fchown",
