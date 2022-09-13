@@ -604,6 +604,19 @@ datadog:
         # datadog.securityAgent.runtime.activityDump.enabled -- Set to true to enable the collection of CWS activity dumps
         enabled: false
 
+        # datadog.securityAgent.runtime.activityDump.tracedCgroupsCount
+        tracedCgroupsCount: 3
+
+        # datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout
+        cgroupDumpTimeout: 20
+
+        # datadog.securityAgent.runtime.activityDump.cgroupWaitListSize
+        cgroupWaitListSize: 0
+
+        pathMerge:
+          # datadog.securityAgent.runtime.activityDump.pathMerge.enabled
+          enabled: false
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
