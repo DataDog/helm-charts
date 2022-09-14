@@ -668,11 +668,11 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
-| datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` |  |
-| datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` |  |
+| datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` | Set to the desired duration of a single container tracing (in minutes) |
+| datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` | Set to the size of the wait list for already traced containers |
 | datadog.securityAgent.runtime.activityDump.enabled | bool | `false` | Set to true to enable the collection of CWS activity dumps |
-| datadog.securityAgent.runtime.activityDump.pathMerge.enabled | bool | `false` |  |
-| datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` |  |
+| datadog.securityAgent.runtime.activityDump.pathMerge.enabled | bool | `false` | Set to true to enable the merging of similar paths |
+| datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring |
 | datadog.securityAgent.runtime.network.enabled | bool | `false` | Set to true to enable the collection of CWS network events |
