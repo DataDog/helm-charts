@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.2
+
+* Throw error if `clusterAgent.token` is set to an invalid value.
+
 ## 3.1.1
 
 * Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
