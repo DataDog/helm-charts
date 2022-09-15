@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.3
+
+* Throw error if `clusterAgent.token` is set to an invalid value.
+
 ## 3.1.2
 
 * Add `datadog.securityAgent.runtime.activityDump.enabled` configuration to enable CWS activity dumps.
