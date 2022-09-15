@@ -54,8 +54,19 @@ data:
         enabled: {{ $.Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
       network:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.activityDump.enabled }}
       activity_dump:
+        enabled: true
+        traced_cgroups_count: {{ $.Values.datadog.securityAgent.runtime.activityDump.tracedCgroupsCount }}
+        cgroup_dump_timeout: {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout }}
+        cgroup_wait_list_size:  {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
+        path_merge:
+          enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
+{{ else }}
+      activity_dump:
+        enabled: false
         traced_cgroups_count: 0
+{{ end }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
