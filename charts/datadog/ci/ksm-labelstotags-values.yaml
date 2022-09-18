@@ -1,0 +1,24 @@
+commonLabels:
+  test-label-key: important-val
+  test-label-key-2: important-val-2
+
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubeStateMetricsCore:
+    enabled: true
+    labelsAsTags:
+      pod:
+        test-label-key: test-label-key
+      node:
+        kubernetes.io/hostname: k8s-hostname
+      namespace:
+        kubernetes.io/metadata.name: k8s-ns-name
+      deployment:
+        test-label-key: test-label-key
+  nodeLabelsAsTags:
+    node-role: node-role
+  podLabelsAsTags:
+    test-label-key-2:  test-label-key-2
+  namespaceLabelsAsTags:
+    ns-key-2: ns-key-2
