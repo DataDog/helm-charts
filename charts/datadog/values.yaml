@@ -168,8 +168,6 @@ datadog:
     ##   <resource2>:
     ##     <label3>: <tag3>
     ##
-    ## Warning: the label must match the transformation done by kube-state-metrics,
-    ## for example tags.datadoghq.com/version becomes tags_datadoghq_com_version.
     labelsAsTags: {}
     #  pod:
     #    app: app
@@ -188,12 +186,16 @@ datadog:
     shareProcessNamespace: false
 
   # datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
+  # Mappings configured here will propogate to the corresponding resource's 
+  # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   nodeLabelsAsTags: {}
   #   beta.kubernetes.io/instance-type: aws-instance-type
   #   kubernetes.io/role: kube_role
   #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
 
   # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
+  # Mappings configured here will propogate to the corresponding resource's 
+  # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   podLabelsAsTags: {}
   #   app: kube_app
   #   release: helm_release
@@ -205,6 +207,8 @@ datadog:
   #   <KUBERNETES_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
   # datadog.namespaceLabelsAsTags -- Provide a mapping of Kubernetes Namespace Labels to Datadog Tags
+  # Mappings configured here will propogate to the corresponding resource's 
+  # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   namespaceLabelsAsTags: {}
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
