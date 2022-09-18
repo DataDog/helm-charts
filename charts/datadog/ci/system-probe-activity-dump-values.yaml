@@ -1,0 +1,9 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+
+  securityAgent:
+    runtime:
+      enabled: true
+      activityDump:
+        enabled: true
