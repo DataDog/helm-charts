@@ -36,21 +36,5 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
-      labels_as_tags:
-{{- $resourcesList := list -}}
-{{- range $k, $v := .Values.datadog -}}
-{{- $curAtt := $k | toString -}}
-{{- if regexMatch ".*LabelsAsTags" $curAtt }}
-{{- $resourcesList = append $resourcesList $curAtt -}}
-{{- end }}
-{{- end }}
-{{- $resourcesDict := dict -}}
-{{- range $resource := $resourcesList }}
-{{- if (get $.Values.datadog $resource) }}
-{{- $dictKey := trimSuffix "LabelsAsTags" $resource -}}
-{{- $_ := set $resourcesDict $dictKey (get $.Values.datadog $resource)}}
-{{- end }}
-{{- end }}
-{{- $labelMappingDict := merge $resourcesDict $.Values.datadog.kubeStateMetricsCore.labelsAsTags }}
-{{ $labelMappingDict | toYaml | indent 10 }}
+      labels_as_tags: {{ template "datadog.mergeLabelsAsTags" . }}
 {{- end -}}
