@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.3
+
+* Add `datadog.helmCheck.valuesAsTags` option to collect helm values and use them as tags.
+
 ## 3.1.2
 
 * Add `datadog.securityAgent.runtime.activityDump.enabled` configuration to enable CWS activity dumps.
