@@ -186,7 +186,7 @@ datadog:
     shareProcessNamespace: false
 
   # datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
-  
+
   # Mappings configured here will propogate to the corresponding resource's
   # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   nodeLabelsAsTags: {}
@@ -195,7 +195,7 @@ datadog:
   #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
 
   # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
-  
+
   # Mappings configured here will propogate to the corresponding resource's
   # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   podLabelsAsTags: {}
@@ -209,7 +209,7 @@ datadog:
   #   <KUBERNETES_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
   # datadog.namespaceLabelsAsTags -- Provide a mapping of Kubernetes Namespace Labels to Datadog Tags
-  
+
   # Mappings configured here will propogate to the corresponding resource's
   # LabelsAsTags mapping in datadog.kubeStateMetricsCore.labelsAsTags
   namespaceLabelsAsTags: {}
