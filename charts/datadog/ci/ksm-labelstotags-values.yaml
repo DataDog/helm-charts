@@ -19,6 +19,6 @@ datadog:
   nodeLabelsAsTags:
     node-role: node-role
   podLabelsAsTags:
-    test-label-key-2:  test-label-key-2
+    test-label-key-2: test-label-key-2
   namespaceLabelsAsTags:
     ns-key-2: ns-key-2
