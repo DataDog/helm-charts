@@ -720,19 +720,15 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 Returns a merged dictionary of datadog.kubeStateMetricsCore.labelsAsTags and datadog.<RESOURCE>LabelsAsTags.
 */}}
 {{- define "datadog.mergeLabelsAsTags" -}}
-{{- $resourcesList := list -}}
 {{- $resourcesDict := dict -}}
 {{- $labelMappingDict := dict -}}
 {{- range $k, $v := .Values.datadog -}}
 {{- $curAtt := $k | toString -}}
 {{- if regexMatch ".*LabelsAsTags" $curAtt }}
-{{- $resourcesList = append $resourcesList $curAtt -}}
+{{- if (get $.Values.datadog $curAtt) }}
+{{- $dictKey := trimSuffix "LabelsAsTags" $curAtt }}
+{{- $_ := set $resourcesDict $dictKey (get $.Values.datadog $curAtt) }}
 {{- end }}
-{{- end }}
-{{- range $resource := $resourcesList }}
-{{- if (get $.Values.datadog $resource) }}
-{{- $dictKey := trimSuffix "LabelsAsTags" $resource }}
-{{- $_ := set $resourcesDict $dictKey (get $.Values.datadog $resource) }}
 {{- end }}
 {{- end }}
 {{- if $.Values.datadog.kubeStateMetricsCore.labelsAsTags }}
