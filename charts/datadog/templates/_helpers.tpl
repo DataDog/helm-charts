@@ -721,19 +721,24 @@ Returns a merged dictionary of datadog.kubeStateMetricsCore.labelsAsTags and dat
 */}}
 {{- define "datadog.mergeLabelsAsTags" -}}
 {{- $resourcesList := list -}}
+{{- $resourcesDict := dict -}}
+{{- $labelMappingDict := dict -}}
 {{- range $k, $v := .Values.datadog -}}
 {{- $curAtt := $k | toString -}}
 {{- if regexMatch ".*LabelsAsTags" $curAtt }}
 {{- $resourcesList = append $resourcesList $curAtt -}}
 {{- end }}
 {{- end }}
-{{- $resourcesDict := dict -}}
 {{- range $resource := $resourcesList }}
 {{- if (get $.Values.datadog $resource) }}
 {{- $dictKey := trimSuffix "LabelsAsTags" $resource }}
 {{- $_ := set $resourcesDict $dictKey (get $.Values.datadog $resource) }}
 {{- end }}
 {{- end }}
-{{- $labelMappingDict := merge $resourcesDict $.Values.datadog.kubeStateMetricsCore.labelsAsTags }}
+{{- if $.Values.datadog.kubeStateMetricsCore.labelsAsTags }}
+{{- $labelMappingDict = merge $resourcesDict $.Values.datadog.kubeStateMetricsCore.labelsAsTags }}
+{{- else }}
+{{- $labelMappingDict = $resourcesDict }}
+{{- end }}
 {{ $labelMappingDict | toYaml | indent 10 }}
 {{- end -}}
