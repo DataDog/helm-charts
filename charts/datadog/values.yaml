@@ -562,6 +562,11 @@ datadog:
     # This requires datadog.HelmCheck.enabled to be set to true
     collectEvents: false
 
+    # datadog.helmCheck.valuesAsTags -- Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+).
+    # This requires datadog.HelmCheck.enabled to be set to true
+    valuesAsTags: {}
+      #   <HELM_VALUE>: <LABEL_NAME>
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false

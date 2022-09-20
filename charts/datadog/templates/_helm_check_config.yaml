@@ -6,4 +6,6 @@ helm.yaml: |-
   init_config:
   instances:
     - collect_events: {{ .Values.datadog.helmCheck.collectEvents }}
+      helm_values_as_tags:
+{{ .Values.datadog.helmCheck.valuesAsTags | toYaml | nindent 8 }}
 {{- end -}}
