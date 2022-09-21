@@ -43,6 +43,9 @@ datadog:
   ## a Datadog application key for read access to your metrics.
   appKey:  # <DATADOG_APP_KEY>
 
+  # datadog.command -- Command to run in the Agent container as entrypoint
+  command: ["agent", "run"]
+
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "appKey".
