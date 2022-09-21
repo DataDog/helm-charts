@@ -587,6 +587,7 @@ helm install <RELEASE_NAME> \
 | datadog.clusterChecks.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the cluster checks agent |
 | datadog.clusterName | string | `nil` | Set a unique cluster name to allow scoping hosts and Cluster Checks easily |
 | datadog.collectEvents | bool | `true` | Enables this to start event collection from the kubernetes API |
+| datadog.command | list | `["agent","run"]` | Command to run in the Agent container as entrypoint |
 | datadog.confd | object | `{}` | Provide additional check configurations (static and Autodiscovery) |
 | datadog.containerExclude | string | `nil` | Exclude containers from the Agent Autodiscovery, as a space-sepatered list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from the Agent Autodiscovery, as a space-separated list |
