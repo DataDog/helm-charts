@@ -36,6 +36,5 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
-      labels_as_tags:
-{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
+      labels_as_tags: {{ template "datadog.mergeLabelsAsTags" . }}
 {{- end -}}

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.4
+
+* Improve `datadog.kubeStateMetricsCore.labelsAsTags` to inherit labelAsTags mappings from `datadog.<RESOURCE>LabelsAsTags`.
+
 ## 3.1.3
 
 * Add `datadog.helmCheck.valuesAsTags` option to collect helm values and use them as tags.
