@@ -21,7 +21,7 @@
       mountPath: /var/log/datadog
     - name: config
       mountPath: /etc/datadog-agent
-    {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+    {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf) (.Values.datadog.advancedConfd)) }}
     - name: confd
       mountPath: /conf.d
       readOnly: true

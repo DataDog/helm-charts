@@ -1,0 +1,19 @@
+datadog:
+  confd:
+    cilium.yaml: |-
+      ad_identifiers:
+        - cilium-agent
+      instances:
+        - agent_endpoint: http://%%host%%:9090/metrics
+  advancedConfd:
+    cilium.d:
+     cilium-agent.yaml: |-
+         ad_identifiers:
+           - cilium-agent
+         instances:
+           - agent_endpoint: http://%%host%%:9090/metrics
+     cilium-operator.yaml: |-
+         ad_identifiers:
+           - cilium-operator
+         instances:
+           - operator_endpoint: http://%%host%%:6942/metrics

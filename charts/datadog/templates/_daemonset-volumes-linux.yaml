@@ -56,10 +56,25 @@
 {{- end }}
 - name: s6-run
   emptyDir: {}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf) (.Values.datadog.advancedConfd)) }}
 - name: confd
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
+    items:
+{{- range $file, $configs := $.Values.datadog.autoconf }}
+      - key: {{ $file | quote }}
+        path: {{ $file | quote }}
+{{- end }}
+{{- range $file, $configs := $.Values.datadog.confd }}
+      - key: {{ $file | quote }}
+        path: {{ $file | quote }}
+{{- end }}
+{{- range $integration, $configs := $.Values.datadog.advancedConfd }}
+{{- range $name, $config := $configs }}
+      - key: {{ printf "%s--%s" $integration $name | quote }}
+        path: {{ printf "%s/%s" $integration $name | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
