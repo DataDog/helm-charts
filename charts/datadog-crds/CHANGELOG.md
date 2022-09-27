@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.5
+
+* Added support for overriding detected Kubernetes version.
+
 ## 0.5.4
 
 * Fix semver comparison for minor version corner case.
