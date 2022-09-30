@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.5
+
+* Use `securityContext.seccompProfile` instead of annotations for system-probe on kubernetes 1.19+.
+
 ## 3.1.4
 
 * Default "Agent" and "Cluster-Agent" image tag to `7.39.1`.
