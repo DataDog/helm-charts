@@ -2,7 +2,7 @@
 - name: system-probe
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
