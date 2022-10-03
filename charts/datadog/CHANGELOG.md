@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.6
+
+* Fix usage of `generate-security-context` helper.
+
 ## 3.1.5
 
 * Use `securityContext.seccompProfile` instead of annotations for system-probe on kubernetes 1.19+.
