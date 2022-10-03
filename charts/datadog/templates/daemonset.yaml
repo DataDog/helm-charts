@@ -54,9 +54,7 @@ spec:
         {{- if .Values.agents.podSecurity.apparmor.enabled }}
         container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
         {{- end }}
-        {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
-        {{- end }}
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}

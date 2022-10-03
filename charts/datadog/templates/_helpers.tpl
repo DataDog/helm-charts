@@ -669,19 +669,6 @@ securityContext:
 {{- else }}
 securityContext:
 {{ toYaml .securityContext | indent 2 }}
-{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
-  seccompProfile:
-    {{- if hasPrefix "localhost/" .seccomp }}
-    type: Localhost
-    {{- else if eq "runtime/default" .seccomp }}
-    type: RuntimeDefault
-    {{- else }}
-    type: Unconfined
-    {{- end -}}
-    {{- if hasPrefix "localhost/" .seccomp }}
-    localhostProfile: {{ .seccomp }}
-    {{- end }}
-{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
