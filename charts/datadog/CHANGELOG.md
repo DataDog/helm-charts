@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.4
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.39.1`.
+
 ## 3.1.3
 
 * Add `datadog.helmCheck.valuesAsTags` option to collect helm values and use them as tags.
