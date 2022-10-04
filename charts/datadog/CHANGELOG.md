@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.7
+
+* Fix the configuration of the default seccomp profile for system-probe
+
 ## 3.1.6
 
 * Fix usage of `generate-security-context` helper.

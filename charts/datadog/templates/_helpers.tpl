@@ -679,7 +679,7 @@ securityContext:
     type: Unconfined
     {{- end -}}
     {{- if hasPrefix "localhost/" .seccomp }}
-    localhostProfile: {{ .seccomp }}
+    localhostProfile: {{ trimPrefix "localhost/" .seccomp }}
     {{- end }}
 {{- end -}}
 {{- end -}}
