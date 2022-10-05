@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.9
+
+* Add `faccessat` to system-probe seccomp profile.
+
 ## 3.1.8
 
 * Add `clone3` and `rseq` to system-probe seccomp profile.
