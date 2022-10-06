@@ -677,6 +677,9 @@ datadog:
   #  - redisdb
   #  - kubernetes_state
 
+  # datadog.installInfoExistingConfigMap -- Use an existing ConfigMap for InstallInfo
+  installInfoExistingConfigMap:
+
   # datadog.containerExclude -- Exclude containers from the Agent
   # Autodiscovery, as a space-sepatered list
 

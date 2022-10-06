@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.10
+
+* Add `datadog.installInfoExistingConfigMap` option.
+
 ## 3.1.9
 
 * Add `faccessat` to system-probe seccomp profile.

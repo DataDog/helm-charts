@@ -479,6 +479,8 @@ datadog-agent-datadog-yaml
 {{- define "agents-install-info-configmap-name" -}}
 {{- if .Values.providers.gke.autopilot -}}
 datadog-agent-installinfo
+{{- else if .Values.datadog.installInfoExistingConfigMap -}}
+{{ .Values.datadog.installInfoExistingConfigMap }}
 {{- else -}}
 {{ template "datadog.fullname" . }}-installinfo
 {{- end -}}
