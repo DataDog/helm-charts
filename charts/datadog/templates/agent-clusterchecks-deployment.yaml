@@ -177,10 +177,6 @@ spec:
             value: "false"
           - name: DD_APM_ENABLED
             value: "false"
-          - name: DD_HOSTNAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
           {{- if .Values.datadog.clusterName }}
           {{- template "check-cluster-name" . }}
           - name: DD_CLUSTER_NAME
