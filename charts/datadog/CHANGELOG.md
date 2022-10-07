@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.1.10
+* Removed `DD_HOSTNAME` so that it won't supersede hostname from other sources.
+
 ## 3.1.9
 
 * Add `faccessat` to system-probe seccomp profile.
