@@ -1,5 +1,84 @@
 # Datadog changelog
 
+## 3.1.9
+
+* Add `faccessat` to system-probe seccomp profile.
+
+## 3.1.8
+
+* Add `clone3` and `rseq` to system-probe seccomp profile.
+
+## 3.1.7
+
+* Fix the configuration of the default seccomp profile for system-probe
+
+## 3.1.6
+
+* Fix usage of `generate-security-context` helper.
+
+## 3.1.5
+
+* Use `securityContext.seccompProfile` instead of annotations for system-probe on kubernetes 1.19+.
+
+## 3.1.4
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.39.1`.
+
+## 3.1.3
+
+* Add `datadog.helmCheck.valuesAsTags` option to collect helm values and use them as tags.
+
+## 3.1.2
+
+* Add `datadog.securityAgent.runtime.activityDump.enabled` configuration to enable CWS activity dumps.
+
+## 3.1.1
+
+* Set default value for `datadog.systemProbe.enableKernelHeaderDownload` to `true`
+
+## 3.1.0
+
+* Default Agent image to `7.39.0`.
+* Default Cluster-Agent image to `7.39.0`. Cluster-Agent versioning is now aligned with the Agent.
+
+## 3.0.4
+
+* Fix preventing mounting os-release in GKE autopilot for all containers.
+
+## 3.0.3
+
+* Add `faccessat2` to allowed actions in system-probe seccomp profile.
+
+## 3.0.2
+
+* Allow disabling kubeStateMetricsCore rbac creation.
+
+## 3.0.1
+
+* Add `datadog.systemProbe.enableDefaultKernelHeadersPaths` option that allows
+  to choose whether to mount the default kernel headers paths.
+
+## 3.0.0
+
+* Minimum version of the Agent supported is 7.36.0 and minimum version of the Cluster Agent supported is 1.20.0.
+* Disable the legacy KSM check and enable the KSM core check by default.
+* Drop support for Helm 2.
+
+## 2.37.9
+
+* Add `DD_PROMETHEUS_SCRAPE_VERSION` to Cluster Agent to match Agent version
+
+## 2.37.8
+
+* Fix the volumeMount duplication in `system-probe` container if `datadog.osReleasePath` value
+  corresponds to one of the default os-release-paths automatically mounted.
+* Add the option to disable the default os-release path mount linked to `system-probe` container.
+
+## 2.37.7
+
+* Fix Windows nodes deployment: do not mount `container-host-release-volumemounts` if
+  the `targetSystem` is "Windows".
+
 ## 2.37.6
 
 * Add `chmod` to allowed actions in system-probe seccomp profile
@@ -39,6 +118,7 @@
 * Add `datadog.clusterName` on clusterCheckRunner pods
 
 ## 2.36.7
+
 * Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
 
 ## 2.36.6
@@ -165,6 +245,7 @@
 ## 2.33.0
 
 ***Warning:*** From this version onwards, on GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes namespace due to the following new constraints:
+
 * On GKE Autopilot, hardcode the "Agent" DaemonSet serviceAccountName.
 * On GKE Autopilot, hardcode the "Install Info" ConfigMap name.
 

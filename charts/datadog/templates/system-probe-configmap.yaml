@@ -54,8 +54,19 @@ data:
         enabled: {{ $.Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
       network:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.activityDump.enabled }}
       activity_dump:
+        enabled: true
+        traced_cgroups_count: {{ $.Values.datadog.securityAgent.runtime.activityDump.tracedCgroupsCount }}
+        cgroup_dump_timeout: {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout }}
+        cgroup_wait_list_size:  {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
+        path_merge:
+          enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
+{{ else }}
+      activity_dump:
+        enabled: false
         traced_cgroups_count: 0
+{{ end }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
@@ -85,6 +96,7 @@ data:
             "chmod",
             "clock_gettime",
             "clone",
+            "clone3",
             "close",
             "connect",
             "copy_file_range",
@@ -98,7 +110,6 @@ data:
             "epoll_ctl_old",
             "epoll_pwait",
             "epoll_wait",
-            "epoll_wait",
             "epoll_wait_old",
             "eventfd",
             "eventfd2",
@@ -106,6 +117,8 @@ data:
             "execveat",
             "exit",
             "exit_group",
+            "faccessat",
+            "faccessat2",
             "fchmod",
             "fchmodat",
             "fchown",
@@ -125,7 +138,9 @@ data:
             "getegid",
             "geteuid",
             "getgid",
+            "getgroups",
             "getpeername",
+            "getpgrp",
             "getpid",
             "getppid",
             "getpriority",
@@ -183,6 +198,7 @@ data:
             "renameat2",
             "restart_syscall",
             "rmdir",
+            "rseq",
             "rt_sigaction",
             "rt_sigpending",
             "rt_sigprocmask",
@@ -208,6 +224,7 @@ data:
             "setgroups32",
             "setitimer",
             "setns",
+            "setpgid",
             "setrlimit",
             "setsid",
             "setsidaccept4",
@@ -221,8 +238,8 @@ data:
             "stat",
             "stat64",
             "statfs",
-            "sysinfo",
             "symlinkat",
+            "sysinfo",
             "tgkill",
             "umask",
             "uname",
@@ -231,10 +248,7 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write",
-            "getgroups",
-            "getpgrp",
-            "setpgid"
+            "write"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
