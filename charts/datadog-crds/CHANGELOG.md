@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.5
+
+* Fix CI, by renaming `kubeval.yaml` to `kubeval-values.yaml`
+
 ## 0.5.4
 
 * Fix semver comparison for minor version corner case.
