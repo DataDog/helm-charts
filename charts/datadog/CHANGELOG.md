@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.1.10
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.39.2`.
+
 ## 3.1.9
 
 * Add `faccessat` to system-probe seccomp profile.
