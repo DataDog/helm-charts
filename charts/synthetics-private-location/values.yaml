@@ -5,6 +5,10 @@
 # replicaCount -- Number of instances of Datadog Synthetics Private Location
 replicaCount: 1
 
+# commonLabels -- Labels to apply to all resources
+commonLabels: {}
+# team_name: dev
+
 image:
   # image.repository -- Repository to use for Datadog Synthetics Private Location image
   repository: gcr.io/datadoghq/synthetics-private-location-worker
