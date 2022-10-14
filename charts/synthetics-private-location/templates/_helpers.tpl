@@ -51,6 +51,9 @@ Selector labels
 {{- define "synthetics-private-location.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "synthetics-private-location.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
+{{- end }}
 {{- end }}
 
 {{/*
