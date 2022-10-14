@@ -409,3 +409,21 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to 'name:.*' .
 
 {{- end }}
+
+{{- if and .Values.datadog.otlp.receiver.protocols.grpc.enabled (not .Values.datadog.otlp.receiver.protocols.grpc.useHostPort) }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+You have enabled OTLP Ingest for the gRPC port without the Host Port enabled. 
+
+To send OTLP data to the Agent use the Service created by specifying "{{ template "localService.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}" as the endpoint.
+{{- end }}
+
+{{- if and .Values.datadog.otlp.receiver.protocols.http.enabled (not .Values.datadog.otlp.receiver.protocols.http.useHostPort) }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+You have enabled OTLP Ingest for the HTTP port without the Host Port enabled. 
+
+To send OTLP data to the Agent use the Service created by specifying "{{ template "localService.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}" as the endpoint.
+{{- end }}
