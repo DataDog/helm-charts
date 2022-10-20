@@ -414,7 +414,7 @@ You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't e
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
-You have enabled OTLP Ingest for the gRPC port without the Host Port enabled. 
+You have enabled OTLP Ingest for the gRPC port without the Host Port enabled.
 
 To send OTLP data to the Agent use the Service created by specifying "http://{{ template "localService.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}" as the endpoint.
 {{- end }}
@@ -423,7 +423,7 @@ To send OTLP data to the Agent use the Service created by specifying "http://{{ 
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
-You have enabled OTLP Ingest for the HTTP port without the Host Port enabled. 
+You have enabled OTLP Ingest for the HTTP port without the Host Port enabled.
 
 To send OTLP data to the Agent use the Service created by specifying "http://{{ template "localService.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}" as the endpoint.
 {{- end }}
