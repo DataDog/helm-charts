@@ -381,6 +381,8 @@ datadog:
           enabled: false
           # datadog.otlp.receiver.procotols.grpc.endpoint -- OTLP/gRPC endpoint
           endpoint: "0.0.0.0:4317"
+          # datadog.otlp.receiver.protocols.grpc.useHostPort -- Enable the Host Port for the OTLP/gRPC endpoint
+          useHostPort: true
 
         # datadog.otlp.receiver.protocols.http - OTLP/HTTP configuration
         http:
@@ -388,6 +390,8 @@ datadog:
           enabled: false
           # datadog.otlp.receiver.protocols.http.endpoint -- OTLP/HTTP endpoint
           endpoint: "0.0.0.0:4318"
+          # datadog.otlp.receiver.protocols.http.useHostPort -- Enable the Host Port for the OTLP/HTTP endpoint
+          useHostPort: true
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 

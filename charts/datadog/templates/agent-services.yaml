@@ -88,5 +88,17 @@ spec:
       targetPort: {{ .Values.datadog.apm.port }}
       name: traceport
 {{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.grpc.enabled }}
+    - protocol: TCP
+      port: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+      targetPort: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+      name: otlpgrpcport
+{{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.http.enabled }}
+    - protocol: TCP
+      port: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+      targetPort: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+      name: otlphttpport
+ {{- end }}
   internalTrafficPolicy: Local
 {{ end }}
