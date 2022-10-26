@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.2.0
+
+* Expose any K8S CPU limit set on the trace-agent as `DD_K8S_MAX_CPU`
+
 ## 3.1.11
 
 * Allow disabling use of the Host Port when enabling OTLP Ingest for Agent
