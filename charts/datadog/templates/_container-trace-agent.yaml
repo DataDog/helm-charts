@@ -33,6 +33,12 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    - name: DD_K8S_MAX_CPU
+      valueFrom:
+        resourceFieldRef:
+          containerName: trace-agent
+          resource: limits.cpu
+          divisor: 1m
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_APM_ENABLED

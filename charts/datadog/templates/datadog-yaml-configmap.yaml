@@ -30,7 +30,6 @@ data:
       enabled: true
       apm_non_local_traffic: true
       max_memory: 0
-      max_cpu_percent: 0
 
     {{- $version := (.Values.agents.image.tag | toString | trimSuffix "-jmx") }}
     {{- $length := len (split "." $version ) -}} 
