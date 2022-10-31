@@ -2,6 +2,10 @@
 
 ## 0.15.3
 
+* Update private location image version to `1.29.0`.
+
+## 0.15.3
+
 * Support `commonlabels` configuration to be able to add common labels on all resources created by the chart.
 
 ### 0.15.2
