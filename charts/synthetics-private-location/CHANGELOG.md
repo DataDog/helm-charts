@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 0.15.3
+## 0.15.5
 
 * Update private location image version to `1.29.0`.
+
+## 0.15.4
+
+* Support `commonLabels` for resources from Kubernetes deployment
 
 ## 0.15.3
 
