@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.2.0
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.40.0`.
+
 ## 3.1.11
 
 * Allow disabling use of the Host Port when enabling OTLP Ingest for Agent
