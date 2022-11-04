@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6
+
+* Introduce option to store DatadogAgent v2alpha1 or v1alpha1.
+
 ## 0.5.5
 
 * Fix CI, by renaming `kubeval.yaml` to `kubeval-values.yaml`

@@ -5819,8 +5819,13 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
+      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
       served: true
       storage: true
+      {{- else }}
+      served: true
+      storage: false
+      {{- end }}
       subresources:
         status: {}
     - additionalPrinterColumns:
@@ -8212,8 +8217,13 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
-      served: false
+      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
+      served: true
+      storage: true
+      {{- else }}
+      served: true
       storage: false
+      {{- end }}
       subresources:
         status: {}
 status:
