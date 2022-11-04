@@ -106,6 +106,13 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
+  migration:
+    datadogAgents:
+      version: "v1alpha1"
+
+migration:
+  webhook:
+    enabled: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
