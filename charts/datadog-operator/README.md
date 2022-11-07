@@ -28,7 +28,6 @@
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
-| migration.webhook.enabled | bool | `false` |  |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
@@ -45,6 +44,7 @@
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
+| webhook | object | `{"conversion":{"enabled":false}}` | configure webhook servers |
 
 ## How to configure which namespaces are watched by the Operator.
 

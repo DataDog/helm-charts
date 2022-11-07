@@ -110,8 +110,10 @@ datadog-crds:
     datadogAgents:
       version: "v1alpha1"
 
-migration:
-  webhook:
+# webhook -- configure webhook servers
+webhook:
+  ## Use the conversion webhook server when multiple versions of objects managed by the Datadog Operator are served.
+  conversion:
     enabled: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs

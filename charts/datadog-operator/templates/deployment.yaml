@@ -93,7 +93,7 @@ spec:
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
-          {{- if and (not .Values.migration.webhook.enabled) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
+          {{- if and (not .Values.webhook.conversion.enabled) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
             - "-webhookEnabled=false"
           {{- end }}
           {{- if .Values.secretBackend.command }}
