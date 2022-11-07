@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+* Add option to deactivate the conversion webhook for usecases where v2alpha1 is solely used.
+* Conversion webhook option is not used if the operator version does not support it.
+* V2alpha1 is now always served.
+
 ## 0.8.8
 
 * Update chart to Datadog Operator tag `0.8.2`.
