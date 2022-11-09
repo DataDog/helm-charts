@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.7
+
+* Update CRD of DatadogAgent to have new fields for the cws feature.
+
 ## 0.5.6
 
 * Introduce option to store DatadogAgent v2alpha1 or v1alpha1.
