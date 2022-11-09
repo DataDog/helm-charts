@@ -125,6 +125,11 @@
 {{- end }}
 {{- end }}
 {{- end }}
+{{- if and .Values.datadog.systemProbe.enableCORE .Values.datadog.systemProbe.btfPath }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.btfPath }}
+  name: btf-path
+{{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:

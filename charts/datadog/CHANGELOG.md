@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.4.0
+
+* Add CO-RE configuration values `datadog.systemProbe.btfPath` and `datadog.systemProbe.enableCORE` (see datadog-agent PRs #13962 and #14096 for more context).
+
 ## 3.3.3
 
 * Add a warning note to alert users about suboptimal configuration of Cluster Checks Runner.

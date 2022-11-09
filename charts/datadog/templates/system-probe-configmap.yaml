@@ -39,6 +39,8 @@ data:
       apt_config_dir: /host/etc/apt
       yum_repos_dir: /host/etc/yum.repos.d
       zypper_repos_dir: /host/etc/zypp/repos.d
+      enable_co_re: {{ $.Values.datadog.systemProbe.enableCORE }}
+      btf_path: {{ $.Values.datadog.systemProbe.btfPath }}
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
