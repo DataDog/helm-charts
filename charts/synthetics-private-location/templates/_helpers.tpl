@@ -35,7 +35,6 @@ Common labels
 */}}
 {{- define "synthetics-private-location.labels" -}}
 helm.sh/chart: {{ include "synthetics-private-location.chart" . }}
-{{ include "synthetics-private-location.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
