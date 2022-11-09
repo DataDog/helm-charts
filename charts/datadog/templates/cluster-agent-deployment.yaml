@@ -290,9 +290,32 @@ spec:
 {{ toYaml .Values.clusterAgent.volumeMounts | indent 10 }}
 {{- end }}
 {{- if eq (include "need-cluster-agent-confd" .) "true" }}
+      {{- range $file, $configs := $.Values.clusterAgent.confd }}
           - name: confd
-            mountPath: /conf.d
+            mountPath: /conf.d/{{ $file }}
             readOnly: true
+            subPath: {{ $file }}
+      {{- end }}
+      {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+          - name: confd
+            mountPath: /conf.d/kubernetes_state_core.yaml.default
+            readOnly: true
+            subPath: kubernetes_state_core.yaml.default
+      {{- end }}
+      {{- if .Values.datadog.helmCheck.enabled }}
+          - name: confd
+            mountPath: /conf.d/helm.yaml
+            readOnly: true
+            subPath: helm.yaml
+      {{- end }}
+      {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
+      {{- range $name, $config := $configs }}
+          - name: confd
+            mountPath: {{ printf "/conf.d/%s--%s" $integration $name | quote }}
+            readOnly: true
+            subPath: {{ printf "/conf.d/%s--%s" $integration $name | quote }}
+      {{- end }}
+      {{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
           - name: cluster-agent-yaml
