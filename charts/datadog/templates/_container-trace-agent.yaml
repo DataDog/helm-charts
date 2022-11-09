@@ -51,14 +51,6 @@
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
   volumeMounts:
-    - name: procdir
-      mountPath: /host/proc
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
-    - name: cgroups
-      mountPath: /host/sys/fs/cgroup
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if .Values.agents.useConfigMap }}
@@ -67,6 +59,14 @@
       subPath: datadog.yaml
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir
