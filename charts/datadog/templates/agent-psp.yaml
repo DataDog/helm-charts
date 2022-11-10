@@ -20,7 +20,7 @@ spec:
   - min: 8125
     max: 8126
   {{- end }}
-  hostPID: {{ or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID }}
+  hostPID: {{ or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID }}
   allowedCapabilities:
 {{ toYaml .Values.agents.podSecurity.capabilities | indent 4 }}
   allowedUnsafeSysctls:

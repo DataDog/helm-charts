@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.3.0
+
+* Add datadog.hostPID option and deprecate datadog.dogstatsd.hostPID.
+
 ## 3.2.2
 
 * Mount `/host/proc` and `/host/sys/fs/cgroup` in trace-agent container for better support of container tagging
