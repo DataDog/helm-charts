@@ -728,3 +728,25 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 --config
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if .Values.datadog.systemProbe.enableRuntimeCompiler has been explicitly set
+*/}}
+{{- define "enableRuntimeCompiler-is-set" -}}
+{{- if kindIs "invalid" $.Values.datadog.systemProbe.enableRuntimeCompiler }}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if .Values.datadog.systemProbe.enableKernelHeaderDownload has been explicitly set
+*/}}
+{{- define "enableKernelHeaderDownload-is-set" -}}
+{{- if kindIs "invalid" $.Values.datadog.systemProbe.enableKernelHeaderDownload }}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
