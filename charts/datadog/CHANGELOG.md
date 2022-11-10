@@ -2,7 +2,7 @@
 
 ## 3.2.2
 
-* Mount /host/proc and /host/sys/fs/cgroup in trace-agent container for better support of container tagging
+* Mount `/host/proc` and `/host/sys/fs/cgroup` in trace-agent container for better support of container tagging
 
 ## 3.2.1
 
