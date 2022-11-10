@@ -78,7 +78,7 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
-{{- if and (or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill) .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
+{{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
 - hostPath:
     path: /lib/modules
   name: modules
@@ -125,10 +125,22 @@
 {{- end }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.systemProbe.enableCORE .Values.datadog.systemProbe.btfPath }}
+{{- if .Values.datadog.systemProbe.enableCORE }}
+{{- if .Values.datadog.systemProbe.btfPath }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.btfPath }}
   name: btf-path
+{{- else }}
+- hostPath:
+    path: /lib/modules
+  name: lib-modules
+- hostPath:
+    path: /usr/lib/modules
+  name: usr-lib-modules
+- hostPath:
+    path: /usr/lib/debug
+  name: usr-lib-debug
+{{- end }}
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
