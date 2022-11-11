@@ -2,9 +2,9 @@
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
-  name: {{ template "vector.fullname" . }}
+  name: {{ template "opw.fullname" . }}
   labels:
-    {{- include "vector.labels" . | nindent 4 }}
+    {{- include "opw.labels" . | nindent 4 }}
 spec:
 {{- with .Values.podDisruptionBudget.minAvailable }}
   minAvailable: {{ . }}
@@ -14,5 +14,5 @@ spec:
 {{- end }}
   selector:
     matchLabels:
-      {{- include "vector.selectorLabels" . | nindent 6 }}
+      {{- include "opw.selectorLabels" . | nindent 6 }}
 {{- end }}

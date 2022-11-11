@@ -13,9 +13,9 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "vector.fullname" . }}
+  name: {{ include "opw.fullname" . }}
   labels:
-    {{- include "vector.labels" . | nindent 4 }}
+    {{- include "opw.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -47,7 +47,7 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "vector.fullname" $ }}{{ end }}
+                name: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "opw.fullname" $ }}{{ end }}
                 port:
                   {{- if .port.name }}
                   name: {{ .port.name }}
@@ -55,7 +55,7 @@ spec:
                   number: {{ .port.number }}
                   {{- end }}
               {{- else }}
-              serviceName: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "vector.fullname" $ }}{{ end }}
+              serviceName: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "opw.fullname" $ }}{{ end }}
               servicePort: {{ .port.number }}
               {{- end }}
           {{- end }}

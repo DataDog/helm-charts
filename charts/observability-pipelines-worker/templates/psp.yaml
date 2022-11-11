@@ -2,9 +2,9 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "vector.fullname" . }}
+  name: {{ include "opw.fullname" . }}
   labels:
-    {{- include "vector.labels" . | nindent 4 }}
+    {{- include "opw.labels" . | nindent 4 }}
 spec:
   privileged: false
   allowPrivilegeEscalation: false

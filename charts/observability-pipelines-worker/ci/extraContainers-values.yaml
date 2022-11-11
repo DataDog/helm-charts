@@ -1,5 +1,5 @@
 # Including extraContainers
-## Values file for testing adding extraContainers to Vector Pods.
+## Values file for testing adding extraContainers to Observability Pipeline Worker Pods.
 extraContainers:
   - name: sleep
     image: busybox

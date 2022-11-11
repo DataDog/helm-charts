@@ -4,14 +4,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "haproxy.fullname" -}}
-{{- printf "%s-haproxy" (include "vector.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-haproxy" (include "opw.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
 {{- define "haproxy.labels" -}}
-helm.sh/chart: {{ include "vector.chart" . }}
+helm.sh/chart: {{ include "opw.chart" . }}
 {{ include "haproxy.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Values.haproxy.image.tag | quote }}
@@ -23,7 +23,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "haproxy.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "vector.name" . }}
+app.kubernetes.io/name: {{ include "opw.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: load-balancer
 {{- end }}

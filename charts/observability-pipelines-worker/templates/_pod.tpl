@@ -1,8 +1,8 @@
 {{/*
-Defines the PodSpec for Vector.
+Defines the PodSpec for Observability Pipelines Worker.
 */}}
-{{- define "vector.pod" -}}
-serviceAccountName: {{ include "vector.serviceAccountName" . }}
+{{- define "opw.pod" -}}
+serviceAccountName: {{ include "opw.serviceAccountName" . }}
 {{- with .Values.podHostNetwork }}
 hostNetwork: {{ . }}
 {{- end }}
@@ -82,7 +82,7 @@ containers:
 {{- if or .Values.containerPorts .Values.existingConfigMaps }}
     {{- toYaml .Values.containerPorts | nindent 6 }}
 {{- else if .Values.customConfig }}
-    {{- include "vector.containerPorts" . | indent 6 }}
+    {{- include "opw.containerPorts" . | indent 6 }}
 {{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
       - name: datadog-agent
         containerPort: 8282
@@ -197,7 +197,7 @@ volumes:
   {{- end }}
 {{- else }}
         - configMap:
-            name: {{ template "vector.fullname" . }}
+            name: {{ template "opw.fullname" . }}
 {{- end }}
 {{- if (eq .Values.role "Agent") }}
   - name: data

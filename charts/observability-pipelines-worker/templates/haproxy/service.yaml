@@ -29,7 +29,7 @@ spec:
 {{- if or .Values.haproxy.service.ports .Values.haproxy.existingConfigMap }}
   {{- toYaml .Values.haproxy.service.ports | nindent 4 }}
 {{- else if .Values.customConfig }}
-  {{- include "vector.ports" . | indent 4 }}
+  {{- include "opw.ports" . | indent 4 }}
 {{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
     - name: datadog-agent
       port: 8282

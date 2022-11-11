@@ -6,9 +6,9 @@ TODO: Remove outer "if/elseif"
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "vector.fullname" . }}-headless
+  name: {{ include "opw.fullname" . }}-headless
   labels:
-    {{- include "vector.labels" . | nindent 4 }}
+    {{- include "opw.labels" . | nindent 4 }}
   annotations:
   {{- with .Values.service.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -28,7 +28,7 @@ spec:
 {{- if or .Values.service.ports .Values.existingConfigMaps }}
   {{- toYaml .Values.service.ports | nindent 4 }}
 {{- else if .Values.customConfig }}
-  {{- include "vector.ports" . | indent 4 }}
+  {{- include "opw.ports" . | indent 4 }}
 {{- else }}
     - name: datadog-agent
       port: 8282
@@ -56,7 +56,7 @@ spec:
       protocol: TCP
   {{- end }}
   selector:
-    {{- include "vector.selectorLabels" . | nindent 4 }}
+    {{- include "opw.selectorLabels" . | nindent 4 }}
   type: ClusterIP
   {{- with or .Values.service.topologyKeys }}
   topologyKeys:
@@ -70,9 +70,9 @@ Allow for clean upgrade from 0.16.3 -> 0.17.0
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "vector.fullname" . }}-headless
+  name: {{ include "opw.fullname" . }}-headless
   labels:
-    {{- include "vector.labels" . | nindent 4 }}
+    {{- include "opw.labels" . | nindent 4 }}
   annotations:
   {{- with .Values.service.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -92,7 +92,7 @@ spec:
 {{- if or .Values.service.ports .Values.existingConfigMaps }}
   {{- toYaml .Values.service.ports | nindent 4 }}
 {{- else if .Values.customConfig }}
-  {{- include "vector.ports" . | indent 4 }}
+  {{- include "opw.ports" . | indent 4 }}
 {{- else }}
     - name: datadog-agent
       port: 8282
@@ -120,7 +120,7 @@ spec:
       protocol: TCP
   {{- end }}
   selector:
-    {{- include "vector.selectorLabels" . | nindent 4 }}
+    {{- include "opw.selectorLabels" . | nindent 4 }}
   type: ClusterIP
   {{- with .Values.service.topologyKeys }}
   topologyKeys:

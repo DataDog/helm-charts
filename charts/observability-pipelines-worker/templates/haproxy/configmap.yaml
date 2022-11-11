@@ -87,42 +87,42 @@ data:
       mode http
       balance roundrobin
       option tcp-check
-      server-template srv 10 _datadog-agent._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _datadog-agent._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend fluent
       mode tcp
       balance roundrobin
       option tcp-check
-      server-template srv 10 _fluent._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _fluent._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend logstash
       mode tcp
       balance roundrobin
       option tcp-check
-      server-template srv 10 _logstash._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _logstash._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend splunk-hec
       mode http
       balance roundrobin
       option tcp-check
-      server-template srv 10 _splunk-hec._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _splunk-hec._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend statsd
       mode tcp
       balance roundrobin
       option tcp-check
-      server-template srv 10 _statsd._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _statsd._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend syslog
       mode tcp
       balance roundrobin
       option tcp-check
-      server-template srv 10 _syslog._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+      server-template srv 10 _syslog._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
 
     backend vector
       mode http
       balance roundrobin
       option tcp-check
-      server-template srv 10 _vector._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns proto h2 check
+      server-template srv 10 _vector._tcp.{{ include "opw.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns proto h2 check
   {{- end }}
 {{- end }}

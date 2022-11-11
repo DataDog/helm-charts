@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "vector.name" -}}
+{{- define "opw.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "vector.fullname" -}}
+{{- define "opw.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "vector.chart" -}}
+{{- define "opw.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels.
 */}}
-{{- define "vector.labels" -}}
-helm.sh/chart: {{ include "vector.chart" . }}
-{{ include "vector.selectorLabels" . }}
+{{- define "opw.labels" -}}
+helm.sh/chart: {{ include "opw.chart" . }}
+{{ include "opw.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 {{- end }}
@@ -48,8 +48,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels.
 */}}
-{{- define "vector.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "vector.name" . }}
+{{- define "opw.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "opw.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if or (ne .Values.role "Agent") (ne .Values.role "Aggregator") (ne .Values.role "Stateless-Aggregator") }}
 app.kubernetes.io/component: {{ .Values.role }}
@@ -59,9 +59,9 @@ app.kubernetes.io/component: {{ .Values.role }}
 {{/*
 Create the name of the service account to use.
 */}}
-{{- define "vector.serviceAccountName" -}}
+{{- define "opw.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "vector.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "opw.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -92,7 +92,7 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{/*
 Generate an array of ServicePorts based on `.Values.customConfig`.
 */}}
-{{- define "vector.ports" -}}
+{{- define "opw.ports" -}}
   {{- range $componentKind, $components := .Values.customConfig }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
@@ -135,14 +135,14 @@ Generate a single ServicePort based on a component configuration.
   protocol: {{ $protocol }}
   targetPort: {{ $port }}
 {{- if not (mustHas $protocol (list "TCP" "UDP")) }}
-{{ fail "Component's `mode` is not a supported protocol, please raise a issue at https://github.com/vectordotdev/vector" }}
+{{ fail "Component's `mode` is not a supported protocol" }}
 {{- end }}
 {{- end }}
 
 {{/*
 Generate an array of ContainerPorts based on `.Values.customConfig`.
 */}}
-{{- define "vector.containerPorts" -}}
+{{- define "opw.containerPorts" -}}
   {{- range $componentKind, $components := .Values.customConfig }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
@@ -170,6 +170,6 @@ Generate a single ContainerPort based on a component configuration.
   containerPort: {{ $port }}
   protocol: {{ $protocol }}
 {{- if not (mustHas $protocol (list "TCP" "UDP")) }}
-{{ fail "Component's `mode` is not a supported protocol, please raise a issue at https://github.com/vectordotdev/vector" }}
+{{ fail "Component's `mode` is not a supported protocol" }}
 {{- end }}
 {{- end }}
