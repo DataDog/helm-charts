@@ -1,0 +1,24 @@
+# Components sharing the same port with different protocols
+## Values file for testing config that shares the same numeric port.
+customConfig:
+  api:
+    enabled: false
+  sources:
+    syslog-tcp:
+      type: syslog
+      address: 0.0.0.0:514
+      max_length: 102400
+      mode: tcp
+      shutdown_timeout_secs: 30
+    syslog-udp:
+      type: syslog
+      address: 0.0.0.0:514
+      max_length: 102400
+      mode: udp
+      shutdown_timeout_secs: 30
+  sinks:
+    stdout:
+      type: console
+      inputs: ["syslog-*"]
+      encoding:
+        codec: json

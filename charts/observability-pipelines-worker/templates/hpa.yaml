@@ -1,0 +1,45 @@
+{{- if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") -}}
+{{- if .Values.autoscaling.enabled }}
+apiVersion: {{ template "autoscaling.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "vector.fullname" . }}
+  labels:
+    {{- include "vector.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    {{- if (eq .Values.role "Aggregator") }}
+    kind: StatefulSet
+    {{- else if (eq .Values.role "Stateless-Aggregator") }}
+    kind: Deployment
+    {{- end }}
+    name: {{ include "vector.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- with .Values.autoscaling.customMetric -}}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.autoscaling.behavior }}
+  behavior:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

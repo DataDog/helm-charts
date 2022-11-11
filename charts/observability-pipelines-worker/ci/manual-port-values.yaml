@@ -1,0 +1,11 @@
+# Manually setting Ports
+## Values file for testing manually setting ports and overriding automatically generated configuration.
+containerPorts:
+  - name: override
+    containerPort: 9999
+    protocol: TCP
+service:
+  ports:
+    - name: override
+      port: 9999
+      protocol: TCP

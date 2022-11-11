@@ -1,0 +1,7 @@
+# Including haproxy.extraContainers
+## Values file for testing adding extraContainers to HAProxy Pods.
+haproxy:
+  extraContainers:
+    - name: sleep
+      image: busybox
+      command: ['sh', '-c', "sleep 5"]

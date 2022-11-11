@@ -1,0 +1,19 @@
+# Including extraContainers and extraVolumes
+## Values file for testing adding extraContainers and extraVolumeMounts to Vector Pods.
+extraContainers:
+  - name: sleep
+    image: busybox
+    command: ['sh', '-c', "sleep 5"]
+extraVolumes:
+  - name: podinfo
+    downwardAPI:
+      items:
+        - path: "labels"
+          fieldRef:
+            fieldPath: metadata.labels
+        - path: "annotations"
+          fieldRef:
+            fieldPath: metadata.annotations
+extraVolumeMounts:
+  - name: podinfo
+    mountPath: "/etc/podinfo"

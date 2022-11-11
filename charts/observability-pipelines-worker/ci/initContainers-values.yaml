@@ -1,0 +1,14 @@
+# Including initContainers
+## Values file for testing adding initContainers to Vector Pods.
+initContainers:
+  - name: sleep
+    image: busybox
+    command: ['sh', '-c', "sleep 5"]
+  - name: touch
+    image: busybox
+    command:
+    - touch
+    - "/vector-data-dir/test"
+    volumeMounts:
+    - name: data
+      mountPath: "/vector-data-dir"

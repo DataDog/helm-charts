@@ -1,0 +1,137 @@
+{{- if .Values.haproxy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "haproxy.fullname" . }}
+  labels:
+    {{- include "haproxy.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.haproxy.autoscaling.enabled }}
+  replicas: {{ .Values.haproxy.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "haproxy.selectorLabels" . | nindent 6 }}
+  {{- with .Values.haproxy.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+      {{- if .Values.haproxy.rollWorkload }}
+        checksum/config: {{ include (print $.Template.BasePath "/haproxy/configmap.yaml") . | sha256sum }}
+      {{- end }}
+      {{- with .Values.haproxy.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "haproxy.selectorLabels" . | nindent 8 }}
+      {{- with .Values.haproxy.podLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.haproxy.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "haproxy.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.haproxy.podSecurityContext | nindent 8 }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with .Values.haproxy.initContainers }}
+      initContainers:
+        {{ toYaml . | indent 8 }}
+      {{- end }}
+      containers:
+        - name: haproxy
+          securityContext:
+            {{- toYaml .Values.haproxy.securityContext | nindent 12 }}
+          image: "{{ .Values.haproxy.image.repository }}:{{ .Values.haproxy.image.tag }}"
+          imagePullPolicy: {{ .Values.haproxy.image.pullPolicy }}
+          args:
+            - -f
+            - /usr/local/etc/haproxy/haproxy.cfg
+          ports:
+          {{- if or .Values.haproxy.containerPorts .Values.haproxy.existingConfigMap }}
+            {{- toYaml .Values.haproxy.containerPorts | nindent 12 }}
+          {{- else if .Values.customConfig }}
+            {{- include "vector.containerPorts" . | indent 12 }}
+          {{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
+            - name: datadog-agent
+              containerPort: 8282
+              protocol: TCP
+            - name: fluent
+              containerPort: 24224
+              protocol: TCP
+            - name: logstash
+              containerPort: 5044
+              protocol: TCP
+            - name: splunk-hec
+              containerPort: 8080
+              protocol: TCP
+            - name: statsd
+              containerPort: 8125
+              protocol: TCP
+            - name: syslog
+              containerPort: 9000
+              protocol: TCP
+            - name: vector
+              containerPort: 6000
+              protocol: TCP
+            - name: prom-exporter
+              containerPort: 9090
+              protocol: TCP
+          {{- else if (eq .Values.role "Agent") }}
+            - name: prom-exporter
+              containerPort: 9090
+              protocol: TCP
+          {{- end }}
+          {{- if not .Values.haproxy.customConfig }}
+            - name: stats
+              containerPort: 1024
+              protocol: TCP
+          {{- end }}
+          {{- with .Values.haproxy.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
+          {{- with .Values.haproxy.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
+          {{- with .Values.haproxy.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: haproxy-config
+              mountPath: /usr/local/etc/haproxy
+          {{- with .Values.haproxy.extraVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- with .Values.haproxy.extraContainers }}
+        {{ toYaml . | indent 8 }}
+        {{- end }}
+      volumes:
+        - name: haproxy-config
+          configMap:
+            name: {{ if .Values.haproxy.existingConfigMap }}{{ .Values.haproxy.existingConfigMap }}{{ else }}{{ template "haproxy.fullname" . }}{{ end }}
+      {{- with .Values.haproxy.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.haproxy.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.haproxy.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.haproxy.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,6 @@
+# Including extraContainers
+## Values file for testing adding extraContainers to Vector Pods.
+extraContainers:
+  - name: sleep
+    image: busybox
+    command: ['sh', '-c', "sleep 5"]

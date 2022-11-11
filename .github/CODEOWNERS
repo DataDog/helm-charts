@@ -10,3 +10,4 @@ charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @Dat
 charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-integrations
 charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-integrations
 charts/synthetics-private-location/                  @Datadog/synthetics
+charts/observability-pipelines-worker                @spencergilbert @lukesteensen

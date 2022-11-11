@@ -1,0 +1,60 @@
+{{- if (eq .Values.role "Aggregator") -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "vector.fullname" . }}
+  labels:
+    {{- include "vector.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicas }}
+  {{- end }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  selector:
+    matchLabels:
+      {{- include "vector.selectorLabels" . | nindent 6 }}
+  {{- with .Values.updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  serviceName: {{ template "vector.fullname" . }}-headless
+  template:
+    metadata:
+      annotations:
+      {{- if .Values.rollWorkload }}
+        {{- if .Values.existingConfigMaps }}
+          {{- range .Values.existingConfigMaps }}
+            {{- range $file, $contents := (lookup "v1" "ConfigMap" (print $.Release.Namespace) (print .)).data }}
+        checksum/{{ $file }}: {{ $contents | sha256sum }}
+            {{- end }}
+          {{- end }}
+        {{- else }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vector.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "vector.pod" . | nindent 6 }}
+  volumeClaimTemplates:
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+  - metadata:
+      name: data
+    spec:
+      accessModes: {{ .Values.persistence.accessModes }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
+      {{- with .Values.persistence.selector }}
+      selector:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}

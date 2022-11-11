@@ -1,0 +1,15 @@
+# Including additional Volumes
+## Values file for testing adding additional Volumes to Vector Pods.
+extraVolumes:
+  - name: podinfo
+    downwardAPI:
+      items:
+        - path: "labels"
+          fieldRef:
+            fieldPath: metadata.labels
+        - path: "annotations"
+          fieldRef:
+            fieldPath: metadata.annotations
+extraVolumeMounts:
+  - name: podinfo
+    mountPath: "/etc/podinfo"

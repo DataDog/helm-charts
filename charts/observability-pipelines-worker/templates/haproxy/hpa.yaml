@@ -1,0 +1,35 @@
+{{- if and .Values.haproxy.enabled .Values.haproxy.autoscaling.enabled }}
+apiVersion: {{ template "autoscaling.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "haproxy.fullname" . }}
+  labels:
+    {{- include "haproxy.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "haproxy.fullname" . }}
+  minReplicas: {{ .Values.haproxy.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.haproxy.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.haproxy.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.haproxy.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.haproxy.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.haproxy.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+    {{- with .Values.haproxy.autoscaling.customMetric -}}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

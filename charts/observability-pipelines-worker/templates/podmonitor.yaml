@@ -1,0 +1,32 @@
+{{- if and .Values.podMonitor.enabled (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "vector.fullname" . }}
+  labels:
+    {{- with .Values.podMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- include "vector.labels" . | nindent 4 }}
+spec:
+  jobLabel: {{ .Values.podMonitor.jobLabel }}
+  selector:
+    matchLabels:
+      {{- include "vector.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - port: {{ .Values.podMonitor.port }}
+      path: {{ .Values.podMonitor.path }}
+      honorLabels: {{ .Values.podMonitor.honorLabels }}
+      honorTimestamps: {{ .Values.podMonitor.honorTimestamps }}
+      {{- with .Values.podMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

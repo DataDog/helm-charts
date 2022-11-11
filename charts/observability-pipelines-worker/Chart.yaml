@@ -1,0 +1,9 @@
+apiVersion: v2
+name: observability-pipelines-worker
+version: "0.1.0"
+description: Observability Pipelines Worker
+home: https://www.datadoghq.com
+icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+maintainers:
+  - name: Datadog
+    email: support@datadoghq.com

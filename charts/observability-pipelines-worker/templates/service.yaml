@@ -1,0 +1,70 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vector.fullname" . }}
+  labels:
+    {{- include "vector.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+{{- end }}
+{{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+{{- end }}
+{{- if .Values.service.ipFamilies }}
+{{- with .Values.service.ipFamilies }}
+  ipFamilies:
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+{{- end }}
+  ports:
+{{- if or .Values.service.ports .Values.existingConfigMaps }}
+  {{- toYaml .Values.service.ports | nindent 4 }}
+{{- else if .Values.customConfig }}
+  {{- include "vector.ports" . | indent 4 }}
+{{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
+    - name: datadog-agent
+      port: 8282
+      protocol: TCP
+    - name: fluent
+      port: 24224
+      protocol: TCP
+    - name: logstash
+      port: 5044
+      protocol: TCP
+    - name: splunk-hec
+      port: 8080
+      protocol: TCP
+    - name: statsd
+      port: 8125
+      protocol: TCP
+    - name: syslog
+      port: 9000
+      protocol: TCP
+    - name: vector
+      port: 6000
+      protocol: TCP
+    - name: prom-exporter
+      port: 9090
+      protocol: TCP
+{{- else if (eq .Values.role "Agent") }}
+    - name: prom-exporter
+      port: 9090
+      protocol: TCP
+{{- end }}
+  selector:
+    {{- include "vector.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.service.type }}
+  {{- with .Values.service.topologyKeys }}
+  topologyKeys:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

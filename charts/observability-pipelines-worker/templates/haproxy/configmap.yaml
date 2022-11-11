@@ -1,0 +1,128 @@
+{{- if and .Values.haproxy.enabled (not .Values.haproxy.existingConfigMap) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "haproxy.fullname" . }}
+  labels:
+    {{- include "haproxy.labels" . | nindent 4 }}
+data:
+  haproxy.cfg: |
+  {{- if .Values.customConfig }}
+  {{ tpl .Values.haproxy.customConfig . | nindent 4 }}
+  {{- else }}
+    global
+      log stdout format raw local0
+      maxconn 4096
+      stats socket /tmp/haproxy
+      hard-stop-after {{ .Values.haproxy.terminationGracePeriodSeconds }}s
+
+    defaults
+      log     global
+      option  dontlognull
+      retries 3
+      option  redispatch
+      option  allbackups
+      timeout client 5s
+      timeout server 5s
+      timeout connect 5s
+
+    resolvers coredns
+      nameserver dns1 kube-dns.kube-system.svc.cluster.local:53
+      resolve_retries 3
+      timeout resolve 2s
+      timeout retry 1s
+      accepted_payload_size 8192
+      hold valid 10s
+      hold obsolete 60s
+
+    frontend stats
+      mode http
+      bind :::1024
+      option httplog
+      http-request use-service prometheus-exporter if { path /metrics }
+
+    frontend datadog-agent
+      mode http
+      bind :::8282
+      option httplog
+      default_backend datadog-agent
+
+    frontend fluent
+      mode tcp
+      bind :::24224
+      option tcplog
+      default_backend fluent
+
+    frontend logstash
+      mode tcp
+      bind :::5044
+      option tcplog
+      default_backend logstash
+
+    frontend splunk-hec
+      mode http
+      bind :::8080
+      option httplog
+      default_backend splunk-hec
+
+    frontend statsd
+      mode tcp
+      bind :::8125
+      option tcplog
+      default_backend statsd
+
+    frontend syslog
+      mode tcp
+      bind :::9000
+      option tcplog
+      default_backend syslog
+
+    frontend vector
+      mode http
+      bind :::6000 proto h2
+      option httplog
+      default_backend vector
+
+    backend datadog-agent
+      mode http
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _datadog-agent._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend fluent
+      mode tcp
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _fluent._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend logstash
+      mode tcp
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _logstash._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend splunk-hec
+      mode http
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _splunk-hec._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend statsd
+      mode tcp
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _statsd._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend syslog
+      mode tcp
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _syslog._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns check
+
+    backend vector
+      mode http
+      balance roundrobin
+      option tcp-check
+      server-template srv 10 _vector._tcp.{{ include "vector.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local resolvers coredns proto h2 check
+  {{- end }}
+{{- end }}

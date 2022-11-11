@@ -1,0 +1,126 @@
+# Aggregator role
+## Values file for testing all Aggregator parameters.
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+updateStrategy:
+  type: OnDelete
+
+nodeSelector:
+  kubernetes.io/os: linux
+
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 1
+      preference:
+        matchExpressions:
+        - key: kubernetes.io/e2e-az-name
+          operator: In
+          values:
+          - e2e-az1
+          - e2e-az2
+
+topologySpreadConstraints:
+  - labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: vector
+        app.kubernetes.io/instance: vector
+        app.kubernetes.io/component: Aggregator
+    maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+
+customConfig:
+  data_dir: /data
+  api:
+    enabled: true
+    address: 0.0.0.0:1212
+  healthchecks:
+    enabled: false
+  sources:
+    kafka:
+      type: kafka
+      acknowledgements: true
+      bootstrap_servers: kafka-bootstrap.svc.cluster.local:9092
+      group_id: vector-consumer
+      topics: [application-logs]
+    prom_remote:
+      type: prometheus_remote_write
+      address: 0.0.0.0:9999
+  transforms:
+    aggregate:
+      type: aggregate
+      inputs: [prom_remote]
+      interval_ms: 15000
+    remap:
+      type: remap
+      inputs: [kafka]
+      drop_on_error: true
+      source: |
+        . |= object!(parse_json!(.message))
+    sample:
+      type: sample
+      inputs: [remap]
+      exclude: |
+        .status_code != 200 && !includes(["info", "debug"], .severity)
+      rate: 10
+  sinks:
+    s3_archive:
+      type: aws_s3
+      inputs: [remap]
+      bucket: logs-archive
+      key_prefix: date=%F/
+      compression: gzip
+      encoding:
+        codec: json
+      region: us-east-1
+    elasticsearch:
+      type: elasticsearch
+      inputs: [aggregate, sample]
+      endpoint: http://elasticsearch.svc.cluster.local:9000
+      index: vector-%F
+      mode: data_stream
+      compression: gzip
+
+service:
+  enabled: true
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 50Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: api
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: api

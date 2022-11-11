@@ -1,0 +1,8 @@
+# Separately disable the Headless Service
+## Values file for testing separate enabling for service and serviceHeadless.
+
+service:
+  enabled: true
+serviceHeadless:
+  enabled: false
+

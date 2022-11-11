@@ -1,0 +1,16 @@
+# Ingress usage
+## Values file for testing Ingress parameters.
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /api/v1
+          pathType: Prefix
+          port:
+            name: "http"
+            number: "8080"

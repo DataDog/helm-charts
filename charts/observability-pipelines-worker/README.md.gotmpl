@@ -1,0 +1,39 @@
+# Observability Pipelines Worker
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+## How to use Datadog Helm repository
+
+You need to add this repository to your Helm repositories:
+
+```
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+```
+
+{{ template "chart.requirementsSection" . }}
+
+## Quick start
+
+### Installing the Observability Pipelines Worker chart
+
+To install the chart with the release name `<RELEASE_NAME>` run:
+
+```bash
+helm install --name <RELEASE_NAME> \
+  datadog/observability-pipelines-worker
+```
+
+### Uninstalling the chart
+
+To uninstall/delete the `<RELEASE_NAME>` deployment:
+
+```bash
+helm delete <RELEASE_NAME>
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+{{ template "chart.valuesHeader" . }}
+
+{{ template "chart.valuesSection" . }}

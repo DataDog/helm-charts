@@ -1,0 +1,75 @@
+{{- if .Values.haproxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "haproxy.fullname" . }}
+  labels:
+    {{- include "haproxy.labels" . | nindent 4 }}
+  annotations:
+  {{- with .Values.haproxy.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.haproxy.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.haproxy.service.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.haproxy.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.haproxy.service.loadBalancerIP }}
+{{- end }}
+{{- if .Values.haproxy.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.haproxy.service.ipFamilyPolicy }}
+{{- end }}
+{{- if .Values.haproxy.service.ipFamilies }}
+{{- with .Values.haproxy.service.ipFamilies }}
+  ipFamilies:
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+{{- end }}
+  ports:
+{{- if or .Values.haproxy.service.ports .Values.haproxy.existingConfigMap }}
+  {{- toYaml .Values.haproxy.service.ports | nindent 4 }}
+{{- else if .Values.customConfig }}
+  {{- include "vector.ports" . | indent 4 }}
+{{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
+    - name: datadog-agent
+      port: 8282
+      protocol: TCP
+    - name: fluent
+      port: 24224
+      protocol: TCP
+    - name: logstash
+      port: 5044
+      protocol: TCP
+    - name: splunk-hec
+      port: 8080
+      protocol: TCP
+    - name: statsd
+      port: 8125
+      protocol: TCP
+    - name: syslog
+      port: 9000
+      protocol: TCP
+    - name: vector
+      port: 6000
+      protocol: TCP
+    - name: prom-exporter
+      port: 9090
+      protocol: TCP
+{{- else if (eq .Values.role "Agent") }}
+    - name: prom-exporter
+      port: 9090
+      protocol: TCP
+{{- end }}
+{{- if not .Values.haproxy.customConfig }}
+    - name: stats
+      port: 1024
+      protocol: TCP
+{{- end }}
+  selector:
+    {{- include "haproxy.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.haproxy.service.type }}
+  {{- with .Values.haproxy.service.topologyKeys }}
+  topologyKeys:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
