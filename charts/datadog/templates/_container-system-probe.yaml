@@ -59,19 +59,16 @@
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/fedora-release" }}
     - name: etc-fedora-release
       mountPath: /host/etc/fedora-release
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/lsb-release" }}
     - name: etc-lsb-release
       mountPath: /host/etc/lsb-release
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
   {{- end }}

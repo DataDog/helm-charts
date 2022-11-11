@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.3.1
+
+* Remove `mountPropagation` for `*-release` files in `/etc`. It is not needed for individual files.
+
 ## 3.3.0
 
 * Add datadog.hostPID option and deprecate datadog.dogstatsd.hostPID.
