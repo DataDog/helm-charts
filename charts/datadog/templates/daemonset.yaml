@@ -97,7 +97,7 @@ spec:
       dnsConfig:
 {{ toYaml .Values.agents.dnsConfig | indent 8 }}
       {{- end }}
-      {{- if or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID }}
+      {{- if or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID }}
       hostPID: true
       {{- end }}
       {{- if .Values.agents.image.pullSecrets }}

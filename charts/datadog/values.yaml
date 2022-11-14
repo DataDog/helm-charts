@@ -292,6 +292,7 @@ datadog:
     useHostPort: false
 
     # datadog.dogstatsd.useHostPID -- Run the agent in the host's PID namespace
+    ## DEPRECATED: use datadog.useHostPID instead.
 
     ## This is required for Dogstatsd origin detection to work.
     ## See https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
@@ -301,6 +302,13 @@ datadog:
 
     ## ref: https://github.com/DataDog/docker-dd-agent#environment-variables
     nonLocalTraffic: true
+
+  # datadog.useHostPID -- Run the agent in the host's PID namespace, required for origin detection
+  # / unified service tagging
+
+  ## This is required for Dogstatsd origin detection to work in dogstatsd and trace agent
+  ## See https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
+  useHostPID: true
 
   # datadog.collectEvents -- Enables this to start event collection from the kubernetes API
 
@@ -732,7 +740,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.40.0
+    tag: 7.40.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1054,7 +1062,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.40.0
+    tag: 7.40.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1492,7 +1500,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.40.0
+    tag: 7.40.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
