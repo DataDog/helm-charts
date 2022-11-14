@@ -14,5 +14,5 @@ spec:
 {{- end }}
   selector:
     matchLabels:
-      {{- include "opw.selectorLabels" . | nindent 6 }}
+      {{- include "opw.template-labels" . | nindent 6 }}
 {{- end }}

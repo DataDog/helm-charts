@@ -1,3 +1,4 @@
+{{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
 */}}
@@ -31,41 +32,41 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels.
+Common template labels.
 */}}
-{{- define "opw.labels" -}}
-helm.sh/chart: {{ include "opw.chart" . }}
-{{ include "opw.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ with .Values.commonLabels }}
-{{- toYaml . -}}
-{{- end }}
-{{- end }}
-
-{{/*
-Selector labels.
-*/}}
-{{- define "opw.selectorLabels" -}}
+{{- define "opw.template-labels" -}}
 app.kubernetes.io/name: {{ include "opw.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if or (ne .Values.role "Agent") (ne .Values.role "Aggregator") (ne .Values.role "Stateless-Aggregator") }}
 app.kubernetes.io/component: {{ .Values.role }}
 {{- end }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use.
+Common labels.
+*/}}
+{{- define "opw.labels" -}}
+helm.sh/chart: {{ include "opw.chart" . }}
+{{ include "opw.template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Values.image.tag | quote }}
+{{- end }}
+{{ if .Values.commonLabels }}
+{{- toYaml .Values.commonLabels -}}
+{{- end }}
+{{- end -}}
+
+{{/*
+Return the service account name
 */}}
 {{- define "opw.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
 {{- default (include "opw.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Return the appropriate apiVersion for PodDisruptionBudget policy APIs.

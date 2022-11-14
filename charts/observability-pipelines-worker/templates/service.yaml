@@ -61,7 +61,7 @@ spec:
       protocol: TCP
 {{- end }}
   selector:
-    {{- include "opw.selectorLabels" . | nindent 4 }}
+    {{- include "opw.template-labels" . | nindent 4 }}
   type: {{ .Values.service.type }}
   {{- with .Values.service.topologyKeys }}
   topologyKeys:

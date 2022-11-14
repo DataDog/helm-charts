@@ -56,7 +56,7 @@ spec:
       protocol: TCP
   {{- end }}
   selector:
-    {{- include "opw.selectorLabels" . | nindent 4 }}
+    {{- include "opw.template-labels" . | nindent 4 }}
   type: ClusterIP
   {{- with or .Values.service.topologyKeys }}
   topologyKeys:
@@ -120,7 +120,7 @@ spec:
       protocol: TCP
   {{- end }}
   selector:
-    {{- include "opw.selectorLabels" . | nindent 4 }}
+    {{- include "opw.template-labels" . | nindent 4 }}
   type: ClusterIP
   {{- with .Values.service.topologyKeys }}
   topologyKeys:
