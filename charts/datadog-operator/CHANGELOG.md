@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+* Updating dependency to CRD to allow all fields.
+
 ## 0.9.0
 
 * Add option to deactivate the conversion webhook for usecases where v2alpha1 is solely used.
