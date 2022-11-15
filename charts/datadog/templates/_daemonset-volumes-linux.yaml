@@ -125,7 +125,7 @@
 {{- end }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.systemProbe.enableCORE .Values.datadog.systemProbe.btfPath }}
+{{- if .Values.datadog.systemProbe.btfPath }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.btfPath }}
   name: btf-path
