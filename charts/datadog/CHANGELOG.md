@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.8
+
+* Remove `mountPropagation` for `/etc/os-release` files.
+
 ## 3.33.7
 
 * Add additional intakes into `CiliumNetworkPolicy` for node Agent and Cluster Check Runner for profiling, network monitoring, dbm, and remote config
