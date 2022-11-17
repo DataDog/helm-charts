@@ -1,5 +1,3 @@
-# Aggregator role
-## Values file for testing all Aggregator parameters.
 podSecurityContext:
   fsGroup: 2000
 

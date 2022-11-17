@@ -54,24 +54,6 @@ containers:
     {{- toYaml . | nindent 6 }}
 {{- end }}
 {{- end }}
-{{- if (eq .Values.role "Agent") }}
-      - name: VECTOR_SELF_NODE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.nodeName
-      - name: VECTOR_SELF_POD_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.name
-      - name: VECTOR_SELF_POD_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.namespace
-      - name: PROCFS_ROOT
-        value: "/host/proc"
-      - name: SYSFS_ROOT
-        value: "/host/sys"
-{{- end }}
 {{- if .Values.envFrom }}
 {{- with .Values.envFrom }}
     envFrom:
@@ -83,7 +65,7 @@ containers:
     {{- toYaml .Values.containerPorts | nindent 6 }}
 {{- else if .Values.customConfig }}
     {{- include "opw.containerPorts" . | indent 6 }}
-{{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
+{{- else }}
       - name: datadog-agent
         containerPort: 8282
         protocol: TCP
@@ -105,10 +87,6 @@ containers:
       - name: vector
         containerPort: 6000
         protocol: TCP
-      - name: prom-exporter
-        containerPort: 9090
-        protocol: TCP
-{{- else if (eq .Values.role "Agent") }}
       - name: prom-exporter
         containerPort: 9090
         protocol: TCP
@@ -139,20 +117,6 @@ containers:
       - name: config
         mountPath: "/etc/vector/"
         readOnly: true
-{{- if (eq .Values.role "Agent") }}
-      - name: var-log
-        mountPath: "/var/log/"
-        readOnly: true
-      - name: var-lib
-        mountPath: "/var/lib"
-        readOnly: true
-      - name: procfs
-        mountPath: "/host/proc"
-        readOnly: true
-      - name: sysfs
-        mountPath: "/host/sys"
-        readOnly: true
-{{- end }}
 {{- with .Values.extraVolumeMounts }}
 {{- toYaml . | nindent 6 }}
 {{- end }}
@@ -177,13 +141,13 @@ topologySpreadConstraints:
 {{- toYaml . | nindent 2 }}
 {{- end }}
 volumes:
-{{- if and .Values.persistence.enabled (eq .Values.role "Aggregator") }}
+{{- if .Values.persistence.enabled }}
 {{- with .Values.persistence.existingClaim }}
   - name: data
     persistentVolumeClaim:
       claimName: {{ . }}
 {{- end }}
-{{- else if (ne .Values.role "Agent") }}
+{{- else }}
   - name: data
     emptyDir: {}
 {{- end }}
@@ -198,23 +162,6 @@ volumes:
 {{- else }}
         - configMap:
             name: {{ template "opw.fullname" . }}
-{{- end }}
-{{- if (eq .Values.role "Agent") }}
-  - name: data
-    hostPath:
-      path: {{ .Values.persistence.hostPath.path | quote }}
-  - name: var-log
-    hostPath:
-      path: "/var/log/"
-  - name: var-lib
-    hostPath:
-      path: "/var/lib/"
-  - name: procfs
-    hostPath:
-      path: "/proc"
-  - name: sysfs
-    hostPath:
-      path: "/sys"
 {{- end }}
 {{- with .Values.extraVolumes }}
 {{- toYaml . | nindent 2 }}

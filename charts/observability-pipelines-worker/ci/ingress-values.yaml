@@ -1,5 +1,3 @@
-# Ingress usage
-## Values file for testing Ingress parameters.
 ingress:
   enabled: true
   className: "nginx"

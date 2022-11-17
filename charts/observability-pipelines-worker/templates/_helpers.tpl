@@ -38,9 +38,6 @@ Common template labels.
 app.kubernetes.io/name: {{ include "opw.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if or (ne .Values.role "Agent") (ne .Values.role "Aggregator") (ne .Values.role "Stateless-Aggregator") }}
-app.kubernetes.io/component: {{ .Values.role }}
-{{- end }}
 {{- end }}
 
 {{/*

@@ -1,4 +1,3 @@
-{{- if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") -}}
 {{- if .Values.autoscaling.enabled }}
 apiVersion: {{ template "autoscaling.apiVersion" . }}
 kind: HorizontalPodAutoscaler
@@ -9,11 +8,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    {{- if (eq .Values.role "Aggregator") }}
     kind: StatefulSet
-    {{- else if (eq .Values.role "Stateless-Aggregator") }}
-    kind: Deployment
-    {{- end }}
     name: {{ include "opw.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
@@ -41,5 +36,4 @@ spec:
   behavior:
   {{- toYaml . | nindent 4 }}
   {{- end }}
-{{- end }}
 {{- end }}

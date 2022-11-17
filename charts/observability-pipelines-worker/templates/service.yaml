@@ -30,7 +30,7 @@ spec:
   {{- toYaml .Values.service.ports | nindent 4 }}
 {{- else if .Values.customConfig }}
   {{- include "opw.ports" . | indent 4 }}
-{{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
+{{- else }}
     - name: datadog-agent
       port: 8282
       protocol: TCP
@@ -52,10 +52,6 @@ spec:
     - name: vector
       port: 6000
       protocol: TCP
-    - name: prom-exporter
-      port: 9090
-      protocol: TCP
-{{- else if (eq .Values.role "Agent") }}
     - name: prom-exporter
       port: 9090
       protocol: TCP

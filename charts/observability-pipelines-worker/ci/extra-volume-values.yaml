@@ -1,5 +1,3 @@
-# Including additional Volumes
-## Values file for testing adding additional Volumes to Vector Pods.
 extraVolumes:
   - name: podinfo
     downwardAPI:

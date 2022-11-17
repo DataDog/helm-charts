@@ -1,5 +1,3 @@
-# Including extraContainers and extraVolumes
-## Values file for testing adding extraContainers and extraVolumeMounts to Vector Pods.
 extraContainers:
   - name: sleep
     image: busybox

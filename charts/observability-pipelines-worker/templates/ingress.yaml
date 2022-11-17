@@ -47,7 +47,7 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "opw.fullname" $ }}{{ end }}
+                name: {{ include "opw.fullname" $ }}
                 port:
                   {{- if .port.name }}
                   name: {{ .port.name }}
@@ -55,7 +55,7 @@ spec:
                   number: {{ .port.number }}
                   {{- end }}
               {{- else }}
-              serviceName: {{ if $.Values.haproxy.enabled }}{{ include "haproxy.fullname" $ }}{{ else }}{{ include "opw.fullname" $ }}{{ end }}
+              serviceName: {{ include "opw.fullname" $ }}
               servicePort: {{ .port.number }}
               {{- end }}
           {{- end }}

@@ -1,5 +1,3 @@
-# Including initContainers
-## Values file for testing adding initContainers to Vector Pods.
 initContainers:
   - name: sleep
     image: busybox

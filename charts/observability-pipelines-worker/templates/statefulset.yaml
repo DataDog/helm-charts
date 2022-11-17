@@ -1,4 +1,3 @@
-{{- if (eq .Values.role "Aggregator") -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -56,5 +55,4 @@ spec:
       selector:
 {{ toYaml . | indent 8 }}
       {{- end }}
-{{- end }}
 {{- end }}

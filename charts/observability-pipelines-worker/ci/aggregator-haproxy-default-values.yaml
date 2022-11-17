@@ -1,4 +1,0 @@
-# HAProxy usage
-## Values file for testing HAProxy parameters.
-haproxy:
-  enabled: true

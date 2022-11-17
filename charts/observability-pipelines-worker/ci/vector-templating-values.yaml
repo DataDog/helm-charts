@@ -1,5 +1,3 @@
-# Using Vector's template syntax
-## Values file for testing Vector's template syntax in `customConfig`.
 customConfig:
   data_dir: /data
   api:
