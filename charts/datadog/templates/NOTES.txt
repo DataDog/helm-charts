@@ -355,6 +355,18 @@ You are using datadog.kubeStateMetricsCore.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
+{{- if and .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners (not .Values.clusterChecksRunner.enabled)}}
+
+###################################################################################
+####               WARNING: Suboptimal Cluster Checks Runner configuration     ####
+###################################################################################
+
+You have `datadog.kubeStateMetricsCore.useClusterCheckRunners` enabled and `clusterChecksRunner.enabled` disabled.
+This configuration will create Cluster Checks Runner deployment but some of the cluster checks may still run on Node Agents.
+To make sure all cluster check run on Cluster Checks Runner set `clusterChecksRunner.enabled` to 'true'.
+
+{{- end }}
+
 
 {{- if or .Values.datadog.acInclude .Values.datadog.acExclude }}
 #################################################################

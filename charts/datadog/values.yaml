@@ -1493,6 +1493,7 @@ clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
 
   ## If both clusterChecksRunner.enabled and datadog.kubeStateMetricsCore.enabled are true, consider enabling datadog.kubeStateMetricsCore.useClusterCheckRunners as well.
+  ## If datadog.kubeStateMetricsCore.useClusterCheckRunners is enabled, it's recommended to enabled this flag as well so all Cluster Checks run on Cluster Checks Runner instead of node agents.
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   enabled: false
 
