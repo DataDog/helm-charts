@@ -34,10 +34,10 @@ containers:
     securityContext:
 {{ toYaml . | indent 6 }}
 {{- end }}
-{{- if .Values.image.sha }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}@sha256:{{ .Values.image.sha }}"
+{{- if .Values.image.digest }}
+    image: "{{ .Values.image.repository }}/{{ .Values.image.name }}@{{ .Values.image.digest }}"
 {{- else }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+    image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- with .Values.command }}

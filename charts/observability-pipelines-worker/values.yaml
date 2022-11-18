@@ -2,42 +2,56 @@
 # See Observability Pipeline helm documentation to learn more:
 ## https://docs.datadoghq.com/observability_pipelines/kubernetes/helm/
 
-# nameOverride -- Override the name of resources.
+## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
+## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
+
+# nameOverride -- Override the name of app
 nameOverride: ""
 
-# fullnameOverride -- Override the full name of resources.
+# fullnameOverride -- Override the full qualified app name
 fullnameOverride: ""
 
-# rollWorkload -- Add a checksum of the generated ConfigMap to workload annotations.
+# rollWorkload -- Add a checksum of the generated ConfigMap to Pod annotations
 rollWorkload: true
 
-# commonLabels -- Add additional labels to all created resources.
+# commonLabels -- Labels to apply to all resources
 commonLabels: {}
+#  team_name: dev
 
-# Define the Vector image to use.
+datadog:
+  # datadog.apiKey -- Your Datadog API key
+  apiKey: <DATADOG_API_KEY>
+  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one.
+  # The value should be set with the `api-key` key inside the secret.
+  apiKeyExistingSecret: ""
+
 image:
-  # image.repository -- Override default registry and name for Vector's image.
-  repository: datadog/observability-pipelines-worker
-  # image.pullPolicy -- The [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy) for
-  # Vector's image.
+  # image.name -- Image name to use (relative to `image.repository`)
+  name: observability-pipelines-worker
+  # image.tag -- Image tag to use
+  tag: 0.1.0
+  # image.digest -- Image digest to use, takes precedence over `image.tag`
+  digest: ""
+  ## Currently, we offer images at:
+  ## - GCP: use gcr.io/datadoghq
+  ## - DockerHub: use docker.io/datadog
+  ## - AWS: use public.ecr.aws/datadog
+  # image.repository -- Image repository to use
+  repository: "gcr.io/datadoghq"
+  # image.pullPolicy -- Set the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy)
   pullPolicy: IfNotPresent
-  # image.pullSecrets -- The [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
-  # to reference for the Vector Pods.
+  # image.pullSecrets -- Set the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
   pullSecrets: []
-  # image.tag -- The tag to use for Vector's image.
-  # @default -- Derived from the Chart's appVersion.
-  tag: ""
-  # image.sha -- The SHA to use for Vector's image.
-  sha: ""
+  #  - name: "<REGISTRY_SECRET>"
 
-# replicas -- Specify the number of Pods to create.
+# replicas -- Specify the number of Pods to create
 replicas: 1
 
 # podManagementPolicy -- Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies)
-# for the StatefulSet.
+# for the StatefulSet
 podManagementPolicy: OrderedReady
 
-# Create a Secret resource for Vector to use.
+# Create a Secret resource
 secrets:
   # secrets.generic -- Each Key/Value will be added to the Secret's data key, each value should be raw and NOT base64
   # encoded. Any secrets can be provided here. It's commonly used for credentials and other access related values.
@@ -50,17 +64,16 @@ secrets:
 
 autoscaling:
   # autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
-  # for Vector.
   enabled: false
-  # autoscaling.minReplicas -- Minimum replicas for Vector's HPA.
+  # autoscaling.minReplicas -- Set minimum replicas
   minReplicas: 1
-  # autoscaling.maxReplicas -- Maximum replicas for Vector's HPA.
+  # autoscaling.maxReplicas -- Set maximum replicas
   maxReplicas: 10
-  # autoscaling.targetCPUUtilizationPercentage -- Target CPU utilization for Vector's HPA.
+  # autoscaling.targetCPUUtilizationPercentage -- Set target CPU utilization
   targetCPUUtilizationPercentage: 80
-  # autoscaling.targetMemoryUtilizationPercentage -- (int) Target memory utilization for Vector's HPA.
+  # autoscaling.targetMemoryUtilizationPercentage -- (int) Set target memory utilization
   targetMemoryUtilizationPercentage:
-  # autoscaling.customMetric -- Target a custom metric for autoscaling.
+  # autoscaling.customMetric -- Target a custom metric for autoscaling
   customMetric: {}
     #  - type: Pods
     #    pods:
@@ -69,82 +82,76 @@ autoscaling:
     #      target:
     #        type: AverageValue
     #        averageValue: 95
-  # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors.
+  # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
   behavior: {}
     # scaleDown:
     #   stabilizationWindowSeconds: 300
 
 podDisruptionBudget:
   # podDisruptionBudget.enabled -- Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
-  # for Vector.
   enabled: false
-  # podDisruptionBudget.minAvailable -- The number of Pods that must still be available after an eviction.
+  # podDisruptionBudget.minAvailable -- The number of Pods that must still be available after an eviction
   minAvailable: 1
-  # podDisruptionBudget.maxUnavailable -- (int) The number of Pods that can be unavailable after an eviction.
+  # podDisruptionBudget.maxUnavailable -- (int) The number of Pods that can be unavailable after an eviction
   maxUnavailable:
 
 serviceAccount:
-  # serviceAccount.create -- If true, create a ServiceAccount for Vector.
+  # serviceAccount.create -- If true, create a ServiceAccount
   create: true
-  # serviceAccount.annotations -- Annotations to add to Vector's ServiceAccount.
+  # serviceAccount.annotations -- Annotations to add to the ServiceAccount
   annotations: {}
-  # serviceAccount.name -- The name of the ServiceAccount to use. If not set and serviceAccount.create is true, a name
+  # serviceAccount.name -- The name of the ServiceAccount to use. If not set and `serviceAccount.create` is **true**, a name
   # is generated using the fullname template.
   name:
-  # serviceAccount.automountToken -- Automount API credentials for Vector's ServiceAccount.
+  # serviceAccount.automountToken -- Automount API credentials for the ServiceAccount
   automountToken: true
 
-# podAnnotations -- Set annotations on Vector Pods.
+# podAnnotations -- Set annotations on Pods.
 podAnnotations: {}
 
-# podLabels -- Set labels on Vector Pods.
+# podLabels -- Set labels on Pods.
 podLabels:
   vector.dev/exclude: "true"
 
 # podPriorityClassName -- Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass)
-# on Vector Pods.
 podPriorityClassName: ""
 
-# podHostNetwork -- Configure hostNetwork on Vector Pods.
+# podHostNetwork -- Enable hostNetwork on Pods.
 podHostNetwork: false
 
 # podSecurityContext -- Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-# for Vector Pods.
 podSecurityContext: {}
 
-# securityContext -- Specify securityContext on Vector containers.
+# securityContext -- Specify securityContext for containers
 securityContext: {}
 
-# command -- Override Vector's default command.
+# command -- Override default image command
 command: []
 
-# args -- Override Vector's default arguments.
-args:
-  - --config-dir
-  - "/etc/vector/"
+# args -- Override default image arguments
+args: []
 
-# env -- Set environment variables for Vector containers.
+# env -- Define environment variables
 env: []
-  # - name: MY_VARIABLE
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: vector
-  #       key: my_variable
-  # - name: AWS_ACCESS_KEY_ID
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: vector
-  #       key: awsAccessKeyId
+#  - name: <ENV_VAR_NAME>
+#    value: <ENV_VAR_VALUE>
+#  - name: <ENV_VAR_NAME>
+#    valueFrom:
+#      secretKeyRef:
+#        name: <SECRET_NAME>
+#        key: <KEY_NAME>
 
-# envFrom -- Define environment variables from Secrets or ConfigMaps.
+# envFrom -- Define environment variables from ConfigMap or Secret data
 envFrom: []
-  # - secretRef:
-  #     name: vector
+#  - configMapRef:
+#      name: <CONFIGMAP_NAME>
+#  - secretRef:
+#     name: <SECRET_NAME>
 
-# containerPorts -- Manually define Vector's containerPorts, overriding automated generation of containerPorts.
+# containerPorts -- Manually define containerPorts, overriding automated generation of containerPorts
 containerPorts: []
 
-# resources -- Set Vector resource requests and limits.
+# resources -- Set resource requests and limits
 resources: {}
   # requests:
   #   cpu: 200m
@@ -153,7 +160,7 @@ resources: {}
   #   cpu: 200m
   #   memory: 256Mi
 
-# lifecycle -- Set lifecycle hooks for Vector containers.
+# lifecycle -- Set lifecycle hooks for containers
 lifecycle: {}
   # preStop:
   #   exec:
@@ -162,74 +169,65 @@ lifecycle: {}
   #     - "10"
 
 # updateStrategy -- Customize the [updateStrategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec)
-# used to replace Vector Pods.
 updateStrategy: {}
 #   type: RollingUpdate
 #   rollingUpdate:
 #     maxUnavailable: 1
 
-# terminationGracePeriodSeconds -- Override Vector's terminationGracePeriodSeconds.
+# terminationGracePeriodSeconds -- Override terminationGracePeriodSeconds
 terminationGracePeriodSeconds: 60
 
-# nodeSelector -- Configure a [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
-# for Vector Pods.
+# nodeSelector -- Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
 nodeSelector: {}
 
-# tolerations -- Configure Vector Pods to be scheduled on [tainted](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
-# nodes.
+# tolerations -- Configure [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 tolerations: []
 
-# affinity -- Configure [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
-# rules for Vector Pods.
+# affinity -- Configure [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
 affinity: {}
 
 # topologySpreadConstraints -- Configure [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/)
-# for Vector Pods.
 topologySpreadConstraints: []
 
-# Configuration for Vector's Service.
 service:
-  # service.enabled -- If true, create and provide a Service resource for Vector.
+  # service.enabled -- If **true**, create and provide a Service resource
   enabled: true
-  # service.type -- Set the type for Vector's Service.
+  # service.type -- Set the type for the Service
   type: "ClusterIP"
-  # service.annotations -- Set annotations on Vector's Service.
+  # service.annotations -- Set annotations on the Service
   annotations: {}
   # service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
-  # field on Vector's Service.
   topologyKeys: []
   #   - "kubernetes.io/hostname"
   #   - "topology.kubernetes.io/zone"
   #   - "topology.kubernetes.io/region"
   #   - "*"
-  # service.ports -- Manually set the Service ports, overriding automated generation of Service ports.
+  # service.ports -- Manually set the Service ports, overriding automated generation of Service ports
   ports: []
-  # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
+  # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
   externalTrafficPolicy: ""
-  # service.loadBalancerIP -- Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer).
+  # service.loadBalancerIP -- Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer)
   loadBalancerIP: ""
-  # service.ipFamilyPolicy -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+  # service.ipFamilyPolicy -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/)
   ipFamilyPolicy: ""
-  # service.ipFamilies -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
+  # service.ipFamilies -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/)
   ipFamilies: []
 
-# Configuration for Vector's Headless Service.
 serviceHeadless:
-  # serviceHeadless.enabled -- If true, create and provide a Headless Service resource for Vector.
+  # serviceHeadless.enabled -- If **true**, create and provide a Headless Service resource
   enabled: true
 
-# Configuration for Vector's Ingress.
 ingress:
-  # ingress.enabled -- If true, create and use an Ingress resource.
+  # ingress.enabled -- If **true**, create and use an Ingress resource
   enabled: false
   # ingress.className -- Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress),
   # requires Kubernetes >= 1.18
   className: ""
-  # ingress.annotations -- Set annotations on the Ingress.
+  # ingress.annotations -- Set annotations on the Ingress
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  # ingress.hosts -- Configure the hosts and paths for the Ingress.
+  # ingress.hosts -- Configure the hosts and paths for the Ingress
   hosts: []
   #  - host: chart-example.local
   #    paths:
@@ -240,7 +238,7 @@ ingress:
   #        port:
   #          name: ""
   #          number: ""
-  # ingress.tls -- Configure TLS for the Ingress.
+  # ingress.tls -- Configure TLS for the Ingress
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -251,7 +249,7 @@ ingress:
 # your supplied configuration. If set, this parameter takes precedence over customConfig and the chart's default configs.
 existingConfigMaps: []
 
-# dataDir -- Specify the path for Vector's data, only used when existingConfigMaps are used.
+# dataDir -- Specify the path for Vector's data, only used when existingConfigMaps are used
 dataDir: ""
 
 # customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
@@ -275,44 +273,41 @@ customConfig: {}
   #     encoding:
   #       codec: json
 
-# extraVolumes -- Additional Volumes to use with Vector Pods.
+# extraVolumes -- Additional Volumes to use
 extraVolumes: []
 
-# extraVolumeMounts -- Additional Volume to mount into Vector Containers.
+# extraVolumeMounts -- Additional Volume to mount
 extraVolumeMounts: []
 
-# initContainers -- Init Containers to be added to the Vector Pods.
+# initContainers -- Init Containers to be added
 initContainers: []
 
-# extraContainers -- Extra Containers to be added to the Vector Pods.
+# extraContainers -- Extra Containers to be added
 extraContainers: []
 
-# Configuration for Vector's data persistence.
 persistence:
-  # persistence.enabled -- If true, create and use PersistentVolumeClaims.
+  # persistence.enabled -- If **true**, create and use PersistentVolumeClaims
   enabled: false
-  # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use.
+  # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use
   existingClaim: ""
-  # persistence.storageClassName -- Specifies the storageClassName for PersistentVolumeClaims.
+  # persistence.storageClassName -- Specifies the storageClassName for PersistentVolumeClaims
   # storageClassName: default
 
-  # persistence.accessModes -- Specifies the accessModes for PersistentVolumeClaims.
+  # persistence.accessModes -- Specifies the accessModes for PersistentVolumeClaims
   accessModes:
     - ReadWriteOnce
-  # persistence.size -- Specifies the size of PersistentVolumeClaims.
+  # persistence.size -- Specifies the size of PersistentVolumeClaims
   size: 10Gi
-  # persistence.finalizers -- Specifies the finalizers of PersistentVolumeClaims.
+  # persistence.finalizers -- Specifies the finalizers of PersistentVolumeClaims
   finalizers:
     - kubernetes.io/pvc-protection
-  # persistence.selectors -- Specifies the selectors for PersistentVolumeClaims.
+  # persistence.selectors -- Specifies the selectors for PersistentVolumeClaims
   selectors: {}
 
 # dnsPolicy -- Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy)
-# for Vector Pods.
 dnsPolicy: ClusterFirst
 
 # dnsConfig -- Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config)
-# options for Vector Pods.
 dnsConfig: {}
   # nameservers:
   #   - 1.2.3.4
