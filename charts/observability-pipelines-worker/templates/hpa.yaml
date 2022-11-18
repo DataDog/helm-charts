@@ -1,10 +1,10 @@
-{{- if .Values.autoscaling.enabled }}
+{{- if .Values.autoscaling.enabled -}}
 apiVersion: {{ template "autoscaling.apiVersion" . }}
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "opw.fullname" . }}
-  labels:
-    {{- include "opw.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -29,11 +29,7 @@ spec:
           type: Utilization
           averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- with .Values.autoscaling.customMetric -}}
-    {{ toYaml . | nindent 4 }}
-    {{- end }}
-  {{- with .Values.autoscaling.behavior }}
-  behavior:
-  {{- toYaml . | nindent 4 }}
+  {{- if .Values.autoscaling.behavior }}
+  behavior: {{ toYaml .Values.autoscaling.behavior | nindent 4 }}
   {{- end }}
-{{- end }}
+{{- end -}}

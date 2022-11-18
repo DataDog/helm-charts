@@ -49,8 +49,8 @@ helm.sh/chart: {{ include "opw.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 {{- end }}
-{{ if .Values.commonLabels }}
-{{- toYaml .Values.commonLabels -}}
+{{- if .Values.commonLabels }}
+{{ toYaml .Values.commonLabels }}
 {{- end }}
 {{- end -}}
 
@@ -88,10 +88,10 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
-Generate an array of ServicePorts based on `.Values.customConfig`.
+Generate an array of ServicePorts based on `.Values.config`.
 */}}
 {{- define "opw.ports" -}}
-  {{- range $componentKind, $components := .Values.customConfig }}
+  {{- range $componentKind, $components := .Values.config }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
@@ -108,7 +108,7 @@ Generate an array of ServicePorts based on `.Values.customConfig`.
 {{- end }}
 
 {{/*
-Iterate over the components defined in `.Values.customConfig`.
+Iterate over the components defined in `.Values.config`.
 */}}
 {{- define "_helper.componentIter" -}}
 {{- $components := index . 0 }}
@@ -138,10 +138,10 @@ Generate a single ServicePort based on a component configuration.
 {{- end }}
 
 {{/*
-Generate an array of ContainerPorts based on `.Values.customConfig`.
+Generate an array of ContainerPorts based on `.Values.config`.
 */}}
 {{- define "opw.containerPorts" -}}
-  {{- range $componentKind, $components := .Values.customConfig }}
+  {{- range $componentKind, $components := .Values.config }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}

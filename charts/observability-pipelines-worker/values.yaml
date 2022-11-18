@@ -5,133 +5,115 @@
 ## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
 ## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
 
-# nameOverride -- Override the name of app
+# nameOverride -- Override the name of the app.
 nameOverride: ""
 
-# fullnameOverride -- Override the full qualified app name
+# fullnameOverride -- Override the fully qualified app name.
 fullnameOverride: ""
 
-# rollWorkload -- Add a checksum of the generated ConfigMap to Pod annotations
-rollWorkload: true
-
-# commonLabels -- Labels to apply to all resources
+# commonLabels -- Labels to apply to all resources.
 commonLabels: {}
 #  team_name: dev
 
 datadog:
-  # datadog.apiKey -- Your Datadog API key
+  # datadog.apiKey -- Specify your Datadog API key.
   apiKey: <DATADOG_API_KEY>
-  # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one.
-  # The value should be set with the `api-key` key inside the secret.
+  # datadog.apiKeyExistingSecret -- Specify a preexisting Secret which has your API key instead of creating a new one.
+  # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
 
 image:
-  # image.name -- Image name to use (relative to `image.repository`)
+  # image.name -- Specify image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
-  # image.tag -- Image tag to use
+  # image.tag -- Specify image tag to use.
   tag: 0.1.0
-  # image.digest -- Image digest to use, takes precedence over `image.tag`
-  digest: ""
+  # image.digest -- (string) Specify image digest to use, takes precedence over `image.tag`.
+  digest:
   ## Currently, we offer images at:
-  ## - GCP: use gcr.io/datadoghq
-  ## - DockerHub: use docker.io/datadog
-  ## - AWS: use public.ecr.aws/datadog
-  # image.repository -- Image repository to use
-  repository: "gcr.io/datadoghq"
-  # image.pullPolicy -- Set the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy)
+  ## - GCP: gcr.io/datadoghq
+  ## - DockerHub: docker.io/datadog
+  ## - AWS: public.ecr.aws/datadog
+  # image.repository -- Specify image repository to use.
+  repository: gcr.io/datadoghq
+  # image.pullPolicy -- Specify the
+  # [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy).
   pullPolicy: IfNotPresent
-  # image.pullSecrets -- Set the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod)
+  # image.pullSecrets -- Specify the
+  # [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod).
   pullSecrets: []
-  #  - name: "<REGISTRY_SECRET>"
+  #  - name: <REGISTRY_SECRET>
 
-# replicas -- Specify the number of Pods to create
+# replicas -- Specify the number of replicas to create.
 replicas: 1
 
-# podManagementPolicy -- Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies)
-# for the StatefulSet
+# podManagementPolicy -- Specify the
+# [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies).
 podManagementPolicy: OrderedReady
 
-# Create a Secret resource
-secrets:
-  # secrets.generic -- Each Key/Value will be added to the Secret's data key, each value should be raw and NOT base64
-  # encoded. Any secrets can be provided here. It's commonly used for credentials and other access related values.
-  # **NOTE: Don't commit unencrypted secrets to git!**
-  generic: {}
-    # my_variable: "my-secret-value"
-    # datadog_api_key: "api-key"
-    # awsAccessKeyId: "access-key"
-    # awsSecretAccessKey: "secret-access-key"
-
+## TODO: Support Watermark Pod Autoscaler?
 autoscaling:
-  # autoscaling.enabled -- Create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+  # autoscaling.enabled -- If **true**, create a
+  # [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
   enabled: false
-  # autoscaling.minReplicas -- Set minimum replicas
+  # autoscaling.minReplicas -- Specify the minimum number of replicas.
   minReplicas: 1
-  # autoscaling.maxReplicas -- Set maximum replicas
+  # autoscaling.maxReplicas -- Specify the maximum number of replicas.
   maxReplicas: 10
-  # autoscaling.targetCPUUtilizationPercentage -- Set target CPU utilization
+  # autoscaling.targetCPUUtilizationPercentage -- Specify the target CPU utilization.
   targetCPUUtilizationPercentage: 80
-  # autoscaling.targetMemoryUtilizationPercentage -- (int) Set target memory utilization
+  # autoscaling.targetMemoryUtilizationPercentage -- (int) Specify the target memory utilization.
   targetMemoryUtilizationPercentage:
-  # autoscaling.customMetric -- Target a custom metric for autoscaling
-  customMetric: {}
-    #  - type: Pods
-    #    pods:
-    #      metric:
-    #        name: utilization
-    #      target:
-    #        type: AverageValue
-    #        averageValue: 95
-  # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors
+  # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors.
   behavior: {}
     # scaleDown:
     #   stabilizationWindowSeconds: 300
 
 podDisruptionBudget:
-  # podDisruptionBudget.enabled -- Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
+  # podDisruptionBudget.enabled -- If **true**, create a
+  # [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
   enabled: false
-  # podDisruptionBudget.minAvailable -- The number of Pods that must still be available after an eviction
+  # podDisruptionBudget.minAvailable -- Specify the number of Pods that must still be available after an eviction.
   minAvailable: 1
-  # podDisruptionBudget.maxUnavailable -- (int) The number of Pods that can be unavailable after an eviction
+  # podDisruptionBudget.maxUnavailable -- (int) Specify the number of Pods that can be unavailable after an eviction.
   maxUnavailable:
 
 serviceAccount:
-  # serviceAccount.create -- If true, create a ServiceAccount
+  # serviceAccount.create -- If **true**, create a ServiceAccount.
   create: true
-  # serviceAccount.annotations -- Annotations to add to the ServiceAccount
+  # serviceAccount.name -- Specify a preexisting ServiceAccount to use if `serviceAccount.create` is **false**.
+  name: default
+  # serviceAccount.annotations -- Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**.
   annotations: {}
-  # serviceAccount.name -- The name of the ServiceAccount to use. If not set and `serviceAccount.create` is **true**, a name
-  # is generated using the fullname template.
-  name:
-  # serviceAccount.automountToken -- Automount API credentials for the ServiceAccount
-  automountToken: true
 
 # podAnnotations -- Set annotations on Pods.
 podAnnotations: {}
 
 # podLabels -- Set labels on Pods.
-podLabels:
-  vector.dev/exclude: "true"
+podLabels: {}
 
-# podPriorityClassName -- Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass)
+# podPriorityClassName -- Set the
+# [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass).
 podPriorityClassName: ""
 
-# podHostNetwork -- Enable hostNetwork on Pods.
+# podHostNetwork -- Enable the hostNetwork option on Pods.
 podHostNetwork: false
 
-# podSecurityContext -- Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+# podSecurityContext -- Allows you to overwrite the default
+# [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).
 podSecurityContext: {}
 
-# securityContext -- Specify securityContext for containers
+# securityContext -- Specify securityContext for containers.
 securityContext: {}
 
-# command -- Override default image command
+# command -- Override default image command.
 command: []
 
-# args -- Override default image arguments
-args: []
+# args -- Override default image arguments.
+args:
+  - --config
+  - "/etc/opw/config.yaml"
 
-# env -- Define environment variables
+# env -- Define environment variables.
 env: []
 #  - name: <ENV_VAR_NAME>
 #    value: <ENV_VAR_VALUE>
@@ -141,17 +123,17 @@ env: []
 #        name: <SECRET_NAME>
 #        key: <KEY_NAME>
 
-# envFrom -- Define environment variables from ConfigMap or Secret data
+# envFrom -- Define environment variables from ConfigMap or Secret data.
 envFrom: []
 #  - configMapRef:
 #      name: <CONFIGMAP_NAME>
 #  - secretRef:
 #     name: <SECRET_NAME>
 
-# containerPorts -- Manually define containerPorts, overriding automated generation of containerPorts
+# containerPorts -- Manually define containerPorts, overriding automated generation of containerPorts.
 containerPorts: []
 
-# resources -- Set resource requests and limits
+# resources -- Specify resource requests and limits.
 resources: {}
   # requests:
   #   cpu: 200m
@@ -160,7 +142,7 @@ resources: {}
   #   cpu: 200m
   #   memory: 256Mi
 
-# lifecycle -- Set lifecycle hooks for containers
+# lifecycle -- Specify lifecycle hooks for containers.
 lifecycle: {}
   # preStop:
   #   exec:
@@ -168,66 +150,77 @@ lifecycle: {}
   #     - /bin/sleep
   #     - "10"
 
-# updateStrategy -- Customize the [updateStrategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec)
+# updateStrategy -- Customize the
+# [updateStrategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec).
 updateStrategy: {}
 #   type: RollingUpdate
 #   rollingUpdate:
 #     maxUnavailable: 1
 
-# terminationGracePeriodSeconds -- Override terminationGracePeriodSeconds
+# terminationGracePeriodSeconds -- Override terminationGracePeriodSeconds.
 terminationGracePeriodSeconds: 60
 
-# nodeSelector -- Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
+# nodeSelector -- Configure
+# [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
 nodeSelector: {}
 
-# tolerations -- Configure [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+# tolerations -- Configure
+# [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
 tolerations: []
 
-# affinity -- Configure [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+# affinity -- Configure
+# [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
 affinity: {}
 
-# topologySpreadConstraints -- Configure [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/)
+# topologySpreadConstraints -- Configure
+# [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
 topologySpreadConstraints: []
 
 service:
-  # service.enabled -- If **true**, create and provide a Service resource
+  # service.enabled -- If **true**, create a Service resource.
   enabled: true
-  # service.type -- Set the type for the Service
+  # service.type -- Specify the type for the Service.
   type: "ClusterIP"
-  # service.annotations -- Set annotations on the Service
+  # service.annotations -- Specify annotations for the Service.
   annotations: {}
-  # service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
-  topologyKeys: []
-  #   - "kubernetes.io/hostname"
-  #   - "topology.kubernetes.io/zone"
-  #   - "topology.kubernetes.io/region"
-  #   - "*"
-  # service.ports -- Manually set the Service ports, overriding automated generation of Service ports
-  ports: []
-  # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  # service.topologyKeys -- (array) Specify the
+  # [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology).
+  topologyKeys:
+  #  - "kubernetes.io/hostname"
+  #  - "topology.kubernetes.io/zone"
+  #  - "topology.kubernetes.io/region"
+  #  - "*"
+  # service.ports -- (array) Manually set the Service ports, overriding automated generation of Service ports.
+  ports:
+  # service.externalTrafficPolicy -- Specify the
+  # [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
   externalTrafficPolicy: ""
-  # service.loadBalancerIP -- Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer)
+  # service.loadBalancerIP -- Specify the
+  # [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer).
   loadBalancerIP: ""
-  # service.ipFamilyPolicy -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/)
+  # service.ipFamilyPolicy -- Configure
+  # [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
   ipFamilyPolicy: ""
-  # service.ipFamilies -- Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/)
+  # service.ipFamilies -- Configure
+  # [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/).
   ipFamilies: []
 
 serviceHeadless:
-  # serviceHeadless.enabled -- If **true**, create and provide a Headless Service resource
+  # serviceHeadless.enabled -- If **true**, create a "headless" Service resource.
   enabled: true
 
 ingress:
-  # ingress.enabled -- If **true**, create and use an Ingress resource
+  # ingress.enabled -- If **true**, create an Ingress resource.
   enabled: false
-  # ingress.className -- Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress),
-  # requires Kubernetes >= 1.18
+  # ingress.className -- Specify the
+  # [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress),
+  # requires Kubernetes >= 1.18.
   className: ""
-  # ingress.annotations -- Set annotations on the Ingress
+  # ingress.annotations -- Specify annotations for the Ingress.
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  # ingress.hosts -- Configure the hosts and paths for the Ingress
+  # ingress.hosts -- Configure the hosts and paths for the Ingress.
   hosts: []
   #  - host: chart-example.local
   #    paths:
@@ -238,97 +231,91 @@ ingress:
   #        port:
   #          name: ""
   #          number: ""
-  # ingress.tls -- Configure TLS for the Ingress
+  # ingress.tls -- Configure TLS for the Ingress.
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-# existingConfigMaps -- List of existing ConfigMaps for Vector's configuration instead of creating a new one. Requires
-# dataDir to be set. Additionally, containerPorts, service.ports, and serviceHeadless.ports should be specified based on
-# your supplied configuration. If set, this parameter takes precedence over customConfig and the chart's default configs.
-existingConfigMaps: []
+# config -- This section supports using helm templates to populate dynamic values. See Vector's
+# [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options.
+config: {}
+#  data_dir: "/var/lib/opw/"
+#  enterprise:
+#  sources:
+#    datadog_agents:
+#      address: 0.0.0.0:8282
+#      type: datadog_agent
+#      multiple_outputs: true
+#  sinks:
+#    datadog_logs:
+#      type: datadog_logs
+#      inputs:
+#        - datadog_agents.logs
+#      default_api_key: ${DATADOG_API_KEY}
+#      compression: gzip
+#    datadog_metrics:
+#      type: datadog_metrics
+#      inputs:
+#        - datadog_agents.metrics
+#      default_api_key: ${DATADOG_API_KEY}
+#    datadog_traces:
+#      type: datadog_traces
+#      inputs:
+#        - datadog_agents.traces
+#      default_api_key: ${DATADOG_API_KEY}
 
-# dataDir -- Specify the path for Vector's data, only used when existingConfigMaps are used
-dataDir: ""
-
-# customConfig -- Override Vector's default configs, if used **all** options need to be specified. This section supports
-# using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/)
-# for all options.
-customConfig: {}
-  # data_dir: /vector-data-dir
-  # api:
-  #   enabled: true
-  #   address: 127.0.0.1:8686
-  #   playground: false
-  # sources:
-  #   vector:
-  #     address: 0.0.0.0:6000
-  #     type: vector
-  #     version: "2"
-  # sinks:
-  #   stdout:
-  #     type: console
-  #     inputs: [vector]
-  #     encoding:
-  #       codec: json
-
-# extraVolumes -- Additional Volumes to use
+# extraVolumes -- Additional Volumes to use.
 extraVolumes: []
 
-# extraVolumeMounts -- Additional Volume to mount
+# extraVolumeMounts -- Additional Volume to mount.
 extraVolumeMounts: []
 
-# initContainers -- Init Containers to be added
+# initContainers -- Init Containers to be added.
 initContainers: []
 
-# extraContainers -- Extra Containers to be added
+# extraContainers -- Extra Containers to be added.
 extraContainers: []
 
 persistence:
-  # persistence.enabled -- If **true**, create and use PersistentVolumeClaims
+  # persistence.enabled -- If **true**, create and use PersistentVolumeClaims.
   enabled: false
-  # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use
+  # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use.
   existingClaim: ""
-  # persistence.storageClassName -- Specifies the storageClassName for PersistentVolumeClaims
-  # storageClassName: default
-
-  # persistence.accessModes -- Specifies the accessModes for PersistentVolumeClaims
+  # persistence.storageClassName -- (string) Specify the storageClassName for PersistentVolumeClaims.
+  storageClassName:
+  # persistence.accessModes -- Specify the accessModes for PersistentVolumeClaims.
   accessModes:
     - ReadWriteOnce
-  # persistence.size -- Specifies the size of PersistentVolumeClaims
+  # persistence.size -- Specify the size of PersistentVolumeClaims.
   size: 10Gi
-  # persistence.finalizers -- Specifies the finalizers of PersistentVolumeClaims
+  # persistence.finalizers -- Specify the finalizers of PersistentVolumeClaims.
   finalizers:
     - kubernetes.io/pvc-protection
-  # persistence.selectors -- Specifies the selectors for PersistentVolumeClaims
-  selectors: {}
+  # persistence.selector -- Specify the selectors for PersistentVolumeClaims.
+  selector: {}
 
-# dnsPolicy -- Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy)
+# dnsPolicy -- Specify the
+# [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy).
 dnsPolicy: ClusterFirst
 
-# dnsConfig -- Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config)
+# dnsConfig -- Specify the
+# [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config).
 dnsConfig: {}
-  # nameservers:
-  #   - 1.2.3.4
-  # searches:
-  #   - ns1.svc.cluster-domain.example
-  #   - my.dns.search.suffix
-  # options:
-  #   - name: ndots
-  #     value: "2"
-  #   - name: edns0
+#  nameservers:
+#    - 1.2.3.4
+#  searches:
+#   - ns1.svc.cluster-domain.example
+#   - my.dns.search.suffix
+#  options:
+#    - name: ndots
+#      value: "2"
+#    - name: edns0
 
-# livenessProbe -- Override default liveness probe settings. If customConfig is used, requires customConfig.api.enabled
-# to be set to true.
+# livenessProbe -- Specify the livenessProbe
+# [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
 livenessProbe: {}
-  # httpGet:
-  #   path: /health
-  #   port: api
 
-# readinessProbe -- Override default readiness probe settings. If customConfig is used,
-# requires customConfig.api.enabled to be set to true.
+# readinessProbe -- Specify the readinessProbe
+# [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
 readinessProbe: {}
-  # httpGet:
-  #   path: /health
-  #   port: api

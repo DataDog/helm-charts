@@ -1,13 +1,12 @@
-{{- if .Values.service.enabled }}
+{{- if .Values.service.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "opw.fullname" . }}
-  labels:
-    {{- include "opw.labels" . | nindent 4 }}
-  annotations:
-  {{- with .Values.service.annotations }}
-    {{- toYaml . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  annotations: {{ toYaml .Values.service.annotations | nindent 4 }}
   {{- end }}
 spec:
 {{- if .Values.service.externalTrafficPolicy }}
@@ -20,47 +19,17 @@ spec:
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
 {{- end }}
 {{- if .Values.service.ipFamilies }}
-{{- with .Values.service.ipFamilies }}
-  ipFamilies:
-  {{- toYaml . | nindent 4 }}
-{{- end }}
+  ipFamilies: {{ toYaml .Values.service.ipFamilies | nindent 4 }}
 {{- end }}
   ports:
-{{- if or .Values.service.ports .Values.existingConfigMaps }}
-  {{- toYaml .Values.service.ports | nindent 4 }}
-{{- else if .Values.customConfig }}
-  {{- include "opw.ports" . | indent 4 }}
-{{- else }}
-    - name: datadog-agent
-      port: 8282
-      protocol: TCP
-    - name: fluent
-      port: 24224
-      protocol: TCP
-    - name: logstash
-      port: 5044
-      protocol: TCP
-    - name: splunk-hec
-      port: 8080
-      protocol: TCP
-    - name: statsd
-      port: 8125
-      protocol: TCP
-    - name: syslog
-      port: 9000
-      protocol: TCP
-    - name: vector
-      port: 6000
-      protocol: TCP
-    - name: prom-exporter
-      port: 9090
-      protocol: TCP
+{{- if .Values.service.ports }}
+{{ toYaml .Values.service.ports | indent 4 }}
+{{- else if .Values.config }}
+{{- include "opw.ports" . | indent 4 }}
 {{- end }}
-  selector:
-    {{- include "opw.template-labels" . | nindent 4 }}
+  selector: {{ include "opw.template-labels" . | nindent 4 }}
   type: {{ .Values.service.type }}
-  {{- with .Values.service.topologyKeys }}
-  topologyKeys:
-    {{- toYaml . | nindent 4 }}
+  {{- if .Values.service.topologyKeys }}
+  topologyKeys: {{ toYaml .Values.service.topologyKeys | nindent 4 }}
   {{- end }}
-{{- end }}
+{{- end -}}

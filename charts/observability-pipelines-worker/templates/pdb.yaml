@@ -1,18 +1,17 @@
-{{- if .Values.podDisruptionBudget.enabled }}
+{{- if .Values.podDisruptionBudget.enabled -}}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "opw.fullname" . }}
-  labels:
-    {{- include "opw.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
 spec:
-{{- with .Values.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ . }}
+{{- if .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
 {{- end }}
-{{- with .Values.podDisruptionBudget.maxUnavailable }}
-  maxUnavailable: {{ . }}
+{{- if .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
 {{- end }}
   selector:
-    matchLabels:
-      {{- include "opw.template-labels" . | nindent 6 }}
-{{- end }}
+    matchLabels: {{ include "opw.template-labels" . | nindent 6 }}
+{{- end -}}
