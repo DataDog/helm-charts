@@ -1,4 +1,4 @@
-customConfig:
+config:
   api:
     enabled: false
   sources:

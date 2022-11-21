@@ -1,4 +1,4 @@
-customConfig:
+config:
   data_dir: /data
   api:
     enabled: true

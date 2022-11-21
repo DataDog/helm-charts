@@ -49,57 +49,31 @@ topologySpreadConstraints:
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
 
-customConfig:
-  data_dir: /data
-  api:
-    enabled: true
-    address: 0.0.0.0:1212
-  healthchecks:
-    enabled: false
+config:
+  data_dir: "/var/lib/opw/"
+  enterprise:
   sources:
-    kafka:
-      type: kafka
-      acknowledgements: true
-      bootstrap_servers: kafka-bootstrap.svc.cluster.local:9092
-      group_id: vector-consumer
-      topics: [application-logs]
-    prom_remote:
-      type: prometheus_remote_write
-      address: 0.0.0.0:9999
-  transforms:
-    aggregate:
-      type: aggregate
-      inputs: [prom_remote]
-      interval_ms: 15000
-    remap:
-      type: remap
-      inputs: [kafka]
-      drop_on_error: true
-      source: |
-        . |= object!(parse_json!(.message))
-    sample:
-      type: sample
-      inputs: [remap]
-      exclude: |
-        .status_code != 200 && !includes(["info", "debug"], .severity)
-      rate: 10
+    datadog_agents:
+      address: 0.0.0.0:8282
+      type: datadog_agent
+      multiple_outputs: true
   sinks:
-    s3_archive:
-      type: aws_s3
-      inputs: [remap]
-      bucket: logs-archive
-      key_prefix: date=%F/
+    datadog_logs:
+      type: datadog_logs
+      inputs:
+        - datadog_agents.logs
+      default_api_key: ${DATADOG_API_KEY}
       compression: gzip
-      encoding:
-        codec: json
-      region: us-east-1
-    elasticsearch:
-      type: elasticsearch
-      inputs: [aggregate, sample]
-      endpoint: http://elasticsearch.svc.cluster.local:9000
-      index: vector-%F
-      mode: data_stream
-      compression: gzip
+    datadog_metrics:
+      type: datadog_metrics
+      inputs:
+        - datadog_agents.metrics
+      default_api_key: ${DATADOG_API_KEY}
+    datadog_traces:
+      type: datadog_traces
+      inputs:
+        - datadog_agents.traces
+      default_api_key: ${DATADOG_API_KEY}
 
 service:
   enabled: true
