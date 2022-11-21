@@ -52,6 +52,8 @@ containers:
           secretKeyRef:
             name: {{ template "opw.configKeySecretName" . }}
             key: config-key
+      - name: DD_SITE
+        value: {{ .Values.datadog.site }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}

@@ -26,6 +26,13 @@ datadog:
   # datadog.configKeyExistingSecret -- Specify a preexisting Secret which has your Configuration key instead of
   # creating a new one. The value must be stored under the `config-key`.
   configKeyExistingSecret: ""
+  ## Set to 'datadoghq.com' to send data to the US1 site.
+  ## Set to 'datadoghq.eu' to send data to the EU site.
+  ## Set to 'us3.datadoghq.com' to send data to the US3 site.
+  ## Set to 'us5.datadoghq.com' to send data to the US5 site.
+  ## Set to 'ddog-gov.com' to send data to the US1-FED site.
+  # datadog.site -- The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to.
+  site: datadoghq.com
 
 image:
   # image.name -- Specify image name to use (relative to `image.repository`).
@@ -249,7 +256,7 @@ config: {}
 #  enterprise:
 #    api_key: "${DD_API_KEY}"
 #    configuration_key: "${DD_CONFIGURATION_KEY}"
-#    site: "datadoghq.com"
+#    site: "${DD_SITE}"
 #  sources:
 #    datadog_agents:
 #      type: datadog_agent
@@ -261,18 +268,21 @@ config: {}
 #      type: datadog_logs
 #      inputs:
 #        - datadog_agents.logs
-#      default_api_key: ${DD_API_KEY}
 #      compression: gzip
+#      default_api_key: ${DD_API_KEY}
+#      site: ${DD_SITE}
 #    datadog_metrics:
 #      type: datadog_metrics
 #      inputs:
 #        - datadog_agents.metrics
 #      default_api_key: ${DD_API_KEY}
+#      site: ${DD_SITE}
 #    datadog_traces:
 #      type: datadog_traces
 #      inputs:
 #        - datadog_agents.traces
 #      default_api_key: ${DD_API_KEY}
+#      site: ${DD_SITE}
 
 # extraVolumes -- Additional Volumes to use.
 extraVolumes: []
