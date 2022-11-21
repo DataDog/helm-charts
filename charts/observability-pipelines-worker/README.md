@@ -19,7 +19,50 @@ To install the chart with the release name `<RELEASE_NAME>` run:
 
 ```bash
 helm install --name <RELEASE_NAME> \
-  --set datadog.apiKey=<DATADOG_API_KEY> \
+  --set datadog.apiKey=<DD_API_KEY> \
+  --set datadog.configKey=<DD_CONFIGURATION_KEY> \
+  datadog/observability-pipelines-worker
+```
+
+By default, this Chart creates Secrets for your Observability Pipelines API and Configuration keys. However, you can use
+manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
+(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
+
+**Note:** When creating the secret(s), be sure to name the key fields `api-key` and `config-key`.
+
+After a few minutes, you should see your new pipeline active in Datadog.
+
+**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
+
+```bash
+helm install --name <RELEASE_NAME> \
+    --set datadog.apiKey=<DD_API_KEY> \
+    --set datadog.configKey=<DD_CONFIGURATION_KEY> \
+    --set datadog.site=<DATADOG_SITE> \
+    datadog/observability-pipelines-worker
+```
+
+#### Create and provide a secret that contains your Datadog API and Configuration Keys
+
+To create a secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
+organization. This secret is used in the manifest to deploy the Observability Pipelines Worker.
+
+```bash
+export DATADOG_SECRET_NAME=datadog-secrets
+kubectl create secret generic $DATADOG_SECRET_NAME \
+    --from-literal api-key="<DD_API_KEY>" \
+    --from-literal config-key="<DD_CONFIGURATION_KEY>"
+```
+
+**Note**: This creates a secret in the **default** namespace. If you are using a custom namespace, update the namespace
+flag of the command before running it.
+
+Now, the installation command contains a reference to the secret.
+
+```bash
+helm install --name <RELEASE_NAME> \
+  --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME \
+  --set datadog.configKeyExistingSecret=$DATADOG_SECRET_NAME \
   datadog/observability-pipelines-worker
 ```
 
