@@ -25,7 +25,7 @@ imagePullSecrets: {{ toYaml .Values.image.pullSecrets | nindent 2 }}
 initContainers: {{ toYaml .Values.initContainers | nindent 2 }}
 {{- end }}
 containers:
-  - name: vector
+  - name: worker
 {{- if .Values.securityContext }}
     securityContext: {{ toYaml .Values.securityContext | nindent 6 }}
 {{- end }}
@@ -42,6 +42,16 @@ containers:
     args: {{ toYaml .Values.args | nindent 6 }}
 {{- end }}
     env:
+      - name: DD_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ template "opw.apiSecretName" . }}
+            key: api-key
+      - name: DD_CONFIGURATION_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ template "opw.configKeySecretName" . }}
+            key: config-key
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -68,7 +78,7 @@ containers:
 {{- end }}
     volumeMounts:
       - name: data
-        mountPath: "{{ .Values.config.data_dir | default "/data" }}"
+        mountPath: "{{ .Values.config.data_dir | default "/var/lib/opw" }}"
       - name: config
         mountPath: "/etc/opw/"
         readOnly: true

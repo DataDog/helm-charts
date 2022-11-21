@@ -8,7 +8,7 @@ metadata:
     checksum/config: {{ tpl (toYaml .Values.config) . | sha256sum }}
 data:
   {{- if .Values.config }}
-  config.yaml: {{ tpl (toYaml .Values.config) . | nindent 4 }}
+  config.yaml: | {{ tpl (toYaml .Values.config) . | nindent 4 }}
   {{- else }}
 {{ fail "A `config` must be specified, see https://github.com/DataDog/helm-charts/tree/main/examples/observability-pipelines-worker for examples" }}
   {{- end -}}

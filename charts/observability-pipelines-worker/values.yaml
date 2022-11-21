@@ -21,6 +21,11 @@ datadog:
   # datadog.apiKeyExistingSecret -- Specify a preexisting Secret which has your API key instead of creating a new one.
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
+  # datadog.configkey -- Specify your Datadog Configuration key.
+  configKey: <DATADOG_API_KEY>
+  # datadog.configKeyExistingSecret -- Specify a preexisting Secret which has your Configuration key instead of
+  # creating a new one. The value must be stored under the `config-key`.
+  configKeyExistingSecret: ""
 
 image:
   # image.name -- Specify image name to use (relative to `image.repository`).
@@ -242,28 +247,32 @@ ingress:
 config: {}
 #  data_dir: "/var/lib/opw/"
 #  enterprise:
+#    api_key: "${DD_API_KEY}"
+#    configuration_key: "${DD_CONFIGURATION_KEY}"
+#    site: "datadoghq.com"
 #  sources:
 #    datadog_agents:
-#      address: 0.0.0.0:8282
 #      type: datadog_agent
+#      address: 0.0.0.0:8282
 #      multiple_outputs: true
+#      store_api_key: false
 #  sinks:
 #    datadog_logs:
 #      type: datadog_logs
 #      inputs:
 #        - datadog_agents.logs
-#      default_api_key: ${DATADOG_API_KEY}
+#      default_api_key: ${DD_API_KEY}
 #      compression: gzip
 #    datadog_metrics:
 #      type: datadog_metrics
 #      inputs:
 #        - datadog_agents.metrics
-#      default_api_key: ${DATADOG_API_KEY}
+#      default_api_key: ${DD_API_KEY}
 #    datadog_traces:
 #      type: datadog_traces
 #      inputs:
 #        - datadog_agents.traces
-#      default_api_key: ${DATADOG_API_KEY}
+#      default_api_key: ${DD_API_KEY}
 
 # extraVolumes -- Additional Volumes to use.
 extraVolumes: []

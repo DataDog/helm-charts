@@ -32,6 +32,22 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Return API key Secret name to be used based on provided values.
+*/}}
+{{- define "opw.apiSecretName" -}}
+{{- $fullName := printf "%s-apikey" (include "opw.fullname" .) -}}
+{{- default $fullName .Values.datadog.apiKeyExistingSecret | quote -}}
+{{- end -}}
+
+{{/*
+Return Configuration key Secret name to be used based on provided values.
+*/}}
+{{- define "opw.configKeySecretName" -}}
+{{- $fullName := printf "%s-configkey" (include "opw.fullname" .) -}}
+{{- default $fullName .Values.datadog.configKeyExistingSecret | quote -}}
+{{- end -}}
+
+{{/*
 Common template labels.
 */}}
 {{- define "opw.template-labels" -}}
@@ -59,9 +75,9 @@ Return the service account name
 */}}
 {{- define "opw.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "opw.fullname" .) .Values.serviceAccount.name }}
+{{- template "opw.fullname" . }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 

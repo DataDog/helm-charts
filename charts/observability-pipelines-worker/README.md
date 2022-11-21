@@ -51,6 +51,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | containerPorts | list | `[]` | Manually define containerPorts, overriding automated generation of containerPorts. |
 | datadog.apiKey | string | `"<DATADOG_API_KEY>"` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your API key instead of creating a new one. The value must be stored under the `api-key`. |
+| datadog.configKey | string | `"<DATADOG_API_KEY>"` |  |
+| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your Configuration key instead of creating a new one. The value must be stored under the `config-key`. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
