@@ -38,7 +38,7 @@ image:
   # image.name -- Specify image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify image tag to use.
-  tag: 0.1.0
+  tag: latest
   # image.digest -- (string) Specify image digest to use, takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
