@@ -155,7 +155,7 @@ datadog:
     # datadog.kubeStateMetricsCore.useClusterCheckRunners -- For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers.
 
     ## Configuring this field will create a separate deployment which will run Cluster Checks, including Kubernetes State Metrics Core.
-    ## If clusterChecksRunner.enabled is true, it's recommended to set this flag to true as well to better utilize dedicated workers and reduce load on Cluster Agent.
+    ## If clusterChecksRunner.enabled is true, it's recommended to set this flag to true as well to better utilize dedicated workers and reduce load on the Cluster Agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
