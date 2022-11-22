@@ -2,7 +2,7 @@
 
 ## 3.3.2
 
-* Add a warning note to alert users about suboptimal configuration of Cluster Checks Runner.
+* Fix GKE Autopilot mounts in the `trace-agent` container and `hostPid` setting for the Agent pods
 
 ## 3.3.1
 
