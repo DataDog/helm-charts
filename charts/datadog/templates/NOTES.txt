@@ -362,7 +362,7 @@ To enable it please set clusterAgent.enabled to 'true'.
 ###################################################################################
 
 You have `datadog.kubeStateMetricsCore.useClusterCheckRunners` enabled and `clusterChecksRunner.enabled` disabled.
-This configuration will create Cluster Checks Runner deployment but some of the cluster checks may still run on Node Agents.
+This configuration will create a Cluster Checks Runner deployment but some of the cluster checks may still run on Node Agents.
 To make sure all cluster check run on Cluster Checks Runner set `clusterChecksRunner.enabled` to 'true'.
 
 {{- end }}
