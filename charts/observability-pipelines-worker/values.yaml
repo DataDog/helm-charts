@@ -17,12 +17,12 @@ commonLabels: {}
 
 datadog:
   # datadog.apiKey -- Specify your Datadog API key.
-  apiKey: <DATADOG_API_KEY>
+  apiKey: <DD_API_KEY>
   # datadog.apiKeyExistingSecret -- Specify a preexisting Secret which has your API key instead of creating a new one.
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
   # datadog.configkey -- Specify your Datadog Configuration key.
-  configKey: <DATADOG_API_KEY>
+  configKey: <DD_CONFIGURATION_KEY>
   # datadog.configKeyExistingSecret -- Specify a preexisting Secret which has your Configuration key instead of
   # creating a new one. The value must be stored under the `config-key`.
   configKeyExistingSecret: ""

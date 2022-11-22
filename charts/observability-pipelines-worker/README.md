@@ -92,9 +92,9 @@ The command removes all the Kubernetes components associated with the chart and 
 | commonLabels | object | `{}` | Labels to apply to all resources. |
 | config | object | `{}` | This section supports using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options. |
 | containerPorts | list | `[]` | Manually define containerPorts, overriding automated generation of containerPorts. |
-| datadog.apiKey | string | `"<DATADOG_API_KEY>"` | Specify your Datadog API key. |
+| datadog.apiKey | string | `"<DD_API_KEY>"` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your API key instead of creating a new one. The value must be stored under the `api-key`. |
-| datadog.configKey | string | `"<DATADOG_API_KEY>"` |  |
+| datadog.configKey | string | `"<DD_CONFIGURATION_KEY>"` |  |
 | datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your Configuration key instead of creating a new one. The value must be stored under the `config-key`. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
