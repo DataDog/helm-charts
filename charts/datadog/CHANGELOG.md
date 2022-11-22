@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.3.2
+
+* Fix GKE Autopilot mounts in the `trace-agent` container and `hostPid` setting for the Agent pods
+
 ## 3.3.1
 
 * Remove `mountPropagation` for `*-release` files in `/etc`. It is not needed for individual files.
