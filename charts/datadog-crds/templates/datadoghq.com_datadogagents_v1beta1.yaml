@@ -39,7 +39,6 @@ spec:
   scope: Namespaced
   subresources:
     status: {}
-  version: v1alpha1
   versions:
     - name: v1alpha1
       schema:
@@ -5822,8 +5821,13 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
+      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
       served: true
       storage: true
+      {{- else }}
+      served: true
+      storage: false
+      {{- end }}
     - name: v2alpha1
       schema:
         openAPIV3Schema:
@@ -5882,26 +5886,31 @@ spec:
                           type: string
                         customBenchmarks:
                           properties:
-                            items:
-                              items:
-                                properties:
-                                  key:
-                                    type: string
-                                  mode:
-                                    format: int32
-                                    type: integer
-                                  path:
-                                    type: string
-                                required:
-                                  - key
-                                  - path
-                                type: object
-                              type: array
-                              x-kubernetes-list-map-keys:
-                                - key
-                              x-kubernetes-list-type: map
-                            name:
+                            configData:
                               type: string
+                            configMap:
+                              properties:
+                                items:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        format: int32
+                                        type: integer
+                                      path:
+                                        type: string
+                                    required:
+                                      - key
+                                      - path
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-map-keys:
+                                    - key
+                                  x-kubernetes-list-type: map
+                                name:
+                                  type: string
+                              type: object
                           type: object
                         enabled:
                           type: boolean
@@ -5910,35 +5919,35 @@ spec:
                       properties:
                         customPolicies:
                           properties:
-                            items:
-                              items:
-                                properties:
-                                  key:
-                                    type: string
-                                  mode:
-                                    format: int32
-                                    type: integer
-                                  path:
-                                    type: string
-                                required:
-                                  - key
-                                  - path
-                                type: object
-                              type: array
-                              x-kubernetes-list-map-keys:
-                                - key
-                              x-kubernetes-list-type: map
-                            name:
+                            configData:
                               type: string
+                            configMap:
+                              properties:
+                                items:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        format: int32
+                                        type: integer
+                                      path:
+                                        type: string
+                                    required:
+                                      - key
+                                      - path
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-map-keys:
+                                    - key
+                                  x-kubernetes-list-type: map
+                                name:
+                                  type: string
+                              type: object
                           type: object
                         enabled:
                           type: boolean
                         syscallMonitorEnabled:
-                          type: boolean
-                      type: object
-                    datadogMonitor:
-                      properties:
-                        enabled:
                           type: boolean
                       type: object
                     dogstatsd:
@@ -6078,6 +6087,10 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        scrubProcessArguments:
+                          type: boolean
+                        stripProcessArguments:
+                          type: boolean
                       type: object
                     logCollection:
                       properties:
@@ -6155,6 +6168,29 @@ spec:
                         scrubContainers:
                           type: boolean
                       type: object
+                    otlp:
+                      properties:
+                        receiver:
+                          properties:
+                            protocols:
+                              properties:
+                                grpc:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                    endpoint:
+                                      type: string
+                                  type: object
+                                http:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                    endpoint:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                      type: object
                     prometheusScrape:
                       properties:
                         additionalConfigs:
@@ -6179,6 +6215,15 @@ spec:
                   properties:
                     clusterAgentToken:
                       type: string
+                    clusterAgentTokenSecret:
+                      properties:
+                        keyName:
+                          type: string
+                        secretName:
+                          type: string
+                      required:
+                        - secretName
+                      type: object
                     clusterName:
                       type: string
                     credentials:
@@ -6979,6 +7024,39 @@ spec:
                                     x-kubernetes-int-or-string: true
                                   type: object
                               type: object
+                            seccompConfig:
+                              properties:
+                                customProfile:
+                                  properties:
+                                    configData:
+                                      type: string
+                                    configMap:
+                                      properties:
+                                        items:
+                                          items:
+                                            properties:
+                                              key:
+                                                type: string
+                                              mode:
+                                                format: int32
+                                                type: integer
+                                              path:
+                                                type: string
+                                            required:
+                                              - key
+                                              - path
+                                            type: object
+                                          type: array
+                                          x-kubernetes-list-map-keys:
+                                            - key
+                                          x-kubernetes-list-type: map
+                                        name:
+                                          type: string
+                                      type: object
+                                  type: object
+                                customRootPath:
+                                  type: string
+                              type: object
                             securityContext:
                               properties:
                                 allowPrivilegeEscalation:
@@ -7165,8 +7243,10 @@ spec:
                         x-kubernetes-list-type: map
                       extraChecksd:
                         properties:
-                          configData:
-                            type: string
+                          configDataMap:
+                            additionalProperties:
+                              type: string
+                            type: object
                           configMap:
                             properties:
                               items:
@@ -7193,8 +7273,10 @@ spec:
                         type: object
                       extraConfd:
                         properties:
-                          configData:
-                            type: string
+                          configDataMap:
+                            additionalProperties:
+                              type: string
+                            type: object
                           configMap:
                             properties:
                               items:
@@ -7256,38 +7338,6 @@ spec:
                       replicas:
                         format: int32
                         type: integer
-                      secCompCustomProfile:
-                        properties:
-                          configData:
-                            type: string
-                          configMap:
-                            properties:
-                              items:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    mode:
-                                      format: int32
-                                      type: integer
-                                    path:
-                                      type: string
-                                  required:
-                                    - key
-                                    - path
-                                  type: object
-                                type: array
-                                x-kubernetes-list-map-keys:
-                                  - key
-                                x-kubernetes-list-type: map
-                              name:
-                                type: string
-                            type: object
-                        type: object
-                      secCompProfileName:
-                        type: string
-                      secCompRootPath:
-                        type: string
                       securityContext:
                         properties:
                           fsGroup:
@@ -7350,6 +7400,148 @@ spec:
                                 type: boolean
                               runAsUserName:
                                 type: string
+                            type: object
+                        type: object
+                      securityContextConstraints:
+                        properties:
+                          create:
+                            type: boolean
+                          customConfiguration:
+                            properties:
+                              allowHostDirVolumePlugin:
+                                type: boolean
+                              allowHostIPC:
+                                type: boolean
+                              allowHostNetwork:
+                                type: boolean
+                              allowHostPID:
+                                type: boolean
+                              allowHostPorts:
+                                type: boolean
+                              allowPrivilegedContainer:
+                                type: boolean
+                              allowedCapabilities:
+                                items:
+                                  type: string
+                                type: array
+                              allowedFlexVolumes:
+                                items:
+                                  properties:
+                                    driver:
+                                      type: string
+                                  type: object
+                                type: array
+                              apiVersion:
+                                type: string
+                              defaultAddCapabilities:
+                                items:
+                                  type: string
+                                type: array
+                              fsGroup:
+                                properties:
+                                  ranges:
+                                    items:
+                                      properties:
+                                        max:
+                                          format: int64
+                                          type: integer
+                                        min:
+                                          format: int64
+                                          type: integer
+                                      type: object
+                                    type: array
+                                  type:
+                                    type: string
+                                type: object
+                              groups:
+                                items:
+                                  type: string
+                                type: array
+                              kind:
+                                type: string
+                              metadata:
+                                type: object
+                              priority:
+                                format: int32
+                                type: integer
+                              readOnlyRootFilesystem:
+                                type: boolean
+                              requiredDropCapabilities:
+                                items:
+                                  type: string
+                                type: array
+                              runAsUser:
+                                properties:
+                                  type:
+                                    type: string
+                                  uid:
+                                    format: int64
+                                    type: integer
+                                  uidRangeMax:
+                                    format: int64
+                                    type: integer
+                                  uidRangeMin:
+                                    format: int64
+                                    type: integer
+                                type: object
+                              seLinuxContext:
+                                properties:
+                                  seLinuxOptions:
+                                    properties:
+                                      level:
+                                        type: string
+                                      role:
+                                        type: string
+                                      type:
+                                        type: string
+                                      user:
+                                        type: string
+                                    type: object
+                                  type:
+                                    type: string
+                                type: object
+                              seccompProfiles:
+                                items:
+                                  type: string
+                                type: array
+                              supplementalGroups:
+                                properties:
+                                  ranges:
+                                    items:
+                                      properties:
+                                        max:
+                                          format: int64
+                                          type: integer
+                                        min:
+                                          format: int64
+                                          type: integer
+                                      type: object
+                                    type: array
+                                  type:
+                                    type: string
+                                type: object
+                              users:
+                                items:
+                                  type: string
+                                type: array
+                              volumes:
+                                items:
+                                  type: string
+                                type: array
+                            required:
+                              - allowHostDirVolumePlugin
+                              - allowHostIPC
+                              - allowHostNetwork
+                              - allowHostPID
+                              - allowHostPorts
+                              - allowPrivilegedContainer
+                              - allowedCapabilities
+                              - allowedFlexVolumes
+                              - defaultAddCapabilities
+                              - priority
+                              - readOnlyRootFilesystem
+                              - requiredDropCapabilities
+                              - volumes
                             type: object
                         type: object
                       serviceAccountName:
@@ -8197,8 +8389,13 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
-      served: false
+      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
+      served: true
+      storage: true
+      {{- else }}
+      served: true
       storage: false
+      {{- end }}
 status:
   acceptedNames:
     kind: ""
