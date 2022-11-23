@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.2.1
+
+* Use volume subpaths for confd files
+
 ## 3.2.0
 
 * Default "Agent" and "Cluster-Agent" image tag to `7.40.0`.
