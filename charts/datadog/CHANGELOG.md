@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.3.3
+
+* Add a warning note to alert users about suboptimal configuration of Cluster Checks Runner.
+
 ## 3.3.2
 
 * Fix GKE Autopilot mounts in the `trace-agent` container and `hostPid` setting for the Agent pods
