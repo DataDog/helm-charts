@@ -9,6 +9,10 @@ config:
       type: blackhole
       inputs:
         - demo_logs
+service:
+  enabled: false
+serviceHeadless:
+  enabled: false
 extraVolumes:
   - name: podinfo
     downwardAPI:

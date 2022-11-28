@@ -104,6 +104,11 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
+NOTE: Below this point is a lot of craziness, I'm not sure if I could write this again today but it seems to have worked
+without issue.
+*/}}
+
+{{/*
 Generate an array of ServicePorts based on `.Values.config`.
 */}}
 {{- define "opw.ports" -}}
