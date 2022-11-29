@@ -103,19 +103,18 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs:
       - lint-chart
       - kubeval-chart
     strategy:
       matrix:
         k8s:
-          # - v1.14.10 (deprecated with kind 1.16)
           - v1.16.15
           - v1.18.20
           - v1.22.9
           - v1.24.2
-          # v1.25.2 (when agent 7.40 is out)
+          - v1.25.2
     steps:
       - name: Checkout
         uses: actions/checkout@v3
