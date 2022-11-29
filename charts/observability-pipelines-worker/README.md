@@ -24,7 +24,7 @@ helm install --name <RELEASE_NAME> \
   datadog/observability-pipelines-worker
 ```
 
-By default, this Chart creates Secrets for your Observability Pipelines API and Configuration keys. However, you can use
+By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
 manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
 (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
 
@@ -93,30 +93,30 @@ The command removes all the Kubernetes components associated with the chart and 
 | config | object | `{}` | This section supports using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options. |
 | containerPorts | list | `[]` | Manually define containerPorts, overriding automated generation of containerPorts. |
 | datadog.apiKey | string | `"<DD_API_KEY>"` | Specify your Datadog API key. |
-| datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your API key instead of creating a new one. The value must be stored under the `api-key`. |
+| datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
 | datadog.configKey | string | `"<DD_CONFIGURATION_KEY>"` |  |
-| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret which has your Configuration key instead of creating a new one. The value must be stored under the `config-key`. |
+| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
-| envFrom | list | `[]` | Define environment variables from ConfigMap or Secret data. |
-| extraContainers | list | `[]` | Extra Containers to be added. |
-| extraVolumeMounts | list | `[]` | Additional Volume to mount. |
-| extraVolumes | list | `[]` | Additional Volumes to use. |
+| envFrom | list | `[]` | Define environment variables from ConfigMap or secret data. |
+| extraContainers | list | `[]` | Extra containers to be added. |
+| extraVolumeMounts | list | `[]` | Additional volumes to mount. |
+| extraVolumes | list | `[]` | Additional volumes to use. |
 | fullnameOverride | string | `""` | Override the fully qualified app name. |
-| image.digest | string | `nil` | Specify image digest to use, takes precedence over `image.tag`. |
-| image.name | string | `"observability-pipelines-worker"` | Specify image name to use (relative to `image.repository`). |
+| image.digest | string | `nil` | Specify the image digest to use; takes precedence over `image.tag`. |
+| image.name | string | `"observability-pipelines-worker"` | Specify the image name to use (relative to `image.repository`). |
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
-| image.repository | string | `"gcr.io/datadoghq"` | Specify image repository to use. |
-| image.tag | string | `"latest"` | Specify image tag to use. |
+| image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
+| image.tag | string | `"latest"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
 | ingress.hosts | list | `[]` | Configure the hosts and paths for the Ingress. |
 | ingress.tls | list | `[]` | Configure TLS for the Ingress. |
-| initContainers | list | `[]` | Init Containers to be added. |
+| initContainers | list | `[]` | Init containers to be added. |
 | lifecycle | object | `{}` | Specify lifecycle hooks for containers. |
 | livenessProbe | object | `{}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
 | nameOverride | string | `""` | Override the name of the app. |
@@ -128,12 +128,12 @@ The command removes all the Kubernetes components associated with the chart and 
 | persistence.selector | object | `{}` | Specify the selectors for PersistentVolumeClaims. |
 | persistence.size | string | `"10Gi"` | Specify the size of PersistentVolumeClaims. |
 | persistence.storageClassName | string | `nil` | Specify the storageClassName for PersistentVolumeClaims. |
-| podAnnotations | object | `{}` | Set annotations on Pods. |
+| podAnnotations | object | `{}` | Set annotations on pods. |
 | podDisruptionBudget.enabled | bool | `false` | If **true**, create a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/). |
-| podDisruptionBudget.maxUnavailable | int | `nil` | Specify the number of Pods that can be unavailable after an eviction. |
-| podDisruptionBudget.minAvailable | int | `1` | Specify the number of Pods that must still be available after an eviction. |
-| podHostNetwork | bool | `false` | Enable the hostNetwork option on Pods. |
-| podLabels | object | `{}` | Set labels on Pods. |
+| podDisruptionBudget.maxUnavailable | int | `nil` | Specify the number of pods that can be unavailable after an eviction. |
+| podDisruptionBudget.minAvailable | int | `1` | Specify the number of pods that must still be available after an eviction. |
+| podHostNetwork | bool | `false` | Enable the hostNetwork option on pods. |
+| podLabels | object | `{}` | Set labels on pods. |
 | podManagementPolicy | string | `"OrderedReady"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
@@ -147,7 +147,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | service.ipFamilies | list | `[]` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.ipFamilyPolicy | string | `""` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.loadBalancerIP | string | `""` | Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer). |
-| service.ports | array | `nil` | Manually set the Service ports, overriding automated generation of Service ports. |
+| service.ports | array | `nil` | Manually set the service ports, overriding automated generation of service ports. |
 | service.topologyKeys | array | `nil` | Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology). |
 | service.type | string | `"ClusterIP"` | Specify the type for the Service. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**. |

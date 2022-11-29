@@ -1,7 +1,7 @@
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (not (eq .Values.datadog.apiKey "<DD_API_KEY>"))) }}
   {{- if .Values.datadog.apiKeyExistingSecret }}
 You disabled creation of Secret containing API key, therefore it is expected
-that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}' which includes a key called 'api-key' containing the API key.
+that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}', which includes a key called 'api-key' containing the API key.
   {{- else if not (eq .Values.datadog.apiKey "<DD_API_KEY>") }}
   {{- end }}
 
@@ -11,9 +11,9 @@ that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}' which 
 ##############################################################################
 
 This deployment will be incomplete until you get your API key from Datadog.
-One can sign up for a free Datadog trial at https://app.datadoghq.com/signup
+Sign up for a free Datadog trial at https://app.datadoghq.com/signup
 
-Once registered you can create an API key at:
+Once registered, you can create an API key at:
 
     https://app.datadoghq.com/observability-pipelines
 
@@ -25,8 +25,8 @@ Then run:
 
 {{- if (or (.Values.datadog.configKeyExistingSecret) (not (eq .Values.datadog.configKey "<DD_CONFIGURATION_KEY>"))) }}
   {{- if .Values.datadog.configKeyExistingSecret }}
-You disabled creation of Secret containing API key, therefore it is expected
-that you create Secret named '{{ .Values.datadog.configKeyExistingSecret }}' which includes a key called 'config-key' containing the Configuration key.
+You disabled the creation of a secret containing the API key, therefore you need to
+create a secret named '{{ .Values.datadog.configKeyExistingSecret }}', which includes a key called 'config-key' containing the configuration key.
   {{- else if not (eq .Values.datadog.apiKey "<DD_CONFIGURATION_KEY>") }}
   {{- end }}
 
@@ -37,9 +37,9 @@ that you create Secret named '{{ .Values.datadog.configKeyExistingSecret }}' whi
 ##############################################################################
 
 This deployment will be incomplete until you get your API key from Datadog.
-One can sign up for a free Datadog trial at https://app.datadoghq.com/signup
+Sign up for a free Datadog trial at https://app.datadoghq.com/signup
 
-Once registered you can create a Configuration key at:
+Once registered, you can create a configuration key at:
 
     https://app.datadoghq.com/observability-pipelines
 

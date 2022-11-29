@@ -8,8 +8,8 @@ Expand the name of the chart.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
+We truncate strings at 63 characters because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If the release name contains a chart name it will be used as a full name.
 */}}
 {{- define "opw.fullname" -}}
 {{- if .Values.fullnameOverride }}
@@ -32,7 +32,7 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Return API key Secret name to be used based on provided values.
+Return the API key secret name to be used based on provided values.
 */}}
 {{- define "opw.apiSecretName" -}}
 {{- $fullName := printf "%s-apikey" (include "opw.fullname" .) -}}
@@ -40,7 +40,7 @@ Return API key Secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
-Return Configuration key Secret name to be used based on provided values.
+Return the configuration key secret name to be used based on provided values.
 */}}
 {{- define "opw.configKeySecretName" -}}
 {{- $fullName := printf "%s-configkey" (include "opw.fullname" .) -}}
