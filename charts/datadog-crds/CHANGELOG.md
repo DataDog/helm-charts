@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.8
+
+* Updating CRD of the Datadog Operator for Kubernetes cluster < 1.21.0.
+
 ## 0.5.7
 
 * Update CRD of DatadogAgent to have new fields for the cws feature.
