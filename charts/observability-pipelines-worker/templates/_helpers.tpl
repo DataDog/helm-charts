@@ -32,7 +32,7 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Return the API key secret name to be used based on provided values.
+Return the API key Secret name to be used based on provided values.
 */}}
 {{- define "opw.apiSecretName" -}}
 {{- $fullName := printf "%s-apikey" (include "opw.fullname" .) -}}
@@ -40,7 +40,7 @@ Return the API key secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
-Return the configuration key secret name to be used based on provided values.
+Return the configuration key Secret name to be used based on provided values.
 */}}
 {{- define "opw.configKeySecretName" -}}
 {{- $fullName := printf "%s-configkey" (include "opw.fullname" .) -}}
@@ -71,7 +71,7 @@ app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 {{- end -}}
 
 {{/*
-Return the service account name
+Return the ServiceAccount name
 */}}
 {{- define "opw.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
@@ -109,7 +109,7 @@ without issue.
 */}}
 
 {{/*
-Generate an array of ServicePorts based on `.Values.config`.
+Generate an array of Service.Ports based on `.Values.config`.
 */}}
 {{- define "opw.ports" -}}
   {{- range $componentKind, $components := .Values.config }}
@@ -142,7 +142,7 @@ Iterate over the components defined in `.Values.config`.
 {{- end }}
 
 {{/*
-Generate a single ServicePort based on a component configuration.
+Generate a single Service.Port based on a component configuration.
 */}}
 {{- define "_helper.generatePort" -}}
 {{- $name := index . 0 | kebabcase -}}
@@ -159,7 +159,7 @@ Generate a single ServicePort based on a component configuration.
 {{- end }}
 
 {{/*
-Generate an array of ContainerPorts based on `.Values.config`.
+Generate an array of Container.Ports based on `.Values.config`.
 */}}
 {{- define "opw.containerPorts" -}}
   {{- range $componentKind, $components := .Values.config }}
@@ -178,7 +178,7 @@ Generate an array of ContainerPorts based on `.Values.config`.
 {{- end }}
 
 {{/*
-Generate a single ContainerPort based on a component configuration.
+Generate a single Container.Port based on a component configuration.
 */}}
 {{- define "_helper.generateContainerPort" -}}
 {{- $name := index . 0 | kebabcase -}}

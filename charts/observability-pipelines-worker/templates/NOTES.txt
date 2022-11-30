@@ -25,8 +25,8 @@ Then run:
 
 {{- if (or (.Values.datadog.configKeyExistingSecret) (not (eq .Values.datadog.configKey "<DD_CONFIGURATION_KEY>"))) }}
   {{- if .Values.datadog.configKeyExistingSecret }}
-You disabled the creation of a secret containing the API key, therefore you need to
-create a secret named '{{ .Values.datadog.configKeyExistingSecret }}', which includes a key called 'config-key' containing the configuration key.
+You disabled the creation of a Secret containing the API key, therefore you need to
+create a Secret named '{{ .Values.datadog.configKeyExistingSecret }}', which includes a key called 'config-key' containing the configuration key.
   {{- else if not (eq .Values.datadog.apiKey "<DD_CONFIGURATION_KEY>") }}
   {{- end }}
 
@@ -36,7 +36,7 @@ create a secret named '{{ .Values.datadog.configKeyExistingSecret }}', which inc
 ####               ERROR: You did not set a datadog.configKey.            ####
 ##############################################################################
 
-This deployment will be incomplete until you get your API key from Datadog.
+This deployment will be incomplete until you get your configuration key from Datadog.
 Sign up for a free Datadog trial at https://app.datadoghq.com/signup
 
 Once registered, you can create a configuration key at:

@@ -18,12 +18,12 @@ commonLabels: {}
 datadog:
   # datadog.apiKey -- Specify your Datadog API key.
   apiKey: <DD_API_KEY>
-  # datadog.apiKeyExistingSecret -- Specify a preexisting secret that has your API key instead of creating a new one.
+  # datadog.apiKeyExistingSecret -- Specify a preexisting Secret that has your API key instead of creating a new one.
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
   # datadog.configkey -- Specify your Datadog Configuration key.
   configKey: <DD_CONFIGURATION_KEY>
-  # datadog.configKeyExistingSecret -- Specify a preexisting secret that has your configuration key instead of
+  # datadog.configKeyExistingSecret -- Specify a preexisting Secret that has your configuration key instead of
   # creating a new one. The value must be stored under the `config-key`.
   configKeyExistingSecret: ""
   ## Set to 'datadoghq.com' to send data to the US1 site.
@@ -84,9 +84,9 @@ podDisruptionBudget:
   # podDisruptionBudget.enabled -- If **true**, create a
   # [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
   enabled: false
-  # podDisruptionBudget.minAvailable -- Specify the number of pods that must still be available after an eviction.
+  # podDisruptionBudget.minAvailable -- Specify the number of Pods that must still be available after an eviction.
   minAvailable: 1
-  # podDisruptionBudget.maxUnavailable -- (int) Specify the number of pods that can be unavailable after an eviction.
+  # podDisruptionBudget.maxUnavailable -- (int) Specify the number of Pods that can be unavailable after an eviction.
   maxUnavailable:
 
 serviceAccount:
@@ -97,24 +97,24 @@ serviceAccount:
   # serviceAccount.annotations -- Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**.
   annotations: {}
 
-# podAnnotations -- Set annotations on pods.
+# podAnnotations -- Set annotations on Pods.
 podAnnotations: {}
 
-# podLabels -- Set labels on pods.
+# podLabels -- Set labels on Pods.
 podLabels: {}
 
 # podPriorityClassName -- Set the
 # [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass).
 podPriorityClassName: ""
 
-# podHostNetwork -- Enable the hostNetwork option on pods.
+# podHostNetwork -- Enable the hostNetwork option on Pods.
 podHostNetwork: false
 
 # podSecurityContext -- Allows you to overwrite the default
 # [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).
 podSecurityContext: {}
 
-# securityContext -- Specify securityContext for containers.
+# securityContext -- Specify securityContext for Containers.
 securityContext: {}
 
 # command -- Override default image command.
@@ -135,14 +135,14 @@ env: []
 #        name: <SECRET_NAME>
 #        key: <KEY_NAME>
 
-# envFrom -- Define environment variables from ConfigMap or secret data.
+# envFrom -- Define environment variables from ConfigMap or Secret data.
 envFrom: []
 #  - configMapRef:
 #      name: <CONFIGMAP_NAME>
 #  - secretRef:
 #     name: <SECRET_NAME>
 
-# containerPorts -- Manually define containerPorts, overriding automated generation of containerPorts.
+# containerPorts -- Manually define ContainerPort array, overriding automated generation of ContainerPorts.
 containerPorts: []
 
 # resources -- Specify resource requests and limits.
@@ -154,7 +154,7 @@ resources: {}
   #   cpu: 200m
   #   memory: 256Mi
 
-# lifecycle -- Specify lifecycle hooks for containers.
+# lifecycle -- Specify lifecycle hooks for Containers.
 lifecycle: {}
   # preStop:
   #   exec:
@@ -202,7 +202,7 @@ service:
   #  - "topology.kubernetes.io/zone"
   #  - "topology.kubernetes.io/region"
   #  - "*"
-  # service.ports -- (array) Manually set the service ports, overriding automated generation of service ports.
+  # service.ports -- (array) Manually set the ServicePort array, overriding automated generation of ServicePorts.
   ports:
   # service.externalTrafficPolicy -- Specify the
   # [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
@@ -249,7 +249,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# config -- This section supports using helm templates to populate dynamic values. See Vector's
+# config -- This section supports using Helm templates to populate dynamic values. See Vector's
 # [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options.
 config: {}
 #  data_dir: "/var/lib/opw/"
@@ -284,16 +284,16 @@ config: {}
 #      default_api_key: ${DD_API_KEY}
 #      site: ${DD_SITE}
 
-# extraVolumes -- Additional volumes to use.
+# extraVolumes -- Specify additional Volumes to use.
 extraVolumes: []
 
-# extraVolumeMounts -- Additional volumes to mount.
+# extraVolumeMounts -- Specify Additional VolumeMounts to use.
 extraVolumeMounts: []
 
-# initContainers -- Init containers to be added.
+# initContainers -- Specify initContainers to be added.
 initContainers: []
 
-# extraContainers -- Extra containers to be added.
+# extraContainers -- Specify extra Containers to be added.
 extraContainers: []
 
 persistence:

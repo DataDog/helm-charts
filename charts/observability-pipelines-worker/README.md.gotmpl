@@ -27,14 +27,14 @@ helm install --name <RELEASE_NAME> \
 ```
 
 By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
-manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
+manually created Secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
 (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
 
-**Note:** When creating the secret(s), be sure to name the key fields `api-key` and `config-key`.
+**Note:** When creating the Secret(s), be sure to name the key fields `api-key` and `config-key`.
 
 After a few minutes, you should see your new pipeline active in Datadog.
 
-**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
+**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` option.
 
 ```bash
 helm install --name <RELEASE_NAME> \
@@ -44,10 +44,10 @@ helm install --name <RELEASE_NAME> \
     datadog/observability-pipelines-worker
 ```
 
-#### Create and provide a secret that contains your Datadog API and Configuration Keys
+#### Create and provide a Secret that contains your Datadog API and Configuration Keys
 
-To create a secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
-organization. This secret is used in the manifest to deploy the Observability Pipelines Worker.
+To create a Secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
+organization. This Secret is used in the manifest to deploy the Observability Pipelines Worker.
 
 ```bash
 export DATADOG_SECRET_NAME=datadog-secrets
@@ -56,10 +56,10 @@ kubectl create secret generic $DATADOG_SECRET_NAME \
     --from-literal config-key="<DD_CONFIGURATION_KEY>"
 ```
 
-**Note**: This creates a secret in the **default** namespace. If you are using a custom namespace, update the namespace
+**Note**: This creates a Secret in the **default** Namespace. If you are using a custom Namespace, update the Namespace
 flag of the command before running it.
 
-Now, the installation command contains a reference to the secret.
+Now, the installation command contains a reference to the Secret.
 
 ```bash
 helm install --name <RELEASE_NAME> \

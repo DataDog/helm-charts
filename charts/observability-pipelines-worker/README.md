@@ -25,14 +25,14 @@ helm install --name <RELEASE_NAME> \
 ```
 
 By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
-manually created secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
+manually created Secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
 (see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
 
-**Note:** When creating the secret(s), be sure to name the key fields `api-key` and `config-key`.
+**Note:** When creating the Secret(s), be sure to name the key fields `api-key` and `config-key`.
 
 After a few minutes, you should see your new pipeline active in Datadog.
 
-**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` field.
+**Note:** You can set your [Datadog site](https://docs.datadoghq.com/getting_started/site) using the `datadog.site` option.
 
 ```bash
 helm install --name <RELEASE_NAME> \
@@ -42,10 +42,10 @@ helm install --name <RELEASE_NAME> \
     datadog/observability-pipelines-worker
 ```
 
-#### Create and provide a secret that contains your Datadog API and Configuration Keys
+#### Create and provide a Secret that contains your Datadog API and Configuration Keys
 
-To create a secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
-organization. This secret is used in the manifest to deploy the Observability Pipelines Worker.
+To create a Secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
+organization. This Secret is used in the manifest to deploy the Observability Pipelines Worker.
 
 ```bash
 export DATADOG_SECRET_NAME=datadog-secrets
@@ -54,10 +54,10 @@ kubectl create secret generic $DATADOG_SECRET_NAME \
     --from-literal config-key="<DD_CONFIGURATION_KEY>"
 ```
 
-**Note**: This creates a secret in the **default** namespace. If you are using a custom namespace, update the namespace
+**Note**: This creates a Secret in the **default** Namespace. If you are using a custom Namespace, update the Namespace
 flag of the command before running it.
 
-Now, the installation command contains a reference to the secret.
+Now, the installation command contains a reference to the Secret.
 
 ```bash
 helm install --name <RELEASE_NAME> \
@@ -90,20 +90,20 @@ The command removes all the Kubernetes components associated with the chart and 
 | autoscaling.targetMemoryUtilizationPercentage | int | `nil` | Specify the target memory utilization. |
 | command | list | `[]` | Override default image command. |
 | commonLabels | object | `{}` | Labels to apply to all resources. |
-| config | object | `{}` | This section supports using helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options. |
-| containerPorts | list | `[]` | Manually define containerPorts, overriding automated generation of containerPorts. |
+| config | object | `{}` | This section supports using Helm templates to populate dynamic values. See Vector's [configuration documentation](https://vector.dev/docs/reference/configuration/) for all options. |
+| containerPorts | list | `[]` | Manually define ContainerPort array, overriding automated generation of ContainerPorts. |
 | datadog.apiKey | string | `"<DD_API_KEY>"` | Specify your Datadog API key. |
-| datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
+| datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
 | datadog.configKey | string | `"<DD_CONFIGURATION_KEY>"` |  |
-| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. |
+| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
-| envFrom | list | `[]` | Define environment variables from ConfigMap or secret data. |
-| extraContainers | list | `[]` | Extra containers to be added. |
-| extraVolumeMounts | list | `[]` | Additional volumes to mount. |
-| extraVolumes | list | `[]` | Additional volumes to use. |
+| envFrom | list | `[]` | Define environment variables from ConfigMap or Secret data. |
+| extraContainers | list | `[]` | Specify extra Containers to be added. |
+| extraVolumeMounts | list | `[]` | Specify Additional VolumeMounts to use. |
+| extraVolumes | list | `[]` | Specify additional Volumes to use. |
 | fullnameOverride | string | `""` | Override the fully qualified app name. |
 | image.digest | string | `nil` | Specify the image digest to use; takes precedence over `image.tag`. |
 | image.name | string | `"observability-pipelines-worker"` | Specify the image name to use (relative to `image.repository`). |
@@ -116,8 +116,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
 | ingress.hosts | list | `[]` | Configure the hosts and paths for the Ingress. |
 | ingress.tls | list | `[]` | Configure TLS for the Ingress. |
-| initContainers | list | `[]` | Init containers to be added. |
-| lifecycle | object | `{}` | Specify lifecycle hooks for containers. |
+| initContainers | list | `[]` | Specify initContainers to be added. |
+| lifecycle | object | `{}` | Specify lifecycle hooks for Containers. |
 | livenessProbe | object | `{}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
@@ -128,26 +128,26 @@ The command removes all the Kubernetes components associated with the chart and 
 | persistence.selector | object | `{}` | Specify the selectors for PersistentVolumeClaims. |
 | persistence.size | string | `"10Gi"` | Specify the size of PersistentVolumeClaims. |
 | persistence.storageClassName | string | `nil` | Specify the storageClassName for PersistentVolumeClaims. |
-| podAnnotations | object | `{}` | Set annotations on pods. |
+| podAnnotations | object | `{}` | Set annotations on Pods. |
 | podDisruptionBudget.enabled | bool | `false` | If **true**, create a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/). |
-| podDisruptionBudget.maxUnavailable | int | `nil` | Specify the number of pods that can be unavailable after an eviction. |
-| podDisruptionBudget.minAvailable | int | `1` | Specify the number of pods that must still be available after an eviction. |
-| podHostNetwork | bool | `false` | Enable the hostNetwork option on pods. |
-| podLabels | object | `{}` | Set labels on pods. |
+| podDisruptionBudget.maxUnavailable | int | `nil` | Specify the number of Pods that can be unavailable after an eviction. |
+| podDisruptionBudget.minAvailable | int | `1` | Specify the number of Pods that must still be available after an eviction. |
+| podHostNetwork | bool | `false` | Enable the hostNetwork option on Pods. |
+| podLabels | object | `{}` | Set labels on Pods. |
 | podManagementPolicy | string | `"OrderedReady"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
 | readinessProbe | object | `{}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
 | replicas | int | `1` | Specify the number of replicas to create. |
 | resources | object | `{}` | Specify resource requests and limits. |
-| securityContext | object | `{}` | Specify securityContext for containers. |
+| securityContext | object | `{}` | Specify securityContext for Containers. |
 | service.annotations | object | `{}` | Specify annotations for the Service. |
 | service.enabled | bool | `true` | If **true**, create a Service resource. |
 | service.externalTrafficPolicy | string | `""` | Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip). |
 | service.ipFamilies | list | `[]` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.ipFamilyPolicy | string | `""` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.loadBalancerIP | string | `""` | Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer). |
-| service.ports | array | `nil` | Manually set the service ports, overriding automated generation of service ports. |
+| service.ports | array | `nil` | Manually set the ServicePort array, overriding automated generation of ServicePorts. |
 | service.topologyKeys | array | `nil` | Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology). |
 | service.type | string | `"ClusterIP"` | Specify the type for the Service. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**. |
