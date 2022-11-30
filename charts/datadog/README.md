@@ -691,7 +691,6 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.conntrackInitTimeout | string | `"10s"` | the time to wait for conntrack to initialize before failing |
 | datadog.systemProbe.conntrackMaxStateSize | int | `131072` | the maximum size of the userspace conntrack cache |
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
-| datadog.systemProbe.enableCORE | bool | `true` | Enables Compile Once - Run Everywhere (CO-RE) for eBPF probes |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableDefaultKernelHeadersPaths | bool | `true` | Enable mount of default paths where kernel headers are stored |
 | datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |

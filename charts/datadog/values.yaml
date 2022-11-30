@@ -529,9 +529,6 @@ datadog:
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
 
-    # datadog.systemProbe.enableCORE -- Enables Compile Once - Run Everywhere (CO-RE) for eBPF probes
-    enableCORE: true
-
     # datadog.systemProbe.btfPath -- Specify the path to a BTF file for your kernel
     btfPath: ""
 
