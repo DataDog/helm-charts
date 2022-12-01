@@ -2,9 +2,9 @@
 
 targetSystem: "linux"
 datadog:
-  apiKey: c3ab928e0b5d480a07980edc4b879f5b
-  appKey: 88b26e5e73828fa3083e8ecf685ab2eb04a3f8e5
-  clusterName: aki-aks-cluster1
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
   tags: []
   # datadog.kubelet.tlsVerify should be `false` on kind and minikube
   # to establish communication with the kubelet
