@@ -1,6 +1,8 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 
 targetSystem: "linux"
+## The registry the Datadog agent image is pulled from can be overwritten
+registry: gcr.io/datadoghq
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
@@ -28,3 +30,9 @@ datadog:
     enableTCPQueueLength: false
     enableOOMKill: true
     collectDNSStats: false
+agents:
+  enabled: true
+  ## Pod toleration to deploy the agent to tainted nodes, ex) Master nodes
+  tolerations: []
+  ## Deploy the agent pod only to specific nodes
+  nodeSelector: {}
