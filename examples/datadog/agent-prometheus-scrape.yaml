@@ -1,0 +1,34 @@
+# Datadog Agent with Logs, APM, Processes, and System Probe enabled
+
+targetSystem: "linux"
+datadog:
+  apiKey: c3ab928e0b5d480a07980edc4b879f5b
+  appKey: 88b26e5e73828fa3083e8ecf685ab2eb04a3f8e5
+  clusterName: aki-aks-cluster1
+  tags: []
+  # datadog.kubelet.tlsVerify should be `false` on kind and minikube
+  # to establish communication with the kubelet
+  kubelet:
+    tlsVerify: "false"
+  apm:
+    portEnabled: false
+  processAgent:
+    enabled: false
+    processCollection: false
+  ## Prometheus scrape
+  ## See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#metric-collection-with-prometheus-annotations
+  prometheusScrape:
+    enabled: true
+    serviceEndpoints: false
+    additionalConfigs:
+      - configurations:
+        - send_distribution_buckets: true
+          ## Metrics namespace used for Prometheus metrics
+          namespace: promtest
+          ## Limit the number of metrics to be collected
+          max_returned_metrics: 200
+          ## Metrics filter and name mapping
+          metrics: 
+            - go_threads: go.threads
+            - promhttp_metric_handler_requests
+

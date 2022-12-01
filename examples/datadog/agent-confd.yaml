@@ -1,0 +1,41 @@
+# Datadog Agent with Logs, APM, Processes, and System Probe enabled
+
+targetSystem: "linux"
+datadog:
+  apiKey: c3ab928e0b5d480a07980edc4b879f5b
+  appKey: 88b26e5e73828fa3083e8ecf685ab2eb04a3f8e5
+  clusterName: aki-aks-cluster1
+  tags: []
+  # datadog.kubelet.tlsVerify should be `false` on kind and minikube
+  # to establish communication with the kubelet
+  kubelet:
+    tlsVerify: "false"
+  # Each key becomes a file in /conf.d and overwrite default settings
+  confd: 
+    ## Custom setting for kubelet check
+    kubelet.yaml: |-
+      ad_identifiers:
+        - _kubelet
+      init_config:
+        timeout: 30        
+      instances:
+        -
+          min_collection_interval: 20
+    ## Custom setting for kube_proxy check          
+    kube_proxy.yaml: |-
+      init_config:
+      instances:
+        - prometheus_url: http://10.240.0.4:10249/metrics
+          send_histograms_buckets: true
+          send_distribution_buckets: true    
+  logs:
+    enabled: false
+    containerCollectAll: false
+    containerCollectUsingFiles: true
+  apm:
+    portEnabled: false
+    socketPath: /var/run/datadog/apm.socket
+    hostSocketPath: /var/run/datadog/
+  processAgent:
+    enabled: false
+    processCollection: false
