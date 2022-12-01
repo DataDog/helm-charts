@@ -51,10 +51,6 @@ topologySpreadConstraints:
 
 config:
   data_dir: "/var/lib/opw/"
-  enterprise:
-    api_key: "${DD_API_KEY}"
-    configuration_key: "${DD_CONFIGURATION_KEY}"
-    site: "datadoghq.com"
   sources:
     datadog_agents:
       address: 0.0.0.0:8282

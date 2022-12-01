@@ -1,9 +1,5 @@
 config:
   data_dir: "/var/lib/opw/"
-  enterprise:
-    api_key: "${DD_API_KEY}"
-    configuration_key: "${DD_CONFIGURATION_KEY}"
-    site: "${DD_SITE}"
   sources:
     datadog_agents:
       type: datadog_agent
