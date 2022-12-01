@@ -25,6 +25,10 @@ clusterAgent:
     service:
       type: ClusterIP
       port: 8443
+  admissionController:
+    enabled: true
+    # Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
+    mutateUnlabelled: false
 agents:
   rbac:
     create: true
