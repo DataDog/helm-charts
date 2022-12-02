@@ -168,7 +168,7 @@
 - hostPath:
     path: /var/log/containers
   name: logscontainerspath
-{{- if .values.datadog.logs.kubelet.enabled }}
+{{- if .Values.datadog.logs.kubelet.enabled }}
 - hostpath:
     path: {{ .Values.datadog.logs.kubelet.hostPath  }}
   name: logskubeletpath
