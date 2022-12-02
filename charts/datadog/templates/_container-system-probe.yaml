@@ -78,7 +78,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if and (or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill) .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
+{{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -129,6 +129,11 @@
       readOnly: true
 {{- end }}
 {{- end }}
+{{- end }}
+{{- if .Values.datadog.systemProbe.btfPath }}
+    - name: btf-path
+      mountPath: {{ .Values.datadog.systemProbe.btfPath }}
+      readOnly: true
 {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}

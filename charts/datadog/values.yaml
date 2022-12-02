@@ -529,6 +529,9 @@ datadog:
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
 
+    # datadog.systemProbe.btfPath -- Specify the path to a BTF file for your kernel
+    btfPath: ""
+
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: true
 
