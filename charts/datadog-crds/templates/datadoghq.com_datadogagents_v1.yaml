@@ -6107,6 +6107,11 @@ spec:
                       type: object
                     logCollection:
                       properties:
+                        kubelet:
+                          enabled:
+                            type: boolean
+                          hostPath:
+                            type: string
                         containerCollectAll:
                           type: boolean
                         containerCollectUsingFiles:
