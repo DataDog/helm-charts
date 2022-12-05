@@ -511,12 +511,6 @@ datadog:
     # datadog.systemProbe.enableOOMKill -- Enable the OOM kill eBPF-based check
     enableOOMKill: false
 
-    # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
-    enableRuntimeCompiler: false
-
-    # datadog.systemProbe.enableKernelHeaderDownload -- Enable the downloading of kernel headers for runtime compilation of eBPF probes
-    enableKernelHeaderDownload: true
-
     # datadog.systemProbe.mountPackageManagementDirs -- Enables mounting of specific package management directories when runtime compilation is enabled
     mountPackageManagementDirs: []
     ## For runtime compilation to be able to download kernel headers, the host's package management folders
