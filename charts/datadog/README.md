@@ -267,7 +267,7 @@ datadog:
           include_units: kubelet.service
 ```
 
-then upgrade your Datadog Helm chart:
+Then upgrade your Datadog Helm chart:
 
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
