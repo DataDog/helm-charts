@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.4.1
+## 3.5.0
 
 * Remove runtime compilation-related config values `enableKernelHeaderDownload` and `enableRuntimeCompiler` in the system-probe.
 
