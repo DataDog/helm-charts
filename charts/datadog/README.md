@@ -246,7 +246,7 @@ then upgrade your Datadog Helm chart:
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
-### Enabling Kubelet log Collection
+### Enabling Kubelet log collection
 
 Update your `datadog-values.yaml` file with the following log collection configuration:
 
