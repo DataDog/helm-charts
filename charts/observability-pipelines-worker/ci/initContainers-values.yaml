@@ -10,18 +10,18 @@ config:
       type: datadog_logs
       inputs:
         - datadog_agents.logs
-      default_api_key: ${DATADOG_API_KEY}
+      default_api_key: ${DD_API_KEY}
       compression: gzip
     datadog_metrics:
       type: datadog_metrics
       inputs:
         - datadog_agents.metrics
-      default_api_key: ${DATADOG_API_KEY}
+      default_api_key: ${DD_API_KEY}
     datadog_traces:
       type: datadog_traces
       inputs:
         - datadog_agents.traces
-      default_api_key: ${DATADOG_API_KEY}
+      default_api_key: ${DD_API_KEY}
 initContainers:
   - name: sleep
     image: busybox
