@@ -28,7 +28,7 @@ helm install --name <RELEASE_NAME> \
 
 By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
 manually created Secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
-(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
+(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-configuration-keys), below).
 
 **Note:** When creating the Secret(s), be sure to name the key fields `api-key` and `config-key`.
 
