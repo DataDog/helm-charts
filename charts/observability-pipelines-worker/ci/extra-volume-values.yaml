@@ -1,18 +1,27 @@
 config:
   data_dir: "/var/lib/opw/"
   sources:
-    demo_logs:
-      format: json
-      type: demo_logs
+    datadog_agents:
+      address: 0.0.0.0:8282
+      type: datadog_agent
+      multiple_outputs: true
   sinks:
-    blackhole:
-      type: blackhole
+    datadog_logs:
+      type: datadog_logs
       inputs:
-        - demo_logs
-service:
-  enabled: false
-serviceHeadless:
-  enabled: false
+        - datadog_agents.logs
+      default_api_key: ${DATADOG_API_KEY}
+      compression: gzip
+    datadog_metrics:
+      type: datadog_metrics
+      inputs:
+        - datadog_agents.metrics
+      default_api_key: ${DATADOG_API_KEY}
+    datadog_traces:
+      type: datadog_traces
+      inputs:
+        - datadog_agents.traces
+      default_api_key: ${DATADOG_API_KEY}
 extraVolumes:
   - name: podinfo
     downwardAPI:

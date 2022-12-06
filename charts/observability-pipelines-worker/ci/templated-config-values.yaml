@@ -15,7 +15,7 @@ config:
       inputs: [generator]
       bucket: logs-archive
       key_prefix: >-
-        {{ print "{{kubernetes.pod_labels.app\\.kubernetes\\.io/client-id}}/%Y/%m/%d/{{kubernetes.pod_name}}/" }}
+        {{ print "{{kubernetes.pod_labels.\"app.kubernetes.io/client-id\"}}/%Y/%m/%d/{{kubernetes.pod_name}}/" }}
       compression: gzip
       encoding:
         codec: json
