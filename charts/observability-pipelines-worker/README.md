@@ -20,13 +20,13 @@ To install the chart with the release name `<RELEASE_NAME>` run:
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DD_API_KEY> \
-  --set datadog.configKey=<DD_CONFIGURATION_KEY> \
+  --set datadog.configKey=<DD_OP_CONFIG_KEY> \
   datadog/observability-pipelines-worker
 ```
 
 By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
 manually created Secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
-(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-app-keys), below).
+(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-configuration-keys), below).
 
 **Note:** When creating the Secret(s), be sure to name the key fields `api-key` and `config-key`.
 
@@ -37,7 +37,7 @@ After a few minutes, you should see your new pipeline active in Datadog.
 ```bash
 helm install --name <RELEASE_NAME> \
     --set datadog.apiKey=<DD_API_KEY> \
-    --set datadog.configKey=<DD_CONFIGURATION_KEY> \
+    --set datadog.configKey=<DD_OP_CONFIG_KEY> \
     --set datadog.site=<DATADOG_SITE> \
     datadog/observability-pipelines-worker
 ```
@@ -51,7 +51,7 @@ organization. This Secret is used in the manifest to deploy the Observability Pi
 export DATADOG_SECRET_NAME=datadog-secrets
 kubectl create secret generic $DATADOG_SECRET_NAME \
     --from-literal api-key="<DD_API_KEY>" \
-    --from-literal config-key="<DD_CONFIGURATION_KEY>"
+    --from-literal config-key="<DD_OP_CONFIG_KEY>"
 ```
 
 **Note**: This creates a Secret in the **default** Namespace. If you are using a custom Namespace, update the Namespace
@@ -94,7 +94,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | containerPorts | list | `[]` | Manually define ContainerPort array, overriding automated generation of ContainerPorts. |
 | datadog.apiKey | string | `"<DD_API_KEY>"` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
-| datadog.configKey | string | `"<DD_CONFIGURATION_KEY>"` |  |
+| datadog.configKey | string | `"<DD_OP_CONFIG_KEY>"` |  |
 | datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |

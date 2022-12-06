@@ -47,7 +47,7 @@ containers:
           secretKeyRef:
             name: {{ template "opw.apiSecretName" . }}
             key: api-key
-      - name: DD_CONFIGURATION_KEY
+      - name: DD_OP_CONFIG_KEY
         valueFrom:
           secretKeyRef:
             name: {{ template "opw.configKeySecretName" . }}

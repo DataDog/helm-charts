@@ -22,7 +22,7 @@ datadog:
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
   # datadog.configkey -- Specify your Datadog Configuration key.
-  configKey: <DD_CONFIGURATION_KEY>
+  configKey: <DD_OP_CONFIG_KEY>
   # datadog.configKeyExistingSecret -- Specify a preexisting Secret that has your configuration key instead of
   # creating a new one. The value must be stored under the `config-key`.
   configKeyExistingSecret: ""

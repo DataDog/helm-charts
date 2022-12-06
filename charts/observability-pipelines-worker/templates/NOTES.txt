@@ -23,11 +23,11 @@ Then run:
         --set datadog.apiKey=YOUR-KEY-HERE datadog/observability-pipelines-worker
 {{- end }}
 
-{{- if (or (.Values.datadog.configKeyExistingSecret) (not (eq .Values.datadog.configKey "<DD_CONFIGURATION_KEY>"))) }}
+{{- if (or (.Values.datadog.configKeyExistingSecret) (not (eq .Values.datadog.configKey "<DD_OP_CONFIG_KEY>"))) }}
   {{- if .Values.datadog.configKeyExistingSecret }}
 You disabled the creation of a Secret containing the API key, therefore you need to
 create a Secret named '{{ .Values.datadog.configKeyExistingSecret }}', which includes a key called 'config-key' containing the configuration key.
-  {{- else if not (eq .Values.datadog.apiKey "<DD_CONFIGURATION_KEY>") }}
+  {{- else if not (eq .Values.datadog.apiKey "<DD_OP_CONFIG_KEY>") }}
   {{- end }}
 
 {{- else }}
