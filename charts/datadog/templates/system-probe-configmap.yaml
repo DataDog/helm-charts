@@ -32,8 +32,6 @@ data:
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
-      enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
-      enable_kernel_header_download: {{ $.Values.datadog.systemProbe.enableKernelHeaderDownload }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       apt_config_dir: /host/etc/apt
