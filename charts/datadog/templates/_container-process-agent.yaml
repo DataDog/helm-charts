@@ -8,7 +8,7 @@
   {{- if eq .Values.targetSystem "windows" }}
   command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
 {{- if .Values.agents.containers.processAgent.ports }}
   ports:
 {{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}

@@ -1,5 +1,74 @@
 # Datadog changelog
 
+## 3.5.0
+
+* Remove runtime compilation-related config values `enableKernelHeaderDownload` and `enableRuntimeCompiler` in the system-probe.
+
+## 3.4.0
+
+* Add `datadog.systemProbe.btfPath` for mounting user-provided BTF files (see datadog-agent PRs #13962 and #14096 for more context).
+
+## 3.3.3
+
+* Add a warning note to alert users about suboptimal configuration of Cluster Checks Runner.
+
+## 3.3.2
+
+* Fix GKE Autopilot mounts in the `trace-agent` container and `hostPid` setting for the Agent pods
+
+## 3.3.1
+
+* Remove `mountPropagation` for `*-release` files in `/etc`. It is not needed for individual files.
+
+## 3.3.0
+
+* Add datadog.hostPID option and deprecate datadog.dogstatsd.hostPID.
+
+## 3.2.2
+
+* Mount `/host/proc` and `/host/sys/fs/cgroup` in trace-agent container for better support of container tagging
+
+## 3.2.1
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.40.1`.
+
+## 3.2.0
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.40.0`.
+
+## 3.1.11
+
+* Allow disabling use of the Host Port when enabling OTLP Ingest for Agent
+* Add OTLP Ingest ports to Agent Service, to be used when Host Port is disabled
+
+## 3.1.10
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.39.2`.
+
+## 3.1.9
+
+* Add `faccessat` to system-probe seccomp profile.
+
+## 3.1.8
+
+* Add `clone3` and `rseq` to system-probe seccomp profile.
+
+## 3.1.7
+
+* Fix the configuration of the default seccomp profile for system-probe
+
+## 3.1.6
+
+* Fix usage of `generate-security-context` helper.
+
+## 3.1.5
+
+* Use `securityContext.seccompProfile` instead of annotations for system-probe on kubernetes 1.19+.
+
+## 3.1.4
+
+* Default "Agent" and "Cluster-Agent" image tag to `7.39.1`.
+
 ## 3.1.3
 
 * Add `datadog.helmCheck.valuesAsTags` option to collect helm values and use them as tags.
