@@ -339,6 +339,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the hostPid features should be enabled for the Agent pod.
+*/}}
+{{- define "should-enable-host-pid" -}}
+{{- if and (not .Values.providers.gke.autopilot) (or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if .Values.existingClusterAgent is fully configured
 */}}
 {{- define "existingClusterAgent-configured" -}}
@@ -608,7 +619,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.systemProbe.enableRuntimeCompiler -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false

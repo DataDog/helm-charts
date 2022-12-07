@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.8.8](https://img.shields.io/badge/Version-0.8.8-informational?style=flat-square) ![AppVersion: 0.8.2](https://img.shields.io/badge/AppVersion-0.8.2-informational?style=flat-square)
+![Version: 0.9.1](https://img.shields.io/badge/Version-0.9.1-informational?style=flat-square) ![AppVersion: 0.8.3](https://img.shields.io/badge/AppVersion-0.8.3-informational?style=flat-square)
 
 ## Values
 
@@ -16,6 +16,7 @@
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadog-crds.migration.datadogAgents.version | string | `"v1alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
@@ -43,6 +44,7 @@
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
+| webhook | object | `{"conversion":{"enabled":false}}` | configure webhook servers |
 
 ## How to configure which namespaces are watched by the Operator.
 
