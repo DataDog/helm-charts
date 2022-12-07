@@ -318,7 +318,7 @@ are enabled:
 * Failure policy of the Admission Controller is set to "Fail"
 {{- end }}
 
-To run in high availability mode, our recommandation is to update the chart
+To run in high availability mode, our recommendation is to update the chart
 configuration with:
 * set `clusterAgent.replicas` value to `2` replicas .
 * set `clusterAgent.createPodDisruptionBudget` to `true`.
