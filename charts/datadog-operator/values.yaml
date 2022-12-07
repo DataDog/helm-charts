@@ -106,6 +106,15 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
+  migration:
+    datadogAgents:
+      version: "v1alpha1"
+
+# webhook -- configure webhook servers
+webhook:
+  ## Use the conversion webhook server when multiple versions of objects managed by the Datadog Operator are served.
+  conversion:
+    enabled: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

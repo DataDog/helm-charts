@@ -22,7 +22,9 @@
   {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
   {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
   - containerPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .grpc.useHostPort }}
     hostPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
     name: otlpgrpcport
     protocol: TCP
   {{- end }}
@@ -30,7 +32,9 @@
   {{- if (and .http .http.enabled) }}
   {{- include "verify-otlp-endpoint-port" .http.endpoint }}
   - containerPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .http.useHostPort }}
     hostPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
     name: otlphttpport
     protocol: TCP
   {{- end }}

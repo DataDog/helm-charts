@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.1
+
+* Updating dependency to CRD to allow all fields.
+
+## 0.9.0
+
+* Add option to deactivate the conversion webhook for usecases where v2alpha1 is solely used.
+* Conversion webhook option is not used if the operator version does not support it.
+* V2alpha1 is now always served.
+
+## 0.8.8
+
+* Update chart to Datadog Operator tag `0.8.2`.
+
 ## 0.8.7
 
 * Add namespaces to all namespace-scoped objects using the HELM standard `Release.namespace`.
@@ -14,7 +28,7 @@
 
 ## 0.8.4
 
-* Update dependency on CRD chards to `0.5.2` to allow deployment on Google marketplace.
+* Update dependency on CRD charts to `0.5.2` to allow deployment on Google marketplace.
 
 ## 0.8.3
 

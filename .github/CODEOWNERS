@@ -6,7 +6,7 @@
 *.md             @DataDog/documentation @DataDog/container-integrations @DataDog/container-ecosystems
 
 # Charts
-charts/datadog/templates/container-system-probe.yaml @DataDog/agent-network @DataDog/container-integrations
-charts/datadog/templates/system-probe-configmap.yaml @DataDog/agent-network @DataDog/container-integrations
-charts/datadog/templates/system-probe-init.yaml      @DataDog/agent-network @DataDog/container-integrations
+charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @DataDog/container-integrations
+charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-integrations
+charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-integrations
 charts/synthetics-private-location/                  @Datadog/synthetics

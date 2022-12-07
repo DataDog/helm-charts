@@ -10,6 +10,11 @@ crds:
   # crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
   datadogMonitors: false
 
+migration:
+  datadogAgents:
+    # enabled: false # Will be used when we add the option to add the webhookConversion field in the CRD.
+    version: "v1alpha1"
+
 # nameOverride -- Override name of app
 nameOverride: ""
 
