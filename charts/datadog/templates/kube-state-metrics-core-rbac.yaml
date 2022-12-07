@@ -1,4 +1,4 @@
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+{{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.rbac.create }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -84,6 +84,13 @@ rules:
   - list
   - watch
 {{- end }}    
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - list
+  - watch
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

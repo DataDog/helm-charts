@@ -16,6 +16,7 @@ datadog:
         fieldRef:
           fieldPath: spec.nodeName
     hostCAPath: /etc/kubernetes/certs/kubeletserver.crt
+    tlsVerify: false # Required as of Agent 7.35 because Kubelet certificates in AKS do not have a Subject Alternative Name (SAN) set.
   logs:
     enabled: true
     containerCollectAll: false

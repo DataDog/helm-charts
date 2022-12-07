@@ -3,12 +3,12 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["process-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  command: ["process-agent", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end }}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["process-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
 {{- if .Values.agents.containers.processAgent.ports }}
   ports:
 {{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}
@@ -61,6 +61,7 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}

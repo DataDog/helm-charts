@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "datadog-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:
@@ -86,12 +87,15 @@ spec:
             {{- range .Values.env }}
             - name: {{ .name }}
               value: {{ .value | quote }}
-            {{- end }} 
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
+          {{- if and (not .Values.webhook.conversion.enabled) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
+            - "-webhookEnabled=false"
+          {{- end }}
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
           {{- end }}

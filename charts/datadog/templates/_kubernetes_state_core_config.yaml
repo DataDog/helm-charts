@@ -32,6 +32,7 @@ kubernetes_state_core.yaml.default: |-
       - poddisruptionbudgets
       - storageclasses
       - volumeattachments
+      - ingresses
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}

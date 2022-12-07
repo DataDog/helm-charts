@@ -28,11 +28,12 @@ spec:
             matchLabels:
               app: {{ template "datadog.fullname" . }}-cluster-agent
 {{- end }}
-# The cluster check runners are susceptible to connect to any service
-# that would be annotated with auto-discovery annotations.
+
+# The cluster check runners are susceptible to an issue connecting to
+# any service that is annotated with auto-discovery annotations.
 #
-# When a user wants to add a check on one of its service, he needs to
-# * annotate its service
+# When a user wants to add a check on such a service, they need to
+# * annotate the service
 # * add an ingress policy from the CLC on its own pod
 # In order to not ask end-users to inject NetworkPolicy on the agent in
 # the agent namespace, the agent must be allowed to probe any service.

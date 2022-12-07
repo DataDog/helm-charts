@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
   ports:
@@ -13,6 +13,36 @@
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+  {{- if .Values.datadog.otlp }}
+  {{- if .Values.datadog.otlp.receiver }}
+  {{- if .Values.datadog.otlp.receiver.protocols }}
+  {{- with .Values.datadog.otlp.receiver.protocols }}
+
+  {{- if (and .grpc .grpc.enabled) }}
+  {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
+  {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
+  - containerPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .grpc.useHostPort }}
+    hostPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
+    name: otlpgrpcport
+    protocol: TCP
+  {{- end }}
+
+  {{- if (and .http .http.enabled) }}
+  {{- include "verify-otlp-endpoint-port" .http.endpoint }}
+  - containerPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .http.useHostPort }}
+    hostPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
+    name: otlphttpport
+    protocol: TCP
+  {{- end }}
+
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
 {{- if .Values.agents.containers.agent.ports }}
 {{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
 {{- end }}
@@ -129,6 +159,7 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

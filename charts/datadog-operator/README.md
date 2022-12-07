@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.8.1](https://img.shields.io/badge/Version-0.8.1-informational?style=flat-square) ![AppVersion: 0.8.0](https://img.shields.io/badge/AppVersion-0.8.0-informational?style=flat-square)
+![Version: 0.9.1](https://img.shields.io/badge/Version-0.9.1-informational?style=flat-square) ![AppVersion: 0.8.3](https://img.shields.io/badge/AppVersion-0.8.3-informational?style=flat-square)
 
 ## Values
 
@@ -16,13 +16,14 @@
 | datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadog-crds.migration.datadogAgents.version | string | `"v1alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"0.8.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"0.8.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
@@ -43,6 +44,7 @@
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
+| webhook | object | `{"conversion":{"enabled":false}}` | configure webhook servers |
 
 ## How to configure which namespaces are watched by the Operator.
 

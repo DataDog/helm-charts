@@ -38,17 +38,11 @@
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
-    - name: DD_RUNTIME_SECURITY_CONFIG_FIM_ENABLED
-      value:  {{ .Values.datadog.securityAgent.runtime.fimEnabled | quote }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
       value: /var/run/sysprobe/runtime-security.sock
-    - name: DD_RUNTIME_SECURITY_CONFIG_SYSCALL_MONITOR_ENABLED
-      value: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled | quote }}
-    - name: DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED
-      value: {{ .Values.datadog.securityAgent.runtime.network.enabled | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
@@ -67,6 +61,7 @@
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
