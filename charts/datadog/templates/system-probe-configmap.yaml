@@ -32,13 +32,12 @@ data:
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
-      enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
-      enable_kernel_header_download: {{ $.Values.datadog.systemProbe.enableKernelHeaderDownload }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       apt_config_dir: /host/etc/apt
       yum_repos_dir: /host/etc/yum.repos.d
       zypper_repos_dir: /host/etc/zypp/repos.d
+      btf_path: {{ $.Values.datadog.systemProbe.btfPath }}
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
@@ -96,6 +95,7 @@ data:
             "chmod",
             "clock_gettime",
             "clone",
+            "clone3",
             "close",
             "connect",
             "copy_file_range",
@@ -109,7 +109,6 @@ data:
             "epoll_ctl_old",
             "epoll_pwait",
             "epoll_wait",
-            "epoll_wait",
             "epoll_wait_old",
             "eventfd",
             "eventfd2",
@@ -117,6 +116,7 @@ data:
             "execveat",
             "exit",
             "exit_group",
+            "faccessat",
             "faccessat2",
             "fchmod",
             "fchmodat",
@@ -137,7 +137,9 @@ data:
             "getegid",
             "geteuid",
             "getgid",
+            "getgroups",
             "getpeername",
+            "getpgrp",
             "getpid",
             "getppid",
             "getpriority",
@@ -195,6 +197,7 @@ data:
             "renameat2",
             "restart_syscall",
             "rmdir",
+            "rseq",
             "rt_sigaction",
             "rt_sigpending",
             "rt_sigprocmask",
@@ -220,6 +223,7 @@ data:
             "setgroups32",
             "setitimer",
             "setns",
+            "setpgid",
             "setrlimit",
             "setsid",
             "setsidaccept4",
@@ -233,8 +237,8 @@ data:
             "stat",
             "stat64",
             "statfs",
-            "sysinfo",
             "symlinkat",
+            "sysinfo",
             "tgkill",
             "umask",
             "uname",
@@ -243,10 +247,7 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write",
-            "getgroups",
-            "getpgrp",
-            "setpgid"
+            "write"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
