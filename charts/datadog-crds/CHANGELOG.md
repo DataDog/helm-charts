@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.9
+
+* Updating DatadogMonitors CRD and DatadogAgents CRDs.
+
 ## 0.5.8
 
 * Updating CRD of the Datadog Operator for Kubernetes cluster < 1.21.0.
