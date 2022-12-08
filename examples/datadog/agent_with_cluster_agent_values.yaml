@@ -1,6 +1,6 @@
 # Datadog Agent with Datadog Cluster Agent and
-# OrchestratorExplorer (Live Containers), Check Runners, and
-# External Metrics Server enabled
+# OrchestratorExplorer (Live Containers), Check Runners,
+# Admission Controller and External Metrics Server enabled
 
 targetSystem: "linux"
 datadog:
