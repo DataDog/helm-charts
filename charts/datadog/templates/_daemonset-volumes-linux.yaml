@@ -82,9 +82,6 @@
 - hostPath:
     path: /lib/modules
   name: modules
-- hostPath:
-    path: /usr/src
-  name: src
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:

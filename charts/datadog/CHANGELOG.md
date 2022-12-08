@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.5.2
+
+* Remove `/usr/src` mount for default kernel headers.
+
 ## 3.5.1
 
 * Removing default value placeholder for the API Key in the values.yaml.
