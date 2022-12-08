@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.5.2
+
+* Fix API Key check in NOTES.txt following change of default value for `datadog.apiKey`.
+* Fix failure if PSP activated in Kubernetes 1.25 (PSP have been removed).
+
 ## 3.5.1
 
 * Removing default value placeholder for the API Key in the values.yaml.
