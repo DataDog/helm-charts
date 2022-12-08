@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.5.2
+
+* Apply `DD_TAGS` to cluster checks pods so that global tags are applied to metrics collected by this pod.
+
 ## 3.5.1
 
 * Removing default value placeholder for the API Key in the values.yaml.
