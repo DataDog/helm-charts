@@ -82,9 +82,11 @@
 - hostPath:
     path: /lib/modules
   name: modules
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
 - hostPath:
     path: /usr/src
   name: src
+{{- end }}
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:

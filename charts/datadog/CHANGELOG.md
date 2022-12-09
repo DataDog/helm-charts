@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.5.2
+
+* Remove /usr/src mount for kernel headers when service monitoring is enabled (fix for issue #829).
+
 ## 3.5.1
 
 * Removing default value placeholder for the API Key in the values.yaml.
