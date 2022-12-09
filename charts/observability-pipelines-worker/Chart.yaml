@@ -1,7 +1,6 @@
 apiVersion: v2
 name: observability-pipelines-worker
 version: "0.1.0"
-kubeVersion: ""
 description: Observability Pipelines Worker
 type: application
 keywords:
@@ -18,9 +17,8 @@ appVersion: "0.1.0"
 annotations:
   artifacthub.io/images: |
     - name: observability-pipelines-worker
-      image: datadog/observability-pipelines-worker:0.1.0
+      image: gcr.io/datadoghq/observability-pipelines-worker:0.1.0
   artifacthub.io/license: Apache-2.0
   artifacthub.io/links: |
     - name: Chart Source
       url: https://github.com/DataDog/helm-charts
-  artifacthub.io/prerelease: "true"
