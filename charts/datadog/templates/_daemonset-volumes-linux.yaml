@@ -78,12 +78,18 @@
   name: debugfs
 - name: sysprobe-socket-dir
   emptyDir: {}
-{{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
+{{- if eq (include "runtime-compilation-enabled" .) "true" }}
+{{- if .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
 - hostPath:
     path: /lib/modules
   name: modules
 {{- end }}
-{{- if eq (include "runtime-compilation-enabled" .) "true" }}
+{{- if .Values.datadog.systemProbe.kernelHeadersDir }}
+- hostPath:
+    path: {{ .Values.datadog.systemProbe.kernelHeadersDir }}
+    type: DirectoryOrCreate
+  name: kernel-headers-dir
+{{- end }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
     type: DirectoryOrCreate

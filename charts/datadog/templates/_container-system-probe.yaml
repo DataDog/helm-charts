@@ -78,18 +78,23 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
-    - name: modules
-      mountPath: /lib/modules
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
-{{- end }}
 {{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
       readOnly: true
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
+{{- if .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
+    - name: modules
+      mountPath: /lib/modules
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
+{{- if .Values.datadog.systemProbe.kernelHeadersDir }}
+    - name: kernel-headers-dir
+      mountPath: {{ .Values.datadog.systemProbe.kernelHeadersDir }}
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+{{- end }}
     - name: runtime-compiler-output-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

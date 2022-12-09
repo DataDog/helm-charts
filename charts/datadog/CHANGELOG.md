@@ -3,6 +3,7 @@
 ## 3.5.2
 
 * Remove `/usr/src` mount for default kernel headers.
+* Add `datadog.systemProbe.kernelHeadersDir` option for mounting kernel headers.
 
 ## 3.5.1
 

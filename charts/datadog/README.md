@@ -696,6 +696,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
+| datadog.systemProbe.kernelHeadersDir | string | `""` | Enables mounting of path where kernel headers are stored |
 | datadog.systemProbe.maxTrackedConnections | int | `131072` | the maximum number of tracked connections |
 | datadog.systemProbe.mountPackageManagementDirs | list | `[]` | Enables mounting of specific package management directories when runtime compilation is enabled |
 | datadog.systemProbe.runtimeCompilationAssetDir | string | `"/var/tmp/datadog-agent/system-probe"` | Specify a directory for runtime compilation assets to live in |
