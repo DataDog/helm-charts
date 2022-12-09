@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.0
+
+* Add `datadog.systemProbe.kernelHeadersDir` option for mounting kernel headers.
+
 ## 3.5.2
 
 * Remove /usr/src mount for kernel headers when service monitoring is enabled (fix for issue #829).
