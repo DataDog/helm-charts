@@ -2116,6 +2116,29 @@ spec:
                         flavor:
                           type: string
                       type: object
+                    otlp:
+                      properties:
+                        receiver:
+                          properties:
+                            protocols:
+                              properties:
+                                grpc:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                    endpoint:
+                                      type: string
+                                  type: object
+                                http:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                    endpoint:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                      type: object
                     priorityClassName:
                       type: string
                     process:
@@ -5861,6 +5884,8 @@ spec:
                           type: string
                         enabled:
                           type: boolean
+                        failurePolicy:
+                          type: string
                         mutateUnlabelled:
                           type: boolean
                         serviceName:
@@ -6212,6 +6237,8 @@ spec:
                           type: boolean
                         enabled:
                           type: boolean
+                        version:
+                          type: integer
                       type: object
                     tcpQueueLength:
                       properties:

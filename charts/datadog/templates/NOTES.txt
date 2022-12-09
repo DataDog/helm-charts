@@ -137,6 +137,16 @@ The option `datadog.apm.socketEnabled` is enabled by default and can be used to 
 
 {{- end }}
 
+{{- if or .Values.datadog.systemProbe.enableKernelHeaderDownload .Values.datadog.systemProbe.enableRuntimeCompiler }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The `enableKernelHeaderDownload` and `enableRuntimeCompiler` options are not supported anymore, in order to enable the runtime compiler, set the environment variable `DD_ENABLE_KERNEL_HEADER_DOWNLOAD` and `DD_ENABLE_RUNTIME_COMPILER` in the system probe.
+
+{{- end }}
+
 {{- if .Values.datadog.apm.useSocketVolume }}
 
 #################################################################
@@ -308,7 +318,7 @@ are enabled:
 * Failure policy of the Admission Controller is set to "Fail"
 {{- end }}
 
-To run in high availability mode, our recommandation is to update the chart
+To run in high availability mode, our recommendation is to update the chart
 configuration with:
 * set `clusterAgent.replicas` value to `2` replicas .
 * set `clusterAgent.createPodDisruptionBudget` to `true`.

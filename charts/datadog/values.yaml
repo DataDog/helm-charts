@@ -30,7 +30,7 @@ datadog:
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
-  apiKey: <DATADOG_API_KEY>
+  apiKey:  # <DATADOG_API_KEY>
 
   # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
 
@@ -511,12 +511,6 @@ datadog:
     # datadog.systemProbe.enableOOMKill -- Enable the OOM kill eBPF-based check
     enableOOMKill: false
 
-    # datadog.systemProbe.enableRuntimeCompiler -- Enable the runtime compiler for eBPF probes
-    enableRuntimeCompiler: false
-
-    # datadog.systemProbe.enableKernelHeaderDownload -- Enable the downloading of kernel headers for runtime compilation of eBPF probes
-    enableKernelHeaderDownload: true
-
     # datadog.systemProbe.mountPackageManagementDirs -- Enables mounting of specific package management directories when runtime compilation is enabled
     mountPackageManagementDirs: []
     ## For runtime compilation to be able to download kernel headers, the host's package management folders
@@ -528,6 +522,9 @@ datadog:
 
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
+
+    # datadog.systemProbe.btfPath -- Specify the path to a BTF file for your kernel
+    btfPath: ""
 
     # datadog.systemProbe.collectDNSStats -- Enable DNS stat collection
     collectDNSStats: true
