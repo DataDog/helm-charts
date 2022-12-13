@@ -1737,3 +1737,6 @@ providers:
       ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
       ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
       useHostnameFromFile: false
+  aks:
+    # providers.aks.enabled -- Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    enabled: false

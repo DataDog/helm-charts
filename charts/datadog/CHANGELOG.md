@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.6.1
+
+* Add `providers.aks.enabled` parameter to activate specific configuration options for AKS.
+
 ## 3.6.0
 
 * Update "Agent" and "Cluster-Agent" versions to `7.41.0` by default.
