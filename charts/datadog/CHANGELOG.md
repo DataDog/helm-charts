@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.0
+
+* Update "Agent" and "Cluster-Agent" versions to `7.41.0` by default.
+
 ## 3.5.2
 
 * Fix API Key check in NOTES.txt following change of default value for `datadog.apiKey`.
