@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.4
+
+* Change nesting for `providers.aks.enabled` parameter in Helm template.
+
 ## 3.6.3
 
 * Add `datadog.kubeStateMetricsCore.annotationsAsTags` that expose the `annotations_as_tags` parameter of the KSM core check.
