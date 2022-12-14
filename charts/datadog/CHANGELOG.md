@@ -1,10 +1,15 @@
 # Datadog changelog
 
+## 3.6.3
+
+* Add `datadog.kubeStateMetricsCore.annotationsAsTags` that expose the `annotations_as_tags` parameter of the KSM core check.
+  This parameter exists only in agent 7.42.0 and above and cluster-agent 7.42.0 and above.
+
 # 3.6.2
 
 * Add CRDs to the cluster agent RBAC to be able to collect them using the Orchestrator Explorer.
 
-# 3.6.1
+## 3.6.1
 
 * Add `providers.aks.enabled` parameter to activate specific configuration options for AKS.
 

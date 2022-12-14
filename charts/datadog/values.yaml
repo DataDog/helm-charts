@@ -178,6 +178,25 @@ datadog:
     #    zone: zone
     #    team: team
 
+    # datadog.kubeStateMetricsCore.annotationsAsTags -- Extra annotations to collect from resources and to turn into datadog tag.
+
+    ## It has the following structure:
+    ## annotationsAsTags:
+    ##   <resource1>:        # can be pod, deployment, node, etc.
+    ##     <annotation1>: <tag1>  # where <annotation1> is the kubernetes annotation and <tag1> is the datadog tag
+    ##     <annotation2>: <tag2>
+    ##   <resource2>:
+    ##     <annotation3>: <tag3>
+    ##
+    ## Warning: the label must match the transformation done by kube-state-metrics,
+    ## for example tags.datadoghq.com/version becomes tags_datadoghq_com_version.
+    annotationsAsTags: {}
+    #  pod:
+    #    app: app
+    #  node:
+    #    zone: zone
+    #    team: team
+
   ## Manage Cluster checks feature
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
