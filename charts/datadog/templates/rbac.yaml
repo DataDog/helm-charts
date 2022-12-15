@@ -82,6 +82,9 @@ rules:
   - endpoints
   verbs:
   - get
+  {{- if eq  (include "should-enable-security-agent" .) "true" }}
+  - list
+  {{- end }}
 - apiGroups:
   - policy
   resources:
