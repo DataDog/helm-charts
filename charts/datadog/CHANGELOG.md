@@ -1,5 +1,15 @@
 # Datadog changelog
 
+## 3.6.5
+
+* Add the following Datadog log related configurations:
+  * `datadog.logs.autoMultiLineDefault.matchThreshold`
+  * `datadog.logs.autoMultiLineDefault.matchTimeout`
+  * `datadog.logs.autoMultiLineDefault.sampleSize`
+  * `datadog.logs.auditorTTL`
+  * `datadog.logs.expectedTagsDuration`
+  * `datadog.logs.processingRules`
+
 ## 3.6.4
 
 * Change nesting for `providers.aks.enabled` parameter in Helm template.

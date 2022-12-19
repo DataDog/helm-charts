@@ -105,6 +105,30 @@
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
+    {{- if .Values.datadog.logs.autoMultiLineDefault.matchThreshold }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_MATCH_THRESHOLD
+      value: {{ .Values.datadog.logs.autoMultiLineDefault.matchThreshold | quote }}
+    {{- end }}
+    {{- if .Values.datadog.logs.autoMultiLineDefault.matchTimeout }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_MATCH_TIMEOUT
+      value: {{ .Values.datadog.logs.autoMultiLineDefault.matchTimeout | quote }}
+    {{- end }}
+    {{- if .Values.datadog.logs.autoMultiLineDefault.sampleSize }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_SAMPLE_SIZE
+      value: {{ .Values.datadog.logs.autoMultiLineDefault.sampleSize | quote }}
+    {{- end }}
+    {{- if .Values.datadog.logs.auditorTTL }}
+    - name: DD_LOGS_CONFIG_AUDITOR_TTL
+      value: {{ .Values.datadog.logs.auditorTTL | quote }}
+    {{- end }}
+    {{- if .Values.datadog.logs.expectedTagsDuration }}
+    - name: DD_LOGS_CONFIG_EXPECTED_TAGS_DURATION
+      value: {{ .Values.datadog.logs.expectedTagsDuration | quote }}
+    {{- end }}
+    {{- if .Values.datadog.logs.processingRules }}
+    - name: DD_LOGS_CONFIG_PROCESSING_RULES
+      value: {{ .Values.datadog.logs.processingRules | quote }}
+    {{- end }}
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.6.4](https://img.shields.io/badge/Version-3.6.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.6.5](https://img.shields.io/badge/Version-3.6.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -635,10 +635,16 @@ helm install <RELEASE_NAME> \
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
+| datadog.logs.auditorTTL | string | `nil` | This variable can be used to allow for longer TTLs to be set. This is useful when some inputs don't emit logs for longer than the default of 23h |
+| datadog.logs.autoMultiLineDefault.matchThreshold | string | `nil` | The ratio of logs that must match a pattern in order for the source to be considered multi-line |
+| datadog.logs.autoMultiLineDefault.matchTimeout | string | `nil` | The timeout to apply to detecting multi-line logs |
+| datadog.logs.autoMultiLineDefault.sampleSize | string | `nil` | The sample size to use when detecting multi-line logs |
 | datadog.logs.autoMultiLineDetection | bool | `false` | Allows the Agent to detect common multi-line patterns automatically. |
 | datadog.logs.containerCollectAll | bool | `false` | Enable this to allow log collection for all containers |
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
+| datadog.logs.expectedTagsDuration | string | `nil` | Duration during which the host tags will be submitted with log events |
+| datadog.logs.processingRules | string | `nil` | The global filtering rules to apply to ingested log lines |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |

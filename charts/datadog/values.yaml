@@ -364,6 +364,28 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
     autoMultiLineDetection: false
 
+    ## Enable logs configurations related to multi-line defaults
+    autoMultiLineDefault:
+      # datadog.logs.autoMultiLineDefault.matchThreshold -- The ratio of logs that must match a pattern in order for the source to be considered multi-line
+      matchThreshold:
+
+      # datadog.logs.autoMultiLineDefault.matchTimeout -- The timeout to apply to detecting multi-line logs
+      matchTimeout:
+
+      # datadog.logs.autoMultiLineDefault.sampleSize -- The sample size to use when detecting multi-line logs
+      sampleSize:
+
+    # datadog.logs.auditorTTL -- This variable can be used to allow for longer TTLs to be set. This is useful when some inputs don't emit logs for longer than the default of 23h
+    auditorTTL:
+
+    # datadog.logs.expectedTagsDuration -- Duration during which the host tags will be submitted with log events
+    expectedTagsDuration:
+
+    # datadog.logs.processingRules -- The global filtering rules to apply to ingested log lines
+
+    ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=helm#global-processing-rules
+    processingRules:
+
   ## Enable apm agent and provide custom configs
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
