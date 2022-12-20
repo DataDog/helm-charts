@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.6.5
+
+* Fix missing Cluster Agent configuration in `security-agent` if CSPM is not actived.
+
 ## 3.6.4
 
 * Change nesting for `providers.aks.enabled` parameter in Helm template.

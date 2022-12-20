@@ -25,6 +25,7 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
@@ -34,7 +35,6 @@
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
     - name: HOST_ROOT
       value: /host/root
-    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
