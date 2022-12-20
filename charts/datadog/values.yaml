@@ -197,6 +197,16 @@ datadog:
     #    zone: zone
     #    team: team
 
+    # datadog.kubeStateMetricsCore.tags -- Tags to be applied to all ksm metrics
+
+    ## It has the following structure
+    ## tags:
+    ##  - "<KEY_1>:<VALUE_1>"
+    ##  - "<KEY_2>:<VALUE_2>"
+
+    tags: []
+    #   - env:prd
+
   ## Manage Cluster checks feature
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/

@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.6.5
+* Add support for tags specific to KSM
+
 ## 3.6.4
 
 * Change nesting for `providers.aks.enabled` parameter in Helm template.
