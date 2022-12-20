@@ -168,6 +168,14 @@ rules:
   - list
   - get
   - watch
+- apiGroups:
+    - "apiextensions.k8s.io"
+  resources:
+    - customresourcedefinitions
+  verbs:
+    - list
+    - get
+    - watch
 {{- end }}
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
 - apiGroups:

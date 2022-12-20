@@ -184,6 +184,10 @@ spec:
             value: {{ template "localService.name" . }}
           {{- end }}
           {{- end }}
+          {{- if .Values.providers.aks.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_ADD_AKS_SELECTORS
+            value: "true"
+          {{- end }}
           - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
