@@ -1,6 +1,10 @@
 # Datadog changelog
 
-# 3.6.5
+## 3.6.6
+
+* Fix missing volumeMount in `security-agent` container when `datadog.kubelet.hostCAPath` is provided.
+
+## 3.6.5
 
 * Fix missing Cluster Agent configuration in `security-agent` if CSPM is not actived.
 
