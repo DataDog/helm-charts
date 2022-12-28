@@ -6,6 +6,7 @@
   (This parameter exists only in agent 7.42.0 and above and cluster-agent 7.42.0 and above.)
 * Add `datadog.clusterTagger.*` options to configure the Kubernetes cluster-tagger feature.
   (This parameter exists only in agent 7.42.0 and above and cluster-agent 7.42.0 and above.)
+* Create `components-common-env` to define shared environment variable between "agent" and "cluster-agent" containers, and refactor `containers-common-env`.
 
 ## 3.6.9
 
