@@ -5,6 +5,10 @@ datadog:
   kubeStateMetricsEnabled: false
   clusterChecks:
     enabled: true
+  kubernetesEvents:
+    unbundleEvents: true
+  clusterTagger:
+    collectKubernetesTags: true
   expvarPort: 6001
   env:
     - name: DD_FOOBAR
