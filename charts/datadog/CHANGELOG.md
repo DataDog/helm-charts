@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.7
+
+* Add missing RBAC rules for collection of Vertical Pod Autoscaler resources in the Orchestrator Explorer.
+
 ## 3.6.6
 
 * Fix missing volumeMount in `security-agent` container when `datadog.kubelet.hostCAPath` is provided.
