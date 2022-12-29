@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.7
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.41.1`.
+
 ## 3.6.6
 
 * Fix missing volumeMount in `security-agent` container when `datadog.kubelet.hostCAPath` is provided.
