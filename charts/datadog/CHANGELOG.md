@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.8
+
+* Add missing RBAC rules for collection of Vertical Pod Autoscaler resources in the Orchestrator Explorer.
+
 ## 3.6.7
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.41.1`.
