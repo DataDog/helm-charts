@@ -336,7 +336,6 @@ rules:
   - verticalpodautoscalers
   verbs:
   - list
-  - get
   - watch
 - apiGroups:
   - batch
