@@ -14,11 +14,12 @@ datadog:
   processAgent:
     enabled: false
     processCollection: false
-  ## Prometheus scrape
   ## See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#metric-collection-with-prometheus-annotations
   prometheusScrape:
     enabled: true
     serviceEndpoints: false
+    ## Example of optional settings for Prometheus scrape
+    ## See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#advanced-configuration
     additionalConfigs:
       - configurations:
         - send_distribution_buckets: true
