@@ -1,6 +1,5 @@
 ## Datadog Agent with APM enabled
 
-targetSystem: "linux"
 datadog:
   apiKey: <DATADOG_API_KEY>
   appKey: <DATADOG_APP_KEY>
