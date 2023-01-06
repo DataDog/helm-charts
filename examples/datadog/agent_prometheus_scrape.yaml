@@ -1,6 +1,5 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 
-targetSystem: "linux"
 datadog:
   apiKey: <DATADOG_API_KEY>
   appKey: <DATADOG_APP_KEY>
