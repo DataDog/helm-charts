@@ -2,7 +2,6 @@
 # OrchestratorExplorer (Live Containers), Check Runners,
 # Admission Controller and External Metrics Server enabled
 
-targetSystem: "linux"
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
