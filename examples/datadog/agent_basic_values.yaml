@@ -1,8 +1,5 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 
-targetSystem: "linux"
-## The registry the Datadog agent image is pulled from can be overwritten
-registry: gcr.io/datadoghq
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
@@ -11,28 +8,17 @@ datadog:
   appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
   clusterName: <CLUSTER_NAME>
   tags: []
-  # datadog.kubelet.tlsVerify should be `false` on kind and minikube
-  # to establish communication with the kubelet
-  # kubelet:
-    # tlsVerify: "false"
   logs:
     enabled: true
-    containerCollectAll: false
-    containerCollectUsingFiles: true
+    containerCollectAll: true
   apm:
-    portEnabled: true
+    socketEnabled: true
     socketPath: /var/run/datadog/apm.socket
     hostSocketPath: /var/run/datadog/
   processAgent:
     enabled: true
-    processCollection: false
   systemProbe:
-    enableTCPQueueLength: false
+    # Enable/Disable necessary checks depending on use case
+    enableTCPQueueLength: true
     enableOOMKill: true
-    collectDNSStats: false
-agents:
-  enabled: true
-  ## Pod toleration to deploy the agent to tainted nodes, ex) Master nodes
-  tolerations: []
-  ## Deploy the agent pod only to specific nodes
-  nodeSelector: {}
+    collectDNSStats: true
