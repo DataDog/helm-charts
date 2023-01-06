@@ -1,7 +1,6 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 # with specific configurations to work on Rancher
 
-targetSystem: "linux"
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
