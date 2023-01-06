@@ -1,7 +1,6 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 # with specific configuration to work on AKS.
 
-targetSystem: "linux"
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
