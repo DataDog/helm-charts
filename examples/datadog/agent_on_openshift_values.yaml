@@ -6,7 +6,6 @@
 # constraints, see https://docs.datadoghq.com/integrations/openshift/ and
 # https://www.datadoghq.com/blog/openshift-monitoring-with-datadog/
 
-targetSystem: "linux"
 datadog:
   # apiKey: <DATADOG_API_KEY>
   # appKey: <DATADOG_APP_KEY>
