@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.6.9
+
+* Add `auth_token` to all the containers.
+
 ## 3.6.8
 
 * Add missing RBAC rules for collection of Vertical Pod Autoscaler resources in the Orchestrator Explorer.
