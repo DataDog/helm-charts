@@ -132,22 +132,7 @@ spec:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
                 optional: true
-          {{- if .Values.datadog.secretBackend.command }}
-          - name: DD_SECRET_BACKEND_COMMAND
-            value: {{ .Values.datadog.secretBackend.command | quote }}
-          {{- end }}
-          {{- if .Values.datadog.secretBackend.arguments }}
-          - name: DD_SECRET_BACKEND_ARGUMENTS
-            value: {{ .Values.datadog.secretBackend.arguments | quote }}
-          {{- end }}
-          {{- if .Values.datadog.secretBackend.timeout }}
-          - name: DD_SECRET_BACKEND_TIMEOUT
-            value: {{ .Values.datadog.secretBackend.timeout | quote }}
-          {{- end }}
-          {{- if .Values.datadog.tags }}
-          - name: DD_TAGS
-            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
-          {{- end }}
+          {{- include "components-common-env" . | nindent 10 }}
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_APP_KEY
             valueFrom:
@@ -199,19 +184,6 @@ spec:
           - name: DD_EXTRA_LISTENERS
             value: "kube_endpoints kube_services"
           {{- end }}
-          {{- if .Values.datadog.clusterName }}
-          {{- template "check-cluster-name" . }}
-          - name: DD_CLUSTER_NAME
-            value: {{ .Values.datadog.clusterName | quote }}
-          {{- end }}
-          {{- if .Values.datadog.site }}
-          - name: DD_SITE
-            value: {{ .Values.datadog.site | quote }}
-          {{- end }}
-          {{- if .Values.datadog.dd_url }}
-          - name: DD_DD_URL
-            value: {{ .Values.datadog.dd_url | quote }}
-          {{- end }}
           {{- if .Values.datadog.logLevel }}
           - name: DD_LOG_LEVEL
             value: {{ .Values.datadog.logLevel | quote }}
@@ -231,7 +203,7 @@ spec:
             value: {{ template "datadog.fullname" . }}token
           {{- if .Values.datadog.collectEvents }}
           - name: DD_COLLECT_KUBERNETES_EVENTS
-            value: {{ .Values.datadog.collectEvents | quote}}
+            value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent
@@ -240,6 +212,8 @@ spec:
               secretKeyRef:
                 name: {{ template "clusterAgent.tokenSecretName" . }}
                 key: token
+          - name: DD_CLUSTER_AGENT_COLLECT_KUBERNETES_TAGS
+            value: {{ .Values.datadog.clusterTagger.collectKubernetesTags | quote }}
           - name: DD_KUBE_RESOURCES_NAMESPACE
             value: {{ .Release.Namespace }}
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
@@ -331,6 +305,10 @@ spec:
 {{- if .Values.datadog.helmCheck.enabled }}
             - key: helm.yaml
               path: helm.yaml
+{{- end }}
+{{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents }}
+            - key: kubernetes_apiserver.yaml
+              path: kubernetes_apiserver.yaml
 {{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}

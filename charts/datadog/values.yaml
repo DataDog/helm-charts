@@ -335,6 +335,39 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: true
 
+  # Configure Kubernetes events collection
+  kubernetesEvents:
+    # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
+    unbundleEvents: false
+    # datadog.kubernetesEvents.collectedEventTypes -- Collects Helm values from a release and uses them as tags (Requires Cluster Agent 7.42.0+).
+    # This requires datadog.kubernetesEvents.unbundleEvents to be set to true
+    collectedEventTypes:
+    # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
+    #   source: <controller name> # (optional if `kind`` is provided)
+    #   reasons: # (optional) if empty accept all event reasons
+    #   - <kubernetes event reason>
+      - kind: Pod
+        reasons:
+          - Failed
+          - BackOff
+          - Unhealthy
+          - FailedScheduling
+          - FailedMount
+          - FailedAttachVolume
+      - kind: Node
+        reasons:
+          - TerminatingEvictedPod
+          - NodeNotReady
+          - Rebooted
+          - HostPortConflict
+      - kind: CronJob
+        reasons:
+          - SawCompletedJob
+
+  clusterTagger:
+    # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
+    collectKubernetesTags: false
+
   # datadog.leaderElection -- Enables leader election mechanism for event collection
   leaderElection: true
 
