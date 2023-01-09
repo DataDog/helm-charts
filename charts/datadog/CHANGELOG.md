@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.7.2
+
+* Update configuration documentation to update references to Universal Service Monitoring, which is now generally available.
+
 ## 3.7.1
 
 * Add required capability to system-probe in order to make the `auth_token` file readable.
