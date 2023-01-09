@@ -1,5 +1,4 @@
-{{/* TODO: Extract version logic? */}}
-{{/* TODO: Still needs to cleanup */}}
+{{/* TODO: The logic to determine which apiVersion is appropriate can be extracted to the `_helpers.tpl` file */}}
 {{- if .Values.ingress.enabled -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}

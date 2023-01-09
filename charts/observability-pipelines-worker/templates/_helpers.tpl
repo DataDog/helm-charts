@@ -104,8 +104,13 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
-NOTE: Below this point is a lot of craziness, I'm not sure if I could write this again today but it seems to have worked
-without issue.
+The helpers below are used to attempt to parse the configuration passed into the `config` option and construct
+the Container and Service Ports without manual specification.
+
+Being limited to just what is available to Go Templates and Sprig functions, the code is rather complex and hard to
+follow. If the auto-generation of these is critical, it may suggest a need to prioritize an operator to handle this in a
+more powerful language. Thankfully this behavior is non-critical as all Ports can be defined by hand, so issues with our
+attempt to generate them can be side-stepped by users.
 */}}
 
 {{/*
