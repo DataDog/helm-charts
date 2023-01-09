@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.7.1
+
+* Add required capability to system-probe in order to make the `auth_token` file readable.
+
 ## 3.7.0
 
 * Add `datadog.kubernetesEvents.*` options to configure new Kubernetes unbundling events feature.
