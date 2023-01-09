@@ -69,6 +69,9 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    - name: auth-token
+      mountPath: /etc/datadog-agent/auth
+      readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir

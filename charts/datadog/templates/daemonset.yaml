@@ -132,6 +132,8 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
+      - name: auth-token
+        emptyDir: {}
       - name: installinfo
         configMap:
           name: {{ include "agents-install-info-configmap-name" . }}

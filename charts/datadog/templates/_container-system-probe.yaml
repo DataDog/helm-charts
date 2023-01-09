@@ -29,6 +29,9 @@
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
+    - name: auth-token
+      mountPath: /etc/datadog-agent/auth
+      readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir
