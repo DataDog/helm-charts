@@ -629,9 +629,8 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
-  ## Universal Service Monitoring is currently in private beta.
-
-  ## See https://www.datadoghq.com/blog/universal-service-monitoring-datadog/ for more details and private beta signup.
+  ## Universal Service Monitoring
+  ## See https://docs.datadoghq.com/universal_service_monitoring for more details
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
