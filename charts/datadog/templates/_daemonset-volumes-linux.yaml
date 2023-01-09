@@ -82,7 +82,7 @@
 - hostPath:
     path: /lib/modules
   name: modules
-{{- if not .Values.providers.gke.cos }}
+{{- if eq (include "is-COS" .) "false" }}
 - hostPath:
     path: /usr/src
   name: src

@@ -739,3 +739,14 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 --config
 {{- end -}}
 {{- end -}}
+
+{{/*
+Returns whether or not the underlying OS is Google Container-Optimized-OS
+*/}}
+{{- define "is-COS" -}}
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

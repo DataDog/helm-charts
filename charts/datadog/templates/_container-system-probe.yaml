@@ -86,7 +86,7 @@
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if not .Values.providers.gke.cos }}
+{{- if eq (include "is-COS" .) "false" }}
     - name: src
       mountPath: /usr/src
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
