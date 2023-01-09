@@ -82,9 +82,11 @@
 - hostPath:
     path: /lib/modules
   name: modules
+{{- if not .Values.providers.gke.cos }}
 - hostPath:
     path: /usr/src
   name: src
+{{- end }}
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:

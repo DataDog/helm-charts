@@ -86,10 +86,12 @@
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if not .Values.providers.gke.cos }}
     - name: src
       mountPath: /usr/src
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- end }}
 {{- end }}
 {{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
