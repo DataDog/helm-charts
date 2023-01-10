@@ -26,15 +26,4 @@ datadog:
       instances:
         - prometheus_url: http://10.240.0.4:10249/metrics
           send_histograms_buckets: true
-          send_distribution_buckets: true    
-  logs:
-    enabled: false
-    containerCollectAll: false
-    containerCollectUsingFiles: true
-  apm:
-    portEnabled: false
-    socketPath: /var/run/datadog/apm.socket
-    hostSocketPath: /var/run/datadog/
-  processAgent:
-    enabled: false
-    processCollection: false
+          send_distribution_buckets: true
