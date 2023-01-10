@@ -1,11 +1,8 @@
 ## Datadog Agent with APM enabled
 
 datadog:
-  # apiKey: <DATADOG_API_KEY>
-  # appKey: <DATADOG_APP_KEY>
-  # If not using secrets, then use apiKey and appKey instead
-  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
-  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
   apm:
