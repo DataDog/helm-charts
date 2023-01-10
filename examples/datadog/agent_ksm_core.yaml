@@ -32,7 +32,6 @@ datadog:
     enabled: false
     processCollection: false
 agents:
-  enabled: true
 ## KSM Core is handled by Cluster agent
 clusterAgent:
   enabled: true
