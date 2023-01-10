@@ -3,8 +3,8 @@
 ## On GKE Autopilot, registry needs to be GCR
 registry: gcr.io/datadoghq
 datadog:
-  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
-  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
   logs:
