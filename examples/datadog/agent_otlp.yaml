@@ -26,5 +26,3 @@ datadog:
   processAgent:
     enabled: false
     processCollection: false
-agents:
-  enabled: true
