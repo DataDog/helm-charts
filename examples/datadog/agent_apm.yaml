@@ -21,7 +21,6 @@ datadog:
     enabled: false
     processCollection: false
 agents:
-  enabled: true
   containers:
     ## Specific configuration for trace-agent container
     traceAgent:
