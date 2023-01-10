@@ -15,16 +15,15 @@ datadog:
     tlsVerify: false # Required as of Agent 7.35 because Kubelet certificates in AKS do not have a Subject Alternative Name (SAN) set.
   logs:
     enabled: true
-    containerCollectAll: false
-    containerCollectUsingFiles: true
+    containerCollectAll: true
   apm:
-    portEnabled: true
+    socketEnabled: true
     socketPath: /var/run/datadog/apm.socket
     hostSocketPath: /var/run/datadog/
   processAgent:
     enabled: true
-    processCollection: false
   systemProbe:
-    enableTCPQueueLength: false
+    # Enable/Disable necessary checks depending on use case
+    enableTCPQueueLength: true
     enableOOMKill: true
-    collectDNSStats: false
+    collectDNSStats: true
