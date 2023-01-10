@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.7.3
+
+* Add ports to agent network policy ingress for both OTLP/gRPC and OTLP/HTTP ports when OTLP is enabled.
+
 ## 3.7.2
 
 * Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).
