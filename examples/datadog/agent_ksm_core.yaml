@@ -5,10 +5,11 @@ datadog:
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
+  
   ## KSM Legacy should be disabled
   kubeStateMetricsEnabled: false
-  kubeStateMetricsNetworkPolicy:
-    create: false
+
+  ## KSM Core Check
   kubeStateMetricsCore:
     enabled: true
     rbac:
@@ -16,35 +17,15 @@ datadog:
     ignoreLegacyKSMCheck: true
     collectSecretMetrics: true
     collectVpaMetrics: false
-    ## KSM Core is run by cluster agent by default but you can dispatch it to a cluster check runner
-    useClusterCheckRunners: true
+    ## KSM Core is run by the Cluster Agent by default, but you can dispatch it to a Cluster Check Runner by enabling this option
+    useClusterCheckRunners: false
     labelsAsTags: {}
-  ## Required for Cluster check runner
-  clusterChecks:
-    enabled: true
-    shareProcessNamespace: false
-  ## apm is not required
-  apm:
-    socketEnabled: false
-    portEnabled: false
-  ## process-agent is not required
-  processAgent:
-    enabled: false
-    processCollection: false
-agents:
+
 ## KSM Core is handled by Cluster agent
 clusterAgent:
   enabled: true
-  shareProcessNamespace: false
-  replicas: 1
-  rbac:
-    create: true
-    serviceAccountName: default
-    serviceAccountAnnotations: {}
-  env: []
-  envFrom: []
-## Enable Cluster check runner
+  
+## Enable Cluster check runner, if dispatching KSM Core Check
 ## See: https://docs.datadoghq.com/containers/cluster_agent/clusterchecksrunner/?tab=helm#pagetitle
 clusterChecksRunner:
-  enabled: true
-  replicas: 2
+  enabled: false
