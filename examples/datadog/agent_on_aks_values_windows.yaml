@@ -12,10 +12,8 @@ datadog:
     tlsVerify: "false"
   logs:
     enabled: true
-    containerCollectAll: false
-    containerCollectUsingFiles: true
+    containerCollectAll: true
   apm:
     portEnabled: true
   processAgent:
     enabled: true
-    processCollection: false
