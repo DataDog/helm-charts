@@ -148,6 +148,7 @@
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo

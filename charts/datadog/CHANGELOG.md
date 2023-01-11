@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.7.3
+
+* Add the following configurations which allow environment variables to be defined in a dictionary:
+  * `agents.containers.agent.envDict`
+  * `agents.containers.processAgent.envDict`
+  * `agents.containers.securityAgent.envDict`
+  * `agents.containers.systemProbe.envDict`
+  * `agents.containers.traceAgent.envDict`
+  * `clusterAgent.envDict`
+  * `clusterChecksRunner.envDict`
+  * `datadog.envDict`
+
 ## 3.7.2
 
 * Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).

@@ -187,6 +187,7 @@ spec:
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
+          {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
         volumeMounts:

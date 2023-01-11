@@ -49,6 +49,7 @@
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.securityAgent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.securityAgent.envDict | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
