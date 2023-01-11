@@ -639,14 +639,14 @@ helm install <RELEASE_NAME> \
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
 | datadog.logs.auditorTTL | string | `nil` | This variable can be used to allow for longer TTLs to be set. This is useful when some inputs don't emit logs for longer than the default of 23h |
-| datadog.logs.autoMultiLineDefault.matchThreshold | string | `nil` | The ratio of logs that must match a pattern in order for the source to be considered multi-line |
-| datadog.logs.autoMultiLineDefault.matchTimeout | string | `nil` | The timeout to apply to detecting multi-line logs |
-| datadog.logs.autoMultiLineDefault.sampleSize | string | `nil` | The sample size to use when detecting multi-line logs |
 | datadog.logs.autoMultiLineDetection | bool | `false` | Allows the Agent to detect common multi-line patterns automatically. |
 | datadog.logs.containerCollectAll | bool | `false` | Enable this to allow log collection for all containers |
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.logs.expectedTagsDuration | string | `nil` | Duration during which the host tags will be submitted with log events |
+| datadog.logs.overrideAutoMultiLineDefault.matchThreshold | string | `nil` | The ratio of logs that must match a pattern in order for the source to be considered multi-line |
+| datadog.logs.overrideAutoMultiLineDefault.matchTimeout | string | `nil` | The timeout to apply to detecting multi-line logs |
+| datadog.logs.overrideAutoMultiLineDefault.sampleSize | string | `nil` | The sample size to use when detecting multi-line logs |
 | datadog.logs.processingRules | string | `nil` | The global filtering rules to apply to ingested log lines |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |

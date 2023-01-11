@@ -105,17 +105,17 @@
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
-    {{- if .Values.datadog.logs.autoMultiLineDefault.matchThreshold }}
+    {{- if .Values.datadog.logs.overrideAutoMultiLineDefault.matchThreshold }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_MATCH_THRESHOLD
-      value: {{ .Values.datadog.logs.autoMultiLineDefault.matchThreshold | quote }}
+      value: {{ .Values.datadog.logs.overrideAutoMultiLineDefault.matchThreshold | quote }}
     {{- end }}
-    {{- if .Values.datadog.logs.autoMultiLineDefault.matchTimeout }}
+    {{- if .Values.datadog.logs.overrideAutoMultiLineDefault.matchTimeout }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_MATCH_TIMEOUT
-      value: {{ .Values.datadog.logs.autoMultiLineDefault.matchTimeout | quote }}
+      value: {{ .Values.datadog.logs.overrideAutoMultiLineDefault.matchTimeout | quote }}
     {{- end }}
-    {{- if .Values.datadog.logs.autoMultiLineDefault.sampleSize }}
+    {{- if .Values.datadog.logs.overrideAutoMultiLineDefault.sampleSize }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DEFAULT_SAMPLE_SIZE
-      value: {{ .Values.datadog.logs.autoMultiLineDefault.sampleSize | quote }}
+      value: {{ .Values.datadog.logs.overrideAutoMultiLineDefault.sampleSize | quote }}
     {{- end }}
     {{- if .Values.datadog.logs.auditorTTL }}
     - name: DD_LOGS_CONFIG_AUDITOR_TTL

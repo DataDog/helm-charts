@@ -3,9 +3,9 @@
 ## 3.7.3
 
 * Add the following Datadog log related configurations:
-  * `datadog.logs.autoMultiLineDefault.matchThreshold`
-  * `datadog.logs.autoMultiLineDefault.matchTimeout`
-  * `datadog.logs.autoMultiLineDefault.sampleSize`
+  * `datadog.logs.overrideAutoMultiLineDefault.matchThreshold`
+  * `datadog.logs.overrideAutoMultiLineDefault.matchTimeout`
+  * `datadog.logs.overrideAutoMultiLineDefault.sampleSize`
   * `datadog.logs.auditorTTL`
   * `datadog.logs.expectedTagsDuration`
   * `datadog.logs.processingRules`
