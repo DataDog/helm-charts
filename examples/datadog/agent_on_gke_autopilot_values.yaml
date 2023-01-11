@@ -13,8 +13,6 @@ datadog:
     containerCollectUsingFiles: true
   apm:
     portEnabled: true
-    socketPath: /var/run/datadog/apm.socket
-    hostSocketPath: /var/run/datadog/
   processAgent:
     enabled: true
   systemProbe:
