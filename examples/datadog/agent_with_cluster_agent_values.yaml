@@ -9,11 +9,9 @@ datadog:
   tags: []
   orchestratorExplorer:
     enabled: true
+    
 clusterAgent:
   replicas: 2
-  rbac:
-    create: true
-    serviceAccountName: default
   metricsProvider:
     enabled: true
     createReaderRbac: true
@@ -25,13 +23,9 @@ clusterAgent:
     enabled: true
     # Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
-agents:
-  rbac:
-    create: true
-    serviceAccountName: default
+
+# Optinally use Cluster Check Runner
+## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
 clusterChecksRunner:
   enabled: true
-  rbac:
-    create: true
-    serviceAccountName: default
   replicas: 2
