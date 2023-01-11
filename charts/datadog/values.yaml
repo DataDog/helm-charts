@@ -676,17 +676,10 @@ datadog:
         enabled: false
 
         # datadog.securityAgent.runtime.activityDump.tracedCgroupsCount -- Set to the number of containers that should be traced concurrently
-        tracedCgroupsCount: 3
+        tracedCgroupsCount: 5
 
         # datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout -- Set to the desired duration of a single container tracing (in minutes)
-        cgroupDumpTimeout: 20
-
-        # datadog.securityAgent.runtime.activityDump.cgroupWaitListSize -- Set to the size of the wait list for already traced containers
-        cgroupWaitListSize: 0
-
-        pathMerge:
-          # datadog.securityAgent.runtime.activityDump.pathMerge.enabled -- Set to true to enable the merging of similar paths
-          enabled: false
+        cgroupDumpTimeout: 30
 
   ## Manage NetworkPolicy
   networkPolicy:
