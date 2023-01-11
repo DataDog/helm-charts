@@ -335,6 +335,39 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: true
 
+  # Configure Kubernetes events collection
+  kubernetesEvents:
+    # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
+    unbundleEvents: false
+    # datadog.kubernetesEvents.collectedEventTypes -- Collects Helm values from a release and uses them as tags (Requires Cluster Agent 7.42.0+).
+    # This requires datadog.kubernetesEvents.unbundleEvents to be set to true
+    collectedEventTypes:
+    # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
+    #   source: <controller name> # (optional if `kind`` is provided)
+    #   reasons: # (optional) if empty accept all event reasons
+    #   - <kubernetes event reason>
+      - kind: Pod
+        reasons:
+          - Failed
+          - BackOff
+          - Unhealthy
+          - FailedScheduling
+          - FailedMount
+          - FailedAttachVolume
+      - kind: Node
+        reasons:
+          - TerminatingEvictedPod
+          - NodeNotReady
+          - Rebooted
+          - HostPortConflict
+      - kind: CronJob
+        reasons:
+          - SawCompletedJob
+
+  clusterTagger:
+    # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
+    collectKubernetesTags: false
+
   # datadog.leaderElection -- Enables leader election mechanism for event collection
   leaderElection: true
 
@@ -779,7 +812,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.41.0
+    tag: 7.41.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1101,7 +1134,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.41.0
+    tag: 7.41.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1361,7 +1394,7 @@ agents:
       securityContext:
         privileged: false
         capabilities:
-          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN"]
+          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
 
       # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -1541,7 +1574,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.41.0
+    tag: 7.41.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

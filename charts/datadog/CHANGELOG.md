@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.6.5
+## 3.7.3
 
 * Add the following Datadog log related configurations:
   * `datadog.logs.autoMultiLineDefault.matchThreshold`
@@ -9,6 +9,42 @@
   * `datadog.logs.auditorTTL`
   * `datadog.logs.expectedTagsDuration`
   * `datadog.logs.processingRules`
+
+## 3.7.2
+
+* Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).
+
+## 3.7.1
+
+* Add required capability to system-probe in order to make the `auth_token` file readable.
+
+## 3.7.0
+
+* Add `datadog.kubernetesEvents.*` options to configure new Kubernetes unbundling events feature.
+  (This parameter exists only in agent 7.42.0 and above and cluster-agent 7.42.0 and above.)
+* Add `datadog.clusterTagger.*` options to configure the Kubernetes cluster-tagger feature.
+  (This parameter exists only in agent 7.42.0 and above and cluster-agent 7.42.0 and above.)
+* Create `components-common-env` to define shared environment variable between "agent" and "cluster-agent" containers, and refactor `containers-common-env`.
+
+## 3.6.9
+
+* Add `auth_token` to all the containers.
+
+## 3.6.8
+
+* Add missing RBAC rules for collection of Vertical Pod Autoscaler resources in the Orchestrator Explorer.
+
+## 3.6.7
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.41.1`.
+
+## 3.6.6
+
+* Fix missing volumeMount in `security-agent` container when `datadog.kubelet.hostCAPath` is provided.
+
+## 3.6.5
+
+* Fix missing Cluster Agent configuration in `security-agent` if CSPM is not actived.
 
 ## 3.6.4
 
