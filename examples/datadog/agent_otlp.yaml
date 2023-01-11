@@ -22,7 +22,3 @@ datadog:
           enabled: false
           endpoint: "0.0.0.0:4318"
           useHostPort: true
-  ## process-agent is not required for apm collection
-  processAgent:
-    enabled: false
-    processCollection: false
