@@ -37,5 +37,7 @@ kubernetes_state_core.yaml.default: |-
       skip_leader_election: true
 {{- end }}
       labels_as_tags:
-{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 10 }}
+{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
+      annotations_as_tags:
+{{ .Values.datadog.kubeStateMetricsCore.annotationsAsTags | toYaml | indent 8 }}
 {{- end -}}

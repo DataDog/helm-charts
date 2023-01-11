@@ -9,18 +9,9 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if .Values.datadog.secretBackend.command }}
-- name: DD_SECRET_BACKEND_COMMAND
-  value: {{ .Values.datadog.secretBackend.command | quote }}
-{{- end }}
-{{- if .Values.datadog.secretBackend.arguments }}
-- name: DD_SECRET_BACKEND_ARGUMENTS
-  value: {{ .Values.datadog.secretBackend.arguments | quote }}
-{{- end }}
-{{- if .Values.datadog.secretBackend.timeout }}
-- name: DD_SECRET_BACKEND_TIMEOUT
-  value: {{ .Values.datadog.secretBackend.timeout | quote }}
-{{- end }}
+- name: DD_AUTH_TOKEN_FILE_PATH
+  value: /etc/datadog-agent/auth/token
+{{ include "components-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
@@ -37,46 +28,11 @@
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
-{{- if .Values.datadog.clusterName }}
-{{- template "check-cluster-name" . }}
-- name: DD_CLUSTER_NAME
-  value: {{ .Values.datadog.clusterName | quote }}
-{{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
 - name: DD_HOSTNAME_FILE
   value: /var/lib/cloud/data/instance-id
 {{- end }}
-{{- end }}
-{{- if .Values.datadog.tags }}
-- name: DD_TAGS
-  value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
-{{- end }}
-{{- if .Values.datadog.nodeLabelsAsTags }}
-- name: DD_KUBERNETES_NODE_LABELS_AS_TAGS
-  value: '{{ toJson .Values.datadog.nodeLabelsAsTags }}'
-{{- end }}
-{{- if .Values.datadog.podLabelsAsTags }}
-- name: DD_KUBERNETES_POD_LABELS_AS_TAGS
-  value: '{{ toJson .Values.datadog.podLabelsAsTags }}'
-{{- end }}
-{{- if .Values.datadog.podAnnotationsAsTags }}
-- name: DD_KUBERNETES_POD_ANNOTATIONS_AS_TAGS
-  value: '{{ toJson .Values.datadog.podAnnotationsAsTags }}'
-{{- end }}
-{{- if .Values.datadog.namespaceLabelsAsTags }}
-- name: DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS
-  value: '{{ toJson .Values.datadog.namespaceLabelsAsTags }}'
-{{- end }}
-- name: KUBERNETES
-  value: "yes"
-{{- if .Values.datadog.site }}
-- name: DD_SITE
-  value: {{ .Values.datadog.site | quote }}
-{{- end }}
-{{- if .Values.datadog.dd_url }}
-- name: DD_DD_URL
-  value: {{ .Values.datadog.dd_url | quote }}
 {{- end }}
 {{- include "additional-env-entries" .Values.datadog.env }}
 {{- if .Values.datadog.acInclude }}
@@ -86,14 +42,6 @@
 {{- if .Values.datadog.acExclude }}
 - name: DD_AC_EXCLUDE
   value: {{ .Values.datadog.acExclude | quote }}
-{{- end }}
-{{- if .Values.datadog.containerInclude }}
-- name: DD_CONTAINER_INCLUDE
-  value: {{ .Values.datadog.containerInclude | quote }}
-{{- end }}
-{{- if .Values.datadog.containerExclude }}
-- name: DD_CONTAINER_EXCLUDE
-  value: {{ .Values.datadog.containerExclude | quote }}
 {{- end }}
 {{- if .Values.datadog.containerIncludeMetrics }}
 - name: DD_CONTAINER_INCLUDE_METRICS
@@ -110,10 +58,6 @@
 {{- if .Values.datadog.containerExcludeLogs }}
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
-{{- end }}
-{{- if not .Values.datadog.excludePauseContainer }}
-- name: DD_EXCLUDE_PAUSE_CONTAINER
-  value: "false"
 {{- end }}
 {{- if .Values.datadog.otlp }}
 {{- if .Values.datadog.otlp.receiver }}
