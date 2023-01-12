@@ -11,16 +11,10 @@ datadog:
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
-  criSocketPath: /var/run/crio/crio.sock
   # Depending on your DNS/SSL setup, it might not be possible to verify the Kubelet cert properly
   # If you have proper CA, you can switch it to true
   kubelet:
     tlsVerify: false
-  confd:
-    cri.yaml: |-
-      init_config:
-      instances:
-        - collect_disk: true
   logs:
     enabled: false
   apm:
@@ -49,6 +43,3 @@ clusterAgent:
 clusterChecksRunner:
   enabled: true
   replicas: 2
-kube-state-metrics:
-  securityContext:
-    enabled: false
