@@ -25,6 +25,7 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
@@ -34,7 +35,6 @@
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
     - name: HOST_ROOT
       value: /host/root
-    {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
@@ -53,6 +53,9 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if eq .Values.targetSystem "linux" }}
+    - name: auth-token
+      mountPath: /etc/datadog-agent/auth
+      readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir
@@ -87,6 +90,9 @@
     - name: procdir
       mountPath: /host/proc
       readOnly: true
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
     {{- if .Values.datadog.securityAgent.compliance.configMap }}
     - name: complianceconfigdir
       mountPath: /etc/datadog-agent/compliance.d
