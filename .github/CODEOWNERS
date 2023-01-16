@@ -3,9 +3,13 @@
 *  @DataDog/container-helm-chart-maintainers
 
 # Documentation
-*.md             @DataDog/documentation container-helm-chart-maintainers
+*.md             @DataDog/documentation @DataDog/container-helm-chart-maintainers
 
 # Charts
+charts/datadog-crds                                 @DataDog/container-helm-chart-maintainers
+charts/datadog-operator                              @DataDog/container-helm-chart-maintainers
+charts/extended-daemon-set                           @DataDog/container-helm-chart-maintainers
+charts/datadog                                       @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
