@@ -667,6 +667,7 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.enabled | bool | `false` | Enable autodiscovering pods and services exposing prometheus metrics. |
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
+| datadog.secretAnnotations | object | `{}` | Annotations to add to the Secrets. | 
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
 | datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
