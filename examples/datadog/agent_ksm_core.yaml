@@ -12,8 +12,6 @@ datadog:
   ## KSM Core Check
   kubeStateMetricsCore:
     enabled: true
-    rbac:
-      create: true
     ignoreLegacyKSMCheck: true
     collectSecretMetrics: true
     collectVpaMetrics: false
