@@ -32,3 +32,6 @@ datadog:
     enableTCPQueueLength: false
     enableOOMKill: true
     collectDNSStats: false
+providers:
+    aks:
+      enabled: true
