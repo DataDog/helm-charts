@@ -16,13 +16,9 @@ datadog:
     port: 8126
     socketPath: /var/run/datadog/apm.socket
     hostSocketPath: /var/run/datadog/
-  ## process-agent is not required for apm collection
-  processAgent:
-    enabled: false
-    processCollection: false
 agents:
   containers:
-    ## Specific configuration for trace-agent container
+    ## Optional configurations for trace-agent container
     traceAgent:
       env:
       envFrom: []
