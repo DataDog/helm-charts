@@ -17,3 +17,6 @@ datadog:
     portEnabled: true
   processAgent:
     enabled: true
+providers:
+    aks:
+      enabled: true
