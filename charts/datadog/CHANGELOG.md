@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.7.3
+
+* Add support for Secret Annotations using `datadog.SecretAnnotations` helm value
+
 ## 3.7.2
 
 * Rename dogstatsd port on the Agent Service to match the name of the dogstatsd port in the Agent pod (`dogstatsd -> dogstatsdport`).
