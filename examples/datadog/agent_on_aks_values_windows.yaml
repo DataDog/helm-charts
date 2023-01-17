@@ -1,5 +1,5 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
-# with specific configuration to work on AKS.
+# with specific configuration to work on AKS Windows instance.
 
 targetSystem: "windows"
 datadog:
