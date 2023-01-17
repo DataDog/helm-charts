@@ -1,5 +1,6 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 # with specific configuration to work on AKS.
+# See https://docs.datadoghq.com/containers/kubernetes/distributions/?tab=helm#AKS
 
 datadog:
   apiKey: <DATADOG_API_KEY>
@@ -24,6 +25,6 @@ datadog:
     enabled: true
   systemProbe:
     # Enable/Disable necessary checks depending on use case
-    enableTCPQueueLength: true
-    enableOOMKill: true
+    enableTCPQueueLength: false
+    enableOOMKill: false
     collectDNSStats: true
