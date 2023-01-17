@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.2
+
+* Updating CRD dependency to DatadogMonitors and DatadogAgent.
+* Update minimum version of the Datadog Operator to 0.8.4.
+
 ## 0.9.1
 
 * Updating dependency to CRD to allow all fields.
