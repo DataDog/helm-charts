@@ -7,25 +7,34 @@ datadog:
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
+  # Orchestrator Explorer
+  # This requires processAgent.enabled and clusterAgent.enabled to be set to true
+  # ref: https://docs.datadoghq.com/infrastructure/livecontainers/configuration/?tab=helm#kubernetes-resources
   orchestratorExplorer:
+    enabled: true
+  processAgent:
     enabled: true
     
 clusterAgent:
-  replicas: 2
+  enabled: true
+  
+  # External Metrics Server (HPA)
+  # ref: https://docs.datadoghq.com/containers/guide/cluster_agent_autoscaling_metrics/?tab=helm#overview
   metricsProvider:
     enabled: true
-    createReaderRbac: true
     useDatadogMetrics: true
     service:
       type: ClusterIP
       port: 8443
+      
+  # Admission Controller 
+  # ref: https://docs.datadoghq.com/containers/cluster_agent/admission_controller/?tab=operator
   admissionController:
     enabled: true
-    # Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-# Optinally use Cluster Check Runner
-## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
+# Cluster Check Runner
+# ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
 clusterChecksRunner:
   enabled: true
   replicas: 2
