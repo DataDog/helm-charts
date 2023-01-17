@@ -1,25 +1,17 @@
-# Datadog Agent with Logs, APM, Processes, and System Probe enabled
+# Datadog Agent with Prometheus Scrape configurations
 
 datadog:
   apiKey: <DATADOG_API_KEY>
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
-  # datadog.kubelet.tlsVerify should be `false` on kind and minikube
-  # to establish communication with the kubelet
-  kubelet:
-    tlsVerify: "false"
-  apm:
-    portEnabled: false
-  processAgent:
-    enabled: false
-    processCollection: false
-  ## See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#metric-collection-with-prometheus-annotations
+  
+  # See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#metric-collection-with-prometheus-annotations
   prometheusScrape:
     enabled: true
-    serviceEndpoints: false
-    ## Example of optional settings for Prometheus scrape
-    ## See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#advanced-configuration
+
+    # Optional settings for Prometheus scrape
+    # See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#advanced-configuration
     additionalConfigs:
       - configurations:
         - send_distribution_buckets: true
