@@ -19,6 +19,6 @@ datadog:
     enabled: true
   systemProbe:
     # Enable/Disable necessary checks depending on use case
-    enableTCPQueueLength: true
-    enableOOMKill: true
+    enableTCPQueueLength: false
+    enableOOMKill: false
     collectDNSStats: true
