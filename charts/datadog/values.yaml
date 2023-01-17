@@ -48,6 +48,10 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
+  # agents.secretAnnotations -- Annotations to add to the Secrets
+  secretAnnotations: {}
+  #   key: "value"
+
   ## Configure the secret backend feature https://docs.datadoghq.com/agent/guide/secrets-management
   ## Examples: https://docs.datadoghq.com/agent/guide/secrets-management/#setup-examples-1
   secretBackend:
