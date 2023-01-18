@@ -466,3 +466,23 @@ You have enabled creataion of PodSecurityPolicy, however PSP have been removed f
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
 {{- end }}
+
+{{- if .Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.securityAgent.runtime.activityDump.cgroupWaitListSize` is deprecated and not supported anymore.
+
+{{- end }}
+
+{{- if .Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.securityAgent.runtime.activityDump.pathMerge.enabled` is deprecated and not supported anymore.
+
+{{- end }}
