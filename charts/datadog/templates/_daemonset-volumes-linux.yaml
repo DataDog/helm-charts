@@ -82,7 +82,7 @@
 - hostPath:
     path: /lib/modules
   name: modules
-{{- if eq (include "is-COS" .) "false" }}
+{{- if eq (include "can-mount-host-usr-src" .) "false" }}
 - hostPath:
     path: /usr/src
   name: src

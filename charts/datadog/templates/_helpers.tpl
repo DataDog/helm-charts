@@ -744,7 +744,7 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 Returns whether or not the underlying OS is Google Container-Optimized-OS
 Note: GKE Autopilot clusters only use COS (see https://cloud.google.com/kubernetes-engine/docs/concepts/node-images)
 */}}
-{{- define "is-COS" -}}
+{{- define "can-mount-host-usr-src" -}}
 {{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
 true
 {{- else -}}
