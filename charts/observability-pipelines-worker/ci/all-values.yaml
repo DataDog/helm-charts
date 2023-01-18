@@ -1,0 +1,97 @@
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+updateStrategy:
+  type: OnDelete
+
+nodeSelector:
+  kubernetes.io/os: linux
+
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 1
+      preference:
+        matchExpressions:
+        - key: kubernetes.io/e2e-az-name
+          operator: In
+          values:
+          - e2e-az1
+          - e2e-az2
+
+topologySpreadConstraints:
+  - labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: vector
+        app.kubernetes.io/instance: vector
+        app.kubernetes.io/component: Aggregator
+    maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+
+config:
+  data_dir: "/var/lib/opw/"
+  sources:
+    datadog_agents:
+      address: 0.0.0.0:8282
+      type: datadog_agent
+      multiple_outputs: true
+  sinks:
+    datadog_logs:
+      type: datadog_logs
+      inputs:
+        - datadog_agents.logs
+      default_api_key: ${DD_API_KEY}
+      compression: gzip
+    datadog_metrics:
+      type: datadog_metrics
+      inputs:
+        - datadog_agents.metrics
+      default_api_key: ${DD_API_KEY}
+    datadog_traces:
+      type: datadog_traces
+      inputs:
+        - datadog_agents.traces
+      default_api_key: ${DD_API_KEY}
+
+service:
+  enabled: true
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 50Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: api
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: api
