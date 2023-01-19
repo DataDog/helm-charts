@@ -652,7 +652,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
-| datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` |  |
+| datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.useHostPort | bool | `true` | Enable the Host Port for the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.http.enabled | bool | `false` | Enable the OTLP/HTTP endpoint |
 | datadog.otlp.receiver.protocols.http.endpoint | string | `"0.0.0.0:4318"` | OTLP/HTTP endpoint |
