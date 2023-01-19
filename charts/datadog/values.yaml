@@ -1785,6 +1785,9 @@ providers:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
     autopilot: false
 
+    # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
+    cos: false
+
   eks:
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
