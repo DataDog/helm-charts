@@ -238,6 +238,15 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 
 {{- end }}
 
+{{- if and .Values.providers.gke.cos .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
+#################################################################################
+####   WARNING: Mounting kernel headers' default paths  is disabled on COS   ####
+#################################################################################
+
+On GKE environments using COS, users cannot choose whether to mount the default kernel headers paths.
+The option is overriden to avoid mounting volumes that are not allowed which would block the deployment of the agent.
+
+{{- end }}
 
 {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
 

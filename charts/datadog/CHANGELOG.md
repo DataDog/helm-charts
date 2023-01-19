@@ -1,5 +1,10 @@
 # Datadog changelog
 
+
+## 3.8.0
+
+* Add `providers.gke.cos` option to prevent `/usr/src` from being mounted on COS
+
 ## 3.7.3
 
 * Add support for Secret Annotations using `datadog.SecretAnnotations` helm value
