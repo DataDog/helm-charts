@@ -10,5 +10,5 @@ data:
   {{- if .Values.config }}
   config.yaml: | {{ tpl (toYaml .Values.config) . | nindent 4 }}
   {{- else }}
-{{ fail "A `config` must be specified, see https://github.com/DataDog/helm-charts/tree/main/examples/observability-pipelines-worker for examples" }}
+{{ fail "A `config` must be specified, see https://docs.datadoghq.com/observability_pipelines/reference for all options" }}
   {{- end -}}
