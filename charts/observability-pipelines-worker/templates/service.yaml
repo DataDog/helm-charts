@@ -1,0 +1,39 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "opw.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  annotations: {{ toYaml .Values.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+{{- end }}
+{{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+{{- end }}
+{{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ toYaml .Values.service.ipFamilies | nindent 4 }}
+{{- end }}
+  ports:
+{{- if .Values.service.ports }}
+{{ toYaml .Values.service.ports | indent 4 }}
+{{- else if .Values.config }}
+{{- if (include "opw.ports" .) }}
+{{- include "opw.ports" . | indent 4 }}
+{{- else}}
+{{- fail "No ports found in the `config`, try setting `service.enabled` to false." }}
+{{- end }}
+{{- end }}
+  selector: {{ include "opw.template-labels" . | nindent 4 }}
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.topologyKeys }}
+  topologyKeys: {{ toYaml .Values.service.topologyKeys | nindent 4 }}
+  {{- end }}
+{{- end -}}
