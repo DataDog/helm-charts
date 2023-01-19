@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.7.3
+## 3.7.4
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
   * `agents.containers.agent.envDict`
@@ -11,6 +11,10 @@
   * `clusterAgent.envDict`
   * `clusterChecksRunner.envDict`
   * `datadog.envDict`
+
+## 3.7.3
+
+* Add support for Secret Annotations using `datadog.SecretAnnotations` helm value
 
 ## 3.7.2
 

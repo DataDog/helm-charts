@@ -1,12 +1,17 @@
 # Code owners for charts
 
-*  @DataDog/container-integrations @DataDog/container-ecosystems
+*  @DataDog/container-helm-chart-maintainers
 
 # Documentation
-*.md             @DataDog/documentation @DataDog/container-integrations @DataDog/container-ecosystems
+*.md             @DataDog/documentation @DataDog/container-helm-chart-maintainers
 
 # Charts
-charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @DataDog/container-integrations
-charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-integrations
-charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-integrations
+charts/datadog-crds                                  @DataDog/container-ecosystems
+charts/datadog-operator                              @DataDog/container-ecosystems
+charts/extended-daemon-set                           @DataDog/container-ecosystems
+charts/datadog                                       @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/synthetics-private-location/                  @Datadog/synthetics
+charts/observability-pipelines-worker                @DataDog/observability-pipelines
