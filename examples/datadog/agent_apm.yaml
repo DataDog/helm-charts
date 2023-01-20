@@ -1,0 +1,33 @@
+## Datadog Agent with APM enabled
+
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  apm:
+    # Enable APM over Socket (Unix Socket or windows named pipe)
+    socketEnabled: true
+    # Enable APM over TCP communication (port 8126 by default)
+    portEnabled: true
+
+    ## Override default port or socket path
+    ## See: https://docs.datadoghq.com/containers/kubernetes/apm/?tab=helm
+    port: 8126
+    socketPath: /var/run/datadog/apm.socket
+    hostSocketPath: /var/run/datadog/
+agents:
+  containers:
+    ## Optional configurations for trace-agent container
+    traceAgent:
+      env:
+      envFrom: []
+      logLevel: 
+      resources: {}
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+      securityContext: {}
+      ports: []
+

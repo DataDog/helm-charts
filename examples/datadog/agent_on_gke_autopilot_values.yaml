@@ -1,0 +1,53 @@
+# Datadog Agent on GKE Autopilot cluster
+
+## On GKE Autopilot, registry needs to be GCR
+registry: gcr.io/datadoghq
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+  apm:
+    portEnabled: true
+  processAgent:
+    enabled: true
+  systemProbe:
+    enableTCPQueueLength: false
+    enableOOMKill: true
+    collectDNSStats: false
+## Recommended to set resource limits on GKE Autopilot
+## See: https://docs.datadoghq.com/containers/kubernetes/distributions/?tab=helm#autopilot
+agents:
+  containers:
+    agent:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+    traceAgent:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+        limits:
+          cpu: 100m
+          memory: 200Mi
+    processAgent:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+        limits:
+          cpu: 100m
+          memory: 200Mi
+# Required to set `true` on GKE Autopilot
+providers:
+  gke:
+    autopilot: true          

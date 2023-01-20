@@ -1,0 +1,25 @@
+# Datadog Agent with additional check configurations
+
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  # Each key becomes a file in /conf.d and overwrite default settings
+  confd: 
+    ## Autodiscovery setting for kubelet check
+    kubelet.yaml: |-
+      ad_identifiers:
+        - _kubelet
+      init_config:
+        timeout: 30        
+      instances:
+        -
+          min_collection_interval: 20
+    ## Static configuration for kube_proxy check          
+    kube_proxy.yaml: |-
+      init_config:
+      instances:
+        - prometheus_url: http://<IP>:<PORT>/metrics
+          send_histograms_buckets: true
+          send_distribution_buckets: true

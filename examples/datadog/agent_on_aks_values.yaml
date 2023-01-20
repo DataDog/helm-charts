@@ -1,13 +1,10 @@
 # Datadog Agent with Logs, APM, Processes, and System Probe enabled
 # with specific configuration to work on AKS.
+# See https://docs.datadoghq.com/containers/kubernetes/distributions/?tab=helm#AKS
 
-targetSystem: "linux"
 datadog:
-  # apiKey: <DATADOG_API_KEY>
-  # appKey: <DATADOG_APP_KEY>
-  # If not using secrets, then use apiKey and appKey instead
-  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
-  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
   kubelet:
@@ -19,19 +16,18 @@ datadog:
     tlsVerify: false # Required as of Agent 7.35 because Kubelet certificates in AKS do not have a Subject Alternative Name (SAN) set.
   logs:
     enabled: true
-    containerCollectAll: false
-    containerCollectUsingFiles: true
+    containerCollectAll: true
   apm:
-    portEnabled: true
+    socketEnabled: true
     socketPath: /var/run/datadog/apm.socket
     hostSocketPath: /var/run/datadog/
   processAgent:
     enabled: true
-    processCollection: false
   systemProbe:
+    # Enable/Disable necessary checks depending on use case
     enableTCPQueueLength: false
-    enableOOMKill: true
-    collectDNSStats: false
+    enableOOMKill: false
+    collectDNSStats: true
 providers:
     aks:
       enabled: true
