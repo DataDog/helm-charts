@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.8.1
+
+* Update docs for `datadog.otlp.receiver.protocols.grpc.endpoint`
 
 ## 3.8.0
 
