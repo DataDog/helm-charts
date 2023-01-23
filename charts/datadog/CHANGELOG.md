@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.8.2
+
+* Set processDiscovery to be true by default
+
 ## 3.8.1
 
 * Update docs for `datadog.otlp.receiver.protocols.grpc.endpoint`
