@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.7.4
+## 3.8.2
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
   * `agents.containers.agent.envDict`
@@ -11,6 +11,14 @@
   * `clusterAgent.envDict`
   * `clusterChecksRunner.envDict`
   * `datadog.envDict`
+
+## 3.8.1
+
+* Update docs for `datadog.otlp.receiver.protocols.grpc.endpoint`
+
+## 3.8.0
+
+* Add `providers.gke.cos` option to prevent `/usr/src` from being mounted on COS
 
 ## 3.7.3
 

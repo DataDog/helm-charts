@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.7.4](https://img.shields.io/badge/Version-3.7.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.8.2](https://img.shields.io/badge/Version-3.8.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -660,7 +660,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
-| datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` |  |
+| datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.useHostPort | bool | `true` | Enable the Host Port for the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.http.enabled | bool | `false` | Enable the OTLP/HTTP endpoint |
 | datadog.otlp.receiver.protocols.http.endpoint | string | `"0.0.0.0:4318"` | OTLP/HTTP endpoint |
@@ -730,6 +730,7 @@ helm install <RELEASE_NAME> \
 | providers.aks.enabled | bool | `false` | Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
+| providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | registry | string | `"gcr.io/datadoghq"` | Registry to use for all Agent images (default gcr.io) |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 

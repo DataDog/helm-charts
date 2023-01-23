@@ -444,7 +444,7 @@ datadog:
         grpc:
           # datadog.otlp.receiver.protocols.grpc.enabled -- Enable the OTLP/gRPC endpoint
           enabled: false
-          # datadog.otlp.receiver.procotols.grpc.endpoint -- OTLP/gRPC endpoint
+          # datadog.otlp.receiver.protocols.grpc.endpoint -- OTLP/gRPC endpoint
           endpoint: "0.0.0.0:4317"
           # datadog.otlp.receiver.protocols.grpc.useHostPort -- Enable the Host Port for the OTLP/gRPC endpoint
           useHostPort: true
@@ -1816,6 +1816,9 @@ providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
     autopilot: false
+
+    # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
+    cos: false
 
   eks:
     ec2:
