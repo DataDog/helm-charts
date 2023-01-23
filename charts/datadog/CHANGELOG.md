@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.8.2
+## 3.9.0
 
 * Set processDiscovery to be true by default
 
