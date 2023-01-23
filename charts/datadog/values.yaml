@@ -531,7 +531,7 @@ datadog:
     stripProcessArguments: false
 
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
-    processDiscovery: false
+    processDiscovery: true
 
   # datadog.osReleasePath -- Specify the path to your os-release file
   osReleasePath: /etc/os-release
