@@ -5,20 +5,14 @@ datadog:
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
-  apm:
-    # Enable APM over Socket (Unix Socket or windows named pipe)
-    socketEnabled: true
-    socketPath: /var/run/datadog/apm.socket
-    hostSocketPath: /var/run/datadog/
-  ## process-agent is not required for apm collection
   otlp:
     receiver:
       protocols:
         grpc:
-          enabled: false
+          enabled: true
           endpoint: "0.0.0.0:4317"
           useHostPort: true
         http:
-          enabled: false
+          enabled: true
           endpoint: "0.0.0.0:4318"
           useHostPort: true
