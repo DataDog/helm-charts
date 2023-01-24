@@ -6,7 +6,7 @@ datadog:
   clusterName: <CLUSTER_NAME>
   tags: []
   # List of integration(s) to ignore auto_conf.yaml.
-  # ref: https://docs.datadoghq.com/agent/faq/auto_conf/
+  # ref: https://docs.datadoghq.com/agent/guide/auto_conf/?tab=helm#disabling-auto-configuration
   ignoreAutoConfig: []
   # Each key becomes a file in /conf.d and overwrite default settings
   confd: 
