@@ -5,6 +5,9 @@ datadog:
   appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
+  # List of integration(s) to ignore auto_conf.yaml.
+  # ref: https://docs.datadoghq.com/agent/faq/auto_conf/
+  ignoreAutoConfig: []
   # Each key becomes a file in /conf.d and overwrite default settings
   confd: 
     ## Autodiscovery setting for kubelet check
