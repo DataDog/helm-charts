@@ -15,10 +15,6 @@ datadog:
     portEnabled: true
   processAgent:
     enabled: true
-  systemProbe:
-    enableTCPQueueLength: false
-    enableOOMKill: true
-    collectDNSStats: false
 ## Recommended to set resource limits on GKE Autopilot
 ## See: https://docs.datadoghq.com/containers/kubernetes/distributions/?tab=helm#autopilot
 agents:
