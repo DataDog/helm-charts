@@ -18,5 +18,5 @@ datadog:
   processAgent:
     enabled: true
 providers:
-    aks:
-      enabled: true
+  aks:
+    enabled: true
