@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.0`.
+
 ## 3.9.0
 
 * Set processDiscovery to be true by default
