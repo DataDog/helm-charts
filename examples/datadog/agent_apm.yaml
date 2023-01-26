@@ -16,18 +16,3 @@ datadog:
     port: 8126
     socketPath: /var/run/datadog/apm.socket
     hostSocketPath: /var/run/datadog/
-agents:
-  containers:
-    ## Optional configurations for trace-agent container
-    traceAgent:
-      env:
-      envFrom: []
-      logLevel: 
-      resources: {}
-      livenessProbe:
-        initialDelaySeconds: 15
-        periodSeconds: 15
-        timeoutSeconds: 5
-      securityContext: {}
-      ports: []
-
