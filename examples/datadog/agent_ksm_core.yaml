@@ -15,7 +15,6 @@ datadog:
     ignoreLegacyKSMCheck: true
     collectSecretMetrics: true
     collectVpaMetrics: false
-    ## KSM Core is run by the Cluster Agent by default, but you can dispatch it to a Cluster Check Runner by enabling this option
     useClusterCheckRunners: false
     labelsAsTags: {}
 
@@ -23,7 +22,3 @@ datadog:
 clusterAgent:
   enabled: true
   
-## Enable Cluster check runner, if dispatching KSM Core Check
-## See: https://docs.datadoghq.com/containers/cluster_agent/clusterchecksrunner/?tab=helm#pagetitle
-clusterChecksRunner:
-  enabled: false
