@@ -153,7 +153,7 @@ See [0.18.1's README](https://github.com/helm/charts/blob/847f737479bb78d89f8fb6
 To uninstall/delete the `<RELEASE_NAME>` deployment:
 
 ```bash
-helm uninstall <RELEASE_NAME> 
+helm delete <RELEASE_NAME> --purge
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
