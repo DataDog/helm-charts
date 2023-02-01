@@ -10,7 +10,7 @@
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
 - name: DD_AUTH_TOKEN_FILE_PATH
-  value: /etc/datadog-agent/auth/token
+  value: {{ template "datadog.confPath" . }}/auth/token
 {{ include "components-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
