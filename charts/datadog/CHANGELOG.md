@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.10.1
+
+* Fix: add missing `DAC_READ_SEARCH` capability in agent PSP and SCC (openshift)
+
+## 3.10.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.0`.
+
+## 3.9.0
+
+* Set processDiscovery to be true by default
+
 ## 3.8.1
 
 * Update docs for `datadog.otlp.receiver.protocols.grpc.endpoint`
