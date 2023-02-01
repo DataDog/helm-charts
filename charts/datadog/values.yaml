@@ -1313,7 +1313,7 @@ agents:
 
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
-      env:
+      env: []
 
       # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
       envFrom: []
@@ -1384,7 +1384,7 @@ agents:
 
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
-      env:
+      env: []
 
       # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
       envFrom: []
