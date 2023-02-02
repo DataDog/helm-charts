@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.5
+
+* Only expose the shared volume for the auth-token in non autopilot environments.
+
 ## 3.10.4
 
 * Fix documentation for `agents.containers.traceAgent.env` and `agents.containers.securityAgent.env`
