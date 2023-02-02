@@ -29,11 +29,9 @@
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
-    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
-    {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir
