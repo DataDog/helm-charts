@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.6
+
+* Includes the imagePullPolicy key for the seccomp-setup container template
+
 ## 3.10.5
 
 * Only expose the shared volume for the auth-token in non autopilot environments.
