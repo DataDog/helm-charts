@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.0.1
+## 1.1.0
 
-* Fix `image.tag` value
+* `1.1.0` release
 
 ## 1.0.0
 
