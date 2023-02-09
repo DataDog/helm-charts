@@ -53,9 +53,11 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
     {{- if .Values.agents.useConfigMap }}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml

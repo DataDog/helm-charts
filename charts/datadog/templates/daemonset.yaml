@@ -132,8 +132,10 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
+      {{- if (not .Values.providers.gke.autopilot) }}
       - name: auth-token
         emptyDir: {}
+      {{- end }}
       - name: installinfo
         configMap:
           name: {{ include "agents-install-info-configmap-name" . }}

@@ -1,6 +1,7 @@
 {{- define "system-probe-init" -}}
 - name: seccomp-setup
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command:
   - cp
   - /etc/config/system-probe-seccomp.json

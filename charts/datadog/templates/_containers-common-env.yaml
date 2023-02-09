@@ -9,8 +9,10 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
+{{- if (not .Values.providers.gke.autopilot) }}
 - name: DD_AUTH_TOKEN_FILE_PATH
   value: {{ template "datadog.confPath" . }}/auth/token
+{{- end }}
 {{ include "components-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
