@@ -81,7 +81,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Configure [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity). |
-| args | list | `["--config","/etc/opw/config.yaml"]` | Override default image arguments. |
+| args | list | `["run","/etc/opw/config.yaml"]` | Override default image arguments. |
 | autoscaling.behavior | object | `{}` | Configure separate scale-up and scale-down behaviors. |
 | autoscaling.enabled | bool | `false` | If **true**, create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). |
 | autoscaling.maxReplicas | int | `10` | Specify the maximum number of replicas. |
