@@ -33,7 +33,6 @@ seLinuxContext:
   type: MustRunAs
 supplementalGroups:
   type: RunAsAny
-users: []
 volumes:
 - configMap
 - downwardAPI

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.8
+
+* Fix `cluster-agent` SCC, remove duplicate `users` field.
+
 ## 3.10.7
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.42.1`.
