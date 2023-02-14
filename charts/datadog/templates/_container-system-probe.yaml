@@ -40,6 +40,9 @@
     - name: debugfs
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    - name: tracefs
+      mountPath: /sys/kernel/tracing
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
