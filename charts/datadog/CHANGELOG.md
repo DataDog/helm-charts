@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.7
+
+* Mount tracefs into `/sys/kernel/tracing` for eBPF purposes (on most systems tracefs is already mounted, but not always).
+
 ## 3.10.6
 
 * Includes the imagePullPolicy key for the seccomp-setup container template
