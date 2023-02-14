@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.10.7
+
+* Adapt the chart to reflect CWS activity dumps parameters:
+  * remove `datadog.securityAgent.runtime.activityDump.pathMerge.enabled` parameter.
+  * remove `datadog.securityAgent.runtime.activityDump.cgroupWaitListSize` parameter.
+  * update default value of `datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout` from 20 to 30.
+  * update default value of `datadog.securityAgent.runtime.activityDump.tracedCgroupsCount` from 3 to 5.
+
 ## 3.10.6
 
 * Includes the imagePullPolicy key for the seccomp-setup container template
