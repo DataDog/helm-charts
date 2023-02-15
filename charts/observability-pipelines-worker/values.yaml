@@ -250,7 +250,7 @@ ingress:
 # config -- This section supports using Helm templates to populate dynamic values. See Observability Pipelines'
 # [configuration documentation](https://docs.datadoghq.com/observability_pipelines/reference/) for all options.
 config: {}
-#  data_dir: "/var/lib/datadog-observability-pipelines-worker"
+#  data_dir: "/var/lib/observability-pipelines-worker"
 #  sources:
 #    datadog_agents:
 #      type: datadog_agent
