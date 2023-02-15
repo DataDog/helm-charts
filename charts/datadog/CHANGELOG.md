@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.10.7
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.1`.
+
 ## 3.10.6
 
 * Includes the imagePullPolicy key for the seccomp-setup container template
