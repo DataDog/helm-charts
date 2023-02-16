@@ -56,9 +56,11 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
-      mountPath: /etc/datadog-agent/auth
+      mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir

@@ -154,8 +154,6 @@
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    - name: auth-token
-      mountPath: /etc/datadog-agent/auth
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir
@@ -165,6 +163,11 @@
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: false
+    {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}

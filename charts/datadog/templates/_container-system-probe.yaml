@@ -30,7 +30,7 @@
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
     - name: auth-token
-      mountPath: /etc/datadog-agent/auth
+      mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
