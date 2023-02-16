@@ -4,6 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.1
+    {{- if .Values.migration.datadogAgents.useCertManager }}
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ .Release.Name }}-serving-cert
+    {{- end }}
   creationTimestamp: null
   name: datadogagents.datadoghq.com
   labels:
@@ -12,6 +15,18 @@ metadata:
     app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
     app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
+  {{- if .Values.migration.datadogAgents.conversionWebhook.enabled }}
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          namespace: {{ .Values.migration.datadogAgents.conversionWebhook.namespace }}
+          name: {{ .Values.migration.datadogAgents.conversionWebhook.name }}
+          path: /convert
+      conversionReviewVersions:
+      - v1
+  {{- end }}
   group: datadoghq.com
   names:
     kind: DatadogAgent
