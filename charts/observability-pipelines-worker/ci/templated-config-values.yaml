@@ -1,8 +1,5 @@
 config:
   data_dir: /data
-  api:
-    enabled: true
-    address: 127.0.0.1:8686
   healthchecks:
     enabled: false
   sources:
