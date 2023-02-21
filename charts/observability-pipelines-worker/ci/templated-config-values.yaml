@@ -1,15 +1,13 @@
 config:
   data_dir: /data
-  healthchecks:
-    enabled: false
   sources:
-    generator:
-      type: generator
+    demo_logs:
+      type: demo_logs
       format: json
   sinks:
     s3:
       type: aws_s3
-      inputs: [generator]
+      inputs: [demo_logs]
       bucket: logs-archive
       key_prefix: >-
         {{ print "{{kubernetes.pod_labels.\"app.kubernetes.io/client-id\"}}/%Y/%m/%d/{{kubernetes.pod_name}}/" }}
