@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.11.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.43.0`.
+
 ## 3.10.9
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.42.2`.
