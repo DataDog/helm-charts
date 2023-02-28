@@ -931,6 +931,28 @@ clusterAgent:
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
 
+    webhookCertificateOverrides:
+      # clusterAgent.admissionController.webhookCertificateOverrides.enabled -- Enable the admissionController webhook certificate config overrides
+      enabled: false
+
+      # clusterAgent.admissionController.webhookCertificateOverrides.validityBound -- Set the admission controller webhook certificate validity.
+
+      ## Translates to DD_ADMISSION_CONTROLLER_CERTIFICATE_VALIDITY_BOUND on cluster agent.
+      ## The certificate's validity bound in hours, default 1 year (365*24).
+      validityBound: 8760
+
+      # clusterAgent.admissionController.webhookCertificateOverrides.expirationThreshold -- Set the admission controller webhook certificate expiration threshold.
+
+      ## Translates to DD_ADMISSION_CONTROLLER_CERTIFICATE_EXPIRATION_THRESHOLD on cluster agent.
+      ## The certificate's refresh threshold in hours, default 1 month (30*24).
+      expirationThreshold: 720
+
+      # clusterAgent.admissionController.webhookCertificateOverrides.secretName -- Set the admission controller webhook certificate k8s secret name.
+
+      ## Translates to DD_ADMISSION_CONTROLLER_CERTIFICATE_SECRET_NAME on cluster agent.
+      ## Name of the Secret object containing the webhook certificate.
+      secretName: webhook-certificate
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/

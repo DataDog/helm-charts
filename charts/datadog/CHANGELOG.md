@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.11.1
+
+* Add `Cluster-Agent` admission controller webhook certificate `validtyBound`, `expirationThreshold` and `secretName`.
+
 ## 3.11.0
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.43.0`.
