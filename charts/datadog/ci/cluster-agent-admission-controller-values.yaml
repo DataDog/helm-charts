@@ -6,3 +6,8 @@ clusterAgent:
   admissionController:
     enabled: true
     mutateUnlabelled: true
+  webhookCertificateOverrides:
+    enabled: true
+    validityBound: 8760
+    expirationThreshold: 720
+    secretName: webhook-certificate

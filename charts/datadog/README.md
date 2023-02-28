@@ -482,6 +482,10 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
+| clusterAgent.admissionController.webhookCertificateOverrides.enabled | bool | `false` | Enable the admissionController webhook certificate config overrides |
+| clusterAgent.admissionController.webhookCertificateOverrides.expirationThreshold | int | `720` | Set the admission controller webhook certificate expiration threshold. |
+| clusterAgent.admissionController.webhookCertificateOverrides.secretName | string | `"webhook-certificate"` | Set the admission controller webhook certificate k8s secret name. |
+| clusterAgent.admissionController.webhookCertificateOverrides.validityBound | int | `8760` | Set the admission controller webhook certificate validity. |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
