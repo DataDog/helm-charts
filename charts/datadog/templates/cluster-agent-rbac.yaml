@@ -287,7 +287,7 @@ subjects:
 ---
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccountToken }}
+automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccountToken | default "true" }}
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"
