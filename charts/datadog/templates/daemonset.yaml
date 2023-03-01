@@ -173,6 +173,7 @@ spec:
       affinity:
 {{ toYaml .Values.agents.affinity | indent 8 }}
       serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
+      automountServiceAccountToken: {{ if .Values.agents.rbac.create }}{{.Values.agents.rbac.automountServiceAccountToken }}{{ end }}
       nodeSelector:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.agents.nodeSelector }}
