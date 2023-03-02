@@ -16,7 +16,7 @@ subjects:
 ---
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: {{ .Values.clusterChecksRunner.rbac.automountServiceAccountToken | default "true" }}
+automountServiceAccountToken: {{ .Values.clusterChecksRunner.rbac.automountServiceAccountToken }}
 metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
