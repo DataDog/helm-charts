@@ -129,6 +129,7 @@ subjects:
 ---
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: {{ .Values.agents.rbac.automountServiceAccountToken }}
 metadata:
   name: {{ include "agents.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
