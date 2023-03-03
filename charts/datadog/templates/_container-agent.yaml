@@ -163,6 +163,7 @@
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth

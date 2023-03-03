@@ -55,6 +55,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token

@@ -42,6 +42,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.useConfigMap }}
     - name: datadog-yaml

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.12.1
+
+* Declare `readOnly` in volumeMounts.
+
 ## 3.12.0
 
 * Add `automountServiceAccountToken` option to configure automatic mounting of ServiceAccount's API credentials
