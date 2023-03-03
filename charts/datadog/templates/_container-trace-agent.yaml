@@ -53,6 +53,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false # needed for auth token
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -62,6 +63,7 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
+      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if not .Values.providers.gke.autopilot }}
@@ -76,14 +78,17 @@
     {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
     {{- if and (eq (include "trace-agent-use-uds" .) "true") (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
     - name: apmsocket
       mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
+      readOnly: false
     {{- end }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}

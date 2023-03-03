@@ -52,6 +52,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -60,6 +61,7 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
@@ -74,6 +76,7 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
+      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
@@ -113,6 +116,7 @@
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
+      readOnly: true
     {{- end }}
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
