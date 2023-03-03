@@ -64,6 +64,7 @@
     {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false
     - name: tmpdir
       mountPath: /tmp
       readOnly: false

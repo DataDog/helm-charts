@@ -61,6 +61,7 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
