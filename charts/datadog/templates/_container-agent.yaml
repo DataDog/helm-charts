@@ -199,6 +199,7 @@
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: false
     - name: logpodpath
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -219,6 +220,7 @@
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: C:/var/log
+      readOnly: false
     - name: logpodpath
       mountPath: C:/var/log/pods
       readOnly: true
