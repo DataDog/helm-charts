@@ -55,8 +55,10 @@
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
+      readOnly: true
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
+      readOnly: false
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -106,6 +108,7 @@
     - name: runtime-compiler-output-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
     - name: kernel-headers-download-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       readOnly: false
