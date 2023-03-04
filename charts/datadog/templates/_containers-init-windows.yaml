@@ -10,10 +10,10 @@
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
-      #readOnly: true
+      readOnly: true
     - name: installinfo
       mountPath: C:/Temp/install_info
-      #readOnly: true
+      readOnly: true
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
