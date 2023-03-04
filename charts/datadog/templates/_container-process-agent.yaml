@@ -92,7 +92,7 @@
       readOnly: true
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: true
+      readOnly: false
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe

@@ -67,7 +67,7 @@
       readOnly: false
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: true
+      readOnly: false
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
