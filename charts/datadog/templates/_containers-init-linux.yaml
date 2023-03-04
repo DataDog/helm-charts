@@ -42,6 +42,7 @@
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
+      readOnly: true
     {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
