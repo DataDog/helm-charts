@@ -50,6 +50,7 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
+      readOnly: true
     {{- end }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
