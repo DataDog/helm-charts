@@ -23,6 +23,7 @@
       readOnly: false
     - name: config
       mountPath: /etc/datadog-agent
+      readOnly: false
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: /conf.d

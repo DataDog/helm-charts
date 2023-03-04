@@ -41,7 +41,7 @@
     - name: debugfs
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
+      readOnly: false
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
