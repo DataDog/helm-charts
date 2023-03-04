@@ -25,7 +25,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      #readOnly: true
+      readOnly: false
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: C:/conf.d
