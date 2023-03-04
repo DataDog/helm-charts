@@ -8,6 +8,7 @@
   volumeMounts:
     - name: config
       mountPath: /opt/datadog-agent
+      readOnly: false
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
