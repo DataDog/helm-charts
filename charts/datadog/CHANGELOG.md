@@ -1,8 +1,12 @@
 # Datadog changelog
 
-# 3.12.1
+# 3.13.1
 
 * Declare `readOnly` in volumeMounts.
+
+## 3.13.0
+
+* Beta: Support APM library injection with Remote Configuration.
 
 ## 3.12.0
 
