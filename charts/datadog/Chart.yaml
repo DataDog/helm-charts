@@ -1,6 +1,10 @@
 apiVersion: v1
 name: datadog
+<<<<<<< HEAD
 version: 3.15.0
+=======
+version: 3.14.0
+>>>>>>> bb3a70d (added notes to readme and bumped chart version)
 appVersion: "7"
 description: Datadog Agent
 keywords:
