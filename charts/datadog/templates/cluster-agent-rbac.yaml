@@ -140,6 +140,9 @@ rules:
   - list
   - get
   - watch
+{{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+  - patch
+{{- end }}
 - apiGroups:
   - "batch"
   resources:

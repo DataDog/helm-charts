@@ -934,6 +934,12 @@ clusterAgent:
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
 
+    remoteInstrumentation:
+      # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config (beta).
+      ## This feature is in beta, and requires Remote Config to be enabled and configured in the Cluster Agent. It also requires Cluster Agent version 7.43+.
+      ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
+      enabled: false
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
