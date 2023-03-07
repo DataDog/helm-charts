@@ -1,8 +1,16 @@
 # Datadog changelog
 
-# 3.13.1
+# 3.15.1
 
 * Declare `readOnly` in volumeMounts.
+
+## 3.15.0
+
+* Beta: Enable remote configuration if `clusterAgent.admissionController.remoteInstrumentation` is enabled.
+
+## 3.14.0
+
+* Make the root filesystem of the cluster agent container read only by default
 
 ## 3.13.0
 

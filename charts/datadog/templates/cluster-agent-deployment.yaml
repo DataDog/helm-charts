@@ -182,6 +182,8 @@ spec:
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: "true"
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
