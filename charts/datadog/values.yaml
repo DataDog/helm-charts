@@ -938,7 +938,7 @@ clusterAgent:
 
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config (beta).
-      ## This feature is in beta, and requires Remote Config to be enabled and configured in the Cluster Agent. It also requires Cluster Agent version 7.43+.
+      ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
 
