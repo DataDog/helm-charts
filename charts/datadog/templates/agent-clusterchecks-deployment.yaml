@@ -80,7 +80,7 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
-            readOnly: false
+            readOnly: false # Need RW for writing agent config files
         resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
       - name: init-config
@@ -92,7 +92,7 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
-            readOnly: false
+            readOnly: false # Need RW for writing datadog.yaml config file
           {{- if .Values.datadog.checksd }}
           - name: checksd
             mountPath: /checks.d
@@ -205,7 +205,7 @@ spec:
             readOnly: true
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
-            readOnly: false
+            readOnly: false # Need RW for config path
 {{- if .Values.clusterChecksRunner.volumeMounts }}
 {{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
 {{- end }}

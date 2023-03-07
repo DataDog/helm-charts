@@ -34,14 +34,14 @@
       readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
-      readOnly: false
+      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false
+      readOnly: false # Need RW for tmp directory to instantiate self tests
     - name: debugfs
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: false
+      readOnly: false # Need RW for kprobe_events
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
@@ -58,7 +58,7 @@
       readOnly: true
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
-      readOnly: false
+      readOnly: false # Need RW for sys-probe socket
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -111,7 +111,7 @@
       readOnly: true
     - name: kernel-headers-download-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
-      readOnly: false
+      readOnly: false # Need RW for sys-probe kernel headers
 {{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
     - name: apt-config-dir
       mountPath: /host/etc/apt

@@ -61,13 +61,13 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: logdatadog
       mountPath: /var/log/datadog
-      readOnly: false
+      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false
+      readOnly: false # Need RW to write to tmp directory
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false
+      readOnly: false # Need RW for UDS DSD socket
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}

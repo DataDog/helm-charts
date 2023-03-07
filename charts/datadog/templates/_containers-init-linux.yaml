@@ -8,7 +8,7 @@
   volumeMounts:
     - name: config
       mountPath: /opt/datadog-agent
-      readOnly: false
+      readOnly: false # Need RW for config path
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
@@ -20,10 +20,10 @@
   volumeMounts:
     - name: logdatadog
       mountPath: /var/log/datadog
-      readOnly: false
+      readOnly: false # Need RW to write logs
     - name: config
       mountPath: /etc/datadog-agent
-      readOnly: false
+      readOnly: false # Need RW for config path
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: /conf.d
