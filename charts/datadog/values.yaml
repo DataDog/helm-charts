@@ -535,7 +535,7 @@ datadog:
     stripProcessArguments: false
 
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
-    processDiscovery: false
+    processDiscovery: true
 
   # datadog.osReleasePath -- Specify the path to your os-release file
   osReleasePath: /etc/os-release
@@ -798,7 +798,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.41.1
+    tag: 7.43.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -830,7 +830,9 @@ clusterAgent:
   containers:
     clusterAgent:
       # clusterAgent.containers.clusterAgent.securityContext -- Specify securityContext on the cluster-agent container.
-      securityContext: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -857,6 +859,9 @@ clusterAgent:
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # clusterAgent.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true
+    automountServiceAccountToken: true
 
   ## Provide Cluster Agent pod security configuration
   podSecurity:
@@ -938,6 +943,12 @@ clusterAgent:
     ## The default of Ignore means that pods will still be admitted even if the webhook is unavailable to inject them.
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
+
+    remoteInstrumentation:
+      # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config (beta).
+      ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
+      ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
+      enabled: false
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
@@ -1124,7 +1135,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.41.1
+    tag: 7.43.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1168,6 +1179,9 @@ agents:
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
 
+    # agents.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true
+    automountServiceAccountToken: true
+
   ## Provide Daemonset PodSecurityPolicy configuration
   podSecurity:
     podSecurityPolicy:
@@ -1205,6 +1219,7 @@ agents:
       - CHOWN
       - AUDIT_CONTROL
       - AUDIT_READ
+      - DAC_READ_SEARCH
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -1328,7 +1343,7 @@ agents:
 
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
-      env:
+      env: []
 
       # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
       envFrom: []
@@ -1407,7 +1422,7 @@ agents:
 
     securityAgent:
       # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
-      env:
+      env: []
 
       # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
       envFrom: []
@@ -1584,7 +1599,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.41.1
+    tag: 7.43.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1621,6 +1636,9 @@ clusterChecksRunner:
 
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
+
+    # clusterChecksRunner.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true
+    automountServiceAccountToken: true
 
     # clusterChecksRunner.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false
     serviceAccountName: default

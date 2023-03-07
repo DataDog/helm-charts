@@ -12,7 +12,11 @@ crds:
 
 migration:
   datadogAgents:
-    # enabled: false # Will be used when we add the option to add the webhookConversion field in the CRD.
+    conversionWebhook:
+      enabled: false
+      name: datadog-operator-webhook-service
+      namespace: default
+    useCertManager: false
     version: "v1alpha1"
 
 # nameOverride -- Override name of app

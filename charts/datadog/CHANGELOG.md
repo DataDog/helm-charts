@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.8.2
+## 3.16.0
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
   * `agents.containers.agent.envDict`
@@ -11,6 +11,67 @@
   * `clusterAgent.envDict`
   * `clusterChecksRunner.envDict`
   * `datadog.envDict`
+
+## 3.15.0
+
+* Beta: Enable remote configuration if `clusterAgent.admissionController.remoteInstrumentation` is enabled.
+
+## 3.14.0
+
+* Make the root filesystem of the cluster agent container read only by default
+
+## 3.13.0
+
+* Beta: Support APM library injection with Remote Configuration.
+
+## 3.12.0
+
+* Add `automountServiceAccountToken` option to configure automatic mounting of ServiceAccount's API credentials
+
+## 3.11.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.43.0`.
+
+## 3.10.9
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.2`.
+
+## 3.10.8
+
+* Fix `cluster-agent` SCC, remove duplicate `users` field.
+
+## 3.10.7
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.1`.
+
+## 3.10.6
+
+* Includes the imagePullPolicy key for the seccomp-setup container template
+
+## 3.10.5
+
+* Only expose the shared volume for the auth-token in non autopilot environments.
+
+## 3.10.4
+
+* Fix documentation for `agents.containers.traceAgent.env` and `agents.containers.securityAgent.env`
+
+## 3.10.3
+
+* Fix default `hostPid` value set to true on Windows.
+* Fix auth token path value on Windows.
+
+## 3.10.1
+
+* Fix: add missing `DAC_READ_SEARCH` capability in agent PSP and SCC (openshift)
+
+## 3.10.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.42.0`.
+
+## 3.9.0
+
+* Set processDiscovery to be true by default
 
 ## 3.8.1
 

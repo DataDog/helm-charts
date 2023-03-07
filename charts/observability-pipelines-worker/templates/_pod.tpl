@@ -80,7 +80,7 @@ containers:
 {{- end }}
     volumeMounts:
       - name: data
-        mountPath: "{{ .Values.config.data_dir | default "/var/lib/opw" }}"
+        mountPath: "{{ .Values.config.data_dir | default "/var/lib/observability-pipelines-worker" }}"
       - name: config
         mountPath: "/etc/opw/"
         readOnly: true
