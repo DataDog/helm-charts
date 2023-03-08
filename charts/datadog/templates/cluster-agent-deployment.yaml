@@ -266,6 +266,9 @@ spec:
 {{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+            readOnly: false
           - name: varlog
             mountPath: /var/log/datadog
             readOnly: false
@@ -299,6 +302,8 @@ spec:
 {{- end}}
 {{- end}}
       volumes:
+        - name: datadogrun
+          emptyDir: {}
         - name: varlog
           emptyDir: {}
         - name: installinfo
