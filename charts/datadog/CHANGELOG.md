@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.16.0
+## 3.17.0
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
   * `agents.containers.agent.envDict`
@@ -11,6 +11,15 @@
   * `clusterAgent.envDict`
   * `clusterChecksRunner.envDict`
   * `datadog.envDict`
+
+## 3.16.1
+
+* Fix `cluster-agent` deployment to allow the cluster-agent to write file in `/var/log/datadog` when it runs with
+  read-only root filesystem.
+
+## 3.16.0
+
+* Add new checksum to cluster agent deployment base on all cluster-agent configmap configuration.
 
 ## 3.15.0
 
