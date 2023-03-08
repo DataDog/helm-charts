@@ -266,6 +266,9 @@ spec:
 {{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: varlog
+            mountPath: /var/log/datadog
+            readOnly: false
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -296,6 +299,8 @@ spec:
 {{- end}}
 {{- end}}
       volumes:
+        - name: varlog
+          emptyDir: {}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
