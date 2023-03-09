@@ -475,6 +475,10 @@ datadog:
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
 
+  # datadog.envDict -- Set environment variables for all Agents defined in a dict
+  envDict: {}
+  #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
   # datadog.confd -- Provide additional check configurations (static and Autodiscovery)
 
   ## Each key becomes a file in /conf.d
@@ -794,7 +798,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.43.0
+    tag: 7.43.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -915,6 +919,10 @@ clusterAgent:
   #       name: <CONFIGMAP_NAME>
   #   - secretRef:
   #       name: <SECRET_NAME>
+
+  # clusterAgent.envDict -- Set environment variables specific to Cluster Agent defined in a dict
+  envDict: {}
+  #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
   admissionController:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
@@ -1127,7 +1135,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.43.0
+    tag: 7.43.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1255,6 +1263,10 @@ agents:
       #   - secretRef:
       #       name: <SECRET_NAME>
 
+      # agents.containers.agent.envDict -- Set environment variables specific to agent container defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -1306,6 +1318,10 @@ agents:
       #   - secretRef:
       #       name: <SECRET_NAME>
 
+      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -1335,6 +1351,10 @@ agents:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
+
+      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
       logLevel:  # INFO
@@ -1372,6 +1392,10 @@ agents:
       #   - secretRef:
       #       name: <SECRET_NAME>
 
+      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
@@ -1406,6 +1430,10 @@ agents:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
+
+      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
@@ -1571,7 +1599,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.43.0
+    tag: 7.43.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1730,6 +1758,10 @@ clusterChecksRunner:
   #       name: <CONFIGMAP_NAME>
   #   - secretRef:
   #       name: <SECRET_NAME>
+
+  # clusterChecksRunner.envDict -- Set environment variables specific to Cluster Checks Runner defined in a dict
+  envDict: {}
+  #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
   # clusterChecksRunner.volumes -- Specify additional volumes to mount in the cluster checks container
   volumes: []

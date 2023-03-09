@@ -255,6 +255,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
+          {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
         livenessProbe:
 {{- $live := .Values.clusterAgent.livenessProbe }}
 {{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}
@@ -266,6 +267,9 @@ spec:
 {{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+            readOnly: false
           - name: varlog
             mountPath: /var/log/datadog
             readOnly: false
@@ -299,6 +303,8 @@ spec:
 {{- end}}
 {{- end}}
       volumes:
+        - name: datadogrun
+          emptyDir: {}
         - name: varlog
           emptyDir: {}
         - name: installinfo

@@ -22,6 +22,7 @@ specs:
       # When the control plane is on the same cluster, we must allow connections
       # to the node entity.
       - toEntities:
+          - kube-apiserver
           - host
           - remote-node
         toPorts:
