@@ -94,6 +94,19 @@ spec:
       securityContext:
         {{ toYaml .Values.clusterAgent.securityContext | nindent 8 }}
       {{- end }}
+      initContainers:
+      - name: init-volume
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
+        imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
+        command:
+          - cp
+        args:
+          - -r
+          - /etc/datadog-agent
+          - /opt
+        volumeMounts:
+          - name: config
+            mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
@@ -273,6 +286,9 @@ spec:
           - name: varlog
             mountPath: /var/log/datadog
             readOnly: false
+          - name: tmpdir
+            mountPath: /tmp
+            readOnly: false
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -302,10 +318,14 @@ spec:
             readOnly: true
 {{- end}}
 {{- end}}
+          - name: config
+            mountPath: /etc/datadog-agent
       volumes:
         - name: datadogrun
           emptyDir: {}
         - name: varlog
+          emptyDir: {}
+        - name: tmpdir
           emptyDir: {}
         - name: installinfo
           configMap:
@@ -350,7 +370,8 @@ spec:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end}}
 {{- end}}
-
+        - name: config
+          emptyDir: {}
 {{- if .Values.clusterAgent.volumes }}
 {{ toYaml .Values.clusterAgent.volumes | indent 8 }}
 {{- end }}
