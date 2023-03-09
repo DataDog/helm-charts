@@ -1,8 +1,25 @@
 # Datadog changelog
 
-## 3.16.2
+## 3.17.1
 
 * Fix Cilium egress rules to kube-apiserver entities.
+
+## 3.17.0
+
+* Add the following configurations which allow environment variables to be defined in a dictionary:
+  * `agents.containers.agent.envDict`
+  * `agents.containers.processAgent.envDict`
+  * `agents.containers.securityAgent.envDict`
+  * `agents.containers.systemProbe.envDict`
+  * `agents.containers.traceAgent.envDict`
+  * `clusterAgent.envDict`
+  * `clusterChecksRunner.envDict`
+  * `datadog.envDict`
+
+## 3.16.2
+
+* Mount an emptyDir volume in `/opt/datadog-agent/run` to allow the cluster-agent to write files in that location
+  with read-only root filesystem.
 
 ## 3.16.1
 

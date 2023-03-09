@@ -25,6 +25,12 @@ datadog:
       valueFrom:
         fieldRef:
           fieldPath: spec.nodeName
+  envDict:
+    DD_ENV_DICT_KEY: DD_ENV_DICT_VALUE
+    DD_ENV_DICT_KEY_FROM:
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
 
 agents:
   containers:

@@ -12,3 +12,9 @@ We aim to follow high quality standards, thus your PR must follow some rules:
 - Make sure you updated documentation (after bumping `Chart.yaml`) by running `.github/helm-docs.sh`
 
 Our team will then happily review and merge contributions!
+
+## How to update a README file
+
+In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
+1. Update either the `README.md.gotmpl` or `values.yaml` file.
+1. Run `.github/helm-docs.sh` to update the README.
