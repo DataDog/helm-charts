@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.16.2
+
+* Fix Cilium egress rules to kube-apiserver entities.
+
 ## 3.16.1
 
 * Fix `cluster-agent` deployment to allow the cluster-agent to write file in `/var/log/datadog` when it runs with
