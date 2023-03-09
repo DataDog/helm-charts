@@ -4,6 +4,10 @@
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.43.1`.
 
+## 3.17.1
+
+* Fix Cilium egress rules to kube-apiserver entities.
+
 ## 3.17.0
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
