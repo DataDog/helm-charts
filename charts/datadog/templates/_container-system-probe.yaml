@@ -109,7 +109,7 @@
     - name: runtime-compiler-output-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
+      readOnly: false
     - name: kernel-headers-download-dir
       mountPath: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       readOnly: false # Need RW for sys-probe kernel headers
