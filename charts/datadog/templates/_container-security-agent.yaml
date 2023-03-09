@@ -53,6 +53,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -61,12 +62,13 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false
+      readOnly: false # Need RW to write to tmp directory
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: true
+      readOnly: false # Need RW for UDS DSD socket
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
@@ -75,6 +77,7 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
+      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
@@ -114,6 +117,7 @@
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
+      readOnly: true
     {{- end }}
     {{- end }}
 {{- if .Values.agents.volumeMounts }}

@@ -157,17 +157,19 @@
       readOnly: true
     - name: logdatadog
       mountPath: /var/log/datadog
+      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false
+      readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false # Need RW to mount to config path
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: false
+      readOnly: false # Need RW to write auth token
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
@@ -175,10 +177,12 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
+      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
@@ -186,6 +190,7 @@
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
+      readOnly: true
     {{- end }}
     - name: procdir
       mountPath: /host/proc
@@ -199,6 +204,7 @@
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -219,6 +225,7 @@
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: C:/var/log
+      readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: C:/var/log/pods
       readOnly: true

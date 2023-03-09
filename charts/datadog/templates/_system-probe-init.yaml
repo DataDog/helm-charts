@@ -9,9 +9,11 @@
   volumeMounts:
   - name: datadog-agent-security
     mountPath: /etc/config
+    readOnly: true
   - name: seccomp-root
     mountPath: /host/var/lib/kubelet/seccomp
     mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    readOnly: false # Need RW for seccomp-root
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 {{- end -}}

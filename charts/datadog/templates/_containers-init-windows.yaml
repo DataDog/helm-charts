@@ -10,8 +10,10 @@
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
+      readOnly: true
     - name: installinfo
       mountPath: C:/Temp/install_info
+      readOnly: true
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
@@ -23,6 +25,7 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false # Need RW for config path
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: C:/conf.d

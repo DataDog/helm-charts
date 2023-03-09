@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.19.0
+
+* Declare `readOnly` in volumeMounts.
+
 ## 3.18.0
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.43.1`.
