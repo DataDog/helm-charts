@@ -49,6 +49,7 @@ spec:
       name: {{ template "datadog.fullname" . }}-cluster-agent
       annotations:
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
+        checksum/clusteragent-configmap: {{ include (print $.Template.BasePath "/cluster-agent-confd-configmap.yaml") . | sha256sum }}
         {{- if not .Values.datadog.apiKeyExistingSecret }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
         {{- end }}
@@ -78,6 +79,9 @@ spec:
 {{ toYaml .Values.clusterAgent.image.pullSecrets | indent 8 }}
       {{- end }}
       serviceAccountName: {{ if .Values.clusterAgent.rbac.create }}{{ template "datadog.fullname" . }}-cluster-agent{{ else }}"{{ .Values.clusterAgent.rbac.serviceAccountName }}"{{ end }}
+      {{- if .Values.clusterAgent.rbac.create  }}
+      automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccountToken }}
+      {{- end }}
       {{- if .Values.clusterAgent.useHostNetwork }}
       hostNetwork: {{ .Values.clusterAgent.useHostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
@@ -176,6 +180,12 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
+            value: "true"
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: "true"
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
@@ -256,6 +266,9 @@ spec:
 {{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: varlog
+            mountPath: /var/log/datadog
+            readOnly: false
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -286,6 +299,8 @@ spec:
 {{- end}}
 {{- end}}
       volumes:
+        - name: varlog
+          emptyDir: {}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.11.0](https://img.shields.io/badge/Version-3.11.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.16.1](https://img.shields.io/badge/Version-3.16.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -466,6 +466,7 @@ helm install <RELEASE_NAME> \
 | agents.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
 | agents.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods. |
 | agents.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
+| agents.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
@@ -482,11 +483,12 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
+| clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config (beta). # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
-| clusterAgent.containers.clusterAgent.securityContext | object | `{}` | Specify securityContext on the cluster-agent container. |
+| clusterAgent.containers.clusterAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"readOnlyRootFilesystem":true}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
 | clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
@@ -517,6 +519,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
+| clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false |
@@ -555,6 +558,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | clusterChecksRunner.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster checks runners |
+| clusterChecksRunner.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true |
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterChecksRunner.rbac.dedicated | bool | `false` | If true, use a dedicated RBAC resource for the cluster checks agent(s) |
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |

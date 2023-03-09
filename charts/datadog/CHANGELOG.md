@@ -1,5 +1,30 @@
 # Datadog changelog
 
+## 3.16.1
+
+* Fix `cluster-agent` deployment to allow the cluster-agent to write file in `/var/log/datadog` when it runs with
+  read-only root filesystem.
+
+## 3.16.0
+
+* Add new checksum to cluster agent deployment base on all cluster-agent configmap configuration.
+
+## 3.15.0
+
+* Beta: Enable remote configuration if `clusterAgent.admissionController.remoteInstrumentation` is enabled.
+
+## 3.14.0
+
+* Make the root filesystem of the cluster agent container read only by default
+
+## 3.13.0
+
+* Beta: Support APM library injection with Remote Configuration.
+
+## 3.12.0
+
+* Add `automountServiceAccountToken` option to configure automatic mounting of ServiceAccount's API credentials
+
 ## 3.11.0
 
 * Default `Agent` and `Cluster-Agent` image tags to `7.43.0`.
