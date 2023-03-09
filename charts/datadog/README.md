@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.10.1](https://img.shields.io/badge/Version-3.10.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.17.0](https://img.shields.io/badge/Version-3.17.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -153,7 +153,7 @@ See [0.18.1's README](https://github.com/helm/charts/blob/847f737479bb78d89f8fb6
 To uninstall/delete the `<RELEASE_NAME>` deployment:
 
 ```bash
-helm delete <RELEASE_NAME> --purge
+helm uninstall <RELEASE_NAME>
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -400,6 +400,7 @@ helm install <RELEASE_NAME> \
 | agents.additionalLabels | object | `{}` | Adds labels to the Agent daemonset and pods |
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
+| agents.containers.agent.envDict | object | `{}` | Set environment variables specific to agent container defined in a dict |
 | agents.containers.agent.envFrom | list | `[]` | Set environment variables specific to agent container from configMaps and/or secrets |
 | agents.containers.agent.healthPort | int | `5555` | Port number to use in the node agent for the healthz endpoint |
 | agents.containers.agent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
@@ -410,23 +411,27 @@ helm install <RELEASE_NAME> \
 | agents.containers.agent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the agent container. |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
+| agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
 | agents.containers.processAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.processAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.processAgent.resources | object | `{}` | Resource requests and limits for the process-agent container |
 | agents.containers.processAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the process-agent container. |
-| agents.containers.securityAgent.env | string | `nil` | Additional environment variables for the security-agent container |
+| agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container |
+| agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict |
 | agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets |
 | agents.containers.securityAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.securityAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.securityAgent.resources | object | `{}` | Resource requests and limits for the security-agent container |
 | agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
+| agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict |
 | agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets |
 | agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","DAC_READ_SEARCH"]},"privileged":false}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
-| agents.containers.traceAgent.env | string | `nil` | Additional environment variables for the trace-agent container |
+| agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
+| agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
 | agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets |
 | agents.containers.traceAgent.livenessProbe | object | Every 15s | Override default agent liveness probe settings |
 | agents.containers.traceAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |
@@ -443,7 +448,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.42.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.43.0"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
@@ -466,6 +471,7 @@ helm install <RELEASE_NAME> \
 | agents.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
 | agents.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods. |
 | agents.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
+| agents.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
@@ -482,17 +488,19 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
+| clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config (beta). # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
-| clusterAgent.containers.clusterAgent.securityContext | object | `{}` | Specify securityContext on the cluster-agent container. |
+| clusterAgent.containers.clusterAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"readOnlyRootFilesystem":true}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
 | clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
+| clusterAgent.envDict | object | `{}` | Set environment variables specific to Cluster Agent defined in a dict |
 | clusterAgent.envFrom | list | `[]` | Set environment variables specific to Cluster Agent from configMaps and/or secrets |
 | clusterAgent.healthPort | int | `5556` | Port number to use in the Cluster Agent for the healthz endpoint |
 | clusterAgent.image.digest | string | `""` | Cluster Agent image digest to use, takes precedence over tag if specified |
@@ -501,7 +509,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.42.0"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.43.0"` | Cluster Agent image tag to use |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
@@ -517,6 +525,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
+| clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false |
@@ -540,6 +549,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
 | clusterChecksRunner.env | list | `[]` | Environment variables specific to Cluster Checks Runner |
+| clusterChecksRunner.envDict | object | `{}` | Set environment variables specific to Cluster Checks Runner defined in a dict |
 | clusterChecksRunner.envFrom | list | `[]` | Set environment variables specific to Cluster Checks Runner from configMaps and/or secrets |
 | clusterChecksRunner.healthPort | int | `5557` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
 | clusterChecksRunner.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
@@ -547,7 +557,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.42.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.43.0"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -555,6 +565,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | clusterChecksRunner.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster checks runners |
+| clusterChecksRunner.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true |
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterChecksRunner.rbac.dedicated | bool | `false` | If true, use a dedicated RBAC resource for the cluster checks agent(s) |
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
@@ -610,6 +621,7 @@ helm install <RELEASE_NAME> \
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
 | datadog.dogstatsd.useSocketVolume | bool | `true` | Enable dogstatsd over Unix Domain Socket with an HostVolume |
 | datadog.env | list | `[]` | Set environment variables for all Agents |
+| datadog.envDict | object | `{}` | Set environment variables for all Agents defined in a dict |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from the Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000 |

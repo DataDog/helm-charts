@@ -54,6 +54,9 @@ spec:
       {{- else }}
       serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
       {{- end }}
+      {{- if .Values.clusterChecksRunner.rbac.create  }}
+      automountServiceAccountToken: {{ .Values.clusterChecksRunner.rbac.automountServiceAccountToken }}
+      {{- end }}
       imagePullSecrets:
 {{ toYaml .Values.clusterChecksRunner.image.pullSecrets | indent 8 }}
       {{- if .Values.clusterChecksRunner.priorityClassName }}
@@ -187,6 +190,7 @@ spec:
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
+          {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
         volumeMounts:

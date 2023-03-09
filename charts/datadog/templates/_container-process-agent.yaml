@@ -52,13 +52,16 @@
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.processAgent.envDict | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
-      mountPath: /etc/datadog-agent/auth
+      mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
     - name: tmpdir

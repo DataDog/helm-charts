@@ -342,7 +342,9 @@ false
 Return true if the hostPid features should be enabled for the Agent pod.
 */}}
 {{- define "should-enable-host-pid" -}}
-{{- if and (not .Values.providers.gke.autopilot) (or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+{{- if eq .Values.targetSystem "windows" -}}
+false
+{{- else if and (not .Values.providers.gke.autopilot) (or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
 true
 {{- else -}}
 false
@@ -653,6 +655,20 @@ Returns env vars correctly quoted and valueFrom respected
 {{- end }}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Returns env vars correctly quoted and valueFrom respected, defined in a dict
+*/}}
+{{- define "additional-env-dict-entries" -}}
+{{- range $key, $value := . }}
+- name: {{ $key }}
+{{- if kindIs "map" $value }}
+{{ toYaml $value | indent 2 }}
+{{- else }}
+  value: {{ $value | quote }}
+{{- end }}
+{{- end }}
 {{- end -}}
 
 {{/*

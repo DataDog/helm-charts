@@ -140,6 +140,9 @@ rules:
   - list
   - get
   - watch
+{{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+  - patch
+{{- end }}
 - apiGroups:
   - "batch"
   resources:
@@ -287,6 +290,7 @@ subjects:
 ---
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccountToken }}
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"

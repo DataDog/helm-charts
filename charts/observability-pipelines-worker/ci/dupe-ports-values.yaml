@@ -1,6 +1,4 @@
 config:
-  api:
-    enabled: false
   sources:
     syslog-tcp:
       type: syslog

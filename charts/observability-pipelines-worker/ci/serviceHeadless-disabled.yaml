@@ -26,4 +26,3 @@ service:
   enabled: true
 serviceHeadless:
   enabled: false
-
