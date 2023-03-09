@@ -37,6 +37,7 @@
 {{- end }}
 {{- end }}
 {{- include "additional-env-entries" .Values.datadog.env }}
+{{- include "additional-env-dict-entries" .Values.datadog.envDict }}
 {{- if .Values.datadog.acInclude }}
 - name: DD_AC_INCLUDE
   value: {{ .Values.datadog.acInclude | quote }}

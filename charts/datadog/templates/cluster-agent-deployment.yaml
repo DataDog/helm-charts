@@ -255,6 +255,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
+          {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
         livenessProbe:
 {{- $live := .Values.clusterAgent.livenessProbe }}
 {{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}
