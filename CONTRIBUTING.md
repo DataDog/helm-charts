@@ -13,9 +13,8 @@ We aim to follow high quality standards, thus your PR must follow some rules:
 
 Our team will then happily review and merge contributions!
 
-## How to update README.md files content
+## How to update a README file
 
-In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files.
-When the command `.github/helm-docs.sh`, the content of the README.md is updated.
-
-So if the contribution requires an update in the README.md, the modification should be done either in the `README.md.gotmpl` or `values.yaml` files.
+In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
+1. Update either the `README.md.gotmpl` or `values.yaml` file.
+1. Run `.github/helm-docs.sh` to update the README.
