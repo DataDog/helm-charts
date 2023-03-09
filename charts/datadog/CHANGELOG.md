@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.18.0
+
+* Default `Agent` and `Cluster-Agent` image tags to `7.43.1`.
+
 ## 3.17.1
 
 * Fix Cilium egress rules to kube-apiserver entities.
