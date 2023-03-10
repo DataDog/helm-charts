@@ -7,3 +7,6 @@ clusterAgent:
   enabled: true
   admissionController:
     enabled: true
+agents:
+  localService:
+    forceLocalServiceEnabled: false
