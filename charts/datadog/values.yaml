@@ -933,7 +933,9 @@ clusterAgent:
 
     # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
 
-    ## If clusterAgent.admissionController.configMode is not set, the Admission Controller defaults to hostip.
+    ## If clusterAgent.admissionController.configMode is not set, the Admission Controller defaults to socket.
+    ## If clusterAgent.admissionController.configMode is not set and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
+    ## If clusterAgent.admissionController.configMode is not set and datadog.apm.portEnabled is true, the Admission Controller uses service.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
     configMode:  # "hostip", "socket" or "service"
