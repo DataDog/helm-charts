@@ -179,12 +179,12 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
-            {{- if or (eq (default .Values.datadog.apm.portEnabled false) true) (eq (default .Values.datadog.apm.enabled false) true) }}
+            {{- if .Values.clusterAgent.admissionController.configMode }}
+            value: {{ .Values.clusterAgent.admissionController.configMode | default "socket" }}
+            {{- else if or (eq (default .Values.datadog.apm.portEnabled false) true) (eq (default .Values.datadog.apm.enabled false) true) }}
             value: service
             {{- else if (eq (default .Values.datadog.apm.socketEnabled true) true) }}
             value: socket
-            {{- else }}
-            value: {{ .Values.clusterAgent.admissionController.configMode | default "socket" }}
             {{- end }}
           {{- if or (eq (default .Values.clusterAgent.admissionController.configMode "socket") "service") (eq (default .Values.datadog.apm.portEnabled false) true) (eq (default .Values.datadog.apm.enabled false) true)}}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
