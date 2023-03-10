@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.20.0
+
+* Auto-configure `clusterAgent.admissionController.configMode` based on `datadog.apm.socketEnabled|portEnabled`.
+
 # 3.19.1
 
 * Mount emptyDir volumes in `/etc/datadog-agent` and `/tmp` to allow the cluster-agent to write files in those
