@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.19.2
+
+* Fix R/W volume mounts in init containers on Windows
+
 # 3.19.1
 
 * Mount emptyDir volumes in `/etc/datadog-agent` and `/tmp` to allow the cluster-agent to write files in those
