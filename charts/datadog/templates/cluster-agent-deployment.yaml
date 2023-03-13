@@ -186,7 +186,7 @@ spec:
             {{- else if eq (include "trace-agent-use-tcp-port" .) "true" }}
             value: hostip
             {{- else }}
-            value: {{ quote }}
+            value: {{ .Values.clusterAgent.admissionController.configMode | quote }}
             {{- end }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: {{ template "localService.name" . }}
