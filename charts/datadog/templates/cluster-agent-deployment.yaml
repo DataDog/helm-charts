@@ -181,10 +181,12 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
             {{- if .Values.clusterAgent.admissionController.configMode }}
             value: {{ .Values.clusterAgent.admissionController.configMode }}
-            {{- else if eq (include "trace-agent-use-tcp-port" .) "true" }}
-            value: hostip
             {{- else if eq (include "trace-agent-use-uds" .) "true" }}
             value: socket
+            {{- else if eq (include "trace-agent-use-tcp-port" .) "true" }}
+            value: hostip
+            {{- else }}
+            value: {{ quote }}
             {{- end }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: {{ template "localService.name" . }}
