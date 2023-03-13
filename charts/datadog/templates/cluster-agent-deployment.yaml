@@ -182,20 +182,12 @@ spec:
             {{- if .Values.clusterAgent.admissionController.configMode }}
             value: {{ .Values.clusterAgent.admissionController.configMode }}
             {{- else if eq (include "trace-agent-use-tcp-port" .) "true" }}
-            {{- if eq (include "enable-service-internal-traffic-policy" .) "true" }}
-            value: service
-            {{- else }}
             value: hostip
-            {{- end }}
             {{- else if eq (include "trace-agent-use-uds" .) "true" }}
             value: socket
-            {{- else }}
-            value: socket
             {{- end }}
-          {{- if or (eq .Values.clusterAgent.admissionController.configMode "service") (and (eq (include "trace-agent-use-tcp-port" .) "true") (eq (include "enable-service-internal-traffic-policy" .) "true")) }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: {{ template "localService.name" . }}
-          {{- end }}
           {{- if .Values.providers.aks.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ADD_AKS_SELECTORS
             value: "true"
