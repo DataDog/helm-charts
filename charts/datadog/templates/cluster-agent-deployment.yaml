@@ -185,6 +185,8 @@ spec:
             value: socket
             {{- else if eq (include "trace-agent-use-tcp-port" .) "true" }}
             value: hostip
+            {{- else if or (not .Values.datadog.apm.enabled ) (and (eq (include "trace-agent-use-tcp-port" .) "true") (eq (include "trace-agent-use-uds" .) "true")) }}
+            value: socket
             {{- else }}
             value: {{ .Values.clusterAgent.admissionController.configMode | quote }}
             {{- end }}
