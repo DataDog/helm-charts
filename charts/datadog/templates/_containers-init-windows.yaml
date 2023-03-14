@@ -10,7 +10,7 @@
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
-      readOnly: true
+      readOnly: false # Need RW for config path
     - name: installinfo
       mountPath: C:/Temp/install_info
       readOnly: true
