@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.20.0
+
+* Enable CWS network detections by default.
+
 ## 3.19.2
 
 * Fix R/W volume mounts in init containers on Windows
