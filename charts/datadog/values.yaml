@@ -35,6 +35,7 @@ datadog:
   # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "apiKey".
+  ## your DATADOG_API_KEY_SECRET secret should contain a key called 'api-key' containing the API key in base64 encoding with quotes.
   apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 
   # datadog.appKey -- Datadog APP key required to use metricsProvider
@@ -46,6 +47,7 @@ datadog:
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "appKey".
+  ## your DATADOG_APP_KEY_SECRET secret should contain a key called 'app-key' containing the APP key in base64 encoding with quotes.
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
   # agents.secretAnnotations -- Annotations to add to the Secrets
