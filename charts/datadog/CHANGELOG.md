@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.20.1
+
+* Fix command args in linux init container to prevent blocking deployment in GKE Autopilot.  
+
 # 3.20.0
 
 * Enable CWS network detections by default.
