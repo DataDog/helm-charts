@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.20.1
+
+* Fix Datadog Agent not deploying on GKE Autopilot.
+
 # 3.20.0
 
 * Enable CWS network detections by default.
