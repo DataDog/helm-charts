@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: datadog-helm-charts-template-test-
+  namespace: argo-workflows
+spec:
+  serviceAccountName: shared-svcs-1-argo-workflows-sa
+  workflowTemplateRef:
+    name: generic-ci-workflow
+  arguments:
+    parameters:
+      - name: repo-name
+      - name: repo-url
+      - name: repo-revision
+      - name: executor-image
+        value: "us-east4-docker.pkg.dev/shared-svcs-prod-artifacts-e7/shared-svcs-docker-images/images-helm:4f11e76d084428301d25dd0b2f9b58814b4ab8d7"
+      - name: pr-context
+        value: helm-template-tests
+      - name: script
+        value: "ci/scripts/run-helm-template.sh"
+      - name: serviceAccountName
+        value: shared-svcs-1-argo-workflows-sa
+      - name: github-helper-image
+        value: us-east4-docker.pkg.dev/shared-svcs-prod-artifacts-e7/shared-svcs-docker-images/images-github-helper:daa7e7df3ee4c62a692c472ca4481fca167c228f
