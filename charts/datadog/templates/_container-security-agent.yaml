@@ -84,9 +84,17 @@
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
+    {{- $foundPasswdMount := "false" -}}
+    {{- range .Values.agents.volumeMounts -}}
+      {{- if eq .name "passwd" -}}
+        {{- $foundPasswdMount = "true" -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $foundPasswdMount "false" }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+    {{- end }}
     - name: group
       mountPath: /etc/group
       readOnly: true

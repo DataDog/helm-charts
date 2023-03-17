@@ -84,9 +84,17 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- $foundPasswdMount := "false" -}}
+    {{- range .Values.agents.volumeMounts -}}
+      {{- if eq .name "passwd" -}}
+        {{- $foundPasswdMount = "true" -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $foundPasswdMount "false" }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+    {{- end }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
