@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: datadog-helm-charts-release-sensor
+  namespace: argocd
+  finalizers:
+    - sensor-controller
+spec:
+  template:
+    serviceAccountName: shared-svcs-1-argo-workflows-sa
+  dependencies:
+    - name: git-repo-dependencies
+      eventSourceName: github
+      eventName: motorefi
+      filters:
+        dataLogicalOperator: "and"
+        data:
+          - path: body.X-GitHub-Event
+            type: string
+            value:
+              - push
+          - path: body.repository
+            type: string
+            value:
+              - datadog-helm-charts
+          - path: body.ref
+            type: string
+            value:
+              - "refs/tags/*"
+  triggers:
+    - template:
+        name: build-template
+        conditions: git-repo-dependencies
+        serviceAccountName: shared-svcs-1-argo-workflows-sa
+        argoWorkflow:
+          group: argoproj.io
+          version: v1alpha1
+          resource: Workflow
+          operation: submit
+          serviceAccountName: shared-svcs-1-argo-workflows-sa
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: datadog-helm-charts-helm-release-build-
+                namespace: argo-workflows
+              spec:
+                serviceAccountName: shared-svcs-1-argo-workflows-sa
+                workflowTemplateRef:
+                  name: helm-release-v2-0-0
+                arguments:
+                  parameters:
+                    - name: semver
+                    - name: repo-revision
+                    - name: repo-name
+                      value: "datadog-helm-charts"
+                    - name: repo-url
+                      value: "git@github.com:motorefi/datadog-helm-charts.git"
+                    - name: chart-directory
+                      value: "charts/datadog"
+          parameters:
+            - src:
+                dependencyName: git-repo-dependencies
+                dataTemplate: '{{ trimPrefix "refs/tags/" .Input.body.ref }}'
+              dest: spec.arguments.parameters.0.value
+            - src:
+                dependencyName: git-repo-dependencies
+                dataKey: body.after
+              dest: spec.arguments.parameters.1.value
