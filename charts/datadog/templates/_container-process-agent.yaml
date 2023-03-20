@@ -62,6 +62,9 @@
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false # Need RW for UDS DSD socket
     {{- end }}
     - name: logdatadog
       mountPath: /var/log/datadog
@@ -91,9 +94,6 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    - name: dsdsocket
-      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false # Need RW for UDS DSD socket
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
