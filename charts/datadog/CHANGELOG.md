@@ -1,5 +1,10 @@
 # Datadog changelog
 
+# 3.20.3
+
+* Fix command script in linux init container to prevent blocking deployment in GKE Autopilot on Rapid release channel.
+* Only mount DogStatsD socket in non-Autopilot environments.
+
 # 3.20.2
 
 * Fix R/W volume mounts for CRI on Windows

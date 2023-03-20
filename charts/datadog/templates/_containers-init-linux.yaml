@@ -2,12 +2,9 @@
 - name: init-volume
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  command:
-    - cp
+  command: ["bash", "-c"]
   args:
-    - -r
-    - /etc/datadog-agent
-    - /opt
+    - cp -r /etc/datadog-agent /opt
   volumeMounts:
     - name: config
       mountPath: /opt/datadog-agent
