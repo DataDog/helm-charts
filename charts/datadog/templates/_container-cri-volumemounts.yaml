@@ -9,11 +9,9 @@
 {{- if eq .Values.targetSystem "windows" }}
 - name: runtimesocket
   mountPath: {{ template "datadog.dockerOrCriSocketPath" . }}
-  readOnly: true
 {{- if not .Values.datadog.criSocketPath }}
-- name: containerdsocket 
+- name: containerdsocket
   mountPath: \\.\pipe\containerd-containerd
-  readOnly: true
 {{- end }}
 {{- end }}
 {{- end }}
