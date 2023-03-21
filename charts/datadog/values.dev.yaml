@@ -1,0 +1,34 @@
+# settings for istio. based on:
+# https://www.datadoghq.com/blog/istio-datadog/
+# 
+# Configure the node-based Agent
+datadog:
+  # apiKey: <DATADOG_API_KEY>
+  # "Set up the Istio integration"
+  clusterChecks:
+    enabled: true
+  # Receiving traces
+  apm:
+    enabled: true
+  # Set up Istio log collection
+  logs:
+    containerCollectAll: true
+    enabled: true
+  acExclude: "name:datadog-agent name:datadog-cluster-agent"
+  # Enable the Process Agent and system probe
+  processAgent:
+    processCollection: true
+  networkMonitoring:
+    enabled: true
+
+# Configure the Cluster Agent
+clusterAgent:
+  enabled: true
+  # Disable automatic sidecar injection for Datadog Agent pods
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+
+# Disable automatic sidecar injection for Datadog Agent pods
+agents:
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
