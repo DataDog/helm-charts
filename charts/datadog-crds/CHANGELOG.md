@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+* Support Certificate Manager.
+* Document conversion webhook configuration.
+
 ## 0.5.9
 
 * Updating DatadogMonitors CRD and DatadogAgents CRDs.
