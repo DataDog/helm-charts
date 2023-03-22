@@ -1,19 +1,23 @@
 # Datadog changelog
 
-# 3.20.3
+## 3.21.0
+
+* Add `datadog.remoteConfiguration.enabled` parameter to enable remote configuration.
+
+## 3.20.3
 
 * Fix command script in linux init container to prevent blocking deployment in GKE Autopilot on Rapid release channel.
 * Only mount DogStatsD socket in non-Autopilot environments.
 
-# 3.20.2
+## 3.20.2
 
 * Fix R/W volume mounts for CRI on Windows
 
-# 3.20.1
+## 3.20.1
 
 * Fix command args in linux init container to prevent blocking deployment in GKE Autopilot.
 
-# 3.20.0
+## 3.20.0
 
 * Enable CWS network detections by default.
 
@@ -21,12 +25,12 @@
 
 * Fix R/W volume mounts in init containers on Windows
 
-# 3.19.1
+## 3.19.1
 
 * Mount emptyDir volumes in `/etc/datadog-agent` and `/tmp` to allow the cluster-agent to write files in those
   locations with read-only root filesystem.
 
-# 3.19.0
+## 3.19.0
 
 * Declare `readOnly` in volumeMounts.
 
