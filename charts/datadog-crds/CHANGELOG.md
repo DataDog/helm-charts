@@ -4,6 +4,11 @@
 
 * Add missing `nodeLabelsAsTags` and `namespaceLabelsAsTags` to the v2alpha1 spec. 
 
+## 0.6.0
+
+* Support Certificate Manager.
+* Document conversion webhook configuration.
+
 ## 0.5.9
 
 * Updating DatadogMonitors CRD and DatadogAgents CRDs.
