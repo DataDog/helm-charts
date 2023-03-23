@@ -6440,6 +6440,14 @@ spec:
                         flavor:
                           type: string
                       type: object
+                    namespaceLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    nodeLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
                     podAnnotationsAsTags:
                       additionalProperties:
                         type: string
