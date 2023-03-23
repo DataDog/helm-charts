@@ -178,14 +178,20 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.mutateUnlabelled | quote }}
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
-          {{- if .Values.clusterAgent.admissionController.configMode }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+            {{- if .Values.clusterAgent.admissionController.configMode }}
+            value: {{ .Values.clusterAgent.admissionController.configMode }}
+            {{- else if eq (include "trace-agent-use-uds" .) "true" }}
+            value: socket
+            {{- else if or (eq (include "trace-agent-use-tcp-port" .) "true") ( .Values.providers.gke.autopilot )}}
+            value: hostip
+            {{- else if or (not .Values.datadog.apm.enabled ) (and (eq (include "trace-agent-use-tcp-port" .) "true") (eq (include "trace-agent-use-uds" .) "true")) }}
+            value: socket
+            {{- else }}
             value: {{ .Values.clusterAgent.admissionController.configMode | quote }}
-          {{- if eq .Values.clusterAgent.admissionController.configMode "service" }}
+            {{- end }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: {{ template "localService.name" . }}
-          {{- end }}
-          {{- end }}
           {{- if .Values.providers.aks.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ADD_AKS_SELECTORS
             value: "true"

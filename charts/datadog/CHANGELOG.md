@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.22.0
+
+* Auto-configure `clusterAgent.admissionController.configMode` based on `datadog.apm.socketEnabled|portEnabled`.
+
 ## 3.21.0
 
 * Add `datadog.remoteConfiguration.enabled` parameter to enable remote configuration.
