@@ -1,5 +1,10 @@
 # Datadog changelog
 
+# 3.23.0
+
+* Injects additional environment variables in the Cluster Agent
+* Add `clusterAgent.rbac.flareAdditionalPermissions` parameter to enable user Helm values retrieval in DCA flare (`true` by default)
+
 # 3.22.0
 
 * Auto-configure `clusterAgent.admissionController.configMode` based on `datadog.apm.socketEnabled|portEnabled`.
