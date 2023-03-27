@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.9.2](https://img.shields.io/badge/Version-0.9.2-informational?style=flat-square) ![AppVersion: 0.8.4](https://img.shields.io/badge/AppVersion-0.8.4-informational?style=flat-square)
+![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 ## Values
 
@@ -13,10 +13,14 @@
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
-| datadog-crds.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
-| datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
-| datadog-crds.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
-| datadog-crds.migration.datadogAgents.version | string | `"v1alpha1"` |  |
+| datadogCRDs.crds.datadogAgents | bool | `true` |  |
+| datadogCRDs.crds.datadogMetrics | bool | `true` |  |
+| datadogCRDs.crds.datadogMonitors | bool | `true` |  |
+| datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
+| datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
+| datadogCRDs.migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
+| datadogCRDs.migration.datadogAgents.useCertManager | bool | `false` |  |
+| datadogCRDs.migration.datadogAgents.version | string | `"v1alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
@@ -44,7 +48,6 @@
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
 | watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
-| webhook | object | `{"conversion":{"enabled":false}}` | configure webhook servers |
 
 ## How to configure which namespaces are watched by the Operator.
 
@@ -64,3 +67,181 @@ To watch all namespaces, the following configuration needs to be used:
 watchNamespaces:
 - ""
 ```
+
+## Migrating to the version 1.0 of the Datadog Operator
+
+### Disclaimer
+
+As part of the General Availability release of the Datadog Operator, we are offering a migration path for our early adopters to migrate to the GA version of the custom resource, `v2alpha1/DatadogAgent`.
+
+The Datadog Operator v1.X reconciles the version `v2alpha1` of the DatadogAgent custom resource, while the v0.X recociles `v1alpha1`.
+
+In the following documentation, you will find mentions of the image with a `rc` (release candidate) tag. We will update it to the official `1.0.0` tag upon releasing.
+
+Consider the following steps with the same maturity (beta) level as the project.
+
+### Requirements
+
+If you are using the v1alpha1 with a v0.X version of the Datadog Operator and would like to upgrade, you will need to use the Conversion Webhook feature.
+
+Start by ensuring that you have the minimum required version of the chart and it's dependencies:
+
+```
+NAME                	CHART VERSION	APP VERSION	DESCRIPTION
+datadog/datadog-crds	0.6.1        	1          	Datadog Kubernetes CRDs chart
+```
+
+and for the Datadog Operator chart:
+
+```
+NAME                    	CHART VERSION	APP VERSION	DESCRIPTION
+datadog/datadog-operator	0.10.0        	1.0.0      	Datadog Operator
+```
+
+Then you will need to install the cert manager if you don't have it already, add the chart:
+```
+helm repo add jetstack https://charts.jetstack.io
+```
+and then install it:
+```
+ helm install \
+  cert-manager jetstack/cert-manager \
+  --version v1.11.0 \
+  --set installCRDs=true
+```
+
+### Migration
+
+You can update with the following:
+
+```
+helm upgrade \
+    datadog-operator datadog/datadog-operator \
+    --set image.tag=1.0.0-rc.12 \
+    --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
+    --set datadogCRDs.migration.datadogAgents.useCertManager=true \
+    --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true
+```
+
+### Implementation details
+
+This will create a self-signed `Certificate` (using an `Issuer`) that will be used by the Certificate Manager to mutate the DatadogAgent CRD to document the `caBundle` that the API Server will use to contact the Conversion Webhhok.
+
+The Datadog Operator will be running the new reconciler for `v2alpha1` object and will also start a Conversion Webhhok Server, exposed on port 9443. This server is the one the API Server will be using to convert v1alpha1 DatadogAgent into v2alpha1.
+
+### Lifecycle
+
+The conversionWebhook is not supposed to be an ever running process, we recommend using it to migrate your objects as a transition.
+
+Once converted, you can store the new version of your DatadogAgent, deactivate the conversion and simply deploy v2alpha1 objects.
+
+### Roadmap
+
+Upon releasing the v2 version of the DatadogAgent object, we will remove v1alpha1 from the CRD as part of a major update of the charts (datadog-crds and datadog-operator).
+
+### Troubleshooting
+
+* I don't see v2alpha1 version of the DatadogAgent resource
+
+The v1alpha1 and the v2alpha1 are `served` so you might need to specify which version you want to see:
+
+```
+kubectl get datadogagents.v2alpha1.datadoghq.com datadog-agent
+```
+
+* The Conversion is not working
+
+The logs of the Datadog Operator pod should show that the conversion webhook is enabled, the server is running, the certificates are watched.
+
+```
+kubectl logs datadog-operator-XXX-YYY
+[...]
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/convert"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.builder","msg":"Conversion webhook enabled","GVK":"datadoghq.com/v2alpha1, Kind=DatadogAgent"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"setup","msg":"starting manager"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.webhook.webhooks","msg":"Starting webhook server"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.certwatcher","msg":"Updated current TLS certificate"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.webhook","msg":"Serving webhook server","host":"","port":9443}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","msg":"Starting server","path":"/metrics","kind":"metrics","addr":"0.0.0.0:8383"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","msg":"Starting server","kind":"health probe","addr":"0.0.0.0:8081"}
+{"level":"INFO","ts":"2023-02-16T16:47:07Z","logger":"controller-runtime.certwatcher","msg":"Starting certificate watcher"}
+[...]
+```
+
+* Check the service registered for the conversion for a registered Endpoint
+
+```
+kubectl describe service datadog-operator-webhook-service
+[...]
+Name:              datadog-operator-webhook-service
+Namespace:         default
+[...]
+Selector:          app.kubernetes.io/instance=datadog-operator,app.kubernetes.io/name=datadog-operator
+[...]
+Port:              <unset>  443/TCP
+TargetPort:        9443/TCP
+Endpoints:         10.88.3.28:9443
+```
+
+* Verify the registered service for the conversion webhook
+
+```
+kubectl describe crd datadogagents.datadoghq.com
+[...]
+  Conversion:
+    Strategy:  Webhook
+    Webhook:
+      Client Config:
+        Ca Bundle:  LS0t[...]UtLS0tLQo=
+        Service:
+          Name:       datadog-operator-webhook-service
+          Namespace:  default
+          Path:       /convert
+          Port:       443
+      Conversion Review Versions:
+        v1
+```
+
+* The CRD does not have the `caBundle`
+
+Make sure that the CRD has the correct annotation: `cert-manager.io/inject-ca-from: default/datadog-operator-serving-cert` and check the logs of the `cert-manager-cainjector` pod.
+
+If you do not see anything stading out, setting the log level to 5 (debug) might help:
+
+```
+kubectl edit deploy cert-manager-cainjector -n cert-manager
+[...]
+    spec:
+      containers:
+      - args:
+        - --v=5
+[...]
+```
+
+You should see logs such as:
+
+```
+[...]
+I0217 08:11:15.582479       1 controller.go:178] cert-manager/certificate/customresourcedefinition/generic-inject-reconciler "msg"="updated object" "resource_kind"="CustomResourceDefinition" "resource_name"="datadogagents.datadoghq.com" "resource_namespace"="" "resource_version"="v1"
+I0217 08:25:24.989209       1 sources.go:98] cert-manager/certificate/customresourcedefinition/generic-inject-reconciler "msg"="Extracting CA from Certificate resource" "certificate"="default/datadog-operator-serving-cert" "resource_kind"="CustomResourceDefinition" "resource_name"="datadogagents.datadoghq.com" "resource_namespace"="" "resource_version"="v1"
+[...]
+```
+### Rollback
+
+If you migrated to the new version of the Datadog Operator using v2alpha1 but want to rollback to the former version, we recommend:
+- Scaling the Datadog Operator deployment to 0 replicas.
+  ```
+  kubectl scale deploy datadog-operator --replicas=0
+  ```
+- Upgrading the chart to have v1alpha1 stored and for the Datadog Operator to use the 0.8.X image.
+  ```
+  helm upgrade \
+    datadog-operator datadog/datadog-operator \
+    --set image.tag=0.8.4 \
+    --set datadogCRDs.migration.datadogAgents.version=v1alpha1 \
+    --set datadogCRDs.migration.datadogAgents.useCertManager=false \
+    --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=false
+  ```
+- Redeploy the previous DatadogAgent v1alpha1 object.
+
+Note: The Daemonset of the Datadog Agents will be rolled out in the process.

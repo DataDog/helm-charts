@@ -98,7 +98,7 @@ affinity: {}
 # installCRDs -- Set to true to deploy the Datadog's CRDs
 installCRDs: true
 
-datadog-crds:
+datadogCRDs:
   crds:
     # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
     datadogAgents: true
@@ -108,13 +108,12 @@ datadog-crds:
     datadogMonitors: true
   migration:
     datadogAgents:
+      conversionWebhook:
+        enabled: false
+        name: datadog-operator-webhook-service
+        namespace: default
+      useCertManager: false
       version: "v1alpha1"
-
-# webhook -- configure webhook servers
-webhook:
-  ## Use the conversion webhook server when multiple versions of objects managed by the Datadog Operator are served.
-  conversion:
-    enabled: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

@@ -1,0 +1,14 @@
+{{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.name }}
+  namespace: {{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.namespace }}
+spec:
+  ports:
+    - port: 443
+      targetPort: 9443
+  selector:
+    app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
