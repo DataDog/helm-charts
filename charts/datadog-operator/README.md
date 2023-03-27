@@ -16,10 +16,10 @@
 | datadogCRDs.crds.datadogAgents | bool | `true` |  |
 | datadogCRDs.crds.datadogMetrics | bool | `true` |  |
 | datadogCRDs.crds.datadogMonitors | bool | `true` |  |
-| datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `true` |  |
+| datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
-| datadogCRDs.migration.datadogAgents.useCertManager | bool | `true` |  |
+| datadogCRDs.migration.datadogAgents.useCertManager | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.version | string | `"v1alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |

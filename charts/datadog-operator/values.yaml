@@ -109,10 +109,10 @@ datadogCRDs:
   migration:
     datadogAgents:
       conversionWebhook:
-        enabled: true
+        enabled: false
         name: datadog-operator-webhook-service
         namespace: default
-      useCertManager: true
+      useCertManager: false
       version: "v1alpha1"
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
