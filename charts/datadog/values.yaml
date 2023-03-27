@@ -1806,6 +1806,10 @@ datadog-crds:
     datadogMetrics: true
 
 kube-state-metrics:
+  # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
+  image:
+    repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
+
   rbac:
     # kube-state-metrics.rbac.create -- If true, create & use RBAC resources
     create: true
