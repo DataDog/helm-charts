@@ -858,6 +858,9 @@ clusterAgent:
     # clusterAgent.rbac.create -- If true, create & use RBAC resources
     create: true
 
+    # clusterAgent.rbac.flareAdditionalPermissions -- If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace
+    flareAdditionalPermissions: true
+
     # clusterAgent.rbac.serviceAccountName -- Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false
     serviceAccountName: default
 

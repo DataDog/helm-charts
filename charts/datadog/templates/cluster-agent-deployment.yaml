@@ -245,6 +245,12 @@ spec:
             value: {{ .Values.datadog.clusterTagger.collectKubernetesTags | quote }}
           - name: DD_KUBE_RESOURCES_NAMESPACE
             value: {{ .Release.Namespace }}
+          - name: CHART_RELEASE_NAME
+            value: {{ .Release.Name | quote }}
+          - name: AGENT_DAEMONSET
+            value: {{ template "datadog.fullname" . }}
+          - name: CLUSTER_AGENT_DEPLOYMENT
+            value: {{ template "datadog.fullname" . }}-cluster-agent
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
           {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
