@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.24.0](https://img.shields.io/badge/Version-3.24.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.25.0](https://img.shields.io/badge/Version-3.25.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -692,7 +692,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
 | datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` | Set to the desired duration of a single container tracing (in minutes) |
 | datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` | Set to the size of the wait list for already traced containers |
-| datadog.securityAgent.runtime.activityDump.enabled | bool | `false` | Set to true to enable the collection of CWS activity dumps |
+| datadog.securityAgent.runtime.activityDump.enabled | bool | `true` | Set to true to enable the collection of CWS activity dumps |
 | datadog.securityAgent.runtime.activityDump.pathMerge.enabled | bool | `false` | Set to true to enable the merging of similar paths |
 | datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |

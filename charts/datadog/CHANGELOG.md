@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.25.0
+
+* Enable CWS Security Profiles collection by default.
+
 ## 3.24.0
 
 * Move `kube-state-metrics` default image registry from k8s.gcr.io to registry.k8s.io.
