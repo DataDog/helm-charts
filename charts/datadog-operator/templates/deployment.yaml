@@ -102,7 +102,11 @@ spec:
           {{- if .Values.secretBackend.arguments }}
             - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
           {{- end }}
+          {{- if .Values.maximumGoroutines }}
+            - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
+          {{- end }}
             - "-datadogMonitorEnabled={{ .Values.datadogMonitor.enabled }}"
+            - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}

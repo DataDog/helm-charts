@@ -53,7 +53,9 @@ nameOverride: ""
 fullnameOverride: ""
 # logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
 logLevel: "info"
-# supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
+# maximumGoroutines -- Override default gouroutines threshold for the health check failure.
+maximumGoroutines: 400
+# supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
 supportExtendedDaemonset: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
@@ -62,6 +64,9 @@ secretBackend:
   command: ""
   # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
   arguments: ""
+datadogAgent:
+  # datadogAgent.enabled -- Enables Datadog Agetn controller
+  enabled: true
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
   enabled: false

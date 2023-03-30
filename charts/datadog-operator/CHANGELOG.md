@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1
+
+* Add configuration for new Operator parameters `maximumGoroutines` and `datadogAgentEnabled`.
+
 ## 0.10.0
 
 * Add ability to use the conversion webhook
