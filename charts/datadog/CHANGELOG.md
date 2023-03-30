@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.28.0
+
+* Adding support to use a FIPS compliant side car container in the Datadog Cluster Agent, the Datadog Agent and the Datadog Cluster Check Runners pods.
+
 ## 3.27.0
 
 * Default `Agent` and `Cluster-Agent` to `7.44.0` version.

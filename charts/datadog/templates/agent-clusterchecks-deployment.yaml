@@ -101,6 +101,9 @@ spec:
         resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
       containers:
+        {{- if eq  (include "should-enable-fips" .) "true" }}
+          {{- include "fips-proxy" . | nindent 6 }}
+        {{- end }}
       - name: agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
@@ -191,6 +194,7 @@ spec:
           - name: DD_CLUSTER_NAME
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
+          {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
