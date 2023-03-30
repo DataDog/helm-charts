@@ -681,7 +681,7 @@ datadog:
 
       activityDump:
         # datadog.securityAgent.runtime.activityDump.enabled -- Set to true to enable the collection of CWS activity dumps
-        enabled: false
+        enabled: true
 
         # datadog.securityAgent.runtime.activityDump.tracedCgroupsCount -- Set to the number of containers that should be traced concurrently
         tracedCgroupsCount: 3
