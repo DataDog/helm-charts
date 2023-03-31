@@ -53,7 +53,7 @@ nameOverride: ""
 fullnameOverride: ""
 # logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
 logLevel: "info"
-# supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
+# supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
@@ -123,7 +123,7 @@ podLabels: {}
 # collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
 collectOperatorMetrics: true
 
-# watchNamespaces -- Restrics the Operator to watch its managed resources on specific namespaces
+# watchNamespaces -- Restricts the Operator to watch its managed resources on specific namespaces
 watchNamespaces: []
 # example: watch only two namespaces:
 # watchNamespaces:
