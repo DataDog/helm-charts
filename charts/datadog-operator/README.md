@@ -45,9 +45,9 @@
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
-| supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDeamonSet CRD |
+| supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
-| watchNamespaces | list | `[]` | Restrics the Operator to watch its managed resources on specific namespaces |
+| watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces |
 
 ## How to configure which namespaces are watched by the Operator.
 
@@ -74,7 +74,7 @@ watchNamespaces:
 
 As part of the General Availability release of the Datadog Operator, we are offering a migration path for our early adopters to migrate to the GA version of the custom resource, `v2alpha1/DatadogAgent`.
 
-The Datadog Operator v1.X reconciles the version `v2alpha1` of the DatadogAgent custom resource, while the v0.X recociles `v1alpha1`.
+The Datadog Operator v1.X reconciles the version `v2alpha1` of the DatadogAgent custom resource, while the v0.X reconciles `v1alpha1`.
 
 In the following documentation, you will find mentions of the image with a `rc` (release candidate) tag. We will update it to the official `1.0.0` tag upon releasing.
 
@@ -125,9 +125,9 @@ helm upgrade \
 
 ### Implementation details
 
-This will create a self-signed `Certificate` (using an `Issuer`) that will be used by the Certificate Manager to mutate the DatadogAgent CRD to document the `caBundle` that the API Server will use to contact the Conversion Webhhok.
+This will create a self-signed `Certificate` (using an `Issuer`) that will be used by the Certificate Manager to mutate the DatadogAgent CRD to document the `caBundle` that the API Server will use to contact the Conversion Webhook.
 
-The Datadog Operator will be running the new reconciler for `v2alpha1` object and will also start a Conversion Webhhok Server, exposed on port 9443. This server is the one the API Server will be using to convert v1alpha1 DatadogAgent into v2alpha1.
+The Datadog Operator will be running the new reconciler for `v2alpha1` object and will also start a Conversion Webhook Server, exposed on port 9443. This server is the one the API Server will be using to convert v1alpha1 DatadogAgent into v2alpha1.
 
 ### Lifecycle
 
@@ -206,7 +206,7 @@ kubectl describe crd datadogagents.datadoghq.com
 
 Make sure that the CRD has the correct annotation: `cert-manager.io/inject-ca-from: default/datadog-operator-serving-cert` and check the logs of the `cert-manager-cainjector` pod.
 
-If you do not see anything stading out, setting the log level to 5 (debug) might help:
+If you do not see anything standing out, setting the log level to 5 (debug) might help:
 
 ```
 kubectl edit deploy cert-manager-cainjector -n cert-manager
