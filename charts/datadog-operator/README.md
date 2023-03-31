@@ -32,7 +32,7 @@
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
-| maximumGoroutines | int | `400` | Override default gouroutines threshold for the health check failure. |
+| maximumGoroutines | string | `nil` | Override default gouroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
