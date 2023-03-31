@@ -31,7 +31,7 @@ The datadogAgent.enabled parameter isn't supported by the Operator 1.0.0-rc.12 a
 DatadogAgent is enabled by default and setting it to false will not have any effect.
     {{- end }}
 
-    {{- if (ne .Values.maximumGoroutines (atoi "400")) }}
+    {{- if .Values.maximumGoroutines }}
 ##############################################################################
 ####               WARNING: Unsupported parameter maximumGoroutines.      ####
 ##############################################################################

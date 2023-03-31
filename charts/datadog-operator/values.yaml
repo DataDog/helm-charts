@@ -54,7 +54,7 @@ fullnameOverride: ""
 # logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
 logLevel: "info"
 # maximumGoroutines -- Override default gouroutines threshold for the health check failure.
-maximumGoroutines: 400
+maximumGoroutines:
 # supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
 supportExtendedDaemonset: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
