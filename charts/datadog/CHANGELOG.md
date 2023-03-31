@@ -2,7 +2,7 @@
 
 ## 3.25.0
 
-* Enable CWS Security Profiles collection by default.
+* Automatically collect Security Profiles when CWS is enabled.
 
 ## 3.24.0
 
