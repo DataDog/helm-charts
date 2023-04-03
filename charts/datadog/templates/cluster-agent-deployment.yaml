@@ -100,7 +100,11 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.securityContext }}
         securityContext:
 {{ toYaml .Values.clusterAgent.containers.initContainers.securityContext | indent 10 }}
-{{- end }}        
+{{- end }}
+{{- if .Values.clusterAgent.containers.initContainers.resources }}
+        resources:
+{{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
+{{- end }}           
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
