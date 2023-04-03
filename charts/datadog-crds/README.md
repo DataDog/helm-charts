@@ -30,7 +30,7 @@ But the recommended Kubernetes versions are `1.16+`.
 | migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
 | migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
 | migration.datadogAgents.useCertManager | bool | `false` |  |
-| migration.datadogAgents.version | string | `"v1alpha1"` |  |
+| migration.datadogAgents.version | string | `"v2alpha1"` |  |
 | nameOverride | string | `""` | Override name of app |
 
 ## Developers
