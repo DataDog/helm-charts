@@ -162,6 +162,9 @@ spec:
             value: {{ $healthPort | quote }}
           # Cluster checks (cluster-agent communication)
           {{- include "containers-cluster-agent-env" . | nindent 10 }}
+          {{- if .Values.providers.gke.autopilot }}
+          {{ include "provider-env" . | nindent 10 }}
+          {{- end }}
           # Safely run alongside the daemonset
           - name: DD_ENABLE_METADATA_COLLECTION
             value: "false"

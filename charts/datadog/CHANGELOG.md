@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.28.2
+
+* Remove duplicated `DD_PROVIDER_KIND` env vars from datadog agent daemontSet.
+
 ## 3.28.1
 
 * Add `memfd_create` syscall to seccomp profile for system-probe.
