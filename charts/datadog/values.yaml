@@ -837,6 +837,9 @@ clusterAgent:
       securityContext:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
+    initContainers:
+      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      securityContext: {}
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
