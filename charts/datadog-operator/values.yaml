@@ -55,7 +55,7 @@ fullnameOverride: ""
 logLevel: "info"
 # maximumGoroutines -- Override default gouroutines threshold for the health check failure.
 maximumGoroutines:
-# supportExtendedDaemonset -- If true, supports using ExtendedDeamonSet CRD
+# supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
