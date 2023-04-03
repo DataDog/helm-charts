@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.25.1
+
+* Fix CI to unblock release of charts
+
 ## 3.25.0
 
 * Automatically collect Security Profiles when CWS is enabled.
