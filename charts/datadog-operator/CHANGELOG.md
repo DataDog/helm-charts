@@ -7,7 +7,7 @@
 * Stored Version is v2alpha1 by default:
     * If you are using a chart 0.X, refer to the [Migration Steps](https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/README.md#migrating-to-the-version-10-of-the-datadog-operator).
 * Added Failure exceptions to avoid breaking changes:
-    * Added exception when using unsopported version of the DatadogAgent object for the configured version of the Datadog Operator.
+    * Added exception when using unsupported version of the DatadogAgent object for the configured version of the Datadog Operator.
 
 ## 0.10.1
 
