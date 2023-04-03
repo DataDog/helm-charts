@@ -42,7 +42,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 0.8.4
+  tag: 1.0.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -118,7 +118,7 @@ datadogCRDs:
         name: datadog-operator-webhook-service
         namespace: default
       useCertManager: false
-      version: "v1alpha1"
+      version: "v2alpha1"
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

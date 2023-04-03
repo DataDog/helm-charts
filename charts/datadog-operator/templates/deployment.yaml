@@ -102,7 +102,7 @@ spec:
           {{- if .Values.secretBackend.arguments }}
             - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
           {{- end }}
-          {{- if (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
+          {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
             - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
           {{- end }}
             - "-datadogMonitorEnabled={{ .Values.datadogMonitor.enabled }}"
