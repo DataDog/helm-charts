@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.25.2
+
+* Adds securityContext and resource annotations for initContainers in cluster agent
+
 ## 3.25.1
 
 * Fix CI to unblock release of charts
