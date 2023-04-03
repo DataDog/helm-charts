@@ -19,3 +19,24 @@ This deployment will be incomplete until you get your APP key from Datadog.
 Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
 {{- end }}
+
+
+{{- if (semverCompare "<1.0.0-rc.13" .Values.image.tag) }}
+    {{- if (not .Values.datadogAgent.enabled) }}
+##############################################################################
+####               WARNING: Unsupported parameter datadogAgent.enabled.   ####
+##############################################################################
+
+The datadogAgent.enabled parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+DatadogAgent is enabled by default and setting it to false will not have any effect.
+    {{- end }}
+
+    {{- if .Values.maximumGoroutines }}
+##############################################################################
+####               WARNING: Unsupported parameter maximumGoroutines.      ####
+##############################################################################
+
+The maximumGoroutines parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+Setting a value will not change the default defined in the Operator.
+    {{- end }}
+{{- end }}
