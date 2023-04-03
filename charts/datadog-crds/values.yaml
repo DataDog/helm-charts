@@ -17,7 +17,7 @@ migration:
       name: datadog-operator-webhook-service
       namespace: default
     useCertManager: false
-    version: "v1alpha1"
+    version: "v2alpha1"
 
 # nameOverride -- Override name of app
 nameOverride: ""
