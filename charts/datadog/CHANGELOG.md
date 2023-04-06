@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.25.2
+
+* Add `list` and `watch` permissions of `customresourcedefinitions` to `kube-state-metrics-core-rbac`.
+
 ## 3.25.1
 
 * Fix CI to unblock release of charts
