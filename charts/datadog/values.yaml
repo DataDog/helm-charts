@@ -1839,7 +1839,7 @@ kube-state-metrics:
   # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
   # image:
   #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
-  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+  #  repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
   #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
   #  tag: v1.9.8
   #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
