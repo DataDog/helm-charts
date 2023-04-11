@@ -19,3 +19,27 @@ This deployment will be incomplete until you get your APP key from Datadog.
 Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
 {{- end }}
+
+
+{{- if (semverCompare "<1.0.0-rc.13" .Values.image.tag) }}
+    {{- if (not .Values.datadogAgent.enabled) }}
+##############################################################################
+####               WARNING: Unsupported parameter datadogAgent.enabled.   ####
+##############################################################################
+
+The datadogAgent.enabled parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+DatadogAgent is enabled by default and setting it to false will not have any effect.
+    {{- end }}
+
+    {{- if .Values.maximumGoroutines }}
+##############################################################################
+####               WARNING: Unsupported parameter maximumGoroutines.      ####
+##############################################################################
+
+The maximumGoroutines parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+Setting a value will not change the default defined in the Operator.
+    {{- end }}
+{{- end }}
+{{- if not (and (semverCompare ">=1.0.0-0" .Values.image.tag) (eq .Values.datadogCRDs.migration.datadogAgents.version "v2alpha1")) }}
+{{- fail "The Datadog Operator `1.0.0` reconciles `DatadogAgent` versions `v2alpha1`. Using an old version of the Datadog Operator (< 1.0.0) with the new version of the DatadogAgent Customer Resource, or the Datadog Operator `1.X` with the `v1alpha1` as stored version of the DatadogAgent is not supported. If you are using a DatadogAgent `v1alpha1`, refer to the Migration Steps: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/README.md#migrating-to-the-version-10-of-the-datadog-operator."}}
+{{- end }}
