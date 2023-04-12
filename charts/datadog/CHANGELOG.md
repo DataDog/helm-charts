@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.0
+
+* Add the option `clusterAgent.initContainers.resources` to configure the cluster-agent init-container's resources.
+
 ## 3.25.3
 
 * Remote Config is now enabled even if the Cluster Agent is disabled.

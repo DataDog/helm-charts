@@ -838,6 +838,16 @@ clusterAgent:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
 
+  initContainers:
+    # clusterAgent.initContainers.resources -- Resource requests and limits for the init containers
+    resources: {}
+    #  requests:
+    #    cpu: 100m
+    #    memory: 200Mi
+    #  limits:
+    #    cpu: 100m
+    #    memory: 200Mi
+
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
 
