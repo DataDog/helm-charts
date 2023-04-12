@@ -4,6 +4,10 @@
 
 * Add the option `clusterAgent.initContainers.resources` to configure the cluster-agent init-container's resources.
 
+## 3.25.3
+
+* Remote Config is now enabled even if the Cluster Agent is disabled.
+
 ## 3.25.2
 
 * Fix a bug with `datadog.remoteConfiguration.enabled` where Remote Config was only enabled for the main agent container but not other containers such as the trace-agent.
