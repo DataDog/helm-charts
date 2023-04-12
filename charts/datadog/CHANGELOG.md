@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.0
+
+* Add the option `clusterAgent.initContainers.resources` to configure the cluster-agent init-container's resources.
+
 ## 3.25.1
 
 * Fix CI to unblock release of charts

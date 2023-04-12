@@ -98,6 +98,7 @@ spec:
       - name: init-volume
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
+{{ toYaml .Values.clusterAgent.initContainers.resources | indent 10 }}
         command:
           - cp
         args:
