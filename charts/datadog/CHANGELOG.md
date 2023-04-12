@@ -2,7 +2,7 @@
 
 ## 3.25.2
 
-* Fix a bug with `datadog.remoteConfiguration.enabled` where Remote Config was only enabled for the core agent.
+* Fix a bug with `datadog.remoteConfiguration.enabled` where Remote Config was only enabled for the main agent container but not other containers such as the trace-agent.
 
 ## 3.25.1
 
