@@ -258,7 +258,7 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if or .Values.agents.containers.initContainers.securityContext .Values.agents.containers.initContainers.securityContext }}
+{{- if .Values.agents.containers.initContainers.securityContext }}
 
 ######################################################################################################
 ####   WARNING: Overwriting security contexts at container level not supported on GKE autopilot   ####
