@@ -15,7 +15,7 @@
 
 ## 3.25.1
 
-* Fixa CI to unblock release of charts
+* Fix CI to unblock release of charts
 
 ## 3.25.0
 
