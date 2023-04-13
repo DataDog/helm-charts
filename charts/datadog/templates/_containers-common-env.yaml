@@ -9,6 +9,10 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
+{{- if .Values.datadog.remoteConfiguration.enabled }}
+- name: DD_REMOTE_CONFIGURATION_ENABLED
+  value: "true"
+{{- end }}
 {{- if (not .Values.providers.gke.autopilot) }}
 - name: DD_AUTH_TOKEN_FILE_PATH
   value: {{ template "datadog.confPath" . }}/auth/token
