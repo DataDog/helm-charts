@@ -147,5 +147,9 @@ Return a list of env-vars if the cluster-agent is enabled
         name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
         key: token
 {{- end }}
+{{- if .Values.datadog.remoteConfiguration.enabled }}
+- name: DD_REMOTE_CONFIGURATION_ENABLED
+  value: "true"
+{{- end }}
 {{ include "provider-env" . }}
 {{- end -}}

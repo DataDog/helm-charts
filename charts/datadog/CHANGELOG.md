@@ -1,5 +1,10 @@
 # Datadog changelog
 
+
+## 3.25.4
+
+* Add `list` and `watch` permissions of `customresourcedefinitions` to `kube-state-metrics-core-rbac`.
+
 ## 3.25.3
 
 * Remote Config is now enabled even if the Cluster Agent is disabled.
@@ -10,7 +15,7 @@
 
 ## 3.25.1
 
-* Fix CI to unblock release of charts
+* Fixa CI to unblock release of charts
 
 ## 3.25.0
 
