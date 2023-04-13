@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 0.10.1](https://img.shields.io/badge/Version-0.10.1-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 ## Values
 
@@ -21,14 +21,14 @@
 | datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
 | datadogCRDs.migration.datadogAgents.useCertManager | bool | `false` |  |
-| datadogCRDs.migration.datadogAgents.version | string | `"v1alpha1"` |  |
+| datadogCRDs.migration.datadogAgents.version | string | `"v2alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"0.8.4"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.0.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
@@ -78,10 +78,6 @@ As part of the General Availability release of the Datadog Operator, we are offe
 
 The Datadog Operator v1.X reconciles the version `v2alpha1` of the DatadogAgent custom resource, while the v0.X reconciles `v1alpha1`.
 
-In the following documentation, you will find mentions of the image with a `rc` (release candidate) tag. We will update it to the official `1.0.0` tag upon releasing.
-
-Consider the following steps with the same maturity (beta) level as the project.
-
 ### Requirements
 
 If you are using the v1alpha1 with a v0.X version of the Datadog Operator and would like to upgrade, you will need to use the Conversion Webhook feature.
@@ -97,7 +93,7 @@ and for the Datadog Operator chart:
 
 ```
 NAME                    	CHART VERSION	APP VERSION	DESCRIPTION
-datadog/datadog-operator	0.10.0        	1.0.0      	Datadog Operator
+datadog/datadog-operator	1.0.0        	1.0.0      	Datadog Operator
 ```
 
 Then you will need to install the cert manager if you don't have it already, add the chart:
@@ -119,11 +115,17 @@ You can update with the following:
 ```
 helm upgrade \
     datadog-operator datadog/datadog-operator \
-    --set image.tag=1.0.0-rc.12 \
+    --set image.tag=1.0.0 \
     --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
     --set datadogCRDs.migration.datadogAgents.useCertManager=true \
     --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true
 ```
+
+### Notes
+
+Starting at the version 1.0.0 of the datadog-operator chart, the fields `image.tag` has a default values of `1.0.0` and `datadogCRDs.migration.datadogAgents.version` is `v2alpha1`.
+
+We set them in the command here to illustrate the migration of going from a Datadog Operator version < 1.0.0 with a stored version of `v1alpha1` to the GA version of `1.0.0` with a stored version of `v2alpha1`.
 
 ### Implementation details
 
