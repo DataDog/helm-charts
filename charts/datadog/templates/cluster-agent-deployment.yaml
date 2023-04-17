@@ -97,6 +97,14 @@ spec:
       initContainers:
       - name: init-volume
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
+{{- if .Values.clusterAgent.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterAgent.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
+{{- if .Values.clusterAgent.containers.initContainers.resources }}
+        resources:
+{{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
+{{- end }}           
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp

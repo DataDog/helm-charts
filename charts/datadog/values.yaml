@@ -837,6 +837,9 @@ clusterAgent:
       securityContext:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
+    initContainers:
+      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      securityContext: {}
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -1470,6 +1473,8 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+      # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
+      securityContext: {}
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []

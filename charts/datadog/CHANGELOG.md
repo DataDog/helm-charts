@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.25.5
+
+* Adds securityContext and resource annotations for initContainers in cluster agent
 
 ## 3.25.4
 
