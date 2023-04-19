@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+* Use `.Release.Name` for reference to conversion webhook certificate in datadog-operator deployment.yaml
+
+
 ## 1.0.1
 
 * Use `.Release.Name` for conversion webhook certificate / issuer name to align with the certificate name generated in datadog-crds sub-chart
