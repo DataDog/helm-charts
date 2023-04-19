@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.25.6
+
+* Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
+  Note: APIServices metrics collection requires Cluster Agent 7.45.0+.
+
 ## 3.25.5
 
 * Adds securityContext and resource annotations for initContainers in cluster agent
