@@ -152,5 +152,5 @@ spec:
       - name: cert
         secret:
           defaultMode: 420
-          secretName: {{ include "datadog-operator.name" . }}-webhook-server-cert
+          secretName: {{ .Release.Name }}-webhook-server-cert
     {{- end }}

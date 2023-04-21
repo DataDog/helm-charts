@@ -5,7 +5,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "datadog-operator.name" . }}-selfsigned-issuer
+  name: {{ .Release.Name }}-selfsigned-issuer
   namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
@@ -13,7 +13,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ include "datadog-operator.name" . }}-serving-cert
+  name: {{ .Release.Name }}-serving-cert
   namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
@@ -21,6 +21,6 @@ spec:
   - {{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.name }}.{{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.namespace }}.svc.cluster.local
   issuerRef:
     kind: Issuer
-    name: {{ include "datadog-operator.name" . }}-selfsigned-issuer
-  secretName: {{ include "datadog-operator.name" . }}-webhook-server-cert
+    name: {{ .Release.Name }}-selfsigned-issuer
+  secretName: {{ .Release.Name }}-webhook-server-cert
 {{- end }}
