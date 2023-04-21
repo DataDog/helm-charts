@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.6
+
+* Adds securitycontext capabilities to seccomp-setup init containers
+
 ## 3.25.5
 
 * Adds securityContext and resource annotations for initContainers in cluster agent
