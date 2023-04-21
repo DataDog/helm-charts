@@ -6,6 +6,7 @@
   securityContext:
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
+      drop: ["ALL"]
   {{- end }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
