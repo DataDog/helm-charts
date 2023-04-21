@@ -16,8 +16,8 @@
     readOnly: false # Need RW for seccomp-root
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
-{{- if .Values.agents.containers.initContainers.SecurityContext -}}
+{{- if .Values.agents.containers.initContainers.securityContext -}}
   securityContext:
-{{ toYaml .Values.agents.containers.initContainers.SecurityContext | indent 4 }}
+{{ toYaml .Values.agents.containers.initContainers.securityContext | indent 4 }}
 {{- end -}}
 {{- end -}}
