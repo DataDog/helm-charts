@@ -71,9 +71,5 @@ Return secret name to be used based on provided values.
 Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 */}}
 {{- define "policy.poddisruptionbudget.apiVersion" -}}
-{{- if or (.Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget") (semverCompare ">=1.21" .Capabilities.KubeVersion.Version) -}}
 "policy/v1"
-{{- else -}}
-"policy/v1beta1"
-{{- end -}}
 {{- end -}}
