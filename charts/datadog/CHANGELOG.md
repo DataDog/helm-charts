@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.1
+
+* Add support for `topologySpreadConstraints` in pod templates
+
 ## 3.26.0
 
 * Default `Agent` and `Cluster-Agent` to `7.43.2` version.
