@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.2
+
+* Adds statx syscall to seccomp for system-probe
+
 ## 3.26.1
 
 * Add support for `topologySpreadConstraints` in pod templates
