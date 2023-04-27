@@ -104,7 +104,7 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.resources }}
         resources:
 {{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
-{{- end }}           
+{{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
@@ -418,5 +418,9 @@ spec:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.clusterAgent.nodeSelector }}
 {{ toYaml .Values.clusterAgent.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- with .Values.clusterAgent.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
 {{ end }}

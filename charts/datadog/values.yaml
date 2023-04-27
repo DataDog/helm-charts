@@ -1024,6 +1024,12 @@ clusterAgent:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
+  # clusterAgent.topologySpreadConstraints -- Allow the Cluster Agent Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
+
   # clusterAgent.healthPort -- Port number to use in the Cluster Agent for the healthz endpoint
   healthPort: 5556
 
@@ -1681,6 +1687,12 @@ clusterChecksRunner:
   ## By default, ClusterChecks Deployment Pods are preferred to run on different Nodes.
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
+
+  # clusterChecksRunner.topologySpreadConstraints -- Allow the ClusterChecks Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
 
   # clusterChecksRunner.strategy -- Allow the ClusterChecks deployment to perform a rolling update on helm update
 
