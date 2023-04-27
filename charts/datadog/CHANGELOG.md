@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.26.0
+
+* Default `Agent` and `Cluster-Agent` to `7.43.2` version.
+
 ## 3.25.5
 
 * Adds securityContext and resource annotations for initContainers in cluster agent
