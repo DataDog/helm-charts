@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.27.0
+
+* Default `Agent` and `Cluster-Agent` to `7.44.0` version.
+
 ## 3.26.2
 
 * Adds statx syscall to seccomp for system-probe
