@@ -767,3 +767,43 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Create RABCs for custome resources
+*/}}
+{{- define "orchestratorExplorer-config-crs" -}}
+
+{{- $crs := .Values.datadog.orchestratorExplorer.customResourcesCollection -}}
+
+{{/*
+If custom config is provided, use regec to get list of custom resources
+*/}}
+{{- range $k, $v := .Values.clusterAgent.confd -}}
+
+{{- if regexMatch "^orchestrator.yaml.*"  $k  -}}
+{{/* make config a line, use # to replace \n and remove empty space */}}
+{{- $vOneline := $v | replace "\n" "#" | nospace -}}
+{{/* split string by crd_collectors: and return the second element contains custom resources */}}
+{{- $vOnelineCr := regexSplit "#[-]?crd_collectors:" $vOneline 2 | last -}}
+{{/* split string again by #[^-]+ to get the end of the custom resources list and split the list by #-*/}}
+{{- $crs = regexSplit "#[^-]+"  $vOnelineCr 2  | first | trimPrefix "#-" |splitList "#-" -}}
+{{- end -}}
+
+{{- end -}}
+
+{{/*
+Generate RABC for each custom resource
+*/}}
+{{- range $cr := $crs }}
+- apiGroups:
+  - {{ (splitList "/" $cr) | first | quote }}
+  resources:
+  - {{ (splitList "/" $cr) | last | quote }}
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+
+{{- end -}}

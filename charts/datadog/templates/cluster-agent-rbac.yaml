@@ -272,6 +272,16 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
+{{- if .Values.datadog.orchestratorExplorer.enabled }}
+- apiGroups:
+    - apiextensions.k8s.io
+  resources:
+    - customresourcedefinitions
+  verbs:
+    - list
+    - watch
+{{- include "orchestratorExplorer-config-crs" . }}
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

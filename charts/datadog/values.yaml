@@ -623,6 +623,14 @@ datadog:
     container_scrubbing:
       enabled: true
 
+    # customResourcesCollection will be ignored if custom orchestrator config is provided in `.Values.clusterAgent.confd`.
+    # customResourcesCollection defines custom resources for the orchestrator explorer to collect.
+    # Each item should follow group/version/name, for example 
+    # customResourcesCollection:
+    #   - datadoghq.com/v1alpha1/datadogmetrics
+    #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
+    customResourcesCollection: []
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
