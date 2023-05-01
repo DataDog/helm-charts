@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.27.0](https://img.shields.io/badge/Version-3.27.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.28.0](https://img.shields.io/badge/Version-3.28.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -730,6 +730,17 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
+| fips.enabled | bool | `false` |  |
+| fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
+| fips.image.name | string | `"fips-proxy"` |  |
+| fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
+| fips.image.repository | string | `nil` |  |
+| fips.image.tag | string | `"0.5.0"` |  |
+| fips.local_address | string | `"127.0.0.1"` |  |
+| fips.port | int | `9803` |  |
+| fips.portRange | int | `15` |  |
+| fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. |
+| fips.use_https | bool | `false` |  |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
 | kube-state-metrics.image.repository | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics"` | Default kube-state-metrics image repository. |
 | kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |

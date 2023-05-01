@@ -27,6 +27,11 @@
   name: etc-lsb-release
 {{- end }}
 {{- end -}}
+{{- if eq (include "should-enable-fips" .) "true" }}
+- name: fips-config
+  configMap:
+    name: {{ template "datadog.fullname" . }}-fips-config
+{{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}

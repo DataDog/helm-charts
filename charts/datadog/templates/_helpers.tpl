@@ -306,6 +306,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the fips side car container should be created.
+*/}}
+{{- define "should-enable-fips" -}}
+{{- if and (not .Values.providers.gke.autopilot) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}

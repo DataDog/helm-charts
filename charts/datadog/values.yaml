@@ -1130,6 +1130,48 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
+# fips is used to enable the fips sidecar container for GOVCLOUD environments.
+fips:
+
+  enabled: false
+
+  # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
+  # customConfig: false
+
+  # fips.port specifies which port is used by the containers to communicate to the FIPS sidecar.
+  port: 9803
+
+  # fips.portRange specifies the number of ports used, defaults to 13  https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  portRange: 15
+
+  use_https: false
+  # fips.resources -- Resource requests and limits for the FIPS sidecar container.
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 20m
+    #   memory: 64Mi
+
+  local_address: "127.0.0.1"
+  ## Define the Datadog image to work with
+  image:
+    ## fips.image.name -- Define the FIPS sidecar container image name.
+    name: fips-proxy
+
+    # agents.image.tag -- Define the FIPS sidecar container version to use.
+    tag: 0.5.0
+
+    # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
+    pullPolicy: IfNotPresent
+
+    # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
+    digest: ""
+
+    # agents.image.repository -- Override default registry + image.name for Agent
+    repository:
+
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
 
