@@ -166,6 +166,7 @@ data:
             "lstat",
             "lstat64",
             "madvise",
+            "memfd_create",
             "mkdir",
             "mkdirat",
             "mmap",
