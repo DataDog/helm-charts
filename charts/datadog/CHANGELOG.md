@@ -2,7 +2,7 @@
 
 # 3.28.0
 
-* Adding support to use a FIPS compliant side car container in the Datadog Cluster Agent, the Datadog Agent and the Datadog Cluster Check Runners pods.
+* Adding support to use a FIPS compliant side car container in the Datadog Cluster Agent, the Datadog Agent, and the Datadog Cluster Check Runners pods.
 
 ## 3.27.0
 

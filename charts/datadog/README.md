@@ -731,7 +731,7 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
 | fips.enabled | bool | `false` |  |
-| fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over tag if specified |
+| fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` |  |

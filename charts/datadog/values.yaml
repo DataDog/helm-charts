@@ -1160,13 +1160,13 @@ fips:
     ## fips.image.name -- Define the FIPS sidecar container image name.
     name: fips-proxy
 
-    # agents.image.tag -- Define the FIPS sidecar container version to use
+    # agents.image.tag -- Define the FIPS sidecar container version to use.
     tag: 0.5.0
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
 
-    # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over tag if specified
+    # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
     digest: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
