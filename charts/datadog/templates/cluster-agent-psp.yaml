@@ -10,6 +10,7 @@ spec:
     - configMap
     - hostPath
     - secret
+    - emptyDir
   fsGroup:
     rule: RunAsAny
   runAsUser:
