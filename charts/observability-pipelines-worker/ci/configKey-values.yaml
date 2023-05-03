@@ -1,37 +1,32 @@
-config:
-  data_dir: "/var/lib/opw/"
+datadog:
+  configKey: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
+pipelineConfig:
   sources:
     datadog_agents:
-      address: 0.0.0.0:8282
       type: datadog_agent
+      address: 0.0.0.0:8282
       multiple_outputs: true
+      store_api_key: false
   sinks:
     datadog_logs:
       type: datadog_logs
       inputs:
         - datadog_agents.logs
-      default_api_key: ${DD_API_KEY}
       compression: gzip
+      default_api_key: ${DD_API_KEY}
+      site: ${DD_SITE}
     datadog_metrics:
       type: datadog_metrics
       inputs:
         - datadog_agents.metrics
       default_api_key: ${DD_API_KEY}
+      site: ${DD_SITE}
     datadog_traces:
       type: datadog_traces
       inputs:
         - datadog_agents.traces
       default_api_key: ${DD_API_KEY}
-extraVolumes:
-  - name: podinfo
-    downwardAPI:
-      items:
-        - path: "labels"
-          fieldRef:
-            fieldPath: metadata.labels
-        - path: "annotations"
-          fieldRef:
-            fieldPath: metadata.annotations
-extraVolumeMounts:
-  - name: podinfo
-    mountPath: "/etc/podinfo"
+      site: ${DD_SITE}
+args:
+  - run
+  - --skip-key-validation

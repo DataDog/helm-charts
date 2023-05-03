@@ -1,4 +1,9 @@
-config:
+datadog:
+  pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
+args:
+  - run
+  - --skip-key-validation
+pipelineConfig:
   sources:
     syslog-tcp:
       type: syslog
