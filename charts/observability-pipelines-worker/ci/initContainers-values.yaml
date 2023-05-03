@@ -1,5 +1,6 @@
-config:
-  data_dir: "/var/lib/opw/"
+datadog:
+  pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
+pipelineConfig:
   sources:
     datadog_agents:
       address: 0.0.0.0:8282
@@ -22,6 +23,9 @@ config:
       inputs:
         - datadog_agents.traces
       default_api_key: ${DD_API_KEY}
+args:
+  - run
+  - --skip-key-validation
 initContainers:
   - name: sleep
     image: busybox

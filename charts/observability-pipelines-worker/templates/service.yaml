@@ -1,4 +1,5 @@
-{{- if .Values.service.enabled -}}
+{{- $ports := (include "opw.ports" .) -}}
+{{- if and .Values.service.enabled (or .Values.service.ports $ports) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -24,12 +25,8 @@ spec:
   ports:
 {{- if .Values.service.ports }}
 {{ toYaml .Values.service.ports | indent 4 }}
-{{- else if .Values.config }}
-{{- if (include "opw.ports" .) }}
-{{- include "opw.ports" . | indent 4 }}
-{{- else}}
-{{- fail "No ports found in the `config`, try setting `service.enabled` to false." }}
-{{- end }}
+{{- else }}
+{{- $ports | indent 4 }}
 {{- end }}
   selector: {{ include "opw.template-labels" . | nindent 4 }}
   type: {{ .Values.service.type }}

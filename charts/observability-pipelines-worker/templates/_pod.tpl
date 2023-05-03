@@ -47,13 +47,25 @@ containers:
           secretKeyRef:
             name: {{ template "opw.apiSecretName" . }}
             key: api-key
-      - name: DD_OP_CONFIG_KEY
+      - name: DD_OP_PIPELINE_ID
+      {{- if or .Values.datadog.configKey .Values.datadog.configKeyExistingSecret }}
         valueFrom:
           secretKeyRef:
             name: {{ template "opw.configKeySecretName" . }}
             key: config-key
+      {{- else }}
+        value: {{ .Values.datadog.pipelineId | quote }}
+      {{- end }}
+      {{- with .Values.datadog.site }}
       - name: DD_SITE
-        value: {{ .Values.datadog.site | quote }}
+        value: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.datadog.dataDir }}
+      - name: DD_OP_DATA_DIR
+        value: {{ . | quote }}
+      {{- end }}
+      - name: DD_OP_REMOTE_CONFIGURATION_ENABLED
+        value: {{ .Values.datadog.remoteConfigurationEnabled | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -63,7 +75,7 @@ containers:
     ports:
 {{- if .Values.containerPorts }}
 {{ toYaml .Values.containerPorts | indent 6 }}
-{{- else if .Values.config }}
+{{- else if .Values.pipelineConfig }}
 {{- include "opw.containerPorts" . | indent 6 }}
 {{- end }}
 {{- if .Values.livenessProbe }}
@@ -80,10 +92,12 @@ containers:
 {{- end }}
     volumeMounts:
       - name: data
-        mountPath: "{{ .Values.config.data_dir | default "/var/lib/observability-pipelines-worker" }}"
+        mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
+      {{- if not .Values.datadog.remoteConfigurationEnabled }}
       - name: config
-        mountPath: "/etc/opw/"
+        mountPath: "/etc/observability-pipelines-worker/"
         readOnly: true
+      {{- end }}
 {{- if .Values.extraVolumeMounts }}
 {{ toYaml .Values.extraVolumeMounts | indent 6 }}
 {{- end }}
@@ -114,11 +128,13 @@ volumes:
   - name: data
     emptyDir: {}
 {{- end }}
+{{- if not .Values.datadog.remoteConfigurationEnabled }}
   - name: config
     projected:
       sources:
         - configMap:
             name: {{ template "opw.fullname" . }}
+{{- end }}
 {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 2 }}
 {{- end }}

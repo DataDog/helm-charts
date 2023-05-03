@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 1.2.0-rc.0](https://img.shields.io/badge/Version-1.2.0--rc.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -20,15 +20,15 @@ To install the chart with the release name `<RELEASE_NAME>` run:
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKey=<DD_API_KEY> \
-  --set datadog.configKey=<DD_OP_CONFIG_KEY> \
+  --set datadog.pipelineId=<DD_OP_PIPELINE_ID> \
   datadog/observability-pipelines-worker
 ```
 
-By default, this chart creates secrets for your Observability Pipelines API and configuration keys. However, you can use
-manually created Secrets by setting the `datadog.apiKeyExistingSecret` and/or `datadog.appKeyExistingSecret` values
-(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-and-configuration-keys), below).
+By default, this chart creates secrets for your Observability Pipelines API key. However, you can use
+manually created Secrets by setting the `datadog.apiKeyExistingSecret` values
+(see [Creating a Secret](#create-and-provide-a-secret-that-contains-your-datadog-api-key), below).
 
-**Note:** When creating the Secret(s), be sure to name the key fields `api-key` and `config-key`.
+**Note:** When creating the Secret(s), be sure to name the key fields `api-key`.
 
 After a few minutes, you should see your new pipeline active in Datadog.
 
@@ -37,12 +37,12 @@ After a few minutes, you should see your new pipeline active in Datadog.
 ```bash
 helm install --name <RELEASE_NAME> \
     --set datadog.apiKey=<DD_API_KEY> \
-    --set datadog.configKey=<DD_OP_CONFIG_KEY> \
+    --set datadog.pipelineId=<DD_OP_PIPELINE_ID> \
     --set datadog.site=<DATADOG_SITE> \
     datadog/observability-pipelines-worker
 ```
 
-#### Create and provide a Secret that contains your Datadog API and Configuration Keys
+#### Create and provide a Secret that contains your Datadog API Key
 
 To create a Secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
 organization. This Secret is used in the manifest to deploy the Observability Pipelines Worker.
@@ -51,7 +51,6 @@ organization. This Secret is used in the manifest to deploy the Observability Pi
 export DATADOG_SECRET_NAME=datadog-secrets
 kubectl create secret generic $DATADOG_SECRET_NAME \
     --from-literal api-key="<DD_API_KEY>" \
-    --from-literal config-key="<DD_OP_CONFIG_KEY>"
 ```
 
 **Note**: This creates a Secret in the **default** Namespace. If you are using a custom Namespace, update the Namespace
@@ -62,7 +61,6 @@ Now, the installation command contains a reference to the Secret.
 ```bash
 helm install --name <RELEASE_NAME> \
   --set datadog.apiKeyExistingSecret=$DATADOG_SECRET_NAME \
-  --set datadog.configKeyExistingSecret=$DATADOG_SECRET_NAME \
   datadog/observability-pipelines-worker
 ```
 
@@ -81,7 +79,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Configure [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity). |
-| args | list | `["run","/etc/opw/config.yaml"]` | Override default image arguments. |
+| args | list | `["run"]` | Override default image arguments. |
 | autoscaling.behavior | object | `{}` | Configure separate scale-up and scale-down behaviors. |
 | autoscaling.enabled | bool | `false` | If **true**, create a [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). |
 | autoscaling.maxReplicas | int | `10` | Specify the maximum number of replicas. |
@@ -90,12 +88,14 @@ The command removes all the Kubernetes components associated with the chart and 
 | autoscaling.targetMemoryUtilizationPercentage | int | `nil` | Specify the target memory utilization. |
 | command | list | `[]` | Override default image command. |
 | commonLabels | object | `{}` | Labels to apply to all resources. |
-| config | object | `{}` | This section supports using Helm templates to populate dynamic values. See Observability Pipelines' [configuration documentation](https://docs.datadoghq.com/observability_pipelines/reference/) for all options. |
 | containerPorts | list | `[]` | Manually define ContainerPort array, overriding automated generation of ContainerPorts. |
 | datadog.apiKey | string | `nil` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
-| datadog.configKey | string | `nil` |  |
-| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. |
+| datadog.configKey | string | `nil` | Specify your Datadog Configuration key. DEPRECATED. Use `datadog.pipelineId` instead. |
+| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. DEPRECATED. Use `datadog.pipelineId` instead. |
+| datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
+| datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
+| datadog.remoteConfigurationEnabled | bool | `false` | Whether to allow remote configuration of the worker from Datadog. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
@@ -110,7 +110,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
 | image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
-| image.tag | string | `"1.1.1"` | Specify the image tag to use. |
+| image.tag | string | `"nightly-2023-05-03"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
@@ -128,6 +128,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | persistence.selector | object | `{}` | Specify the selectors for PersistentVolumeClaims. |
 | persistence.size | string | `"10Gi"` | Specify the size of PersistentVolumeClaims. |
 | persistence.storageClassName | string | `nil` | Specify the storageClassName for PersistentVolumeClaims. |
+| pipelineConfig | object | `{}` | This section supports using Helm templates to populate dynamic values. See Observability Pipelines' [configuration documentation](https://docs.datadoghq.com/observability_pipelines/reference/) for all options. |
 | podAnnotations | object | `{}` | Set annotations on Pods. |
 | podDisruptionBudget.enabled | bool | `false` | If **true**, create a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/). |
 | podDisruptionBudget.maxUnavailable | int | `nil` | Specify the number of Pods that can be unavailable after an eviction. |
