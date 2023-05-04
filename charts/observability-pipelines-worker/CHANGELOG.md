@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.2.0-rc.1
+
+* Nightly image `2023-05-04`
+
 # 1.2.0-rc.0
 
 * Rename `config` to `pipelineConfig` in values
