@@ -2,3 +2,4 @@ charts/*/charts
 helm-docs
 kubeval
 .idea
+**/vendor

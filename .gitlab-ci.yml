@@ -1,0 +1,17 @@
+e2e:
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "main"
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:a58cc31c
+  tags: ["arch:amd64"]
+  before_script:
+    - apt-get update
+    - apt-get install -y jq
+    # Setup AWS Credentials
+#    - mkdir -p ~/.aws
+#    - set +x
+#    - aws ssm get-parameter --region us-east-1 --name ci.datadog-agent.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+#    - set -x
+#    - export AWS_PROFILE=agent-qa-ci
+#    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+  script:
+    - make test-e2e
