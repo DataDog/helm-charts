@@ -1,11 +1,8 @@
 package pulumi_env
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
-	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"os"
 )
@@ -25,13 +22,4 @@ func SetupConfig() runner.ConfigMap {
 	}
 
 	return res
-}
-
-func TearDown() []error {
-	fmt.Fprintf(os.Stderr, "Cleaning up stacks")
-	errs := infra.GetStackManager().Cleanup(context.Background())
-	if errs != nil {
-		return errs
-	}
-	return nil
 }

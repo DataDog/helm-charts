@@ -3,6 +3,7 @@ package pulumi_env
 import (
 	"context"
 	"fmt"
+	"github.com/pulumi/pulumi/sdk/v3/go/auto/optdestroy"
 	"os"
 	"path"
 	"runtime"
@@ -125,6 +126,47 @@ func buildWorkspace(ctx context.Context, profile runner.Profile, stackName strin
 	}
 
 	return auto.NewLocalWorkspace(ctx, auto.Project(project), auto.Program(runFunc), auto.WorkDir(profile.RootWorkspacePath()))
+}
+
+func (sm *StackManager) DeleteStack(ctx context.Context, name string) error {
+	sm.lock.Lock()
+	defer sm.lock.Unlock()
+
+	return sm.deleteStack(ctx, name, sm.stacks[name])
+}
+
+func (sm *StackManager) Cleanup(ctx context.Context) []error {
+	sm.lock.Lock()
+	defer sm.lock.Unlock()
+
+	var errors []error
+
+	for stackID, stack := range sm.stacks {
+		err := sm.deleteStack(ctx, stackID, stack)
+		if err != nil {
+			errors = append(errors, err)
+		}
+	}
+
+	return errors
+}
+
+func (sm *StackManager) deleteStack(ctx context.Context, stackID string, stack *auto.Stack) error {
+	if stack == nil {
+		return fmt.Errorf("unable to find stack, skipping deletion of: %s", stackID)
+	}
+
+	destroyContext, cancel := context.WithTimeout(ctx, stackDestroyTimeout)
+	_, err := stack.Destroy(destroyContext, optdestroy.ProgressStreams(os.Stdout))
+	cancel()
+	if err != nil {
+		return err
+	}
+
+	deleteContext, cancel := context.WithTimeout(ctx, stackDeleteTimeout)
+	defer cancel()
+	err = stack.Workspace().RemoveStack(deleteContext, stack.Name())
+	return err
 }
 
 func buildStackName(namePrefix, stackName string) string {
