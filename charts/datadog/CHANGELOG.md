@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.28.2
+
+* Add `emptyDir` volume allowance to Cluster Agent PodSecurityPolicy.
+
 ## 3.28.1
 
 * Add `memfd_create` syscall to seccomp profile for system-probe.
