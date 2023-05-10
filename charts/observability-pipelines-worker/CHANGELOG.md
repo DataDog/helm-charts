@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.2.0
+
+* Official image `1.2.0`
+
 # 1.2.0-rc.1
 
 * Nightly image `2023-05-04`

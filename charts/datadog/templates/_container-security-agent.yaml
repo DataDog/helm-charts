@@ -34,6 +34,10 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+    {{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+    - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+      value:  {{ .Values.datadog.securityAgent.compliance.xccdf.enabled | quote }}
+    {{- end }}
     - name: HOST_ROOT
       value: /host/root
     {{- end }}

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.29.0
+
+* Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.
+
 ## 3.28.1
 
 * Add `memfd_create` syscall to seccomp profile for system-probe.
