@@ -9,6 +9,9 @@ rules:
 - apiGroups:
   - ""
   resources:
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMapCount }}
+  - configmaps
+{{- end}}
   - services
   - endpoints
   - pods

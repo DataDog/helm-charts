@@ -6,9 +6,12 @@ kubernetes_state_core.yaml.default: |-
   init_config:
   instances:
     - collectors:
-{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
+{{- if  or (.Values.datadog.kubeStateMetricsCore.collectSecretMetrics) (.Values.datadog.kubeStateMetricsCore.collectSecretCount) }}
       - secrets
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMapCount }}
+      - configmaps
+{{- end}}
 {{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
       - verticalpodautoscalers
 {{- end }}
@@ -36,6 +39,12 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretCount }}
+      enable_secret_count: true 
+{{- end}}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMapCount }}
+      enable_configmap_count: true
+{{- end}}
       labels_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
       annotations_as_tags:
