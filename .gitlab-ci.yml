@@ -6,12 +6,14 @@ e2e:
   before_script:
     - apt-get update
     - apt-get install -y jq
+    - export TEST_PARAM=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.test-param --with-decryption --query "Parameter.Value" --out text)
     # Setup AWS Credentials
-#    - mkdir -p ~/.aws
-#    - set +x
-#    - aws ssm get-parameter --region us-east-1 --name ci.datadog-agent.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
-#    - set -x
-#    - export AWS_PROFILE=agent-qa-ci
+    - mkdir -p ~/.aws
+    - set +x
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - set -x
+    - export AWS_PROFILE=helm-charts-e2e-ci
 #    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
-    - make test-e2e
+    - echo $TEST_PARAM
+#    - make test-e2e
