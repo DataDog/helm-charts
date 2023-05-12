@@ -1,4 +1,5 @@
 variables:
+  # Do not modify this - must be the repository name for Kubernetes gitlab runners to run
   KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: helm-charts
 e2e:
 #  rules:
@@ -8,14 +9,14 @@ e2e:
   before_script:
     - apt-get update
     - apt-get install -y jq
-    - export TEST_PARAM=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.test-param --with-decryption --query "Parameter.Value" --out text)
     # Setup AWS Credentials
     - mkdir -p ~/.aws
     - set +x
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
-    - export AWS_PROFILE=helm-charts-e2e-ci
-#    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+    - export AWS_PROFILE=helm-charts-e2e-agent-qa
+    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+    - pulumi logout --all
   script:
-    - echo $TEST_PARAM
+    - echo "Success"
 #    - make test-e2e
