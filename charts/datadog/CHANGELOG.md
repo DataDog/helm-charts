@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.29.1
+
+* Simplify CWS security profiles configuration.
+
 ## 3.29.0
 
 * Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.

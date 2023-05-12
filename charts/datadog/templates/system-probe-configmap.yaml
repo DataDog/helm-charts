@@ -55,19 +55,13 @@ data:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
       remote_configuration:
         enabled: {{ if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.remoteConfiguration.enabled -}} true {{else -}} false {{end}}
-{{- if .Values.datadog.securityAgent.runtime.activityDump.enabled }}
       activity_dump:
-        enabled: true
+        enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.enabled }}
         traced_cgroups_count: {{ $.Values.datadog.securityAgent.runtime.activityDump.tracedCgroupsCount }}
         cgroup_dump_timeout: {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout }}
         cgroup_wait_list_size:  {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
         path_merge:
           enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
-{{ else }}
-      activity_dump:
-        enabled: false
-        traced_cgroups_count: 0
-{{ end }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
