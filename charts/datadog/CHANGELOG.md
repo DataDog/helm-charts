@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.0
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
 ## 3.29.0
 
 * Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.
