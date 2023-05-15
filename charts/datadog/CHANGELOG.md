@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.29.1
+
+* Add `customresourcedefinitions` option to enable CRD metrics collection in KSM Core.
+
 ## 3.29.0
 
 * Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.
