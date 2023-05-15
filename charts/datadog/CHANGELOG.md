@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.29.1
+
+* Add `customresourcedefinitions` to collectors `charts/datadog/templates/_kubernetes_state_core_config.yaml`.
+
 ## 3.29.0
 
 * Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.
