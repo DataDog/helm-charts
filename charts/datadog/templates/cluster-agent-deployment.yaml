@@ -66,7 +66,6 @@ spec:
       {{- if .Values.clusterAgent.podAnnotations }}
 {{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
       {{- end }}
-
     spec:
       {{- if .Values.clusterAgent.shareProcessNamespace }}
       shareProcessNamespace: {{ .Values.clusterAgent.shareProcessNamespace }}
@@ -104,7 +103,7 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.resources }}
         resources:
 {{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
-{{- end }}           
+{{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
@@ -116,6 +115,9 @@ spec:
           - name: config
             mountPath: /opt/datadog-agent
       containers:
+        {{- if eq  (include "should-enable-fips" .) "true" }}
+          {{- include "fips-proxy" . | nindent 6 }}
+        {{- end }}
       - name: cluster-agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
         {{- with .Values.clusterAgent.command }}
@@ -287,6 +289,7 @@ spec:
             value: {{ .Values.datadog.prometheusScrape.version | quote }}
           {{- end }}
           {{- end }}
+          {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
         livenessProbe:
@@ -418,5 +421,9 @@ spec:
         {{ template "label.os" . }}: {{ .Values.targetSystem }}
       {{- if .Values.clusterAgent.nodeSelector }}
 {{ toYaml .Values.clusterAgent.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- with .Values.clusterAgent.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
 {{ end }}

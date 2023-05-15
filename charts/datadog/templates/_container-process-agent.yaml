@@ -27,6 +27,7 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
     {{- if .Values.datadog.processAgent.processCollection }}
     - name: DD_PROCESS_AGENT_ENABLED
       value: "true"

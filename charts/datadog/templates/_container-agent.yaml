@@ -57,6 +57,7 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}

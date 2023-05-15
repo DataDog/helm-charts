@@ -1,0 +1,6 @@
+args:
+  - run
+  - --skip-key-validation
+datadog:
+  remoteConfigurationEnabled: true
+  pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
