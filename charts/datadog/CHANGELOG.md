@@ -2,7 +2,7 @@
 
 ## 3.29.1
 
-* Add `customresourcedefinitions` to collectors `charts/datadog/templates/_kubernetes_state_core_config.yaml`.
+* Add `customresourcedefinitions` option to enable CRD metrics collection in KSM Core.
 
 ## 3.29.0
 
