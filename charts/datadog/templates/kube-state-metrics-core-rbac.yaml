@@ -91,7 +91,6 @@ rules:
   verbs:
   - list
   - watch
-{{- if .Values.datadog.kubeStateMetricsCore.collectCrdMetrics }}
 - apiGroups:
     - apiextensions.k8s.io
   resources:
@@ -99,7 +98,6 @@ rules:
   verbs:
     - list
     - watch
-{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
