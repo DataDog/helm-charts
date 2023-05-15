@@ -1,4 +1,5 @@
 charts/*/charts
+*.tgz
 helm-docs
 kubeval
 .idea
