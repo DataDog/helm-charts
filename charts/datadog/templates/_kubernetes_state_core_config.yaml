@@ -12,6 +12,9 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
       - verticalpodautoscalers
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectCrdMetrics }}
+      - customresourcedefinitions
+{{- end }}
       - nodes
       - pods
       - services
