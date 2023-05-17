@@ -39,12 +39,6 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
-{{- if .Values.datadog.kubeStateMetricsCore.collectSecretCount }}
-      enable_secret_count: true 
-{{- end}}
-{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMapCount }}
-      enable_configmap_count: true
-{{- end}}
       labels_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
       annotations_as_tags:
