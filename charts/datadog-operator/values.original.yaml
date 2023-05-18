@@ -1,0 +1,143 @@
+# Default values for datadog-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of Datadog Operator
+replicaCount: 1
+
+# apiKey -- Your Datadog API key
+apiKey:  # <DATADOG_API_KEY>
+
+# apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+
+## If set, this parameter takes precedence over "apiKey".
+apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+
+# appKey -- Your Datadog APP key
+appKey:  # <DATADOG_APP_KEY>
+
+# site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
+
+## Set to 'datadoghq.com' to send data to the US1 site (default).
+## Set to 'datadoghq.eu' to send data to the EU site.
+## Set to 'us3.datadoghq.com' to send data to the US3 site.
+## Set to 'us5.datadoghq.com' to send data to the US5 site.
+## Set to 'ddog-gov.com' to send data to the US1-FED site.
+site:  # datadoghq.com
+
+# dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
+
+## Overrides the site setting defined in "site".
+dd_url:  # <DATADOG_API_ENDPOINT>
+
+# env -- Define any environment variables to be passed to the operator.
+env: []
+
+# appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+
+## If set, this parameter takes precedence over "appKey".
+appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+
+image:
+  # image.repository -- Repository to use for Datadog Operator image
+  repository: gcr.io/datadoghq/operator
+  # image.tag -- Define the Datadog Operator version to use
+  tag: 1.0.0
+  # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
+  pullPolicy: IfNotPresent
+# imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
+imagePullSecrets: []
+# nameOverride -- Override name of app
+nameOverride: ""
+# fullNameOverride -- Override the full qualified app name
+fullnameOverride: ""
+# logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
+logLevel: "info"
+# maximumGoroutines -- Override default gouroutines threshold for the health check failure.
+maximumGoroutines:
+# supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
+supportExtendedDaemonset: "false"
+# metricsPort -- Port used for OpenMetrics endpoint
+metricsPort: 8383
+secretBackend:
+  # secretBackend.command -- Specifies the path to the command that implements the secret backend api
+  command: ""
+  # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
+  arguments: ""
+datadogAgent:
+  # datadogAgent.enabled -- Enables Datadog Agetn controller
+  enabled: true
+datadogMonitor:
+  # datadogMonitor.enabled -- Enables the Datadog Monitor controller
+  enabled: false
+rbac:
+  # rbac.create -- Specifies whether the RBAC resources should be created
+  create: true
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: true
+  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
+  name:
+  # serviceAccount.annotations -- Allows setting additional annotations for service account
+  annotations: {}
+# resources -- Set resources requests/limits for Datadog Operator PODs
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+# nodeSelector -- Allows to schedule Datadog Operator on specific nodes
+nodeSelector: {}
+# tolerations -- Allows to schedule Datadog Operator on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for Datadog Operator PODs
+affinity: {}
+
+# installCRDs -- Set to true to deploy the Datadog's CRDs
+installCRDs: true
+
+datadogCRDs:
+  crds:
+    # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    datadogAgents: true
+    # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    datadogMetrics: true
+    # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+    datadogMonitors: true
+  migration:
+    datadogAgents:
+      conversionWebhook:
+        enabled: false
+        name: datadog-operator-webhook-service
+        namespace: default
+      useCertManager: false
+      version: "v2alpha1"
+
+# podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
+podAnnotations: {}
+# podLabels -- Allows setting additional labels for for Datadog Operator PODs
+podLabels: {}
+
+# collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
+collectOperatorMetrics: true
+
+# watchNamespaces -- Restricts the Operator to watch its managed resources on specific namespaces
+watchNamespaces: []
+# example: watch only two namespaces:
+# watchNamespaces:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespaces:
+# - ""
+
+# containerSecurityContext -- A security context defines privileges and access control settings for a container.
+containerSecurityContext: {}
