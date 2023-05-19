@@ -3,7 +3,7 @@ package e2e
 import (
 	"context"
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
-	"github.com/DataDog/helm-charts/test/e2e/pulumi_env"
+	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
 	"github.com/DataDog/test-infra-definitions/aws/scenarios/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/stretchr/testify/require"
@@ -12,7 +12,7 @@ import (
 
 func TestAgentOnEKS(t *testing.T) {
 	//Create the stack
-	config := pulumi_env.SetupConfig()
+	config := SetupConfig()
 	stackConfig := runner.ConfigMap{
 		"ddinfra:aws/eks/linuxNodeGroup":             auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/linuxARMNodeGroup":          auto.ConfigValue{Value: "false"},
@@ -23,7 +23,7 @@ func TestAgentOnEKS(t *testing.T) {
 	}
 	stackConfig.Merge(config)
 
-	_, _, err := pulumi_env.GetStackManager().GetStack(context.Background(), "helm-charts-eks-cluster", stackConfig, eks.Run, false)
+	_, _, err := infra.GetStackManager().GetStack(context.Background(), "helm-charts-eks-cluster", stackConfig, eks.Run, false)
 
 	require.NoError(t, err)
 }

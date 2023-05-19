@@ -1,4 +1,4 @@
-package pulumi_env
+package e2e
 
 import (
 	"encoding/json"
