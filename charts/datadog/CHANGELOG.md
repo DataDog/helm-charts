@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.29.3
+
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
+
+## 3.29.2
+
+* Default `Agent` and `Cluster-Agent` to `7.44.1` version.
+
 ## 3.29.1
 
 * Add `customresourcedefinitions` option to enable CRD metrics collection in KSM Core.
