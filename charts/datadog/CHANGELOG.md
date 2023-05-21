@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.0
+
+* Add `datadog.dataStreamsMonitoring.enabled` parameter to enable Data Stream Monitoring.
+
 ## 3.29.3
 
 * Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
