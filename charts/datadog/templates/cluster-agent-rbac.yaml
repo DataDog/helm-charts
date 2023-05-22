@@ -75,6 +75,11 @@ rules:
   verbs:
   - get
   - update
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
   - create
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 - apiGroups:
