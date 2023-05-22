@@ -2,7 +2,7 @@
 
 ## 3.30.2
 
-* Add `get` permissions of `leases` to `cluster-agent-rbac`.
+* Add `get`, `create`, `update` permissions of `leases` to `cluster-agent-rbac`.
 
 ## 3.30.1
 
