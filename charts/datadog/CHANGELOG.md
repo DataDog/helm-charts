@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.3
+
+* Remove resourceName field from `create` permission of `leases` in `cluster-agent-rbac`.
+
 ## 3.30.2
 
 * Add `get`, `create`, `update` permissions of `leases` to `cluster-agent-rbac`.
