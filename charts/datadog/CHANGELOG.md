@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.30.1
+## 3.30.2
 
 * Add `get` permissions of `leases` to `cluster-agent-rbac`.
+
+## 3.30.1
+
+* Remove guidance that users must manually convert tag syntax for `labelsAsTags`
 
 ## 3.30.0
 
