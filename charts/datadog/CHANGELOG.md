@@ -18,7 +18,8 @@
 
 ## 3.29.3
 
-* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe.
+* Remove USM private beta comments.
 
 ## 3.29.2
 
