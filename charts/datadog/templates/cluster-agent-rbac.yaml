@@ -60,20 +60,20 @@ rules:
   resourceNames:
   - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
   - datadog-leader-election  # Kept for backward compatibility with agent <7.37.0
-- apiGroups:
-  - "coordination.k8s.io"
-  resources:
-  - leases
-  verbs:
-  - get
-  resourceNames:
-  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
   - datadog-custom-metrics
 {{- end }}
   verbs:
   - get
   - update
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 - apiGroups:
   - ""
