@@ -66,6 +66,16 @@ rules:
   verbs:
   - get
   - update
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
+  - update
+  - create
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
 - apiGroups:
   - ""
