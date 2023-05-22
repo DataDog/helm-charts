@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.1
+
+* Add `get` permissions of `leases` to `cluster-agent-rbac`.
+
 ## 3.30.0
 
 * Add `datadog.dataStreamsMonitoring.enabled` parameter to enable Data Stream Monitoring.
