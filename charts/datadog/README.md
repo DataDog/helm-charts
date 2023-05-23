@@ -501,6 +501,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
 | clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
+| clusterAgent.dnsPolicy | string | `"ClusterFirst"` | Define how DNS requests should be resolved |
 | clusterAgent.enabled | bool | `true` | Set this to false to disable Datadog Cluster Agent |
 | clusterAgent.env | list | `[]` | Set environment variables specific to Cluster Agent |
 | clusterAgent.envDict | object | `{}` | Set environment variables specific to Cluster Agent defined in a dict |

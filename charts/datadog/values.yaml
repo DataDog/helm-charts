@@ -1090,6 +1090,11 @@ clusterAgent:
   #
   useHostNetwork: false
 
+  # clusterAgent.dnsPolicy -- Define how DNS requests should be resolved
+
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  dnsPolicy: ClusterFirst
+
   # clusterAgent.dnsConfig -- Specify dns configuration options for datadog cluster agent containers e.g ndots
 
   ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config

@@ -84,7 +84,7 @@ spec:
       {{- if .Values.clusterAgent.useHostNetwork }}
       hostNetwork: {{ .Values.clusterAgent.useHostNetwork }}
       {{- end }}
-      dnsPolicy: {{ .Values.agents.dnsPolicy }}
+      dnsPolicy: {{ .Values.clusterAgent.dnsPolicy }}
       {{- if .Values.clusterAgent.dnsConfig }}
       dnsConfig:
 {{ toYaml .Values.clusterAgent.dnsConfig | indent 8 }}

@@ -2,7 +2,7 @@
 
 ## 3.30.4
 
-* Makes `dnsPolicy` configurable for agents using `agents.dnsPolicy` variable in `values.yaml`.
+* Makes `dnsPolicy` configurable using `agents.dnsPolicy`/`clusterAgent.dnsPolicy` variable in `values.yaml`.
 
 ## 3.30.3
 
