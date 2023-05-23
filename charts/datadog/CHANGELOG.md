@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.5
+
+* Add `list` and `watch` permissions of `apiservices` resources for the `kubernetes_state_core` check.
+
 ## 3.30.4
 
 * Remove USM private beta comments.
