@@ -1557,6 +1557,11 @@ agents:
   ## metrics and traces are accepted from any host able to connect to this host.
   useHostNetwork: false
 
+  # agents.dnsPolicy -- Define how DNS requests should be resolved
+
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  dnsPolicy: ClusterFirst
+
   # agents.dnsConfig -- specify dns configuration options for datadog cluster agent containers e.g ndots
 
   ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config

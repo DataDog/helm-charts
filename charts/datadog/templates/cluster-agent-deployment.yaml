@@ -83,8 +83,8 @@ spec:
       {{- end }}
       {{- if .Values.clusterAgent.useHostNetwork }}
       hostNetwork: {{ .Values.clusterAgent.useHostNetwork }}
-      dnsPolicy: ClusterFirstWithHostNet
       {{- end }}
+      dnsPolicy: {{ .Values.agents.dnsPolicy }}
       {{- if .Values.clusterAgent.dnsConfig }}
       dnsConfig:
 {{ toYaml .Values.clusterAgent.dnsConfig | indent 8 }}
