@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.4
+
+* Remove USM private beta comments.
+
 ## 3.30.3
 
 * Remove resourceName field from `create` permission of `leases` in `cluster-agent-rbac`.
@@ -18,7 +22,7 @@
 
 ## 3.29.3
 
-* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe.
 
 ## 3.29.2
 
