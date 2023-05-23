@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.30.3](https://img.shields.io/badge/Version-3.30.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.30.4](https://img.shields.io/badge/Version-3.30.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -442,6 +442,7 @@ helm install <RELEASE_NAME> \
 | agents.customAgentConfig | object | `{}` | Specify custom contents for the datadog agent config (datadog.yaml) |
 | agents.daemonsetAnnotations | object | `{}` | Annotations to add to the DaemonSet |
 | agents.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
+| agents.dnsPolicy | string | `"ClusterFirst"` | Define how DNS requests should be resolved |
 | agents.enabled | bool | `true` | You should keep Datadog DaemonSet enabled! |
 | agents.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
 | agents.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
