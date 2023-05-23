@@ -2,8 +2,8 @@ variables:
   # Do not modify this - must be the repository name for Kubernetes gitlab runners to run
   KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: helm-charts
 e2e:
-  #  rules:
-  #    - if: $CI_COMMIT_BRANCH == "main"
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "main"
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:a58cc31c
   tags: ["arch:amd64"]
   before_script:
@@ -15,6 +15,6 @@ e2e:
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-sandbox-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
     - export AWS_PROFILE=helm-charts-e2e-sandbox
-    - pulumi login --local
+    - pulumi login "s3://dd-helm-charts-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
     - make test-e2e
