@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.7
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
 ## 3.30.6
 
 * Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
