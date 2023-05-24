@@ -43,6 +43,8 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+    data_streams_config:
+      enabled: {{ $.Values.datadog.dataStreamsMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
@@ -159,6 +161,10 @@ data:
             "gettimeofday",
             "getuid",
             "getxattr",
+            "inotify_add_watch",
+            "inotify_init",
+            "inotify_init1",
+            "inotify_rm_watch",
             "ioctl",
             "ipc",
             "listen",

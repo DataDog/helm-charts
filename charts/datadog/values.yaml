@@ -156,6 +156,16 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectVpaMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectCrdMetrics -- Enable watching CRD objects and collecting their corresponding metrics kubernetes_state.crd.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
+    collectCrdMetrics: false
+
+    # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+)
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectApiServicesMetrics: false
+
     # datadog.kubeStateMetricsCore.useClusterCheckRunners -- For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers.
 
     ## Configuring this field will create a separate deployment which will run Cluster Checks, including Kubernetes State Metrics Core.
@@ -173,8 +183,6 @@ datadog:
     ##   <resource2>:
     ##     <label3>: <tag3>
     ##
-    ## Warning: the label must match the transformation done by kube-state-metrics,
-    ## for example tags.datadoghq.com/version becomes tags_datadoghq_com_version.
     labelsAsTags: {}
     #  pod:
     #    app: app
@@ -641,11 +649,12 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
-  ## Universal Service Monitoring is currently in private beta.
-
-  ## See https://www.datadoghq.com/blog/universal-service-monitoring-datadog/ for more details and private beta signup.
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
+    enabled: false
+
+  dataStreamsMonitoring:
+    # datadog.dataStreamsMonitoring.enabled -- Enable Data Streams Monitoring.
     enabled: false
 
   ## Enable security agent and provide custom configs
@@ -806,7 +815,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.44.0
+    tag: 7.44.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1200,7 +1209,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.44.0
+    tag: 7.44.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1666,7 +1675,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.44.0
+    tag: 7.44.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
