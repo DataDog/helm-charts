@@ -1934,6 +1934,6 @@ providers:
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the cluster agent (if set) and the datadog agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
   # Preferred way to enable Remote Configuration.
   enabled: false
