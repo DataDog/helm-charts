@@ -2,7 +2,8 @@
 
 ## 3.30.6
 
-* Add a feature flag to gate the collection of `apiservices` metrics in the `kubernetes_state_core` check.
+* Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
+  Note: APIServices metrics collection requires Cluster Agent 7.45.0+.
 
 ## 3.30.5
 

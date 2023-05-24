@@ -194,16 +194,6 @@ rules:
   - list
   - get
   - watch
-{{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
-- apiGroups:
-    - apiregistration.k8s.io
-  resources:
-    - apiservices
-  verbs:
-    - list
-    - get
-    - watch
-{{- end }}
 - apiGroups:
     - apiextensions.k8s.io
   resources:
