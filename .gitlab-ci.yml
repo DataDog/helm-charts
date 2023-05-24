@@ -4,7 +4,7 @@ variables:
 
 e2e:
   rules:
-    - if: $CI_COMMIT_BRANCH
+    - if: true
       changes:
         compare_to: "refs/head/main"
         paths:
