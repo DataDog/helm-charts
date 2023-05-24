@@ -7,6 +7,9 @@
     - |
       Copy-Item -Recurse -Force {{ template "datadog.confPath" . }} C:/Temp
       Copy-Item -Force C:/Temp/install_info/install_info C:/Temp/Datadog/install_info
+      {{- if .Values.agents.useConfigMap }}
+      Copy-Item -Force C:/Temp/datadog_yaml/datadog.yaml C:/Temp/Datadog/datadog.yaml
+      {{- end}}
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
@@ -14,6 +17,11 @@
     - name: installinfo
       mountPath: C:/Temp/install_info
       readOnly: true
+    {{- if .Values.agents.useConfigMap }}
+    - name: datadog-yaml
+      mountPath: C:/Temp/datadog_yaml
+      readOnly: true
+    {{- end}}
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
