@@ -6,9 +6,8 @@ e2e:
   rules:
     - if: true
       changes:
-        compare_to: "refs/head/main"
         paths:
-          - charts/**/*.yaml
+          - charts/**/*
           - test/**/*
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:a58cc31c
   tags: ["arch:amd64"]
