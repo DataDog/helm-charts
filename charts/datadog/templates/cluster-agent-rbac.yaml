@@ -195,14 +195,6 @@ rules:
   - get
   - watch
 - apiGroups:
-    - apiregistration.k8s.io
-  resources:
-    - apiservices
-  verbs:
-    - list
-    - get
-    - watch
-- apiGroups:
     - apiextensions.k8s.io
   resources:
     - customresourcedefinitions
