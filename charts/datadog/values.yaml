@@ -161,6 +161,11 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
     collectCrdMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching API Services objects and collecting their corresponding metrics kubernetes_state.apiservice.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
+    collectApiServicesMetrics: false
+
     # datadog.kubeStateMetricsCore.useClusterCheckRunners -- For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers.
 
     ## Configuring this field will create a separate deployment which will run Cluster Checks, including Kubernetes State Metrics Core.
