@@ -42,11 +42,6 @@ func TestAgentOnEKS(t *testing.T) {
 	stack, stackOutput, err := infra.GetStackManager().GetStack(ctx, "helm-charts-eks-cluster", stackConfig, eks.Run, false)
 	defer stack.Destroy(ctx)
 
-	for _, output := range stackOutput.Outputs {
-		fmt.Println(output)
-		fmt.Println(output.Value.(any))
-	}
-
 	if err != nil && stackOutput.Outputs["kubeconfig"].Value != nil {
 
 		kc := stackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})

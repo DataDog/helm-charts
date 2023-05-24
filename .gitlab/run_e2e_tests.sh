@@ -24,6 +24,8 @@ while getopts ":t:c:p:g:v:" opt; do
   esac
 done
 
+set -x
+
 if ! command -v pulumi &> /dev/null; then
   echo "pulumi CLI not found. Pulumi needs to be installed on the system.
         See https://github.com/DataDog/test-infra-definitions/blob/main/README.md"
@@ -50,7 +52,11 @@ if [[ ! ("${PROFILE}" == "ci" || "${PROFILE}" == "local") ]]; then
   exit
 fi
 
-export CI_SECRET_PREFIX="ci.helm-charts."
+if [[ "${PROFILE}" == "ci" ]]; then
+  export CI_ENV_NAMES="aws/agent-qa"
+fi
+
+echo $CI_ENV_NAMES
 
 if [[ "${PROFILE}" == "local" ]]; then
   msg="Profile is ${PROFILE}, but missing"
@@ -73,7 +79,6 @@ if [[ "${PROFILE}" == "local" ]]; then
           AWS console and set USER environment variable to continue."
     exit
   fi
-  export CI_ENV_NAMES="aws/sandbox"
 fi
 
 declare -A parsed_params

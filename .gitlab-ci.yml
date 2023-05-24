@@ -12,9 +12,11 @@ e2e:
     # Setup AWS Credentials
     - mkdir -p ~/.aws
     - set +x
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-sandbox-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - aws --version
+    - echo $HOST
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
-    - export AWS_PROFILE=helm-charts-e2e-sandbox
-    - pulumi login "s3://dd-helm-charts-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+    - export AWS_PROFILE=agent-qa-ci
+    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
-    - make test-e2e
+    - make test-e2e-ci
