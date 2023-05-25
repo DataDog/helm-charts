@@ -2,7 +2,7 @@
 
 ## 3.30.8
 
-* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+* Update `fips.image.tag` to `0.5.2` version
 
 ## 3.30.7
 
