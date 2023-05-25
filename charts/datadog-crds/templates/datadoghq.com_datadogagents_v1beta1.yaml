@@ -1,4 +1,6 @@
 {{- if and .Values.crds.datadogAgents (semverCompare "<=1.21-0" .Capabilities.KubeVersion.GitVersion ) }}
+
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -5845,13 +5847,8 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
-      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
-      served: true
-      storage: true
-      {{- else }}
       served: true
       storage: false
-      {{- end }}
     - additionalPrinterColumns:
         - JSONPath: .status.agent.status
           name: agent
@@ -6393,6 +6390,10 @@ spec:
                       type: object
                     logLevel:
                       type: string
+                    namespaceLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
                     networkPolicy:
                       properties:
                         create:
@@ -6425,6 +6426,10 @@ spec:
                           x-kubernetes-list-type: atomic
                         flavor:
                           type: string
+                      type: object
+                    nodeLabelsAsTags:
+                      additionalProperties:
+                        type: string
                       type: object
                     podAnnotationsAsTags:
                       additionalProperties:
@@ -8430,13 +8435,8 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
-      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
       served: true
       storage: true
-      {{- else }}
-      served: true
-      storage: false
-      {{- end }}
 status:
   acceptedNames:
     kind: ""

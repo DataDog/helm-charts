@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+* Update CRDs from Datadog Operator v1.0.3.
+
 ## 1.0.0
 
 * Default DatadogAgent stored version is `v2alpha1` to align with the GA of the Datadog Operator.
