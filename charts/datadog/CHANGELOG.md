@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.8
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
 ## 3.30.7
 
 * Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
