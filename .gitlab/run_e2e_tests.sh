@@ -24,8 +24,6 @@ while getopts ":t:c:p:g:v:" opt; do
   esac
 done
 
-set -x
-
 if ! command -v pulumi &> /dev/null; then
   echo "pulumi CLI not found. Pulumi needs to be installed on the system.
         See https://github.com/DataDog/test-infra-definitions/blob/main/README.md"
@@ -55,8 +53,6 @@ fi
 if [[ "${PROFILE}" == "ci" ]]; then
   export CI_ENV_NAMES="aws/agent-qa"
 fi
-
-echo $CI_ENV_NAMES
 
 if [[ "${PROFILE}" == "local" ]]; then
   msg="Profile is ${PROFILE}, but missing"
@@ -100,6 +96,8 @@ config_json=$(jq -n --argjson n "${#parsed_params[@]}" '
 export PULUMI_CONFIGS=$config_json
 export DD_TAGS=$TAGS
 export DD_TEAM="container-ecosystems"
+
+set -x
 
 cmd="gotestsum --format pkgname --packages=${TARGETS} -- ${VERBOSE} -vet=off -timeout 1h -count=1"
 

@@ -25,32 +25,26 @@ var (
 )
 
 func TestAgentOnEKS(t *testing.T) {
-	//Create the stack
+	// Create pulumi EKS stack
 	config := SetupConfig()
 	stackConfig := runner.ConfigMap{
-		"ddinfra:aws/eks/linuxNodeGroup":             auto.ConfigValue{Value: "false"},
-		"ddinfra:aws/eks/linuxARMNodeGroup":          auto.ConfigValue{Value: "false"},
-		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
-		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-		"pulumi:disable-default-providers":           auto.ConfigValue{Value: "[]"},
-		"ddagent:deploy":                             auto.ConfigValue{Value: "true"},
+		"ddinfra:aws/eks/windowsNodeGroup": auto.ConfigValue{Value: "false"},
+		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
 	}
 	stackConfig.Merge(config)
 
-	ctx := context.Background()
+	_, stackOutput, err := infra.GetStackManager().GetStack(context.Background(), "helm-charts-eks-e2e", stackConfig, eks.Run, false)
+	defer teardownSuite()
 
-	stack, stackOutput, err := infra.GetStackManager().GetStack(ctx, "helm-charts-eks-cluster", stackConfig, eks.Run, false)
-	defer stack.Destroy(ctx)
-
-	if err != nil && stackOutput.Outputs["kubeconfig"].Value != nil {
-
+	if stackOutput.Outputs["kubeconfig"].Value != nil {
 		kc := stackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})
+		fmt.Println("KUBECONFIG: ", kc)
 		kubeconfig, err = json.Marshal(kc)
 		clientConfig, err = clientcmd.NewClientConfigFromBytes(kubeconfig)
 		restConfig, err = clientConfig.ClientConfig()
 		clientSet, err = kubernetes.NewForConfig(restConfig)
 
-		namespace := ""
+		namespace := "datadog"
 		pods, err = ListPods(namespace, clientSet)
 
 		for _, pod := range pods.Items {
