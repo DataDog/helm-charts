@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.8
+
+* Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
 ## 3.30.7
 
 * Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
