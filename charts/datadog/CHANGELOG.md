@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.30.8
+## 3.30.9
 
 * Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
+## 3.30.8
+
+* Update `fips.image.tag` to `0.5.2` version
 
 ## 3.30.7
 

@@ -1173,8 +1173,8 @@ fips:
     ## fips.image.name -- Define the FIPS sidecar container image name.
     name: fips-proxy
 
-    # agents.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.0
+    # fips.image.tag -- Define the FIPS sidecar container version to use.
+    tag: 0.5.2
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
