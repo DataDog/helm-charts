@@ -976,6 +976,11 @@ clusterAgent:
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
 
+    apmInstrumentationEnabled:
+      # clusterAgent.admissionController.apmInstrumentationEnabled -- Enable injecting the Datadog APM libraries into all Kubernetes deployments (beta).
+      ## This feature is in beta. It requires Cluster Agent 7.46+.
+      enabled: false
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
