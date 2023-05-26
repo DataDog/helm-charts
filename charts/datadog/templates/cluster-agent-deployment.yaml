@@ -150,6 +150,10 @@ spec:
 {{- end }}
 {{- end }}
         env:
+          - name: DD_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
