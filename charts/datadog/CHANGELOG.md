@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.30.10
+
+* Updated pointerdir mountPath for Windows deployments.
+
 ## 3.30.9
 
 * Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
