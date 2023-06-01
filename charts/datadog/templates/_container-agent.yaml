@@ -225,7 +225,7 @@
     {{- if eq .Values.targetSystem "windows" }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
-      mountPath: C:/var/log
+      mountPath: c:/programdata/datadog/run
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: C:/var/log/pods
