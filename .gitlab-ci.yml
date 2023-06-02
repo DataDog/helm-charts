@@ -1,9 +1,19 @@
 variables:
   # Do not modify this - must be the repository name for Kubernetes gitlab runners to run
   KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: helm-charts
+
+stages:
+  - e2e
+
 e2e:
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == "main"
+  stage: e2e
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        paths:
+          - charts/**/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:a58cc31c
   tags: ["arch:amd64"]
   before_script:

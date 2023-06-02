@@ -174,7 +174,7 @@
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-    {{- if .Values.agents.useConfigMap }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
@@ -225,7 +225,7 @@
     {{- if eq .Values.targetSystem "windows" }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
-      mountPath: C:/var/log
+      mountPath: c:/programdata/datadog/run
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: C:/var/log/pods

@@ -1,8 +1,53 @@
 # Datadog changelog
 
+## 3.30.10
+
+* Updated pointerdir mountPath for Windows deployments.
+
+## 3.30.9
+
+* Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
+## 3.30.8
+
+* Update `fips.image.tag` to `0.5.2` version
+
+## 3.30.7
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
+## 3.30.6
+
+* Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
+  Note: APIServices metrics collection requires Cluster Agent 7.45.0+.
+
+## 3.30.5
+
+* Add `list` and `watch` permissions of `apiservices` resources for the `kubernetes_state_core` check.
+
+## 3.30.4
+
+* Remove USM private beta comments.
+
+## 3.30.3
+
+* Remove resourceName field from `create` permission of `leases` in `cluster-agent-rbac`.
+
+## 3.30.2
+
+* Add `get`, `create`, `update` permissions of `leases` to `cluster-agent-rbac`.
+
+## 3.30.1
+
+* Remove guidance that users must manually convert tag syntax for `labelsAsTags`
+
+## 3.30.0
+
+* Add `datadog.dataStreamsMonitoring.enabled` parameter to enable Data Stream Monitoring.
+
 ## 3.29.3
 
-* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe.
 
 ## 3.29.2
 
