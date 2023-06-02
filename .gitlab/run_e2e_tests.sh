@@ -62,12 +62,12 @@ if [[ "${PROFILE}" == "local" ]]; then
     exit
   fi
   if [[ -z "${E2E_API_KEY}" ]]; then
-       echo "${msg} 'E2E_API_KEY' environment variable. Set environment variable to continue."
-       exit
+     echo "${msg} 'E2E_API_KEY' environment variable. Set environment variable to continue."
+     exit
   fi
   if [[ -z "${E2E_APP_KEY}" ]]; then
-       echo "${msg} 'E2E_APP_KEY' environment variable. Set environment variable to continue."
-       exit
+     echo "${msg} 'E2E_APP_KEY' environment variable. Set environment variable to continue."
+     exit
   fi
   AWS_KEYPAIR_NAME=$USER
   if [[ -z ${AWS_KEYPAIR_NAME} ]]; then
