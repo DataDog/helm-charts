@@ -1,4 +1,21 @@
-all: docs
+.PHONY: all
+all: fmt vet test
 
-docs:
-	./.github/helm-docs.sh
+.PHONY: test
+test: fmt vet unit-test
+
+.PHONY: fmt
+fmt:
+	go fmt -C test ./...
+
+.PHONY: vet
+vet:
+	go vet -C test ./...
+
+.PHONY: unit-test
+unit-test:
+	go test -C test ./... -count=1
+
+.PHONY: update-test-baselines
+update-test-baselines:
+	go test -C test ./... -count=1 -args -updateBaselines=true
