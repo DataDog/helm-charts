@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
 	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
 	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
@@ -13,7 +15,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"testing"
 )
 
 var (
@@ -29,6 +30,8 @@ func TestAgentOnEKS(t *testing.T) {
 	config := SetupConfig()
 	stackConfig := runner.ConfigMap{
 		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
+		"aws:skipCredentialsValidation":    auto.ConfigValue{Value: "true"},
+		"aws:skipMetadataApiCheck":         auto.ConfigValue{Value: "false"},
 	}
 	stackConfig.Merge(config)
 
