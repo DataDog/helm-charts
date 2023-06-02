@@ -19,3 +19,8 @@ unit-test:
 .PHONY: update-test-baselines
 update-test-baselines:
 	go test -C test ./... -count=1 -args -updateBaselines=true
+
+.PHONY: integration-tests
+integration-tests:
+	go test -C test/integ --tags=integration -count=1 -v
+

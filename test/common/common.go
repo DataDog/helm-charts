@@ -3,9 +3,12 @@ package common
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,7 +16,7 @@ type HelmCommand struct {
 	ReleaseName string
 	ChartPath   string
 	ShowOnly    []string          // helm template `-s, --show-only` flag
-	Values      string            // helm template `-f, --values` flag
+	Values      []string          // helm template `-f, --values` flag
 	Overrides   map[string]string // helm template `--set` flag
 }
 
@@ -26,17 +29,57 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 	require.NoError(t, err, "can't resolve absolute path", "path", cmd.ChartPath)
 	require.NoError(t, err)
 
+	kubectlOptions := k8s.NewKubectlOptions("", "", "datadog-agent")
+
 	options := &helm.Options{
-		SetValues: cmd.Overrides,
+		KubectlOptions: kubectlOptions,
+		SetValues:      cmd.Overrides,
+		ValuesFiles:    cmd.Values,
 	}
 
-	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly,
-		"-f", cmd.Values,
-		"-n", "datadog-agent",
-		// "--debug",
-	)
+	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly)
 
 	return output, err
+}
+
+func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmCommand) (cleanupFunc func()) {
+	helmChartPath, err := filepath.Abs(cmd.ChartPath)
+	require.NoError(t, err)
+
+	helmOptions := &helm.Options{
+		KubectlOptions: kubectlOptions,
+		SetValues:      cmd.Overrides,
+		ValuesFiles:    cmd.Values,
+	}
+
+	releaseName := cmd.ReleaseName + "-" + strings.ToLower(random.UniqueId())
+	t.Log("Installing release", releaseName)
+
+	helm.Install(t, helmOptions, helmChartPath, releaseName)
+
+	return func() {
+		t.Log("Deleting release", releaseName)
+		helm.Delete(t, helmOptions, releaseName, true)
+	}
+}
+
+func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKeyEnv, appKeyEnv string) (cleanupFunc func()) {
+	apiKey := os.Getenv(apiKeyEnv)
+	require.NotEmpty(t, apiKey, "API key can't be empty")
+	appKey := os.Getenv(appKeyEnv)
+	require.NotEmpty(t, appKey, "APP key can't be empty")
+
+	// Setup Datadog Agent
+	t.Log("Creating secret")
+	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
+		"--from-literal",
+		"api-key="+apiKey,
+		"--from-literal",
+		"app-key="+appKey)
+	return func() {
+		t.Log("Deleting secret")
+		k8s.RunKubectl(t, kubectlOptions, "delete", "secret", "datadog-secret")
+	}
 }
 
 func LoadFromFile[T any](t *testing.T, filepath string, destObj *T) string {
