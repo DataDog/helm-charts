@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
 	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
-	"github.com/DataDog/test-infra-definitions/aws/scenarios/eks"
+	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
