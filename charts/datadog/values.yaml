@@ -156,6 +156,16 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectVpaMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectCrdMetrics -- Enable watching CRD objects and collecting their corresponding metrics kubernetes_state.crd.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
+    collectCrdMetrics: false
+
+    # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+)
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectApiServicesMetrics: false
+
     # datadog.kubeStateMetricsCore.useClusterCheckRunners -- For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers.
 
     ## Configuring this field will create a separate deployment which will run Cluster Checks, including Kubernetes State Metrics Core.
@@ -173,8 +183,6 @@ datadog:
     ##   <resource2>:
     ##     <label3>: <tag3>
     ##
-    ## Warning: the label must match the transformation done by kube-state-metrics,
-    ## for example tags.datadoghq.com/version becomes tags_datadoghq_com_version.
     labelsAsTags: {}
     #  pod:
     #    app: app
@@ -641,11 +649,12 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
-  ## Universal Service Monitoring is currently in private beta.
-
-  ## See https://www.datadoghq.com/blog/universal-service-monitoring-datadog/ for more details and private beta signup.
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
+    enabled: false
+
+  dataStreamsMonitoring:
+    # datadog.dataStreamsMonitoring.enabled -- Enable Data Streams Monitoring.
     enabled: false
 
   ## Enable security agent and provide custom configs
@@ -659,6 +668,10 @@ datadog:
 
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
+
+      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      xccdf:
+        enabled: false
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -802,7 +815,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.43.1
+    tag: 7.44.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -837,6 +850,9 @@ clusterAgent:
       securityContext:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
+    initContainers:
+      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      securityContext: {}
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -1021,6 +1037,12 @@ clusterAgent:
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
+  # clusterAgent.topologySpreadConstraints -- Allow the Cluster Agent Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
+
   # clusterAgent.healthPort -- Port number to use in the Cluster Agent for the healthz endpoint
   healthPort: 5556
 
@@ -1121,6 +1143,48 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
+# fips is used to enable the fips sidecar container for GOVCLOUD environments.
+fips:
+
+  enabled: false
+
+  # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
+  # customConfig: false
+
+  # fips.port specifies which port is used by the containers to communicate to the FIPS sidecar.
+  port: 9803
+
+  # fips.portRange specifies the number of ports used, defaults to 13  https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  portRange: 15
+
+  use_https: false
+  # fips.resources -- Resource requests and limits for the FIPS sidecar container.
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 20m
+    #   memory: 64Mi
+
+  local_address: "127.0.0.1"
+  ## Define the Datadog image to work with
+  image:
+    ## fips.image.name -- Define the FIPS sidecar container image name.
+    name: fips-proxy
+
+    # fips.image.tag -- Define the FIPS sidecar container version to use.
+    tag: 0.5.2
+
+    # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
+    pullPolicy: IfNotPresent
+
+    # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
+    digest: ""
+
+    # agents.image.repository -- Override default registry + image.name for Agent
+    repository:
+
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
 
@@ -1145,7 +1209,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.43.1
+    tag: 7.44.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1453,10 +1517,10 @@ agents:
       resources: {}
       #  requests:
       #    cpu: 100m
-      #    memory: 200Mi
+      #    memory: 300Mi
       #  limits:
       #    cpu: 100m
-      #    memory: 200Mi
+      #    memory: 300Mi
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -1470,6 +1534,8 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 200Mi
+      # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
+      securityContext: {}
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []
@@ -1609,7 +1675,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.43.1
+    tag: 7.44.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1676,6 +1742,12 @@ clusterChecksRunner:
   ## By default, ClusterChecks Deployment Pods are preferred to run on different Nodes.
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
+
+  # clusterChecksRunner.topologySpreadConstraints -- Allow the ClusterChecks Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
 
   # clusterChecksRunner.strategy -- Allow the ClusterChecks deployment to perform a rolling update on helm update
 

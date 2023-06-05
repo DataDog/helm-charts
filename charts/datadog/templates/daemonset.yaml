@@ -112,6 +112,9 @@ spec:
         {{- if eq (include "should-enable-trace-agent" .) "true" }}
           {{- include "container-trace-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq  (include "should-enable-fips" .) "true" }}
+          {{- include "fips-proxy" . | nindent 6 }}
+        {{- end }}
         {{- if .Values.datadog.processAgent.enabled }}
           {{- include "container-process-agent" . | nindent 6 }}
         {{- end }}

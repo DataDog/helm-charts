@@ -258,6 +258,16 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- if .Values.agents.containers.initContainers.securityContext }}
+
+######################################################################################################
+####   WARNING: Overwriting security contexts at container level not supported on GKE autopilot   ####
+######################################################################################################
+
+{{- fail "On GKE autopilot environments, overwriting default security context is not supported, these options will be ignored" }}
+
+{{- end }}
+
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 
 #################################################################################################

@@ -10,3 +10,5 @@ securityAgent:
     enabled: true
     # Set an empty configMap so that we don't try to mount one
     configMap:
+    xccdf:
+      enabled: true

@@ -1,0 +1,32 @@
+{{- define "fips-proxy" -}}
+- name: fips-proxy
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.fips.image) }}"
+  imagePullPolicy: {{ .Values.fips.image.pullPolicy }}
+  ports:
+  {{- $portMax := add (.Values.fips.port | int) (.Values.fips.portRange | int) -}}
+  {{- $portRange :=  untilStep (.Values.fips.port | int) ($portMax | int) 1 }}
+  {{- range $index, $port := $portRange }}
+    - name: port-{{ $index }}
+      containerPort: {{ $port }}
+      protocol: TCP
+  {{- end }}
+  env:
+  - name: DD_FIPS_LOCAL_ADDRESS
+    value: {{ .Values.fips.local_address | quote }}
+  resources:
+{{ toYaml .Values.fips.resources | indent 4 }}
+    # TODO Add config to monitor journald
+{{- end -}}
+
+{{- define "fips-envvar" -}}
+{{- if eq  (include "should-enable-fips" .) "true" }}
+- name: DD_FIPS_ENABLED
+  value: {{ .Values.fips.enabled | quote }}
+- name: DD_FIPS_PORT_RANGE_START
+  value: {{ .Values.fips.port | quote }}
+- name: DD_FIPS_HTTPS
+  value: {{ .Values.fips.use_https | quote }}
+- name: DD_FIPS_LOCAL_ADDRESS
+  value: {{ .Values.fips.local_address | quote }}
+{{- end }}
+{{- end -}}

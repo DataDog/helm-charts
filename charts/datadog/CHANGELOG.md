@@ -1,5 +1,93 @@
 # Datadog changelog
 
+## 3.30.10
+
+* Updated pointerdir mountPath for Windows deployments.
+
+## 3.30.9
+
+* Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
+## 3.30.8
+
+* Update `fips.image.tag` to `0.5.2` version
+
+## 3.30.7
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
+## 3.30.6
+
+* Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
+  Note: APIServices metrics collection requires Cluster Agent 7.45.0+.
+
+## 3.30.5
+
+* Add `list` and `watch` permissions of `apiservices` resources for the `kubernetes_state_core` check.
+
+## 3.30.4
+
+* Remove USM private beta comments.
+
+## 3.30.3
+
+* Remove resourceName field from `create` permission of `leases` in `cluster-agent-rbac`.
+
+## 3.30.2
+
+* Add `get`, `create`, `update` permissions of `leases` to `cluster-agent-rbac`.
+
+## 3.30.1
+
+* Remove guidance that users must manually convert tag syntax for `labelsAsTags`
+
+## 3.30.0
+
+* Add `datadog.dataStreamsMonitoring.enabled` parameter to enable Data Stream Monitoring.
+
+## 3.29.3
+
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe.
+
+## 3.29.2
+
+* Default `Agent` and `Cluster-Agent` to `7.44.1` version.
+
+## 3.29.1
+
+* Add `customresourcedefinitions` option to enable CRD metrics collection in KSM Core.
+
+## 3.29.0
+
+* Add `datadog.securityAgent.compliance.xccdf.enabled` parameter to enable XCCDF feature in CSPM.
+
+## 3.28.1
+
+* Add `memfd_create` syscall to seccomp profile for system-probe.
+
+## 3.28.0
+
+* Adding support to use a FIPS compliant side car container in the Datadog Cluster Agent, the Datadog Agent, and the Datadog Cluster Check Runners pods.
+
+## 3.27.0
+
+* Default `Agent` and `Cluster-Agent` to `7.44.0` version.
+
+## 3.26.2
+
+* Adds statx syscall to seccomp for system-probe
+
+## 3.26.1
+
+* Add support for `topologySpreadConstraints` in pod templates
+
+## 3.26.0
+
+* Default `Agent` and `Cluster-Agent` to `7.43.2` version.
+
+## 3.25.5
+
+* Adds securityContext and resource annotations for initContainers in cluster agent
 
 ## 3.25.4
 

@@ -83,7 +83,7 @@ rules:
   verbs:
   - list
   - watch
-{{- end }}    
+{{- end }}
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -98,6 +98,15 @@ rules:
   verbs:
     - list
     - watch
+{{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
+- apiGroups:
+    - apiregistration.k8s.io
+  resources:
+    - apiservices
+  verbs:
+    - list
+    - watch
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

@@ -19,11 +19,15 @@ datadog:
   # datadog.apiKeyExistingSecret -- Specify a preexisting Secret that has your API key instead of creating a new one.
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
-  # datadog.configkey -- Specify your Datadog Configuration key.
+  # datadog.configKey -- Specify your Datadog Configuration key.
+  # DEPRECATED. Use `datadog.pipelineId` instead.
   configKey:  # <DD_OP_CONFIG_KEY>
   # datadog.configKeyExistingSecret -- Specify a preexisting Secret that has your configuration key instead of
   # creating a new one. The value must be stored under the `config-key`.
+  # DEPRECATED. Use `datadog.pipelineId` instead.
   configKeyExistingSecret: ""
+  # datadog.pipelineId -- Specify your Datadog Observability Pipelines pipeline ID
+  pipelineId:  # <DD_OP_PIPELINE_ID>
   ## Set to 'datadoghq.com' to send data to the US1 site.
   ## Set to 'datadoghq.eu' to send data to the EU site.
   ## Set to 'us3.datadoghq.com' to send data to the US3 site.
@@ -31,12 +35,16 @@ datadog:
   ## Set to 'ddog-gov.com' to send data to the US1-FED site.
   # datadog.site -- The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to.
   site: datadoghq.com
+  # datadog.dataDir -- The data directory for OPW to store runtime data in.
+  dataDir: "/var/lib/observability-pipelines-worker"
+  # datadog.remoteConfigurationEnabled -- Whether to allow remote configuration of the worker from Datadog.
+  remoteConfigurationEnabled: false
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 1.1.1
+  tag: 1.2.0
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -121,7 +129,6 @@ command: []
 # args -- Override default image arguments.
 args:
   - run
-  - "/etc/opw/config.yaml"
 
 # env -- Define environment variables.
 env: []
@@ -247,10 +254,9 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# config -- This section supports using Helm templates to populate dynamic values. See Observability Pipelines'
+# pipelineConfig -- This section supports using Helm templates to populate dynamic values. See Observability Pipelines'
 # [configuration documentation](https://docs.datadoghq.com/observability_pipelines/reference/) for all options.
-config: {}
-#  data_dir: "/var/lib/observability-pipelines-worker"
+pipelineConfig: {}
 #  sources:
 #    datadog_agents:
 #      type: datadog_agent

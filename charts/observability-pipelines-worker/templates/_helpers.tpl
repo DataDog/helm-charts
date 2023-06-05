@@ -114,10 +114,10 @@ attempt to generate them can be side-stepped by users.
 */}}
 
 {{/*
-Generate an array of Service.Ports based on `.Values.config`.
+Generate an array of Service.Ports based on `.Values.pipelineConfig`.
 */}}
 {{- define "opw.ports" -}}
-  {{- range $componentKind, $components := .Values.config }}
+  {{- range $componentKind, $components := .Values.pipelineConfig }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
@@ -134,7 +134,7 @@ Generate an array of Service.Ports based on `.Values.config`.
 {{- end }}
 
 {{/*
-Iterate over the components defined in `.Values.config`.
+Iterate over the components defined in `.Values.pipelineConfig`.
 */}}
 {{- define "_helper.componentIter" -}}
 {{- $components := index . 0 }}
@@ -164,10 +164,10 @@ Generate a single Service.Port based on a component configuration.
 {{- end }}
 
 {{/*
-Generate an array of Container.Ports based on `.Values.config`.
+Generate an array of Container.Ports based on `.Values.pipelineConfig`.
 */}}
 {{- define "opw.containerPorts" -}}
-  {{- range $componentKind, $components := .Values.config }}
+  {{- range $componentKind, $components := .Values.pipelineConfig }}
     {{- if eq $componentKind "sources" }}
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}

@@ -26,6 +26,7 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
@@ -33,6 +34,10 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+    {{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+    - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+      value:  {{ .Values.datadog.securityAgent.compliance.xccdf.enabled | quote }}
+    {{- end }}
     - name: HOST_ROOT
       value: /host/root
     {{- end }}
@@ -73,7 +78,7 @@
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-    {{- if .Values.agents.useConfigMap }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
