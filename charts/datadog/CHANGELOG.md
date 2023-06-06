@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.31.0
+
+* Default `Agent` and `Cluster-Agent` to `7.45.0` version.
+
 ## 3.30.10
 
 * Updated pointerdir mountPath for Windows deployments.
