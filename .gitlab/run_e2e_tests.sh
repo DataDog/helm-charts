@@ -99,6 +99,17 @@ export DD_TEAM="container-ecosystems"
 
 set -x
 
+echo "Hostname: "
+hostname
+echo "Hostname IP: "
+hostname -I
+
+echo "Checking aws-cli version..."
+aws --version
+
+echo "Checking aws sts-get-caller-identity"
+aws sts get-caller-identity
+
 cmd="gotestsum --format pkgname --packages=${TARGETS} -- ${VERBOSE} -vet=off -timeout 1h -count=1"
 
 $cmd

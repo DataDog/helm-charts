@@ -29,6 +29,7 @@ func TestAgentOnEKS(t *testing.T) {
 	// Create pulumi EKS stack
 	config := SetupConfig()
 	stackConfig := runner.ConfigMap{
+		// "ddinfra:aws/eks/windowsNodeGroup": auto.ConfigValue{Value: "false"},
 		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
 		"aws:skipCredentialsValidation":    auto.ConfigValue{Value: "true"},
 		"aws:skipMetadataApiCheck":         auto.ConfigValue{Value: "false"},
@@ -36,7 +37,7 @@ func TestAgentOnEKS(t *testing.T) {
 	stackConfig.Merge(config)
 
 	_, stackOutput, err := infra.GetStackManager().GetStack(context.Background(), "eks-e2e", stackConfig, eks.Run, false)
-	defer teardownSuite()
+	defer debugCI()
 
 	if stackOutput.Outputs["kubeconfig"].Value != nil {
 		kc := stackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})
