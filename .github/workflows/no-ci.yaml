@@ -1,0 +1,13 @@
+name: No lint and test needed
+on:
+  pull_request:
+    paths-ignore:
+      - 'charts/**'
+      - 'test/**'
+jobs:
+  pr-validated:
+    name: pr-validated
+    runs-on: ubuntu-latest
+    steps:
+      - name: validate
+        run: echo "PR OK"

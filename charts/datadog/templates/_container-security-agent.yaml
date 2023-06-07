@@ -78,7 +78,7 @@
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-    {{- if .Values.agents.useConfigMap }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml

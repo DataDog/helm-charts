@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 3.30.7
+## 3.32.0
 
 * Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
+
+## 3.31.0
+
+* Default `Agent` and `Cluster-Agent` to `7.45.0` version.
+
+## 3.30.10
+
+* Updated pointerdir mountPath for Windows deployments.
+
+## 3.30.9
+
+* Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
+## 3.30.8
+
+* Update `fips.image.tag` to `0.5.2` version
+
+## 3.30.7
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
 
 ## 3.30.6
 
