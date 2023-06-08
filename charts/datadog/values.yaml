@@ -388,6 +388,7 @@ datadog:
 
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
+    # Consider using remoteConfiguration.enabled instead
     enabled: false
 
   ## Enable logs agent and provide custom configs
@@ -971,7 +972,7 @@ clusterAgent:
     failurePolicy: Ignore
 
     remoteInstrumentation:
-      # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config (beta).
+      # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
@@ -1935,3 +1936,9 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+remoteConfiguration:
+  # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
+  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Preferred way to enable Remote Configuration.
+  enabled: false

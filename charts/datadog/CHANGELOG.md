@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.0
+
+* Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
+
 ## 3.31.0
 
 * Default `Agent` and `Cluster-Agent` to `7.45.0` version.

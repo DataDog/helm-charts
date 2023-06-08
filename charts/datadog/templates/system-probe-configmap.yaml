@@ -56,7 +56,7 @@ data:
       network:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
       remote_configuration:
-        enabled: {{ if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.remoteConfiguration.enabled -}} true {{else -}} false {{end}}
+        enabled: {{ if and .Values.datadog.securityAgent.runtime.enabled (eq (include "datadog-remoteConfiguration-enabled" .) "true") -}} true {{else -}} false {{end}}
 {{- if .Values.datadog.securityAgent.runtime.activityDump.enabled }}
       activity_dump:
         enabled: true
