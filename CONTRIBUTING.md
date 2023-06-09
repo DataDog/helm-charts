@@ -28,11 +28,26 @@ Tests have been validated using:
 They may work with older versions, though.
 
 ### Running the Tests
-Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root using following command:
+Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root:
+
+#### Unit Tests
 
 ```shell
  make test
  ```
+
+#### End-to-End Tests
+[Pulumi](https://www.pulumi.com/) is used to deploy End-to-End infrastructures, defined as "stacks", using the [`test-infra-definitions`](https://github.com/DataDog/test-infra-definitions) and [`datadog-agent`](https://github.com/DataDog/datadog-agent/tree/main/test/new-e2e) E2E frameworks.
+
+**Prerequisites**
+Internal Datadog users may run E2E locally with the following prerequisites:
+
+* Access to the AWS `agent-sandbox` account 
+* [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide) steps 1-4
+
+```shell
+ make test-e2e
+```
  
 ## How to update a README file
 
