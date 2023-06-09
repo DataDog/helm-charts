@@ -33,7 +33,7 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 	stackConfig.Merge(config)
 
 	_, stackOutput, err := infra.GetStackManager().GetStack(context.Background(), "eks-e2e", stackConfig, eks.Run, false)
-	defer common.TeardownSuite(PreserveStacks)
+	defer common.TeardownSuite(common.PreserveStacks)
 
 	if stackOutput.Outputs["kubeconfig"].Value != nil {
 		kc := stackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})

@@ -45,8 +45,22 @@ Internal Datadog users may run E2E locally with the following prerequisites:
 * Access to the AWS `agent-sandbox` account 
 * [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide) steps 1-4
 
+To run E2E tests, run `make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructures, and performs stack cleanup upon test completion.
+
 ```shell
  make test-e2e
+```
+
+To keep an E2E Pulumi stack running upon test completion, run `make e2e-test-preserve-stacks`. This is useful for developing tests on Pulumi infrastructures that have a long startup time (e.g. AWS EKS).
+
+```shell
+make e2e-test-preserve-stacks
+```
+
+To clean up existing stacks, run:
+
+```shell
+make e2e-test-cleanup-stacks
 ```
  
 ## How to update a README file

@@ -1,13 +1,10 @@
-package datadog_operator
+package common
 
 import (
 	"flag"
 	"os"
 	"testing"
 )
-
-var UpdateBaselines bool
-var PreserveStacks bool
 
 func TestMain(m *testing.M) {
 	flag.BoolVar(&UpdateBaselines, "updateBaselines", false, "When set to true overwrites existing baselines with the rendered ones")

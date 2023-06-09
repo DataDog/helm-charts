@@ -1,16 +1,19 @@
-# default variables
+# Default variables
 SHELL = /usr/bin/env bash -o pipefail
 GOTESTSUM_FORMAT?=standard-verbose
+
+# E2E environment variables
+export E2E_CONFIG_PARAMS?=
 
 ## Local profile
 export AWS_KEYPAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
+e2e-local-aws-vault-sso=aws-vault exec sso-agent-sandbox-account-admin
 
 ## CI profile
 E2E_PROFILE?=local
-E2E_CONFIG_PARAMS?=
 CI_ENV_NAMES?=aws/agent-qa
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
@@ -20,6 +23,14 @@ override E2E_PROFILE=ci
 endif
 ifdef ${CI_PROJECT_ID}
 override E2E_PROFILE=ci
+endif
+
+ifeq ($(E2E_PROFILE), ci)
+export E2E_PROFILE=$(E2E_PROFILE)
+export E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS)
+export CI_ENV_NAMES=$(CI_ENV_NAMES)
+export DD_TEAM=$(DD_TEAM)
+export DD_TAGS=$(DD_TAGS)
 endif
 
 .PHONY: all
@@ -50,22 +61,14 @@ test-e2e: e2e-test
 
 .PHONY: e2e-test
 e2e-test:
-ifeq ($(E2E_PROFILE), ci)
-	E2E_PROFILE=$(E2E_PROFILE)
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS)
-	CI_ENV_NAMES=$(CI_ENV_NAMES)
-	DD_TEAM=$(DD_TEAM)
-	DD_TAGS=$(DD_TAGS)
+ifeq ($(E2E_PROFILE), local)
+	$(e2e-local-aws-vault-sso) -- gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
 endif
-	GOTESTSUM_FORMAT=$(GOTESTSUM_FORMAT) gotestsum --packages=./test/... --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
+	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
 
 .PHONY: e2e-test-preserve-stacks
 e2e-test-preserve-stacks:
-ifeq ($(E2E_PROFILE), ci)
-	E2E_PROFILE=$(E2E_PROFILE)
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS)
-	CI_ENV_NAMES=$(CI_ENV_NAMES)
-	DD_TEAM=$(DD_TEAM)
-	DD_TAGS=$(DD_TAGS)
-endif
-	GOTESTSUM_FORMAT=$(GOTESTSUM_FORMAT) gotestsum --packages=./test/... --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+	$(e2e-local-aws-vault-sso) -- gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+
+.PHONY: e2e-test-cleanup-stacks
+e2e-test-cleanup-stacks: e2e-test

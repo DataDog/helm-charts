@@ -86,9 +86,9 @@ func Test_baseline_manifests(t *testing.T) {
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
-			assert.Nil(t, err, "cound't render template")
-			t.Log("update baselines", UpdateBaselines)
-			if UpdateBaselines {
+			assert.Nil(t, err, "couldn't render template")
+			t.Log("update baselines", common.UpdateBaselines)
+			if common.UpdateBaselines {
 				common.WriteToFile(t, tt.baselineManifestPath, manifest)
 			}
 
