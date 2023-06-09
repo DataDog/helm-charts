@@ -1,6 +1,6 @@
 # default variables
 SHELL = /usr/bin/env bash -o pipefail
-GOTESTSUM_FORMAT?=pkgname-and-test-fails
+GOTESTSUM_FORMAT?=standard-verbose
 
 ## Local profile
 export AWS_KEYPAIR_NAME?=${USER}
