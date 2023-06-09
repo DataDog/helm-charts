@@ -52,10 +52,10 @@ github.com/Azure/go-autorest/logger v0.2.1/go.mod h1:T9E3cAhj2VqvPOtCYAvby9aBXkZ
 github.com/Azure/go-autorest/tracing v0.6.0/go.mod h1:+vhtPC754Xsa23ID7GlGsrdKBpUA79WCAKPPZVC2DeU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230602150707-3723c72a732f h1:rBi1K1bqorQEavK3qXCdueHmMcDcY2AjGO9eOaEXbH8=
-github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230602150707-3723c72a732f/go.mod h1:rIcoTnks+9OY33f6JRN2RpEOPxKWC2Y0BN8kz7ivIVs=
-github.com/DataDog/test-infra-definitions v0.0.0-20230602124215-6ca68fd1b65f h1:e4P/25pHzbTULUdoR19dFhVxgVq7plX0Cgd2yDzXPeY=
-github.com/DataDog/test-infra-definitions v0.0.0-20230602124215-6ca68fd1b65f/go.mod h1:+/QxkRq9E7YyS96fCpO7oQfEPBMeUi6eQHvqIFy2DzE=
+github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230609130303-334192ceac66 h1:z0g8D4twx7UtDki02/jApwAc5KjUOYDN4zjXN8/N1x0=
+github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230609130303-334192ceac66/go.mod h1:7HldHLnxZsLZpglKqm7YcG4aWTWlK1MLx7bZOpi/fIs=
+github.com/DataDog/test-infra-definitions v0.0.0-20230608221144-5cf9c2aae32c h1:B7fc99iqagYltiUh9dcF3Kb2MsgD/idH+0YUMEPhhkw=
+github.com/DataDog/test-infra-definitions v0.0.0-20230608221144-5cf9c2aae32c/go.mod h1:VlLmT/PmwpWNV6o0tKFzWuPtHuN9YBb73WjS5SjhFzY=
 github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
@@ -261,8 +261,6 @@ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg78
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gofrs/flock v0.7.1/go.mod h1:F1TvTiK9OcQqauNUHlbJvyl9Qa1QvF/gOUDKA14jxHU=
 github.com/gofrs/uuid v3.3.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
-github.com/gofrs/uuid v4.4.0+incompatible h1:3qXRTX8/NbyulANqlc0lchS1gqAVxRgsuW1YrTJupqA=
-github.com/gofrs/uuid v4.4.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/gogo/protobuf v1.2.1/go.mod h1:hp+jE20tsWTFYpLwKvXlhS1hjn+gTNwPg2I6zVXpSg4=
 github.com/gogo/protobuf v1.3.1/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
@@ -586,8 +584,8 @@ github.com/pulumi/pulumi-random/sdk/v4 v4.13.2/go.mod h1:cFlJw0eQnqN+62QpITEF9M0
 github.com/pulumi/pulumi/sdk/v3 v3.16.0/go.mod h1:252ou/zAU1g6E8iTwe2Y9ht7pb5BDl2fJlOuAgZCHiA=
 github.com/pulumi/pulumi/sdk/v3 v3.25.0/go.mod h1:VsxW+TGv2VBLe/MeqsAr9r0zKzK/gbAhFT9QxYr24cY=
 github.com/pulumi/pulumi/sdk/v3 v3.36.0/go.mod h1:e1xuPnh9aKzCesrFf96DEzcybLdRWRMhKeKVBmb2lm0=
-github.com/pulumi/pulumi/sdk/v3 v3.68.0 h1:JWn3DGJhzoWL8bNbUdyLSSPeKS2F9mv14/EL9QeVT3w=
-github.com/pulumi/pulumi/sdk/v3 v3.68.0/go.mod h1:A/WHc5MlxU8GpX/sRmfQ9G0/Bxxl4GNdSP7TQmy4yIw=
+github.com/pulumi/pulumi/sdk/v3 v3.70.0 h1:1asfj2CFoRK96IGI4DPyWUWZw7GZ9hTQLCL2EAC2/Sk=
+github.com/pulumi/pulumi/sdk/v3 v3.70.0/go.mod h1:BUUBfQZsH0FPuznRfFHkR+b96VlXELnn+DgidFj4XSQ=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.4 h1:8TfxU8dW6PdqD27gjM8MVNuicgxIjxpm4K7x4jp8sis=
 github.com/rivo/uniseg v0.4.4/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=

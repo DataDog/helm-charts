@@ -1,13 +1,13 @@
-module github.com/DataDog/helm-chart/test
+module github.com/DataDog/helm-charts/test
 
 go 1.20
 
 require (
-	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230602150707-3723c72a732f
-	github.com/DataDog/test-infra-definitions v0.0.0-20230602124215-6ca68fd1b65f
+	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230609130303-334192ceac66
+	github.com/DataDog/test-infra-definitions v0.0.0-20230608221144-5cf9c2aae32c
 	github.com/google/go-cmp v0.5.9
 	github.com/gruntwork-io/terratest v0.41.18
-	github.com/pulumi/pulumi/sdk/v3 v3.68.0
+	github.com/pulumi/pulumi/sdk/v3 v3.70.0
 	github.com/stretchr/testify v1.8.3
 	k8s.io/api v0.23.5
 	k8s.io/apiextensions-apiserver v0.23.5
@@ -57,7 +57,6 @@ require (
 	github.com/go-git/go-git/v5 v5.7.0 // indirect
 	github.com/go-logr/logr v1.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
-	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v1.1.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect

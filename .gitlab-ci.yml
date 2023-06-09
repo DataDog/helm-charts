@@ -17,8 +17,6 @@ e2e:
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:a58cc31c
   tags: ["arch:amd64"]
   before_script:
-    - apt-get update
-    - apt-get install -y jq
     # Update awscli v2
     - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     - unzip -q awscliv2.zip
@@ -33,4 +31,4 @@ e2e:
     - export AWS_PROFILE=agent-qa-ci
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
-    - make test-e2e-ci
+    - make test-e2e
