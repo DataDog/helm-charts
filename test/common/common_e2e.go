@@ -59,7 +59,7 @@ func SetupConfig() runner.ConfigMap {
 			}
 		}
 	}
-
+	log.Printf("Setting up Pulumi E2E stack with configs: %v", res)
 	return res
 }
 
