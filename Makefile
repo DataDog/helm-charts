@@ -18,19 +18,19 @@ CI_ENV_NAMES?=aws/agent-qa
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
 
-ifdef ${CI_PIPELINE_ID}
+ifndef ${CI_PIPELINE_ID}
 override E2E_PROFILE=ci
 endif
-ifdef ${CI_PROJECT_ID}
+ifndef ${CI_PROJECT_ID}
 override E2E_PROFILE=ci
 endif
 
 ifeq ($(E2E_PROFILE), ci)
-export E2E_PROFILE=$(E2E_PROFILE)
-export E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS)
-export CI_ENV_NAMES=$(CI_ENV_NAMES)
-export DD_TEAM=$(DD_TEAM)
-export DD_TAGS=$(DD_TAGS)
+export E2E_PROFILE
+export E2E_CONFIG_PARAMS
+export CI_ENV_NAMES
+export DD_TEAM
+export DD_TAGS
 endif
 
 .PHONY: all
