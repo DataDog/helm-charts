@@ -3,6 +3,38 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2023-06-12T20:41:37.558316645Z"
+    dependencies:
+    - condition: clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 0.4.7
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    description: Datadog Agent
+    digest: 0635ac6800b7cc2b7ac3fde4089fc3cd43db160bc8f9ab9c86fab765302479d8
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-3.32.2/datadog-3.32.2.tgz
+    version: 3.32.2
+  - apiVersion: v1
+    appVersion: "7"
     created: "2023-06-12T15:21:55.035239719Z"
     dependencies:
     - condition: clusterAgent.metricsProvider.useDatadogMetrics
@@ -14369,6 +14401,31 @@ entries:
           url: https://github.com/DataDog/helm-charts
     apiVersion: v2
     appVersion: "1"
+    created: "2023-06-12T20:41:37.718775682Z"
+    description: Observability Pipelines Worker
+    digest: 92d8998aa581c199e23b8c19c3bfc1b246c3adb9139e1b2195dfe9f81b66461d
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - observability
+    - logs
+    - metrics
+    - traces
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: observability-pipelines-worker
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/observability-pipelines-worker-1.2.1/observability-pipelines-worker-1.2.1.tgz
+    version: 1.2.1
+  - annotations:
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/DataDog/helm-charts
+    apiVersion: v2
+    appVersion: "1"
     created: "2023-05-08T16:01:27.189163738Z"
     description: Observability Pipelines Worker
     digest: af7815192a370f22db9a9570287d67ce0ca8595653eea77456af0ccff1607371
@@ -15319,4 +15376,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-12T15:21:55.03653929Z"
+generated: "2023-06-12T20:41:37.720101775Z"
