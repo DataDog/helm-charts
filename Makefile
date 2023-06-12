@@ -10,7 +10,6 @@ export AWS_KEYPAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
-e2e-local-aws-vault-sso=aws-vault exec sso-agent-sandbox-account-admin
 
 ## CI profile
 E2E_PROFILE?=local
@@ -62,13 +61,13 @@ test-e2e: e2e-test
 .PHONY: e2e-test
 e2e-test:
 ifeq ($(E2E_PROFILE), local)
-	$(e2e-local-aws-vault-sso) -- gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
+	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
 endif
 	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
 
 .PHONY: e2e-test-preserve-stacks
 e2e-test-preserve-stacks:
-	$(e2e-local-aws-vault-sso) -- gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
 
 .PHONY: e2e-test-cleanup-stacks
 e2e-test-cleanup-stacks: e2e-test

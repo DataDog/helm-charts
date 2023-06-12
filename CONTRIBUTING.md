@@ -42,25 +42,31 @@ Go sources are located under the `test` directory. The repository uses [Go works
 **Prerequisites**
 Internal Datadog users may run E2E locally with the following prerequisites:
 
-* Access to the AWS `agent-sandbox` account 
-* [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide) steps 1-4
+* Access to the AWS `agent-sandbox` account
+* AWS keypair with your public ssh key has been created in the `agent-sandbox` account
+* Completed steps 1-4 of the `test-infra-definitions` [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide)
+* Environment Variables:
+  * AWS_KEYPAIR_NAME
+  * E2E_API_KEY
+  * E2E_APP_KEY
+  * PULUMI_CONFIG_PASSPHRASE
 
-To run E2E tests, run `make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructures, and performs stack cleanup upon test completion.
+To run E2E tests locally, run `aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructures, and performs stack cleanup upon test completion.
 
 ```shell
- make test-e2e
+ aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
 ```
 
 To keep an E2E Pulumi stack running upon test completion, run `make e2e-test-preserve-stacks`. This is useful for developing tests on Pulumi infrastructures that have a long startup time (e.g. AWS EKS).
 
 ```shell
-make e2e-test-preserve-stacks
+aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
 ```
 
 To clean up existing stacks, run:
 
 ```shell
-make e2e-test-cleanup-stacks
+aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 ```
  
 ## How to update a README file
