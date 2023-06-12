@@ -2,7 +2,8 @@
 
 ## 1.2.1
 
-* Add AP1 Site Comment at `value.yaml`.
+* Official image `1.2.1`
+* Add AP1 Site Comment in `values.yaml`.
 
 ## 1.2.0
 
