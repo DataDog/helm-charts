@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.1
+
+* Add AP1 Site Comment at `value.yaml`.
+
 ## 3.32.0
 
 * Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
