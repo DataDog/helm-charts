@@ -33,6 +33,7 @@ datadog:
   ## Set to 'us3.datadoghq.com' to send data to the US3 site.
   ## Set to 'us5.datadoghq.com' to send data to the US5 site.
   ## Set to 'ddog-gov.com' to send data to the US1-FED site.
+  ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
   # datadog.site -- The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to.
   site: datadoghq.com
   # datadog.dataDir -- The data directory for OPW to store runtime data in.
