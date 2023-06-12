@@ -1,14 +1,18 @@
 # Changelog
 
-# 1.2.0
+## 1.2.1
+
+* Add AP1 Site Comment at `value.yaml`.
+
+## 1.2.0
 
 * Official image `1.2.0`
 
-# 1.2.0-rc.1
+## 1.2.0-rc.1
 
 * Nightly image `2023-05-04`
 
-# 1.2.0-rc.0
+## 1.2.0-rc.0
 
 * Rename `config` to `pipelineConfig` in values
 * Add `datadog.pipelineId` value to replace `datadog.configKey`. `configKey` is still supported for backwards compatability.
