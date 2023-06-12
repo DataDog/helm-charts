@@ -3,6 +3,7 @@
 ## 3.32.1
 
 * Add AP1 Site Comment at `value.yaml`.
+* Fix CVE in the FIPS compliant side car container  
 
 ## 3.32.0
 

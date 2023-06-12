@@ -739,7 +739,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` |  |
-| fips.image.tag | string | `"0.5.2"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"0.5.3"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` |  |
 | fips.port | int | `9803` |  |
 | fips.portRange | int | `15` |  |
