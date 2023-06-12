@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+* Add AP1 Site Comment at `value.yaml`.
+
 ## 1.0.3
 
 * Add `list` and `watch` permissions of `customresourcedefinitions` for the KSM core check to collect CRD resources.
@@ -7,7 +11,6 @@
 ## 1.0.2
 
 * Use `.Release.Name` for reference to conversion webhook certificate in datadog-operator deployment.yaml
-
 
 ## 1.0.1
 
