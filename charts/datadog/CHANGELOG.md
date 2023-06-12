@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.1
+
+* Fix CVE in the FIPS compliant side car container  
+
 ## 3.32.0
 
 * Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
