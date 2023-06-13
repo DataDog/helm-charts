@@ -1,9 +1,12 @@
 # Changelog
 
+## 1.2.2
+
+* Add AP1 Site Comment in `values.yaml`.
+
 ## 1.2.1
 
 * Official image `1.2.1`
-* Add AP1 Site Comment in `values.yaml`.
 
 ## 1.2.0
 
