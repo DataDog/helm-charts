@@ -3,30 +3,28 @@ SHELL = /usr/bin/env bash -o pipefail
 GOTESTSUM_FORMAT?=standard-verbose
 
 # E2E environment variables
-export E2E_CONFIG_PARAMS?=
+E2E_CONFIG_PARAMS?=
+DD_TEAM?=container-ecosystems
+DD_TAGS?=
 
 ## Local profile
+E2E_PROFILE?=local
 export AWS_KEYPAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
 
 ## CI profile
-E2E_PROFILE?=local
 CI_ENV_NAMES?=aws/agent-qa
-DD_TEAM?=container-ecosystems
-DD_TAGS?=
 
-ifndef ${CI_PIPELINE_ID}
+ifdef ${CI_PIPELINE_ID}
 override E2E_PROFILE=ci
 endif
-ifndef ${CI_PROJECT_ID}
+ifdef ${CI_PROJECT_ID}
 override E2E_PROFILE=ci
 endif
 
 ifeq ($(E2E_PROFILE), ci)
-export E2E_PROFILE
-export E2E_CONFIG_PARAMS
 export CI_ENV_NAMES
 export DD_TEAM
 export DD_TAGS
@@ -60,14 +58,11 @@ test-e2e: e2e-test
 
 .PHONY: e2e-test
 e2e-test:
-ifeq ($(E2E_PROFILE), local)
-	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
-endif
-	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
 
 .PHONY: e2e-test-preserve-stacks
 e2e-test-preserve-stacks:
-	gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
 
 .PHONY: e2e-test-cleanup-stacks
 e2e-test-cleanup-stacks: e2e-test

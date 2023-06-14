@@ -35,8 +35,9 @@ func TeardownSuite(preserveStacks bool) {
 		for _, err := range errs {
 			fmt.Fprint(os.Stderr, err.Error())
 		}
+	} else {
+		fmt.Fprintf(os.Stderr, "Preserving E2E stacks. ")
 	}
-	fmt.Fprintf(os.Stderr, "Preserving E2E stacks. ")
 }
 
 func SetupConfig() runner.ConfigMap {
