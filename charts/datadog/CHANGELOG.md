@@ -1,5 +1,22 @@
 # Datadog changelog
 
+## 3.32.2
+
+* Set the `priority` field of the OpenShift’s SCC to `null` in order to not have a higher priority than the OpenShift 4.11+ default `restricted-v2` SCC.
+
+## 3.32.1
+
+* Add AP1 Site Comment at `value.yaml`.
+* Fix CVE in the FIPS compliant side car container  
+
+## 3.32.0
+
+* Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
+
+## 3.31.0
+
+* Default `Agent` and `Cluster-Agent` to `7.45.0` version.
+
 ## 3.30.10
 
 * Updated pointerdir mountPath for Windows deployments.

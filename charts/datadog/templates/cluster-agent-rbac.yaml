@@ -155,7 +155,7 @@ rules:
   - list
   - get
   - watch
-{{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+{{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
   - patch
 {{- end }}
 - apiGroups:
