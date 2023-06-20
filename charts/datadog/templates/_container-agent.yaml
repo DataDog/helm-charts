@@ -73,6 +73,8 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    {{- end }}
+    {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
       value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
     {{- end }}
