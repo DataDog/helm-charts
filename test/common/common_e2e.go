@@ -40,13 +40,22 @@ func TeardownSuite(preserveStacks bool) {
 	}
 }
 
-func SetupConfig() runner.ConfigMap {
+func SetupConfig() (runner.ConfigMap, error) {
 	res := runner.ConfigMap{}
 	configs := parseE2EConfigParams()
 	if os.Getenv("E2E_PROFILE") == "ci" {
 		res.Merge(defaultCIPulumiConfigs)
 	} else {
-		res.Merge(defaultLocalPulumiConfigs)
+		// use "local" E2E profile for local testing
+		// fast-fail if missing required env vars
+		_, e2eApiKeyBool := os.LookupEnv("E2E_API_KEY")
+		_, e2eAppKeyBool := os.LookupEnv("E2E_APP_KEY")
+		_, e2eAwsKeypairNameBool := os.LookupEnv("AWS_KEYPAIR_NAME")
+		if !e2eApiKeyBool || !e2eAppKeyBool || !e2eAwsKeypairNameBool {
+			return nil, fmt.Errorf("missing required environment variables. Must set `E2E_API_KEY`, `E2E_APP_KEY`, and `AWS_KEYPAIR_NAME` for the local E2E profile")
+		} else {
+			res.Merge(defaultLocalPulumiConfigs)
+		}
 	}
 
 	if len(configs) > 0 {
@@ -61,7 +70,7 @@ func SetupConfig() runner.ConfigMap {
 		}
 	}
 	log.Printf("Setting up Pulumi E2E stack with configs: %v", res)
-	return res
+	return res, nil
 }
 
 func parseE2EConfigParams() []string {

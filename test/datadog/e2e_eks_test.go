@@ -22,7 +22,9 @@ const (
 
 func Test_E2E_AgentOnEKS(t *testing.T) {
 	// Create pulumi EKS stack
-	config := common.SetupConfig()
+	config, err := common.SetupConfig()
+	require.NoError(t, err)
+
 	stackConfig := runner.ConfigMap{
 		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
