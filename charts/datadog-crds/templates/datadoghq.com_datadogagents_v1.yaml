@@ -6,6 +6,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.1
+    {{- if .Values.migration.datadogAgents.useCertManager }}
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ .Release.Name }}-serving-cert
+    {{- end }}
   creationTimestamp: null
   name: datadogagents.datadoghq.com
   labels:
@@ -14,6 +17,18 @@ metadata:
     app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
     app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
+  {{- if .Values.migration.datadogAgents.conversionWebhook.enabled }}
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          namespace: {{ .Values.migration.datadogAgents.conversionWebhook.namespace }}
+          name: {{ .Values.migration.datadogAgents.conversionWebhook.name }}
+          path: /convert
+      conversionReviewVersions:
+      - v1
+  {{- end }}
   group: datadoghq.com
   names:
     kind: DatadogAgent
@@ -5839,10 +5854,18 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                defaultOverride:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
+      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
+      served: true
+      storage: true
+      {{- else }}
       served: true
       storage: false
+      {{- end }}
       subresources:
         status: {}
     - additionalPrinterColumns:
@@ -8431,8 +8454,13 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
+      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
       served: true
       storage: true
+      {{- else }}
+      served: true
+      storage: false
+      {{- end }}
       subresources:
         status: {}
 status:

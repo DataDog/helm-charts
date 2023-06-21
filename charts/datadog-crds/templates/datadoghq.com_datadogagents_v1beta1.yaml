@@ -5847,8 +5847,13 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
+      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
+      served: true
+      storage: true
+      {{- else }}
       served: true
       storage: false
+      {{- end }}
     - additionalPrinterColumns:
         - JSONPath: .status.agent.status
           name: agent
@@ -8435,8 +8440,13 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
+      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
       served: true
       storage: true
+      {{- else }}
+      served: true
+      storage: false
+      {{- end }}
 status:
   acceptedNames:
     kind: ""
