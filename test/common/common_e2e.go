@@ -8,8 +8,11 @@ import (
 	"log"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
@@ -22,11 +25,51 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
-var defaultLocalPulumiConfigs = runner.ConfigMap{
-	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")},
+const (
+	ddaPrefix string = "dda-datadog"
+	dcaPrefix string = "dda-datadog-cluster-agent"
+	ccPrefix  string = "dda-datadog-clusterchecks"
+)
+
+var (
+	defaultLocalPulumiConfigs = runner.ConfigMap{
+		"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")}}
+	defaultCIPulumiConfigs = runner.ConfigMap{}
+	dcaPodLabelSelector    = fmt.Sprintf("app=%s", dcaPrefix)
+	ddaPodLabelSelector    = fmt.Sprintf("app=%s", ddaPrefix)
+	ccPodLabelSelector     = fmt.Sprintf("app=%s", ccPrefix)
+)
+
+type ExpectedPod struct {
+	Prefix           string
+	ContainerName    string
+	PodLabelSelector string
+	PodCount         int
+	Msg              string
 }
 
-var defaultCIPulumiConfigs = runner.ConfigMap{}
+var dcaPod = ExpectedPod{
+	Prefix:           dcaPrefix,
+	ContainerName:    "cluster-agent",
+	PodLabelSelector: dcaPodLabelSelector,
+	PodCount:         2,
+	Msg:              "There should be 2 datadog-cluster-agent pod by default.",
+}
+
+var ddaPod = ExpectedPod{
+	Prefix:           ddaPrefix,
+	ContainerName:    "agent",
+	PodLabelSelector: ddaPodLabelSelector,
+	Msg:              "There should be 1 datadog-agent pod per node.",
+}
+
+var ccPod = ExpectedPod{
+	Prefix:           ccPrefix,
+	ContainerName:    "agent",
+	PodLabelSelector: ccPodLabelSelector,
+	PodCount:         2,
+	Msg:              "There should be 2 datadog-cluster-check pods by default.",
+}
 
 func TeardownSuite(preserveStacks bool) {
 	if !preserveStacks {
@@ -84,8 +127,38 @@ func parseE2EConfigParams() []string {
 	return configKVs
 }
 
-func ListPods(namespace string, client kubernetes.Interface) (*corev1.PodList, error) {
-	pods, err := client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
+func VerifyPods(t *testing.T, client *kubernetes.Clientset, restConfig *rest.Config) {
+	namespace := "datadog"
+	// get each type of dd pods
+	ddPods := []ExpectedPod{dcaPod, ddaPod, ccPod}
+	nodes, err := ListNodes(namespace, client)
+	require.NoError(t, err)
+
+	for _, ddPod := range ddPods {
+		podCount := 0
+		pods, err := ListPods(namespace, ddPod.PodLabelSelector, client)
+		require.NoError(t, err)
+
+		for _, pod := range pods.Items {
+			podCount++
+			assert.True(t, pod.Status.Phase == "Running")
+
+			podExec := NewK8sExec(client, restConfig, pod.Name, ddPod.ContainerName, namespace)
+
+			_, _, err := podExec.Exec([]string{"agent", "status"})
+			require.NoError(t, err)
+		}
+
+		if ddPod.Prefix == ddaPrefix {
+			assert.EqualValues(t, podCount, len(nodes.Items), ddPod.Msg)
+		} else {
+			assert.EqualValues(t, podCount, ddPod.PodCount, ddPod.Msg)
+		}
+	}
+}
+
+func ListPods(namespace string, podLabelSelector string, client *kubernetes.Clientset) (*corev1.PodList, error) {
+	pods, err := client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{LabelSelector: podLabelSelector})
 	if err != nil {
 		log.Panicf("error getting pods: %v", err)
 		return nil, err
