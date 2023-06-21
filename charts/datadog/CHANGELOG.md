@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.32.3
+## 3.32.4
 
 * Add futimens, utime, utimes and utimensat syscalls to system-probe seccomp.
+
+## 3.32.3
+
+* Allows configuration of `dogstatsd.tagCardinality` independent of `dogstatsd.originDetection`.
 
 ## 3.32.2
 
