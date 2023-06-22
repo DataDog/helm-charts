@@ -62,6 +62,10 @@ spec:
               query:
                 description: Query is the raw datadog query
                 type: string
+              timeWindow:
+                description: TimeWindow provides the time window for the metric query,
+                  defaults to MaxAge.
+                type: string
             type: object
           status:
             description: DatadogMetricStatus defines the observed state of DatadogMetric
