@@ -8,11 +8,9 @@ import (
 	"log"
 	"os"
 	"strings"
-	"testing"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
@@ -34,13 +32,16 @@ const (
 var (
 	defaultLocalPulumiConfigs = runner.ConfigMap{
 		"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")}}
-	defaultCIPulumiConfigs = runner.ConfigMap{}
-	dcaPodLabelSelector    = fmt.Sprintf("app=%s", dcaPrefix)
-	ddaPodLabelSelector    = fmt.Sprintf("app=%s", ddaPrefix)
-	ccPodLabelSelector     = fmt.Sprintf("app=%s", ccPrefix)
+	defaultCIPulumiConfigs = runner.ConfigMap{
+		"aws:skipCredentialsValidation": auto.ConfigValue{Value: "true"},
+		"aws:skipMetadataApiCheck":      auto.ConfigValue{Value: "false"},
+	}
+	dcaPodLabelSelector = fmt.Sprintf("app=%s", dcaPrefix)
+	ddaPodLabelSelector = fmt.Sprintf("app=%s", ddaPrefix)
+	ccPodLabelSelector  = fmt.Sprintf("app=%s", ccPrefix)
 )
 
-type ExpectedPod struct {
+type ExpectedPods struct {
 	Prefix           string
 	ContainerName    string
 	PodLabelSelector string
@@ -48,22 +49,22 @@ type ExpectedPod struct {
 	Msg              string
 }
 
-var dcaPod = ExpectedPod{
+var ExpDcaPods = ExpectedPods{
 	Prefix:           dcaPrefix,
 	ContainerName:    "cluster-agent",
 	PodLabelSelector: dcaPodLabelSelector,
-	PodCount:         2,
-	Msg:              "There should be 2 datadog-cluster-agent pod by default.",
+	PodCount:         1,
+	Msg:              "There should be 1 datadog-cluster-agent pod by default.",
 }
 
-var ddaPod = ExpectedPod{
+var ExpDdaPods = ExpectedPods{
 	Prefix:           ddaPrefix,
 	ContainerName:    "agent",
 	PodLabelSelector: ddaPodLabelSelector,
 	Msg:              "There should be 1 datadog-agent pod per node.",
 }
 
-var ccPod = ExpectedPod{
+var ExpCcPods = ExpectedPods{
 	Prefix:           ccPrefix,
 	ContainerName:    "agent",
 	PodLabelSelector: ccPodLabelSelector,
@@ -71,16 +72,47 @@ var ccPod = ExpectedPod{
 	Msg:              "There should be 2 datadog-cluster-check pods by default.",
 }
 
-func TeardownSuite(preserveStacks bool) {
+type E2EEnv struct {
+	context     context.Context
+	name        string
+	StackOutput auto.UpResult
+}
+
+func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
+	eksE2eEnv := &E2EEnv{
+		context: context.Background(),
+		name:    "eks-e2e",
+	}
+
+	stackManager := infra.GetStackManager()
+
+	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, false)
+	eksE2eEnv.StackOutput = stackOutput
+	if err != nil {
+		return nil, err
+	}
+	return eksE2eEnv, nil
+}
+
+func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
 		fmt.Fprintf(os.Stderr, "Cleaning up E2E stacks. ")
-		errs := infra.GetStackManager().Cleanup(context.Background())
-		for _, err := range errs {
-			fmt.Fprint(os.Stderr, err.Error())
-		}
+		return infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
 	} else {
 		fmt.Fprintf(os.Stderr, "Preserving E2E stacks. ")
+		return nil
 	}
+}
+
+func parseE2EConfigParams() []string {
+	// "key1=val1 key2=val2"
+	configParams := os.Getenv("E2E_CONFIG_PARAMS")
+	if len(configParams) < 1 {
+		return []string{}
+	}
+	// ["key1=val1", "key2=val2"]
+	configKVs := strings.Split(configParams, " ")
+	return configKVs
 }
 
 func SetupConfig() (runner.ConfigMap, error) {
@@ -114,47 +146,6 @@ func SetupConfig() (runner.ConfigMap, error) {
 	}
 	log.Printf("Setting up Pulumi E2E stack with configs: %v", res)
 	return res, nil
-}
-
-func parseE2EConfigParams() []string {
-	// "key1=val1 key2=val2"
-	configParams := os.Getenv("E2E_CONFIG_PARAMS")
-	if len(configParams) < 1 {
-		return []string{}
-	}
-	// ["key1=val1", "key2=val2"]
-	configKVs := strings.Split(configParams, " ")
-	return configKVs
-}
-
-func VerifyPods(t *testing.T, client *kubernetes.Clientset, restConfig *rest.Config) {
-	namespace := "datadog"
-	// get each type of dd pods
-	ddPods := []ExpectedPod{dcaPod, ddaPod, ccPod}
-	nodes, err := ListNodes(namespace, client)
-	require.NoError(t, err)
-
-	for _, ddPod := range ddPods {
-		podCount := 0
-		pods, err := ListPods(namespace, ddPod.PodLabelSelector, client)
-		require.NoError(t, err)
-
-		for _, pod := range pods.Items {
-			podCount++
-			assert.True(t, pod.Status.Phase == "Running")
-
-			podExec := NewK8sExec(client, restConfig, pod.Name, ddPod.ContainerName, namespace)
-
-			_, _, err := podExec.Exec([]string{"agent", "status"})
-			require.NoError(t, err)
-		}
-
-		if ddPod.Prefix == ddaPrefix {
-			assert.EqualValues(t, podCount, len(nodes.Items), ddPod.Msg)
-		} else {
-			assert.EqualValues(t, podCount, ddPod.PodCount, ddPod.Msg)
-		}
-	}
 }
 
 func ListPods(namespace string, podLabelSelector string, client *kubernetes.Clientset) (*corev1.PodList, error) {
@@ -205,7 +196,7 @@ type K8sExec struct {
 	Namespace     string
 }
 
-func (k8s *K8sExec) Exec(command []string) ([]byte, []byte, error) {
+func (k8s *K8sExec) K8sExec(command []string) ([]byte, []byte, error) {
 	req := k8s.ClientSet.CoreV1().RESTClient().Post().
 		Resource("pods").
 		Name(k8s.PodName).

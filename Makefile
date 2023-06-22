@@ -65,4 +65,5 @@ e2e-test-preserve-stacks:
 	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
 
 .PHONY: e2e-test-cleanup-stacks
-e2e-test-cleanup-stacks: e2e-test
+e2e-test-cleanup-stacks:
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -destroyStacks=true
