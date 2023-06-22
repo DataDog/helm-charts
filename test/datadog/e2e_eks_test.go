@@ -34,18 +34,19 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 	eksEnv, err := common.NewEKStack(stackConfig)
 	defer common.TeardownE2EStack(eksEnv, common.PreserveStacks)
 
-	if common.DestroyStacks {
-		err := common.TeardownE2EStack(eksEnv, false)
-		require.NoError(t, err)
-	} else if eksEnv.StackOutput.Outputs["kubeconfig"].Value != nil {
-		kc := eksEnv.StackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})
+	if err == nil {
+		if common.DestroyStacks {
+			err = common.TeardownE2EStack(eksEnv, false)
+		} else if eksEnv.StackOutput.Outputs["kubeconfig"].Value != nil {
+			kc := eksEnv.StackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})
 
-		_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
-		require.NoError(t, err)
+			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
+			require.NoError(t, err)
 
-		verifyPods(t)
-	} else {
-		err = fmt.Errorf("Error creating cluster: %s", err)
+			verifyPods(t)
+		} else {
+			err = fmt.Errorf("Error creating cluster")
+		}
 	}
 	require.NoError(t, err)
 }
