@@ -1,34 +1,18 @@
-{{- if and .Values.crds.datadogAgents (semverCompare ">1.21-0" .Capabilities.KubeVersion.GitVersion ) }}
-
 ---
+# Source: datadog-operator/charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.1
-    {{- if .Values.migration.datadogAgents.useCertManager }}
-    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ .Release.Name }}-serving-cert
-    {{- end }}
   creationTimestamp: null
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
-    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
-    app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
-    app.kubernetes.io/instance: '{{ .Release.Name }}'
+    helm.sh/chart: 'datadogCRDs-1.0.0'
+    app.kubernetes.io/managed-by: 'Helm'
+    app.kubernetes.io/name: 'datadogCRDs'
+    app.kubernetes.io/instance: 'datadog-operator'
 spec:
-  {{- if .Values.migration.datadogAgents.conversionWebhook.enabled }}
-  conversion:
-    strategy: Webhook
-    webhook:
-      clientConfig:
-        service:
-          namespace: {{ .Values.migration.datadogAgents.conversionWebhook.namespace }}
-          name: {{ .Values.migration.datadogAgents.conversionWebhook.name }}
-          path: /convert
-      conversionReviewVersions:
-      - v1
-  {{- end }}
   group: datadoghq.com
   names:
     kind: DatadogAgent
@@ -5854,15 +5838,13 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                defaultOverride:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
           type: object
-      {{- if not (eq .Values.migration.datadogAgents.version "v2alpha1") }}
-      served: true
-      storage: true
-      {{- else }}
       served: true
       storage: false
-      {{- end }}
       subresources:
         status: {}
     - additionalPrinterColumns:
@@ -6406,10 +6388,6 @@ spec:
                       type: object
                     logLevel:
                       type: string
-                    namespaceLabelsAsTags:
-                      additionalProperties:
-                        type: string
-                      type: object
                     networkPolicy:
                       properties:
                         create:
@@ -6442,6 +6420,10 @@ spec:
                           x-kubernetes-list-type: atomic
                         flavor:
                           type: string
+                      type: object
+                    namespaceLabelsAsTags:
+                      additionalProperties:
+                        type: string
                       type: object
                     nodeLabelsAsTags:
                       additionalProperties:
@@ -8451,13 +8433,8 @@ spec:
                   x-kubernetes-list-type: map
               type: object
           type: object
-      {{- if eq .Values.migration.datadogAgents.version "v2alpha1" }}
       served: true
       storage: true
-      {{- else }}
-      served: true
-      storage: false
-      {{- end }}
       subresources:
         status: {}
 status:
@@ -8466,4 +8443,3 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-{{- end }}
