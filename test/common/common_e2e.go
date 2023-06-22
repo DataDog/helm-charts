@@ -86,7 +86,7 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 
 	stackManager := infra.GetStackManager()
 
-	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, false)
+	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, true)
 	eksE2eEnv.StackOutput = stackOutput
 	if err != nil {
 		return nil, err
@@ -97,11 +97,24 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
 		fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
-		return infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+		fmt.Fprintf(os.Stderr, "E2EENV.CONTEXT: %v", e2eEnv.context)
+		fmt.Fprintf(os.Stderr, e2eEnv.name)
+		err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
+			fmt.Fprintf(os.Stderr, "E2EENV.CONTEXT: %v", e2eEnv.context)
+			fmt.Fprintf(os.Stderr, e2eEnv.name)
+			errs := infra.GetStackManager().Cleanup(context.Background())
+			for _, err := range errs {
+				fmt.Fprint(os.Stderr, err.Error())
+			}
+			return fmt.Errorf("error deleting stack: %s", err)
+		}
 	} else {
 		fmt.Fprintf(os.Stderr, "Preserving E2E stack. ")
 		return nil
 	}
+	return nil
 }
 
 func parseE2EConfigParams() []string {
