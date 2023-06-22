@@ -28,7 +28,7 @@
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.0.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.0.3"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
