@@ -97,24 +97,29 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
 		fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
-		fmt.Fprintf(os.Stderr, "E2EENV.CONTEXT: %v", e2eEnv.context)
-		fmt.Fprintf(os.Stderr, e2eEnv.name)
-		err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
-			fmt.Fprintf(os.Stderr, "E2EENV.CONTEXT: %v", e2eEnv.context)
-			fmt.Fprintf(os.Stderr, e2eEnv.name)
-			errs := infra.GetStackManager().Cleanup(context.Background())
-			for _, err := range errs {
-				fmt.Fprint(os.Stderr, err.Error())
+		if e2eEnv != nil {
+			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error tearing down E2E stack: %s", err)
+				cleanupStacks()
+				return err
 			}
-			return fmt.Errorf("error deleting stack: %s", err)
+		} else {
+			cleanupStacks()
 		}
 	} else {
 		fmt.Fprintf(os.Stderr, "Preserving E2E stack. ")
 		return nil
 	}
 	return nil
+}
+
+func cleanupStacks() {
+	fmt.Fprintf(os.Stderr, "Cleaning up E2E stacks. ")
+	errs := infra.GetStackManager().Cleanup(context.Background())
+	for _, err := range errs {
+		fmt.Fprint(os.Stderr, err.Error())
+	}
 }
 
 func parseE2EConfigParams() []string {
