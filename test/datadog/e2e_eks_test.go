@@ -37,13 +37,20 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 	if err == nil {
 		if common.DestroyStacks {
 			err = common.TeardownE2EStack(eksEnv, false)
-		} else if eksEnv.StackOutput.Outputs["kubeconfig"].Value != nil {
-			kc := eksEnv.StackOutput.Outputs["kubeconfig"].Value.(map[string]interface{})
+			require.NoError(t, err)
+		}
+		kubeconfig := eksEnv.StackOutput.Outputs["kubeconfig"]
+		agentChartInstallName := eksEnv.StackOutput.Outputs["agent-linux-helm-install-name"].Value.(string)
+		agentChartInstallStatus := eksEnv.StackOutput.Outputs["agent-linux-helm-install-status"].Value.(map[string]interface{})
+
+		if kubeconfig.Value != nil {
+			kc := kubeconfig.Value.(map[string]interface{})
 
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
 			require.NoError(t, err)
 
 			verifyPods(t)
+			assertLatestAgentChart(t, agentChartInstallName, agentChartInstallStatus)
 		} else {
 			err = fmt.Errorf("Error creating cluster")
 		}
@@ -83,4 +90,10 @@ func assertPodExec(t *testing.T, podName string, containerName string) {
 
 	_, _, err := podExec.K8sExec([]string{"agent", "status"})
 	require.NoError(t, err)
+}
+
+func assertLatestAgentChart(t *testing.T, chartInstallName string, chartInstallStatus map[string]interface{}) {
+	assert.EqualValues(t, chartInstallName, "dda", "Agent helm chart install name should be `dda`")
+	assert.EqualValues(t, chartInstallStatus["chart"], "datadog", "Agent helm chart name should be `datadog`")
+	assert.EqualValues(t, chartInstallStatus["version"], "3.32.4", "Agent helm chart version should be `3.32.4` (latest)")
 }
