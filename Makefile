@@ -53,8 +53,7 @@ update-test-baselines:
 	go test -C test ./... -count=1 -skip=E2E -args -updateBaselines=true
 
 .PHONY: test-e2e
-test-e2e: e2e-test
-# TODO add `fmt` and `vet` targets when test-infra-definitions gitlab runner image bumps GO version to 1.20
+test-e2e: fmt vet e2e-test
 
 .PHONY: e2e-test
 e2e-test:
