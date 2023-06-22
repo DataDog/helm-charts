@@ -9,9 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var UpdateBaselines bool
-var PreserveStacks bool
-
 type HelmCommand struct {
 	ReleaseName string
 	ChartPath   string

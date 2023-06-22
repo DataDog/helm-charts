@@ -96,10 +96,10 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 
 func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
-		fmt.Fprintf(os.Stderr, "Cleaning up E2E stacks. ")
+		fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
 		return infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
 	} else {
-		fmt.Fprintf(os.Stderr, "Preserving E2E stacks. ")
+		fmt.Fprintf(os.Stderr, "Preserving E2E stack. ")
 		return nil
 	}
 }

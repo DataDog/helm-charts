@@ -32,9 +32,9 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 	stackConfig.Merge(config)
 
 	eksEnv, err := common.NewEKStack(stackConfig)
-	defer common.TeardownE2EStack(eksEnv, PreserveStacks)
+	defer common.TeardownE2EStack(eksEnv, common.PreserveStacks)
 
-	if DestroyStacks {
+	if common.DestroyStacks {
 		err := common.TeardownE2EStack(eksEnv, false)
 		require.NoError(t, err)
 	} else if eksEnv.StackOutput.Outputs["kubeconfig"].Value != nil {
