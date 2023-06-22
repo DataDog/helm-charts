@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+* Update Datadog Operator version to 1.0.3.
+
 ## 1.0.3
 
 * Add `list` and `watch` permissions of `customresourcedefinitions` for the KSM core check to collect CRD resources.
