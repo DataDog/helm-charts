@@ -3,7 +3,7 @@ module github.com/DataDog/helm-charts/test
 go 1.20
 
 require (
-	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623140053-a75f1c6add90
+	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623172135-8f9a8aa381b8
 	github.com/DataDog/test-infra-definitions v0.0.0-20230623085832-f85e7eb2f003
 	github.com/google/go-cmp v0.5.9
 	github.com/gruntwork-io/terratest v0.41.18

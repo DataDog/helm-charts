@@ -52,8 +52,8 @@ github.com/Azure/go-autorest/logger v0.2.1/go.mod h1:T9E3cAhj2VqvPOtCYAvby9aBXkZ
 github.com/Azure/go-autorest/tracing v0.6.0/go.mod h1:+vhtPC754Xsa23ID7GlGsrdKBpUA79WCAKPPZVC2DeU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623140053-a75f1c6add90 h1:N7DsALdJn+sUHeV4misHFs6IjXu0FBafefPAfQ2Uxfg=
-github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623140053-a75f1c6add90/go.mod h1:CAfSFQ97T6P9LXPU/iTI4Iqe0qWsmO6kLR4WipIAzTQ=
+github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623172135-8f9a8aa381b8 h1:ubmzj8eI0theiicy03cl1O0dVJyODAEZF1g5A7kpiOw=
+github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623172135-8f9a8aa381b8/go.mod h1:/PvGGGUv5rbFYCZOuXu8de0tAXUfl+0ffewT+DVv8Do=
 github.com/DataDog/test-infra-definitions v0.0.0-20230623085832-f85e7eb2f003 h1:fNH3dVAgySfdiALYHI/sz3NQ26OM4TQQWpCcz5XV2pw=
 github.com/DataDog/test-infra-definitions v0.0.0-20230623085832-f85e7eb2f003/go.mod h1:ooZpPM5wPJNEIjDQfrWdWLlw2waB0xB8bG+J5XRDVKk=
 github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=

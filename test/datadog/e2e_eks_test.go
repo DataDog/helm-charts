@@ -29,8 +29,8 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 		"ddtestworkload:deploy":                      auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-		"pulumi:disable-default-providers":           auto.ConfigValue{Value: "['kubernetes', 'azure-native', 'awsx', 'eks']"},
 	}
+
 	stackConfig.Merge(config)
 
 	eksEnv, err := common.NewEKStack(stackConfig, common.DestroyStacks)
