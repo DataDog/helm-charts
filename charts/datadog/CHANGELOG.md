@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.5
+
+* Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml
+  
 ## 3.32.4
 
 * Add futimens, utime, utimes and utimensat syscalls to system-probe seccomp.
