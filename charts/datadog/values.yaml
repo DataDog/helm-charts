@@ -352,7 +352,7 @@ datadog:
   kubernetesEvents:
     # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
     unbundleEvents: false
-    # datadog.kubernetesEvents.collectedEventTypes -- Collects Helm values from a release and uses them as tags (Requires Cluster Agent 7.42.0+).
+    # datadog.kubernetesEvents.collectedEventTypes -- Event types to be collected
     # This requires datadog.kubernetesEvents.unbundleEvents to be set to true
     collectedEventTypes:
     # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
