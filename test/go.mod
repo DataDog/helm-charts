@@ -3,12 +3,12 @@ module github.com/DataDog/helm-charts/test
 go 1.20
 
 require (
-	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230609130303-334192ceac66
-	github.com/DataDog/test-infra-definitions v0.0.0-20230621121920-986d192b25a5
+	github.com/DataDog/datadog-agent/test/new-e2e v0.0.0-20230623140053-a75f1c6add90
+	github.com/DataDog/test-infra-definitions v0.0.0-20230623085832-f85e7eb2f003
 	github.com/google/go-cmp v0.5.9
 	github.com/gruntwork-io/terratest v0.41.18
-	github.com/pulumi/pulumi/sdk/v3 v3.71.0
-	github.com/stretchr/testify v1.8.3
+	github.com/pulumi/pulumi/sdk/v3 v3.72.2
+	github.com/stretchr/testify v1.8.4
 	k8s.io/api v0.23.5
 	k8s.io/apiextensions-apiserver v0.23.5
 	k8s.io/apimachinery v0.23.5
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.18.0 // indirect
+	cloud.google.com/go/compute v1.19.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
@@ -34,7 +34,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.35 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.12 // indirect
@@ -100,7 +100,7 @@ require (
 	github.com/pulumi/pulumi-command/sdk v0.7.2 // indirect
 	github.com/pulumi/pulumi-docker/sdk/v3 v3.6.1 // indirect
 	github.com/pulumi/pulumi-eks/sdk v1.0.1 // indirect
-	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.28.1 // indirect
+	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.29.1 // indirect
 	github.com/pulumi/pulumi-random/sdk/v4 v4.13.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
@@ -124,15 +124,15 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
 	golang.org/x/net v0.11.0 // indirect
-	golang.org/x/oauth2 v0.6.0 // indirect
+	golang.org/x/oauth2 v0.7.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/term v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	golang.org/x/tools v0.9.3 // indirect
+	golang.org/x/tools v0.10.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
-	google.golang.org/grpc v1.55.0 // indirect
+	google.golang.org/grpc v1.56.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect

@@ -29,8 +29,6 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 		"ddtestworkload:deploy":                      auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-		// TODO: remove when upstream eks-pulumi bug is fixed https://github.com/pulumi/pulumi-eks/pull/886
-		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
 	}
 	stackConfig.Merge(config)
 

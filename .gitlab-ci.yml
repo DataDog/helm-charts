@@ -14,7 +14,7 @@ e2e:
 #          - charts/**/*.yaml
 #          - test/**/*
 #        compare_to: "refs/heads/main"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:986d192b
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:f85e7eb2f003
   tags: ["arch:amd64"]
   before_script:
     # Update awscli v2
