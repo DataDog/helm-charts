@@ -17,12 +17,10 @@ e2e:
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:f85e7eb2f003
   tags: ["arch:amd64"]
   before_script:
-    # Update awscli v2
-    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    - unzip -q awscliv2.zip
-    - ./aws/install --update
     - aws --version
-    - rm -rf aws && rm awscliv2.zip
+    - rm -rf /usr/local/aws && rm /usr/local/bin/aws
+    - ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws
+    - aws --version
     # Setup AWS Credentials
     - mkdir -p ~/.aws
     - set +x
