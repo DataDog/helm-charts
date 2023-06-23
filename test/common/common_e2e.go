@@ -90,10 +90,10 @@ func NewEKStack(stackConfig runner.ConfigMap, destroyStacks bool) (*E2EEnv, erro
 
 	// Get or create stack if it doesn't exist
 	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, destroyStacks)
-	eksE2eEnv.StackOutput = stackOutput
 	if err != nil {
 		return nil, err
 	}
+	eksE2eEnv.StackOutput = stackOutput
 	return eksE2eEnv, nil
 }
 
@@ -193,19 +193,23 @@ func NewClientFromKubeconfig(kc map[string]interface{}) (clientcmd.ClientConfig,
 	kubeconfig, err := json.Marshal(kc)
 	if err != nil {
 		log.Printf("Error encoding kubeconfig json. %v", err)
+		return nil, nil, nil, err
 	}
 	clientConfig, err := clientcmd.NewClientConfigFromBytes(kubeconfig)
 	if err != nil {
 		log.Printf("Error creating client config from kubeconfig. %v", err)
+		return nil, nil, nil, err
 	}
 	restConfig, err := clientConfig.ClientConfig()
 	if err != nil {
 		log.Printf("Error creating rest config. %v", err)
+		return nil, nil, nil, err
 	}
 
 	clientSet, err := kubernetes.NewForConfig(restConfig)
 	if err != nil {
 		log.Printf("Error creating clientset from rest config. %v", err)
+		return nil, nil, nil, err
 	}
 
 	return clientConfig, restConfig, clientSet, err

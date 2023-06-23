@@ -46,7 +46,9 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 		if kubeconfig.Value != nil {
 			kc := kubeconfig.Value.(map[string]interface{})
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
-			verifyPods(t)
+			if err == nil {
+				verifyPods(t)
+			}
 		} else {
 			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
 		}
@@ -87,5 +89,6 @@ func assertPodExec(t *testing.T, podName string, containerName string) {
 	podExec := common.NewK8sExec(k8sClient, restConfig, podName, containerName, namespace)
 
 	_, _, err := podExec.K8sExec([]string{"agent", "status"})
+
 	require.NoError(t, err)
 }
