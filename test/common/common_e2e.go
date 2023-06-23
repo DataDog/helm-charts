@@ -23,53 +23,12 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
-const (
-	ddaPrefix string = "dda-datadog"
-	dcaPrefix string = "dda-datadog-cluster-agent"
-	ccPrefix  string = "dda-datadog-clusterchecks"
-)
-
-var (
-	defaultLocalPulumiConfigs = runner.ConfigMap{
-		"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")}}
-	defaultCIPulumiConfigs = runner.ConfigMap{
-		"aws:skipCredentialsValidation": auto.ConfigValue{Value: "true"},
-		"aws:skipMetadataApiCheck":      auto.ConfigValue{Value: "false"},
-	}
-	dcaPodLabelSelector = fmt.Sprintf("app=%s", dcaPrefix)
-	ddaPodLabelSelector = fmt.Sprintf("app=%s", ddaPrefix)
-	ccPodLabelSelector  = fmt.Sprintf("app=%s", ccPrefix)
-)
-
-type ExpectedPods struct {
-	Prefix           string
-	ContainerName    string
-	PodLabelSelector string
-	PodCount         int
-	Msg              string
+var defaultLocalPulumiConfigs = runner.ConfigMap{
+	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")},
 }
-
-var ExpDcaPods = ExpectedPods{
-	Prefix:           dcaPrefix,
-	ContainerName:    "cluster-agent",
-	PodLabelSelector: dcaPodLabelSelector,
-	PodCount:         1,
-	Msg:              "There should be 1 datadog-cluster-agent pod by default.",
-}
-
-var ExpDdaPods = ExpectedPods{
-	Prefix:           ddaPrefix,
-	ContainerName:    "agent",
-	PodLabelSelector: ddaPodLabelSelector,
-	Msg:              "There should be 1 datadog-agent pod per node.",
-}
-
-var ExpCcPods = ExpectedPods{
-	Prefix:           ccPrefix,
-	ContainerName:    "agent",
-	PodLabelSelector: ccPodLabelSelector,
-	PodCount:         2,
-	Msg:              "There should be 2 datadog-cluster-check pods by default.",
+var defaultCIPulumiConfigs = runner.ConfigMap{
+	"aws:skipCredentialsValidation": auto.ConfigValue{Value: "true"},
+	"aws:skipMetadataApiCheck":      auto.ConfigValue{Value: "false"},
 }
 
 type E2EEnv struct {
@@ -216,22 +175,19 @@ func NewClientFromKubeconfig(kc map[string]interface{}) (clientcmd.ClientConfig,
 }
 
 type K8sExec struct {
-	ClientSet     kubernetes.Interface
-	RestConfig    *rest.Config
-	PodName       string
-	ContainerName string
-	Namespace     string
+	ClientSet  kubernetes.Interface
+	RestConfig *rest.Config
 }
 
-func (k8s *K8sExec) K8sExec(command []string) ([]byte, []byte, error) {
+func (k8s *K8sExec) K8sExec(namespace string, podName string, containerName string, command []string) ([]byte, []byte, error) {
 	req := k8s.ClientSet.CoreV1().RESTClient().Post().
 		Resource("pods").
-		Name(k8s.PodName).
-		Namespace(k8s.Namespace).
+		Name(podName).
+		Namespace(namespace).
 		SubResource("exec")
 
 	req.VersionedParams(&corev1.PodExecOptions{
-		Container: k8s.ContainerName,
+		Container: containerName,
 		Command:   command,
 		Stdin:     false,
 		Stdout:    true,
@@ -257,13 +213,10 @@ func (k8s *K8sExec) K8sExec(command []string) ([]byte, []byte, error) {
 	return stdout.Bytes(), stderr.Bytes(), nil
 }
 
-func NewK8sExec(clientSet *kubernetes.Clientset, restConfig *rest.Config, podName string, containerName string, namespace string) K8sExec {
+func NewK8sExec(clientSet *kubernetes.Clientset, restConfig *rest.Config) K8sExec {
 	k8sExec := K8sExec{
-		ClientSet:     clientSet,
-		RestConfig:    restConfig,
-		PodName:       podName,
-		ContainerName: containerName,
-		Namespace:     namespace,
+		ClientSet:  clientSet,
+		RestConfig: restConfig,
 	}
 	return k8sExec
 }

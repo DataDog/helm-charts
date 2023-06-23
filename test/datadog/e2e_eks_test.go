@@ -9,6 +9,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -62,33 +63,32 @@ func verifyPods(t *testing.T) {
 	nodes, err := common.ListNodes(namespace, k8sClient)
 	require.NoError(t, err)
 
-	ddaPodsCount := assertPodsRunning(t, common.ExpDdaPods)
-	dcaPodsCount := assertPodsRunning(t, common.ExpDcaPods)
-	ccPodsCount := assertPodsRunning(t, common.ExpCcPods)
-
-	assert.EqualValues(t, ddaPodsCount, len(nodes.Items), common.ExpDdaPods.Msg)
-	assert.EqualValues(t, dcaPodsCount, common.ExpDcaPods.PodCount, common.ExpDcaPods.Msg)
-	assert.EqualValues(t, ccPodsCount, common.ExpCcPods.PodCount, common.ExpCcPods.Msg)
-}
-
-func assertPodsRunning(t *testing.T, expPodType common.ExpectedPods) int {
-	podCount := 0
-	pods, err := common.ListPods(namespace, expPodType.PodLabelSelector, k8sClient)
+	ddaPodList, err := common.ListPods(namespace, "app=dda-datadog", k8sClient)
+	require.NoError(t, err)
+	dcaPodList, err := common.ListPods(namespace, "app=dda-datadog-cluster-agent", k8sClient)
+	require.NoError(t, err)
+	ccPodList, err := common.ListPods(namespace, "app=dda-datadog-clusterchecks", k8sClient)
 	require.NoError(t, err)
 
-	for _, pod := range pods.Items {
-		podCount++
-		assert.True(t, pod.Status.Phase == "Running")
-		assertPodExec(t, pod.Name, expPodType.ContainerName)
+	assert.EqualValues(t, len(nodes.Items), len(ddaPodList.Items), "There should be 1 datadog-agent pod per node.")
+	assert.EqualValues(t, 1, len(dcaPodList.Items), "There should be 1 datadog-cluster-agent pod by default.")
+	assert.EqualValues(t, 2, len(ccPodList.Items), "There should be 2 datadog-cluster-check pods by default.")
 
+	podExec := common.K8sExec{
+		ClientSet:  k8sClient,
+		RestConfig: restConfig,
 	}
-	return podCount
+
+	assertPodStatus(t, podExec, ddaPodList, "agent")
+	assertPodStatus(t, podExec, dcaPodList, "cluster-agent")
+	assertPodStatus(t, podExec, ccPodList, "agent")
+
 }
 
-func assertPodExec(t *testing.T, podName string, containerName string) {
-	podExec := common.NewK8sExec(k8sClient, restConfig, podName, containerName, namespace)
-
-	_, _, err := podExec.K8sExec([]string{"agent", "status"})
-
-	require.NoError(t, err)
+func assertPodStatus(t *testing.T, podExec common.K8sExec, podList *v1.PodList, containerName string) {
+	for _, pod := range podList.Items {
+		assert.True(t, pod.Status.Phase == "Running")
+		_, _, err := podExec.K8sExec(namespace, pod.Name, containerName, []string{"agent", "status"})
+		require.NoError(t, err)
+	}
 }
