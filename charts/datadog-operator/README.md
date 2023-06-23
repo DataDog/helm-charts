@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.0.3](https://img.shields.io/badge/Version-1.0.3-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 1.0.4](https://img.shields.io/badge/Version-1.0.4-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
 
 ## Values
 
@@ -28,7 +28,7 @@
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.0.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.0.3"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
@@ -93,7 +93,7 @@ and for the Datadog Operator chart:
 
 ```
 NAME                    	CHART VERSION	APP VERSION	DESCRIPTION
-datadog/datadog-operator	1.0.0        	1.0.0      	Datadog Operator
+datadog/datadog-operator	1.0.4        	1.0.3      	Datadog Operator
 ```
 
 Then you will need to install the cert manager if you don't have it already, add the chart:
@@ -115,7 +115,7 @@ You can update with the following:
 ```
 helm upgrade \
     datadog-operator datadog/datadog-operator \
-    --set image.tag=1.0.0 \
+    --set image.tag=1.0.3 \
     --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
     --set datadogCRDs.migration.datadogAgents.useCertManager=true \
     --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true
