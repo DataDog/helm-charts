@@ -78,7 +78,9 @@ type E2EEnv struct {
 	StackOutput auto.UpResult
 }
 
-func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
+// Create new EKS pulumi stack
+// The latest datadog/datadog helm chart is installed by default via the stack config `ddagent:deploy`
+func NewEKStack(stackConfig runner.ConfigMap, destroyStacks bool) (*E2EEnv, error) {
 	eksE2eEnv := &E2EEnv{
 		context: context.Background(),
 		name:    "eks-e2e",
@@ -86,40 +88,43 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 
 	stackManager := infra.GetStackManager()
 
-	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, true)
-	eksE2eEnv.StackOutput = stackOutput
+	// Get or create stack if it doesn't exist
+	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, destroyStacks)
 	if err != nil {
 		return nil, err
 	}
+	eksE2eEnv.StackOutput = stackOutput
 	return eksE2eEnv, nil
 }
 
 func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
-		fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
+		log.Println("Tearing down E2E stack. ")
 		if e2eEnv != nil {
 			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error tearing down E2E stack: %s", err)
-				cleanupStacks()
-				return err
+				return fmt.Errorf("error tearing down E2E stack: %s", err)
 			}
 		} else {
-			cleanupStacks()
+			return cleanupStacks()
 		}
 	} else {
-		fmt.Fprintf(os.Stderr, "Preserving E2E stack. ")
+		log.Println("Preserving E2E stack. ")
 		return nil
 	}
 	return nil
 }
 
-func cleanupStacks() {
-	fmt.Fprintf(os.Stderr, "Cleaning up E2E stacks. ")
+func cleanupStacks() error {
+	log.Println("Cleaning up E2E stacks. ")
 	errs := infra.GetStackManager().Cleanup(context.Background())
 	for _, err := range errs {
-		fmt.Fprint(os.Stderr, err.Error())
+		log.Println(err.Error())
 	}
+	if errs != nil {
+		return fmt.Errorf("error cleaning up E2E stacks")
+	}
+	return nil
 }
 
 func parseE2EConfigParams() []string {
@@ -179,7 +184,7 @@ func ListNodes(namespace string, client kubernetes.Interface) (*corev1.NodeList,
 	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
-		log.Panicf("error getting pods: %v", err)
+		log.Panicf("error getting nodes: %v", err)
 	}
 	return nodes, nil
 }
@@ -188,19 +193,23 @@ func NewClientFromKubeconfig(kc map[string]interface{}) (clientcmd.ClientConfig,
 	kubeconfig, err := json.Marshal(kc)
 	if err != nil {
 		log.Printf("Error encoding kubeconfig json. %v", err)
+		return nil, nil, nil, err
 	}
 	clientConfig, err := clientcmd.NewClientConfigFromBytes(kubeconfig)
 	if err != nil {
 		log.Printf("Error creating client config from kubeconfig. %v", err)
+		return nil, nil, nil, err
 	}
 	restConfig, err := clientConfig.ClientConfig()
 	if err != nil {
 		log.Printf("Error creating rest config. %v", err)
+		return nil, nil, nil, err
 	}
 
 	clientSet, err := kubernetes.NewForConfig(restConfig)
 	if err != nil {
 		log.Printf("Error creating clientset from rest config. %v", err)
+		return nil, nil, nil, err
 	}
 
 	return clientConfig, restConfig, clientSet, err
