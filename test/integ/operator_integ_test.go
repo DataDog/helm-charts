@@ -33,6 +33,8 @@ func Test(t *testing.T) {
 		t.Fatal("Make sure context is pointing to local cluster")
 
 	}
+	require.NotEmpty(t, os.Getenv(apiKeyEnv), "API key can't be empty")
+	require.NotEmpty(t, os.Getenv(appKeyEnv), "APP key can't be empty")
 
 	tests := []struct {
 		name                     string
@@ -81,7 +83,7 @@ func Test(t *testing.T) {
 			k8s.CreateNamespace(t, kubectlOptions, namespaceName)
 			defer k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
 
-			// Instal Cert Manager if needed
+			// Install Cert Manager if needed
 			cleanupCM := setupCertManager(t, kubectlOptions, tt.installCertManager)
 			defer cleanupCM()
 

@@ -65,9 +65,7 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 
 func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKeyEnv, appKeyEnv string) (cleanupFunc func()) {
 	apiKey := os.Getenv(apiKeyEnv)
-	require.NotEmpty(t, apiKey, "API key can't be empty")
 	appKey := os.Getenv(appKeyEnv)
-	require.NotEmpty(t, appKey, "APP key can't be empty")
 
 	// Setup Datadog Agent
 	t.Log("Creating secret")

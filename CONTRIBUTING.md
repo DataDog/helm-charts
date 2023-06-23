@@ -19,6 +19,14 @@ Go tests ensure quality and correctness of our Helm charts. These tests are inte
 
 These tests run as part of the CI workflow. They can be used locally, during development as well.
 
+We have two major groups of tests
+* Unit tests - these are lightweight tests utilizing Helm to verify:
+  * Error-free rendering of the templates.
+  * Correctness of specific values in the rendered manifests.
+  * Rendered manifests against baselines saved in the repo.
+* Integration tests - these test run against cluster in the local Kubernetes context or Kind cluster in the CI.
+  * Tests install one or multiple charts and assert that certain resources reach expected state.
+
 ### Prerequisites
 
 Tests have been validated using:
@@ -28,12 +36,27 @@ Tests have been validated using:
 They may work with older versions, though.
 
 ### Running the Tests
-Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root using following command:
+Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root using `make`.
 
-```shell
- make test
- ```
- 
+#### Unit Tests
+To run unit tests, run `make unit-test`.
+
+For changes which require baseline file update run `make update-test-baselines`. This will update all baseline files which should be included in the PR and pushed upstream.
+
+#### Integration Tests
+Integration tests run against locally configured context. We use [Terratest][terratest] for interacting with Helm and Kubectl.
+
+Each test creates unique namespace and subsequent resources are created in this namespace. Clean-up upon test completion is best effort, so it's recommended to run test against disposable cluster. **Make sure your don't accidentally run the test against production cluster.**
+
+**Prerequisites**
+* Kubeconfig context targeting test cluster. Local and CI tests have been tested using Kind cluster.
+* Environment Variables:
+  * `APP_KEY`
+  * `API_KEY`
+  * `K8S_VERSION` e.g. "v1.24"
+
+To run tests, run `make integration-tests`. You can run tests from IDE too (tested with VScode) as long as the environment variables are configured properly.
+
 ## How to update a README file
 
 In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
@@ -42,3 +65,4 @@ In each chart, the `README.md` file is generated from the corresponding `README.
 
 
 [go-ws]:https://go.dev/ref/mod#workspaces
+[terratest]:https://github.com/gruntwork-io/terratest
