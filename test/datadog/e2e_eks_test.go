@@ -43,13 +43,14 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 			t.Skipf("Skipping test, tearing down stack")
 		}
 		kubeconfig := eksEnv.StackOutput.Outputs["kubeconfig"]
-    agentChartInstallName := eksEnv.StackOutput.Outputs["agent-linux-helm-install-name"].Value.(string)
+		agentChartInstallName := eksEnv.StackOutput.Outputs["agent-linux-helm-install-name"].Value.(string)
 		agentChartInstallStatus := eksEnv.StackOutput.Outputs["agent-linux-helm-install-status"].Value.(map[string]interface{})
 		if kubeconfig.Value != nil {
 			kc := kubeconfig.Value.(map[string]interface{})
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
 			if err == nil {
 				verifyPods(t)
+				assertLatestAgentChart(t, agentChartInstallName, agentChartInstallStatus)
 			}
 		} else {
 			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
