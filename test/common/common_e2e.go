@@ -220,3 +220,7 @@ func NewK8sExec(clientSet *kubernetes.Clientset, restConfig *rest.Config) K8sExe
 	}
 	return k8sExec
 }
+
+func GetHelmRelease() {
+
+}

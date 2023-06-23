@@ -30,9 +30,8 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 		"ddtestworkload:deploy":                      auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-		// TODO: remove when upstream eks-pulumi bug is fixed https://github.com/pulumi/pulumi-eks/pull/886
-		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
 	}
+
 	stackConfig.Merge(config)
 
 	eksEnv, err := common.NewEKStack(stackConfig, common.DestroyStacks)
@@ -44,11 +43,14 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 			t.Skipf("Skipping test, tearing down stack")
 		}
 		kubeconfig := eksEnv.StackOutput.Outputs["kubeconfig"]
+		agentChartInstallName := eksEnv.StackOutput.Outputs["agent-linux-helm-install-name"].Value.(string)
+		agentChartInstallStatus := eksEnv.StackOutput.Outputs["agent-linux-helm-install-status"].Value.(map[string]interface{})
 		if kubeconfig.Value != nil {
 			kc := kubeconfig.Value.(map[string]interface{})
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
 			if err == nil {
 				verifyPods(t)
+				assertLatestAgentChart(t, agentChartInstallName, agentChartInstallStatus)
 			}
 		} else {
 			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
@@ -91,4 +93,10 @@ func assertPodStatus(t *testing.T, podExec common.K8sExec, podList *v1.PodList, 
 		_, _, err := podExec.K8sExec(namespace, pod.Name, containerName, []string{"agent", "status"})
 		require.NoError(t, err)
 	}
+}
+
+func assertLatestAgentChart(t *testing.T, chartInstallName string, chartInstallStatus map[string]interface{}) {
+	assert.EqualValues(t, chartInstallName, "dda", "Agent helm chart install name should be `dda`")
+	assert.EqualValues(t, chartInstallStatus["chart"], "datadog", "Agent helm chart name should be `datadog`")
+	assert.EqualValues(t, chartInstallStatus["version"], "3.32.4", "Agent helm chart version should be `3.32.4` (latest)")
 }
