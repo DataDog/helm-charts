@@ -78,7 +78,9 @@ type E2EEnv struct {
 	StackOutput auto.UpResult
 }
 
-func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
+// Create new EKS pulumi stack
+// The latest datadog/datadog helm chart is installed by default via the stack config `ddagent:deploy`
+func NewEKStack(stackConfig runner.ConfigMap, destroyStacks bool) (*E2EEnv, error) {
 	eksE2eEnv := &E2EEnv{
 		context: context.Background(),
 		name:    "eks-e2e",
@@ -86,7 +88,8 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 
 	stackManager := infra.GetStackManager()
 
-	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, false)
+	// Get or create stack if it doesn't exist
+	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, destroyStacks)
 	eksE2eEnv.StackOutput = stackOutput
 	if err != nil {
 		return nil, err
@@ -96,12 +99,32 @@ func NewEKStack(stackConfig runner.ConfigMap) (*E2EEnv, error) {
 
 func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
-		fmt.Fprintf(os.Stderr, "Tearing down E2E stack. ")
-		return infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+		log.Println("Tearing down E2E stack. ")
+		if e2eEnv != nil {
+			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+			if err != nil {
+				return fmt.Errorf("error tearing down E2E stack: %s", err)
+			}
+		} else {
+			return cleanupStacks()
+		}
 	} else {
-		fmt.Fprintf(os.Stderr, "Preserving E2E stack. ")
+		log.Println("Preserving E2E stack. ")
 		return nil
 	}
+	return nil
+}
+
+func cleanupStacks() error {
+	log.Println("Cleaning up E2E stacks. ")
+	errs := infra.GetStackManager().Cleanup(context.Background())
+	for _, err := range errs {
+		log.Println(err.Error())
+	}
+	if errs != nil {
+		return fmt.Errorf("error cleaning up E2E stacks")
+	}
+	return nil
 }
 
 func parseE2EConfigParams() []string {
@@ -161,7 +184,7 @@ func ListNodes(namespace string, client kubernetes.Interface) (*corev1.NodeList,
 	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
-		log.Panicf("error getting pods: %v", err)
+		log.Panicf("error getting nodes: %v", err)
 	}
 	return nodes, nil
 }
