@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.0
+
+* Add `fips.useConfigMap` and `fips.customFipsConfig` parameters to configure FIPS proxy side-car datadog-fips-proxy.cfg using configMap
+
 ## 3.32.4
 
 * Add futimens, utime, utimes and utimensat syscalls to system-probe seccomp.

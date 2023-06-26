@@ -476,3 +476,13 @@ You have enabled creataion of PodSecurityPolicy, however PSP have been removed f
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
 {{- end }}
+
+{{- if and (eq  (include "should-enable-fips" .) "true") (and .Values.fips.useConfigMap (empty .Values.fips.customFipsConfig) )}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using the fips.useConfigMap parameter but did not configure fips.customFipsConfig.
+This configuration is unsupported and FIPS proxy side-car custom configMap configuration is disabled.
+{{- end }}

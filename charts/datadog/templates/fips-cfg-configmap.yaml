@@ -1,0 +1,14 @@
+{{- if and (eq  (include "should-enable-fips" .) "true") (and .Values.fips.useConfigMap (not (empty .Values.fips.customFipsConfig) ))}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "fips-useConfigMap-configmap-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  annotations:
+    checksum/fips-config: {{ tpl (toYaml .Values.fips.customFipsConfig) . | sha256sum }}
+data:
+  datadog-fips-proxy.cfg: |
+{{ tpl (toYaml .Values.fips.customFipsConfig) . | indent 4 }}
+{{- end }}

@@ -1184,8 +1184,17 @@ fips:
     # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
     digest: ""
 
-    # agents.image.repository -- Override default registry + image.name for Agent
+    # fips.image.repository -- Override default registry + image.name for the FIPS sidecar container.
     repository:
+
+  # fips.useConfigMap -- Configures a configmap to provide the FIPS configuration. Use this in combination with the `fips.customFipsConfig` parameter.
+  useConfigMap:  # false
+
+  # fips.customFipsConfig -- Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg)
+
+  ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
+  ## Note the `fips.useConfigMap` needs to be set to `true` for this parameter to be taken into account.
+  customFipsConfig: {}
 
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!

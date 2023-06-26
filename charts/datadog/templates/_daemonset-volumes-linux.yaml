@@ -27,10 +27,10 @@
   name: etc-lsb-release
 {{- end }}
 {{- end -}}
-{{- if eq (include "should-enable-fips" .) "true" }}
-- name: fips-config
+{{- if eq (include "should-mount-fips-configmap" .) "true"}}
+- name: fips-proxy-cfg
   configMap:
-    name: {{ template "datadog.fullname" . }}-fips-config
+    name: {{ template "fips-useConfigMap-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
