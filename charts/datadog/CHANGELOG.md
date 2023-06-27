@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.6
+
+* Update the cluster agent network policy to allow telemetry submission.
+
 ## 3.32.5
 
 * Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml.
