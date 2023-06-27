@@ -3,7 +3,7 @@ package datadog_operator
 import (
 	"testing"
 
-	"github.com/DataDog/helm-chart/test/common"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
