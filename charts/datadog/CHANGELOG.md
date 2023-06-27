@@ -4,6 +4,15 @@
 
 * Add `fips.useConfigMap` and `fips.customFipsConfig` parameters to configure FIPS proxy side-car datadog-fips-proxy.cfg using configMap
 
+## 3.32.6
+
+* Fix cluster agent pod failing to start when securityContext is set.
+
+## 3.32.5
+
+* Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml.
+
+
 ## 3.32.4
 
 * Add futimens, utime, utimes and utimensat syscalls to system-probe seccomp.
