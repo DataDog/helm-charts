@@ -28,7 +28,7 @@ Tests have been validated using:
 They may work with older versions, though.
 
 ### Running the Tests
-Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root:
+Go sources are located under the `test` directory.
 
 #### Unit Tests
 
@@ -74,6 +74,3 @@ aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
 1. Update either the `README.md.gotmpl` or `values.yaml` file.
 1. Run `.github/helm-docs.sh` to update the README.
-
-
-[go-ws]:https://go.dev/ref/mod#workspaces
