@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.32.6
+
+* Fix cluster agent pod failing to start when securityContext is set.
+
 ## 3.32.5
 
 * Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml.
