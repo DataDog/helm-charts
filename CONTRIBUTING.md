@@ -54,7 +54,7 @@ Internal Datadog users may run E2E locally with the following prerequisites:
 To run E2E tests locally, run `aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructure, and performs stack cleanup upon test completion.
 
 ```shell
- aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
+aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
 ```
 
 To keep an E2E Pulumi stack running upon test completion, run `make e2e-test-preserve-stacks`. This is useful for developing tests on Pulumi infrastructures that have a long startup time (such as AWS EKS).

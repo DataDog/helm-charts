@@ -4,3 +4,4 @@ kubeval
 .idea
 vendor/
 .vscode
+go.work*
