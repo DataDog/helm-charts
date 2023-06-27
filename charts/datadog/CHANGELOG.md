@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.32.6
+## 3.32.7
 
 * Update the cluster agent network policy to allow telemetry submission.
+
+## 3.32.6
+
+* Fix cluster agent pod failing to start when securityContext is set.
 
 ## 3.32.5
 
