@@ -106,11 +106,12 @@ spec:
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
-          - cp
+          - bash
+          - -c
         args:
-          - -r
-          - /etc/datadog-agent
-          - /opt
+          - |
+            chmod -R 744 /etc/datadog-agent;
+            cp -r /etc/datadog-agent /opt
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
