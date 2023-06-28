@@ -7,7 +7,7 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-1.0.4
+    helm.sh/chart: datadog-operator-1.0.5
     app.kubernetes.io/instance: datadog-operator
     app.kubernetes.io/version: "1.0.3"
     app.kubernetes.io/managed-by: Helm

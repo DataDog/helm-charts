@@ -53,10 +53,12 @@ specs:
           - matchName: "app.{{ $.Values.datadog.site }}"
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{  $.Values.datadog.site }}"
+          - matchName: "instrumentation-telemetry-intake.{{  $.Values.datadog.site }}"
           {{- else}}
           - matchName: "app.datadoghq.com"
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
+          - matchName: "instrumentation-telemetry-intake.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:
