@@ -52,17 +52,25 @@ unit-test:
 update-test-baselines:
 	go test -C test ./... -count=1 -skip=E2E -args -updateBaselines=true
 
+# Running E2E tests locally:
+## Must be connected to appgate
+## E2E make target commands must be prepended with `aws-vault exec sso-agent-sandbox-account-admin --`
+
+# aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
 .PHONY: test-e2e
 test-e2e: fmt vet e2e-test
 
+# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test
 .PHONY: e2e-test
 e2e-test:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1
 
+# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
 .PHONY: e2e-test-preserve-stacks
 e2e-test-preserve-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
 
+# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 .PHONY: e2e-test-cleanup-stacks
 e2e-test-cleanup-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) gotestsum --packages=./test/... --format standard-verbose --format-hide-empty-pkg -- -run=E2E -vet=off -timeout 1h -count=1 -args -destroyStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1 -args -destroyStacks=true

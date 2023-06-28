@@ -28,7 +28,7 @@ Tests have been validated using:
 They may work with older versions, though.
 
 ### Running the Tests
-Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root:
+Go sources are located under the `test` directory.
 
 #### Unit Tests
 
@@ -54,7 +54,7 @@ Internal Datadog users may run E2E locally with the following prerequisites:
 To run E2E tests locally, run `aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructure, and performs stack cleanup upon test completion.
 
 ```shell
- aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
+aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
 ```
 
 To keep an E2E Pulumi stack running upon test completion, run `make e2e-test-preserve-stacks`. This is useful for developing tests on Pulumi infrastructures that have a long startup time (such as AWS EKS).
@@ -74,6 +74,3 @@ aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
 1. Update either the `README.md.gotmpl` or `values.yaml` file.
 1. Run `.github/helm-docs.sh` to update the README.
-
-
-[go-ws]:https://go.dev/ref/mod#workspaces
