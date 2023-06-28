@@ -6385,6 +6385,10 @@ spec:
                       type: object
                     logLevel:
                       type: string
+                    namespaceLabelsAsTags:
+                      additionalProperties:
+                        type: string
+                      type: object
                     networkPolicy:
                       properties:
                         create:
@@ -6417,10 +6421,6 @@ spec:
                           x-kubernetes-list-type: atomic
                         flavor:
                           type: string
-                      type: object
-                    namespaceLabelsAsTags:
-                      additionalProperties:
-                        type: string
                       type: object
                     nodeLabelsAsTags:
                       additionalProperties:
