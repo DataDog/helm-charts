@@ -51,6 +51,7 @@ spec:
             - "-logEncoder=json"
             - "-metrics-addr=:8383"
             - "-loglevel=info"
+            - "-webhookEnabled=true"
             - "-datadogMonitorEnabled=false"
             - "-datadogAgentEnabled=true"
           ports:

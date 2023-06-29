@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+* Fix conversionWebhook.enabled parameter to set user-configured value.
+
 ## 1.0.5
 
 * Add AP1 Site Comment in `values.yaml`.
