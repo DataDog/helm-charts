@@ -23,7 +23,7 @@ jobs:
     - name: run Go tests
       run: |
         helm dependency build ./charts/datadog-operator
-        make test
+        make unit-test
 
   integ-tests:
     name: integ-tests
@@ -63,4 +63,4 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
           helm dependency build ./charts/datadog-operator
-          make integration-tests
+          make integration-test
