@@ -51,7 +51,7 @@ For changes which require baseline file update run `make update-test-baselines`.
 #### Integration Tests
 Integration tests run against locally configured context. We use [Terratest][terratest] for interacting with Helm and Kubectl.
 
-Each test creates unique namespace and subsequent resources are created in this namespace. Clean-up upon test completion is best effort, so it's recommended to run test against disposable cluster. **Make sure your don't accidentally run the test against production cluster.**
+Each test creates a unique namespace and subsequent resources are created in this namespace. Clean-up upon test completion is best effort, so it's recommended to run test against disposable cluster. **Make sure you don't accidentally run the test against a production cluster.**
 
 **Prerequisites**
 * Kubeconfig context targeting test cluster. Local and CI tests have been tested using Kind cluster.
