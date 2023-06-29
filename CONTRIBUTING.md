@@ -26,6 +26,7 @@ We have two major groups of tests
   * Rendered manifests against baselines saved in the repo.
 * Integration tests - these test run against cluster in the local Kubernetes context or Kind cluster in the CI.
   * Tests install one or multiple charts and assert that certain resources reach expected state.
+* End-to-End test - these tests target cloud infrastructure deployed by [Pulumi][pulumi].
 
 ### Prerequisites
 
@@ -42,7 +43,7 @@ Go sources are located under the `test` directory.
 To run unit tests.
 
 ```shell
- make test
+ make unit-test
  ```
 
 For changes which require baseline file update run `make update-test-baselines`. This will update all baseline files which should be included in the PR and pushed upstream.
@@ -59,22 +60,23 @@ Each test creates unique namespace and subsequent resources are created in this 
   * `API_KEY`
   * `K8S_VERSION` e.g. "v1.24"
 
-To run tests, run 
+Use below `make` targets to run integration tests or integration and unit tests together respectively.
 
 ```shell
-`make integration-tests`
+make integration-test
+make test
 ```
 You can run tests from IDE too (tested with VScode) as long as the environment variables are configured properly.
 
 #### End-to-End Tests
-The helm-charts end-to-end (E2E) tests run on [Pulumi](https://www.pulumi.com/)-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`test-infra-definitions`](https://github.com/DataDog/test-infra-definitions) and [`datadog-agent`](https://github.com/DataDog/datadog-agent/tree/main/test/new-e2e) E2E frameworks.
+The helm-charts end-to-end (E2E) tests run on [Pulumi][pulumi]-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`test-infra-definitions`][test-infra-repo] and [`datadog-agent`][agent-e2e-source] E2E frameworks.
 
 **Prerequisites**
 Internal Datadog users may run E2E locally with the following prerequisites:
 
 * Access to the AWS `agent-sandbox` account
 * AWS keypair with your public ssh key created in the `agent-sandbox` account
-* Completed steps 1-4 of the `test-infra-definitions` [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide)
+* Completed steps 1-4 of the `test-infra-definitions` [Quick start guide][test-infra-quickstart]
 * Environment Variables:
   * AWS_KEYPAIR_NAME
   * E2E_API_KEY
@@ -104,10 +106,11 @@ aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
 1. Update either the `README.md.gotmpl` or `values.yaml` file.
 1. Run `.github/helm-docs.sh` to update the README.
-<<<<<<< HEAD
 
 
 [go-ws]:https://go.dev/ref/mod#workspaces
 [terratest]:https://github.com/gruntwork-io/terratest
-=======
->>>>>>> main
+[pulumi]:https://www.pulumi.com/
+[test-infra-repo]:https://github.com/DataDog/test-infra-definitions
+[agent-e2e-source]:https://github.com/DataDog/datadog-agent/tree/main/test/new-e2e
+[test-infra-quickstart]:https://github.com/DataDog/test-infra-definitions#quick-start-guide
