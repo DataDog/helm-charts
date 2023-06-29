@@ -36,10 +36,14 @@ Tests have been validated using:
 They may work with older versions, though.
 
 ### Running the Tests
-Go sources are located under the `test` directory. The repository uses [Go workspace][go-ws], so tests can be run from the repository root using `make`.
+Go sources are located under the `test` directory.
 
 #### Unit Tests
-To run unit tests, run `make unit-test`.
+To run unit tests.
+
+```shell
+ make test
+ ```
 
 For changes which require baseline file update run `make update-test-baselines`. This will update all baseline files which should be included in the PR and pushed upstream.
 
@@ -55,14 +59,55 @@ Each test creates unique namespace and subsequent resources are created in this 
   * `API_KEY`
   * `K8S_VERSION` e.g. "v1.24"
 
-To run tests, run `make integration-tests`. You can run tests from IDE too (tested with VScode) as long as the environment variables are configured properly.
+To run tests, run 
 
+```shell
+`make integration-tests`
+```
+You can run tests from IDE too (tested with VScode) as long as the environment variables are configured properly.
+
+#### End-to-End Tests
+The helm-charts end-to-end (E2E) tests run on [Pulumi](https://www.pulumi.com/)-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`test-infra-definitions`](https://github.com/DataDog/test-infra-definitions) and [`datadog-agent`](https://github.com/DataDog/datadog-agent/tree/main/test/new-e2e) E2E frameworks.
+
+**Prerequisites**
+Internal Datadog users may run E2E locally with the following prerequisites:
+
+* Access to the AWS `agent-sandbox` account
+* AWS keypair with your public ssh key created in the `agent-sandbox` account
+* Completed steps 1-4 of the `test-infra-definitions` [Quick start guide](https://github.com/DataDog/test-infra-definitions#quick-start-guide)
+* Environment Variables:
+  * AWS_KEYPAIR_NAME
+  * E2E_API_KEY
+  * E2E_APP_KEY
+  * PULUMI_CONFIG_PASSPHRASE
+
+To run E2E tests locally, run `aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e`. This creates the E2E infrastructure stacks, runs tests in the infrastructure, and performs stack cleanup upon test completion.
+
+```shell
+aws-vault exec sso-agent-sandbox-account-admin -- make test-e2e
+```
+
+To keep an E2E Pulumi stack running upon test completion, run `make e2e-test-preserve-stacks`. This is useful for developing tests on Pulumi infrastructures that have a long startup time (such as AWS EKS).
+
+```shell
+aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
+```
+
+To clean up existing stacks, run:
+
+```shell
+aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
+```
+ 
 ## How to update a README file
 
 In each chart, the `README.md` file is generated from the corresponding `README.md.gotmpl` and `values.yaml` files. Instead of modifying the `README.md` file directly:
 1. Update either the `README.md.gotmpl` or `values.yaml` file.
 1. Run `.github/helm-docs.sh` to update the README.
+<<<<<<< HEAD
 
 
 [go-ws]:https://go.dev/ref/mod#workspaces
 [terratest]:https://github.com/gruntwork-io/terratest
+=======
+>>>>>>> main

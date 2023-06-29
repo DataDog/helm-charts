@@ -2,4 +2,6 @@ charts/*/charts
 helm-docs
 kubeval
 .idea
+vendor/
 .vscode
+go.work*
