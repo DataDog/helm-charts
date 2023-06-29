@@ -19,7 +19,7 @@ Go tests ensure quality and correctness of our Helm charts. These tests are inte
 
 These tests run as part of the CI workflow. They can be used locally, during development as well.
 
-We have two major groups of tests
+We have three major groups of tests
 * Unit tests - these are lightweight tests utilizing Helm to verify:
   * Error-free rendering of the templates.
   * Correctness of specific values in the rendered manifests.
