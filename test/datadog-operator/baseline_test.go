@@ -24,7 +24,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
@@ -37,7 +37,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
@@ -54,7 +54,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/datadog-operator",
 				// datadogCRDs is an alias defined in the chart dependency
 				ShowOnly:  []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:    "../../charts/datadog-operator/values.yaml",
+				Values:    []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{},
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
@@ -68,7 +68,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/datadog-operator",
 				// datadogCRDs is an alias defined in the chart dependency
 				ShowOnly: []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:   "../../charts/datadog-operator/values.yaml",
+				Values:   []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",

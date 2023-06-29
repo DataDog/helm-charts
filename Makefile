@@ -34,7 +34,7 @@ endif
 all: fmt vet test test-e2e
 
 .PHONY: test
-test: fmt vet unit-test
+test: fmt vet unit-test integration-test
 
 .PHONY: fmt
 fmt:
@@ -51,6 +51,10 @@ unit-test:
 .PHONY: update-test-baselines
 update-test-baselines:
 	go test -C test ./... -count=1 -skip=E2E -args -updateBaselines=true
+
+.PHONY: integration-test
+integration-test:
+	go test -C test/integ --tags=integration -skip=E2E -count=1 -v
 
 # Running E2E tests locally:
 ## Must be connected to appgate
