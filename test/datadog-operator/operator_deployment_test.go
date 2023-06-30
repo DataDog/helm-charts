@@ -59,7 +59,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=true arg",
+			name: "Verify Operator 1.0 conversionWebhook.enabled=true",
 			command: common.HelmCommand{
 				ReleaseName: "random-string-as-release-name",
 				ChartPath:   "../../charts/datadog-operator",
@@ -73,7 +73,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=false arg",
+			name: "Verify Operator 1.0 conversionWebhook.enabled=false",
 			command: common.HelmCommand{
 				ReleaseName: "random-string-as-release-name",
 				ChartPath:   "../../charts/datadog-operator",
@@ -82,6 +82,17 @@ func Test_operator_chart(t *testing.T) {
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "false",
 				},
+			},
+			assertions: verifyConversionWebhookEnabledFalse,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "Verify Operator 1.0 conversionWebhook.enabled default",
+			command: common.HelmCommand{
+				ReleaseName: "random-string-as-release-name",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 			},
 			assertions: verifyConversionWebhookEnabledFalse,
 			skipTest:   SkipTest,
