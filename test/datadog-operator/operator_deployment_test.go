@@ -3,7 +3,7 @@ package datadog_operator
 import (
 	"testing"
 
-	"github.com/DataDog/helm-chart/test/common"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -37,7 +37,7 @@ func Test_operator_chart(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			assertions: verifyDeployment,
@@ -49,7 +49,7 @@ func Test_operator_chart(t *testing.T) {
 				ReleaseName: "random-string-as-release-name",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
@@ -64,7 +64,7 @@ func Test_operator_chart(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			assertions: verifyAll,

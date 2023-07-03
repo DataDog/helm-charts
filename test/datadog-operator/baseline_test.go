@@ -3,7 +3,7 @@ package datadog_operator
 import (
 	"testing"
 
-	"github.com/DataDog/helm-chart/test/common"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
@@ -24,7 +24,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
@@ -37,7 +37,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      "../../charts/datadog-operator/values.yaml",
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
@@ -54,7 +54,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/datadog-operator",
 				// datadogCRDs is an alias defined in the chart dependency
 				ShowOnly:  []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:    "../../charts/datadog-operator/values.yaml",
+				Values:    []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{},
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
@@ -68,7 +68,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/datadog-operator",
 				// datadogCRDs is an alias defined in the chart dependency
 				ShowOnly: []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:   "../../charts/datadog-operator/values.yaml",
+				Values:   []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
 					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
@@ -86,9 +86,9 @@ func Test_baseline_manifests(t *testing.T) {
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
-			assert.Nil(t, err, "cound't render template")
-			t.Log("update baselines", UpdateBaselines)
-			if UpdateBaselines {
+			assert.Nil(t, err, "couldn't render template")
+			t.Log("update baselines", common.UpdateBaselines)
+			if common.UpdateBaselines {
 				common.WriteToFile(t, tt.baselineManifestPath, manifest)
 			}
 

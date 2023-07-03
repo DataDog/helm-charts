@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+* Add AP1 Site Comment in `values.yaml`.
+
 ## 1.0.4
 
 * Update Datadog Operator version to 1.0.3.
