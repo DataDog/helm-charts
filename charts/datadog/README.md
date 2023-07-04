@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.32.7](https://img.shields.io/badge/Version-3.32.7-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.32.8](https://img.shields.io/badge/Version-3.32.8-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -734,6 +734,7 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
+| extraObjects | list | `[]` | Array of extra K8s manifests to deploy # NOTE: The below Secret in extraObjects array is just an example of how can you use this array.  # While using GitOps approach, it's not recommended to deploy unencrypted secrets this way.  # Consider using one of the more secure approaches, like Sealed Secrets, Helm Secrets, KSOPS, aws-secret-operator, etc. |
 | fips.enabled | bool | `false` |  |
 | fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
 | fips.image.name | string | `"fips-proxy"` |  |
