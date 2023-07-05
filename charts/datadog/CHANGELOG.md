@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.0
+
+* Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)` or "" for auto detection.
+
 ## 3.32.7
 
 * Update the cluster agent network policy to allow telemetry submission.

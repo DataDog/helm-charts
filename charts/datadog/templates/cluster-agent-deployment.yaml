@@ -234,6 +234,8 @@ spec:
           {{- end }}
           - name: DD_LEADER_ELECTION
             value: {{ .Values.datadog.leaderElection | quote}}
+          - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+            value: {{ .Values.datadog.leaderElectionResource | quote}}
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
