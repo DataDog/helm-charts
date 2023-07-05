@@ -31,5 +31,4 @@ e2e:
     - export AWS_PROFILE=agent-qa-ci
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
-    # TODO: enable running E2E tests when upstream pulumi-eks fix is merged https://github.com/pulumi/pulumi-eks/pull/886
-    - echo "Success!"
+    - E2E_PROFILE=CI make test-e2e
