@@ -2,7 +2,14 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+{{- if .Values.datadog.communityIntegrations }}
+  command:
+  - bash
+  - -c
+  - {{ range .Values.datadog.communityIntegrations }} agent integration install -t -r datadog-{{ .name }}=={{ .version }} && {{- end}} agent run
+{{- else }}
   command: ["agent", "run"]
+{{- end}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}

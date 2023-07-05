@@ -386,6 +386,16 @@ datadog:
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
 
+  # datadog.communityIntegrations -- Install community integrations in the Datadog Daemonset.
+
+  ## Specify community integrations (ref: https://docs.datadoghq.com/agent/guide/use-community-integrations/) for the Datadog Daemonset.
+  ## Warning: Ensure the integration version you are installing is compatible with the Agent version you are using.
+  communityIntegrations: []
+  # - name: neo4j
+  #   version: 3.0.0
+  # - name: aws_pricing
+  #   version: 1.0.0
+
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.0
+
+* Adds `datadog.communityIntegrations` to permit the installation of community integrations at deployment time, instead of resorting to a custom image.
+
 ## 3.32.7
 
 * Update the cluster agent network policy to allow telemetry submission.
