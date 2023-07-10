@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
+
 ## 3.32.8
 
 * Always set the Remote Configuration environment variable
