@@ -1,9 +1,13 @@
 # Datadog changelog
 
-## 3.30.0
+## 3.34.0
 
 * Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
 * Narrowed the admission controller's RBAC scope in the cluster agent to only include a single resourceName, specifically `clusterAgent.admissionController.webhookName`.
+
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
 
 ## 3.32.8
 
