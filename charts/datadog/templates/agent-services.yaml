@@ -78,10 +78,12 @@ spec:
   selector:
     app: {{ template "datadog.fullname" . }}
   ports:
+{{- if .Values.datadog.dogstatsd.useHostPort }}
     - protocol: UDP
       port: {{ .Values.datadog.dogstatsd.port }}
       targetPort: {{ .Values.datadog.dogstatsd.port }}
       name: dogstatsdport
+{{- end}}
 {{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.33.1
+
+* Fix agent service to target DogstatsD port only if datadog.dogstatsd.useHostPort=true
+
 # 3.33.0
 
 * Default `Agent` and `Cluster-Agent` to `7.46.0` version.
