@@ -490,6 +490,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
 | clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config. # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
+| clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the mutatingwebhookconfigurations created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |

@@ -5,6 +5,10 @@
 * Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
 * Narrowed the admission controller's RBAC scope in the cluster agent to only include a single resourceName, specifically `clusterAgent.admissionController.webhookName`.
 
+## 3.32.8
+
+* Always set the Remote Configuration environment variable
+
 ## 3.32.7
 
 * Update the cluster agent network policy to allow telemetry submission.
@@ -32,7 +36,7 @@
 ## 3.32.1
 
 * Add AP1 Site Comment at `value.yaml`.
-* Fix CVE in the FIPS compliant side car container  
+* Fix CVE in the FIPS compliant side car container
 
 ## 3.32.0
 

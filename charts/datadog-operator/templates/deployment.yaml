@@ -93,7 +93,9 @@ spec:
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
-          {{- if and (not .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
+          {{- if and (not (empty .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled)) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
+            - "-webhookEnabled={{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled }}"
+          {{- else }}
             - "-webhookEnabled=false"
           {{- end }}
           {{- if .Values.secretBackend.command }}
