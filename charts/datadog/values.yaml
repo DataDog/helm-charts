@@ -824,6 +824,24 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
 
+  features:
+
+    # Container monitoring
+    containerMonitoring:
+      containerImageCollection:
+        # datadog.features.containerMonitoring.containerImageCollection.enabled -- Enable collection of container images metadata
+        enabled: false
+
+    # (Software Bill Of Materials) configuration
+    sbom:
+      containerImage:
+        # datadog.features.sbom.containerImage.enabled -- Enable SBOM collection for container images
+        enabled: false
+
+      host:
+        # datadog.features.sbom.host.enabled -- Enable SBOM collection for host filesystem
+        enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics

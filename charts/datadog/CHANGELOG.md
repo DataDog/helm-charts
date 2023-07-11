@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.5
+
+* Allow enabling SBOM collection for host and container images.
+
 ## 3.40.4
 
 * Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
