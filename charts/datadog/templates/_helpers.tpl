@@ -275,7 +275,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -632,7 +632,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -773,6 +773,28 @@ Note: GKE Autopilot clusters only use COS (see https://cloud.google.com/kubernet
 */}}
 {{- define "can-mount-host-usr-src" -}}
 {{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Remote Configuration should be enabled in the agent
+*/}}
+{{- define "datadog-remoteConfiguration-enabled" -}}
+{{- if or .Values.remoteConfiguration.enabled .Values.datadog.remoteConfiguration.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Remote Configuration should be enabled in the cluster agent
+*/}}
+{{- define "clusterAgent-remoteConfiguration-enabled" -}}
+{{- if or .Values.remoteConfiguration.enabled .Values.clusterAgent.admissionController.remoteInstrumentation.enabled -}}
 true
 {{- else -}}
 false

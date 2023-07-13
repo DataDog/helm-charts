@@ -91,6 +91,7 @@ specs:
           - matchName: "agent-http-intake.logs.{{ $.Values.datadog.site }}"
           - matchName: "process.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{ $.Values.datadog.site }}"
+          - matchName: "instrumentation-telemetry-intake.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "app.datadoghq.com"
@@ -99,6 +100,7 @@ specs:
           - matchName: "agent-http-intake.logs.datadoghq.com"
           - matchName: "process.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
+          - matchName: "instrumentation-telemetry-intake.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:

@@ -106,11 +106,12 @@ spec:
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
-          - cp
+          - bash
+          - -c
         args:
-          - -r
-          - /etc/datadog-agent
-          - /opt
+          - |
+            chmod -R 744 /etc/datadog-agent;
+            cp -r /etc/datadog-agent /opt
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
@@ -150,6 +151,10 @@ spec:
 {{- end }}
 {{- end }}
         env:
+          - name: DD_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
@@ -209,12 +214,12 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+          {{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
-          - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "true"
           {{- end }}
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}

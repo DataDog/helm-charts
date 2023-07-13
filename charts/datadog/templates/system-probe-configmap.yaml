@@ -43,6 +43,8 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+    data_streams_config:
+      enabled: {{ $.Values.datadog.dataStreamsMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
@@ -54,7 +56,7 @@ data:
       network:
         enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
       remote_configuration:
-        enabled: {{ if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.remoteConfiguration.enabled -}} true {{else -}} false {{end}}
+        enabled: {{ if and .Values.datadog.securityAgent.runtime.enabled (eq (include "datadog-remoteConfiguration-enabled" .) "true") -}} true {{else -}} false {{end}}
 {{- if .Values.datadog.securityAgent.runtime.activityDump.enabled }}
       activity_dump:
         enabled: true
@@ -133,6 +135,7 @@ data:
             "fstatfs",
             "fsync",
             "futex",
+            "futimens",
             "getcwd",
             "getdents",
             "getdents64",
@@ -159,6 +162,10 @@ data:
             "gettimeofday",
             "getuid",
             "getxattr",
+            "inotify_add_watch",
+            "inotify_init",
+            "inotify_init1",
+            "inotify_rm_watch",
             "ioctl",
             "ipc",
             "listen",
@@ -248,6 +255,9 @@ data:
             "uname",
             "unlink",
             "unlinkat",
+            "utime",
+            "utimensat",
+            "utimes",
             "wait4",
             "waitid",
             "waitpid",
