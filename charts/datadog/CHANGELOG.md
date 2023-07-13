@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.33.1
+## 3.33.2
 
 * Adds securitycontext capabilities to seccomp-setup init containers
 
