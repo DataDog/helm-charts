@@ -35,3 +35,5 @@
 {{- end }}
 {{- end }}
 {{- end -}}
+- name: logdatadog
+  emptyDir: {}

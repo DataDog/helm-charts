@@ -186,6 +186,18 @@ Return the container runtime socket
 {{- end -}}
 
 {{/*
+Return agent log directory path
+*/}}
+{{- define "datadog.logDirectoryPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/var/log/datadog
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog/logs
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return agent config path
 */}}
 {{- define "datadog.confPath" -}}
