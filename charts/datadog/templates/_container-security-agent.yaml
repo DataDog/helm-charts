@@ -60,6 +60,9 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -69,9 +72,6 @@
       readOnly: false # Need RW for UDS DSD socket
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to tmp directory
