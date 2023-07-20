@@ -1,8 +1,89 @@
 # Datadog changelog
 
-## 3.30.4
+## 3.33.4
 
 * Makes `dnsPolicy` configurable using `agents.dnsPolicy`/`clusterAgent.dnsPolicy` variable in `values.yaml`.
+## 3.33.3
+
+* Remove `datadog.dataStreamsMonitoring.enabled` parameter.
+
+## 3.33.2
+
+* Add emptyDir and volumeMounts for Agent log files in Windows containers to fix log file access
+
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
+
+## 3.32.8
+
+* Always set the Remote Configuration environment variable
+
+## 3.32.7
+
+* Update the cluster agent network policy to allow telemetry submission.
+
+## 3.32.6
+
+* Fix cluster agent pod failing to start when securityContext is set.
+
+## 3.32.5
+
+* Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml.
+
+## 3.32.4
+
+* Add futimens, utime, utimes and utimensat syscalls to system-probe seccomp.
+
+## 3.32.3
+
+* Allows configuration of `dogstatsd.tagCardinality` independent of `dogstatsd.originDetection`.
+
+## 3.32.2
+
+* Set the `priority` field of the OpenShift’s SCC to `null` in order to not have a higher priority than the OpenShift 4.11+ default `restricted-v2` SCC.
+
+## 3.32.1
+
+* Add AP1 Site Comment at `value.yaml`.
+* Fix CVE in the FIPS compliant side car container
+
+## 3.32.0
+
+* Add a new preferred parameter to enable Remote Configuration on both the agent and the cluster agent.
+
+## 3.31.0
+
+* Default `Agent` and `Cluster-Agent` to `7.45.0` version.
+
+## 3.30.10
+
+* Updated pointerdir mountPath for Windows deployments.
+
+## 3.30.9
+
+* Pass its pod name to the cluster-agent. This is used by cluster agent 7.46+ to make leader election work when using host network.
+
+## 3.30.8
+
+* Update `fips.image.tag` to `0.5.2` version
+
+## 3.30.7
+
+* Fix Windows support of `agents.customAgentConfig` to avoid bind mount of a file.
+
+## 3.30.6
+
+* Adds `datadog.kubeStateMetricsCore.collectApiServicesMetrics` (`false` by default) to collect apiservices metrics in Kube State Metrics Core.
+  Note: APIServices metrics collection requires Cluster Agent 7.45.0+.
+
+## 3.30.5
+
+* Add `list` and `watch` permissions of `apiservices` resources for the `kubernetes_state_core` check.
+
+## 3.30.4
+
+* Remove USM private beta comments.
 
 ## 3.30.3
 
@@ -22,7 +103,7 @@
 
 ## 3.29.3
 
-* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe. 
+* Add `inotify_add_watch`, `inotify_init`, `inotify_init1`, and `inotify_rm_watch` to the default seccomp profile of system-probe.
 
 ## 3.29.2
 

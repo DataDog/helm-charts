@@ -1,0 +1,35 @@
+variables:
+  # Do not modify this - must be the repository name for Kubernetes gitlab runners to run
+  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: helm-charts
+
+stages:
+  - e2e
+
+e2e:
+  stage: e2e
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        paths:
+          - charts/**/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:986d192b
+  tags: ["arch:amd64"]
+  before_script:
+    # Update awscli v2
+    - aws --version
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - ./aws/install --update
+    - aws --version
+    # Setup AWS Credentials
+    - mkdir -p ~/.aws
+    - set +x
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - set -x
+    - export AWS_PROFILE=agent-qa-ci
+    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+  script:
+    # TODO: enable running E2E tests when upstream pulumi-eks fix is merged https://github.com/pulumi/pulumi-eks/pull/886
+    - echo "Success!"

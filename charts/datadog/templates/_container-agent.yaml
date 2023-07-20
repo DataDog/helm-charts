@@ -73,6 +73,8 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    {{- end }}
+    {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
       value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
     {{- end }}
@@ -151,14 +153,14 @@
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
@@ -174,7 +176,7 @@
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-    {{- if .Values.agents.useConfigMap }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
@@ -225,7 +227,7 @@
     {{- if eq .Values.targetSystem "windows" }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
-      mountPath: C:/var/log
+      mountPath: c:/programdata/datadog/run
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: C:/var/log/pods

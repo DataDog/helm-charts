@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.6
+
+* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook. 
+
+## 1.0.5
+
+* Add AP1 Site Comment in `values.yaml`.
+
+## 1.0.4
+
+* Update Datadog Operator version to 1.0.3.
+
+## 1.0.3
+
+* Add `list` and `watch` permissions of `customresourcedefinitions` for the KSM core check to collect CRD resources.
+
 ## 1.0.2
 
 * Use `.Release.Name` for reference to conversion webhook certificate in datadog-operator deployment.yaml
