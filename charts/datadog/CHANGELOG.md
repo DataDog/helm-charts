@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.3
+
+* Remove `datadog.dataStreamsMonitoring.enabled` parameter.
+
 ## 3.33.2
 
 * Add emptyDir and volumeMounts for Agent log files in Windows containers to fix log file access
