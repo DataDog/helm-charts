@@ -41,7 +41,7 @@ appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
-  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/datadog-operator
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator
   # image.tag -- Define the Datadog Operator version to use
   tag: 1.0.3
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
