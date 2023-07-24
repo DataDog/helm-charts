@@ -50,6 +50,10 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
+    - name: DD_PROCESS_CONFIG_LANGUAGE_DETECTION_ENABLED
+      value: {{ (default false (or .Values.datadog.apm.process_language_detection.enabled)) | quote }}
+    - name: DD_PROCESS_CONFIG_LANGUAGE_DETECTION_GRPC_PORT
+      value: {{ $.Values.config.process_language_detection.grpc_port | quote }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}
