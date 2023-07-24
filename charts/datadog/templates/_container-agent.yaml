@@ -100,6 +100,12 @@
     {{- end }}
     - name: DD_APM_ENABLED
       value: "false"
+    - name: DD_WORKLOADMETA_REMOTE_PROCESS_COLLECTOR_ENABLED # Enable the workloadmeta remote process collector only in the core agent
+      value: {{ (default false (or .Values.datadog.apm.process_language_detection.enabled)) | quote }}
+    - name: DD_PROCESS_CONFIG_LANGUAGE_DETECTION_ENABLED # Does nothing in the core agent but is printed in the output of agent config
+      value: {{ (default false (or .Values.datadog.apm.process_language_detection.enabled)) | quote }}
+    - name: DD_PROCESS_CONFIG_LANGUAGE_DETECTION_GRPC_PORT
+      value: {{ $.Values.config.process_language_detection.grpc_port | quote }}
     - name: DD_LOGS_ENABLED
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
