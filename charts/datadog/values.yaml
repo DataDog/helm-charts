@@ -451,7 +451,7 @@ datadog:
 
     process_language_detection:
       # datadog.apm.process_language_detection.enabled -- Set to true to enable process language detection
-      # which gather information about the language associated with each process. This information 
+      # which gather information about the language associated with each process. This information
       # is then used to inject the appropriate Datadog library specific to that language.
       enabled: false
       # datadog.apm.process_language_detection.port -- Set the process-agent port exposing the process
