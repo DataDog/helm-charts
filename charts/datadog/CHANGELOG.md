@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.4
+
+* Increase the health checks inteval from 2 to 10 seconds in the FIPS compliant side car container 
+
 ## 3.33.3
 
 * Remove `datadog.dataStreamsMonitoring.enabled` parameter.
