@@ -217,9 +217,9 @@ spec:
           {{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
-          - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "true"
           {{- end }}
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}

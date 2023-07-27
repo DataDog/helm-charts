@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 3.33.0
+## 3.33.5
 
 * Add `fips.useConfigMap` and `fips.customFipsConfig` parameters to configure FIPS proxy side-car datadog-fips-proxy.cfg using configMap
+
+## 3.33.4
+
+* Update `fips.image.tag` to `0.5.4` increasing the health checks interval from 2 to 10 seconds in the FIPS compliant side car container
+
+## 3.33.3
+
+* Remove `datadog.dataStreamsMonitoring.enabled` parameter.
+
+## 3.33.2
+
+* Add emptyDir and volumeMounts for Agent log files in Windows containers to fix log file access
+
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
+
+## 3.32.8
+
+* Always set the Remote Configuration environment variable
 
 ## 3.32.7
 
@@ -32,7 +52,7 @@
 ## 3.32.1
 
 * Add AP1 Site Comment at `value.yaml`.
-* Fix CVE in the FIPS compliant side car container  
+* Fix CVE in the FIPS compliant side car container
 
 ## 3.32.0
 

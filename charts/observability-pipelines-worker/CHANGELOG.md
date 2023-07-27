@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+* Official image `1.3.1`
+
 ## 1.3.0
 
 * Official image `1.3.0`
