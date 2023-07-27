@@ -2,11 +2,31 @@
 - name: trace-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+  {{- $length := len (split "." $version) -}}
+  {{- if and (eq $length 1) (eq $version "6") -}}
+  {{- $version = "6.48.0" -}}
+  {{- end -}}
+  {{- if and (eq $length 1) (eq $version "7") -}}
+  {{- $version = "7.48.0" -}}
+  {{- end -}}
+  {{- if and (eq $length 1) (eq $version "latest") -}}
+  {{- $version = "7.48.0" -}}
+  {{- end -}}
+  {{- if semverCompare "^6.48.0-0 || ^7.48.0-0" $version -}}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["trace-agent", "--config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["trace-agent", "--foreground", "--config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
+  {{- else -}}
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
