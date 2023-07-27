@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.34.0
+
+* After changes to the trace-agent CLI, arguments now require `--` double-hyphen.
+
 ## 3.33.3
 
 * Remove `datadog.dataStreamsMonitoring.enabled` parameter.
