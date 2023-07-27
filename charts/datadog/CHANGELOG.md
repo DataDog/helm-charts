@@ -2,7 +2,7 @@
 
 ## 3.33.4
 
-* Increase the health checks inteval from 2 to 10 seconds in the FIPS compliant side car container 
+* Update `fips.image.tag` to `0.5.4` increasing the health checks interval from 2 to 10 seconds in the FIPS compliant side car container
 
 ## 3.33.3
 
