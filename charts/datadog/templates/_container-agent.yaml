@@ -240,6 +240,15 @@
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    - name: fips-config
+      mountPath: /etc/datadog-fips-proxy
+      readOnly: false # Need RW to mount to config path
+    - name: fips-proxy-cfg
+      mountPath: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
+      subPath: datadog-fips-proxy.cfg
+      readOnly: true
+    {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}

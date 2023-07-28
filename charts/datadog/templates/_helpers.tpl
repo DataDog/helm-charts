@@ -332,7 +332,7 @@ false
 Return true if the fips side car configMap should be mounted.
 */}}
 {{- define "should-mount-fips-configmap" -}}
-{{- if and (eq (include "should-enable-fips" .) "true") .Values.fips.useConfigMap (not (empty .Values.fips.customFipsConfig)) -}}
+{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
 true
 {{- else -}}
 false

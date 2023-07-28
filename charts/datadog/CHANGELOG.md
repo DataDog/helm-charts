@@ -2,7 +2,7 @@
 
 ## 3.33.6
 
-* Add `fips.useConfigMap` and `fips.customFipsConfig` parameters to configure FIPS proxy side-car datadog-fips-proxy.cfg using configMap
+* Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
 
 ## 3.33.5
 
@@ -39,7 +39,6 @@
 ## 3.32.5
 
 * Fix comment for datadog.kubernetesEvents.collectedEventTypes in values.yaml.
-
 
 ## 3.32.4
 
