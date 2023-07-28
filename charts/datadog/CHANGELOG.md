@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.33.5
+## 3.33.6
 
 * Add `fips.useConfigMap` and `fips.customFipsConfig` parameters to configure FIPS proxy side-car datadog-fips-proxy.cfg using configMap
+
+## 3.33.5
+
+* Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
 
 ## 3.33.4
 

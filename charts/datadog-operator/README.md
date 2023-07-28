@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.0.7](https://img.shields.io/badge/Version-1.0.7-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
+![Version: 1.0.8](https://img.shields.io/badge/Version-1.0.8-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
 
 ## Values
 
@@ -13,7 +13,7 @@
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
-| datadogAgent.enabled | bool | `true` | Enables Datadog Agetn controller |
+| datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
 | datadogCRDs.crds.datadogAgents | bool | `true` |  |
 | datadogCRDs.crds.datadogMetrics | bool | `true` |  |
 | datadogCRDs.crds.datadogMonitors | bool | `true` |  |
