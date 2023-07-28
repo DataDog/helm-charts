@@ -63,8 +63,8 @@ jobs:
         run: helm repo add datadog https://helm.datadoghq.com && helm repo update
       - name: Run integ tests
         env:
-          API_KEY: ${{ secrets.GO_INTEG_TEST_API_KEY }}
-          APP_KEY: ${{ secrets.GO_INTEG_TEST_APP_KEY }}
+          API_KEY: '${{ secrets.GO_INTEG_TEST_API_KEY }}'
+          APP_KEY: '${{ secrets.GO_INTEG_TEST_APP_KEY }}'
           CLUSTER_NAME: operator-ci-${{ matrix.k8s }}
           K8S_VERSION: ${{ matrix.k8s }}
         run: |
