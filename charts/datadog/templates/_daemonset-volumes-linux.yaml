@@ -27,7 +27,7 @@
   name: etc-lsb-release
 {{- end }}
 {{- end -}}
-{{- if eq (include "should-mount-fips-configmap" .) "true"}}
+{{- if eq (include "should-enable-fips" .) "true"}}
 - name: fips-config
   emptyDir: {}
 - name: fips-proxy-cfg
