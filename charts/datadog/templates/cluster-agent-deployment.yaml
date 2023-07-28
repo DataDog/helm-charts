@@ -141,6 +141,11 @@ spec:
           name: metricsapi
           protocol: TCP
         {{- end }}
+        {{- if .Values.clusterAgent.admissionController.enabled }}
+        - containerPort: 8000
+          name: webhook
+          protocol: TCP
+        {{- end }}
 {{- if or .Values.datadog.envFrom .Values.clusterAgent.envFrom }}
         envFrom:
 {{- if .Values.datadog.envFrom }}
