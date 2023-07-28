@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.6
+
+* Add additional intakes into `CiliumNetworkPolicy` for node Agent for profiling, network monitoring, dbm, and remote config
+
 ## 3.33.5
 
 * Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
