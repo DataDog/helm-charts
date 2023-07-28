@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8
+
+* Minor spelling corrections in the `datadog-operator` chart.
+
 ## 1.0.7
 
 * Fix clusterrole to include `extensions` group for `customresourcedefinitions` resource.

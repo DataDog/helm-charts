@@ -66,7 +66,7 @@ secretBackend:
   # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
   arguments: ""
 datadogAgent:
-  # datadogAgent.enabled -- Enables Datadog Agetn controller
+  # datadogAgent.enabled -- Enables Datadog Agent controller
   enabled: true
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
