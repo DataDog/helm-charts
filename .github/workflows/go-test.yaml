@@ -3,11 +3,11 @@ on:
   push:
     paths:
       - 'test/**'
-      - 'chart/datadog-operator/**'
+      - 'charts/datadog-operator/**'
   pull_request:
     paths:
       - 'test/**'
-      - 'chart/datadog-operator/**'
+      - 'charts/datadog-operator/**'
 env:
   GO111MODULE: "on"
   PROJECTNAME: "helm-charts"
