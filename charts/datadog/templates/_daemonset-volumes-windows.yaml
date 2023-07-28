@@ -34,6 +34,6 @@
   name: containerdsocket
 {{- end }}
 {{- end }}
-{{- end -}}
 - name: logdatadog
   emptyDir: {}
+{{- end -}}
