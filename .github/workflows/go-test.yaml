@@ -1,5 +1,13 @@
 name: Go Test
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'test/**'
+      - 'chart/datadog-operator/**'
+  pull_request:
+    paths:
+      - 'test/**'
+      - 'chart/datadog-operator/**'
 env:
   GO111MODULE: "on"
   PROJECTNAME: "helm-charts"
