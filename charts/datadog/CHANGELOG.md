@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.6
+
+* Ensure the core agent is aware that CSPM is enabled (for inventories purposes).
+
 ## 3.33.5
 
 * Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
