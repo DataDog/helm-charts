@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.33.6
+## 3.33.8
 
 * Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
+
+## 3.33.7
+
+* Add additional intakes into `CiliumNetworkPolicy` for node Agent and Cluster Check Runner for profiling, network monitoring, dbm, and remote config
+
+## 3.33.6
+
+* Ensure the core agent is aware that CSPM is enabled (for inventories purposes).
 
 ## 3.33.5
 
