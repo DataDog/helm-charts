@@ -8,5 +8,5 @@ metadata:
 {{ include "datadog.labels" . | indent 4 }}
 data:
   datadog-fips-proxy.cfg: |
-{{ tpl (toYaml .Values.fips.customFipsConfig) . | indent 4 }}
+{{ tpl (.Values.fips.customFipsConfig) . | indent 4 }}
 {{- end }}
