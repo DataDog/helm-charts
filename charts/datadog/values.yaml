@@ -1186,7 +1186,7 @@ fips:
 
   ## Note: Use `|` to declare multi-line configuration.
   ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
-  customFipsConfig: {} # |
+  customFipsConfig: {}  # |
   #  foobar
   #     foo bar baz
 
