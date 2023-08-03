@@ -1,8 +1,24 @@
 # Datadog changelog
 
-## 3.33.4
+## 3.33.8
 
 * Adds securitycontext capabilities to seccomp-setup init containers
+
+## 3.33.7
+
+* Add additional intakes into `CiliumNetworkPolicy` for node Agent and Cluster Check Runner for profiling, network monitoring, dbm, and remote config
+
+## 3.33.6
+
+* Ensure the core agent is aware that CSPM is enabled (for inventories purposes).
+
+## 3.33.5
+
+* Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
+
+## 3.33.4
+
+* Update `fips.image.tag` to `0.5.4` increasing the health checks interval from 2 to 10 seconds in the FIPS compliant side car container
 
 ## 3.33.3
 
