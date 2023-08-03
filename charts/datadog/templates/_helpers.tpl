@@ -549,7 +549,7 @@ datadog-agent-checksd
 
 {{- define "fips-useConfigMap-configmap-name" -}}
 {{- if .Values.providers.gke.autopilot -}}
-datadog-agent-fips-cfg
+datadog-agent-fips-config
 {{- else -}}
 {{ template "datadog.fullname" . }}-fips-config
 {{- end -}}
