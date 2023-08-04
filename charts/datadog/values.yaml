@@ -654,10 +654,6 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
-  dataStreamsMonitoring:
-    # datadog.dataStreamsMonitoring.enabled -- Enable Data Streams Monitoring.
-    enabled: false
-
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -1175,7 +1171,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.3
+    tag: 0.5.4
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
