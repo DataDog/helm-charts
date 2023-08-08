@@ -40,14 +40,6 @@ Return the API key Secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
-Return the configuration key Secret name to be used based on provided values.
-*/}}
-{{- define "opw.configKeySecretName" -}}
-{{- $fullName := printf "%s-configkey" (include "opw.fullname" .) -}}
-{{- default $fullName .Values.datadog.configKeyExistingSecret | quote -}}
-{{- end -}}
-
-{{/*
 Common template labels.
 */}}
 {{- define "opw.template-labels" -}}

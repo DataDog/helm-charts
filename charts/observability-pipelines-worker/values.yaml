@@ -19,13 +19,6 @@ datadog:
   # datadog.apiKeyExistingSecret -- Specify a preexisting Secret that has your API key instead of creating a new one.
   # The value must be stored under the `api-key`.
   apiKeyExistingSecret: ""
-  # datadog.configKey -- Specify your Datadog Configuration key.
-  # DEPRECATED. Use `datadog.pipelineId` instead.
-  configKey:  # <DD_OP_CONFIG_KEY>
-  # datadog.configKeyExistingSecret -- Specify a preexisting Secret that has your configuration key instead of
-  # creating a new one. The value must be stored under the `config-key`.
-  # DEPRECATED. Use `datadog.pipelineId` instead.
-  configKeyExistingSecret: ""
   # datadog.pipelineId -- Specify your Datadog Observability Pipelines pipeline ID
   pipelineId:  # <DD_OP_PIPELINE_ID>
   ## Set to 'datadoghq.com' to send data to the US1 site.

@@ -1,5 +1,5 @@
 datadog:
-  configKey: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
+  pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
 pipelineConfig:
   sources:
     datadog_agents:
