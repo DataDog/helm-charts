@@ -66,6 +66,14 @@ containers:
       {{- end }}
       - name: DD_OP_REMOTE_CONFIGURATION_ENABLED
         value: {{ .Values.datadog.remoteConfigurationEnabled | quote }}
+      - name: DD_OP_API_ENABLED
+        value: {{ .Values.datadog.worker.api.enabled | quote }}
+      - name: DD_OP_API_PLAYGROUND
+        value: {{ .Values.datadog.worker.api.playground | quote }}
+      {{- with .Values.datadog.worker.api.address }}
+      - name: DD_OP_API_ADDRESS
+        value: {{ . | quote }}
+      {{- end}}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}

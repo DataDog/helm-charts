@@ -39,6 +39,14 @@ datadog:
   dataDir: "/var/lib/observability-pipelines-worker"
   # datadog.remoteConfigurationEnabled -- Whether to allow remote configuration of the worker from Datadog.
   remoteConfigurationEnabled: false
+  worker:
+    api:
+      # datadog.worker.api.enabled -- Whether to enable the worker API
+      enabled: false
+      # datadog.worker.api.playground -- Whether to enable the worker API GraphQL playground
+      playground: true
+      # datadog.worker.api.address -- Local address to bind the worker API to
+      address: ""
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
