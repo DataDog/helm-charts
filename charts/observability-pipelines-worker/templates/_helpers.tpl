@@ -104,6 +104,13 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
+Return the port of the worker API address
+*/}}
+{{- define "opw.api.port" -}}
+{{- mustRegexFind "[^:]+:(\\d+)" .Values.datadog.worker.api.address -}}
+{{- end -}}
+
+{{/*
 The helpers below are used to attempt to parse the configuration passed into the `config` option and construct
 the Container and Service Ports without manual specification.
 

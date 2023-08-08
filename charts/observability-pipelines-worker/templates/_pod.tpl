@@ -70,10 +70,8 @@ containers:
         value: {{ .Values.datadog.worker.api.enabled | quote }}
       - name: DD_OP_API_PLAYGROUND
         value: {{ .Values.datadog.worker.api.playground | quote }}
-      {{- with .Values.datadog.worker.api.address }}
       - name: DD_OP_API_ADDRESS
-        value: {{ . | quote }}
-      {{- end}}
+        value: {{ .Values.datadog.worker.api.address | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -85,6 +83,10 @@ containers:
 {{ toYaml .Values.containerPorts | indent 6 }}
 {{- else if .Values.pipelineConfig }}
 {{- include "opw.containerPorts" . | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.worker.api.enabled }}
+      - protocol: TCP
+        containerPort: {{- include "opw.api.port" . }}
 {{- end }}
 {{- if .Values.livenessProbe }}
     livenessProbe: {{ toYaml .Values.livenessProbe | trim | nindent 6 }}
