@@ -145,5 +145,4 @@ Return a list of env-vars if the cluster-agent is enabled
         name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
         key: token
 {{- end }}
-{{ include "provider-env" . }}
 {{- end -}}
