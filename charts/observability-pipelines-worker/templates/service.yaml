@@ -27,6 +27,7 @@ spec:
 {{ toYaml .Values.service.ports | indent 4 }}
 {{- else }}
 {{- $ports | indent 4 }}
+{{- end }}
 {{- if .Values.datadog.worker.api.enabled }}
     - protocol: TCP
       port: {{- include "opw.api.port" . }}
