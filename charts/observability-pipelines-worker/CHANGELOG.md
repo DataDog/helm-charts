@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.4.0
+## 1.4.0-rc.0
 
-* Official image `1.4.0`
+* Nightly image representative of `1.4.0`
 * Add `datadog.worker.api.enabled`, `datadog.worker.api.playground`, `datadog.worker.api.address` for worker API configuration
 * Expose worker API port in pod and through service if enabled
 * Deprecate `datadog.configKey`
