@@ -1,5 +1,5 @@
 {{- $ports := (include "opw.ports" .) -}}
-{{- if and .Values.service.enabled (or .Values.service.ports $ports) -}}
+{{- if and .Values.service.enabled (or .Values.service.ports $ports .Values.datadog.worker.api.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
