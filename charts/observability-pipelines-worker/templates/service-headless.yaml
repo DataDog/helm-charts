@@ -1,5 +1,5 @@
 {{- $ports := (include "opw.ports" .) -}}
-{{- if and .Values.serviceHeadless.enabled (or .Values.service.ports $ports .Values.datadog.worker.api.enabled) -}}
+{{- if and .Values.serviceHeadless.enabled (or .Values.service.ports $ports .Values.datadog.workerAPI.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -23,7 +23,7 @@ spec:
 {{- else }}
 {{- $ports | indent 4 }}
 {{- end }}
-{{- if .Values.datadog.worker.api.enabled }}
+{{- if .Values.datadog.workerAPI.enabled }}
 {{ include "opw.api.servicePort" . | indent 4 }}
 {{- end }}
   selector: {{ include "opw.template-labels" . | nindent 4 }}

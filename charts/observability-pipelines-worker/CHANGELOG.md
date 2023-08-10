@@ -3,9 +3,9 @@
 ## 1.4.0-rc.0
 
 * Nightly image representative of `1.4.0`
-* Add `datadog.worker.api.enabled`, `datadog.worker.api.playground`, `datadog.worker.api.address` for worker API configuration
-* Expose worker API port in pod and through service if enabled
-* Deprecate `datadog.configKey`
+* Add `datadog.workerAPI.enabled`, `datadog.workerAPI.playground`, `datadog.workerAPI.address` for Worker API configuration
+* Expose Worker API port in pod and through service if enabled
+* Remove deprecated `datadog.configKey`
 
 ## 1.3.1
 

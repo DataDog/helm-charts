@@ -95,9 +95,9 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.remoteConfigurationEnabled | bool | `false` | Whether to allow remote configuration of the worker from Datadog. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
-| datadog.worker.api.address | string | `"127.0.0.1:8686"` | Local address to bind the worker API to |
-| datadog.worker.api.enabled | bool | `false` | Whether to enable the worker API |
-| datadog.worker.api.playground | bool | `true` | Whether to enable the worker API GraphQL playground |
+| datadog.workerAPI.address | string | `"127.0.0.1:8686"` | Local address to bind the Worker's API to. |
+| datadog.workerAPI.enabled | bool | `false` | Whether to enable the Worker's API. |
+| datadog.workerAPI.playground | bool | `true` | Whether to enable the Worker's API GraphQL playground. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |

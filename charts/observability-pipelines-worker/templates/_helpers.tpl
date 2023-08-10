@@ -96,10 +96,10 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
-Return a Service.Port for the worker API
+Return a Service.Port for the Worker API
 */}}
 {{- define "opw.api.servicePort" -}}
-{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.worker.api.address) }}
+{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.workerAPI.address) }}
 - name: api
   port: {{ $port }}
   protocol: TCP
@@ -107,10 +107,10 @@ Return a Service.Port for the worker API
 {{- end -}}
 
 {{/*
-Return a Container.Port for the worker API
+Return a Container.Port for the Worker API
 */}}
 {{- define "opw.api.containerPort" -}}
-{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.worker.api.address) }}
+{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.workerAPI.address) }}
 - name: api
   containerPort: {{ $port }}
   protocol: TCP

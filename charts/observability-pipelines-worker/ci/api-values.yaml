@@ -1,10 +1,9 @@
 datadog:
   pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
-  worker:
-    api:
-      enabled: true
-      playground: false
-      address: "127.0.0.1:1010"
+  workerAPI:
+    enabled: true
+    playground: false
+    address: "127.0.0.1:1010"
 pipelineConfig:
   sources:
     datadog_agents:

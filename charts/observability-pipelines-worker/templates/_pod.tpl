@@ -60,11 +60,11 @@ containers:
       - name: DD_OP_REMOTE_CONFIGURATION_ENABLED
         value: {{ .Values.datadog.remoteConfigurationEnabled | quote }}
       - name: DD_OP_API_ENABLED
-        value: {{ .Values.datadog.worker.api.enabled | quote }}
+        value: {{ .Values.datadog.workerAPI.enabled | quote }}
       - name: DD_OP_API_PLAYGROUND
-        value: {{ .Values.datadog.worker.api.playground | quote }}
+        value: {{ .Values.datadog.workerAPI.playground | quote }}
       - name: DD_OP_API_ADDRESS
-        value: {{ .Values.datadog.worker.api.address | quote }}
+        value: {{ .Values.datadog.workerAPI.address | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -77,7 +77,7 @@ containers:
 {{- else if .Values.pipelineConfig }}
 {{- include "opw.containerPorts" . | indent 6 }}
 {{- end }}
-{{- if .Values.datadog.worker.api.enabled }}
+{{- if .Values.datadog.workerAPI.enabled }}
 {{ include "opw.api.containerPort" . | indent 6 }}
 {{- end }}
 {{- if .Values.livenessProbe }}
