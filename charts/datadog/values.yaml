@@ -431,6 +431,11 @@ datadog:
     ## ref: https://github.com/DataDog/docker-dd-agent#tracing-from-the-host
     enabled: false
 
+    # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all Kubernetes deployments (beta).
+    ## This feature is in beta. It requires Cluster Agent 7.46+.
+    instrumentation:
+      enabled: false
+
     # datadog.apm.port -- Override the trace Agent port
 
     ## Note: Make sure your client is sending to the same UDP port.
@@ -974,11 +979,6 @@ clusterAgent:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config (beta).
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
-      enabled: false
-
-    apmInstrumentationEnabled:
-      # clusterAgent.admissionController.apmInstrumentationEnabled -- Enable injecting the Datadog APM libraries into all Kubernetes deployments (beta).
-      ## This feature is in beta. It requires Cluster Agent 7.46+.
       enabled: false
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.

@@ -215,10 +215,10 @@ spec:
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "true"
           {{- end }}
-          {{- if .Values.clusterAgent.admissionController.apmInstrumentationEnabled }}
+          {{- if .Values.datadog.apm.instrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
-          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APM_INSTRUMENTATION_ENABLED
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APM_ENABLED
             value: "true"
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
