@@ -99,7 +99,7 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 Return the port of the worker API address
 */}}
 {{- define "opw.api.port" -}}
-{{- int (mustRegexFind "[^:]+:(\\d+)" .Values.datadog.worker.api.address) -}}
+{{- int (mustRegexFind "[0-9]+$" .Values.datadog.worker.api.address) -}}
 {{- end -}}
 
 {{/*
