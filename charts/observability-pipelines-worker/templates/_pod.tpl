@@ -78,7 +78,8 @@ containers:
 {{- include "opw.containerPorts" . | indent 6 }}
 {{- end }}
 {{- if .Values.datadog.worker.api.enabled }}
-      - protocol: TCP
+      - name: api
+        protocol: TCP
         containerPort: {{ include "opw.api.port" . }}
 {{- end }}
 {{- if .Values.livenessProbe }}

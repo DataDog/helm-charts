@@ -29,9 +29,10 @@ spec:
 {{- $ports | indent 4 }}
 {{- end }}
 {{- if .Values.datadog.worker.api.enabled }}
-    - protocol: TCP
+    - name: api
+      protocol: TCP
       port: {{ include "opw.api.port" . }}
-      targetPort: {{ include "opw.api.port" . }}
+      targetPort: api
 {{- end }}
   selector: {{ include "opw.template-labels" . | nindent 4 }}
   type: {{ .Values.service.type }}

@@ -121,13 +121,6 @@ Generate an array of Service.Ports based on `.Values.pipelineConfig`.
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
-    {{- else if eq $componentKind "api" }}
-      {{- if $components.enabled }}
-- name: api
-  port: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-  protocol: TCP
-  targetPort: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
@@ -171,12 +164,6 @@ Generate an array of Container.Ports based on `.Values.pipelineConfig`.
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
-    {{- else if eq $componentKind "api" }}
-      {{- if $components.enabled }}
-- name: api
-  containerPort: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-  protocol: TCP
-      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
