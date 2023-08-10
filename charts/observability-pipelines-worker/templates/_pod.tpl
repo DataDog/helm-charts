@@ -79,7 +79,7 @@ containers:
 {{- end }}
 {{- if .Values.datadog.worker.api.enabled }}
       - protocol: TCP
-        containerPort: {{- include "opw.api.port" . }}
+        containerPort: {{ include "opw.api.port" . }}
 {{- end }}
 {{- if .Values.livenessProbe }}
     livenessProbe: {{ toYaml .Values.livenessProbe | trim | nindent 6 }}
