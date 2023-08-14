@@ -22,13 +22,7 @@ Then run:
         --set datadog.apiKey=YOUR-KEY-HERE datadog/observability-pipelines-worker
 {{- end }}
 
-{{- if or .Values.datadog.configKeyExistingSecret .Values.datadog.configKey .Values.datadog.pipelineId }}
-  {{- if .Values.datadog.configKeyExistingSecret }}
-You disabled the creation of a Secret containing the API key, therefore you need to
-create a Secret named '{{ .Values.datadog.configKeyExistingSecret }}', which includes a key called 'config-key' containing the configuration key.
-  {{- end }}
-
-{{- else }}
+{{- if not .Values.datadog.pipelineId }}
 
 ##############################################################################
 ####              ERROR: You did not set a datadog.pipelineId.            ####
@@ -45,15 +39,4 @@ Then run:
 
     helm upgrade {{ .Release.Name }} \
         --set datadog.pipelineId=YOUR-PIPELINE-ID-HERE datadog/observability-pipelines-worker
-{{- end }}
-
-{{- if or .Values.datadog.configKey .Values.datadog.configKeyExistingSecret }}
-
-#################################################################
-####               WARNING: Deprecation notice               ####
-#################################################################
-
-The options `datadog.configKey` and `datadog.configKeyExistingSecret` are deprecated, please use `datadog.pipelineId` to
-provide your pipeline's UUID.
-
 {{- end }}
