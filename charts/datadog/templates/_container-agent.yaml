@@ -167,6 +167,9 @@
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+    {{- end }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -242,9 +245,6 @@
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}
-{{- if eq (include "should-mount-fips-configmap" .) "true" }}
-{{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
-{{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
