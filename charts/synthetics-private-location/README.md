@@ -39,7 +39,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | hostAliases | list | `[]` | Add entries to Datadog Synthetics Private Location PODs' /etc/hosts |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
-| image.tag | string | `"1.37.0"` | Define the Datadog Synthetics Private Location version to use |
+| image.tag | string | `"1.38.0"` | Define the Datadog Synthetics Private Location version to use |
 | imagePullSecrets | list | `[]` | Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials) |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Synthetics Private Location on specific nodes |
