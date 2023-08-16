@@ -1,0 +1,26 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+
+  fips:
+    enabled: true
+    use_https: false
+    customFipsConfig: |
+      global
+          presetenv DD_FIPS_LOCAL_ADDRESS 127.0.0.1
+          log 127.0.0.1 local0
+          ssl-default-server-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-GCM-SHA384:!aNULL:!eNULL:!EXPORT
+          ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11 no-tlsv13
+          ssl-default-server-options no-sslv3 no-tlsv10 no-tlsv11 no-tlsv13
+          default-path config
+
+      # Some sane defaults
+      defaults
+          log     global
+          option  dontlognull
+          retries 3
+          option  redispatch
+          timeout client 5s
+          timeout server 5s
+          timeout connect 5s
+          default-server verify required ca-file ca-certificates.crt check inter 10s resolvers my-dns init-addr none resolve-prefer ipv4

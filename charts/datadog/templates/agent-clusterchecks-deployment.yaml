@@ -211,6 +211,9 @@ spec:
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
             readOnly: false # Need RW for config path
+{{- if eq (include "should-mount-fips-configmap" .) "true" }}
+{{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
+{{- end }}
 {{- if .Values.clusterChecksRunner.volumeMounts }}
 {{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
 {{- end }}
@@ -233,6 +236,9 @@ spec:
         - name: checksd
           configMap:
             name: {{ include "datadog-checksd-configmap-name" . }}
+{{- end }}
+{{- if eq (include "should-mount-fips-configmap" .) "true"}}
+{{ include "linux-container-fips-proxy-cfg-volume" . | indent 8}}
 {{- end }}
       affinity:
 {{- if .Values.clusterChecksRunner.affinity }}

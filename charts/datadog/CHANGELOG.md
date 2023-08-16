@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.33.9 
+
+* Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
+
 ## 3.33.8
 
 * Remove `mountPropagation` for `/etc/os-release` files.
