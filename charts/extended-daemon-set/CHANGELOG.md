@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+* Updated for EDS 0.8.0.
+
 ## 0.2.2
 
 * Nothing
