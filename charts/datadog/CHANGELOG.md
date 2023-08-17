@@ -1,6 +1,10 @@
 # Datadog changelog
 
-## 3.33.9 
+## 3.33.10
+
+* Avoid creating the `DD_PROVIDER_KIND` environment variable twice for containers.
+
+## 3.33.9
 
 * Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
 

@@ -194,6 +194,7 @@ spec:
           - name: DD_CLUSTER_NAME
             value: {{ .Values.datadog.clusterName | quote }}
           {{- end }}
+          {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
