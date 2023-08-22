@@ -186,6 +186,18 @@ Return the container runtime socket
 {{- end -}}
 
 {{/*
+Return agent log directory path
+*/}}
+{{- define "datadog.logDirectoryPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/var/log/datadog
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog/logs
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return agent config path
 */}}
 {{- define "datadog.confPath" -}}
@@ -275,7 +287,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -310,6 +322,17 @@ Return true if the fips side car container should be created.
 */}}
 {{- define "should-enable-fips" -}}
 {{- if and (not .Values.providers.gke.autopilot) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the fips side car configMap should be mounted.
+*/}}
+{{- define "should-mount-fips-configmap" -}}
+{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
 true
 {{- else -}}
 false
@@ -524,6 +547,14 @@ datadog-agent-checksd
 {{- end -}}
 {{- end -}}
 
+{{- define "fips-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-fips-config
+{{- else -}}
+{{ template "datadog.fullname" . }}-fips-config
+{{- end -}}
+{{- end -}}
+
 {{/*
 Common template labels
 */}}
@@ -632,7 +663,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false

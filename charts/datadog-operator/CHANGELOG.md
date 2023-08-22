@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.4
+
+* Update Datadog Operator version to 1.1.0.
+
+## 1.0.8
+
+* Minor spelling corrections in the `datadog-operator` chart.
+
+## 1.0.7
+
+* Fix clusterrole to include `extensions` group for `customresourcedefinitions` resource.
+
+## 1.0.6
+
+* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook. 
+
 ## 1.0.5
 
 * Add AP1 Site Comment in `values.yaml`.

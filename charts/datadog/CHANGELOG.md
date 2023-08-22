@@ -1,8 +1,57 @@
 # Datadog changelog
 
-## 3.33.0
+## 3.35.0
 
 * Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)` or empty for auto detection.
+
+## 3.34.0
+
+* Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
+* Narrowed the admission controller's RBAC scope in the cluster agent to only include a single resourceName, specifically `clusterAgent.admissionController.webhookName`.
+
+## 3.33.10
+
+* Avoid creating the `DD_PROVIDER_KIND` environment variable twice for containers.
+
+## 3.33.9
+
+* Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
+
+## 3.33.8
+
+* Remove `mountPropagation` for `/etc/os-release` files.
+
+## 3.33.7
+
+* Add additional intakes into `CiliumNetworkPolicy` for node Agent and Cluster Check Runner for profiling, network monitoring, dbm, and remote config
+
+## 3.33.6
+
+* Ensure the core agent is aware that CSPM is enabled (for inventories purposes).
+
+## 3.33.5
+
+* Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
+
+## 3.33.4
+
+* Update `fips.image.tag` to `0.5.4` increasing the health checks interval from 2 to 10 seconds in the FIPS compliant side car container
+
+## 3.33.3
+
+* Remove `datadog.dataStreamsMonitoring.enabled` parameter.
+
+## 3.33.2
+
+* Add emptyDir and volumeMounts for Agent log files in Windows containers to fix log file access
+
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
+
+## 3.32.8
+
+* Always set the Remote Configuration environment variable
 
 ## 3.32.7
 
@@ -31,7 +80,7 @@
 ## 3.32.1
 
 * Add AP1 Site Comment at `value.yaml`.
-* Fix CVE in the FIPS compliant side car container  
+* Fix CVE in the FIPS compliant side car container
 
 ## 3.32.0
 

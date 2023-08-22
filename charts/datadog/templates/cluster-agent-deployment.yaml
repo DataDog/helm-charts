@@ -189,6 +189,8 @@ spec:
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
+            value: {{ .Values.clusterAgent.admissionController.webhookName | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
             value: {{ .Values.clusterAgent.admissionController.mutateUnlabelled | quote }}
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
@@ -217,9 +219,9 @@ spec:
           {{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
-          - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "true"
           {{- end }}
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
@@ -402,6 +404,9 @@ spec:
 {{- end}}
         - name: config
           emptyDir: {}
+{{- if eq (include "should-mount-fips-configmap" .) "true"}}
+{{ include "linux-container-fips-proxy-cfg-volume" . | indent 8}}
+{{- end }}
 {{- if .Values.clusterAgent.volumes }}
 {{ toYaml .Values.clusterAgent.volumes | indent 8 }}
 {{- end }}

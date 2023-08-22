@@ -41,11 +41,27 @@ specs:
           - matchName: {{ trimPrefix "https://" $.Values.datadog.dd_url }}
           {{- end}}
           {{- if $.Values.datadog.site}}
-          - matchName: "app.{{ $.Values.datadog.site }}"
           - matchPattern: "*-app.agent.{{ $.Values.datadog.site }}"
+          - matchName: "app.{{ $.Values.datadog.site }}"
+          - matchName: "api.{{ $.Values.datadog.site }}"
+          - matchName: "orchestrator.{{ $.Values.datadog.site }}"
+          - matchName: "ndm-intake.{{ $.Values.datadog.site }}"
+          - matchName: "snmp-traps-intake.{{ $.Values.datadog.site }}"
+          - matchName: "ndmflow-intake.{{ $.Values.datadog.site }}"
+          - matchName: "config.{{ $.Values.datadog.site }}"
+          - matchName: "dbm-metrics-intake.{{ $.Values.datadog.site }}"
+          - matchName: "dbquery-intake.{{ $.Values.datadog.site }}"
           {{- else}}
-          - matchName: "app.datadoghq.com"
           - matchPattern: "*-app.agent.datadoghq.com"
+          - matchName: "app.datadoghq.com"
+          - matchName: "api.datadoghq.com"
+          - matchName: "orchestrator.datadoghq.com"
+          - matchName: "ndm-intake.datadoghq.com"
+          - matchName: "snmp-traps-intake.datadoghq.com"
+          - matchName: "ndmflow-intake.datadoghq.com"
+          - matchName: "config.datadoghq.com"
+          - matchName: "dbm-metrics-intake.datadoghq.com"
+          - matchName: "dbquery-intake.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:

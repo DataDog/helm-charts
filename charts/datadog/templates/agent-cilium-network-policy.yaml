@@ -92,6 +92,13 @@ specs:
           - matchName: "process.{{ $.Values.datadog.site }}"
           - matchName: "orchestrator.{{ $.Values.datadog.site }}"
           - matchName: "instrumentation-telemetry-intake.{{ $.Values.datadog.site }}"
+          - matchName: "intake.profile.{{ $.Values.datadog.site }}"
+          - matchName: "ndm-intake.{{ $.Values.datadog.site }}"
+          - matchName: "snmp-traps-intake.{{ $.Values.datadog.site }}"
+          - matchName: "ndmflow-intake.{{ $.Values.datadog.site }}"
+          - matchName: "config.{{ $.Values.datadog.site }}"
+          - matchName: "dbm-metrics-intake.{{ $.Values.datadog.site }}"
+          - matchName: "dbquery-intake.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "app.datadoghq.com"
@@ -101,6 +108,13 @@ specs:
           - matchName: "process.datadoghq.com"
           - matchName: "orchestrator.datadoghq.com"
           - matchName: "instrumentation-telemetry-intake.datadoghq.com"
+          - matchName: "intake.profile.datadoghq.com"
+          - matchName: "ndm-intake.datadoghq.com"
+          - matchName: "snmp-traps-intake.datadoghq.com"
+          - matchName: "ndmflow-intake.datadoghq.com"
+          - matchName: "config.datadoghq.com"
+          - matchName: "dbm-metrics-intake.datadoghq.com"
+          - matchName: "dbquery-intake.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:

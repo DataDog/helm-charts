@@ -152,21 +152,26 @@
     {{- end }}
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
+    - name: DD_COMPLIANCE_CONFIG_ENABLED
+      value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+    {{- end }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
