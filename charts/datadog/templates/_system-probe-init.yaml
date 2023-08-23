@@ -1,4 +1,7 @@
 {{- define "system-probe-init" -}}
+{{- if not .Values.providers.gke.autopilot }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- end }}
 - name: seccomp-setup
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}

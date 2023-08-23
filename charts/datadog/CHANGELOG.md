@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.34.2
+
+* Adds securitycontext capabilities to seccomp-setup init containers
+
 ## 3.34.1
 
 * Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
