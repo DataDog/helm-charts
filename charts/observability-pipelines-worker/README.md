@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 1.3.1](https://img.shields.io/badge/Version-1.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 1.4.0-rc.0](https://img.shields.io/badge/Version-1.4.0--rc.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -91,12 +91,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | containerPorts | list | `[]` | Manually define ContainerPort array, overriding automated generation of ContainerPorts. |
 | datadog.apiKey | string | `nil` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
-| datadog.configKey | string | `nil` | Specify your Datadog Configuration key. DEPRECATED. Use `datadog.pipelineId` instead. |
-| datadog.configKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your configuration key instead of creating a new one. The value must be stored under the `config-key`. DEPRECATED. Use `datadog.pipelineId` instead. |
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.remoteConfigurationEnabled | bool | `false` | Whether to allow remote configuration of the worker from Datadog. |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
+| datadog.workerAPI.address | string | `"127.0.0.1:8686"` | Local address to bind the Worker's API to. |
+| datadog.workerAPI.enabled | bool | `false` | Whether to enable the Worker's API. |
+| datadog.workerAPI.playground | bool | `true` | Whether to enable the Worker's API GraphQL playground. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
@@ -110,7 +111,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
 | image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
-| image.tag | string | `"1.3.1"` | Specify the image tag to use. |
+| image.tag | string | `"nightly-2023-08-14"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |

@@ -1,8 +1,29 @@
 # Datadog changelog
 
-## 3.33.8
+## 3.34.2
 
 * Adds securitycontext capabilities to seccomp-setup init containers
+
+## 3.34.1
+
+* Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
+
+## 3.34.0
+
+* Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
+* Narrowed the admission controller's RBAC scope in the cluster agent to only include a single resourceName, specifically `clusterAgent.admissionController.webhookName`.
+
+## 3.33.10
+
+* Avoid creating the `DD_PROVIDER_KIND` environment variable twice for containers.
+
+## 3.33.9
+
+* Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
+
+## 3.33.8
+
+* Remove `mountPropagation` for `/etc/os-release` files.
 
 ## 3.33.7
 

@@ -5973,6 +5973,16 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        network:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
+                        securityProfiles:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         syscallMonitorEnabled:
                           type: boolean
                       type: object
@@ -6182,6 +6192,11 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        customResources:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
                         ddUrl:
                           type: string
                         enabled:
@@ -6227,6 +6242,11 @@ spec:
                           type: boolean
                         version:
                           type: integer
+                      type: object
+                    remoteConfiguration:
+                      properties:
+                        enabled:
+                          type: boolean
                       type: object
                     tcpQueueLength:
                       properties:

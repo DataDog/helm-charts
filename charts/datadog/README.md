@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.33.8](https://img.shields.io/badge/Version-3.33.8-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.34.2](https://img.shields.io/badge/Version-3.34.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -490,6 +490,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
 | clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config. # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
+| clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the mutatingwebhookconfigurations created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
@@ -733,11 +734,12 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
+| fips.customFipsConfig | object | `{}` | Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used. |
 | fips.enabled | bool | `false` |  |
 | fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
-| fips.image.repository | string | `nil` |  |
+| fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
 | fips.image.tag | string | `"0.5.4"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` |  |
 | fips.port | int | `9803` |  |
