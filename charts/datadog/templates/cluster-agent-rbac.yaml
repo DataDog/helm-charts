@@ -227,7 +227,12 @@ rules:
   - mutatingwebhookconfigurations
   resourceNames: 
     - {{ .Values.clusterAgent.admissionController.webhookName | quote }}
-  verbs: ["get", "list", "watch", "update", "create"]
+  verbs: ["get", "list", "watch", "update"]
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  verbs: ["create"]
 - apiGroups: ["batch"]
   resources: ["jobs", "cronjobs"]
   verbs: ["get"]

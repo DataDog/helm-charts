@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.34.1
+
+* Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
+
 ## 3.34.0
 
 * Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
