@@ -976,6 +976,9 @@ clusterAgent:
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
 
+    # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
+    port: 8000
+
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/
