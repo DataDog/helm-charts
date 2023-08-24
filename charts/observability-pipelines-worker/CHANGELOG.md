@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+* Official image `1.4.0`
+
 ## 1.4.0-rc.0
 
 * Nightly image representative of `1.4.0`
