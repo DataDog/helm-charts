@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.34.2
+
+* Add containerPort 8000/TCP to `cluster-agent` deployment for Admission Controller.
+
 ## 3.34.1
 
 * Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
