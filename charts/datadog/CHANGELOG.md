@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.34.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
 ## 3.34.3
 
 * Fix extra empty line in helmchecks, issue [#953](https://github.com/DataDog/helm-charts/issues/953).
