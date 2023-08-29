@@ -329,6 +329,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the fips side car configMap should be mounted.
+*/}}
+{{- define "should-mount-fips-configmap" -}}
+{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
@@ -533,6 +544,14 @@ datadog-agent-confd
 datadog-agent-checksd
 {{- else -}}
 {{ template "datadog.fullname" . }}-checksd
+{{- end -}}
+{{- end -}}
+
+{{- define "fips-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-fips-config
+{{- else -}}
+{{ template "datadog.fullname" . }}-fips-config
 {{- end -}}
 {{- end -}}
 

@@ -167,6 +167,9 @@
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+    {{- end }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

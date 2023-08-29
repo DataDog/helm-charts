@@ -948,6 +948,9 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
+    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    webhookName: datadog-webhook
+
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
@@ -972,6 +975,9 @@ clusterAgent:
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
+
+    # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
+    port: 8000
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
@@ -1179,8 +1185,16 @@ fips:
     # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
     digest: ""
 
-    # agents.image.repository -- Override default registry + image.name for Agent
+    # fips.image.repository -- Override default registry + image.name for the FIPS sidecar container.
     repository:
+
+  # fips.customFipsConfig -- Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used.
+
+  ## Note: Use `|` to declare multi-line configuration.
+  ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
+  customFipsConfig: {}  # |
+  #  foobar
+  #     foo bar baz
 
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
