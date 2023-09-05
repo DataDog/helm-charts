@@ -1,6 +1,6 @@
 # Datadog changelog
 
-# 3.35.0
+## 3.35.0
 
 * Default `Agent` and `Cluster-Agent` to `7.47.0` version.
 
