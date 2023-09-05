@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.35.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.0` version.
+
 ## 3.34.3
 
 * Fix extra empty line in helmchecks, issue [#953](https://github.com/DataDog/helm-charts/issues/953).
