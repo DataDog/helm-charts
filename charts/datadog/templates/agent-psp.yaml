@@ -15,7 +15,7 @@ metadata:
 spec:
   privileged: {{ .Values.agents.podSecurity.privileged }}
   hostNetwork: {{ .Values.agents.useHostNetwork }}
-  {{- if or .Values.datadog.dogstatsd.useHostPort (eq  (include "trace-agent-use-tcp-port" .) "true") }}
+  {{- if or .Values.datadog.dogstatsd.useHostPort (eq  (include "trace-agent-use-host-port" .) "true") }}
   hostPorts:
   - min: 8125
     max: 8126
