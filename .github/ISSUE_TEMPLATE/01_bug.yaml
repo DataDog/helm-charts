@@ -1,0 +1,62 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Chart
+      description: What version of our software are you running?
+      options:
+        - datadog
+        - datadog-crds
+        - datadog-operator
+        - extended-daemon-set
+        - observability-pipelines-worker
+        - synthetics-private-location
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Chart Version
+      description: Please add the chart version.
+    validations:
+      required: true
+  - type: dropdown
+    id: k8s-distribution
+    attributes:
+      label: Kubernetes Distribution
+      options:
+        - AKS
+        - EKS
+        - GKE
+        - On premise
+        - Openshift
+        - Other
+  - type: input
+    id: k8s-version
+    attributes:
+      label: Kubernetes Version
+      description: Please add the Kubernetes version.
+    validations:
+      required: true
+  - type: checkboxes
+    id: operating-systems
+    attributes:
+      label: Operating System
+      description: Please provide OS used
+      options:
+        - label: Windows
+        - label: Linux
