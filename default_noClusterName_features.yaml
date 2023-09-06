@@ -1,0 +1,55 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog-agent
+spec:
+  global:
+    credentials:
+      apiSecret:
+        secretName: datadog-secret
+        keyName: api-key
+      appSecret:
+        secretName: datadog-secret
+        keyName: app-key
+  features:
+    admissionController:
+      enabled: false
+    apm:
+      enabled: false
+    clusterChecks:
+      enabled: true
+    cspm:
+      enabled: false
+    cws:
+      enabled: false
+    dogstatsd:
+      originDetectionEnabled: true
+    eventCollection:
+      collectKubernetesEvents: false
+    externalMetricsServer:
+      enabled: false
+    kubeStateMetricsCore:
+      enabled: true
+    liveContainerCollection:
+      enabled: false
+    liveProcessCollection:
+      enabled: false
+    logCollection:
+      containerCollectAll: false
+      enabled: false
+    npm:
+      enabled: false
+    oomKill:
+      enabled: false
+    orchestratorExplorer:
+      enabled: false
+    # otlp:
+    prometheusScrape:
+      enabled: true
+    #remoteConfiguration:
+    #  enabled: false
+    tcpQueueLength:
+      enabled: false
+    usm:
+      enabled: false
+  
