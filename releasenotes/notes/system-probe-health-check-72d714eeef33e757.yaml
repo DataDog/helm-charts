@@ -1,5 +1,0 @@
----
-features:
-  - |
-    System probe can now expose its health check on a dedicated HTTP port.
-    The Kubernetes daemonset uses this by default on port 5558.
