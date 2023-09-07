@@ -427,12 +427,12 @@ helm install <RELEASE_NAME> \
 | agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
 | agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict |
 | agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets |
-| agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
-| agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
-| agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.healthPort | int | `5558` | Port number to use in the system probe for the healthz endpoint |
 | agents.containers.systemProbe.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
+| agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
+| agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.systemProbe.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
+| agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","DAC_READ_SEARCH"]},"privileged":false}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
 | agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
 | agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
