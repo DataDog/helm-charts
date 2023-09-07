@@ -209,6 +209,30 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- fail "You are using datadog.systemProbe.enabled which has been superseded by networkMonitoring.enabled, systemProbe.enableTCPQueueLength, systemProbe.enableOOMKill, and securityAgent.runtime.enabled. These options provide a more granular control of which features should be activated." }}
 {{- end }}
 
+{{- if eq (include "should-enable-system-probe" .) "true" }}
+  {{- $healthPort := .Values.agents.containers.systemProbe.healthPort }}
+  {{- with $liveness := .Values.agents.containers.systemProbe.livenessProbe.httpGet }}
+  {{- if and $liveness.port (ne $healthPort $liveness.port) }}
+
+  ##############################################################################
+  ####            ERROR: System Probe liveness probe misconfiguration       ####
+  ##############################################################################
+
+  System Probe liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
+  {{- end }}
+  {{- end }}
+  {{- with $readiness := .Values.agents.containers.systemProbe.readinessProbe.httpGet }}
+  {{- if and $readiness.port (ne $healthPort $readiness.port) }}
+
+  ##############################################################################
+  ####           ERROR: System Probe readiness probe misconfiguration       ####
+  ##############################################################################
+
+  System Probe readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
+  {{- end }}
+  {{- end }}
+{{- end }}
+
 {{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################

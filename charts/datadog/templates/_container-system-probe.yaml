@@ -21,6 +21,9 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
+    - name: DD_SYSTEM_PROBE_HEALTH_PORT
+    {{- $healthPort := .Values.agents.containers.systemProbe.healthPort }}
+      value: {{ $healthPort | quote }}
     {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
@@ -151,4 +154,10 @@
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
+  livenessProbe:
+{{- $live := .Values.agents.containers.systemProbe.livenessProbe }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 4 }}
+  readinessProbe:
+{{- $ready := .Values.agents.containers.systemProbe.readinessProbe }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
 {{- end -}}

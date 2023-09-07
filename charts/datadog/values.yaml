@@ -1494,6 +1494,27 @@ agents:
       #    cpu: 100m
       #    memory: 200Mi
 
+      # agents.containers.systemProbe.healthPort -- Port number to use in the system probe for the healthz endpoint
+      healthPort: 5558
+
+      # agents.containers.systemProbe.livenessProbe -- Override default agent liveness probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # agents.containers.systemProbe.readinessProbe -- Override default agent readiness probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
       ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
