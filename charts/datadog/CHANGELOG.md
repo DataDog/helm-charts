@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.35.2
+
+* Add liveness/readiness probes to `system-probe`.
+
 ## 3.35.1
 
 * Add permissions to curl `/metrics/slis` to agent cluster role.
