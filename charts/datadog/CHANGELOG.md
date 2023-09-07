@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.36.0
+
+* Add datadog.apm.serviceEnabled option to allow the use of APM with k8s service without enabling hostPort.
+
 ## 3.35.0
 
 * Default `Agent` and `Cluster-Agent` to `7.47.0` version.

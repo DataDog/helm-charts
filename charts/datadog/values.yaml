@@ -426,6 +426,9 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
 
+    # datadog.apm.serviceEnabled -- Enable APM over k8s service. When not set, it will default to datadog.apm.portEnabled
+    serviceEnabled:
+
     # datadog.apm.enabled -- Enable this to enable APM and tracing, on port 8126
     # DEPRECATED. Use datadog.apm.portEnabled instead
 

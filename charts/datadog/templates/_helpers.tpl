@@ -459,11 +459,32 @@ false
 {{- end -}}
 {{- end -}}
 
+
+{{/*
+Use the value of datadog.apm.serviceEnabled if set otherwise matches datadog.apm.portEnabled.
+*/}}
+{{- define "trace-agent-use-service" -}}
+{{- default (include "trace-agent-use-host-port" .) .Values.datadog.apm.serviceEnabled -}}
+{{- end -}}
+
+
+{{/*
+Return true if a host port is desired for APM.
+*/}}
+{{- define "trace-agent-use-host-port" -}}
+{{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
 {{/*
 Return true if a traffic over TCP is configured for APM.
 */}}
 {{- define "trace-agent-use-tcp-port" -}}
-{{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
+{{- if or (eq  (include "trace-agent-use-host-port" .) "true") (eq  (include "trace-agent-use-service" .) "true") -}}
 true
 {{- else -}}
 false
