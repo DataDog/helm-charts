@@ -814,10 +814,10 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if or (not .Values.remoteConfiguration.enabled) (not .Values.datadog.remoteConfiguration.enabled) -}}
-false
-{{- else -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) -}}
 true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 
@@ -825,9 +825,9 @@ true
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if or (not .Values.remoteConfiguration.enabled) (not .Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
-false
-{{- else -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
 true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
