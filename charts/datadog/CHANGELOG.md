@@ -4,6 +4,10 @@
 
 * Enable Remote Config by default
 
+## 3.35.1
+
+* Add permissions to curl `/metrics/slis` to agent cluster role.
+
 ## 3.35.0
 
 * Default `Agent` and `Cluster-Agent` to `7.47.0` version.
