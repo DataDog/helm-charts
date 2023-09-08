@@ -65,6 +65,7 @@ rules:
 {{- end }}
 - nonResourceURLs:
   - "/metrics"
+  - "/metrics/slis"
   verbs:
   - get
 - apiGroups:  # Kubelet connectivity
