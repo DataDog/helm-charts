@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.35.2
+
+* Fix Agent Service Account Name used in `RoleBinding` for Secret Backend permissions when in GKE Autopliot
+
+
 ## 3.35.1
 
 * Add permissions to curl `/metrics/slis` to agent cluster role.
