@@ -168,7 +168,7 @@ metadata:
 {{ include "datadog.labels" $ | indent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" $ }}
+    name: {{ include "agents.serviceAccountName" $ }}
     apiGroup: ""
     namespace: {{ $.Release.Namespace }}
 roleRef:
