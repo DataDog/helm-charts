@@ -1121,6 +1121,14 @@ clusterAgent:
   # clusterAgent.createPodDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
   createPodDisruptionBudget: false
 
+  # clusterAgent.podDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
+  podDisruptionBudget:
+    # maxUnavailable: 1
+    minAvailable: 1
+    ## unhealthyPodEvictionPolicy is available since 1.27.0 (beta)
+    ## https://kubernetes.io/docs/tasks/run-application/configure-pdb/#unhealthy-pod-eviction-policy
+    # unhealthyPodEvictionPolicy: IfHealthyBudget
+
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
     # DEPRECATED. Use datadog.networkPolicy.create instead
@@ -1712,6 +1720,14 @@ clusterChecksRunner:
 
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
   createPodDisruptionBudget: false
+
+  # clusterChecksRunner.podDisruptionBudget -- Create pod disruption budget for Cluster Checks Runner deployments
+  podDisruptionBudget:
+    maxUnavailable: 1
+    # minAvailable: 1
+    ## unhealthyPodEvictionPolicy is available since 1.27.0 (beta)
+    ## https://kubernetes.io/docs/tasks/run-application/configure-pdb/#unhealthy-pod-eviction-policy
+    # unhealthyPodEvictionPolicy: IfHealthyBudget
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:
