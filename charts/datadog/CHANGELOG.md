@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 3.36.0
+
+* Enable Remote Config by default
+
 ## 3.35.2
 
 * Fix Agent Service Account Name used in `RoleBinding` for Secret Backend permissions when in GKE Autopliot
-
 
 ## 3.35.1
 
