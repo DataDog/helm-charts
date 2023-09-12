@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0
+
+* Official image `1.5.0`
+
 ## 1.4.0
 
 * Official image `1.4.0`
