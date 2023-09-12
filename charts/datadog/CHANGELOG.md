@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.36.1
+
+* Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
+
 ## 3.36.0
 
 * Enable Remote Config by default
