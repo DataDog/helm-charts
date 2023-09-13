@@ -35,6 +35,8 @@ datadog:
 clusterAgent:
   enabled: true
   createPodDisruptionBudget: true
+  podDisruptionBudget:
+    minAvailable: 1
   nodeSelector:
     kubernetes.io/os: linux
   metricsProvider:
@@ -45,6 +47,8 @@ clusterAgent:
 clusterChecksRunner:
   enabled: true
   createPodDisruptionBudget: true
+  podDisruptionBudget:
+    minAvailable: 1
   nodeSelector:
     kubernetes.io/os: linux
 agents:

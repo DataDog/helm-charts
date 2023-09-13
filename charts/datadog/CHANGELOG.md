@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.37.0
+
+* Allow more flexible PodDisruptionBudget configuration for Cluster Agent
+* Allow more flexible PodDisruptionBudget configuration for Cluster Checks Runner
+
 ## 3.36.0
 
 * Enable Remote Config by default

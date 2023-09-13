@@ -7,8 +7,8 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
-  maxUnavailable: 1
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}-clusterchecks
+  {{- toYaml .Values.clusterChecksRunner.podDisruptionBudget | nindent 2 }}
 {{- end -}}
