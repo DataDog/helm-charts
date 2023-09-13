@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.36.1
+
+* Add option to enable CWS security profiles (runtime anomaly detection)
+
 ## 3.36.0
 
 * Enable Remote Config by default
