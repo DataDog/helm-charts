@@ -1,6 +1,7 @@
 ---
 schema-version: v1
 kind: mergequeue
+gitlab_check_enable: false
 github_teams_restrictions:
   - agent-all
   - container-app
