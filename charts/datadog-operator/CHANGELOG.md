@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.0.4
+## 1.1.1
+
+* Add permissions to curl `/metrics/slis` to operator cluster role.
+
+## 1.1.0
 
 * Update Datadog Operator version to 1.1.0.
 

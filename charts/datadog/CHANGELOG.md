@@ -1,8 +1,32 @@
 # Datadog changelog
 
-## 3.34.4
+## 3.36.3
 
 * Add `orchestrator_explorer.enabled` for the Agent
+
+## 3.36.2
+
+* Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
+
+## 3.36.1
+
+* Add option to enable CWS security profiles (runtime anomaly detection)
+
+## 3.36.0
+
+* Enable Remote Config by default
+
+## 3.35.2
+
+* Fix Agent Service Account Name used in `RoleBinding` for Secret Backend permissions when in GKE Autopliot
+
+## 3.35.1
+
+* Add permissions to curl `/metrics/slis` to agent cluster role.
+
+## 3.35.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.0` version.
 
 ## 3.34.3
 
