@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.36.3
+
+* Disable Remote Config on the cluster checks runner
+
 ## 3.36.2
 
 * Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
