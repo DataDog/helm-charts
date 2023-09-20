@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.36.3
+
+* Mount `/etc/passwd` in process agent only if `datadog.processAgent.processCollection` or `datadog.processAgent.processDiscovery` is enabled.
+
 ## 3.36.2
 
 * Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3

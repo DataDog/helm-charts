@@ -532,7 +532,7 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
 
-    ## Note: /etc/passwd is automatically mounted to allow username resolution.
+    ## Note: /etc/passwd is automatically mounted when `processCollection` or `processDiscovery` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
