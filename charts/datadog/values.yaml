@@ -666,8 +666,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
-      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
+        enabled: false
+
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      host_benchmarks:
         enabled: false
 
     runtime:

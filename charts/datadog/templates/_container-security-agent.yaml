@@ -34,9 +34,11 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-    {{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+    {{- if or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
     - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
-      value:  {{ .Values.datadog.securityAgent.compliance.xccdf.enabled | quote }}
+      value:  "true"
+    - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+      value:  "true"
     {{- end }}
     - name: HOST_ROOT
       value: /host/root

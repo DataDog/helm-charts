@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.37.0
+
+* Rename `datadog.securityAgent.compliance.xccdf.enabled` parameter to `datadog.securityAgent.compliance.host_benchmarks.enabled`.
+
 ## 3.36.4
 
 * Disable Remote Config on the cluster checks runner
