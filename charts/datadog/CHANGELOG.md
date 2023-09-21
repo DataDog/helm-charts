@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.36.3
+## 3.36.4
 
 * Disable Remote Config on the cluster checks runner
+
+## 3.36.3
+
+* Mount `/etc/passwd` in process agent only if `datadog.processAgent.processCollection` or `datadog.processAgent.processDiscovery` is enabled.
 
 ## 3.36.2
 
