@@ -476,3 +476,13 @@ You have enabled creataion of PodSecurityPolicy, however PSP have been removed f
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
 {{- end }}
+
+{{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
+This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
+More information about this change: https://github.com/DataDog/helm-charts/pull/1161
+{{- end }}
