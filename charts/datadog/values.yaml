@@ -389,7 +389,7 @@ datadog:
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
-    enabled: false
+    enabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -1957,6 +1957,6 @@ providers:
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
-  enabled: false
+  enabled: true
