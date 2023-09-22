@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.37.2
+
+* Enable Remote Config by default on the host agent only
+
 ## 3.37.1
 
 * Temporarily revert enabling Remote Config by default
