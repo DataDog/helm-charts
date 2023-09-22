@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.39.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
 ## 3.38.1
 
 * Enable Remote Config by default on the host agent only
