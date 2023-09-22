@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.37.1
+
+* Temporarily revert enabling Remote Config by default
+
 ## 3.37.0
 
 * Rename `datadog.securityAgent.compliance.xccdf.enabled` parameter to `datadog.securityAgent.compliance.host_benchmarks.enabled`.
