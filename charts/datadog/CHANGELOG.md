@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.38.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.1` version.
+ 
 ## 3.37.1
 
 * Temporarily revert enabling Remote Config by default
