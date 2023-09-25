@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.38.2
+
+* Skip references to PodSecurityPolicy where the support of this API has been dropped.
+
 ## 3.38.1
 
 * Enable Remote Config by default on the host agent only
