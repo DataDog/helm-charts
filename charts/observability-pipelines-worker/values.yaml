@@ -224,7 +224,7 @@ service:
 
 serviceHeadless:
   # serviceHeadless.enabled -- If **true**, create a "headless" Service resource.
-  enabled: true
+  enabled: false
 
 ingress:
   # ingress.enabled -- If **true**, create an Ingress resource.
