@@ -43,8 +43,6 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
-    data_streams_config:
-      enabled: {{ $.Values.datadog.dataStreamsMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
@@ -70,6 +68,8 @@ data:
         enabled: false
         traced_cgroups_count: 0
 {{ end }}
+      security_profile:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---

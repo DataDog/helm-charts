@@ -389,7 +389,7 @@ datadog:
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
-    enabled: false
+    enabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -532,7 +532,7 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
 
-    ## Note: /etc/passwd is automatically mounted to allow username resolution.
+    ## Note: /etc/passwd is automatically mounted when `processCollection` or `processDiscovery` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -654,10 +654,6 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
-  dataStreamsMonitoring:
-    # datadog.dataStreamsMonitoring.enabled -- Enable Data Streams Monitoring.
-    enabled: false
-
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -670,8 +666,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
-      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
+        enabled: false
+
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      host_benchmarks:
         enabled: false
 
     runtime:
@@ -709,6 +709,10 @@ datadog:
         pathMerge:
           # datadog.securityAgent.runtime.activityDump.pathMerge.enabled -- Set to true to enable the merging of similar paths
           enabled: false
+
+      securityProfile:
+        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime anomaly detection
+        enabled: false
 
   ## Manage NetworkPolicy
   networkPolicy:
@@ -816,7 +820,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.45.0
+    tag: 7.47.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -952,6 +956,9 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
+    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    webhookName: datadog-webhook
+
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
@@ -976,6 +983,9 @@ clusterAgent:
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
+
+    # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
+    port: 8000
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
@@ -1175,7 +1185,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.3
+    tag: 0.5.5
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1183,8 +1193,16 @@ fips:
     # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
     digest: ""
 
-    # agents.image.repository -- Override default registry + image.name for Agent
+    # fips.image.repository -- Override default registry + image.name for the FIPS sidecar container.
     repository:
+
+  # fips.customFipsConfig -- Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used.
+
+  ## Note: Use `|` to declare multi-line configuration.
+  ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
+  customFipsConfig: {}  # |
+  #  foobar
+  #     foo bar baz
 
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
@@ -1210,7 +1228,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.45.0
+    tag: 7.47.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1676,7 +1694,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.45.0
+    tag: 7.47.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1939,9 +1957,9 @@ providers:
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
-  enabled: false
+  enabled: true
 
 # -- Array of extra K8s manifests to deploy
 ## NOTE: The below Secret in extraObjects array is just an example of how can you use this array. 

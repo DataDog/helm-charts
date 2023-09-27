@@ -8,6 +8,7 @@ metadata:
 rules:
 - nonResourceURLs:
   - /metrics
+  - /metrics/slis
   verbs:
   - get
 - apiGroups:
@@ -332,6 +333,7 @@ rules:
   - watch
 - apiGroups:
   - apiextensions.k8s.io
+  - extensions
   resources:
   - customresourcedefinitions
   verbs:
