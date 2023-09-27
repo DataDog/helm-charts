@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.1
+* Switched `serviceHeadless.enabled` to `false`, since it's confusing for folks running cloud load balancers.
+
 ## 1.5.0
 
 * Official image `1.5.0`

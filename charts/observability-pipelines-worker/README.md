@@ -155,7 +155,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | serviceAccount.annotations | object | `{}` | Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**. |
 | serviceAccount.create | bool | `true` | If **true**, create a ServiceAccount. |
 | serviceAccount.name | string | `"default"` | Specify a preexisting ServiceAccount to use if `serviceAccount.create` is **false**. |
-| serviceHeadless.enabled | bool | `true` | If **true**, create a "headless" Service resource. |
+| serviceHeadless.enabled | bool | `false` | If **true**, create a "headless" Service resource. |
 | terminationGracePeriodSeconds | int | `60` | Override terminationGracePeriodSeconds. |
 | tolerations | list | `[]` | Configure [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). |
 | topologySpreadConstraints | list | `[]` | Configure [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/). |
