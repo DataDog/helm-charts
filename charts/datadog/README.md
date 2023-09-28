@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.38.2](https://img.shields.io/badge/Version-3.38.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.38.3](https://img.shields.io/badge/Version-3.38.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -743,7 +743,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"0.5.5"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"0.6.0"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` |  |
 | fips.port | int | `9803` |  |
 | fips.portRange | int | `15` |  |

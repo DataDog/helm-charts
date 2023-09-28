@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.38.3
+
+* Update `fips.image.tag` to `0.6.0`
+
 ## 3.38.2
 
 * Skip references to PodSecurityPolicy where the support of this API has been dropped.
