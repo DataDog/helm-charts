@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.1.3
+* Bump version for a product version upload with rebuilt dependencies.
 ## 0.1.2
 * Rename schema file.
 

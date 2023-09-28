@@ -10,10 +10,12 @@ This is a wrapper chart for installing EKS add-on. Charts required for the add-o
 ## Pushing Add-on Chart
 Below steps have been validated using `Helm v3.12.0`.
 
-* Build dependencies - this step is necessary to update the dependent charts under `charts/operator-eks-addon/charts` before we package it.
-
+* Build dependencies - this step is necessary to update the dependent charts under `charts/operator-eks-addon/charts` and `charts/datadog-operator/charts`. Latter is necessary to include correct version of `datadog-crds` chart in the `datadog-operator`.
 ```sh
-helm dependency build charts/operator-eks-addon
+helm dependency update ./charts/datadog-operator
+helm dependency build ./charts/datadog-operator
+helm dependency update ./charts/operator-eks-addon
+helm dependency build ./charts/operator-eks-addon
 ```
 
 * Package chart - this step creates a chart archive e.g. `operator-eks-addon-0.1.0.tgz`
@@ -21,15 +23,29 @@ helm dependency build charts/operator-eks-addon
 helm package ./charts/operator-eks-addon
 ```
 
+* Validate the artifact
+```sh
+# Unpack the chart and go the the chart folder
+tar -xzf operator-eks-addon-0.1.3.tgz -C /tmp/
+cd /tmp/operator-eks-addon
+
+# Review chart version and dependency version are correct
+
+# Render chart in a file
+helm template datadog-operator . > datadog.yaml
+```
+Make sure the rendered manifest container the CRD, Operator tag and points to EKS repo.
+
+
 * Push chart to EKS repo - first we need to authenticate Helm with the repo, then we push the chart archive to the Marketplace repository. This will upload the chart at `datadog/helm-charts/operator-eks-addon` and tag it with version `0.1.0`. See [ECR documentation][eks-helm-push] for more details.
 ```sh
-aws-vault exec prod-engineering -- aws ecr get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
+aws ecr get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
 helm push operator-eks-addon-0.1.0.tgz oci://709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/helm-charts
 ```
 
 * Validation - with AWS CLI we can list images in a give reposotiry.
 ```sh
-aws-vault exec prod-engineering -- aws ecr describe-images --registry-id 709825985650 --region us-east-1  --repository-name datadog/helm-charts/operator-eks-addon
+aws ecr describe-images --registry-id 709825985650 --region us-east-1  --repository-name datadog/helm-charts/operator-eks-addon
 {
     "imageDetails": [
         {
@@ -51,14 +67,14 @@ aws-vault exec prod-engineering -- aws ecr describe-images --registry-id 7098259
 ## Pushing Container Images
 Images required during add-on instasllation must be available through the EKS marketplace repository. Each image can be copied simply by `crane copy`. Make sure all referenced tags are uploaded to the respective repository.
 ```sh
-aws-vault exec prod-engineering -- aws ecr get-login-password --region us-east-1|crane auth login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
+aws ecr get-login-password --region us-east-1|crane auth login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
 
 ❯ crane copy gcr.io/datadoghq/operator:1.0.3 709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.0.3
 ```
 
 To validate, describe the repository
 ```sh
-aws-vault exec prod-engineering -- aws ecr describe-images --registry-id 709825985650 --region us-east-1  --repository-name datadog/operator
+aws ecr describe-images --registry-id 709825985650 --region us-east-1  --repository-name datadog/operator
 ..
         {
             "registryId": "709825985650",
