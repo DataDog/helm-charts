@@ -124,6 +124,9 @@ spec:
         {{- if eq  (include "should-enable-security-agent" .) "true" }}
           {{- include "container-security-agent" . | nindent 6 }}
         {{- end }}
+        {{- with .Values.agents.containers.sidecarContainers }}
+        {{- toYaml . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}

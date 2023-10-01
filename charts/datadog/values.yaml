@@ -1556,6 +1556,21 @@ agents:
       # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
       securityContext: {}
 
+    # agents.containers.sidecarContainers -- Additional containers to run alongside the Datadog Agent
+    sidecarContainers: []
+    # sidecarContainers:
+    #   - name: cloud-sql-proxy
+    #     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.3.0
+    #     args:
+    #       - "--private-ip"
+    #       - "--port=6000"
+    #     securityContext:
+    #       runAsNonRoot: true
+    #     resources:
+    #       requests:
+    #         memory: "2Gi"
+    #         cpu: "1"
+
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []
   #   - hostPath:
