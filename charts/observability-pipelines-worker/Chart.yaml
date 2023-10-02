@@ -15,7 +15,6 @@ maintainers:
     email: support@datadoghq.com
 appVersion: "1.5.0"
 annotations:
-  artifacthub.io/license: Apache-2.0
   artifacthub.io/links: |
     - name: Chart Source
-      url: https://github.com/DataDog/helm-charts
+      url: https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
