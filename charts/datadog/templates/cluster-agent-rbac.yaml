@@ -249,6 +249,7 @@ rules:
   - namespaces
   verbs:
   - list
+{{- if .Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy" }}
 - apiGroups:
   - "policy"
   resources:
@@ -257,6 +258,7 @@ rules:
   - get
   - list
   - watch
+{{- end }}
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
@@ -272,6 +274,7 @@ rules:
   - list
 {{- end }}
 {{- end }}
+{{- if .Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy" }}
 - apiGroups:
   - policy
   resources:
@@ -280,6 +283,7 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}-cluster-agent
+{{- end }}
 - apiGroups:
   - "security.openshift.io"
   resources:
