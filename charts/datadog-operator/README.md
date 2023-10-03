@@ -25,7 +25,6 @@
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
-| forwardOperatorMetrics | string | `"true"` | If false, disables sending operator metrics to Datadog |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
@@ -37,6 +36,7 @@
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
+| operatorMetricsEnabled | string | `"true"` | If false, disables the metrics forwarder component of the Operator, responsible to send metrics and events related to the Datadog custom resources |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |

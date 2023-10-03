@@ -2,7 +2,7 @@
 
 ## 1.1.2
 
-* Add configuration for Operator parameter `operatorMetricsEnabled` : this parameter can be used to disable the Operator metrics forwarder.
+* Add configuration for Operator parameter `operatorMetricsEnabled` : this parameter can be used to disable the Operator metrics forwarder. This component is responsible to send metrics (such as whether or not a feature is enabled) and events related to the Datadog custom resources. It is enabled by default.
 
 ## 1.1.1
 

@@ -58,8 +58,8 @@ logLevel: "info"
 maximumGoroutines:
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
-# forwardOperatorMetrics -- If false, disables sending operator metrics to Datadog
-forwardOperatorMetrics: "true"
+# operatorMetricsEnabled -- If false, disables the metrics forwarder component of the Operator, responsible to send metrics and events related to the Datadog custom resources
+operatorMetricsEnabled: "true"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:
