@@ -8,7 +8,7 @@ metadata:
   name: datadogmetrics.datadoghq.com
   labels:
     helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
-    app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+    app.kubernetes.io/managed-by: eks-addon
     app.kubernetes.io/name: '{{ include "datadog-crds.name" . }}'
     app.kubernetes.io/instance: '{{ .Release.Name }}'
 spec:
