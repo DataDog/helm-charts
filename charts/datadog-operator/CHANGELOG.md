@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+* Add configuration for Operator flag `operatorMetricsEnabled` : this parameter can be used to disable the Operator metrics forwarder. It is enabled by default.
+
 ## 1.1.1
 
 * Add permissions to curl `/metrics/slis` to operator cluster role.
