@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
+![Version: 1.1.2](https://img.shields.io/badge/Version-1.1.2-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
 
 ## Values
 
@@ -36,6 +36,7 @@
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
+| operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
