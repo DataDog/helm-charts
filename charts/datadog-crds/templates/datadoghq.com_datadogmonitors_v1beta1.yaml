@@ -160,11 +160,13 @@ spec:
               items:
                 type: string
               type: array
+              x-kubernetes-list-type: set
             tags:
               description: Tags is the monitor tags associated with your monitor
               items:
                 type: string
               type: array
+              x-kubernetes-list-type: set
             type:
               description: Type is the monitor type
               type: string
@@ -261,8 +263,13 @@ spec:
                   state:
                     description: DatadogMonitorState represents the overall DatadogMonitor state
                     type: string
+                required:
+                  - monitorGroup
                 type: object
               type: array
+              x-kubernetes-list-map-keys:
+                - monitorGroup
+              x-kubernetes-list-type: map
           type: object
       type: object
   version: v1alpha1

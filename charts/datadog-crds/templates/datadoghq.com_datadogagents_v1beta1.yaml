@@ -5893,6 +5893,8 @@ spec:
                           type: boolean
                         serviceName:
                           type: string
+                        webhookName:
+                          type: string
                       type: object
                     apm:
                       properties:
@@ -5955,6 +5957,11 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        hostBenchmarks:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                       type: object
                     cws:
                       properties:
@@ -5989,6 +5996,11 @@ spec:
                         enabled:
                           type: boolean
                         network:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
+                        remoteConfiguration:
                           properties:
                             enabled:
                               type: boolean
@@ -6048,6 +6060,11 @@ spec:
                             path:
                               type: string
                           type: object
+                      type: object
+                    ebpfCheck:
+                      properties:
+                        enabled:
+                          type: boolean
                       type: object
                     eventCollection:
                       properties:
