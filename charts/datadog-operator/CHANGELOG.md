@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+* Minor spelling corrections in the `datadog-operator` chart.
+
 ## 1.2.0
 
 * Update Datadog Operator version to 1.2.0.
