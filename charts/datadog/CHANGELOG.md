@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.38.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
 ## 3.38.3
 
 * Update `fips.image.tag` to `0.6.0`

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1
+
+* Minor spelling corrections in the `datadog-operator` chart.
+
+## 1.2.0
+
+* Update Datadog Operator version to 1.2.0.
+
 ## 1.1.2
 
 * Add configuration for Operator flag `operatorMetricsEnabled` : this parameter can be used to disable the Operator metrics forwarder. It is enabled by default.
