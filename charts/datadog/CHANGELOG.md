@@ -75,7 +75,6 @@
 ## 3.34.1
 
 * Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
->>>>>>> main
 
 ## 3.34.0
 
