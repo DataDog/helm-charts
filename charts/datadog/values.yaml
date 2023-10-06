@@ -386,6 +386,13 @@ datadog:
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
 
+  # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
+  # Can be:
+  # * "lease" / "leases". Only supported in agent 7.47+
+  # * "configmap" / "confimaps".
+  # "" to automatically detect which one to use.
+  leaderElectionResource: configmap
+
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
