@@ -8,6 +8,7 @@ metadata:
 rules:
 - nonResourceURLs:
   - /metrics
+  - /metrics/slis
   verbs:
   - get
 - apiGroups:

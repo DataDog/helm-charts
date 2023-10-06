@@ -1,8 +1,80 @@
 # Datadog changelog
 
-## 3.35.0
+## 3.39.0
 
 * Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)` or empty for auto detection.
+## 3.38.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
+## 3.38.3
+
+* Update `fips.image.tag` to `0.6.0`
+
+## 3.38.2
+
+* Skip references to PodSecurityPolicy where the support of this API has been dropped.
+
+## 3.38.1
+
+* Enable Remote Config by default on the host agent only
+
+## 3.38.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.1` version.
+
+## 3.37.1
+
+* Temporarily revert enabling Remote Config by default
+
+## 3.37.0
+
+* Rename `datadog.securityAgent.compliance.xccdf.enabled` parameter to `datadog.securityAgent.compliance.host_benchmarks.enabled`.
+
+## 3.36.4
+
+* Disable Remote Config on the cluster checks runner
+
+## 3.36.3
+
+* Mount `/etc/passwd` in process agent only if `datadog.processAgent.processCollection` or `datadog.processAgent.processDiscovery` is enabled.
+
+## 3.36.2
+
+* Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
+
+## 3.36.1
+
+* Add option to enable CWS security profiles (runtime anomaly detection)
+
+## 3.36.0
+
+* Enable Remote Config by default
+
+## 3.35.2
+
+* Fix Agent Service Account Name used in `RoleBinding` for Secret Backend permissions when in GKE Autopliot
+
+## 3.35.1
+
+* Add permissions to curl `/metrics/slis` to agent cluster role.
+
+## 3.35.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.0` version.
+
+## 3.34.3
+
+* Fix extra empty line in helmchecks, issue [#953](https://github.com/DataDog/helm-charts/issues/953).
+
+## 3.34.2
+
+* Add containerPort 8000/TCP to `cluster-agent` deployment for Admission Controller.
+
+## 3.34.1
+
+* Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
+>>>>>>> main
 
 ## 3.34.0
 

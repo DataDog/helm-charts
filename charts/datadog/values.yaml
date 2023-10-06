@@ -396,7 +396,7 @@ datadog:
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
-    enabled: false
+    enabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -539,7 +539,7 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
 
-    ## Note: /etc/passwd is automatically mounted to allow username resolution.
+    ## Note: /etc/passwd is automatically mounted when `processCollection` or `processDiscovery` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -673,8 +673,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
-      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
+        enabled: false
+
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      host_benchmarks:
         enabled: false
 
     runtime:
@@ -712,6 +716,10 @@ datadog:
         pathMerge:
           # datadog.securityAgent.runtime.activityDump.pathMerge.enabled -- Set to true to enable the merging of similar paths
           enabled: false
+
+      securityProfile:
+        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime anomaly detection
+        enabled: false
 
   ## Manage NetworkPolicy
   networkPolicy:
@@ -819,7 +827,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.46.0
+    tag: 7.47.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -982,6 +990,9 @@ clusterAgent:
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
+
+    # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
+    port: 8000
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
@@ -1181,7 +1192,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.4
+    tag: 0.6.0
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1224,7 +1235,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.46.0
+    tag: 7.47.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1690,7 +1701,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.46.0
+    tag: 7.47.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1953,6 +1964,6 @@ providers:
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
-  enabled: false
+  enabled: true
