@@ -298,6 +298,9 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
+{{- if .Values.datadog.orchestratorExplorer.enabled }}
+{{- include "orchestratorExplorer-config-crs" . }}
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.39.2
+
+* Support custom resources and custom resource definitions collection in orchestrator explorer
+
 ## 3.39.1
 
 * Add `kubeStateMetricsCore.collectConfigMaps` config field to the Agent
