@@ -390,6 +390,12 @@ spec:
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}
+{{- if .Values.datadog.orchestratorExplorer.enabled }}
+{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
+            - key: orchestrator.yaml
+              path: orchestrator.yaml
+{{- end }}
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
