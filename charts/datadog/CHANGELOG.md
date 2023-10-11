@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
+
 ## 3.39.3
 
 * Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
