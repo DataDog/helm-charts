@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.39.4
+
+* Add environment variable `DD_ORCHESTRATOR_EXPLORER_CRD_COLLECTION_ENABLED` to cluster agent if custom resources collection is enabled orchestrator check
+
 ## 3.39.3
 
 * Omit cluster check and leader election in orchestrator check configuration if custom resources are provided

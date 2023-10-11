@@ -282,6 +282,10 @@ spec:
           {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
+          {{- if eq (include "should-enable-orchestratorExplorer-crd-collection" .) "true" }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CRD_COLLECTION_ENABLED
+            value: "true"
+          {{- end }}
           {{- end }}
           {{- if eq  (include "should-enable-security-agent" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED

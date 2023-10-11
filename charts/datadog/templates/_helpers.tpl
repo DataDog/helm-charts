@@ -847,3 +847,48 @@ Create RBACs for custom resources
   - watch
 {{- end }}
 {{- end -}}
+
+{{/*
+Check if orchestrator check is run as cluster check
+*/}}
+{{- define "orchestratorExplorer-clc-enabled" -}}
+
+{{- $clcEnabled := .Values.clusterChecksRunner.enabled  -}}
+{{- $clcConfigFound := false  -}}
+
+{{/*
+If custom config is not provided in `clusterAgent.advancedConfd`, then we don't run cluster checks runner for orchestrator check.
+*/}}
+{{- range $integration, $configs := .Values.clusterAgent.advancedConfd -}}
+{{- if and (eq "orchestrator.d" $integration) (gt (len $configs) 0) -}}
+{{- $clcConfigFound = true -}}
+{{- end -}}
+{{- end -}}
+
+{{- if eq $clcConfigFound false -}}
+{{- $clcEnabled = false  -}}
+{{- end -}}
+
+{{- $clcEnabled -}}
+{{- end -}}
+
+{{/*
+Return if crd collection should be enabled
+*/}}
+{{- define "should-enable-orchestratorExplorer-crd-collection" -}}
+
+{{- $crdEnabled := false  -}}
+{{- if gt (len $.Values.datadog.orchestratorExplorer.customResources) 0 -}}
+{{- $crdEnabled = true  -}}
+{{- end -}}
+
+{{/*
+If cluster check is enabled on orchestrator check then we don't enable crd collection.
+This will cause all cluster runners to run crd collection.
+*/}}
+{{- if eq (include "orchestratorExplorer-clc-enabled" .) "true" }}
+{{- $crdEnabled = false  -}}
+{{- end -}}
+
+{{- $crdEnabled -}}
+{{- end -}}
