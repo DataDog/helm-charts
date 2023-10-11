@@ -86,6 +86,8 @@
     {{- if .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
       value: {{ .Values.datadog.leaderElection | quote}}
+    - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+      value: {{ .Values.datadog.leaderElectionResource | quote}}
     {{- end }}
     {{- if .Values.datadog.leaderLeaseDuration }}
     - name: DD_LEADER_LEASE_DURATION

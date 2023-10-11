@@ -58,6 +58,8 @@
     {{- if and (eq (include "cluster-agent-enabled" .) "false") .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
       value: {{ .Values.datadog.leaderElection | quote }}
+    - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+      value: {{ .Values.datadog.leaderElectionResource | quote}}
     {{- end }}
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}

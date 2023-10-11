@@ -1,5 +1,25 @@
 # Datadog changelog
 
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
+
+## 3.39.3
+
+* Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
+
+## 3.39.2
+
+* Support custom resources and custom resource definitions collection in orchestrator explorer
+
+## 3.39.1
+
+* Add `kubeStateMetricsCore.collectConfigMaps` config field to the Agent
+
+## 3.39.0
+
+* Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)`, or empty for auto detection.
+
 ## 3.38.4
 
 * Add `orchestrator_explorer.enabled` for the Agent
