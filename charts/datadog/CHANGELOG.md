@@ -2,6 +2,10 @@
 
 ## 3.40.0
 
+* Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+
+## 3.40.0
+
 * Default `Agent` and `Cluster-Agent` to `7.48.0` version.
 
 ## 3.39.3
