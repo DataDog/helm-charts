@@ -1158,7 +1158,7 @@ clusterAgent:
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
   additionalLabels: {}
     # key: "value"
-  
+
   # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
   # Autodiscovery, as a space-separated list
 

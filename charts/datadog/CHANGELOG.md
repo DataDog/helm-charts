@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.40.0
+## 3.40.1
 
 * Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
 
