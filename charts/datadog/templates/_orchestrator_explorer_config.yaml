@@ -38,14 +38,10 @@ If customResources is empty, then we don't add crd collection config.
 
 {{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" -}}
 orchestrator.yaml: |-
-  cluster_check: {{ .Values.clusterChecksRunner.enabled }}
   init_config:
   instances: 
-    - skip_leader_election: {{ .Values.clusterChecksRunner.enabled }}
-      {{- if gt (len $.Values.datadog.orchestratorExplorer.customResources) 0 }}
-      crd_collectors:
+    - crd_collectors:
       {{- toYaml $.Values.datadog.orchestratorExplorer.customResources | nindent 8 -}}
-      {{- end }}
 {{- end -}}
 
 {{- end -}}

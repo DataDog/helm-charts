@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.39.3
+
+* Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
+
 ## 3.39.2
 
 * Support custom resources and custom resource definitions collection in orchestrator explorer
