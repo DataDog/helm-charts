@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.2
+
+* Dropped ArtifactHub license designation to avoid confusion
+
 ## 1.5.1
 
 * Official image `1.5.1`

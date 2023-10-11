@@ -1,8 +1,11 @@
 # Datadog changelog
 
-## 3.39.4
+## 3.40.1
 
 * Add environment variable `DD_ORCHESTRATOR_EXPLORER_CRD_COLLECTION_ENABLED` to cluster agent if custom resources collection is enabled orchestrator check
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
 
 ## 3.39.3
 
