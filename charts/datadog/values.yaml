@@ -791,7 +791,7 @@ datadog:
   #  - kubernetes_state
 
   # datadog.containerExclude -- Exclude containers from the Agent
-  # Autodiscovery, as a space-sepatered list
+  # Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
@@ -1158,6 +1158,19 @@ clusterAgent:
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
   additionalLabels: {}
     # key: "value"
+  
+  # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
+  # Autodiscovery, as a space-separated list
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # clusterAgent.containerInclude -- Include containers in the Cluster Agent Autodiscovery,
+  # as a space-separated list.  If a container matches an include rule, it’s
+  # always included in the Autodiscovery
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
 
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently

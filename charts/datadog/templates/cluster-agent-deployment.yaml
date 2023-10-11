@@ -188,13 +188,13 @@ spec:
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENDPOINT
             value: {{ .Values.clusterAgent.metricsProvider.endpoint | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.datadog.containerInclude }}
+          {{- if .Values.clusterAgent.containerInclude }}
           - name: DD_CONTAINER_INCLUDE
-            value: {{ .Values.clusterAgent.datadog.containerInclude | quote }}
+            value: {{ .Values.clusterAgent.containerInclude | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.datadog.containerExclude }}
+          {{- if .Values.clusterAgent.containerExclude }}
           - name: DD_CONTAINER_EXCLUDE
-            value: {{ .Values.clusterAgent.datadog.containerExclude | quote }}
+            value: {{ .Values.clusterAgent.containerExclude | quote }}
           {{- end }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
