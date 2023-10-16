@@ -152,6 +152,11 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectSecretMetrics: true
 
+    # datadog.kubeStateMetricsCore.collectConfigMaps -- Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectConfigMaps: true
+
     # datadog.kubeStateMetricsCore.collectVpaMetrics -- Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.*
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
@@ -386,10 +391,17 @@ datadog:
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
 
+  # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
+  # Can be:
+  # * "lease" / "leases". Only supported in agent 7.47+
+  # * "configmap" / "confimaps".
+  # "" to automatically detect which one to use.
+  leaderElectionResource: configmap
+
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
-    enabled: false
+    enabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -532,7 +544,7 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
 
-    ## Note: /etc/passwd is automatically mounted to allow username resolution.
+    ## Note: /etc/passwd is automatically mounted when `processCollection` or `processDiscovery` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -632,6 +644,15 @@ datadog:
     container_scrubbing:
       enabled: true
 
+    # datadog.orchestratorExplorer.customResources -- Defines custom resources for the orchestrator explorer to collect
+
+    # customResources is required for RBAC creation if a custom orchestrator explorer configuration is provided in `clusterAgent.confd` or `clusterAgent.advancedConfd`
+    # Each item should follow group/version/name, for example
+    # customResources:
+    #   - datadoghq.com/v1alpha1/datadogmetrics
+    #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
+    customResources: []
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
@@ -666,8 +687,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
-      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
+        enabled: false
+
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      host_benchmarks:
         enabled: false
 
     runtime:
@@ -705,6 +730,10 @@ datadog:
         pathMerge:
           # datadog.securityAgent.runtime.activityDump.pathMerge.enabled -- Set to true to enable the merging of similar paths
           enabled: false
+
+      securityProfile:
+        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime anomaly detection
+        enabled: false
 
   ## Manage NetworkPolicy
   networkPolicy:
@@ -812,7 +841,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.46.0
+    tag: 7.48.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1177,7 +1206,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.4
+    tag: 0.6.0
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1220,7 +1249,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.46.0
+    tag: 7.48.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1686,7 +1715,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.46.0
+    tag: 7.48.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1949,6 +1978,6 @@ providers:
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
-  enabled: false
+  enabled: true

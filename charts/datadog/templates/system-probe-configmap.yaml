@@ -68,6 +68,8 @@ data:
         enabled: false
         traced_cgroups_count: 0
 {{ end }}
+      security_profile:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
