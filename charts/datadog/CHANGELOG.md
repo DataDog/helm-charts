@@ -1,5 +1,69 @@
 # Datadog changelog
 
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
+
+## 3.39.3
+
+* Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
+
+## 3.39.2
+
+* Support custom resources and custom resource definitions collection in orchestrator explorer
+
+## 3.39.1
+
+* Add `kubeStateMetricsCore.collectConfigMaps` config field to the Agent
+
+## 3.39.0
+
+* Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)`, or empty for auto detection.
+
+## 3.38.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
+## 3.38.3
+
+* Update `fips.image.tag` to `0.6.0`
+
+## 3.38.2
+
+* Skip references to PodSecurityPolicy where the support of this API has been dropped.
+
+## 3.38.1
+
+* Enable Remote Config by default on the host agent only
+
+## 3.38.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.1` version.
+
+## 3.37.1
+
+* Temporarily revert enabling Remote Config by default
+
+## 3.37.0
+
+* Rename `datadog.securityAgent.compliance.xccdf.enabled` parameter to `datadog.securityAgent.compliance.host_benchmarks.enabled`.
+
+## 3.36.4
+
+* Disable Remote Config on the cluster checks runner
+
+## 3.36.3
+
+* Mount `/etc/passwd` in process agent only if `datadog.processAgent.processCollection` or `datadog.processAgent.processDiscovery` is enabled.
+
+## 3.36.2
+
+* Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
+
+## 3.36.1
+
+* Add option to enable CWS security profiles (runtime anomaly detection)
+
 ## 3.36.0
 
 * Enable Remote Config by default

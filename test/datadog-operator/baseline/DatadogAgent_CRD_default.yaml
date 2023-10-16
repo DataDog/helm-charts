@@ -8,7 +8,7 @@ metadata:
   creationTimestamp: null
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-1.1.0'
+    helm.sh/chart: 'datadogCRDs-1.2.0'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -5883,6 +5883,8 @@ spec:
                           type: boolean
                         serviceName:
                           type: string
+                        webhookName:
+                          type: string
                       type: object
                     apm:
                       properties:
@@ -5945,6 +5947,11 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        hostBenchmarks:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                       type: object
                     cws:
                       properties:
@@ -5979,6 +5986,11 @@ spec:
                         enabled:
                           type: boolean
                         network:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
+                        remoteConfiguration:
                           properties:
                             enabled:
                               type: boolean
@@ -6038,6 +6050,11 @@ spec:
                             path:
                               type: string
                           type: object
+                      type: object
+                    ebpfCheck:
+                      properties:
+                        enabled:
+                          type: boolean
                       type: object
                     eventCollection:
                       properties:
