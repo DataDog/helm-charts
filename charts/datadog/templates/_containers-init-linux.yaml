@@ -53,6 +53,9 @@
       subPath: system-probe.yaml
       readOnly: true
     {{- end }}
+    {{- if .Values.agents.containers.initContainers.volumeMounts }}
+    {{ toYaml .Values.agents.containers.initContainers.volumeMounts | nindent 4 }}
+    {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- if and (eq (include "cluster-agent-enabled" .) "false") .Values.datadog.leaderElection }}
