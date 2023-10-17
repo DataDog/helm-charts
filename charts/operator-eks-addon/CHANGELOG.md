@@ -1,7 +1,11 @@
 # Changelog
 
+## 0.1.5
+* Update schema file to reference dependency chart properties. Make top level properties optional.
+
 ## 0.1.3
 * Bump version for a product version upload with rebuilt dependencies.
+
 ## 0.1.2
 * Rename schema file.
 

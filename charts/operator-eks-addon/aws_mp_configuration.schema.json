@@ -1,141 +1,123 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "replicaCount": {
-        "type": "integer"
-      },
-      "site": {
-        "type": "null"
-      },
-      "dd_url": {
-        "type": "null"
-      },
-      "env": {
-        "type": "array",
-        "items": {}
-      },
-      "image": {
-        "type": "object",
-        "properties": {
-          "tag": {
-            "type": "string"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "datadog-operator": {
+      "type": "object",
+      "properties": {
+        "replicaCount": {
+          "type": "integer"
+        },
+        "site": {
+          "type": "null"
+        },
+        "dd_url": {
+          "type": "null"
+        },
+        "env": {
+          "type": "array",
+          "items": {}
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "tag": {
+              "type": "string"
+            }
           }
+        },
+        "nameOverride": {
+          "type": "string"
+        },
+        "fullnameOverride": {
+          "type": "string"
+        },
+        "logLevel": {
+          "type": "string"
+        },
+        "maximumGoroutines": {
+          "type": "integer"
+        },
+        "metricsPort": {
+          "type": "integer"
+        },
+        "secretBackend": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string"
+            },
+            "arguments": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "command",
+            "arguments"
+          ]
+        },
+        "rbac": {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "create"
+          ]
+        },
+        "serviceAccount": {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "annotations": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "create",
+            "annotations"
+          ]
+        },
+        "resources": {
+          "type": "object"
+        },
+        "nodeSelector": {
+          "type": "object"
+        },
+        "tolerations": {
+          "type": "array",
+          "items": {}
+        },
+        "affinity": {
+          "type": "object"
+        },
+        "installCRDs": {
+          "type": "boolean"
+        },
+        "podAnnotations": {
+          "type": "object"
+        },
+        "podLabels": {
+          "type": "object"
+        },
+        "collectOperatorMetrics": {
+          "type": "boolean"
+        },
+        "watchNamespaces": {
+          "type": "array",
+          "items": {}
+        },
+        "containerSecurityContext": {
+          "type": "object"
         }
-      },
-      "nameOverride": {
-        "type": "string"
-      },
-      "fullnameOverride": {
-        "type": "string"
-      },
-      "logLevel": {
-        "type": "string"
-      },
-      "maximumGoroutines": {
-        "type": "integer"
-      },
-      "metricsPort": {
-        "type": "integer"
-      },
-      "secretBackend": {
-        "type": "object",
-        "properties": {
-          "command": {
-            "type": "string"
-          },
-          "arguments": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "command",
-          "arguments"
-        ]
-      },
-      "rbac": {
-        "type": "object",
-        "properties": {
-          "create": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "create"
-        ]
-      },
-      "serviceAccount": {
-        "type": "object",
-        "properties": {
-          "create": {
-            "type": "boolean"
-          },
-          "name": {
-            "type": "string"
-          },
-          "annotations": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "create",
-          "annotations"
-        ]
-      },
-      "resources": {
-        "type": "object"
-      },
-      "nodeSelector": {
-        "type": "object"
-      },
-      "tolerations": {
-        "type": "array",
-        "items": {}
-      },
-      "affinity": {
-        "type": "object"
-      },
-      "installCRDs": {
-        "type": "boolean"
-      },
-      "podAnnotations": {
-        "type": "object"
-      },
-      "podLabels": {
-        "type": "object"
-      },
-      "collectOperatorMetrics": {
-        "type": "boolean"
-      },
-      "watchNamespaces": {
-        "type": "array",
-        "items": {}
-      },
-      "containerSecurityContext": {
-        "type": "object"
       }
-    },
-    "required": [
-      "replicaCount",
-      "env",
-      "image",
-      "imagePullSecrets",
-      "nameOverride",
-      "fullnameOverride",
-      "logLevel",
-      "metricsPort",
-      "secretBackend",
-      "rbac",
-      "serviceAccount",
-      "resources",
-      "nodeSelector",
-      "tolerations",
-      "affinity",
-      "installCRDs",
-      "podAnnotations",
-      "podLabels",
-      "collectOperatorMetrics",
-      "watchNamespaces",
-      "containerSecurityContext"
-    ]
+    }
   }
+}

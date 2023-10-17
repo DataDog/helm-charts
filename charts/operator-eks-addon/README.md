@@ -32,9 +32,19 @@ cd /tmp/operator-eks-addon
 # Review chart version and dependency version are correct
 
 # Render chart in a file
-helm template datadog-operator . > datadog.yaml
+helm template datadog-operator . > operator-addon.yaml
+
+# Render chart with a sample override
+helm template datadog-operator . --set datadog-operator.image.tag=1.2.0 > operator-addon.yaml
 ```
-Make sure the rendered manifest container the CRD, Operator tag and points to EKS repo.
+Make sure the rendered manifest contains the CRD, Operator tag override works and uses correct EKS repo. 
+
+Install it on a Kind cluster after replacing registry `709825985650.dkr.ecr.us-east-1.amazonaws.com` with a public one.
+
+```sh
+kubectl apply -f operator-addon.yaml
+```
+Confirm Operator is deploy and pods reach running state. Afterwards, create secret and apply default `DatadogAgent` manifest and make sure agents reach running state and metric shows up in the app.
 
 
 * Push chart to EKS repo - first we need to authenticate Helm with the repo, then we push the chart archive to the Marketplace repository. This will upload the chart at `datadog/helm-charts/operator-eks-addon` and tag it with version `0.1.0`. See [ECR documentation][eks-helm-push] for more details.
