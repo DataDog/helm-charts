@@ -1576,6 +1576,8 @@ agents:
       #    memory: 200Mi
       # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
       securityContext: {}
+      # agents.containers.initContainers.volumeMounts -- Specify additional volumes to mount for the init containers
+      volumeMounts: []
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []

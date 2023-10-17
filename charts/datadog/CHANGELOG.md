@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.1
+
+* Add support for initContainer volume mounts
+
 ## 3.40.0
 
 * Default `Agent` and `Cluster-Agent` to `7.48.0` version.
