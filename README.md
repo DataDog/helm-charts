@@ -1,6 +1,6 @@
 # Datadog Helm Charts
 
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/datadog)](https://artifacthub.io/packages/search?repo=datadog) 
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/datadog)](https://artifacthub.io/packages/search?repo=datadog)
 
 Official Helm charts for Datadog products. Currently supported:
 - [Datadog Agents](charts/datadog/README.md) (datadog/datadog)
@@ -9,7 +9,7 @@ Official Helm charts for Datadog products. Currently supported:
 
 You need to add this repository to your Helm repositories:
 
-```
+```shell
 helm repo add datadog https://helm.datadoghq.com
 helm repo update
 ```

@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.40.2
+
+* Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
+
+## 3.40.1
+
+* Add support for initContainer volume mounts
+
 ## 3.40.0
 
 * Default `Agent` and `Cluster-Agent` to `7.48.0` version.
