@@ -228,64 +228,6 @@ datadog:
     socketEnabled: false
 ```
 
-### Enabling APM Single Step Instrumentation
-
-APM tracing libraries and configurations can be automatically injected in your application pods in the whole cluster or specific namespaces using Single Step Instrumentation.
-
-Update your `datadog-values.yaml` file with the following configration to enable Single Step Instrumentation in the whole cluster:
-
-```yaml
-datadog:
-  # (...)
-  apm:
-    instrumentation:
-      enabled: true
-```
-
-Single Step Instrumentation can be disabled in specific namespaces using configuration option `disabledNamespaces`:
-
-```yaml
-datadog:
-  # (...)
-  apm:
-    instrumentation:
-      enabled: true
-      disabledNamespaces:
-        - namespaceA
-        - namespaceB
-```
-
-Single Step Instrumentation can be enabled in specific namespaces using configuration option `enabledNamespaces`:
-
-```yaml
-datadog:
-  # (...)
-  apm:
-    instrumentation:
-      enabled: false
-      enabledNamespaces:
-        - namespaceC
-```
-
-To confiure the version of Tracing library that Single Step Instrumentation will instrument applications with, set the configuration `libVersions`:
-
-```yaml
-datadog:
-  # (...)
-  apm:
-    instrumentation:
-      enabled: false
-      libVersions: 
-        java: v1.18.0
-        python: v1.20.0
-```
-
-then upgrade your Datadog Helm chart:
-
-```bash
-helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
-```
-
 ### Enabling Log Collection
 
 Update your `datadog-values.yaml` file with the following log collection configuration:
@@ -654,7 +596,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
 | datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces |
-| datadog.apm.instrumentation.libVersions | object | `{}` | Disable injecting the Datadog APM libraries into pods in specific namespaces |
+| datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation  |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
 | datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (port 8126 by default) |
 | datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |

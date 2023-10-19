@@ -473,7 +473,7 @@ datadog:
       # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces
       disabledNamespaces: []
 
-      # datadog.apm.instrumentation.libVersions -- Disable injecting the Datadog APM libraries into pods in specific namespaces
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation 
       libVersions: {}
 
   ## OTLP ingest related configuration
