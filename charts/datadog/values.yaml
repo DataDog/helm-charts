@@ -461,6 +461,21 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+    # APM Single Step Instrumentation
+    # This feature is in beta. It requires Cluster Agent 7.49+.
+    instrumentation:
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
+      enabled: false
+
+      # datadog.apm.instrumentation.enabled_namespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces
+      enabled_namespaces: []
+
+      # datadog.apm.instrumentation.disabled_namespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces
+      disabled_namespaces: []
+
+      # datadog.apm.instrumentation.lib_versions -- Disable injecting the Datadog APM libraries into pods in specific namespaces
+      lib_versions: {}
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
