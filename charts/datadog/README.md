@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.40.2](https://img.shields.io/badge/Version-3.40.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.40.3](https://img.shields.io/badge/Version-3.40.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -226,6 +226,64 @@ datadog:
   # (...)
   apm:
     socketEnabled: false
+```
+
+### Enabling APM Single Step Instrumentation
+
+APM tracing libraries and configurations can be automatically injected in your application pods in the whole cluster or specific namespaces using Single Step Instrumentation.
+
+Update your `datadog-values.yaml` file with the following configration to enable Single Step Instrumentation in the whole cluster:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: true
+```
+
+Single Step Instrumentation can be disabled in specific namespaces using configuration option `disabledNamespaces`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: true
+      disabledNamespaces:
+        - namespaceA
+        - namespaceB
+```
+
+Single Step Instrumentation can be enabled in specific namespaces using configuration option `enabledNamespaces`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: false
+      enabledNamespaces:
+        - namespaceC
+```
+
+To confiure the version of Tracing library that Single Step Instrumentation will instrument applications with, set the configuration `libVersions`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: false
+      libVersions: 
+        java: v1.18.0
+        python: v1.20.0
+```
+
+then upgrade your Datadog Helm chart:
+
+```bash
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
 ### Enabling Log Collection
@@ -593,6 +651,10 @@ helm install <RELEASE_NAME> \
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
+| datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces |
+| datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
+| datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces |
+| datadog.apm.instrumentation.libVersions | object | `{}` | Disable injecting the Datadog APM libraries into pods in specific namespaces |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
 | datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (port 8126 by default) |
 | datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |

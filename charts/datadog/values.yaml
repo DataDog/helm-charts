@@ -467,14 +467,14 @@ datadog:
       # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
       enabled: false
 
-      # datadog.apm.instrumentation.enabled_namespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces
-      enabled_namespaces: []
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces
+      enabledNamespaces: []
 
-      # datadog.apm.instrumentation.disabled_namespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces
-      disabled_namespaces: []
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces
+      disabledNamespaces: []
 
-      # datadog.apm.instrumentation.lib_versions -- Disable injecting the Datadog APM libraries into pods in specific namespaces
-      lib_versions: {}
+      # datadog.apm.instrumentation.libVersions -- Disable injecting the Datadog APM libraries into pods in specific namespaces
+      libVersions: {}
 
   ## OTLP ingest related configuration
   otlp:

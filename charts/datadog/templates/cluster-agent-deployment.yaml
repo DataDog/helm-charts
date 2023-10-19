@@ -233,17 +233,17 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: "true"
           {{- end }}
-          {{- if .Values.datadog.apm.instrumentation.enabled_namespaces }}
+          {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
-            value: {{ .Values.datadog.apm.instrumentation.enabled_namespaces }}
+            value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
           {{- end }}
-          {{- if .Values.datadog.apm.instrumentation.disabled_namespaces }}
+          {{- if .Values.datadog.apm.instrumentation.disabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_DISABLED_NAMESPACES
-            value: {{ .Values.datadog.apm.instrumentation.disabled_namespaces }}
+            value: {{ .Values.datadog.apm.instrumentation.disabledNamespaces | toJson | quote }}
           {{- end }}
-          {{- if .Values.datadog.apm.instrumentation.lib_versions }}
+          {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
-            value: {{ .Values.datadog.apm.instrumentation.lib_versions }}
+            value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
