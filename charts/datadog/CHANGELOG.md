@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.3
+
+* Add the option `clusterAgent.metricsProvider.register` to allow user to disable registering external-metrics server as an `APIService`
+
 ## 3.40.2
 
 * Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
