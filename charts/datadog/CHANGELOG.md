@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.3
+
+* Add `datadog.apm.instrumentation` sections to configure APM Single Step Instrumentation
+
 ## 3.40.2
 
 * Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
