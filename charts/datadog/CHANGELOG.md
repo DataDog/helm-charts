@@ -2,7 +2,7 @@
 
 ## 3.40.3
 
-* Add the option `clusterAgent.metricsProvider.register` to allow user to disable registering external-metrics server as an `APIService`
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
 
 ## 3.40.2
 
