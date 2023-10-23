@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.3
+
+* Default `Agent` and `Cluster-Agent` to `7.48.1` version.
+
 ## 3.40.2
 
 * Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
