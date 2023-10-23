@@ -612,6 +612,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerExclude | string | `nil` | Exclude containers from the Agent Autodiscovery, as a space-sepatered list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from the Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from the Agent Autodiscovery, as a space-separated list |
+| datadog.containerImageCollection.enabled | bool | `false` | Enable collection of container image metadata |
 | datadog.containerInclude | string | `nil` | Include containers in the Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery |
 | datadog.containerIncludeLogs | string | `nil` | Include logs in the Agent Autodiscovery, as a space-separated list |
 | datadog.containerIncludeMetrics | string | `nil` | Include metrics in the Agent Autodiscovery, as a space-separated list |
@@ -634,9 +635,6 @@ helm install <RELEASE_NAME> \
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from the Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000 |
-| datadog.features.containerMonitoring.containerImageCollection.enabled | bool | `false` | Enable collection of container images metadata |
-| datadog.features.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
-| datadog.features.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystem |
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
@@ -697,6 +695,8 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. Consider using remoteConfiguration.enabled instead |
+| datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
+| datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |

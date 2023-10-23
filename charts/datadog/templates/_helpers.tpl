@@ -853,10 +853,10 @@ Create RBACs for custom resources
 */}}
 {{- define "should-enable-container-image-collection" -}}
   {{- if and (not .Values.datadog.containerRuntimeSupport.enabled)
-      (or .Values.datadog.features.containerMonitoring.containerImageCollection.enabled .Values.datadog.features.sbom.containerImage.enabled) -}}
+      (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
     {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
   {{- end -}}
-  {{- if or .Values.datadog.features.containerMonitoring.containerImageCollection.enabled .Values.datadog.features.sbom.containerImage.enabled -}}
+  {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}
     true
   {{- else -}}
     false
@@ -867,7 +867,7 @@ Create RBACs for custom resources
   Return true if SBOM collection for container image is enabled
 */}}
 {{- define "should-enable-sbom-container-image-collection" -}}
-  {{- if .Values.datadog.features.sbom.containerImage.enabled -}}
+  {{- if .Values.datadog.sbom.containerImage.enabled -}}
     {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
       {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
     {{- end -}}

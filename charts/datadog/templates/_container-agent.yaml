@@ -160,14 +160,14 @@
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
-    {{- if or .Values.datadog.features.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if or .Values.datadog.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     - name: DD_SBOM_ENABLED
       value: "true"
     {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
-    {{- if .Values.datadog.features.sbom.host.enabled }}
+    {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
     {{- end }}

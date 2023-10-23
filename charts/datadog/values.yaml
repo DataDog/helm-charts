@@ -629,6 +629,11 @@ datadog:
     # datadog.systemProbe.enableDefaultKernelHeadersPaths -- Enable mount of default paths where kernel headers are stored
     enableDefaultKernelHeadersPaths: true
 
+
+  containerImageCollection:
+    # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
+    enabled: false
+
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
 
@@ -674,6 +679,16 @@ datadog:
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
+
+  # Software Bill of Materials configuration
+  sbom:
+    containerImage:
+      # datadog.sbom.containerImage.enabled -- Enable SBOM collection for container images
+      enabled: false
+
+    host:
+      # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
+      enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -823,24 +838,6 @@ datadog:
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
-
-  features:
-
-    # Container monitoring
-    containerMonitoring:
-      containerImageCollection:
-        # datadog.features.containerMonitoring.containerImageCollection.enabled -- Enable collection of container images metadata
-        enabled: false
-
-    # (Software Bill Of Materials) configuration
-    sbom:
-      containerImage:
-        # datadog.features.sbom.containerImage.enabled -- Enable SBOM collection for container images
-        enabled: false
-
-      host:
-        # datadog.features.sbom.host.enabled -- Enable SBOM collection for host filesystem
-        enabled: false
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
