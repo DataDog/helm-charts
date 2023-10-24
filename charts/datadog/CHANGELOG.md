@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.40.4
+
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
+
 ## 3.40.3
 
 * Default `Agent` and `Cluster-Agent` to `7.48.1` version.

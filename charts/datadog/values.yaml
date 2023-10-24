@@ -926,6 +926,9 @@ clusterAgent:
     # clusterAgent.metricsProvider.enabled -- Set this to true to enable Metrics Provider
     enabled: false
 
+    # clusterAgent.metricsProvider.registerAPIService -- Set this to false to disable external metrics registration as an APIService
+    registerAPIService: true
+
     # clusterAgent.metricsProvider.wpaController -- Enable informer and controller of the watermark pod autoscaler
 
     ## Note: You need to install the `WatermarkPodAutoscaler` CRD before
