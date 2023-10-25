@@ -839,6 +839,10 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
 
+  containerLifecycle:
+    # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
+    enabled: true
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
