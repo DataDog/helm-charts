@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.41.0](https://img.shields.io/badge/Version-3.41.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.42.0](https://img.shields.io/badge/Version-3.42.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -612,6 +612,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerExclude | string | `nil` | Exclude containers from the Agent Autodiscovery, as a space-sepatered list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from the Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from the Agent Autodiscovery, as a space-separated list |
+| datadog.containerImageCollection.enabled | bool | `false` | Enable collection of container image metadata |
 | datadog.containerInclude | string | `nil` | Include containers in the Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery |
 | datadog.containerIncludeLogs | string | `nil` | Include logs in the Agent Autodiscovery, as a space-separated list |
 | datadog.containerIncludeMetrics | string | `nil` | Include metrics in the Agent Autodiscovery, as a space-separated list |
@@ -695,6 +696,8 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. Consider using remoteConfiguration.enabled instead |
+| datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
+| datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |

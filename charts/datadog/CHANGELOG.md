@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.42.0
+
+* Allow enabling SBOM collection for host and container images.
+
 ## 3.41.0
 
 * Enable container lifecycle events collection by default.
