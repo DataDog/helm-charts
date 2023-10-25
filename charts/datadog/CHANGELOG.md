@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.41.0
+
+* Enable container lifecycle events collection by default.
+
 ## 3.40.4
 
 * Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
