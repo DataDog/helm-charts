@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.42.1
+
+* Bump FIPS proxy OpenSSL version to 3.0.12 
+
 ## 3.42.0
 
 * Allow enabling SBOM collection for host and container images.
