@@ -1,0 +1,78 @@
+agents:
+  image:
+    tag: 7.46.0
+  nodeSelector:
+    kubernetes.io/os: windows
+  priorityClassName: system-node-critical
+  tolerations:
+  - effect: NoSchedule
+    key: apps
+    operator: Equal
+    value: platform
+  - effect: NoSchedule
+    key: apps
+    operator: Equal
+    value: infra
+  - effect: NoSchedule
+    key: os
+    operator: Equal
+    value: windows
+  volumeMounts:
+  - mountPath: /var/log/mounted
+    name: log-volume
+    readOnly: true
+  volumes:
+  - hostPath:
+      path: C:\volumes\logs
+    name: log-volume
+datadog:
+  apiKeyExistingSecret: datadog-apikey
+  apm:
+    # enabled: true
+    socketEnabled: true
+    serviceEnabled: true
+    portEnabled: false
+  clusterChecks:
+    enabled: true
+  clusterName: platform-pci-nonprod
+  dogstatsd:
+    hostSocketPath: /var/run/datadog/
+    nonLocalTraffic: true
+    port: 8125
+    socketPath: /var/run/datadog/dsd.socket
+    useHostPort: true
+    useSocketVolume: true
+  kubeStateMetricsEnabled: false
+  logs:
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    enabled: true
+  networkMonitoring:
+    enabled: true
+  otlp:
+    receiver:
+      protocols:
+        http:
+          enabled: true
+  processAgent:
+    processCollection: true
+  prometheusScrape:
+    enabled: true
+  serviceMonitoring:
+    enabled: true
+  site: datadoghq.eu
+  tags:
+  - env:platform-nonprod
+  - clusterFriendlyName:platform-pci
+datadog-crds:
+  crds:
+    datadogMetrics: false
+existingClusterAgent:
+  join: true
+  serviceName: datadog-agent-linux-cluster-agent
+  tokenSecretName: datadog-agent-linux-cluster-agent
+kube-state-metrics:
+  nodeSelector:
+    kubernetes.io/os: windows
+registry: public.ecr.aws/datadog
+targetSystem: windows

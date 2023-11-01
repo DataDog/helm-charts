@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.43.0
+
+* Add datadog.apm.serviceEnabled option to allow the use of APM with k8s service without enabling hostPort.
+
 ## 3.42.1
 
 * Bump FIPS proxy OpenSSL version to 3.0.12 

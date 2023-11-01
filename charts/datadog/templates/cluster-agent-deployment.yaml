@@ -205,7 +205,7 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.configMode }}
             {{- else if eq (include "trace-agent-use-uds" .) "true" }}
             value: socket
-            {{- else if or (eq (include "trace-agent-use-tcp-port" .) "true") ( .Values.providers.gke.autopilot )}}
+            {{- else if or (eq (include "trace-agent-use-host-port" .) "true") ( .Values.providers.gke.autopilot )}}
             value: hostip
             {{- else if or (not .Values.datadog.apm.enabled ) (and (eq (include "trace-agent-use-tcp-port" .) "true") (eq (include "trace-agent-use-uds" .) "true")) }}
             value: socket
