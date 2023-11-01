@@ -835,7 +835,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if or .Values.remoteConfiguration.enabled .Values.datadog.remoteConfiguration.enabled -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) -}}
 true
 {{- else -}}
 false
@@ -846,9 +846,54 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if or .Values.remoteConfiguration.enabled .Values.clusterAgent.admissionController.remoteInstrumentation.enabled -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
 true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Create RBACs for custom resources
+*/}}
+{{- define "orchestratorExplorer-config-crs" -}}
+{{- range $cr := .Values.datadog.orchestratorExplorer.customResources }}
+- apiGroups:
+  - {{ (splitList "/" $cr) | first | quote }}
+  resources:
+  - {{ (splitList "/" $cr) | last | quote }}
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+{{- end }}
+
+{{/*
+  Return true if container image collection is enabled
+*/}}
+{{- define "should-enable-container-image-collection" -}}
+  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled)
+      (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
+    {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
+  {{- end -}}
+  {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM collection for container image is enabled
+*/}}
+{{- define "should-enable-sbom-container-image-collection" -}}
+  {{- if .Values.datadog.sbom.containerImage.enabled -}}
+    {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
+      {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
+    {{- end -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
 {{- end -}}

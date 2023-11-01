@@ -243,6 +243,8 @@ spec:
           {{- end }}
           - name: DD_LEADER_ELECTION
             value: {{ .Values.datadog.leaderElection | quote}}
+          - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+            value: {{ .Values.datadog.leaderElectionResource | quote}}
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
@@ -387,6 +389,12 @@ spec:
 {{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
+{{- end }}
+{{- if .Values.datadog.orchestratorExplorer.enabled }}
+{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
+            - key: orchestrator.yaml
+              path: orchestrator.yaml
+{{- end }}
 {{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}

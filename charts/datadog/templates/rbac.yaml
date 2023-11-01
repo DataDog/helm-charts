@@ -56,6 +56,21 @@ rules:
   - configmaps
   verbs:
   - create
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
+  - update
+- apiGroups:  # To create the leader election token
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - create
 {{- end }}
 - nonResourceURLs:
   - "/version"
@@ -65,6 +80,7 @@ rules:
 {{- end }}
 - nonResourceURLs:
   - "/metrics"
+  - "/metrics/slis"
   verbs:
   - get
 - apiGroups:  # Kubelet connectivity
@@ -82,6 +98,7 @@ rules:
   - endpoints
   verbs:
   - get
+{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
   - policy
   resources:
@@ -90,6 +107,7 @@ rules:
   - use
   resourceNames:
   - {{ template "datadog.fullname" . }}
+{{- end }}
 - apiGroups:
   - "security.openshift.io"
   resources:
@@ -167,7 +185,7 @@ metadata:
 {{ include "datadog.labels" $ | indent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "datadog.fullname" $ }}
+    name: {{ include "agents.serviceAccountName" $ }}
     apiGroup: ""
     namespace: {{ $.Release.Namespace }}
 roleRef:
