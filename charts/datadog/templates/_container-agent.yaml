@@ -150,12 +150,32 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
+    {{- if .Values.datadog.containerLifecycle.enabled }}
+    - name: DD_CONTAINER_LIFECYCLE_ENABLED
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote }}
+    {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+    {{- if eq (include "should-enable-container-image-collection" .) "true" }}
+    - name: DD_CONTAINER_IMAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if or .Values.datadog.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    - name: DD_SBOM_ENABLED
+      value: "true"
+    {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if .Values.datadog.sbom.host.enabled }}
+    - name: DD_SBOM_HOST_ENABLED
+      value: "true"
+    {{- end }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:

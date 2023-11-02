@@ -1,8 +1,32 @@
 # Datadog changelog
 
+## 3.43.1
+
+* Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.43.0
+
+* Default `Agent` and `Cluster-Agent` to `7.49.0` version.
+
+## 3.42.1
+
+* Bump FIPS proxy OpenSSL version to 3.0.12 
+
+## 3.42.0
+
+* Allow enabling SBOM collection for host and container images.
+
+## 3.41.0
+
+* Enable container lifecycle events collection by default.
+
+## 3.40.4
+
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
+
 ## 3.40.3
 
-* Add `datadog.apm.instrumentation` sections to configure APM Single Step Instrumentation
+* Default `Agent` and `Cluster-Agent` to `7.48.1` version.
 
 ## 3.40.2
 

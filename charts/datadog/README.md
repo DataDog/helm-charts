@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.40.3](https://img.shields.io/badge/Version-3.40.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.43.1](https://img.shields.io/badge/Version-3.43.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -228,6 +228,64 @@ datadog:
     socketEnabled: false
 ```
 
+### Enabling APM Single Step Instrumentation (beta)
+
+APM tracing libraries and configurations can be automatically injected in your application pods in the whole cluster or specific namespaces using Single Step Instrumentation.
+
+Update your `datadog-values.yaml` file with the following configration to enable Single Step Instrumentation in the whole cluster:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: true
+```
+
+Single Step Instrumentation can be disabled in specific namespaces using configuration option `disabledNamespaces`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: true
+      disabledNamespaces:
+        - namespaceA
+        - namespaceB
+```
+
+Single Step Instrumentation can be enabled in specific namespaces using configuration option `enabledNamespaces`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: false
+      enabledNamespaces:
+        - namespaceC
+```
+
+To confiure the version of Tracing library that Single Step Instrumentation will instrument applications with, set the configuration `libVersions`:
+
+```yaml
+datadog:
+  # (...)
+  apm:
+    instrumentation:
+      enabled: false
+      libVersions: 
+        java: v1.18.0
+        python: v1.20.0
+```
+
+then upgrade your Datadog Helm chart:
+
+```bash
+helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
+```
+
 ### Enabling Log Collection
 
 Update your `datadog-values.yaml` file with the following log collection configuration:
@@ -450,7 +508,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.48.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.49.0"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
@@ -514,12 +572,13 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.48.0"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.49.0"` | Cluster Agent image tag to use |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
 | clusterAgent.metricsProvider.enabled | bool | `false` | Set this to true to enable Metrics Provider |
 | clusterAgent.metricsProvider.endpoint | string | `nil` | Override the external metrics provider endpoint. If not set, the cluster-agent defaults to `datadog.site` |
+| clusterAgent.metricsProvider.registerAPIService | bool | `true` | Set this to false to disable external metrics registration as an APIService |
 | clusterAgent.metricsProvider.service.port | int | `8443` | Set port of cluster-agent metrics server service (Kubernetes >= 1.15) |
 | clusterAgent.metricsProvider.service.type | string | `"ClusterIP"` | Set type of cluster-agent metrics server service |
 | clusterAgent.metricsProvider.useDatadogMetrics | bool | `false` | Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries |
@@ -564,7 +623,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.48.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.49.0"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -593,10 +652,10 @@ helm install <RELEASE_NAME> \
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
-| datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces |
-| datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
-| datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces |
-| datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation |
+| datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces. # This feature is in beta, and requires Cluster Agent version 7.49+. # |
+| datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). # This feature is in beta, and requires Cluster Agent version 7.49+. # |
+| datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces. # This feature is in beta, and requires Cluster Agent version 7.49+. # |
+| datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. # This feature is in beta, and requires Cluster Agent version 7.49+. # |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
 | datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (port 8126 by default) |
 | datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |
@@ -615,9 +674,11 @@ helm install <RELEASE_NAME> \
 | datadog.containerExclude | string | `nil` | Exclude containers from the Agent Autodiscovery, as a space-sepatered list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from the Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from the Agent Autodiscovery, as a space-separated list |
+| datadog.containerImageCollection.enabled | bool | `false` | Enable collection of container image metadata |
 | datadog.containerInclude | string | `nil` | Include containers in the Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery |
 | datadog.containerIncludeLogs | string | `nil` | Include logs in the Agent Autodiscovery, as a space-separated list |
 | datadog.containerIncludeMetrics | string | `nil` | Include metrics in the Agent Autodiscovery, as a space-separated list |
+| datadog.containerLifecycle.enabled | bool | `true` | Enable container lifecycle events collection |
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
@@ -697,6 +758,8 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. Consider using remoteConfiguration.enabled instead |
+| datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
+| datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
@@ -751,7 +814,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"0.6.0"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"0.6.1"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` |  |
 | fips.port | int | `9803` |  |
 | fips.portRange | int | `15` |  |
