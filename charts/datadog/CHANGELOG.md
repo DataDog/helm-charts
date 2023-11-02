@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.43.1
+
+* Fix local agent Kubernetes service to include APM traceport
+
 ## 3.43.0
 
 * Default `Agent` and `Cluster-Agent` to `7.49.0` version.
