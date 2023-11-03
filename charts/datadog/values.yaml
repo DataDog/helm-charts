@@ -279,7 +279,7 @@ datadog:
     # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
     podLogsPath:
 
-  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000
+  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
 
   ## dogstatsd configuration
@@ -394,7 +394,7 @@ datadog:
   # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
   # Can be:
   # * "lease" / "leases". Only supported in agent 7.47+
-  # * "configmap" / "confimaps".
+  # * "configmap" / "configmaps".
   # "" to automatically detect which one to use.
   leaderElectionResource: configmap
 
@@ -805,36 +805,30 @@ datadog:
   #  - redisdb
   #  - kubernetes_state
 
-  # datadog.containerExclude -- Exclude containers from the Agent
-  # Autodiscovery, as a space-sepatered list
+  # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
 
-  # datadog.containerInclude -- Include containers in the Agent Autodiscovery,
-  # as a space-separated list.  If a container matches an include rule, it’s
-  # always included in the Autodiscovery
+  # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
+  # If a container matches an include rule, it’s always included in Autodiscovery
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
-  # datadog.containerExcludeLogs -- Exclude logs from the Agent Autodiscovery,
-  # as a space-separated list
+  # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
   containerExcludeLogs:
 
-  # datadog.containerIncludeLogs -- Include logs in the Agent Autodiscovery, as
-  # a space-separated list
+  # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
   containerIncludeLogs:
 
-  # datadog.containerExcludeMetrics -- Exclude metrics from the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerExcludeMetrics -- Exclude metrics from Agent Autodiscovery, as a space-separated list
   containerExcludeMetrics:
 
-  # datadog.containerIncludeMetrics -- Include metrics in the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
-  # datadog.excludePauseContainer -- Exclude pause containers from the Agent Autodiscovery.
+  # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
@@ -1199,19 +1193,21 @@ existingClusterAgent:
 
 # fips is used to enable the fips sidecar container for GOVCLOUD environments.
 fips:
-
+  # fips.enabled -- Enable fips sidecar
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
-  # fips.port specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
   port: 9803
 
-  # fips.portRange specifies the number of ports used, defaults to 13  https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
   portRange: 15
 
+  # fips.use_https -- Option to enable https
   use_https: false
+
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
   resources: {}
     # limits:
@@ -1221,7 +1217,9 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
+  # fips.local_address -- Set local IP address
   local_address: "127.0.0.1"
+
   ## Define the Datadog image to work with
   image:
     ## fips.image.name -- Define the FIPS sidecar container image name.
@@ -1972,14 +1970,6 @@ kube-state-metrics:
   nodeSelector:
     kubernetes.io/os: linux
 
-  # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
-  # image:
-  #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
-  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-  #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
-  #  tag: v1.9.8
-  #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
-  #  pullPolicy: IfNotPresent
 providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
@@ -1993,15 +1983,15 @@ providers:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
       ## When deploying to EC2-backed EKS infrastructure, there are situations where the
-      ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
+      ## IMDS metadata endpoint is not accessible to containers. This flag mounts the host's
       ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
       useHostnameFromFile: false
   aks:
-    # providers.aks.enabled -- Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
+  # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
   enabled: true
