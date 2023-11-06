@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
 ## 3.43.1
 
 * Fix docstring typos and remove unneeded lines.
