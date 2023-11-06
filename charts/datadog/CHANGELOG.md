@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.43.1
+## 3.43.3
 
 * Fix local agent Kubernetes service to include APM traceport
+
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
+## 3.43.1
+
+* Fix docstring typos and remove unneeded lines.
 
 ## 3.43.0
 
