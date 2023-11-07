@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.43.1
+## 3.45.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
+## 3.43.1
+
+* Fix docstring typos and remove unneeded lines.
 
 ## 3.43.0
 

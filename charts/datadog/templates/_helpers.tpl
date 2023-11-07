@@ -852,8 +852,7 @@ Create RBACs for custom resources
   Return true if container image collection is enabled
 */}}
 {{- define "should-enable-container-image-collection" -}}
-  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled)
-      (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
+  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
     {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
   {{- end -}}
   {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}
