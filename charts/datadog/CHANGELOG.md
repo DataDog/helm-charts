@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.34.0
+## 3.44.0
 
 * Remove buggy `chmod` directive in the init container of the cluster agent.
 
