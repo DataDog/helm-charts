@@ -152,6 +152,11 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectSecretMetrics: true
 
+    # datadog.kubeStateMetricsCore.collectConfigMaps -- Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectConfigMaps: true
+
     # datadog.kubeStateMetricsCore.collectVpaMetrics -- Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.*
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
@@ -274,7 +279,7 @@ datadog:
     # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
     podLogsPath:
 
-  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000
+  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
 
   ## dogstatsd configuration
@@ -385,6 +390,13 @@ datadog:
 
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
+
+  # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
+  # Can be:
+  # * "lease" / "leases". Only supported in agent 7.47+
+  # * "configmap" / "configmaps".
+  # "" to automatically detect which one to use.
+  leaderElectionResource: configmap
 
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
@@ -617,6 +629,11 @@ datadog:
     # datadog.systemProbe.enableDefaultKernelHeadersPaths -- Enable mount of default paths where kernel headers are stored
     enableDefaultKernelHeadersPaths: true
 
+
+  containerImageCollection:
+    # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
+    enabled: false
+
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
 
@@ -631,6 +648,15 @@ datadog:
     ## turning this option off will improve the situation.
     container_scrubbing:
       enabled: true
+
+    # datadog.orchestratorExplorer.customResources -- Defines custom resources for the orchestrator explorer to collect
+
+    # customResources is required for RBAC creation if a custom orchestrator explorer configuration is provided in `clusterAgent.confd` or `clusterAgent.advancedConfd`
+    # Each item should follow group/version/name, for example
+    # customResources:
+    #   - datadoghq.com/v1alpha1/datadogmetrics
+    #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
+    customResources: []
 
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
@@ -653,6 +679,16 @@ datadog:
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
+
+  # Software Bill of Materials configuration
+  sbom:
+    containerImage:
+      # datadog.sbom.containerImage.enabled -- Enable SBOM collection for container images
+      enabled: false
+
+    host:
+      # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
+      enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -769,39 +805,37 @@ datadog:
   #  - redisdb
   #  - kubernetes_state
 
-  # datadog.containerExclude -- Exclude containers from the Agent
-  # Autodiscovery, as a space-sepatered list
+  # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
 
-  # datadog.containerInclude -- Include containers in the Agent Autodiscovery,
-  # as a space-separated list.  If a container matches an include rule, it’s
-  # always included in the Autodiscovery
+  # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
+  # If a container matches an include rule, it’s always included in Autodiscovery
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
-  # datadog.containerExcludeLogs -- Exclude logs from the Agent Autodiscovery,
-  # as a space-separated list
+  # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
   containerExcludeLogs:
 
-  # datadog.containerIncludeLogs -- Include logs in the Agent Autodiscovery, as
-  # a space-separated list
+  # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
   containerIncludeLogs:
 
-  # datadog.containerExcludeMetrics -- Exclude metrics from the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerExcludeMetrics -- Exclude metrics from Agent Autodiscovery, as a space-separated list
   containerExcludeMetrics:
 
-  # datadog.containerIncludeMetrics -- Include metrics in the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
-  # datadog.excludePauseContainer -- Exclude pause containers from the Agent Autodiscovery.
+  # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
+
+  containerLifecycle:
+    # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
+    enabled: true
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
@@ -820,7 +854,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.47.1
+    tag: 7.49.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -904,6 +938,9 @@ clusterAgent:
   metricsProvider:
     # clusterAgent.metricsProvider.enabled -- Set this to true to enable Metrics Provider
     enabled: false
+
+    # clusterAgent.metricsProvider.registerAPIService -- Set this to false to disable external metrics registration as an APIService
+    registerAPIService: true
 
     # clusterAgent.metricsProvider.wpaController -- Enable informer and controller of the watermark pod autoscaler
 
@@ -1156,19 +1193,21 @@ existingClusterAgent:
 
 # fips is used to enable the fips sidecar container for GOVCLOUD environments.
 fips:
-
+  # fips.enabled -- Enable fips sidecar
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
-  # fips.port specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
   port: 9803
 
-  # fips.portRange specifies the number of ports used, defaults to 13  https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
   portRange: 15
 
+  # fips.use_https -- Option to enable https
   use_https: false
+
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
   resources: {}
     # limits:
@@ -1178,14 +1217,16 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
+  # fips.local_address -- Set local IP address
   local_address: "127.0.0.1"
+
   ## Define the Datadog image to work with
   image:
     ## fips.image.name -- Define the FIPS sidecar container image name.
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.5
+    tag: 0.6.1
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1228,7 +1269,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.47.1
+    tag: 7.49.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1555,6 +1596,8 @@ agents:
       #    memory: 200Mi
       # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
       securityContext: {}
+      # agents.containers.initContainers.volumeMounts -- Specify additional volumes to mount for the init containers
+      volumeMounts: []
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []
@@ -1694,7 +1737,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.47.1
+    tag: 7.49.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1927,14 +1970,6 @@ kube-state-metrics:
   nodeSelector:
     kubernetes.io/os: linux
 
-  # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
-  # image:
-  #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
-  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-  #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
-  #  tag: v1.9.8
-  #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
-  #  pullPolicy: IfNotPresent
 providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
@@ -1948,15 +1983,15 @@ providers:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
       ## When deploying to EC2-backed EKS infrastructure, there are situations where the
-      ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
+      ## IMDS metadata endpoint is not accessible to containers. This flag mounts the host's
       ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
       useHostnameFromFile: false
   aks:
-    # providers.aks.enabled -- Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
+  # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
   enabled: true

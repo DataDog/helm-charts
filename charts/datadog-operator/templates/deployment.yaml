@@ -93,6 +93,7 @@ spec:
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
+            - "-operatorMetricsEnabled={{ .Values.operatorMetricsEnabled }}"
           {{- if and (not (empty .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled)) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
             - "-webhookEnabled={{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled }}"
           {{- else }}
