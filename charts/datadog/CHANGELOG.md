@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
 ## 3.43.2
 
 * Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
