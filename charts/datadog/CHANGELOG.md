@@ -1,8 +1,52 @@
 # Datadog changelog
 
-## 3.40.1
+## 3.44.1
 
 * Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
+## 3.43.1
+
+* Fix docstring typos and remove unneeded lines.
+
+## 3.43.0
+
+* Default `Agent` and `Cluster-Agent` to `7.49.0` version.
+
+## 3.42.1
+
+* Bump FIPS proxy OpenSSL version to 3.0.12 
+
+## 3.42.0
+
+* Allow enabling SBOM collection for host and container images.
+
+## 3.41.0
+
+* Enable container lifecycle events collection by default.
+
+## 3.40.4
+
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
+
+## 3.40.3
+
+* Default `Agent` and `Cluster-Agent` to `7.48.1` version.
+
+## 3.40.2
+
+* Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
+
+## 3.40.1
+
+* Add support for initContainer volume mounts
 
 ## 3.40.0
 
