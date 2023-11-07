@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.43.3
+## 3.44.1
 
 * Fix local agent Kubernetes service to include APM traceport
+
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
 
 ## 3.43.2
 
