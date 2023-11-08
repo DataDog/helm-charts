@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.44.2
+
+* TEST CI
+
 ## 3.44.1
 
 * Fix local agent Kubernetes service to include APM traceport
