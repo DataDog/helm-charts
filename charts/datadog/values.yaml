@@ -427,13 +427,15 @@ datadog:
     autoMultiLineDetection: false
 
   ## Enable apm agent and provide custom configs
+  ##
+  ## APM is enabled by default. If local service Internal Traffic Policy is allowed (Kubernetes v1.22+), the agent service is created with the APM local traceport.
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     socketEnabled: true
 
-    # datadog.apm.portEnabled -- Enable APM over TCP communication (port 8126 by default)
+    # datadog.apm.portEnabled -- Enable APM over TCP communication (hostPort 8126 by default)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
