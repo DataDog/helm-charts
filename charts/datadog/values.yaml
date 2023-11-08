@@ -633,7 +633,7 @@ datadog:
   containerImageCollection:
     # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
 
-    # This parameter will be honored only by Agent version 7.46+
+    # This parameter requires Agent version 7.46+
     enabled: true
 
   orchestratorExplorer:
