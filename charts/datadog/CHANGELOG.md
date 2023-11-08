@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.45.0
+
+* Enable container image collection by default.
+
 ## 3.44.0
 
 * Remove buggy `chmod` directive in the init container of the cluster agent.
