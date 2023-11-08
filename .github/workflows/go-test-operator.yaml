@@ -2,11 +2,11 @@ name: Go Test
 on:
   push:
     paths:
-      - 'test/**'
+      - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
   pull_request:
     paths:
-      - 'test/**'
+      - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
 env:
   GO111MODULE: "on"
@@ -30,6 +30,7 @@ jobs:
       uses: actions/checkout@v1
     - name: run Go tests
       run: |
+        helm dependency update ./charts/datadog-operator
         helm dependency build ./charts/datadog-operator
         make unit-test
 
