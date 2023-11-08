@@ -2,12 +2,10 @@ name: Go Test
 on:
   push:
     paths:
-      - '.github/workflows/go-test.yaml'
       - 'test/**'
       - 'charts/datadog-operator/**'
   pull_request:
     paths:
-      - '.github/workflows/go-test.yaml'
       - 'test/**'
       - 'charts/datadog-operator/**'
 env:
@@ -36,7 +34,7 @@ jobs:
         make unit-test
 
   integ-tests:
-    if: ${{github_event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
     runs-on: ubuntu-20.04
     strategy:
