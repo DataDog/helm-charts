@@ -1178,14 +1178,14 @@ clusterAgent:
     # key: "value"
 
   # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
-  # Autodiscovery, as a space-separated list
+  # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
 
   # clusterAgent.containerInclude -- Include containers in the Cluster Agent Autodiscovery,
   # as a space-separated list.  If a container matches an include rule, it’s
-  # always included in the Autodiscovery
+  # always included in the Autodiscovery. (Requires Agent/Cluster Agent 7.50.0+)
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
