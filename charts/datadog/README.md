@@ -497,8 +497,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
-| clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list |
-| clusterAgent.containerInclude | string | `nil` | Include containers in the Cluster Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery |
+| clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |
+| clusterAgent.containerInclude | string | `nil` | Include containers in the Cluster Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery. (Requires Agent/Cluster Agent 7.50.0+) |
 | clusterAgent.containers.clusterAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"readOnlyRootFilesystem":true}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.containers.initContainers.securityContext | object | `{}` |  |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
