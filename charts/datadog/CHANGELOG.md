@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.45.0
+
+* Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+  Note: this requires agent/cluster agent version 7.50.0+
+
 ## 3.44.1
 
 * Fix local agent Kubernetes service to include APM traceport
