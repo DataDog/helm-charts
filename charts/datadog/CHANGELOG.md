@@ -2,7 +2,7 @@
 
 ## 3.44.1
 
-* Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+* Fix local agent Kubernetes service to include APM traceport
 
 ## 3.44.0
 
