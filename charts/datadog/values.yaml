@@ -773,8 +773,12 @@ datadog:
           enabled: false
 
       securityProfile:
-        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime anomaly detection
-        enabled: false
+        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime security profiles
+        enabled: true
+
+        anomalyDetection:
+          # datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled -- Set to true to enable CWS runtime drift events
+          enabled: true
 
   ## Manage NetworkPolicy
   networkPolicy:
