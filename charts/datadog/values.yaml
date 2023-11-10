@@ -427,13 +427,15 @@ datadog:
     autoMultiLineDetection: false
 
   ## Enable apm agent and provide custom configs
+  ##
+  ## APM is enabled by default. If local service Internal Traffic Policy is allowed (Kubernetes v1.22+), the agent service is created with the APM local traceport.
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     socketEnabled: true
 
-    # datadog.apm.portEnabled -- Enable APM over TCP communication (port 8126 by default)
+    # datadog.apm.portEnabled -- Enable APM over TCP communication (hostPort 8126 by default)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
@@ -1189,6 +1191,19 @@ clusterAgent:
   # clusterAgent.additionalLabels -- Adds labels to the Cluster Agent deployment and pods
   additionalLabels: {}
     # key: "value"
+
+  # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
+  # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # clusterAgent.containerInclude -- Include containers in the Cluster Agent Autodiscovery,
+  # as a space-separated list.  If a container matches an include rule, it’s
+  # always included in the Autodiscovery. (Requires Agent/Cluster Agent 7.50.0+)
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
 
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently

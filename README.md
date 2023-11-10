@@ -4,6 +4,7 @@
 
 Official Helm charts for Datadog products. Currently supported:
 - [Datadog Agents](charts/datadog/README.md) (datadog/datadog)
+- [Observability Pipelines Worker](charts/observability-pipelines-worker/README.md) (datadog/observability-pipelines-worker)
 
 ## How to use Datadog Helm repository
 
