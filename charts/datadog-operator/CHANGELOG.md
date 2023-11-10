@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.2
+* Fix that an error occurs when specifying replicaCount using `--set`
+
 ## 1.2.1
 
 * Minor spelling corrections in the `datadog-operator` chart.
