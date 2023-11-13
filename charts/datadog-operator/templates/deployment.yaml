@@ -128,11 +128,14 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
           volumeMounts:
+          {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
           - mountPath: /tmp/k8s-webhook-server/serving-certs
             name: cert
             readOnly: true
+          {{- end }}
+          {{- if .Values.volumeMounts }}
+          {{- toYaml .Values.volumeMounts | nindent 10 }}
           {{- end }}
           {{- if .Values.containerSecurityContext }}
           securityContext:
@@ -150,10 +153,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
       volumes:
+      {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
       - name: cert
         secret:
           defaultMode: 420
           secretName: {{ .Release.Name }}-webhook-server-cert
-    {{- end }}
+      {{- end }}
+      {{- if .Values.volumes }}
+      {{- toYaml .Values.volumes | nindent 6 }}
+      {{- end }}

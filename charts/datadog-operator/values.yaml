@@ -144,3 +144,15 @@ watchNamespaces: []
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
 containerSecurityContext: {}
+
+# volumes -- Specify additional volumes to mount in the container
+volumes: []
+#   - hostPath:
+#       path: <HOST_PATH>
+#     name: <VOLUME_NAME>
+
+# volumeMounts -- Specify additional volumes to mount in the container
+volumeMounts: []
+#   - name: <VOLUME_NAME>
+#     mountPath: <CONTAINER_PATH>
+#     readOnly: true
