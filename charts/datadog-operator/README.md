@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.2.2](https://img.shields.io/badge/Version-1.2.2-informational?style=flat-square) ![AppVersion: 1.2.0](https://img.shields.io/badge/AppVersion-1.2.0-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![AppVersion: 1.2.0](https://img.shields.io/badge/AppVersion-1.2.0-informational?style=flat-square)
 
 ## Values
 
@@ -50,6 +50,8 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
+| volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces |
 
 ## How to configure which namespaces are watched by the Operator.
