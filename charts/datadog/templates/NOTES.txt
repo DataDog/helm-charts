@@ -141,8 +141,7 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
-To enable it please set clusterAgent.enabled to 'true'." }}
+{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off. To enable it please set clusterAgent.enabled to 'true'." }}
 
 {{- end }}
 
