@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.47.1
+
+* Fix `registry` being ignored even if set.
+
 ## 3.47.0
 
 * `registry` is now set automatically adapted based on `datadog.site` value. Still default to `gcr.io/datadoghq` if not set.
