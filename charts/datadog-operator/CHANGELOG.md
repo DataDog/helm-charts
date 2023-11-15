@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+* Add configuration to mount volumes (`volumes` and `volumeMounts`) in the container. Empty by default.
+
+## 1.2.2
+
+* Fix that an error occurs when specifying replicaCount using `--set`
+
 ## 1.2.1
 
 * Minor spelling corrections in the `datadog-operator` chart.

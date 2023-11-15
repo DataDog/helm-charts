@@ -34,6 +34,7 @@ jobs:
         make unit-test
 
   integ-tests:
+    if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
     runs-on: ubuntu-20.04
     strategy:
