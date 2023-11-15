@@ -4,6 +4,10 @@
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
 
+## 3.47.2
+
+* Fix CI following enabling container image collection by default.
+
 ## 3.47.1
 
 * Fix `registry` being ignored even if set.
