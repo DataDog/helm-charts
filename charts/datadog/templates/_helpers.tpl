@@ -265,7 +265,9 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return the proper registry based on datadog.site (requires .Values to be passed as .)
 */}}
 {{- define "registry" -}}
-{{- if eq .datadog.site "datadoghq.eu" -}}
+{{- if .registry -}}
+{{- .registry -}}
+{{- else if eq .datadog.site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
 {{- else if eq .datadog.site "ddog-gov.com" -}}
 public.ecr.aws/datadog
