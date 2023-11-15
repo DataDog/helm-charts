@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.47.0
+## 3.48.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.47.0
+
+* `registry` is now set automatically adapted based on `datadog.site` value. Still default to `gcr.io/datadoghq` if not set.
 
 ## 3.46.0
 
