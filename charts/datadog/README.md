@@ -676,7 +676,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerExclude | string | `nil` | Exclude containers from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from Agent Autodiscovery, as a space-separated list |
-| datadog.containerImageCollection.enabled | bool | `false` | Enable collection of container image metadata |
+| datadog.containerImageCollection.enabled | bool | `true` | Enable collection of container image metadata |
 | datadog.containerInclude | string | `nil` | Include containers in Agent Autodiscovery, as a space-separated list. If a container matches an include rule, it’s always included in Autodiscovery |
 | datadog.containerIncludeLogs | string | `nil` | Include logs in Agent Autodiscovery, as a space-separated list |
 | datadog.containerIncludeMetrics | string | `nil` | Include metrics in Agent Autodiscovery, as a space-separated list |

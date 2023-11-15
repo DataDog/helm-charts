@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.46.0
+## 3.47.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.46.0
+
+* Enable container image collection by default.
 
 ## 3.45.0
 
