@@ -125,6 +125,68 @@ Trace Agent liveness probe port ({{ $liveness.port }}) is different from the con
 The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 {{- end }}
 
+{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces .Values.datadog.apm.instrumentation.disabled_namespaces }}
+
+###################################################################################
+####               ERROR: APM Single Step Instrumentation misconfiguration     ####
+###################################################################################
+
+{{- fail "The options `datadog.apm.instrumentation.enabled_namespaces` and `datadog.apm.instrumentation.disabled_namespaces` cannot be set together." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off. To enable it please set clusterAgent.enabled to 'true'." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled (not .Values.clusterAgent.admissionController.enabled)}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the admission controller. This configuration is unsupported. To enable it please set clusterAgent.admissionController.enabled to 'true'." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.apm.instrumentation.enabled_namespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
+To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabled_namespaces }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabled_namespaces` are set together.
+APM Single Step Instrumentation will be enabled in the whole cluster.
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.disabled_namespaces (eq .Values.datadog.apm.instrumentation.enabled "false") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The option `datadog.apm.instrumentation.enabled_namespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
+APM Single Step Instrumentation will be disabled in the whole cluster.
+
+{{- end }}
+
 {{- if .Values.datadog.apm.enabled }}
 
 #################################################################
