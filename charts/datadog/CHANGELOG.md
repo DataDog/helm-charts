@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.46.0
+
+* Enable container image collection by default.
+
 ## 3.45.0
 
 * Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
