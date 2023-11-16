@@ -18,13 +18,15 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default gcr.io)
+# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | public.ecr.aws/datadog] depending on datadog.site value)
 
 ## Currently we offer Datadog Agent images on:
-## GCR - use gcr.io/datadoghq (default)
-## DockerHub - use docker.io/datadog
+## GCR US - use gcr.io/datadoghq
+## GCR Europe - use eu.gcr.io/datadoghq
+## GCR Asia - use asia.gcr.io/datadoghq
 ## AWS - use public.ecr.aws/datadog
-registry: gcr.io/datadoghq
+## DockerHub - use docker.io/datadog
+registry:  # gcr.io/datadoghq
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
@@ -634,7 +636,9 @@ datadog:
 
   containerImageCollection:
     # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
-    enabled: false
+
+    # This parameter requires Agent version 7.46+
+    enabled: true
 
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
