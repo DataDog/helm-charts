@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.48.0
+## 3.49.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.48.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.49.1`.
 
 ## 3.47.2
 
