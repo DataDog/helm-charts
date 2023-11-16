@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.48.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.49.1`.
+
 ## 3.47.2
 
 * Fix CI following enabling container image collection by default.
