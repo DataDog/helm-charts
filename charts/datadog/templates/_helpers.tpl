@@ -262,6 +262,23 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{- end -}}
 
 {{/*
+Return the proper registry based on datadog.site (requires .Values to be passed as .)
+*/}}
+{{- define "registry" -}}
+{{- if .registry -}}
+{{- .registry -}}
+{{- else if eq .datadog.site "datadoghq.eu" -}}
+eu.gcr.io/datadoghq
+{{- else if eq .datadog.site "ddog-gov.com" -}}
+public.ecr.aws/datadog
+{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+asia.gcr.io/datadoghq
+{{- else -}}
+gcr.io/datadoghq
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
@@ -269,7 +286,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.repository -}}
 {{- .image.repository -}}@{{ .image.digest }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}@{{ .image.digest }}
+{{ include "registry" .root }}/{{ .image.name }}@{{ .image.digest }}
 {{- end -}}
 {{- else -}}
 {{- $tagSuffix := "" -}}
@@ -279,10 +296,11 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
+{{ include "registry" .root }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
 {{/*
 Return true if a system-probe feature is enabled.
 */}}
