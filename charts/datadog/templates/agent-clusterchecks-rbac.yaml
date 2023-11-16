@@ -13,6 +13,25 @@ subjects:
   - kind: ServiceAccount
     name: {{ template "datadog.fullname" . }}-cluster-checks
     namespace: {{ .Release.Namespace }}
+{{- range $role := .Values.datadog.secretBackend.roles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "datadog.fullname" $ }}-cluster-checks-read-secrets-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" $ }}-cluster-checks
+    apiGroup: ""
+    namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  apiGroup: "rbac.authorization.k8s.io"
+{{- end }}
 ---
 apiVersion: v1
 kind: ServiceAccount
