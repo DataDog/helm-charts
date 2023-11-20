@@ -236,7 +236,7 @@ spec:
           {{- end }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
-                    {{- if .Values.datadog.apm.instrumentation.enabled }}
+          {{- if .Values.datadog.apm.instrumentation.enabled }}
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: "true"
           {{- end }}
@@ -244,9 +244,9 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
             value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
           {{- end }}
-          {{- if .Values.datadog.apm.instrumentation.disabledNamespaces }}
+          {{- if ne (include "apmInstrumentation.disabledNamespaces" .) "" }}
           - name: DD_APM_INSTRUMENTATION_DISABLED_NAMESPACES
-            value: {{ .Values.datadog.apm.instrumentation.disabledNamespaces | toJson | quote }}
+            value: {{ include "apmInstrumentation.disabledNamespaces" . }}
           {{- end }}
           {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS

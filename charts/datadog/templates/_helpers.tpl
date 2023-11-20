@@ -893,3 +893,16 @@ Create RBACs for custom resources
     false
   {{- end -}}
 {{- end -}}
+
+{{/*
+Return all namespaces with disabled Single Step Instrumentation
+*/}}
+{{- define "apmInstrumentation.disabledNamespaces" -}}
+{{- if and .Values.datadog.apm .Values.datadog.apm.instrumentation -}}
+{{- if and .Values.datadog.apm.instrumentation.disabledNamespaces .Values.datadog.apm.instrumentation.enabled -}}
+{{- append .Values.datadog.apm.instrumentation.disabledNamespaces .Release.namespace | toJson | quote  -}}
+{{- else if .Values.datadog.apm.instrumentation.enabled -}}
+{{- .Release.namespace | toJson | quote -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

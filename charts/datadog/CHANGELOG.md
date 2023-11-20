@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.1
+
+* Exclude a namespace with Datadog resources from APM Single Step Instrumentation
+
 ## 3.49.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
