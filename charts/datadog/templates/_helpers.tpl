@@ -902,7 +902,7 @@ Return all namespaces with disabled Single Step Instrumentation
 {{- if and .Values.datadog.apm.instrumentation.disabledNamespaces .Values.datadog.apm.instrumentation.enabled -}}
 {{- append .Values.datadog.apm.instrumentation.disabledNamespaces .Release.namespace | toJson | quote  -}}
 {{- else if .Values.datadog.apm.instrumentation.enabled -}}
-{{- .Release.namespace | toJson | quote -}}
+{{- list .Release.namespace | toJson | quote -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
