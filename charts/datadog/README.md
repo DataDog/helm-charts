@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.49.0](https://img.shields.io/badge/Version-3.49.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.50.0](https://img.shields.io/badge/Version-3.50.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -457,6 +457,8 @@ helm install <RELEASE_NAME> \
 |-----|------|---------|-------------|
 | agents.additionalLabels | object | `{}` | Adds labels to the Agent daemonset and pods |
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
+| agents.containers.agent.args | list | `[]` |  |
+| agents.containers.agent.command | list | `[]` |  |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
 | agents.containers.agent.envDict | object | `{}` | Set environment variables specific to agent container defined in a dict |
 | agents.containers.agent.envFrom | list | `[]` | Set environment variables specific to agent container from configMaps and/or secrets |
@@ -470,6 +472,8 @@ helm install <RELEASE_NAME> \
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
 | agents.containers.initContainers.volumeMounts | list | `[]` | Specify additional volumes to mount for the init containers |
+| agents.containers.processAgent.args | list | `[]` |  |
+| agents.containers.processAgent.command | list | `[]` |  |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -477,12 +481,16 @@ helm install <RELEASE_NAME> \
 | agents.containers.processAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.processAgent.resources | object | `{}` | Resource requests and limits for the process-agent container |
 | agents.containers.processAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the process-agent container. |
+| agents.containers.securityAgent.args | list | `[]` |  |
+| agents.containers.securityAgent.command | list | `[]` |  |
 | agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container |
 | agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict |
 | agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets |
 | agents.containers.securityAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.securityAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.securityAgent.resources | object | `{}` | Resource requests and limits for the security-agent container |
+| agents.containers.systemProbe.args | list | `[]` |  |
+| agents.containers.systemProbe.command | list | `[]` |  |
 | agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
 | agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict |
 | agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets |
@@ -490,6 +498,8 @@ helm install <RELEASE_NAME> \
 | agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","DAC_READ_SEARCH"]},"privileged":false}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
+| agents.containers.traceAgent.args | list | `[]` |  |
+| agents.containers.traceAgent.command | list | `[]` |  |
 | agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
 | agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
 | agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets |
@@ -553,6 +563,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the mutatingwebhookconfigurations created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
+| clusterAgent.args | list | `[]` | Override default image arguments. |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
 | clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |

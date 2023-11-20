@@ -125,6 +125,11 @@ spec:
           - {{ . | quote }}
         {{- end }}
         {{- end }}
+        {{- with .Values.clusterAgent.args }}
+        args: {{ range . }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         resources:
 {{ toYaml .Values.clusterAgent.resources | indent 10 }}

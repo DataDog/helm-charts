@@ -3,11 +3,20 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
+  {{- if .Values.agents.containers.processAgent.command }}
+  command: {{ .Values.agents.containers.processAgent.command }}
+  {{- else}}
   command: ["process-agent", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end }}
+  {{- end}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
+  {{- with .Values.agents.containers.processAgent.args }}
+  args: {{ range . }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
 {{- if .Values.agents.containers.processAgent.ports }}
   ports:

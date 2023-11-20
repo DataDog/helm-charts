@@ -3,7 +3,16 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  {{- if .Values.agents.containers.systemProbe.command }}
+  command: {{ .Values.agents.containers.systemProbe.command }}
+  {{- else}}
   command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+  {{- end}}
+  {{- with .Values.agents.containers.systemProbe.args }}
+  args: {{ range . }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- end }}
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}

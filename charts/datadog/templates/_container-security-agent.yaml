@@ -7,7 +7,16 @@
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
   {{- end }}
+  {{- if .Values.agents.containers.securityAgent.command }}
+  command: {{ .Values.agents.containers.securityAgent.command }}
+  {{- else}}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
+  {{- with .Values.agents.containers.securityAgent.args }}
+  args: {{ range . }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- end }}
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
 {{- if .Values.agents.containers.securityAgent.ports }}

@@ -2,7 +2,16 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.containers.agent.command }}
+  command: {{ .Values.agents.containers.agent.command }}
+  {{- else}}
   command: ["agent", "run"]
+  {{- end }}
+  {{- with .Values.agents.containers.agent.args }}
+  args: {{ range . }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}

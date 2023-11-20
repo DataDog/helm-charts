@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.50.0
+
+* Add `command` and `args` values for `clusterAgent`, `agent`, `traceAgent`, `securityAgent`, `systemProbe` and `processAgent` containers.
+
 ## 3.49.0
 
 * Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
@@ -51,7 +55,7 @@
 
 ## 3.42.1
 
-* Bump FIPS proxy OpenSSL version to 3.0.12 
+* Bump FIPS proxy OpenSSL version to 3.0.12
 
 ## 3.42.0
 
