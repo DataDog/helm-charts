@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.2
+
+* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set 
+
 ## 3.49.1
 
 * Update `fips.image.tag` to `1.0.0`
