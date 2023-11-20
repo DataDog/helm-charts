@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.49.1
+## 3.49.2
 
 * Exclude a namespace with Datadog resources from APM Single Step Instrumentation
+
+## 3.49.1
+
+* Update `fips.image.tag` to `1.0.0`
 
 ## 3.49.0
 
