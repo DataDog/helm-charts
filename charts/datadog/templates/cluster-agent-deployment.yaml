@@ -240,7 +240,7 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: "true"
           {{- end }}
-          {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
+          {{- if ne (include "apmInstrumentation.enabledNamespaces" .) "" }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
             value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
           {{- end }}

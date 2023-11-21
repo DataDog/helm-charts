@@ -895,6 +895,23 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
+Return all namespaces with enabled Single Step Instrumentation. If instrumentation.enabledNamespaces contains the namespace where Datadog is installed,
+it will be removed.
+*/}}
+{{- define "apmInstrumentation.enabledNamespaces" -}}
+{{- if .Values.datadog.apm.instrumentation.enabledNamespaces -}}
+{{- if has .Release.namespace .Values.datadog.apm.instrumentation.enabledNamespaces -}}
+{{- $ns := mustWithout .Values.datadog.apm.instrumentation.enabledNamespaces .Release.namespace -}}
+{{- if $ns -}}
+{{- $ns | toJson | quote -}}
+{{- end -}}
+{{- else -}}
+{{- .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return all namespaces with disabled Single Step Instrumentation
 */}}
 {{- define "apmInstrumentation.disabledNamespaces" -}}
