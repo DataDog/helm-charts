@@ -176,7 +176,7 @@ APM Single Step Instrumentation will be enabled in the whole cluster.
 
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.disabled_namespaces (eq .Values.datadog.apm.instrumentation.enabled "false") }}
+{{- if and .Values.datadog.apm.instrumentation.disabled_namespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
