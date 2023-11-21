@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.3
+
+* Fix NOTES warning for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
 ## 3.49.2
 
 * Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set 
