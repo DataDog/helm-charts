@@ -900,8 +900,8 @@ it will be removed.
 */}}
 {{- define "apmInstrumentation.enabledNamespaces" -}}
 {{- if .Values.datadog.apm.instrumentation.enabledNamespaces -}}
-{{- if has .Release.namespace .Values.datadog.apm.instrumentation.enabledNamespaces -}}
-{{- $ns := mustWithout .Values.datadog.apm.instrumentation.enabledNamespaces .Release.namespace -}}
+{{- if has .Release.Namespace .Values.datadog.apm.instrumentation.enabledNamespaces -}}
+{{- $ns := mustWithout .Values.datadog.apm.instrumentation.enabledNamespaces .Release.Namespace -}}
 {{- if $ns -}}
 {{- $ns | toJson | quote -}}
 {{- end -}}
@@ -917,9 +917,9 @@ Return all namespaces with disabled Single Step Instrumentation
 {{- define "apmInstrumentation.disabledNamespaces" -}}
 {{- if and .Values.datadog.apm .Values.datadog.apm.instrumentation -}}
 {{- if and .Values.datadog.apm.instrumentation.disabledNamespaces .Values.datadog.apm.instrumentation.enabled -}}
-{{- append .Values.datadog.apm.instrumentation.disabledNamespaces .Release.namespace | toJson | quote  -}}
+{{- append .Values.datadog.apm.instrumentation.disabledNamespaces .Release.Namespace | toJson | quote  -}}
 {{- else if .Values.datadog.apm.instrumentation.enabled -}}
-{{- list .Release.namespace | toJson | quote -}}
+{{- list .Release.Namespace | toJson | quote -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
