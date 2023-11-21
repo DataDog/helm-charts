@@ -899,7 +899,8 @@ Return all namespaces with enabled Single Step Instrumentation. If instrumentati
 it will be removed.
 */}}
 {{- define "apmInstrumentation.enabledNamespaces" -}}
-{{- if .Values.datadog.apm.instrumentation.enabledNamespaces -}}
+{{- if and .Values.datadog.apm .Values.datadog.apm.instrumentation -}}
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) -}}
 {{- if has .Release.Namespace .Values.datadog.apm.instrumentation.enabledNamespaces -}}
 {{- $ns := mustWithout .Values.datadog.apm.instrumentation.enabledNamespaces .Release.Namespace -}}
 {{- if $ns -}}
@@ -907,6 +908,7 @@ it will be removed.
 {{- end -}}
 {{- else -}}
 {{- .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

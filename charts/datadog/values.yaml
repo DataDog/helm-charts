@@ -469,10 +469,10 @@ datadog:
     # This feature is in beta. It requires Cluster Agent 7.49+.
     instrumentation:
       # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
-      enabled: false
+      enabled: true
 
       # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (beta).
-      enabledNamespaces: []
+      enabledNamespaces: [test1, default]
 
       # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (beta).
       disabledNamespaces: []
