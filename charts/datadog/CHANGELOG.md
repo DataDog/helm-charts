@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.5
+
+Fix registry selection with GKE Autopilot until new registries are allowed.
+
 ## 3.49.4
 
 * Exclude a namespace with Datadog resources from APM Single Step Instrumentation
