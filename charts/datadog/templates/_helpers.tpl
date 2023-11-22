@@ -267,6 +267,8 @@ Return the proper registry based on datadog.site (requires .Values to be passed 
 {{- define "registry" -}}
 {{- if .registry -}}
 {{- .registry -}}
+{{- else if .providers.gke.autopilot -}}
+gcr.io/datadoghq
 {{- else if eq .datadog.site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
 {{- else if eq .datadog.site "ddog-gov.com" -}}
