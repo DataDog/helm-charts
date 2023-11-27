@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.49.6
+
+* Add default container resource values for GKE Autopilot
+
 ## 3.49.5
 
-Fix registry selection with GKE Autopilot until new registries are allowed.
+* Fix registry selection with GKE Autopilot until new registries are allowed.
 
 ## 3.49.4
 

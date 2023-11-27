@@ -5,7 +5,11 @@
   command: ["agent", "run"]
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
+{{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-agent-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
+{{- end }}
   ports:
   - containerPort: {{ .Values.datadog.dogstatsd.port }}
     {{- if .Values.datadog.dogstatsd.useHostPort }}

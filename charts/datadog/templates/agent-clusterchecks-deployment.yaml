@@ -82,7 +82,11 @@ spec:
             mountPath: /opt/datadog-agent
             readOnly: false # Need RW for writing agent config files
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
@@ -99,7 +103,11 @@ spec:
             readOnly: true
           {{- end }}
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       containers:
         {{- if eq  (include "should-enable-fips" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
@@ -201,7 +209,11 @@ spec:
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
+{{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
+{{- include "default-cluster-check-runner-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: installinfo
             subPath: install_info

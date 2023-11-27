@@ -910,8 +910,16 @@ clusterAgent:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
     initContainers:
-      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      # clusterAgent.containers.initContainers.securityContext -- Specify securityContext on the initContainers.
       securityContext: {}
+      # clusterAgent.containers.initContainers.resources -- Resource requests and limits for the Cluster Agent init containers
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []

@@ -13,7 +13,11 @@
       mountPath: /opt/datadog-agent
       readOnly: false # Need RW for config path
   resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+{{- end }}
 - name: init-config
 {{- if not .Values.providers.gke.autopilot }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
@@ -65,5 +69,9 @@
       value: {{ .Values.datadog.leaderElectionResource | quote}}
     {{- end }}
   resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+{{- end }}
 {{- end -}}
