@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.6
+
+Fix NOTES warning for APM Instrumentation
+
 ## 3.49.5
 
 Fix registry selection with GKE Autopilot until new registries are allowed.

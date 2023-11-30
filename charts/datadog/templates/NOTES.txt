@@ -125,13 +125,13 @@ Trace Agent liveness probe port ({{ $liveness.port }}) is different from the con
 The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces .Values.datadog.apm.instrumentation.disabled_namespaces }}
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces .Values.datadog.apm.instrumentation.disabledNamespaces }}
 
 ###################################################################################
 ####               ERROR: APM Single Step Instrumentation misconfiguration     ####
 ###################################################################################
 
-{{- fail "The options `datadog.apm.instrumentation.enabled_namespaces` and `datadog.apm.instrumentation.disabled_namespaces` cannot be set together." }}
+{{- fail "The options `datadog.apm.instrumentation.enabledNamespaces` and `datadog.apm.instrumentation.disabledNamespaces` cannot be set together." }}
 
 {{- end }}
 
@@ -161,28 +161,28 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You are using datadog.apm.instrumentation.enabled_namespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
+You are using datadog.apm.instrumentation.enabledNamespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabled_namespaces }}
+{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabledNamespaces }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabled_namespaces` are set together.
+The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabledNamespaces` are set together.
 APM Single Step Instrumentation will be enabled in the whole cluster.
 
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.disabled_namespaces (not .Values.datadog.apm.instrumentation.enabled) }}
+{{- if and .Values.datadog.apm.instrumentation.disabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-The option `datadog.apm.instrumentation.disabled_namespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
+The option `datadog.apm.instrumentation.disabledNamespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
 APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
