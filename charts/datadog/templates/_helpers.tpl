@@ -120,6 +120,14 @@ Return secret name to be used based on provided values.
 {{/*
 Return secret name to be used based on provided values.
 */}}
+{{- define "datadog.highAvailability.failoverApiKeySecretName" -}}
+{{- $fullName := printf "%s-ha-apikey" (include "datadog.fullname" .) -}}
+{{- default $fullName .Values.datadog.highAvailability.failoverApiKeyExistingSecret | quote -}}
+{{- end -}}
+
+{{/*
+Return secret name to be used based on provided values.
+*/}}
 {{- define "datadog.appKeySecretName" -}}
 {{- $fullName := printf "%s-appkey" (include "datadog.fullname" .) -}}
 {{- default $fullName .Values.datadog.appKeyExistingSecret | quote -}}
@@ -399,6 +407,17 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- if eq .Values.targetSystem "windows" -}}
 false
 {{- else if and (not .Values.providers.gke.autopilot) (or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the agent-data-plane container should be created.
+*/}}
+{{- define "should-enable-agent-data-plane" -}}
+{{- if and .Values.datadog.highAvailability.enabled .Values.datadog.highAvailability.agentDataPlaneEnabled -}}
 true
 {{- else -}}
 false

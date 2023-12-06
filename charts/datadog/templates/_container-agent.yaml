@@ -176,6 +176,29 @@
       value: "true"
     {{- end }}
     {{- end }}
+    {{- if .Values.datadog.highAvailability.enabled }}
+    - name: DD_HA_ENABLED
+      value: "true"
+    - name: DD_HA_FAILOVER
+      value: {{ .Values.datadog.highAvailability.useFailover | quote }}
+    - name: DD_HA_SITE
+      value: {{ .Values.datadog.highAvailability.failoverSite }}
+    - name: DD_HA_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ template "datadog.highAvailability.failoverApiKeySecretName" . }}
+          key: api-key
+    {{- if .Values.datadog.highAvailability.agentDataPlaneEnabled }}
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_METRICS_ENABLED
+      value: "true"
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_METRICS_URL
+      value: "http://127.0.0.1:9125"
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+      value: "true"
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+      value: "http://127.0.0.1:9125"
+    {{- end }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:

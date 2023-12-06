@@ -467,6 +467,14 @@ helm install <RELEASE_NAME> \
 | agents.containers.agent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
 | agents.containers.agent.resources | object | `{}` | Resource requests and limits for the agent container. |
 | agents.containers.agent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the agent container. |
+| agents.containers.agentDataPlane.env | list | `[]` | Additional environment variables for the agent-data-plane container |
+| agents.containers.agentDataPlane.envDict | object | `{}` | Set environment variables specific to agent-data-plane defined in a dict |
+| agents.containers.agentDataPlane.envFrom | list | `[]` | Set environment variables specific to agent-data-plane from configMaps and/or secrets |
+| agents.containers.agentDataPlane.livenessProbe | object | Every 15s | Override default agent liveness probe settings |
+| agents.containers.agentDataPlane.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, and error |
+| agents.containers.agentDataPlane.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
+| agents.containers.agentDataPlane.resources | object | `{}` | Resource requests and limits for the agent-data-plane container |
+| agents.containers.agentDataPlane.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the trace-agent container. |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
 | agents.containers.initContainers.volumeMounts | list | `[]` | Specify additional volumes to mount for the init containers |
@@ -703,6 +711,12 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
+| datadog.highAvailability.agentDataPlaneEnabled | bool | `false` | Enable the Agent Data Plane (ADP) for sending telemetry data to the primary/failover regions |
+| datadog.highAvailability.enabled | bool | `false` | Enable high-availability mode via Agent Data Plane (ADP) |
+| datadog.highAvailability.failoverApiKey | string | `nil` | Datadog API key for the failover region |
+| datadog.highAvailability.failoverApiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
+| datadog.highAvailability.failoverSite | string | `""` | The Datadog site to use as the failover region |
+| datadog.highAvailability.useFailover | bool | `false` | Whether or not to send data to the failover region |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
