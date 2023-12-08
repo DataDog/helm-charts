@@ -4,6 +4,14 @@
 
 Add env variables to support APM Telemetry KPIs
 
+## 3.49.7
+
+Fix NOTES warning for APM Instrumentation
+
+## 3.49.6
+
+Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in lastest versions of the agent.
+
 ## 3.49.5
 
 Fix registry selection with GKE Autopilot until new registries are allowed.
