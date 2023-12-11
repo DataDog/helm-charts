@@ -1,5 +1,49 @@
 # Datadog changelog
 
+## 3.49.7
+
+Fix NOTES warning for APM Instrumentation
+
+## 3.49.6
+
+Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in lastest versions of the agent.
+
+## 3.49.5
+
+Fix registry selection with GKE Autopilot until new registries are allowed.
+
+## 3.49.4
+
+* Exclude a namespace with Datadog resources from APM Single Step Instrumentation
+
+## 3.49.3
+
+* Fix NOTES warning for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
+## 3.49.2
+
+* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set 
+
+## 3.49.1
+
+* Update `fips.image.tag` to `1.0.0`
+
+## 3.49.0
+
+* Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.48.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.49.1`.
+
+## 3.47.2
+
+* Fix CI following enabling container image collection by default.
+
+## 3.47.1
+
+* Fix `registry` being ignored even if set.
+
 ## 3.47.0
 
 * `registry` is now set automatically adapted based on `datadog.site` value. Still default to `gcr.io/datadoghq` if not set.

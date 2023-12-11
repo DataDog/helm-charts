@@ -18,6 +18,9 @@ spec:
       labels:
         {{- include "synthetics-private-location.selectorLabels" . | nindent 8 }}
     spec:
+      {{ if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy}}
+      {{ end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
