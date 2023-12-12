@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.50.0
+## 3.50.1
 
 Add env variables to support APM Telemetry KPIs to Tracer Agent
 
