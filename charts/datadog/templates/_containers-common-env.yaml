@@ -151,3 +151,11 @@ Return a list of env-vars if the cluster-agent is enabled
         key: token
 {{- end }}
 {{- end -}}
+
+
+{{- define "kpi-envvar" -}}
+- name: DD_INSTRUMENTATION_INSTALL_TIME
+  value: {{ now | unixEpoch | quote }}
+- name: DD_INSTRUMENTATION_INSTALL_ID
+  value: {{ uuidv4 | quote }}
+{{- end -}}

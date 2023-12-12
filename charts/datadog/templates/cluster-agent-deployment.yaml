@@ -252,10 +252,6 @@ spec:
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
-          - name: DD_INSTRUMENTATION_INSTALL_TIME
-            value: {{ now | unixEpoch | quote }}
-          - name: DD_INSTRUMENTATION_INSTALL_ID
-            value: {{ uuidv4 | b64enc | quote }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
