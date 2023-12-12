@@ -43,7 +43,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.2.0
+  tag: 1.3.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -72,6 +72,9 @@ datadogAgent:
   enabled: true
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
+  enabled: false
+datadogSLO:
+  # datadogSLO.enabled -- Enables the Datadog SLO controller
   enabled: false
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
@@ -108,12 +111,14 @@ installCRDs: true
 
 datadogCRDs:
   crds:
-    # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
     datadogAgents: true
-    # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
-    # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+    # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
+    # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+    datadogSLOs: false
   migration:
     datadogAgents:
       conversionWebhook:
