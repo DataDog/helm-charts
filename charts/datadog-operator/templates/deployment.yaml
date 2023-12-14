@@ -113,7 +113,7 @@ spec:
             - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"
           {{- end }}
           {{- if (semverCompare ">=1.3.0" .Values.image.tag) }}
-            - "-datadogSLOEnabled={{ .Values.datadogSLOEnabled.enabled }}"
+            - "-datadogSLOEnabled={{ .Values.datadogSLO.enabled }}"
           {{- end }}
           ports:
             - name: metrics
