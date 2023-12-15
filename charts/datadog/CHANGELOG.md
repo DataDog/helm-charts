@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.8
+
+* Fix VolumeMount for agent container wehn sbom host scanning is enabled.
+
 ## 3.49.7
 
 Fix NOTES warning for APM Instrumentation
