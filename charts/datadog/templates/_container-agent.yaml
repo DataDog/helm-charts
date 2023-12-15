@@ -175,7 +175,7 @@
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
     - name: HOST_ROOT
-      value: /host/root
+      value: /host
     {{- end }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
@@ -255,8 +255,14 @@
     {{- end }}
     {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
-    - name: hostroot
-      mountPath: /host/root
+    - name: host-apk-dir
+      mountPath: /host/var/lib/apk
+      readOnly: true
+    - name: host-dpkg-dir
+      mountPath: /host/var/lib/dpkg
+      readOnly: true
+    - name: host-rpm-dir
+      mountPath: /host/var/lib/rpm
       readOnly: true
     {{- end }}
     {{- end }}
