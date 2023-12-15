@@ -46,10 +46,6 @@
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: DD_DOGSTATSD_SOCKET
-      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
-    {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}

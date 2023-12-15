@@ -46,10 +46,6 @@
     - name: DD_APM_RECEIVER_SOCKET
       value: {{ .Values.datadog.apm.socketPath | quote }}
     {{- end }}
-    {{- if eq .Values.targetSystem "linux" }}
-    - name: DD_DOGSTATSD_SOCKET
-      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
-    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
   volumeMounts:

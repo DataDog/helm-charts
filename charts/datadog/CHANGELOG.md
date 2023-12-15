@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.50.0
+
+* Align DogStatsD configuration across all Agent containers.
+
 ## 3.49.9
 
 * Update `fips.image.tag` to `1.0.1`
