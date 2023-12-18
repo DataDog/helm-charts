@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.3.1
+## 1.4.1
 
 * Add configuration for Operator flag `datadogSLOEnabled` : this parameter is used to enable the Datadog SLO Controller. It is disabled by default.
+
+## 1.4.0
+
+* Update Datadog Operator version to 1.3.0.
 
 ## 1.3.0
 
