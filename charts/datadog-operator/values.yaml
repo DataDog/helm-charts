@@ -73,6 +73,9 @@ datadogAgent:
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
   enabled: false
+datadogSLO:
+  # datadogSLO.enabled -- Enables the Datadog SLO controller
+  enabled: false
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true

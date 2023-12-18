@@ -112,6 +112,9 @@ spec:
           {{- if (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
             - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"
           {{- end }}
+          {{- if (semverCompare ">=1.3.0" .Values.image.tag) }}
+            - "-datadogSLOEnabled={{ .Values.datadogSLO.enabled }}"
+          {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}
