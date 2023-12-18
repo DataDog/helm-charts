@@ -17,6 +17,9 @@ image:
   # image.tag -- Define the Datadog Synthetics Private Location version to use
   tag: 1.41.0
 
+# dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
+dnsPolicy: ClusterFirst
+
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
 # nameOverride -- Override name of app
