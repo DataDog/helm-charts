@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
+
 ## 3.49.7
 
 Fix NOTES warning for APM Instrumentation
@@ -10,7 +14,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 
 ## 3.49.5
 
-Fix registry selection with GKE Autopilot until new registries are allowed.
+* Fix registry selection with GKE Autopilot until new registries are allowed.
 
 ## 3.49.4
 
