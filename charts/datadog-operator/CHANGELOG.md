@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1
+
+* Add configuration for Operator flag `datadogSLOEnabled` : this parameter is used to enable the Datadog SLO Controller. It is disabled by default.
+
+## 1.4.0
+
+* Update Datadog Operator version to 1.3.0.
+
 ## 1.3.0
 
 * Add configuration to mount volumes (`volumes` and `volumeMounts`) in the container. Empty by default.
@@ -38,7 +46,7 @@
 
 ## 1.0.6
 
-* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook. 
+* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook.
 
 ## 1.0.5
 

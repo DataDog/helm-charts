@@ -130,7 +130,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "gcr.io/datadoghq/operator:1.2.0", operatorContainer.Image)
+	assert.Equal(t, "gcr.io/datadoghq/operator:1.3.0", operatorContainer.Image)
 	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
