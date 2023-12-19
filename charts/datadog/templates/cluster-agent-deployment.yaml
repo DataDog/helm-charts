@@ -329,6 +329,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
+          {{- include "kpi-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
         livenessProbe:

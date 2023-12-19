@@ -158,4 +158,6 @@ Return a list of env-vars if the cluster-agent is enabled
   value: {{ now | unixEpoch | quote }}
 - name: DD_INSTRUMENTATION_INSTALL_ID
   value: {{ uuidv4 | quote }}
+- name: DD_INSTRUMENTATION_INSTALL_TYPE
+  value: placeholder
 {{- end -}}
