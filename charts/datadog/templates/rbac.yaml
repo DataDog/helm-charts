@@ -191,6 +191,6 @@ subjects:
 roleRef:
   kind: Role
   name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
-  apiGroup: ""
-{{- end }} # end range $role := .Values.datadog.secretBackend.roles
+  apiGroup: "rbac.authorization.k8s.io"
+{{- end }}
 {{- end -}}
