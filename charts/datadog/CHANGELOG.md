@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.8
+
+* Update `fips.image.tag` to `1.0.1`
+
 ## 3.49.7
 
 Fix NOTES warning for APM Instrumentation
