@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.49.8
+## 3.49.9
 
 * Update `fips.image.tag` to `1.0.1`
+
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
 
 ## 3.49.7
 
@@ -14,7 +18,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 
 ## 3.49.5
 
-Fix registry selection with GKE Autopilot until new registries are allowed.
+* Fix registry selection with GKE Autopilot until new registries are allowed.
 
 ## 3.49.4
 
