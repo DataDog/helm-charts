@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.9
+
+* Update `fips.image.tag` to `1.0.1`
+
 ## 3.49.8
 
 * Mount host package manager database when host SBOM is enabled.
