@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kpi-telemetry-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+data:
+  install_id: {{ uuidv4 | quote }}
+  install_type: unknown
+  install_time: {{ now | unixEpoch | quote }}
