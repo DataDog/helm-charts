@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.49.10
+
+Added clusterAgent.containers.initContainer.resources in values.yaml
+
 ## 3.49.9
 
 * Update `fips.image.tag` to `1.0.1`
