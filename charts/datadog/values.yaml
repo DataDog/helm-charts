@@ -912,6 +912,8 @@ clusterAgent:
     initContainers:
       # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
       securityContext: {}
+      # clusterAgent.containers.initContainer.resources -- Specify resources on the initContainers.
+      resources: {}
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
