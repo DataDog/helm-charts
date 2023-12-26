@@ -87,6 +87,23 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/other_default.yaml",
 			assertions:           verifyUntypedResources,
 		},
+		{
+			name: "Admission Controller",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				// ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+				ShowOnly: []string{},
+				Values:   []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":                                 "datadog-secret",
+					"datadog.appKeyExistingSecret":                                 "datadog-secret",
+					"clusterAgent.admissionController.enabled":                     "true",
+					"clusterAgent.admissionController.enableAgentSideCarInjection": "true",
+				}},
+			baselineManifestPath: "./baseline/dca_admission.yaml",
+			assertions:           verifyUntypedResources,
+		},
 	}
 
 	for _, tt := range tests {

@@ -191,7 +191,18 @@ spec:
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.admissionController.enabled }}
+          {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.enableAgentSideCarInjection }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          # {{- if .Values.clusterAgent.admissionController.overrideAgentSidecar }}
+          # - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
+          #   value: | 
+          #     {{- .Values.clusterAgent.admissionController.overrideAgentSidecar | nindent 14 }}          
+          # {{- else }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
+            value: | 
+              {{- include "container-agent" . | nindent 14 }}
+          {{- end }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
