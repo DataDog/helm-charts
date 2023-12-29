@@ -35,7 +35,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: dc4db96a844b73fb74fc4310806ebab7990e48df4cc5f13a34b15e499d717e65
+        checksum/clusteragent_token: c1fc03ae6ea7114124d52c2052de52f872c9df8f3a275c797478332657de0ee5
         checksum/clusteragent-configmap: 6b71b588ddba327b5d0f8960314102c0f9b18701cbe6ee2732c070c57fb384be
         checksum/api_key: 14cd30736bf4c9ec0c03305908ee5835c033075eb380dc497860aa54d55d3e52
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -89,6 +89,78 @@ spec:
           
           - name: KUBERNETES
             value: "yes"
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
+            value: |
+              - image: gcr.io/datadoghq/agent:7.48.0
+                name: datadog-agent-injected
+                env:
+                  - name: DD_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: "datadog-secret"
+                        key: api-key
+                  - name: DD_SITE
+                    value: "datadoghq.com"
+                  - name: DD_CLUSTER_NAME
+                    value: sidecar-test
+                  - name: DD_EKS_FARGATE
+                    value: "true"
+                  - name: "DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED"
+                    value: "true"
+                  - name: DD_KUBERNETES_KUBELET_NODENAME
+                    valueFrom:
+                      fieldRef:
+                        apiVersion: v1
+                        fieldPath: spec.nodeName
+                  - name: DD_HEALTH_PORT
+                    value: "5555"
+                  - name: DD_CLUSTER_AGENT_ENABLED
+                    value: "true"
+                  - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                          name: datadog-cluster-agent
+                          key: token
+                  - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
+                    value: "true"
+                livenessProbe:
+                  httpGet:
+                    path: /live
+                    port: 5555
+                    scheme: HTTP
+                  initialDelaySeconds: 15
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 6
+                readinessProbe:
+                  httpGet:
+                    path: /ready
+                    port: 5555
+                    scheme: HTTP
+                  initialDelaySeconds: 15
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 6
+          - name: DD_ADMISSION_CONTROLLER_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
+            value: "datadog-webhook"
+          - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
+            value: datadog-cluster-agent-admission-controller
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+            value: socket
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
+            value: datadog
+          - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
+            value: "Ignore"
+          - name: DD_ADMISSION_CONTROLLER_PORT
+            value: "8000"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED

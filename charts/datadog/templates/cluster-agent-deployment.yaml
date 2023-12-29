@@ -194,11 +194,11 @@ spec:
           {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.enableAgentSideCarInjection }}
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
-          # {{- if .Values.clusterAgent.admissionController.overrideAgentSidecar }}
-          # - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
-          #   value: | 
-          #     {{- .Values.clusterAgent.admissionController.overrideAgentSidecar | nindent 14 }}          
-          # {{- else }}
+          {{- if .Values.clusterAgent.admissionController.overrideAgentSidecar }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
+            value: | 
+              {{- .Values.clusterAgent.admissionController.overrideAgentSidecar | nindent 14 }}          
+          {{- else }}
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML
             value: | 
               {{- include "container-agent" . | nindent 14 }}

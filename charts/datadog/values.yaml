@@ -1009,63 +1009,60 @@ clusterAgent:
     port: 8000
 
     # 
-    enableAgentSideCarInjection: false
-    # overrideAgentSidecar: |-
-    #   - image: gcr.io/datadoghq/agent:7.48.0
-    #     name: datadog-agent
-    #     env:
-    #       - name: DD_API_KEY
-    #         value: "<YOUR_API_KEY>"
-    #       - name: DD_SITE
-    #         value: "datadoghq.com"
-    #       - name: DD_CLUSTER_NAME
-    #         value: "<DD_CLUSTER_NAME>"
-    #       - name: DD_EKS_FARGATE
-    #         value: "true"
-    #       - name: "DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED"
-    #         value: "true"
-    #       - name: DD_KUBERNETES_KUBELET_NODENAME
-    #         valueFrom:
-    #           fieldRef:
-    #             apiVersion: v1
-    #             fieldPath: spec.nodeName
-    #       - name: DD_HEALTH_PORT
-    #         value: "5555"
-    #       - name: DD_CLUSTER_AGENT_ENABLED
-    #         value: "true"
-    #       - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-    #         value: "<DD_TOKEN>"
-    #       - name: DD_CLUSTER_AGENT_URL
-    #         value: https://<DD_CLUSTER_AGENT_SVC>.<DD_CLUSTER_AGENT_NS>.svc.cluster.local:5005
-    #       - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
-    #         value: "true"
-    #     resources:
-    #       requests:
-    #         memory: "256Mi"
-    #         cpu: "200m"
-    #       limits:
-    #         memory: "256Mi"
-    #         cpu: "200m"
-    #     livenessProbe:
-    #       httpGet:
-    #         path: /live
-    #         port: 5555
-    #         scheme: HTTP
-    #       initialDelaySeconds: 15
-    #       periodSeconds: 15
-    #       timeoutSeconds: 5
-    #       successThreshold: 1
-    #       failureThreshold: 6
-    #     readinessProbe:
-    #       httpGet:
-    #         path: /ready
-    #         port: 5555
-    #         scheme: HTTP
-    #       initialDelaySeconds: 15
-    #       periodSeconds: 15
-    #       timeoutSeconds: 5
-    #       successThreshold: 1
-    #       failureThreshold: 6
+    enableAgentSideCarInjection: true
+    overrideAgentSidecar: |-
+      - image: gcr.io/datadoghq/agent:7.48.0
+        name: datadog-agent-injected
+        env:
+          - name: DD_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "datadog-secret"
+                key: api-key
+          - name: DD_SITE
+            value: "datadoghq.com"
+          - name: DD_CLUSTER_NAME
+            value: sidecar-test
+          - name: DD_EKS_FARGATE
+            value: "true"
+          - name: "DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED"
+            value: "true"
+          - name: DD_KUBERNETES_KUBELET_NODENAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: DD_HEALTH_PORT
+            value: "5555"
+          - name: DD_CLUSTER_AGENT_ENABLED
+            value: "true"
+          - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                  name: datadog-cluster-agent
+                  key: token
+          - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
+            value: "true"
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: 5555
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 5555
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
