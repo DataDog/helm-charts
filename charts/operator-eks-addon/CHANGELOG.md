@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.6
+* Update schema file to reference datadog-operator chart dependency (v1.4.1)
+
 ## 0.1.5
 * Update schema file to reference dependency chart properties. Make top level properties optional.
 

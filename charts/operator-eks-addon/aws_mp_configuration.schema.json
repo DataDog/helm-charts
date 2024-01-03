@@ -38,6 +38,9 @@
         "maximumGoroutines": {
           "type": "integer"
         },
+        "operatorMetricsEnabled": {
+          "type": "boolean"
+        },
         "metricsPort": {
           "type": "integer"
         },
@@ -116,6 +119,14 @@
         },
         "containerSecurityContext": {
           "type": "object"
+        },
+        "volumes": {
+          "type": "array",
+          "items": {}
+        },
+        "volumeMounts": {
+          "type": "array",
+          "items": {}
         }
       }
     }
