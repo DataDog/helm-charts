@@ -5878,6 +5878,8 @@ spec:
                           type: boolean
                         serviceName:
                           type: string
+                        webhookName:
+                          type: string
                       type: object
                     apm:
                       properties:
@@ -5940,6 +5942,11 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        hostBenchmarks:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                       type: object
                     cws:
                       properties:
@@ -5973,6 +5980,21 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        network:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
+                        remoteConfiguration:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
+                        securityProfiles:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         syscallMonitorEnabled:
                           type: boolean
                       type: object
@@ -6016,6 +6038,8 @@ spec:
                           type: object
                         originDetectionEnabled:
                           type: boolean
+                        tagCardinality:
+                          type: string
                         unixDomainSocketConfig:
                           properties:
                             enabled:
@@ -6023,6 +6047,11 @@ spec:
                             path:
                               type: string
                           type: object
+                      type: object
+                    ebpfCheck:
+                      properties:
+                        enabled:
+                          type: boolean
                       type: object
                     eventCollection:
                       properties:
@@ -6066,6 +6095,8 @@ spec:
                         port:
                           format: int32
                           type: integer
+                        registerAPIService:
+                          type: boolean
                         useDatadogMetrics:
                           type: boolean
                         wpaController:
@@ -6182,6 +6213,11 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        customResources:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
                         ddUrl:
                           type: string
                         enabled:
@@ -6217,6 +6253,11 @@ spec:
                               type: object
                           type: object
                       type: object
+                    processDiscovery:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     prometheusScrape:
                       properties:
                         additionalConfigs:
@@ -6227,6 +6268,36 @@ spec:
                           type: boolean
                         version:
                           type: integer
+                      type: object
+                    remoteConfiguration:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
+                    sbom:
+                      properties:
+                        containerImage:
+                          properties:
+                            analyzers:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
+                            enabled:
+                              type: boolean
+                          type: object
+                        enabled:
+                          type: boolean
+                        host:
+                          properties:
+                            analyzers:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
+                            enabled:
+                              type: boolean
+                          type: object
                       type: object
                     tcpQueueLength:
                       properties:
@@ -7436,148 +7507,6 @@ spec:
                                 type: boolean
                               runAsUserName:
                                 type: string
-                            type: object
-                        type: object
-                      securityContextConstraints:
-                        properties:
-                          create:
-                            type: boolean
-                          customConfiguration:
-                            properties:
-                              allowHostDirVolumePlugin:
-                                type: boolean
-                              allowHostIPC:
-                                type: boolean
-                              allowHostNetwork:
-                                type: boolean
-                              allowHostPID:
-                                type: boolean
-                              allowHostPorts:
-                                type: boolean
-                              allowPrivilegedContainer:
-                                type: boolean
-                              allowedCapabilities:
-                                items:
-                                  type: string
-                                type: array
-                              allowedFlexVolumes:
-                                items:
-                                  properties:
-                                    driver:
-                                      type: string
-                                  type: object
-                                type: array
-                              apiVersion:
-                                type: string
-                              defaultAddCapabilities:
-                                items:
-                                  type: string
-                                type: array
-                              fsGroup:
-                                properties:
-                                  ranges:
-                                    items:
-                                      properties:
-                                        max:
-                                          format: int64
-                                          type: integer
-                                        min:
-                                          format: int64
-                                          type: integer
-                                      type: object
-                                    type: array
-                                  type:
-                                    type: string
-                                type: object
-                              groups:
-                                items:
-                                  type: string
-                                type: array
-                              kind:
-                                type: string
-                              metadata:
-                                type: object
-                              priority:
-                                format: int32
-                                type: integer
-                              readOnlyRootFilesystem:
-                                type: boolean
-                              requiredDropCapabilities:
-                                items:
-                                  type: string
-                                type: array
-                              runAsUser:
-                                properties:
-                                  type:
-                                    type: string
-                                  uid:
-                                    format: int64
-                                    type: integer
-                                  uidRangeMax:
-                                    format: int64
-                                    type: integer
-                                  uidRangeMin:
-                                    format: int64
-                                    type: integer
-                                type: object
-                              seLinuxContext:
-                                properties:
-                                  seLinuxOptions:
-                                    properties:
-                                      level:
-                                        type: string
-                                      role:
-                                        type: string
-                                      type:
-                                        type: string
-                                      user:
-                                        type: string
-                                    type: object
-                                  type:
-                                    type: string
-                                type: object
-                              seccompProfiles:
-                                items:
-                                  type: string
-                                type: array
-                              supplementalGroups:
-                                properties:
-                                  ranges:
-                                    items:
-                                      properties:
-                                        max:
-                                          format: int64
-                                          type: integer
-                                        min:
-                                          format: int64
-                                          type: integer
-                                      type: object
-                                    type: array
-                                  type:
-                                    type: string
-                                type: object
-                              users:
-                                items:
-                                  type: string
-                                type: array
-                              volumes:
-                                items:
-                                  type: string
-                                type: array
-                            required:
-                              - allowHostDirVolumePlugin
-                              - allowHostIPC
-                              - allowHostNetwork
-                              - allowHostPID
-                              - allowHostPorts
-                              - allowPrivilegedContainer
-                              - allowedCapabilities
-                              - allowedFlexVolumes
-                              - defaultAddCapabilities
-                              - priority
-                              - readOnlyRootFilesystem
-                              - requiredDropCapabilities
-                              - volumes
                             type: object
                         type: object
                       serviceAccountName:

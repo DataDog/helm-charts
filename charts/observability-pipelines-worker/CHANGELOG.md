@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.7.1
+
+* Official image `1.7.1`
+
+## 1.7.0
+
+* Official image `1.7.0`
+
+## 1.6.0
+
+* Official image `1.6.0`
+
+## 1.5.2
+
+* Dropped ArtifactHub license designation to avoid confusion
+
+## 1.5.1
+
+* Official image `1.5.1`
+
+## 1.5.0
+
+* Official image `1.5.0`
+
+## 1.4.0
+
+* Official image `1.4.0`
+
+## 1.4.0-rc.0
+
+* Nightly image representative of `1.4.0`
+* Add `datadog.workerAPI.enabled`, `datadog.workerAPI.playground`, `datadog.workerAPI.address` for Worker API configuration
+* Expose Worker API port in pod and through service if enabled
+* Remove deprecated `datadog.configKey`
+
+## 1.3.1
+
+* Official image `1.3.1`
+
 ## 1.3.0
 
 * Official image `1.3.0`

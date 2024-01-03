@@ -1,18 +1,13 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
-# Needs to be removed when Agent N-2 is built with Golang 1.17
-- name: GODEBUG
-  value: x509ignoreCN=0
 - name: DD_API_KEY
   valueFrom:
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if eq (include "datadog-remoteConfiguration-enabled" .) "true" }}
 - name: DD_REMOTE_CONFIGURATION_ENABLED
-  value: "true"
-{{- end }}
+  value: {{ include "datadog-remoteConfiguration-enabled" . | quote }}
 {{- if (not .Values.providers.gke.autopilot) }}
 - name: DD_AUTH_TOKEN_FILE_PATH
   value: {{ template "datadog.confPath" . }}/auth/token
@@ -49,6 +44,14 @@
 {{- if .Values.datadog.acExclude }}
 - name: DD_AC_EXCLUDE
   value: {{ .Values.datadog.acExclude | quote }}
+{{- end }}
+{{- if .Values.datadog.containerInclude }}
+- name: DD_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.containerExclude }}
+- name: DD_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.containerExclude | quote }}
 {{- end }}
 {{- if .Values.datadog.containerIncludeMetrics }}
 - name: DD_CONTAINER_INCLUDE_METRICS
@@ -147,5 +150,4 @@ Return a list of env-vars if the cluster-agent is enabled
         name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
         key: token
 {{- end }}
-{{ include "provider-env" . }}
 {{- end -}}

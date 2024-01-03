@@ -48,14 +48,6 @@
 - name: DD_DD_URL
   value: {{ .Values.datadog.dd_url | quote }}
 {{- end }}
-{{- if .Values.datadog.containerInclude }}
-- name: DD_CONTAINER_INCLUDE
-  value: {{ .Values.datadog.containerInclude | quote }}
-{{- end }}
-{{- if .Values.datadog.containerExclude }}
-- name: DD_CONTAINER_EXCLUDE
-  value: {{ .Values.datadog.containerExclude | quote }}
-{{- end }}
 {{- if not .Values.datadog.excludePauseContainer }}
 - name: DD_EXCLUDE_PAUSE_CONTAINER
   value: "false"

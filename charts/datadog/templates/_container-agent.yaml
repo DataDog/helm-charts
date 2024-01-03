@@ -86,6 +86,8 @@
     {{- if .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
       value: {{ .Values.datadog.leaderElection | quote}}
+    - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+      value: {{ .Values.datadog.leaderElectionResource | quote}}
     {{- end }}
     {{- if .Values.datadog.leaderLeaseDuration }}
     - name: DD_LEADER_LEASE_DURATION
@@ -148,23 +150,52 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
+    {{- if .Values.datadog.containerLifecycle.enabled }}
+    - name: DD_CONTAINER_LIFECYCLE_ENABLED
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote }}
+    {{- end }}
+    - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+      value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
+    - name: DD_COMPLIANCE_CONFIG_ENABLED
+      value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+    {{- if eq (include "should-enable-container-image-collection" .) "true" }}
+    - name: DD_CONTAINER_IMAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if or .Values.datadog.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    - name: DD_SBOM_ENABLED
+      value: "true"
+    {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if .Values.datadog.sbom.host.enabled }}
+    - name: DD_SBOM_HOST_ENABLED
+      value: "true"
+    - name: HOST_ROOT
+      value: /host
+    {{- end }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+    {{- end }}
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -222,6 +253,17 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.host.enabled }}
+    - name: host-apk-dir
+      mountPath: /host/var/lib/apk
+      readOnly: true
+    - name: host-dpkg-dir
+      mountPath: /host/var/lib/dpkg
+      readOnly: true
+    - name: host-rpm-dir
+      mountPath: /host/var/lib/rpm
+      readOnly: true
     {{- end }}
     {{- end }}
     {{- if eq .Values.targetSystem "windows" }}

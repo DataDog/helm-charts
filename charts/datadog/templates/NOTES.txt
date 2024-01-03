@@ -125,6 +125,68 @@ Trace Agent liveness probe port ({{ $liveness.port }}) is different from the con
 The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 {{- end }}
 
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces .Values.datadog.apm.instrumentation.disabledNamespaces }}
+
+###################################################################################
+####               ERROR: APM Single Step Instrumentation misconfiguration     ####
+###################################################################################
+
+{{- fail "The options `datadog.apm.instrumentation.enabledNamespaces` and `datadog.apm.instrumentation.disabledNamespaces` cannot be set together." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off. To enable it please set clusterAgent.enabled to 'true'." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled (not .Values.clusterAgent.admissionController.enabled)}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- fail "You are using datadog.apm.instrumentation.enabled but you disabled the admission controller. This configuration is unsupported. To enable it please set clusterAgent.admissionController.enabled to 'true'." }}
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.apm.instrumentation.enabledNamespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
+To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabledNamespaces }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabledNamespaces` are set together.
+APM Single Step Instrumentation will be enabled in the whole cluster.
+
+{{- end }}
+
+{{- if and .Values.datadog.apm.instrumentation.disabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The option `datadog.apm.instrumentation.disabledNamespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
+APM Single Step Instrumentation will be disabled in the whole cluster.
+
+{{- end }}
+
 {{- if .Values.datadog.apm.enabled }}
 
 #################################################################
@@ -475,4 +537,14 @@ To send OTLP data to the Agent use the Service created by specifying "http://{{ 
 You have enabled creataion of PodSecurityPolicy, however PSP have been removed from Kubernetes >= 1.25, thus PSP will not be created.
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
+{{- end }}
+
+{{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
+This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
+More information about this change: https://github.com/DataDog/helm-charts/pull/1161
 {{- end }}

@@ -1,5 +1,33 @@
 # Datadog changelog
 
+## 0.15.21
+
+* Update private location image version to `1.42.0`.
+
+## 0.15.20
+
+* Support `dnsPolicy` configuration.
+
+## 0.15.19
+
+* Update private location image version to `1.41.0`.
+
+## 0.15.18
+
+* Update private location image version to `1.40.0`.
+
+## 0.15.17
+
+* Update private location image version to `1.39.0`.
+
+## 0.15.16
+
+* Update private location image version to `1.38.0`.
+
+## 0.15.15
+
+* Update private location image version to `1.37.0`.
+
 ## 0.15.14
 
 * Update private location image version to `1.36.0`.
