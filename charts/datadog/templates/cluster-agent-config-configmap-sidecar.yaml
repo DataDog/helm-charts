@@ -1,0 +1,69 @@
+{{- if .Values.clusterAgent.admissionController.enableSidecarOverride }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-sidecar-container-cm
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: "{{ template "datadog.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+  annotations:
+    checksum/clusteragent-config: {{ tpl (toYaml .Values.clusterAgent.datadog_cluster_yaml) . | sha256sum }}
+data:
+  sidecar-container.yaml: |
+    - image: gcr.io/datadoghq/agent:7.48.0
+      name: datadog-agent-injected
+      env:
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: "datadog-secret"
+              key: api-key
+        - name: DD_SITE
+          value: "datadoghq.com"
+        - name: DD_CLUSTER_NAME
+          value: sidecar-test
+        - name: DD_EKS_FARGATE
+          value: "true"
+        - name: "DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED"
+          value: "true"
+        - name: DD_KUBERNETES_KUBELET_NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: DD_HEALTH_PORT
+          value: "5555"
+        - name: DD_CLUSTER_AGENT_ENABLED
+          value: "true"
+        - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+                name: datadog-cluster-agent
+                key: token
+        - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
+          value: "true"
+      livenessProbe:
+        httpGet:
+          path: /live
+          port: 5555
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 5555
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+{{- end }}

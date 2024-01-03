@@ -1010,6 +1010,7 @@ clusterAgent:
 
     # 
     enableAgentSideCarInjection: true
+    enableSidecarOverride: true
     overrideAgentSidecar: |-
       - image: gcr.io/datadoghq/agent:7.48.0
         name: datadog-agent-injected

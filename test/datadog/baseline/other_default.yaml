@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "czEzV1ZYanF6dnlqaHFTUjgycTUyYUt4bFNycFJOOUE="
+  token: "cExuMEkzc0xxclJTUHU1VVlZVEdXdHdmMll1R0Q2Mlc="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -149,6 +149,79 @@ data:
           {}
         annotations_as_tags:
           {}
+---
+# Source: datadog/templates/cluster-agent-config-configmap-sidecar.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datadog-sidecar-container-cm
+  namespace: datadog-agent
+  labels:
+    app: "datadog"
+    chart: "datadog-3.40.2"
+    release: "datadog"
+    heritage: "Helm"
+    helm.sh/chart: 'datadog-3.40.2'
+    app.kubernetes.io/name: "datadog"
+    app.kubernetes.io/instance: "datadog"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "7"
+  annotations:
+    checksum/clusteragent-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+data:
+  sidecar-container.yaml: |
+    - image: gcr.io/datadoghq/agent:7.48.0
+      name: datadog-agent-injected
+      env:
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: "datadog-secret"
+              key: api-key
+        - name: DD_SITE
+          value: "datadoghq.com"
+        - name: DD_CLUSTER_NAME
+          value: sidecar-test
+        - name: DD_EKS_FARGATE
+          value: "true"
+        - name: "DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED"
+          value: "true"
+        - name: DD_KUBERNETES_KUBELET_NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: DD_HEALTH_PORT
+          value: "5555"
+        - name: DD_CLUSTER_AGENT_ENABLED
+          value: "true"
+        - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+                name: datadog-cluster-agent
+                key: token
+        - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
+          value: "true"
+      livenessProbe:
+        httpGet:
+          path: /live
+          port: 5555
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 5555
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
 ---
 # Source: datadog/templates/install_info-configmap.yaml
 apiVersion: v1
@@ -785,7 +858,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: ea26e3f0e946072871ccb98b055108f2b5c6999b450a48afc691456a57b69283
+        checksum/clusteragent_token: cac1a4d6273bae4feb1b61e1337622b1fb5f863374455ed52915763099b14d63
         checksum/install_info: e25591d3c3d4f1ffd34b44799840d82a96fd1bdf4875b5bdba29f1cde44f600b
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -1251,7 +1324,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: fd17a9d3bda8be2daf0f747015f9ffe8e60f7691f9ef75896e9fae9b9c16de22
+        checksum/clusteragent_token: 7f3d45f06a6cc22d89ac7975a4145dfac71b947e003a9b3d32d90f0104728040
         checksum/install_info: e25591d3c3d4f1ffd34b44799840d82a96fd1bdf4875b5bdba29f1cde44f600b
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1431,7 +1504,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: d64ea03108b08322d43dee103445ce2b8e08ba5d51143b9ae558c17f3987a21e
+        checksum/clusteragent_token: ffda7cb730437cc7d8cdaf5063fbfe0eb025da5072730f5384884847dd4e136b
         checksum/clusteragent-configmap: 37ece2fae5e132daa96a3ab45752ac9e00cb166d690b43a4371c904831d30dc9
         checksum/install_info: e25591d3c3d4f1ffd34b44799840d82a96fd1bdf4875b5bdba29f1cde44f600b
     spec:
@@ -1467,6 +1540,11 @@ spec:
         - containerPort: 8000
           name: datadog-webhook
           protocol: TCP
+        envFrom:
+#
+          - configMapRef:
+            name: sidecar-container-cm        
+#
         env:
           - name: DD_POD_NAME
             valueFrom:
@@ -1539,6 +1617,11 @@ spec:
                   timeoutSeconds: 5
                   successThreshold: 1
                   failureThreshold: 6
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SIDECARYAML_CM
+            valueFrom:
+              configMapKeyRef:
+                name: datadog-sidecar-container-cm
+                key: sidecar-container.yaml 
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
