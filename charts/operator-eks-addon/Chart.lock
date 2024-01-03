@@ -1,6 +1,6 @@
 dependencies:
 - name: datadog-operator
   repository: file://../datadog-operator/
-  version: 1.0.5
-digest: sha256:7c03b8598372555d16b3bc02039ace79aecf62fd21831de9bc67240911cd0791
-generated: "2023-10-16T20:25:33.846501-04:00"
+  version: 1.4.1
+digest: sha256:cf346037c0594699f758d7fa5b6756fd341d21518d9c296f8dad6f5780ded173
+generated: "2024-01-03T16:30:21.97605-05:00"

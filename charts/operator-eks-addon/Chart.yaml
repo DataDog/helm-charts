@@ -1,6 +1,6 @@
 apiVersion: v2
 name: operator-eks-addon
-version: 0.1.5
+version: 0.1.6
 appVersion: 0.1.0
 description: Datadog Operator Wrapper
 home: https://www.datadoghq.com
@@ -10,6 +10,6 @@ maintainers:
   email: support@datadoghq.com
 dependencies:
 - name: datadog-operator
-  version: "=1.0.5"
+  version: "=1.4.1"
   alias: datadog-operator
   repository: file://../datadog-operator/
