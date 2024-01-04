@@ -1,4 +1,4 @@
-{{- if gt .Values.replicaCount 1.0 -}}
+{{- if gt (int .Values.replicaCount) 1 -}}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:

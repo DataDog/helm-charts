@@ -1,5 +1,13 @@
 name: Go Test
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'test/**'
+      - 'charts/datadog-operator/**'
+  pull_request:
+    paths:
+      - 'test/**'
+      - 'charts/datadog-operator/**'
 env:
   GO111MODULE: "on"
   PROJECTNAME: "helm-charts"
@@ -26,6 +34,7 @@ jobs:
         make unit-test
 
   integ-tests:
+    if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
     runs-on: ubuntu-20.04
     strategy:
