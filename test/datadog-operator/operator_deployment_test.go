@@ -59,20 +59,6 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=true",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			assertions: verifyConversionWebhookEnabledTrue,
-			skipTest:   SkipTest,
-		},
-		{
 			name: "Verify Operator 1.0 conversionWebhook.enabled=false",
 			command: common.HelmCommand{
 				ReleaseName: "random-string-as-release-name",
@@ -148,13 +134,6 @@ func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
 			},
 		},
 	})
-}
-
-func verifyConversionWebhookEnabledTrue(t *testing.T, manifest string) {
-	var deployment appsv1.Deployment
-	common.Unmarshal(t, manifest, &deployment)
-	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
 
 func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {

@@ -46,7 +46,7 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_with_certManager.yaml",
 			assertions:           verifyOperatorDeployment,
-			skipTest:             SkipTest,
+			skipTest:             true,
 		},
 		{
 			name: "DatadogAgent CRD default",

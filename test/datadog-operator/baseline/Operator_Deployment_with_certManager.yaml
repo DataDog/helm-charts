@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
-          image: "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.3.0"
+          image: "gcr.io/datadoghq/operator:1.3.0"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
