@@ -10,6 +10,6 @@ maintainers:
   email: support@datadoghq.com
 dependencies:
 - name: datadog-operator
-  version: "=1.0.5"
+  version: "=1.4.1"
   alias: datadog-operator
   repository: file://../datadog-operator/
