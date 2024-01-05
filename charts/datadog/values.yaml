@@ -1064,6 +1064,11 @@ clusterAgent:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 6
+    labelSelectorSidecar: {}
+      #injectSidecar: "true"
+    namespaceSelectorSidecar:
+      injectSidecarNs: "true"
+
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 

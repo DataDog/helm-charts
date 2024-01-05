@@ -191,6 +191,7 @@ spec:
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
+          # --- sidecar
           {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.enableAgentSideCarInjection }}
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
@@ -206,6 +207,15 @@ spec:
                 name: {{ template "datadog.fullname" . }}-sidecar-container-cm
                 key: sidecar-container.yaml
           {{- end }} 
+          {{- if .Values.clusterAgent.admissionController.labelSelectorSidecar }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_LABELSELECTOR
+            value: '{{ toJson .Values.clusterAgent.admissionController.labelSelectorSidecar }}'
+          {{- end }}
+          {{- if .Values.clusterAgent.admissionController.namespaceSelectorSidecar }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_NAMESPACESELECTOR
+            value: '{{ toJson .Values.clusterAgent.admissionController.namespaceSelectorSidecar }}'
+          {{- end }}         
+          # ---
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
