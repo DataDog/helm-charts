@@ -1,12 +1,28 @@
 # Datadog changelog
 
+## 3.51.0
+
+* Add env variables to support APM Telemetry KPIs to Tracer Agent
+
+# 3.50.2
+
+* Support automatic registry selection based on `datadog.site` on GKE Autopilot.
+
 ## 3.50.1
 
-Add env variables to support APM Telemetry KPIs to Tracer Agent
+* Set default `Agent` and `Cluster-Agent` version to `7.50.2`.
 
 ## 3.50.0
 
-Add env variables to support APM Telemetry KPIs
+* Set default `Agent` and `Cluster-Agent` version to `7.50.1`.
+
+## 3.49.9
+
+* Update `fips.image.tag` to `1.0.1`
+
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
 
 ## 3.49.7
 
@@ -18,7 +34,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 
 ## 3.49.5
 
-Fix registry selection with GKE Autopilot until new registries are allowed.
+* Fix registry selection with GKE Autopilot until new registries are allowed.
 
 ## 3.49.4
 
