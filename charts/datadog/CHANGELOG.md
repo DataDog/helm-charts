@@ -2,7 +2,7 @@
 
 ## 3.51.0
 
-* Add env variables to support APM Telemetry KPIs to Tracer Agent
+* Add env variables to support APM Telemetry KPIs
 
 # 3.50.2
 
