@@ -21,6 +21,9 @@ spec:
       {{ if .Values.dnsPolicy }}
       dnsPolicy: {{ .Values.dnsPolicy}}
       {{ end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
