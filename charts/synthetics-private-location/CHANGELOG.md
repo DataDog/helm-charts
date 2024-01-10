@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.24
+
+* Clarify the usage of `configSecret`
+
 ## 0.15.23
 
 * Add `priorityClassName` value to specify PriorityClass for pods.
