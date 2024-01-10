@@ -70,6 +70,10 @@ data:
 {{ end }}
       security_profile:
         enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.enabled }}
+        auto_suppression:
+          enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
+        anomaly_detection:
+          enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.driftEvents.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---

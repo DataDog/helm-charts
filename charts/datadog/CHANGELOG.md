@@ -1,6 +1,10 @@
 # Datadog changelog
 
-# 3.50.2
+## 3.50.3
+
+* Allow setting `datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled` and `datadog.securityAgent.runtime.securityProfile.driftEvents.enabled`.
+
+## 3.50.2
 
 * Support automatic registry selection based on `datadog.site` on GKE Autopilot.
 
