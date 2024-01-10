@@ -59,6 +59,31 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
+			name: "Verify Operator 1.0 conversionWebhook.enabled=false",
+			command: common.HelmCommand{
+				ReleaseName: "random-string-as-release-name",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "false",
+				},
+			},
+			assertions: verifyConversionWebhookEnabledFalse,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "Verify Operator 1.0 conversionWebhook.enabled default",
+			command: common.HelmCommand{
+				ReleaseName: "random-string-as-release-name",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+			},
+			assertions: verifyConversionWebhookEnabledFalse,
+			skipTest:   SkipTest,
+		},
+		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -91,7 +116,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.0.3", operatorContainer.Image)
+	assert.Equal(t, "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.3.0", operatorContainer.Image)
 	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
@@ -109,6 +134,13 @@ func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
 			},
 		},
 	})
+}
+
+func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyAll(t *testing.T, manifest string) {

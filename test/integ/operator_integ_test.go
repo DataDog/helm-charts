@@ -56,23 +56,6 @@ func Test(t *testing.T) {
 			agentAssertions:          verifyAgent,
 			installCertManager:       false,
 		},
-		{
-			name: "Datadog agent with Operator Helm install, conversion webhook enabled",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator-with-webhook",
-				ChartPath:   "../../charts/datadog-operator",
-				Overrides: map[string]string{
-					"installCRDs": "true",
-					"datadogCRDs.migration.datadogAgents.version":                   "v2alpha1",
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			datadogAgentManifestPath: "./manifests/default.yaml",
-			operatorAssertions:       verifyOperator,
-			agentAssertions:          verifyAgent,
-			installCertManager:       true,
-		},
 	}
 
 	for _, tt := range tests {

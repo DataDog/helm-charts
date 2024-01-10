@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
+![Version: 1.4.1](https://img.shields.io/badge/Version-1.4.1-informational?style=flat-square) ![AppVersion: 1.3.0](https://img.shields.io/badge/AppVersion-1.3.0-informational?style=flat-square)
 
 ## Values
 
@@ -13,29 +13,32 @@
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
-| datadogAgent.enabled | bool | `true` | Enables Datadog Agetn controller |
-| datadogCRDs.crds.datadogAgents | bool | `true` |  |
-| datadogCRDs.crds.datadogMetrics | bool | `true` |  |
-| datadogCRDs.crds.datadogMonitors | bool | `true` |  |
+| datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
+| datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
+| datadogCRDs.crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
 | datadogCRDs.migration.datadogAgents.useCertManager | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.version | string | `"v2alpha1"` |  |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
+| datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
-| image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
+| image.repository | string | `"709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator"` | Repository to use for Datadog Operator image |
 | image.tag | string | `"1.0.3"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
-| maximumGoroutines | string | `nil` | Override default gouroutines threshold for the health check failure. |
+| maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
+| operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
@@ -49,6 +52,8 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
+| volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces |
 
 ## How to configure which namespaces are watched by the Operator.
