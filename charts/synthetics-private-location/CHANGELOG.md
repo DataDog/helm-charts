@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.23
+
+* Add `priorityClassName` value to specify PriorityClass for pods.
+
 ## 0.15.22
 
 * Update private location image version to `1.43.0`.
