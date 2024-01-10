@@ -91,7 +91,7 @@ configFile: "{}"
 # configConfigMap -- Config Map that stores the configuration of the private location worker for the deployment
 configConfigMap: ""
 
-# configSecret -- Secret that stores the configuration of the private location worker for the deployment
+# configSecret -- Name of the secret that stores the configuration of the private location worker for the deployment. Use it only if you want to manage the secret outside of the Helm chart as using `configFile` will create a secret. The `data` inside the secret needs to have the key `synthetics-check-runner.json`.
 configSecret: ""
 
 # envFrom -- Set environment variables from configMaps and/or secrets
