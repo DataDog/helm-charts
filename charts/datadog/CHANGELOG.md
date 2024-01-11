@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.50.3
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.3`.
+
 # 3.50.2
 
 * Support automatic registry selection based on `datadog.site` on GKE Autopilot.
