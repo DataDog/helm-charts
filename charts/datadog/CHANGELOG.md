@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.50.5
+
+* Add option to use containerd snapshotter to generate SBOMs.
+
 ## 3.50.4
 
 * Mount host files for proper OS detection in SBOMs.
@@ -8,7 +12,7 @@
 
 * Set default `Agent` and `Cluster-Agent` version to `7.50.3`.
 
-# 3.50.2
+## 3.50.2
 
 * Support automatic registry selection based on `datadog.site` on GKE Autopilot.
 
