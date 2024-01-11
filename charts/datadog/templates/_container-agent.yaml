@@ -3,7 +3,12 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
+{{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport -}}
+{{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
+{{ include "generate-security-context" (dict "securityContext" (merge $capabilities .Values.agents.containers.agent.securityContext) "targetSystem" "foobar" "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- else }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- end }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
   ports:
@@ -171,6 +176,10 @@
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
+      value: "true"
+    {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
@@ -253,6 +262,11 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    - name: host-containerd-dir
+      mountPath: /host/var/lib/containerd
+      readOnly: true
     {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: host-apk-dir

@@ -147,6 +147,11 @@
     path: /
   name: hostroot
 {{- end }}
+{{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+- hostPath:
+    path: /var/lib/containerd
+  name: host-containerd-dir
+{{- end }}
 {{- if .Values.datadog.sbom.host.enabled }}
 - hostPath:
     path: /var/lib/apk
