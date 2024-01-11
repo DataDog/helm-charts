@@ -709,6 +709,7 @@ datadog:
       # datadog.sbom.containerImage.uncompressedLayersSupport -- Use container runtime snapshotter
       # This should be set to true when using EKS, GKE or if containerd is configured to
       # discard uncompressed layers.
+      # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
       uncompressedLayersSupport: false
 
     host:
