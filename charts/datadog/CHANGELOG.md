@@ -2,7 +2,7 @@
 
 ## 3.51.0
 
-* Add env variables to support APM Telemetry KPIs
+* Add `DD_INSTRUMENTATION_INSTALL_TIME`, `DD_INSTRUMENTATION_INSTALL_ID`, `DD_INSTRUMENTATION_INSTALL_TYPE` env variables to the Trace and Cluster agents to support APM Telemetry KPIs.
 
 ## 3.50.5
 
