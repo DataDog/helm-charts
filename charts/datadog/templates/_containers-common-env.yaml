@@ -151,4 +151,3 @@ Return a list of env-vars if the cluster-agent is enabled
         key: token
 {{- end }}
 {{- end -}}
-
