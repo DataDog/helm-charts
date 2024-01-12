@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.50.4
+
+* Mount host files for proper OS detection in SBOMs.
+
 ## 3.50.3
 
 * Set default `Agent` and `Cluster-Agent` version to `7.50.3`.

@@ -24,6 +24,9 @@
 - hostPath:
     path: /etc/lsb-release
   name: etc-lsb-release
+- hostPath:
+    path: /etc/system-release
+  name: etc-system-release
 {{- end -}}
 {{- if eq (include "should-enable-fips" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
