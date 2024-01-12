@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.51.0
+
+* Add `DD_INSTRUMENTATION_INSTALL_TIME`, `DD_INSTRUMENTATION_INSTALL_ID`, `DD_INSTRUMENTATION_INSTALL_TYPE` env variables to the Trace and Cluster agents to support APM Telemetry KPIs.
+
 ## 3.50.5
 
 * Add option to use containerd snapshotter to generate SBOMs.
