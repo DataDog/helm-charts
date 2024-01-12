@@ -1,6 +1,10 @@
 apiVersion: v1
 name: datadog
+<<<<<<< HEAD
 version: 3.51.0
+=======
+version: 3.50.5
+>>>>>>> origin/main
 appVersion: "7"
 description: Datadog Agent
 keywords:

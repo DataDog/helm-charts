@@ -706,6 +706,12 @@ datadog:
       # datadog.sbom.containerImage.enabled -- Enable SBOM collection for container images
       enabled: false
 
+      # datadog.sbom.containerImage.uncompressedLayersSupport -- Use container runtime snapshotter
+      # This should be set to true when using EKS, GKE or if containerd is configured to
+      # discard uncompressed layers.
+      # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
+      uncompressedLayersSupport: false
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
@@ -874,7 +880,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.50.2
+    tag: 7.50.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1302,7 +1308,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.50.2
+    tag: 7.50.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1770,7 +1776,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.50.2
+    tag: 7.50.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

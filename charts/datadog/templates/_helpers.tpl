@@ -755,7 +755,12 @@ securityContext:
   {{- end -}}
 {{- else }}
 securityContext:
+{{- if .sysAdmin }}
+{{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
+{{ toYaml (merge $capabilities .securityContext) | indent 2 }}
+{{- else }}
 {{ toYaml .securityContext | indent 2 }}
+{{- end -}}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
@@ -770,6 +775,9 @@ securityContext:
     {{- end }}
 {{- end -}}
 {{- end -}}
+{{- else if .sysAdmin }}
+securityContext:
+{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
 {{- end -}}
 {{- end -}}
 
