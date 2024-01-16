@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.51.2
+
+* Use correct kpi-telemetry-configmap in Cluster Agent and Trace Agent.
+
 ## 3.51.1
 
-* Parametrize the name of kpi-telemetry-configmap
+* Parametrize the name of kpi-telemetry-configmap.
 
 ## 3.51.0
 
