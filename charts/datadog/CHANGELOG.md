@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.51.3
+## 3.52.0
 
 * Allow configuring CWS security profile features and enable drift events by default
 
