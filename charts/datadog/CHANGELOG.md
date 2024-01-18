@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.52.0
+
+* Allow configuring CWS security profile features and enable drift events by default
+
 ## 3.51.2
 
 * Use correct kpi-telemetry-configmap in Cluster Agent and Trace Agent.
