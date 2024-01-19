@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.0
+
+* Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
+
 ## 3.52.0
 
 * Allow configuring CWS security profile features and enable drift events by default
