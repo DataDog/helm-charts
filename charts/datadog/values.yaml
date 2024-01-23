@@ -500,6 +500,9 @@ datadog:
           endpoint: "0.0.0.0:4318"
           # datadog.otlp.receiver.protocols.http.useHostPort -- Enable the Host Port for the OTLP/HTTP endpoint
           useHostPort: true
+    logs:
+      # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
+      enabled: false
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
