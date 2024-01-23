@@ -749,6 +749,7 @@ helm install <RELEASE_NAME> \
 | datadog.otlp.receiver.protocols.http.enabled | bool | `false` | Enable the OTLP/HTTP endpoint |
 | datadog.otlp.receiver.protocols.http.endpoint | string | `"0.0.0.0:4318"` | OTLP/HTTP endpoint |
 | datadog.otlp.receiver.protocols.http.useHostPort | bool | `true` | Enable the Host Port for the OTLP/HTTP endpoint |
+| datadog.otlp.logs.enabled | bool | `false` | Enable logs support in the OTLP ingest endpoint |
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent |
