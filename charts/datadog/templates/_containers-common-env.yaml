@@ -89,13 +89,11 @@
 {{- end }}
 {{- end }}
 
-{{- if .Values.datadog.otlp.logs }}
 {{- with .Values.datadog.otlp.logs }}
 
 - name: DD_OTLP_CONFIG_LOGS_ENABLED
   value: {{ .enabled | quote }}
 
-{{- end }}
 {{- end }}
 
 {{- end }}
