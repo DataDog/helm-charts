@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.53.0
+* Add NetworkPolicy ingress rules for OTLP receivers(grpc & http)
+
 ## 3.52.0
 
 * Allow configuring CWS security profile features and enable drift events by default
