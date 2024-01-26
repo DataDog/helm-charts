@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.0
+
+* Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
+
 ## 3.52.0
 
 * Allow configuring CWS security profile features and enable drift events by default
