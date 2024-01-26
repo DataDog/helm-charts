@@ -70,6 +70,7 @@
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
 {{- if .Values.datadog.otlp }}
+
 {{- if .Values.datadog.otlp.receiver }}
 {{- if .Values.datadog.otlp.receiver.protocols }}
 {{- with .Values.datadog.otlp.receiver.protocols }}
@@ -87,6 +88,12 @@
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{- with .Values.datadog.otlp.logs }}
+- name: DD_OTLP_CONFIG_LOGS_ENABLED
+  value: {{ .enabled | quote }}
+{{- end }}
+
 {{- end }}
 {{- if eq (include "agent-has-env-ad" .) "true" }}
 {{- if .Values.datadog.dockerSocketPath }}
