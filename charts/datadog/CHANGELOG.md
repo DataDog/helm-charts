@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.1
+
+* Update `fips.image.tag` to `1.1.0`
+
 ## 3.53.0
 
 * Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
