@@ -1,0 +1,12 @@
+{{- define "container-journald-volumemounts" -}}
+{{- if .Values.datadog.logs.enabled }}
+{{- if .Values.datadog.journaldMount.enabled }}
+{{- if eq .Values.targetSystem "linux" }}
+- name: journaldpersistentpath
+  mountPath: {{ .Values.datadog.journaldMount.persistentDir }}
+  mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+  readOnly: true
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

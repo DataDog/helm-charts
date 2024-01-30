@@ -93,6 +93,12 @@ datadog:
   ## ref: https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
   hostVolumeMountPropagation: None
 
+  # datadog.journaldMount -- Mount the host journald persistent directory to the agent
+  ## Requires datadog.logs.enabled to be set to true, targetSystem to be "linux" to have any effect
+  journaldMount:
+    enabled: false
+    persistentDir: /var/log/journal
+
   # datadog.clusterName -- Set a unique cluster name to allow scoping hosts and Cluster Checks easily
 
   ## The name must be unique and must be dot-separated tokens with the following restrictions:

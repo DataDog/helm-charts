@@ -195,6 +195,11 @@
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
+{{- if .Values.datadog.journaldMount.enabled }}
+- hostPath:
+    path: {{ .Values.datadog.journaldMount.persistentDir }}
+  name: journaldpersistentpath
+{{- end }}
 {{- end }}
 {{- if .Values.datadog.containerRuntimeSupport.enabled }}
 - hostPath:
