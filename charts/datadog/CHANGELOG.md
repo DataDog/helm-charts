@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.54.0
+
+* Add support for mounting host journald persistent and runtime directories to the agent - `datadog.journaldMount`
+
 ## 3.53.0
 
 * Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
