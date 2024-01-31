@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.2
+
+* Exclude agent container from receiving labels from the admission controller 
+
 ## 3.53.1
 
 * Update `fips.image.tag` to `1.1.0`
