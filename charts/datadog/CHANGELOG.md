@@ -2,7 +2,7 @@
 
 ## 3.53.2
 
-* Exclude agent container from receiving labels from the admission controller 
+* Exclude agent pod from labels injection from the admission controller 
 
 ## 3.53.1
 
