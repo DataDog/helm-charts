@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.53.3
+
+* Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
+
 ## 3.53.2
 
-* Exclude agent pod from labels injection from the admission controller 
+* Exclude agent pod from labels injection from the admission controller
 
 ## 3.53.1
 
@@ -82,7 +86,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 
 ## 3.49.2
 
-* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set 
+* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
 
 ## 3.49.1
 
@@ -139,7 +143,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 
 ## 3.42.1
 
-* Bump FIPS proxy OpenSSL version to 3.0.12 
+* Bump FIPS proxy OpenSSL version to 3.0.12
 
 ## 3.42.0
 
