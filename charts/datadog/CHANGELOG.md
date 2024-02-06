@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.53.3
+
+* Migrate from `kubeval` to `kubeconform` the chart ci validation.
+
 ## 3.53.2
 
-* Exclude agent pod from labels injection from the admission controller 
+* Exclude agent pod from labels injection from the admission controller.
 
 ## 3.53.1
 

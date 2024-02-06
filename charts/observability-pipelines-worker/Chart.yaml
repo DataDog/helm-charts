@@ -1,6 +1,6 @@
 apiVersion: v2
 name: observability-pipelines-worker
-version: "1.8.0"
+version: "1.8.1"
 description: Observability Pipelines Worker
 type: application
 keywords:

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+* Migrate from `kubeval` to `kubeconform` the chart ci validation.
+
 ## 0.3.0
 
 * Updated for EDS 0.8.0.
