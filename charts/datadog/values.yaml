@@ -1056,6 +1056,27 @@ clusterAgent:
 
     # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
     port: 8000
+    agentSidecarInjection:
+      enabled: true
+      selectors:
+      - objectSelector:
+          matchLabels:
+            injectsidecar: "true"
+        namespaceSelector:
+          matchLabels:
+            injectsidecar: "true"
+      # - objectSelector:
+      #     matchExpressions:
+      #       - key: runlevel
+      #         operator: NotIn
+      #         values:
+      #           - "0"
+      #           - "1"
+      #   namespaceSelector:
+      #     matchLabels:
+      #       nsKey3: nsValue3
+      #       nsKey4: nsValue4
+
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 

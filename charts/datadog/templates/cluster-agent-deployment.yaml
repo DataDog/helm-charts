@@ -234,6 +234,16 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
           {{- end }}
+          # Sidecar injection
+          {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          {{- if .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
+            value: '{{ toJson .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}'
+          {{- end }}
+          {{- end }}
+          # end sidecar injection
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabled }}

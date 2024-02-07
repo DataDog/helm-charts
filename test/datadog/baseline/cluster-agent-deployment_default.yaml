@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.40.2'
+    helm.sh/chart: 'datadog-3.53.2'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -35,31 +35,30 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: eb2c5f44cc4b867bb29e6a68a2f08f15b033e462a3ae203821227f85acc5ef23
-        checksum/clusteragent-configmap: 6b71b588ddba327b5d0f8960314102c0f9b18701cbe6ee2732c070c57fb384be
-        checksum/api_key: 14cd30736bf4c9ec0c03305908ee5835c033075eb380dc497860aa54d55d3e52
+        checksum/clusteragent_token: 8d602b609b9e6fc8533b36f8c29d2e4d11cb64016d11adc538285afdbbfffa7b
+        checksum/clusteragent-configmap: 3f31a62941835a795f0e91cf7b1d73bcff008bc6209660cfcc057d21d4dc5beb
+        checksum/api_key: f2ebb229936b8c29e5a679f9ceb3770e693e8957e437b067c5b84d7fd88aa0d5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: e25591d3c3d4f1ffd34b44799840d82a96fd1bdf4875b5bdba29f1cde44f600b
+        checksum/install_info: 14844cdbe43d3d05661c949c1d525a753339a79a29a7c5661621aea486790c9a
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.48.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.50.3"
         imagePullPolicy: IfNotPresent
         command:
-          - bash
-          - -c
+          - cp
+          - -r
         args:
-          - |
-            chmod -R 744 /etc/datadog-agent;
-            cp -r /etc/datadog-agent /opt
+          - /etc/datadog-agent
+          - /opt
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.48.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.50.3"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -105,6 +104,12 @@ spec:
             value: "Ignore"
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: "8000"
+          # Sidecar injection
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
+            value: '[{"namespaceSelector":{"matchLabels":{"injectsidecar":true}},"objectSelector":{"matchLabels":{"injectsidecar":true}}}]'
+          # end sidecar injection
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -146,6 +151,21 @@ spec:
             value: "true"
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: "true"
+          - name: DD_INSTRUMENTATION_INSTALL_TIME
+            valueFrom:
+              configMapKeyRef:
+                name: datadog-kpi-telemetry-configmap
+                key: install_time
+          - name: DD_INSTRUMENTATION_INSTALL_ID
+            valueFrom:
+              configMapKeyRef:
+                name: datadog-kpi-telemetry-configmap
+                key: install_id
+          - name: DD_INSTRUMENTATION_INSTALL_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: datadog-kpi-telemetry-configmap
+                key: install_type
                               
         livenessProbe:
           failureThreshold: 6

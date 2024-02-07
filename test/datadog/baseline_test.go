@@ -51,6 +51,21 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:           verifyDeployment,
 		},
 		{
+			name: "DCA Deployment default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"clusterAgent.admissionController.enabled":                       "true",
+					"clusterAgent.admissionController.agentSidecarInjection.enabled": "true",
+				},
+			},
+			baselineManifestPath: "./baseline/cluster-agent-deployment_default.yaml",
+			assertions:           verifyDeployment,
+		},
+		{
 			name: "CLC Deployment default",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
