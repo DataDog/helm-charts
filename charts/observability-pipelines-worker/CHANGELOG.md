@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+
+* Official image `1.8.0`
+
 ## 1.7.1
 
 * Official image `1.7.1`
