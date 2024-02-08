@@ -15,3 +15,4 @@ charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @Dat
 charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/synthetics-private-location/                  @Datadog/synthetics
 charts/observability-pipelines-worker                @DataDog/observability-pipelines
+charts/datadog/templates/_container-trace-agent.yaml @DataDog/agent-apm @DataDog/container-helm-chart-maintainers
