@@ -783,6 +783,10 @@ datadog:
           # datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled -- Set to true to enable CWS runtime drift events
           enabled: true
 
+        autoSuppression:
+          # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
+          enabled: true
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
