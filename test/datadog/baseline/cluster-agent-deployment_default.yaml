@@ -35,7 +35,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 8d602b609b9e6fc8533b36f8c29d2e4d11cb64016d11adc538285afdbbfffa7b
+        checksum/clusteragent_token: 60c2185d51b4f61be96fb8b028440a891ed206c63738cfdeb7238a73fcb292c8
         checksum/clusteragent-configmap: 3f31a62941835a795f0e91cf7b1d73bcff008bc6209660cfcc057d21d4dc5beb
         checksum/api_key: f2ebb229936b8c29e5a679f9ceb3770e693e8957e437b067c5b84d7fd88aa0d5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -108,7 +108,9 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
-            value: '[{"namespaceSelector":{"matchLabels":{"injectsidecar":true}},"objectSelector":{"matchLabels":{"injectsidecar":true}}}]'
+            value: '[{"name":"fargate-profile1","namespaceSelector":{"matchLabels":{"injectsidecar":"true"}},"objectSelector":{"matchLabels":{"application-fargate":"true"}}},{"name":"fargate-profile2","namespaceSelector":{"matchLabels":{"nsName":"frontend_or_backend"}}}]'
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES
+            value: '[{"default":true,"env":[{"name":"DD_CARDINALITY","value":"orchestrator"},{"name":"DD_PROCESS_ENABLE","value":"true"}],"name":"standard","resources":{"cpu":"500m","limits":null,"memory":"500Mi","requests":{"cpu":"500m","memory":"500Mi"}}},{"basedOnDefault":true,"name":"large","resources":{"limits":{"cpu":"1","memory":"800Mi"},"requests":{"cpu":"1","memory":"800Mi"}},"selectors":["fargate-profile1"]}]'
           # end sidecar injection
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"

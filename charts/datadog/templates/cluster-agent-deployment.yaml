@@ -242,6 +242,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
             value: '{{ toJson .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}'
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.agentSidecarInjection.profiles }}
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES
+            value: '{{ toJson .Values.clusterAgent.admissionController.agentSidecarInjection.profiles }}'
+          {{- end }}
           {{- end }}
           # end sidecar injection
           - name: DD_REMOTE_CONFIGURATION_ENABLED

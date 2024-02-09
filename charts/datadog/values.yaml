@@ -1058,13 +1058,53 @@ clusterAgent:
     port: 8000
     agentSidecarInjection:
       enabled: true
+      provider: fargate
       selectors:
-      - objectSelector:
+      - name: fargate-profile1
+        objectSelector:
           matchLabels:
-            injectsidecar: "true"
+            application-fargate: "true"
         namespaceSelector:
           matchLabels:
             injectsidecar: "true"
+      - name: fargate-profile2
+        namespaceSelector:
+          matchLabels:
+            nsName: frontend_or_backend
+      profiles:
+        - name: standard
+          default: true
+          env:
+            - name: DD_CARDINALITY
+              value: orchestrator
+            - name: DD_PROCESS_ENABLE
+              value: "true"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+            cpu: 500m
+            memory: 500Mi
+        - name: large
+          basedOnDefault: true
+          selectors:
+          - fargate-profile1
+          resources:
+            requests:
+              cpu: "1"
+              memory: 800Mi
+            limits:
+              cpu: "1"
+              memory: 800Mi
+      # enabled: true
+      # selectors:
+      # - objectSelector:
+      #     matchLabels:
+      #       injectsidecar: "true"
+      #   namespaceSelector:
+      #     matchLabels:
+      #       injectsidecar: "true"
       # - objectSelector:
       #     matchExpressions:
       #       - key: runlevel
@@ -1076,6 +1116,30 @@ clusterAgent:
       #     matchLabels:
       #       nsKey3: nsValue3
       #       nsKey4: nsValue4
+      # profiles:
+      #   - env:
+      #       - name: PROVIDER_1
+      #         value: true
+      #       - name: DD_APM_ENABLED
+      #         value: true
+      #     resources:
+      #       requests:
+      #         cpu: "1"
+      #         memory: "512Mi"
+      #       limits:
+      #         cpu: "2"
+      #         memory: "1024Mi"
+      #   - env:
+      #       - name: ENV_VAR
+      #         value: value
+      #     resources:
+      #       requests:
+      #         cpu: "0.3"
+      #         memory: "128Mi"
+      #       limits:
+      #         cpu: "0.5"
+      #         memory: "256Mi"
+
 
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
