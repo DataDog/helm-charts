@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.4
+
+* Move automatic blacklisting of datadog namespace for APM Instrumentation from Helm to the Agent
+
 ## 3.53.3
 
 * Update `fips.image.tag` to `1.1.1`
