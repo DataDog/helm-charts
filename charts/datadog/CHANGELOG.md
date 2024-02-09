@@ -1,8 +1,80 @@
 # Datadog changelog
 
-## 3.49.6
+## 3.53.4
 
 * Add default container resource values for GKE Autopilot
+
+## 3.53.3
+
+* Update `fips.image.tag` to `1.1.1`
+
+## 3.53.2
+
+* Exclude agent pod from labels injection from the admission controller 
+
+## 3.53.1
+
+* Update `fips.image.tag` to `1.1.0`
+
+## 3.53.0
+
+* Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
+
+## 3.52.0
+
+* Allow configuring CWS security profile features and enable drift events by default
+
+## 3.51.2
+
+* Use correct kpi-telemetry-configmap in Cluster Agent and Trace Agent.
+
+## 3.51.1
+
+* Parametrize the name of kpi-telemetry-configmap.
+
+## 3.51.0
+
+* Add `DD_INSTRUMENTATION_INSTALL_TIME`, `DD_INSTRUMENTATION_INSTALL_ID`, `DD_INSTRUMENTATION_INSTALL_TYPE` env variables to the Trace and Cluster agents to support APM Telemetry KPIs.
+
+## 3.50.5
+
+* Add option to use containerd snapshotter to generate SBOMs.
+
+## 3.50.4
+
+* Mount host files for proper OS detection in SBOMs.
+
+## 3.50.3
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.3`.
+
+## 3.50.2
+
+* Support automatic registry selection based on `datadog.site` on GKE Autopilot.
+
+## 3.50.1
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.2`.
+
+## 3.50.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.1`.
+
+## 3.49.9
+
+* Update `fips.image.tag` to `1.0.1`
+
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
+
+## 3.49.7
+
+Fix NOTES warning for APM Instrumentation
+
+## 3.49.6
+
+Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in lastest versions of the agent.
 
 ## 3.49.5
 

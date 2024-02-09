@@ -9,13 +9,12 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath) }}
+{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
 {{- end }}
-{{- if eq (include "should-enable-system-probe" .) "true" }}
-{{- if .Values.datadog.systemProbe.enableDefaultOsReleasePaths }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.systemProbe.enableDefaultOsReleasePaths) .Values.datadog.sbom.host.enabled }}
 - hostPath:
     path: /etc/redhat-release
   name: etc-redhat-release
@@ -25,7 +24,9 @@
 - hostPath:
     path: /etc/lsb-release
   name: etc-lsb-release
-{{- end }}
+- hostPath:
+    path: /etc/system-release
+  name: etc-system-release
 {{- end -}}
 {{- if eq (include "should-enable-fips" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
@@ -145,6 +146,22 @@
 - hostPath:
     path: /
   name: hostroot
+{{- end }}
+{{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+- hostPath:
+    path: /var/lib/containerd
+  name: host-containerd-dir
+{{- end }}
+{{- if .Values.datadog.sbom.host.enabled }}
+- hostPath:
+    path: /var/lib/apk
+  name: host-apk-dir
+- hostPath:
+    path: /var/lib/dpkg
+  name: host-dpkg-dir
+- hostPath:
+    path: /var/lib/rpm
+  name: host-rpm-dir
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}

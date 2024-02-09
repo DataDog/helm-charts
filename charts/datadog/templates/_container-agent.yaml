@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" .Values.datadog.sbom.containerImage.uncompressedLayersSupport) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-agent-container-resources" . | indent 4 }}
@@ -175,9 +175,15 @@
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
+      value: "true"
+    {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
+    - name: HOST_ROOT
+      value: /host
     {{- end }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
@@ -253,6 +259,42 @@
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    - name: host-containerd-dir
+      mountPath: /host/var/lib/containerd
+      readOnly: true
+    {{- end }}
+    {{- if .Values.datadog.sbom.host.enabled }}
+    - name: host-apk-dir
+      mountPath: /host/var/lib/apk
+      readOnly: true
+    - name: host-dpkg-dir
+      mountPath: /host/var/lib/dpkg
+      readOnly: true
+    - name: host-rpm-dir
+      mountPath: /host/var/lib/rpm
+      readOnly: true
+    {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
+    - name: etc-redhat-release
+      mountPath: /host/etc/redhat-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/fedora-release" }}
+    - name: etc-fedora-release
+      mountPath: /host/etc/fedora-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/lsb-release" }}
+    - name: etc-lsb-release
+      mountPath: /host/etc/lsb-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/system-release" }}
+    - name: etc-system-release
+      mountPath: /host/etc/system-release
       readOnly: true
     {{- end }}
     {{- end }}
