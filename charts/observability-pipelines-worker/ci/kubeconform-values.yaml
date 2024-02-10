@@ -1,32 +1,10 @@
+image:
+  tag: nightly
+  pullPolicy: Always
+
 datadog:
   pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
-pipelineConfig:
-  sources:
-    datadog_agents:
-      type: datadog_agent
-      address: 0.0.0.0:8282
-      multiple_outputs: true
-      store_api_key: false
-  sinks:
-    datadog_logs:
-      type: datadog_logs
-      inputs:
-        - datadog_agents.logs
-      compression: gzip
-      default_api_key: ${DD_API_KEY}
-      site: ${DD_SITE}
-    datadog_metrics:
-      type: datadog_metrics
-      inputs:
-        - datadog_agents.metrics
-      default_api_key: ${DD_API_KEY}
-      site: ${DD_SITE}
-    datadog_traces:
-      type: datadog_traces
-      inputs:
-        - datadog_agents.traces
-      default_api_key: ${DD_API_KEY}
-      site: ${DD_SITE}
+
 args:
   - run
   - --skip-key-validation
