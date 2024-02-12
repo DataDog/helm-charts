@@ -116,7 +116,7 @@ jobs:
           - v1.22.9
           - v1.24.2
           - v1.25.16
-          - v1.26.9
+          - v1.26.13
     steps:
       - name: Checkout
         uses: actions/checkout@v3
