@@ -280,6 +280,9 @@ datadog:
     # datadog.kubelet.podLogsPath -- Path (on host) where the PODs logs are located
     # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
     podLogsPath:
+    # datadog.kubelet.core_check -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.52.0+)
+    # @default -- false
+    core_check: false
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000

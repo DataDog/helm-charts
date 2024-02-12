@@ -4,6 +4,7 @@ datadog:
   kubelet:
     hostCAPath: /foo/bar/cert.ca
     agentCAPath: /bar/foo/cert.ca
+    core_check: true
   env:
   - name: "DD_KUBELET_TLS_VERIFY"
     value: "false"

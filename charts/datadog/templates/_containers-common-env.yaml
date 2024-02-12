@@ -17,6 +17,10 @@
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
 {{- end }}
+{{- if .Values.datadog.kubelet.core_check }}
+- name: DD_KUBERNETES_KUBELET_CORE_CHECK_ENABLED
+  value: {{ .Values.datadog.kubelet.core_check | quote }}
+{{- end }}
 {{- if .Values.datadog.kubelet.tlsVerify | quote }}
 - name: DD_KUBELET_TLS_VERIFY
   value: {{ .Values.datadog.kubelet.tlsVerify | quote }}

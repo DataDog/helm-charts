@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.58.0
+
+* Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
+  Note: this requires agent/cluster agent version 7.53.0+
+
 ## 3.57.3
 
 * Exclude agent, cluster agent and agent clusterchecks pods from injection from the admission controller.
