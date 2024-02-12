@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.53.4
+## 3.54.1
 
 * Migrate from `kubeval` to `kubeconform` for ci chart validation.
 
