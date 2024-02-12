@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.53.4
+
+* Add default container resource values for GKE Autopilot
+
 ## 3.53.3
 
 * Update `fips.image.tag` to `1.1.1`
