@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.54.0
+
+* Add NetworkPolicy ingress rules for OTLP receivers(grpc & http)
+
 ## 3.53.3
 
 * Update `fips.image.tag` to `1.1.1`
