@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.25
+
+* Update private location image version to `1.44.0`.
+
 ## 0.15.24
 
 * Clarify the usage of `configSecret`

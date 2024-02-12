@@ -500,6 +500,9 @@ datadog:
           endpoint: "0.0.0.0:4318"
           # datadog.otlp.receiver.protocols.http.useHostPort -- Enable the Host Port for the OTLP/HTTP endpoint
           useHostPort: true
+    logs:
+      # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
+      enabled: false
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
@@ -1269,7 +1272,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.0.1
+    tag: 1.1.1
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
