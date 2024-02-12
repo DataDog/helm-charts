@@ -106,6 +106,7 @@ jobs:
   install-chart:
     name: install-chart
     runs-on: ubuntu-20.04
+    timeout-minutes: 60
     needs:
       - lint-chart
       - kubeconform-chart
@@ -126,6 +127,7 @@ jobs:
         uses: helm/kind-action@v1.5.0
         with:
           node_image: kindest/node:${{ matrix.k8s }}
+          config: .github/kind_config.yaml
       - uses: actions/setup-python@v4
         with:
           python-version: 3.7
