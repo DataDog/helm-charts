@@ -31,7 +31,7 @@ for CHART_DIR in ${CHART_DIRS}; do
   # they're available via
   # https://github.com/datreeio/CRDs-catalog/tree/main/datadoghq.com
   helm dep up "${CHART_DIR}" && helm template --kube-version "${KUBERNETES_VERSION#v}" \
-        --values "${CHART_DIR}/ci/kubeconform-values.yaml" "${CHART_DIR}" \
+        --values "${CHART_DIR}/ci/kubeconform.yaml" "${CHART_DIR}" \
     | ./kubeconform -strict -schema-location default -schema-location "$CRD_SPEC_URL" \
         -schema-location $LEGACY_SCHEMA_URL -output pretty \
         -verbose -kubernetes-version "${KUBERNETES_VERSION#v}" -
