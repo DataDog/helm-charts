@@ -1,6 +1,6 @@
 charts/*/charts
 helm-docs
-kubeval
+kubeconform
 .idea
 vendor/
 .vscode

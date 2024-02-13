@@ -1,20 +1,20 @@
 # Datadog changelog
 
-<<<<<<< HEAD
-## 3.53.3
+## 3.54.2
 
 * Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
 
-||||||| 3c6bc62
-=======
+## 3.54.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 3.53.3
 
 * Update `fips.image.tag` to `1.1.1`
 
->>>>>>> main
 ## 3.53.2
 
-* Exclude agent pod from labels injection from the admission controller
+* Exclude agent pod from labels injection from the admission controller.
 
 ## 3.53.1
 
