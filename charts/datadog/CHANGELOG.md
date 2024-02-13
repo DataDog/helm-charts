@@ -1,12 +1,16 @@
 # Datadog changelog
 
+## 3.54.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 3.53.3
 
 * Update `fips.image.tag` to `1.1.1`
 
 ## 3.53.2
 
-* Exclude agent pod from labels injection from the admission controller 
+* Exclude agent pod from labels injection from the admission controller.
 
 ## 3.53.1
 
