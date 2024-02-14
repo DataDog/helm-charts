@@ -1,3 +1,6 @@
+//go:build e2e
+// +build e2e
+
 package datadog
 
 import (
@@ -5,13 +8,14 @@ import (
 	"testing"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
-	"github.com/DataDog/helm-charts/test/common"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+
+	"github.com/DataDog/helm-charts/test/common"
 )
 
 const namespace = "datadog"
@@ -30,8 +34,6 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 		"ddtestworkload:deploy":                      auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
 		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-		// TODO: remove when upstream eks-pulumi bug is fixed https://github.com/pulumi/pulumi-eks/pull/886
-		"pulumi:disable-default-providers": auto.ConfigValue{Value: "[]"},
 	}
 	stackConfig.Merge(config)
 
@@ -48,7 +50,7 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 			kc := kubeconfig.Value.(map[string]interface{})
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
 			if err == nil {
-				verifyPods(t)
+				t.Run("Verify pods", verifyPods)
 			}
 		} else {
 			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
@@ -79,10 +81,15 @@ func verifyPods(t *testing.T) {
 		RestConfig: restConfig,
 	}
 
-	assertPodStatus(t, podExec, ddaPodList, "agent")
-	assertPodStatus(t, podExec, dcaPodList, "cluster-agent")
-	assertPodStatus(t, podExec, ccPodList, "agent")
-
+	t.Run("Assert `agent` pod status", func(t *testing.T) {
+		assertPodStatus(t, podExec, ddaPodList, "agent")
+	})
+	t.Run("Assert `cluster-agent` pod status", func(t *testing.T) {
+		assertPodStatus(t, podExec, dcaPodList, "cluster-agent")
+	})
+	t.Run("Assert `cluster-check-runner` pod status", func(t *testing.T) {
+		assertPodStatus(t, podExec, ccPodList, "agent")
+	})
 }
 
 func assertPodStatus(t *testing.T, podExec common.K8sExec, podList *v1.PodList, containerName string) {
