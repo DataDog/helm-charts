@@ -22,10 +22,10 @@ e2e:
     # Setup AWS Credentials
     - mkdir -p ~/.aws
     - set +x
+    - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
     - export AWS_PROFILE=agent-qa-ci
-    - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
 #    - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
 #    - make test-e2e
