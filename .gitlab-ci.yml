@@ -8,7 +8,7 @@ stages:
 e2e:
   stage: e2e
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+#    - if: $CI_COMMIT_BRANCH == "main"
 #      changes:
 #        paths:
 #          - charts/**/*.yaml
