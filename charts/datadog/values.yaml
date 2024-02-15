@@ -411,7 +411,8 @@ datadog:
     autoMultiLineDetection: false
 
     ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
-    autoMultiLineExtraLines: 
+    ## sample line matches timestamp of [2024-01-31 10:10:10]. Configure it with a comma separated string for multiple values.
+    autoMultiLineExtraLines: #\\[\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}\\]'
 
   ## Enable apm agent and provide custom configs
   apm:
