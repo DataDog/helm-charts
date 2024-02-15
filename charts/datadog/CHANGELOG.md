@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.29.3
+* Makes automultiline extra patterns configurable in the main chart *
+
 ## 3.29.2
 
 * Default `Agent` and `Cluster-Agent` to `7.44.1` version.
