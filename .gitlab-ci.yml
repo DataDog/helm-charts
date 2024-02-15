@@ -12,6 +12,9 @@ e2e:
 #        compare_to: "refs/heads/main"
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
   tags: ["arch:amd64"]
+  variables:
+    AWS_KEYPAIR_NAME: datadog-agent-ci
+    AWS_PRIVATE_KEY_FILE: $CI_PROJECT_DIR/ssh_key
   before_script:
     # Update awscli v2
     - aws --version
@@ -23,6 +26,11 @@ e2e:
     - mkdir -p ~/.aws
     - set +x
     - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_key --with-decryption --query "Parameter.Value" --out text > $AWS_PRIVATE_KEY_FILE
+    - set -x
+    # Without the newline ssh silently fails and moves on to try other auth methods
+    - echo "" >> $AWS_PRIVATE_KEY_FILE
+    - chmod 600 $AWS_PRIVATE_KEY_FILE
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
     - export AWS_PROFILE=agent-qa-ci
