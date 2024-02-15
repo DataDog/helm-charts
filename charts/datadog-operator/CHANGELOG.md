@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0
+
+* Update Datadog Operator version to 1.4.0.
+
 ## 1.4.2
 
 * Migrate from `kubeval` to `kubeconform` for ci chart validation.
