@@ -50,14 +50,14 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 			kc := kubeconfig.Value.(map[string]interface{})
 			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
 			if err == nil {
-				t.Run("Verify pods", verifyPods)
+				t.Run("Agent pods should be created", verifyPods)
 			}
 		} else {
 			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
 		}
 	}
 	if err != nil {
-		t.Skipf("Skipping test. Encountered problem creating or updating E2E stack: %s", err)
+		t.Errorf("Skipping tests. Encountered problem creating or updating E2E stack: %s", err)
 	}
 }
 
@@ -81,13 +81,13 @@ func verifyPods(t *testing.T) {
 		RestConfig: restConfig,
 	}
 
-	t.Run("Assert `agent` pod status", func(t *testing.T) {
+	t.Run("exec `agent status` for `agent` pod should not error", func(t *testing.T) {
 		assertPodStatus(t, podExec, ddaPodList, "agent")
 	})
-	t.Run("Assert `cluster-agent` pod status", func(t *testing.T) {
+	t.Run("`exec `agent status` for `cluster-agent` pod should not error", func(t *testing.T) {
 		assertPodStatus(t, podExec, dcaPodList, "cluster-agent")
 	})
-	t.Run("Assert `cluster-check-runner` pod status", func(t *testing.T) {
+	t.Run("exec `agent status` for `cluster-check-runner` pod should not error", func(t *testing.T) {
 		assertPodStatus(t, podExec, ccPodList, "agent")
 	})
 }
