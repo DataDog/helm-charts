@@ -15,6 +15,9 @@ e2e:
   variables:
     AWS_KEYPAIR_NAME: datadog-agent-ci
     AWS_PRIVATE_KEY_FILE: $CI_PROJECT_DIR/ssh_key
+    KUBERNETES_CPU_REQUEST: 2
+    KUBERNETES_MEMORY_REQUEST: 4Gi
+    KUBERNETES_MEMORY_LIMIT: 12Gi
   before_script:
     - mkdir -p ~/.aws
     - set +x
