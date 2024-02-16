@@ -6340,6 +6340,8 @@ spec:
                       type: object
                     clusterName:
                       type: string
+                    containerStrategy:
+                      type: string
                     credentials:
                       properties:
                         apiKey:
@@ -6367,6 +6369,8 @@ spec:
                       type: object
                     criSocketPath:
                       type: string
+                    disableNonResourceRules:
+                      type: boolean
                     dockerSocketPath:
                       type: string
                     endpoint:
@@ -8266,6 +8270,44 @@ spec:
                     - ready
                     - upToDate
                   type: object
+                agentList:
+                  items:
+                    properties:
+                      available:
+                        format: int32
+                        type: integer
+                      current:
+                        format: int32
+                        type: integer
+                      currentHash:
+                        type: string
+                      daemonsetName:
+                        type: string
+                      desired:
+                        format: int32
+                        type: integer
+                      lastUpdate:
+                        format: date-time
+                        type: string
+                      ready:
+                        format: int32
+                        type: integer
+                      state:
+                        type: string
+                      status:
+                        type: string
+                      upToDate:
+                        format: int32
+                        type: integer
+                    required:
+                      - available
+                      - current
+                      - desired
+                      - ready
+                      - upToDate
+                    type: object
+                  type: array
+                  x-kubernetes-list-type: atomic
                 clusterAgent:
                   properties:
                     availableReplicas:
