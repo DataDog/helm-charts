@@ -16,7 +16,7 @@
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME
-  value: {{ .Values.datadog.clusterName | quote }}
+  value: {{ tpl .Values.datadog.clusterName . | quote }}
 {{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
