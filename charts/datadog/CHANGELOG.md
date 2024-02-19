@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.55.0
+
+* Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
+
 ## 3.54.2
 
 * Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
