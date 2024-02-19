@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.56.0
+
+* Allow templating of `datadog.clusterName`.
+
 ## 3.55.0
 
 * Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
