@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.57.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.51.0`.
+
 ## 3.56.0
 
 * Allow templating of `datadog.clusterName`.
