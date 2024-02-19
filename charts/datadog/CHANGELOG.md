@@ -1,6 +1,5 @@
 # Datadog changelog
 
-
 ## 3.55.0
 
 * Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
