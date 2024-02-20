@@ -10,6 +10,9 @@ e2e:
           - charts/**/*.yaml
           - test/**/*
         compare_to: "refs/heads/main"
+      when: always
+    - if: $CI_COMMIT_BRANCH != "main"
+      when: manual
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
   tags: ["arch:amd64"]
   variables:
