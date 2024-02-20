@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.57.1
+
+* Allow configuring CWS security profile based auto suppression feature and enable it by default.
+
 ## 3.57.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.51.0`.
