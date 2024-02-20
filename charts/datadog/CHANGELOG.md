@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 3.57.1
+
+* Allow configuring CWS security profile based auto suppression feature and enable it by default.
+
+## 3.57.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.51.0`.
+
+## 3.56.0
+
+* Allow templating of `datadog.clusterName`.
+
+## 3.55.0
+
+* Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
+
 ## 3.54.2
 
 * Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
