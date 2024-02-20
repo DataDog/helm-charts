@@ -73,6 +73,8 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    - name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
+      value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
     {{- end }}
     {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
@@ -101,7 +103,7 @@
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_APM_ENABLED
-      value: "false"
+      value: {{ include "should-enable-trace-agent" . | quote }}
     - name: DD_LOGS_ENABLED
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL

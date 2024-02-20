@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.8.0
 
 * Official image `1.8.0`
