@@ -1,7 +1,3 @@
-variables:
-  # Do not modify this - must be the repository name for Kubernetes gitlab runners to run
-  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: helm-charts
-
 stages:
   - e2e
 
@@ -14,22 +10,32 @@ e2e:
           - charts/**/*.yaml
           - test/**/*
         compare_to: "refs/heads/main"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:986d192b
+      when: always
+    - if: $CI_COMMIT_BRANCH != "main"
+      when: manual
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
   tags: ["arch:amd64"]
+  variables:
+    AWS_KEYPAIR_NAME: datadog-agent-ci
+    AWS_PRIVATE_KEY_FILE: $CI_PROJECT_DIR/ssh_key
+    KUBERNETES_CPU_REQUEST: 2
+    KUBERNETES_MEMORY_REQUEST: 4Gi
+    KUBERNETES_MEMORY_LIMIT: 12Gi
   before_script:
-    # Update awscli v2
-    - aws --version
-    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    - unzip awscliv2.zip
-    - ./aws/install --update
-    - aws --version
-    # Setup AWS Credentials
     - mkdir -p ~/.aws
     - set +x
+    # Set GITHUB_TOKEN to avoid getting rate-limited when pulumi sdk downloads the kubernetes provider
+    - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
+    # Configure AWS EC2 ssh key needed for create pulumi EKS environment
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_key --with-decryption --query "Parameter.Value" --out text > $AWS_PRIVATE_KEY_FILE
+    - set -x
+    # Without the newline ssh silently fails and moves on to try other auth methods
+    - echo "" >> $AWS_PRIVATE_KEY_FILE
+    - chmod 600 $AWS_PRIVATE_KEY_FILE
+    # Configure AWS profile
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - set -x
     - export AWS_PROFILE=agent-qa-ci
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
-    # TODO: enable running E2E tests when upstream pulumi-eks fix is merged https://github.com/pulumi/pulumi-eks/pull/886
-    - echo "Success!"
+    - make test-e2e
