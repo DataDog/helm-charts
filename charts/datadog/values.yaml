@@ -479,6 +479,9 @@ datadog:
 
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
       libVersions: {}
+
+      # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
+      skipKPITelemetry: false
   ## OTLP ingest related configuration
   otlp:
     receiver:

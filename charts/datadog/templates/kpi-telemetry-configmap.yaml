@@ -6,6 +6,11 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 data:
-  install_id: {{ uuidv4 | quote }}
   install_type: k8s_manual
+  {{- if .Values.datadog.apm.instrumentation.skipKPITelemetry }}
+  install_id: "default"
+  install_time: "default"
+  {{- else }}
+  install_id: {{ uuidv4 | quote }}
   install_time: {{ now | unixEpoch | quote }}
+  {{- end }}

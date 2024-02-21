@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.57.2
+
+* Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
+
 ## 3.57.1
 
 * Allow configuring CWS security profile based auto suppression feature and enable it by default.
