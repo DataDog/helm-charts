@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.57.3
+
+* Exclude agent, cluster agent and agent clusterchecks pods from injection from the admission controller.
+
 ## 3.57.2
 
 * Add `networkpolicies` default permission for the cluster agent.

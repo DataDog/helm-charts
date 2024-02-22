@@ -30,6 +30,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
