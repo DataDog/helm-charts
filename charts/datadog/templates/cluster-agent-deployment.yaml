@@ -238,7 +238,7 @@ spec:
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabled }}
           - name: DD_APM_INSTRUMENTATION_ENABLED
-            value: "true"
+            value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
           {{- end }}
           {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
