@@ -783,6 +783,10 @@ datadog:
           # datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled -- Set to true to enable CWS runtime drift events
           enabled: true
 
+        autoSuppression:
+          # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
+          enabled: true
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
@@ -887,7 +891,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.50.3
+    tag: 7.51.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1315,7 +1319,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.50.3
+    tag: 7.51.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1783,7 +1787,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.50.3
+    tag: 7.51.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
