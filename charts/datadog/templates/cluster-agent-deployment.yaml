@@ -8,7 +8,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: cluster-agent
-    admission.datadoghq.com/enabled: "false"
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
