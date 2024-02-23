@@ -1,0 +1,45 @@
+chart/datadog:
+    - changed-files:
+        - any-glob-to-any-file: "charts/datadog/**"
+
+chart/datadog-crds:
+    - changed-files:
+        - any-glob-to-any-file: "charts/datadog-crds/**"
+        - any-glob-to-any-file: "crds/**"
+
+chart/datadog-operator:
+    - changed-files:
+        - any-glob-to-any-file: "charts/datadog-operator/**"
+
+chart/extended-daemon-set:
+    - changed-files:
+        - any-glob-to-any-file: "charts/extended-daemon-set/**"
+
+chart/watermarkpodautoscaler:
+    - changed-files:
+        - any-glob-to-any-file: "charts/watermarkpodautoscaler/**"
+
+chart/observability-pipelines-worker:
+    - changed-files:
+        - any-glob-to-any-file: "charts/observability-pipelines-worker/**"
+
+chart/synthetics-private-location:
+    - changed-files:
+        - any-glob-to-any-file: "charts/synthetics-private-location/**"
+
+tools/tests:
+    - changed-files:
+        - any-glob-to-any-file: "tests/**"
+
+tools/ci:
+    - changed-files:
+        - any-glob-to-any-file: ".github/**"
+        - any-glob-to-any-file: ".gitlab-ci.yml"
+        - any-glob-to-any-file: "Makefile"
+
+documentation:
+    - changed-files:
+        - any-glob-to-any-file: "README.md"
+        - any-glob-to-any-file: "examples/**"
+        - any-glob-to-any-file: "CONTRIBUTING.md"
+        - any-glob-to-any-file: "LICENSE"

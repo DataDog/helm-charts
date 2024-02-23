@@ -4,6 +4,14 @@
 
 * Change configuration options for APM Instrumentation.
 
+## 3.57.3
+
+* Exclude agent, cluster agent and agent clusterchecks pods from injection from the admission controller.
+
+## 3.57.2
+
+* Add `networkpolicies` default permission for the cluster agent.
+
 ## 3.57.1
 
 * Allow configuring CWS security profile based auto suppression feature and enable it by default.

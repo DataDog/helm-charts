@@ -27,6 +27,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-clusterchecks
         {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
