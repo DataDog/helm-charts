@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+
+* Add deprecation warning for `DatadogAgent` `v1alpha1` CRD version.
+
 ## 1.5.0
 
 * Update Datadog Operator version to 1.4.0.
