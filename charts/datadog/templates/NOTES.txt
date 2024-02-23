@@ -155,7 +155,7 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.enableddNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
