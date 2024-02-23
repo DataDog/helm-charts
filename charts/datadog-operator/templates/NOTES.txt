@@ -44,7 +44,7 @@ Setting a value will not change the default defined in the Operator.
 {{- if (semverCompare ">=1.0.0" .Values.image.tag) }}
     {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled }}
 ##############################################################################
-####               WARNING: v1alpha1 and conversion webhook deprecation.  ####
+####         WARNING: v1alpha1 and conversion webhook deprecation.        ####
 ##############################################################################
 
 The DatadogAgent `v1alpha1` reconciliation in the Operator is deprecated since v1.2.0+ and will be removed in v1.7.0.
