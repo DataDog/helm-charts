@@ -20,3 +20,5 @@ spec:
       useClusterChecksRunners: true
     liveContainerCollection:
       enabled: true
+    orchestratorExplorer:
+      enabled: true
