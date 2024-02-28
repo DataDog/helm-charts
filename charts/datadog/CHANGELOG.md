@@ -2,7 +2,11 @@
 
 ## 3.58.0
 
-* Change configuration options for APM Instrumentation.
+* Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
+* `datadog.apm.instrumentation.enabled` - set to `true` to enable automatic instrumentation.
+* `datadog.apm.instrumentation.enabledNamespaces` - optional; list of namespaces to enable automatic instrumentation in. If not provided, every namespace in the cluster will be instrumented.
+* `datadog.apm.instrumentation.disabledNamespaces` - optional; list of namespaces to disable automatic instrumentation in.
+
 
 ## 3.57.3
 
