@@ -56,6 +56,11 @@ fullnameOverride: ""
 logLevel: "info"
 # maximumGoroutines -- Override default goroutines threshold for the health check failure.
 maximumGoroutines:
+
+
+introspection:
+# introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  enabled: false
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
 # operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
