@@ -854,7 +854,7 @@ datadog:
   containerInclude:
 
   # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
-  containerExcludeLogs:
+  containerExcludeLogs: api-contratos
 
   # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
   containerIncludeLogs:
