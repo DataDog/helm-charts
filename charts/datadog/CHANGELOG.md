@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.3
+
+* Add language detection enable option for `APM` instrumentation.
+
 ## 3.59.2
 
 * Disable language detection reporting by default in Cluster Agent with Agent 7.52+.

@@ -479,6 +479,13 @@ datadog:
 
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
       libVersions: {}
+
+      # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
+      # It requires Agent 7.52+ and Cluster Agent 7.52+
+      language_detection:
+        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
+        enabled: true
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
