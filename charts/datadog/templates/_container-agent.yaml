@@ -184,9 +184,9 @@
       value: /host
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.kubelet.core_check }}
+    {{- if .Values.datadog.kubelet.coreCheck }}
     - name: DD_KUBERNETES_KUBELET_CORE_CHECK_ENABLED
-      value: {{ .Values.datadog.kubelet.core_check | quote }}
+      value: {{ .Values.datadog.kubelet.coreCheck | quote }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
