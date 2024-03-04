@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.4
+
+* Add language detection enable option for `APM` instrumentation.
+
 ## 3.59.3
 * Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
 
