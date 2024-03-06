@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.2
+
+* Add deprecation warning for `DatadogAgent` `v1alpha1` CRD version.
+
+## 1.5.1
+
+* Add configuration for Operator flag `introspectionEnabled`: this parameter is used to enable the Introspection. It is disabled by default.
+
 ## 1.5.0
 
 * Update Datadog Operator version to 1.4.0.
