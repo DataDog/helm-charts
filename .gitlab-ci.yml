@@ -5,11 +5,18 @@ e2e:
   stage: e2e
   rules:
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
+      changes:
+        paths:
+          - charts/datadog/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
+      when: always
+    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       when: never
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
-          - charts/**/*.yaml
+          - charts/datadog/**
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
