@@ -4,6 +4,8 @@ stages:
 e2e:
   stage: e2e
   rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
+      when: never
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
