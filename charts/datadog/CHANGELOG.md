@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.0
+* fix missing DD_TAGS on clusterchecks runner deployment
+* fix: clusterChecksRunner.rbac.create=false should not create rbac resources
+
 ## 3.58.0
 
 * Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
