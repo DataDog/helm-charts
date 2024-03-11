@@ -156,6 +156,10 @@ spec:
           - name: DD_LOG_LEVEL
             value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
+          {{- if .Values.datadog.tags }}
+          - name: DD_TAGS
+            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
+          {{- end }}
           - name: DD_EXTRA_CONFIG_PROVIDERS
             value: "clusterchecks"
           - name: DD_HEALTH_PORT
