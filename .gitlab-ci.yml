@@ -1,20 +1,32 @@
 stages:
   - e2e
 
+variables:
+  RUN_E2E_TEST:
+    description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
+
 e2e:
   stage: e2e
   rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
+      changes:
+        paths:
+          - charts/datadog/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
+      when: always
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       when: never
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
-          - charts/**/*.yaml
+          - charts/datadog/**
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: $CI_COMMIT_BRANCH != "main"
+    - if: $RUN_E2E_TEST == "true"
       when: manual
+    - when: never
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
   tags: ["arch:amd64"]
   variables:
