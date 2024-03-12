@@ -282,7 +282,7 @@ datadog:
     podLogsPath:
     # datadog.kubelet.coreCheck -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
     # @default -- false
-    coreCheck: false
+    coreCheckEnabled: false
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
