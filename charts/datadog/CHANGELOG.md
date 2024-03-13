@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.58.1
+
+* Add `clusterAgent.admissionController.autoInstrumentationContainerRegistry` option for cluster-agent to specify registry used by Admission Controller for library injection (by setting `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY` environment variable).
+
 ## 3.58.0
 
 * Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
