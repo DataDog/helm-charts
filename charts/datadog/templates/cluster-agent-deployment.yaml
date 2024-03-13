@@ -253,6 +253,12 @@ spec:
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APM_ENABLED
+            value: "true"
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
