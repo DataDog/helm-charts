@@ -1057,6 +1057,9 @@ clusterAgent:
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
+    
+    # clusterAgent.admissionController.autoInstrumentationContainerRegistry -- registry used by the Admission Controller for the initContainer that injects instrumentation libraries
+    autoInstrumentationContainerRegistry: "gcr.io/datadoghq" # "gcr.io/datadoghq", "docker.io/datadog" or "public.ecr.aws/datadog"
 
     # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
     port: 8000
