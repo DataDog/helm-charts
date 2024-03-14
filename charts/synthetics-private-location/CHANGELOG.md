@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.27
+
+* Update private location image version to `1.45.0`.
+
 ## 0.15.26
 
 * Migrate from `kubeval` to `kubeconform` for ci chart validation.
