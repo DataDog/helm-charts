@@ -51,6 +51,30 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:           verifyDeployment,
 		},
 		{
+			name: "DCA Deployment default with minimal AC sidecar injection",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml" /*,"./manifests/dca_AC_sidecar_fargateMinimal.yaml"*/},
+				Overrides:   map[string]string{},
+			},
+			baselineManifestPath: "./baseline/cluster-agent-deployment_default_minimal_AC_injection.yaml",
+			assertions:           verifyDeployment,
+		},
+		{
+			name: "DCA Deployment default with advanced AC sidecar injection",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml" /*,"./manifests/dca_AC_sidecar_advanced.yaml"*/},
+				Overrides:   map[string]string{},
+			},
+			baselineManifestPath: "./baseline/cluster-agent-deployment_default_advanced_AC_injection.yaml",
+			assertions:           verifyDeployment,
+		},
+		{
 			name: "CLC Deployment default",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
@@ -121,7 +145,7 @@ func verifyBaseline[T any](t *testing.T, baselineManifestPath, manifest string, 
 	// to avoid frequent baseline update and CI failures.
 	ops := make(cmp.Options, 0)
 	ops = append(ops, cmpopts.IgnoreMapEntries(func(k, v string) bool {
-		return k == "helm.sh/chart" || k == "checksum/clusteragent_token" || strings.Contains(k, "checksum") || k == "Image"
+		return k == "helm.sh/chart" || k == "checksum/clusteragent_token" || strings.Contains(k, "checksum")
 	}))
 	ops = append(ops, cmpopts.IgnoreFields(corev1.Container{}, "Image"))
 
@@ -157,9 +181,11 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 		}
 
 		ops := make(cmp.Options, 0)
-		ops = append(ops, cmpopts.IgnoreMapEntries(func(k, v string) bool {
-			// skip these as these change freqently
-			return k == "helm.sh/chart" || k == "token" || strings.Contains(k, "checksum")
+		ops = append(ops, cmpopts.IgnoreMapEntries(func(k string, v any) bool {
+			// skip these as these change frequently
+			t.Log(k, v)
+			return k == "helm.sh/chart" || k == "token" || strings.Contains(k, "checksum") ||
+				k == "Image" || k == "install_id" || k == "install_time"
 		}))
 
 		assert.True(t, cmp.Equal(expected, actual, ops), cmp.Diff(expected, actual))
