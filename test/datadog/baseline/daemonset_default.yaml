@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.57.3'
+    helm.sh/chart: 'datadog-3.58.2'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 3b6811ea07d2b99a0f0fdba3311c16fe34515f24ea3bbc3395ed7600d8a541bc
-        checksum/install_info: ba661cfd1e600203476c7247bad81157e5bc70aaa7f91e6cdd6be6a469cd0093
+        checksum/clusteragent_token: fda251486f1ab16a9803c01f11650951b063efa6256257451b49077077bce51d
+        checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a

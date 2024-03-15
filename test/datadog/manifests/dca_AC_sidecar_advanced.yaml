@@ -1,0 +1,30 @@
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    agentSidecarInjection:
+      enabled: true
+      containerRegistry: gcr.io/datadoghq
+      imageName: agent
+      imageTag: 7.53.0
+      selectors:
+        - objectSelector:
+            matchLabels:
+                "runsOn": nodeless
+                "app": nginx
+          namespaceSelector:
+            matchLabels:
+              agentSidecars: "true"       
+      profiles:
+        - env:
+            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+              value: "false"
+            - name: DD_TAGS
+              value: "key1:value1 key2:value2"
+          resources:
+            requests:
+              cpu: "1"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "1024Mi"

@@ -235,6 +235,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
           {{- end }}
+          {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabled }}

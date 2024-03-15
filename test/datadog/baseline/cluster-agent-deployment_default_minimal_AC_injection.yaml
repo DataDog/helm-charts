@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.57.3'
+    helm.sh/chart: 'datadog-3.58.2'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,11 +36,11 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: be494ddb6dfc1e236fd2df24cd29923903e1dc4d171f4d74795e26e5fc8b6aa9
-        checksum/clusteragent-configmap: 7f009f417a71add9ae521f09f0eaf63c29efd5cdd701f5d92714fc3ac1800b6f
-        checksum/api_key: dbe0d3b411cc72447e81235afeed9e2102588d5088fcbb696a2db9e4e31af712
+        checksum/clusteragent_token: f8f23c14feb55dac766d387dc32b9a3fe7cab2ad129d11570c141b0d04e3e270
+        checksum/clusteragent-configmap: c4ebd3c35d77ac0260f47e1ec10c9733cd76488f4232f76f26466174b922b430
+        checksum/api_key: 3c042e07978640da60c9adc10c03acb2e68c176d8f5ecc4c1c8d216051f476a5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: ba661cfd1e600203476c7247bad81157e5bc70aaa7f91e6cdd6be6a469cd0093
+        checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
@@ -106,7 +106,15 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: "8000"
           
-          # TODO cluster agent version check
+          
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER
+            value: fargate
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
+            value: agent
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
+            value: 7.51.0
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED

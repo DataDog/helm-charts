@@ -1,0 +1,11 @@
+# agents:
+#   image:
+#     tag: 7.51.0
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    agentSidecarInjection:
+      enabled: true
+      provider: fargate

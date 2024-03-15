@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.58.2
+
+* Add support for configuring Agent sidecar injection using Admission Controller.
+
 ## 3.58.1
 
 * Fix typo in PodSecurityPolicy warning note.
