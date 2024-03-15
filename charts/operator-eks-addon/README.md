@@ -7,6 +7,7 @@ This is a wrapper chart for installing EKS add-on. Charts required for the add-o
 | - | - | - | - | - | - |
 | < 0.1.6 | 1.0.5 | 1.0.1 | 1.0.3 | 7.43.1 | 7.43.1 | 
 | 0.1.6 | 1.4.1 | 1.3.0 | 1.3.0 | 7.47.1 | 7.47.1 |
+| 0.1.7 | 1.5.1 | 1.4.0 | 1.4.0 | 7.50.3 | 7.50.3 |
 
 ## Pushing Add-on Chart
 Below steps have been validated using `Helm v3.12.0`.

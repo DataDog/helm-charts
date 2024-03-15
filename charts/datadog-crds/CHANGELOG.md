@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+* Update CRDs from Datadog Operator v1.4.0 tag.
+
+## 1.3.1
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.3.0
 * Update CRDs from Datadog Operator v1.3.0 tag.
 
