@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.0
+* Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
+  Note: this requires agent/cluster agent version 7.53.0+
+
 ## 3.58.0
 
 * Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
