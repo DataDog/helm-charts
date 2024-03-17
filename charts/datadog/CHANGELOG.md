@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.58.1
+
+* Add extraObjects[] array that allows to create additional kubernetes objects
+  
 ## 3.58.0
 
 * Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
@@ -236,7 +240,6 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 ## 3.38.3
 
 * Update `fips.image.tag` to `0.6.0`
-
 ## 3.38.2
 
 * Skip references to PodSecurityPolicy where the support of this API has been dropped.

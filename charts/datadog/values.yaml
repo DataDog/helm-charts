@@ -2045,3 +2045,17 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+# -- Array of extra K8s manifests to deploy
+## NOTE: The below Secret in extraObjects array is just an example of how can you use this array. 
+## While using GitOps approach, it's not recommended to deploy unencrypted secrets this way. 
+## Consider using one of the more secure approaches, like Sealed Secrets, Helm Secrets, KSOPS, aws-secret-operator, etc.
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: Secret
+  #   metadata:
+  #     name: datadog-secret
+  #     namespace: kube-system
+  #   type: Opaque
+  #   data:
+  #     apiKey: <yourBase64DatadogApiKey>
