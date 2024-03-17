@@ -56,6 +56,21 @@ rules:
   - configmaps
   verbs:
   - create
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
+  - update
+- apiGroups:  # To create the leader election token
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - create
 {{- end }}
 - nonResourceURLs:
   - "/version"
@@ -83,7 +98,7 @@ rules:
   - endpoints
   verbs:
   - get
-{{- if .Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy" }}
+{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
   - policy
   resources:

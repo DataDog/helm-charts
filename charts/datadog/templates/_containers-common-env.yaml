@@ -1,9 +1,6 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
-# Needs to be removed when Agent N-2 is built with Golang 1.17
-- name: GODEBUG
-  value: x509ignoreCN=0
 - name: DD_API_KEY
   valueFrom:
     secretKeyRef:
@@ -48,6 +45,14 @@
 - name: DD_AC_EXCLUDE
   value: {{ .Values.datadog.acExclude | quote }}
 {{- end }}
+{{- if .Values.datadog.containerInclude }}
+- name: DD_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.containerExclude }}
+- name: DD_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.containerExclude | quote }}
+{{- end }}
 {{- if .Values.datadog.containerIncludeMetrics }}
 - name: DD_CONTAINER_INCLUDE_METRICS
   value: {{ .Values.datadog.containerIncludeMetrics | quote }}
@@ -65,6 +70,7 @@
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
 {{- if .Values.datadog.otlp }}
+
 {{- if .Values.datadog.otlp.receiver }}
 {{- if .Values.datadog.otlp.receiver.protocols }}
 {{- with .Values.datadog.otlp.receiver.protocols }}
@@ -82,6 +88,12 @@
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{- with .Values.datadog.otlp.logs }}
+- name: DD_OTLP_CONFIG_LOGS_ENABLED
+  value: {{ .enabled | quote }}
+{{- end }}
+
 {{- end }}
 {{- if eq (include "agent-has-env-ad" .) "true" }}
 {{- if .Values.datadog.dockerSocketPath }}

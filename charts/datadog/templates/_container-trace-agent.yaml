@@ -50,6 +50,21 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
+    - name: DD_INSTRUMENTATION_INSTALL_TIME
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_time
+    - name: DD_INSTRUMENTATION_INSTALL_ID
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_id
+    - name: DD_INSTRUMENTATION_INSTALL_TYPE
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_type
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
   volumeMounts:

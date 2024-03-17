@@ -38,6 +38,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: cluster-agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
@@ -106,12 +107,11 @@ spec:
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
-          - bash
-          - -c
+          - cp
+          - -r
         args:
-          - |
-            chmod -R 744 /etc/datadog-agent;
-            cp -r /etc/datadog-agent /opt
+          - /etc/datadog-agent
+          - /opt
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
@@ -188,6 +188,14 @@ spec:
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENDPOINT
             value: {{ .Values.clusterAgent.metricsProvider.endpoint | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.containerInclude }}
+          - name: DD_CONTAINER_INCLUDE
+            value: {{ .Values.clusterAgent.containerInclude | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.containerExclude }}
+          - name: DD_CONTAINER_EXCLUDE
+            value: {{ .Values.clusterAgent.containerExclude | quote }}
+          {{- end }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
@@ -229,6 +237,22 @@ spec:
           {{- end }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
+          {{- if .Values.datadog.apm.instrumentation.enabled }}
+          - name: DD_APM_INSTRUMENTATION_ENABLED
+            value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
+          - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
+            value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.disabledNamespaces }}
+          - name: DD_APM_INSTRUMENTATION_DISABLED_NAMESPACES
+            value: {{ .Values.datadog.apm.instrumentation.disabledNamespaces | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.libVersions }}
+          - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
+            value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
@@ -243,6 +267,8 @@ spec:
           {{- end }}
           - name: DD_LEADER_ELECTION
             value: {{ .Values.datadog.leaderElection | quote}}
+          - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+            value: {{ .Values.datadog.leaderElectionResource | quote}}
           {{- if .Values.datadog.leaderLeaseDuration }}
           - name: DD_LEADER_LEASE_DURATION
             value: {{ .Values.datadog.leaderLeaseDuration | quote }}
@@ -303,6 +329,21 @@ spec:
             value: {{ .Values.datadog.prometheusScrape.version | quote }}
           {{- end }}
           {{- end }}
+          - name: DD_INSTRUMENTATION_INSTALL_TIME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+                key: install_time
+          - name: DD_INSTRUMENTATION_INSTALL_ID
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+                key: install_id
+          - name: DD_INSTRUMENTATION_INSTALL_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+                key: install_type
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
@@ -387,6 +428,12 @@ spec:
 {{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
+{{- end }}
+{{- if .Values.datadog.orchestratorExplorer.enabled }}
+{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
+            - key: orchestrator.yaml
+              path: orchestrator.yaml
+{{- end }}
 {{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}

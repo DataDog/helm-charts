@@ -43,7 +43,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.1.0
+  tag: 1.4.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -54,10 +54,17 @@ nameOverride: ""
 fullnameOverride: ""
 # logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
 logLevel: "info"
-# maximumGoroutines -- Override default gouroutines threshold for the health check failure.
+# maximumGoroutines -- Override default goroutines threshold for the health check failure.
 maximumGoroutines:
+
+
+introspection:
+# introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  enabled: false
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
+# operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
+operatorMetricsEnabled: "true"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:
@@ -70,6 +77,9 @@ datadogAgent:
   enabled: true
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
+  enabled: false
+datadogSLO:
+  # datadogSLO.enabled -- Enables the Datadog SLO controller
   enabled: false
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
@@ -106,12 +116,14 @@ installCRDs: true
 
 datadogCRDs:
   crds:
-    # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
     datadogAgents: true
-    # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
-    # datadog-crds.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+    # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
+    # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+    datadogSLOs: false
   migration:
     datadogAgents:
       conversionWebhook:
@@ -142,3 +154,15 @@ watchNamespaces: []
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
 containerSecurityContext: {}
+
+# volumes -- Specify additional volumes to mount in the container
+volumes: []
+#   - hostPath:
+#       path: <HOST_PATH>
+#     name: <VOLUME_NAME>
+
+# volumeMounts -- Specify additional volumes to mount in the container
+volumeMounts: []
+#   - name: <VOLUME_NAME>
+#     mountPath: <CONTAINER_PATH>
+#     readOnly: true

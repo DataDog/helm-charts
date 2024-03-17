@@ -34,6 +34,7 @@ jobs:
         make unit-test
 
   integ-tests:
+    if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
     runs-on: ubuntu-20.04
     strategy:
@@ -46,6 +47,8 @@ jobs:
           - v1.25.2
           - v1.26.6
           - v1.27.3
+          - v1.28.7
+          - v1.29.2
     steps:
       - name: Checkout
         uses: actions/checkout@v3

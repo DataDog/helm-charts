@@ -1,9 +1,245 @@
 # Datadog changelog
 
-## 3.38.3
+## 3.58.1
 
 * Add extraObjects[] array that allows to create additional kubernetes objects
   
+## 3.58.0
+
+* Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
+* `datadog.apm.instrumentation.enabled` - set to `true` to enable automatic instrumentation.
+* `datadog.apm.instrumentation.enabledNamespaces` - optional; list of namespaces to enable automatic instrumentation in. If not provided, every namespace in the cluster will be instrumented.
+* `datadog.apm.instrumentation.disabledNamespaces` - optional; list of namespaces to disable automatic instrumentation in.
+
+
+## 3.57.3
+
+* Exclude agent, cluster agent and agent clusterchecks pods from injection from the admission controller.
+
+## 3.57.2
+
+* Add `networkpolicies` default permission for the cluster agent.
+
+## 3.57.1
+
+* Allow configuring CWS security profile based auto suppression feature and enable it by default.
+
+## 3.57.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.51.0`.
+
+## 3.56.0
+
+* Allow templating of `datadog.clusterName`.
+
+## 3.55.0
+
+* Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
+
+## 3.54.2
+
+* Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
+
+## 3.54.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 3.53.3
+
+* Update `fips.image.tag` to `1.1.1`
+
+## 3.53.2
+
+* Exclude agent pod from labels injection from the admission controller.
+
+## 3.53.1
+
+* Update `fips.image.tag` to `1.1.0`
+
+## 3.53.0
+
+* Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
+
+## 3.52.0
+
+* Allow configuring CWS security profile features and enable drift events by default
+
+## 3.51.2
+
+* Use correct kpi-telemetry-configmap in Cluster Agent and Trace Agent.
+
+## 3.51.1
+
+* Parametrize the name of kpi-telemetry-configmap.
+
+## 3.51.0
+
+* Add `DD_INSTRUMENTATION_INSTALL_TIME`, `DD_INSTRUMENTATION_INSTALL_ID`, `DD_INSTRUMENTATION_INSTALL_TYPE` env variables to the Trace and Cluster agents to support APM Telemetry KPIs.
+
+## 3.50.5
+
+* Add option to use containerd snapshotter to generate SBOMs.
+
+## 3.50.4
+
+* Mount host files for proper OS detection in SBOMs.
+
+## 3.50.3
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.3`.
+
+## 3.50.2
+
+* Support automatic registry selection based on `datadog.site` on GKE Autopilot.
+
+## 3.50.1
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.2`.
+
+## 3.50.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.1`.
+
+## 3.49.9
+
+* Update `fips.image.tag` to `1.0.1`
+
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
+
+## 3.49.7
+
+Fix NOTES warning for APM Instrumentation
+
+## 3.49.6
+
+Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in lastest versions of the agent.
+
+## 3.49.5
+
+* Fix registry selection with GKE Autopilot until new registries are allowed.
+
+## 3.49.4
+
+* Exclude a namespace with Datadog resources from APM Single Step Instrumentation
+
+## 3.49.3
+
+* Fix NOTES warning for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
+## 3.49.2
+
+* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
+## 3.49.1
+
+* Update `fips.image.tag` to `1.0.0`
+
+## 3.49.0
+
+* Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.48.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.49.1`.
+
+## 3.47.2
+
+* Fix CI following enabling container image collection by default.
+
+## 3.47.1
+
+* Fix `registry` being ignored even if set.
+
+## 3.47.0
+
+* `registry` is now set automatically adapted based on `datadog.site` value. Still default to `gcr.io/datadoghq` if not set.
+
+## 3.46.0
+
+* Enable container image collection by default.
+
+## 3.45.0
+
+* Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+  Note: this requires agent/cluster agent version 7.50.0+
+
+## 3.44.1
+
+* Fix local agent Kubernetes service to include APM traceport
+
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
+## 3.43.1
+
+* Fix docstring typos and remove unneeded lines.
+
+## 3.43.0
+
+* Default `Agent` and `Cluster-Agent` to `7.49.0` version.
+
+## 3.42.1
+
+* Bump FIPS proxy OpenSSL version to 3.0.12
+
+## 3.42.0
+
+* Allow enabling SBOM collection for host and container images.
+
+## 3.41.0
+
+* Enable container lifecycle events collection by default.
+
+## 3.40.4
+
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
+
+## 3.40.3
+
+* Default `Agent` and `Cluster-Agent` to `7.48.1` version.
+
+## 3.40.2
+
+* Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
+
+## 3.40.1
+
+* Add support for initContainer volume mounts
+
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
+
+## 3.39.3
+
+* Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
+
+## 3.39.2
+
+* Support custom resources and custom resource definitions collection in orchestrator explorer
+
+## 3.39.1
+
+* Add `kubeStateMetricsCore.collectConfigMaps` config field to the Agent
+
+## 3.39.0
+
+* Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)`, or empty for auto detection.
+
+## 3.38.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
+## 3.38.3
+
+* Update `fips.image.tag` to `0.6.0`
 ## 3.38.2
 
 * Skip references to PodSecurityPolicy where the support of this API has been dropped.

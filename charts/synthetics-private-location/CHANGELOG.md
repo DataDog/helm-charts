@@ -1,5 +1,45 @@
 # Datadog changelog
 
+## 0.15.27
+
+* Update private location image version to `1.45.0`.
+
+## 0.15.26
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 0.15.25
+
+* Update private location image version to `1.44.0`.
+
+## 0.15.24
+
+* Clarify the usage of `configSecret`
+
+## 0.15.23
+
+* Add `priorityClassName` value to specify PriorityClass for pods.
+
+## 0.15.22
+
+* Update private location image version to `1.43.0`.
+
+## 0.15.21
+
+* Update private location image version to `1.42.0`.
+
+## 0.15.20
+
+* Support `dnsPolicy` configuration.
+
+## 0.15.19
+
+* Update private location image version to `1.41.0`.
+
+## 0.15.18
+
+* Update private location image version to `1.40.0`.
+
 ## 0.15.17
 
 * Update private location image version to `1.39.0`.

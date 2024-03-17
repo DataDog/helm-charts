@@ -1,5 +1,49 @@
 # Changelog
 
+## 1.5.2
+
+* Add deprecation warning for `DatadogAgent` `v1alpha1` CRD version.
+
+## 1.5.1
+
+* Add configuration for Operator flag `introspectionEnabled`: this parameter is used to enable the Introspection. It is disabled by default.
+
+## 1.5.0
+
+* Update Datadog Operator version to 1.4.0.
+
+## 1.4.2
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 1.4.1
+
+* Add configuration for Operator flag `datadogSLOEnabled` : this parameter is used to enable the Datadog SLO Controller. It is disabled by default.
+
+## 1.4.0
+
+* Update Datadog Operator version to 1.3.0.
+
+## 1.3.0
+
+* Add configuration to mount volumes (`volumes` and `volumeMounts`) in the container. Empty by default.
+
+## 1.2.2
+
+* Fix that an error occurs when specifying replicaCount using `--set`
+
+## 1.2.1
+
+* Minor spelling corrections in the `datadog-operator` chart.
+
+## 1.2.0
+
+* Update Datadog Operator version to 1.2.0.
+
+## 1.1.2
+
+* Add configuration for Operator flag `operatorMetricsEnabled` : this parameter can be used to disable the Operator metrics forwarder. It is enabled by default.
+
 ## 1.1.1
 
 * Add permissions to curl `/metrics/slis` to operator cluster role.
@@ -18,7 +62,7 @@
 
 ## 1.0.6
 
-* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook. 
+* Fix conversionWebhook.enabled parameter to correctly set user-configured value when enabling the conversion webhook.
 
 ## 1.0.5
 
