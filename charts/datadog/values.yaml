@@ -1098,7 +1098,7 @@ clusterAgent:
 
       # clusterAgent.admissionController.agentSidecarInjection.profiles -- Defines the sidecar configuration override, only one profile is supported.
 
-      ## This setting allows to override sidecar Agent configuration by adding environment variables and providing resource settings.
+      ## This setting allows overriding the sidecar Agent configuration by adding environment variables and providing resource settings.
       profiles: []
         # - env:
         #     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
