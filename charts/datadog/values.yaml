@@ -1073,7 +1073,7 @@ clusterAgent:
       ## ref: https://docs.datadoghq.com/integrations/eks_fargate
       provider:
 
-      # clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled -- Enable communication between Agent sidecars and Cluster Agent.
+      # clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled -- Enable communication between Agent sidecars and the Cluster Agent.
       clusterAgentCommunicationEnabled: true
 
       # clusterAgent.admissionController.containerRegistry -- Override the default registry for the sidecar Agent.
