@@ -1096,7 +1096,7 @@ clusterAgent:
         #       "nsLabelKey1": nsLabelValue1
         #       "nsLabelKey2": nsLabelValue2
 
-      # clusterAgent.admissionController.agentSidecarInjection.profiles -- Defines the sidecar configuration override, only one profile is supported.
+      # clusterAgent.admissionController.agentSidecarInjection.profiles -- Defines the sidecar configuration override, currently only one profile is supported.
 
       ## This setting allows overriding the sidecar Agent configuration by adding environment variables and providing resource settings.
       profiles: []
