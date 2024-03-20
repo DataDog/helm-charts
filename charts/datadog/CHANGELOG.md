@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.52.0`.
+
 ## 3.58.1
 
 * Fix typo in PodSecurityPolicy warning note.
