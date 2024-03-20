@@ -1079,7 +1079,7 @@ clusterAgent:
       # clusterAgent.admissionController.containerRegistry -- Override the default registry for the sidecar Agent.
       containerRegistry:
 
-      # clusterAgent.admissionController.imageName -- Override default agents.image.name for Agent sidecar.
+      # clusterAgent.admissionController.imageName -- Override the default agents.image.name for the Agent sidecar.
       imageName:
 
       # clusterAgent.admissionController.imageTag -- Override default agents.image.tag for Agent sidecar.
