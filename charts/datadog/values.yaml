@@ -1064,7 +1064,7 @@ clusterAgent:
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
-      ## When enabled, Admission Controller mutating webhook will inject Agent sidecar with minimal configuration in every pods meeting configured criteria.
+      ## When enabled, the admission controller mutating webhook will inject an Agent sidecar with minimal configuration in every pod meeting the configured criteria.
       ## ref: https://docs.datadoghq.com/integrations/eks_fargate
       enabled: false
 
