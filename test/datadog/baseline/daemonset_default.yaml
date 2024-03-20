@@ -30,7 +30,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: fda251486f1ab16a9803c01f11650951b063efa6256257451b49077077bce51d
+        checksum/clusteragent_token: fabb09123bf6e665c21faa8e124e717b0ae57261e5907c9c7a68fb74f704002d
         checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a

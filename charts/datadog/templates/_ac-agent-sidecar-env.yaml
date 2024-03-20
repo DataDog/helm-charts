@@ -2,6 +2,13 @@
 {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
   value: "true"
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentEnabled }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
+  value: "true"
+{{- else }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
+  value: "false"
+{{- end }}
 {{- if .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER
   value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}

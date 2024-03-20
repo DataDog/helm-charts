@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: f8f23c14feb55dac766d387dc32b9a3fe7cab2ad129d11570c141b0d04e3e270
+        checksum/clusteragent_token: ee40b3d003430647a21fb3c491d5dd5db6c950e2d9a2ae03e680eeb6532fc117
         checksum/clusteragent-configmap: c4ebd3c35d77ac0260f47e1ec10c9733cd76488f4232f76f26466174b922b430
         checksum/api_key: 3c042e07978640da60c9adc10c03acb2e68c176d8f5ecc4c1c8d216051f476a5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -108,6 +108,8 @@ spec:
           
           
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER
             value: fargate

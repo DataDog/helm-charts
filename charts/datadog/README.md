@@ -549,9 +549,9 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.agentSidecarInjection.enabled | bool | `false` | Enables Datadog Agent sidecar injection. |
 | clusterAgent.admissionController.agentSidecarInjection.imageName | string | `nil` |  |
 | clusterAgent.admissionController.agentSidecarInjection.imageTag | string | `nil` |  |
-| clusterAgent.admissionController.agentSidecarInjection.profiles | list | `[]` | Defines sidecar configuration override, only one profile is supported. |
-| clusterAgent.admissionController.agentSidecarInjection.provider | string | `nil` | Used by Admission Controller to add infrastructure provider-specific configurations to the Agent sidecar. |
-| clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines pod selector for sidecar injection, only one rule is supported. |
+| clusterAgent.admissionController.agentSidecarInjection.profiles | list | `[]` | Defines the sidecar configuration override, only one profile is supported. |
+| clusterAgent.admissionController.agentSidecarInjection.provider | string | `nil` | Used by the admission controller to add infrastructure provider-specific configurations to the Agent sidecar. |
+| clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines the pod selector for sidecar injection, only one rule is supported. |
 | clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", or "socket". |
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |

@@ -12,13 +12,14 @@ import (
 )
 
 const (
-	DDSidecrEnabled    = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED"
-	DDSidecarProvider  = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER"
-	DDSidecarRegistry  = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY"
-	DDSidecarImageName = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME"
-	DDSidecarImageTag  = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG"
-	DDSidecarSelectors = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS"
-	DDSidecarProfiles  = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES"
+	DDSidecarEnabled             = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED"
+	DDSidecarClusterAgentEnabled = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED"
+	DDSidecarProvider            = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER"
+	DDSidecarRegistry            = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY"
+	DDSidecarImageName           = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME"
+	DDSidecarImageTag            = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG"
+	DDSidecarSelectors           = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS"
+	DDSidecarProfiles            = "DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES"
 )
 
 func Test_admissionControllerConfig(t *testing.T) {
@@ -83,7 +84,8 @@ func verifyDeploymentFargateMinimal(t *testing.T, manifest string) {
 
 	acConfigEnv := selectEnvVars(dcaContainer.Env)
 
-	assert.Equal(t, "true", acConfigEnv[DDSidecrEnabled])
+	assert.Equal(t, "true", acConfigEnv[DDSidecarEnabled])
+	assert.Equal(t, "true", acConfigEnv[DDSidecarClusterAgentEnabled])
 	assert.Equal(t, "fargate", acConfigEnv[DDSidecarProvider])
 	// Default will be set by DCA
 	assert.Empty(t, acConfigEnv[DDSidecarRegistry])
@@ -100,7 +102,8 @@ func verifyDeploymentAdvancedConfig(t *testing.T, manifest string) {
 
 	acConfigEnv := selectEnvVars(dcaContainer.Env)
 
-	assert.Equal(t, "true", acConfigEnv[DDSidecrEnabled])
+	assert.Equal(t, "true", acConfigEnv[DDSidecarEnabled])
+	assert.Equal(t, "false", acConfigEnv[DDSidecarClusterAgentEnabled])
 	assert.Empty(t, acConfigEnv[DDSidecarProvider])
 	assert.Equal(t, "gcr.io/datadoghq", acConfigEnv[DDSidecarRegistry])
 	assert.Equal(t, "agent", acConfigEnv[DDSidecarImageName])
@@ -136,7 +139,8 @@ func verifyDeploymentAdvancedConfig(t *testing.T, manifest string) {
 
 func selectEnvVars(envVars []corev1.EnvVar) map[string]string {
 	acConfoigNames := []string{
-		DDSidecrEnabled,
+		DDSidecarEnabled,
+		DDSidecarClusterAgentEnabled,
 		DDSidecarProvider,
 		DDSidecarRegistry,
 		DDSidecarImageName,

@@ -6,6 +6,7 @@ clusterAgent:
   enabled: true
   admissionController:
     enabled: true
+    clusterAgentEnabled: false
     agentSidecarInjection:
       enabled: true
       provider: fargate
