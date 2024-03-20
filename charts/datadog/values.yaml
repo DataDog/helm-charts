@@ -1076,7 +1076,7 @@ clusterAgent:
       # clusterAgent.admissionController.agentSidecarInjection.clusterAgentEnabled -- Enable communication between Agent sidecars and Cluster Agent.
       clusterAgentEnabled: true
 
-      # clusterAgent.admissionController.containerRegistry -- Override default registry for sidecar Agent.
+      # clusterAgent.admissionController.containerRegistry -- Override the default registry for the sidecar Agent.
       containerRegistry:
 
       # clusterAgent.admissionController.imageName -- Override default agents.image.name for Agent sidecar.
