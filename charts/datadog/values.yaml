@@ -1068,7 +1068,7 @@ clusterAgent:
       ## ref: https://docs.datadoghq.com/integrations/eks_fargate
       enabled: false
 
-      # clusterAgent.admissionController.agentSidecarInjection.provider -- Used by Admission Controller to add infrastructure provider specific configurations to the Agent sidecar.
+      # clusterAgent.admissionController.agentSidecarInjection.provider -- Used by the admission controller to add infrastructure provider-specific configurations to the Agent sidecar.
 
       ## Currently only "fargate" is supported. To use the feature in other environments (including local testing) omit the config.
       provider:
