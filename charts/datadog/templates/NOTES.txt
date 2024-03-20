@@ -538,14 +538,3 @@ You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
 {{- end }}
-
-{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
-    {{- if (semverCompare "<7.52.0" .Values.clusterAgent.image.tag) }}
-##############################################################################
-####               WARNING: Sidecar injection not supported.              ####
-##############################################################################
-
-The clusterAgent.admissionController.agentSidecarInjection.enabled is only supported
-by Cluster Agent 7.52.0 or later. Enabling this flag will not have any effect.
-    {{- end }}
-{{- end }}

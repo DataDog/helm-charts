@@ -4,10 +4,10 @@ clusterAgent:
     enabled: true
     agentSidecarInjection:
       enabled: true
-      clusterAgentEnabled: false
+      clusterAgentCommunicationEnabled: false
       containerRegistry: gcr.io/datadoghq
       imageName: agent
-      imageTag: 7.53.0
+      imageTag: 7.52.0
       selectors:
         - objectSelector:
             matchLabels:

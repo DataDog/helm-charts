@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: f0a59c1f14610a12f8f5f69204a76d704736b3ae625b1efc46d01b26fd6ca1ca
+        checksum/clusteragent_token: cc4689bbc5f524d4080b164c621500d7f830d0aeef415c86a3535e76883577a3
         checksum/clusteragent-configmap: c4ebd3c35d77ac0260f47e1ec10c9733cd76488f4232f76f26466174b922b430
         checksum/api_key: 3c042e07978640da60c9adc10c03acb2e68c176d8f5ecc4c1c8d216051f476a5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -116,7 +116,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
             value: agent
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-            value: 7.53.0
+            value: 7.52.0
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
             value: '[{"namespaceSelector":{"matchLabels":{"agentSidecars":"true"}},"objectSelector":{"matchLabels":{"app":"nginx","runsOn":"nodeless"}}}]'
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES

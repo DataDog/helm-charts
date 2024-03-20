@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "Y3NWTDR4VEppUDRNY01FQlJNMXJOVjVuNWNWU2JqVTk="
+  token: "TkNSTkV5UlJqdjhHV0NWcmduMmRBaWdqTUw2WmdsV2g="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -185,9 +185,9 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
 data:
-  install_id: "e2010bea-3e6c-4fbd-b73e-d31a1b6074e9"
+  install_id: "fd55046d-8dfc-47a6-9fb7-20088a93ea58"
   install_type: k8s_manual
-  install_time: "1710943122"
+  install_time: "1710950775"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -808,7 +808,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 9960830a19c4a7f387ba7719619843f02f6870ac1fb005e6c170f59d97e0b4e6
+        checksum/clusteragent_token: d1284848a462e5feb13cfbc55a8d3eb48c477b6916832a592867cb5a4a9e4969
         checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -1290,7 +1290,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: b5ffc5adda7fdc95189943962746b2980aa3e728104bd0976096f5fbcdda0fcc
+        checksum/clusteragent_token: d56cd35d2ed589e9817382c6d02cf18a1d24772863e156f83e78a038ee24b51d
         checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1471,7 +1471,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: edf6caf3a41752b756f3b78d690a3459b91054333b2336e4d9f54e05d48a1890
+        checksum/clusteragent_token: 9f86485d7f07627ccbd29f3ad3996ceb1fa57403f055c1b15e7c6919f944a2c1
         checksum/clusteragent-configmap: 4bd988547c8c6cc1f177d466bee234b3d51f96bd8f1177244bd0cca5cdea8082
         checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
     spec:

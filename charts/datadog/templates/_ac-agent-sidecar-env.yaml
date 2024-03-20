@@ -2,7 +2,7 @@
 {{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
   value: "true"
-{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentEnabled }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
   value: "true"
 {{- else }}

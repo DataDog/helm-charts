@@ -107,7 +107,7 @@ func verifyDeploymentAdvancedConfig(t *testing.T, manifest string) {
 	assert.Empty(t, acConfigEnv[DDSidecarProvider])
 	assert.Equal(t, "gcr.io/datadoghq", acConfigEnv[DDSidecarRegistry])
 	assert.Equal(t, "agent", acConfigEnv[DDSidecarImageName])
-	assert.Equal(t, "7.53.0", acConfigEnv[DDSidecarImageTag])
+	assert.Equal(t, "7.52.0", acConfigEnv[DDSidecarImageTag])
 	assert.NotEmpty(t, acConfigEnv[DDSidecarSelectors])
 	assert.NotEmpty(t, acConfigEnv[DDSidecarProfiles])
 
