@@ -1085,7 +1085,7 @@ clusterAgent:
       # clusterAgent.admissionController.imageTag -- Override default agents.image.tag for Agent sidecar.
       imageTag:
 
-      # clusterAgent.admissionController.agentSidecarInjection.selectors -- Defines pod selector for sidecar injection, only one rule is supported.
+      # clusterAgent.admissionController.agentSidecarInjection.selectors -- Defines the pod selector for sidecar injection, only one rule is supported.
       selectors: []
         # - objectSelector:
         #   matchLabels:
