@@ -544,7 +544,7 @@ helm install <RELEASE_NAME> \
 | agents.volumeMounts | list | `[]` | Specify additional volumes to mount in all containers of the agent pod |
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
-| clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled | bool | `true` | Enable communication between Agent sidecars and Cluster Agent. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled | bool | `true` | Enable communication between Agent sidecars and the Cluster Agent. |
 | clusterAgent.admissionController.agentSidecarInjection.containerRegistry | string | `nil` |  |
 | clusterAgent.admissionController.agentSidecarInjection.enabled | bool | `false` | Enables Datadog Agent sidecar injection. |
 | clusterAgent.admissionController.agentSidecarInjection.imageName | string | `nil` |  |
