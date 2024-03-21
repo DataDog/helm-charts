@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.58.2
+## 3.59.1
 
 * Add support for configuring Agent sidecar injection using Admission Controller.
 
