@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.1
+
+* Add support for configuring Agent sidecar injection using Admission Controller.
+
 ## 3.59.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.52.0`.
