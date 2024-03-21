@@ -1,6 +1,9 @@
 # The purpose of this template is to define a minimal set of environment
 # variables shared between components: agent, cluster-agent
 {{- define "components-common-env" -}}
+# Workaround for issue in `7.52.0` default activating language detection
+- name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+  value: "false"
 {{- if .Values.datadog.secretBackend.command }}
 - name: DD_SECRET_BACKEND_COMMAND
   value: {{ .Values.datadog.secretBackend.command | quote }}
