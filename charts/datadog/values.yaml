@@ -491,6 +491,25 @@ datadog:
       language_detection:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
         enabled: true
+  
+  ## Application Security Managment (ASM) configuration
+  ##  
+  ## ASM is not enabled by default but and can be enabled by setting the various `enabled` fields to `true` under the `datadog.asm` section.
+  ## Manually adding the various environment variables to a pod will take precedence over the ones in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed, either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation` section).
+  ## It requires Datadog Cluster Agent 7.53.0+.
+  asm:
+    threats:
+      # datadog.asm.threats.enabled -- Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    sca:
+      # datadog.asm.sca.enabled -- Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    iast:
+      # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
 
   ## OTLP ingest related configuration
   otlp:
