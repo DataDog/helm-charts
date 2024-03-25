@@ -254,6 +254,18 @@ spec:
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.asm.threats.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.datadog.asm.sca.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_SCA_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if .Values.datadog.asm.iast.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_IAST_ENABLED
+            value: "true"
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
