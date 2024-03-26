@@ -15,7 +15,7 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.45.0
+  tag: 1.46.0
 
 # dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
 dnsPolicy: ClusterFirst
