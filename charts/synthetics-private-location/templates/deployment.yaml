@@ -73,7 +73,7 @@ spec:
           env:
       {{- if .Values.enableStatusProbes }}
             - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
-              value: {{ .Values.enableStatusProbes }}
+              value: {{ .Values.enableStatusProbes | quote }}
       {{- end }}
       {{- if .Values.env }}
       {{ toYaml .Values.env | indent 12 }}
