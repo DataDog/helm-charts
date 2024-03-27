@@ -52,6 +52,9 @@ extraVolumeMounts: []
 # podAnnotations -- Annotations to set to Datadog Synthetics Private Location PODs
 podAnnotations: {}
 
+# podLabels -- Labels to be placed on pods managed by the deployment
+podLabels: {}
+
 # podSecurityContext -- Security context to set to Datadog Synthetics Private Location PODs
 podSecurityContext: {}
   # fsGroup: 2000
