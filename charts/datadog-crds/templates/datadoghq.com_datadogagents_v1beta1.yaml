@@ -5908,6 +5908,25 @@ spec:
                               format: int32
                               type: integer
                           type: object
+                        instrumentation:
+                          properties:
+                            disabledNamespaces:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
+                            enabled:
+                              type: boolean
+                            enabledNamespaces:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
+                            libVersions:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
                         unixDomainSocketConfig:
                           properties:
                             enabled:
@@ -6116,6 +6135,17 @@ spec:
                           type: boolean
                         wpaController:
                           type: boolean
+                      type: object
+                    helmCheck:
+                      properties:
+                        collectEvents:
+                          type: boolean
+                        enabled:
+                          type: boolean
+                        valuesAsTags:
+                          additionalProperties:
+                            type: string
+                          type: object
                       type: object
                     kubeStateMetricsCore:
                       properties:
@@ -6402,6 +6432,86 @@ spec:
                           type: object
                         url:
                           type: string
+                      type: object
+                    fips:
+                      properties:
+                        customFIPSConfig:
+                          properties:
+                            configData:
+                              type: string
+                            configMap:
+                              properties:
+                                items:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        format: int32
+                                        type: integer
+                                      path:
+                                        type: string
+                                    required:
+                                      - key
+                                      - path
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-map-keys:
+                                    - key
+                                  x-kubernetes-list-type: map
+                                name:
+                                  type: string
+                              type: object
+                          type: object
+                        enabled:
+                          type: boolean
+                        image:
+                          properties:
+                            jmxEnabled:
+                              type: boolean
+                            name:
+                              type: string
+                            pullPolicy:
+                              type: string
+                            pullSecrets:
+                              items:
+                                properties:
+                                  name:
+                                    type: string
+                                type: object
+                              type: array
+                            tag:
+                              type: string
+                          type: object
+                        localAddress:
+                          type: string
+                        port:
+                          format: int32
+                          type: integer
+                        portRange:
+                          format: int32
+                          type: integer
+                        resources:
+                          properties:
+                            limits:
+                              additionalProperties:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type: object
+                            requests:
+                              additionalProperties:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type: object
+                          type: object
+                        useHTTPS:
+                          type: boolean
                       type: object
                     kubelet:
                       properties:
