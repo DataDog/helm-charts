@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.29
+
+* Update Kubernetes deployment template to set `DATADOG_WORKER_ENABLE_STATUS_PROBES` environment variable when `enableStatusProbes` value is defined.
+
 ## 0.15.28
 
 * Update private location image version to `1.46.0`.
