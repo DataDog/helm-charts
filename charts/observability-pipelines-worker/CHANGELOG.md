@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+* GA release of Observability Pipelines Worker v2
+
 ## 1.8.1
 
 * Migrate from `kubeval` to `kubeconform` for ci chart validation.
