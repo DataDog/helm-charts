@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.16.0
+
+* Add `podLabels` value to allow setting labels that only appear on the pods managed by the deployment.
+
 ## 0.15.29
 
 * Update Kubernetes deployment template to set `DATADOG_WORKER_ENABLE_STATUS_PROBES` environment variable when `enableStatusProbes` value is defined.
