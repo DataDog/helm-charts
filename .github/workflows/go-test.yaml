@@ -31,7 +31,7 @@ jobs:
     - name: run Go tests
       run: |
         helm dependency build ./charts/datadog-operator
-        make unit-test
+        make unit-test-operator
 
   integ-tests:
     if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
