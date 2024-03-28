@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.60.0
+
+* Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default
+
 ## 3.59.2
 
 * Disable language detection reporting by default in Cluster Agent with Agent 7.52+.
