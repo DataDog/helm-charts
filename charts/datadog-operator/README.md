@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.4.1](https://img.shields.io/badge/Version-1.4.1-informational?style=flat-square) ![AppVersion: 1.3.0](https://img.shields.io/badge/AppVersion-1.3.0-informational?style=flat-square)
+![Version: 1.5.1](https://img.shields.io/badge/Version-1.5.1-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
 
 ## Values
 
@@ -30,15 +30,16 @@
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.0.3"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.4.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
+| introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
 | maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
-| operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
+| operatorMetricsEnabled | string | `"false"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
@@ -98,7 +99,7 @@ and for the Datadog Operator chart:
 
 ```
 NAME                    	CHART VERSION	APP VERSION	DESCRIPTION
-datadog/datadog-operator	1.0.4        	1.0.3      	Datadog Operator
+datadog/datadog-operator	1.1.0        	1.1.0      	Datadog Operator
 ```
 
 Then you will need to install the cert manager if you don't have it already, add the chart:
@@ -120,7 +121,7 @@ You can update with the following:
 ```
 helm upgrade \
     datadog-operator datadog/datadog-operator \
-    --set image.tag=1.0.3 \
+    --set image.tag=1.4.0 \
     --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
     --set datadogCRDs.migration.datadogAgents.useCertManager=true \
     --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true

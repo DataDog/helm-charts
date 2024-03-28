@@ -43,7 +43,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.3.0
+  tag: 1.4.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -56,10 +56,17 @@ fullnameOverride: ""
 logLevel: "info"
 # maximumGoroutines -- Override default goroutines threshold for the health check failure.
 maximumGoroutines:
+
+
+introspection:
+# introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  enabled: false
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
+
+# not enabled in addon
 # operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
-operatorMetricsEnabled: "true"
+operatorMetricsEnabled: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:

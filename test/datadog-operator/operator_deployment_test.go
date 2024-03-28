@@ -116,7 +116,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.3.0", operatorContainer.Image)
+	assert.Equal(t, "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.4.0", operatorContainer.Image)
 	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 

@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-1.4.1
+    helm.sh/chart: datadog-operator-1.5.1
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.3.0"
+    app.kubernetes.io/version: "1.4.0"
     app.kubernetes.io/managed-by: eks-addon
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
-          image: "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.3.0"
+          image: "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.4.0"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
@@ -51,8 +51,9 @@ spec:
             - "-logEncoder=json"
             - "-metrics-addr=:8383"
             - "-loglevel=info"
-            - "-operatorMetricsEnabled=true"
+            - "-operatorMetricsEnabled=false"
             - "-webhookEnabled=false"
+            - "-introspectionEnabled=false"
             - "-datadogMonitorEnabled=false"
             - "-datadogAgentEnabled=true"
             - "-datadogSLOEnabled=false"
