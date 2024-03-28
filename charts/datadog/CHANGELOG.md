@@ -1,7 +1,7 @@
 # Datadog changelog
 
 ## 3.59.3
-* Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the cilium network policy
+* Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
 
 ## 3.59.2
 
