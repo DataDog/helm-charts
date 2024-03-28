@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.59.3
+* Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
+
 ## 3.59.2
 
 * Disable language detection reporting by default in Cluster Agent with Agent 7.52+.
