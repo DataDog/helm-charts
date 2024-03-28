@@ -52,6 +52,10 @@ unit-test:
 update-test-baselines:
 	go test -C test ./... -count=1 -args -updateBaselines=true
 
+.PHONY: update-test-baselines-operator
+update-test-baselines-operator:
+	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
+
 .PHONY: integration-test
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
