@@ -67,7 +67,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- if .Values.envFrom }}
           envFrom:
-      {{ toYaml .Values.envFrom | indent 12 }}
+      {{- toYaml .Values.envFrom | nindent 12 }}
       {{- end }}
       {{- if or (.Values.env) (.Values.enableStatusProbes) }}
           env:
