@@ -52,6 +52,8 @@
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
+    - name: DD_PROCESS_AGENT_PROCESS_COLLECTION_ENABLED
+      value: {{ include "language-detection-enabled" .  | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.processAgent.envDict | indent 4 }}
   volumeMounts:
