@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.15.31
+
+* Fix `env` indentation in Deployment template.
+
 ## 0.15.30
 
 * Fix `envFrom` indentation in Deployment template.
