@@ -903,4 +903,15 @@ Create RBACs for custom resources
   {{- end -}}
 {{- end -}}
 
+{{/*
+  Return true if language detection feature is enabled
+*/}}
+{{- define "language-detection-enabled" -}}
+  {{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
 

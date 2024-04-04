@@ -308,6 +308,8 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
+            value: {{ include "language-detection-enabled" .  | quote }}
           {{- if eq  (include "should-enable-security-agent" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
             value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
