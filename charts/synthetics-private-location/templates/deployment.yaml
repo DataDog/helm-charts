@@ -76,7 +76,7 @@ spec:
               value: {{ .Values.enableStatusProbes | quote }}
       {{- end }}
       {{- if .Values.env }}
-      {{ toYaml .Values.env | indent 12 }}
+      {{- toYaml .Values.env | nindent 12 }}
       {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
