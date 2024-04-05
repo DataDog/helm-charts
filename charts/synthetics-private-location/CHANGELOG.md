@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.16.0
+
+* Add `podLabels` value to allow setting labels that only appear on the pods managed by the deployment.
+
 ## 0.15.31
 
 * Fix `env` indentation in Deployment template.
