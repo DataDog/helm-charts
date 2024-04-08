@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.58.2'
+    helm.sh/chart: 'datadog-3.59.5'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: cb4b859f7f7c7e495dcca4e6471a201cf8c7eb77134fbcaaf27e5a5b5ef1b9b8
-        checksum/clusteragent-configmap: c4ebd3c35d77ac0260f47e1ec10c9733cd76488f4232f76f26466174b922b430
-        checksum/api_key: 3c042e07978640da60c9adc10c03acb2e68c176d8f5ecc4c1c8d216051f476a5
+        checksum/clusteragent_token: 5aef8764f6b4aeb3bd45082ad9876bb29166947c57686982e07a831d07ec5c53
+        checksum/clusteragent-configmap: e76c6e387906993bf00147d7686dc3c64be7714d069bb1a2cbf88240ef996268
+        checksum/api_key: 285e50be97a9ee27ecdd3466635dcedc8b3d08f9db978c1d427bf3bc39d2de0c
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
+        checksum/install_info: ff7899c74b353510429944625eb16f8e592229bb5787e83e275316fa810fb729
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.51.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.51.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.52.1"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -86,7 +86,10 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
-          
+          - name: DD_LANGUAGE_DETECTION_ENABLED
+            value: "false"
+          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+            value: "false"
           - name: KUBERNETES
             value: "yes"
           - name: DD_ADMISSION_CONTROLLER_ENABLED
@@ -148,6 +151,8 @@ spec:
             value: "true"
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: "true"
+          - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
+            value: "false"
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
               configMapKeyRef:

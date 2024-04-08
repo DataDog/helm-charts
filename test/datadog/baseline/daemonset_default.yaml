@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.58.2'
+    helm.sh/chart: 'datadog-3.59.5'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: de10bbc694d3c44c7863afc67c2921c921466f00bae249eddfd43d06f0e40e83
-        checksum/install_info: 3c5d7a2732f453d72b241f37b74f59319bcbf51e387a8fc35dc47bc4a1a7a390
+        checksum/clusteragent_token: cdc95023f8d20e02cbfbe7fccf9e3ace103429d80685b51e2c23f7ac155c3737
+        checksum/install_info: ff7899c74b353510429944625eb16f8e592229bb5787e83e275316fa810fb729
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -42,7 +42,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.51.0"
+        image: "gcr.io/datadoghq/agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -62,7 +62,10 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+          - name: DD_LANGUAGE_DETECTION_ENABLED
+            value: "false"
+          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+            value: "false"
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
@@ -177,7 +180,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.51.0"
+        image: "gcr.io/datadoghq/agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -196,7 +199,10 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+          - name: DD_LANGUAGE_DETECTION_ENABLED
+            value: "false"
+          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+            value: "false"
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
@@ -280,7 +286,7 @@ spec:
             port: 8126
           timeoutSeconds: 5
       - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.51.0"
+        image: "gcr.io/datadoghq/agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -295,7 +301,10 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+          - name: DD_LANGUAGE_DETECTION_ENABLED
+            value: "false"
+          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+            value: "false"
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
@@ -324,7 +333,9 @@ spec:
           - name: DD_DOGSTATSD_SOCKET
             value: "/var/run/datadog/dsd.socket"
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-            value: "true"        
+            value: "true"
+          - name: DD_PROCESS_AGENT_PROCESS_COLLECTION_ENABLED
+            value: "false"        
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -366,7 +377,7 @@ spec:
           
       - name: init-volume
         
-        image: "gcr.io/datadoghq/agent:7.51.0"
+        image: "gcr.io/datadoghq/agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -379,7 +390,7 @@ spec:
           {}
       - name: init-config
         
-        image: "gcr.io/datadoghq/agent:7.51.0"
+        image: "gcr.io/datadoghq/agent:7.52.1"
         imagePullPolicy: IfNotPresent
         command:
           - bash
@@ -412,7 +423,10 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+          - name: DD_LANGUAGE_DETECTION_ENABLED
+            value: "false"
+          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+            value: "false"
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
