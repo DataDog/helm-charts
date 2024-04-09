@@ -8,8 +8,8 @@ metadata:
 data:
   install_type: k8s_manual
   {{- if .Values.datadog.apm.instrumentation.skipKPITelemetry }}
-  install_id: "default"
-  install_time: "default"
+  install_id: "00000000-0000-0000-0000-000000000000"
+  install_time: 0
   {{- else }}
   install_id: {{ uuidv4 | quote }}
   install_time: {{ now | unixEpoch | quote }}
