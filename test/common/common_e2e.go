@@ -9,10 +9,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/utils/infra"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/utils/infra"
 	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/runner"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,12 +23,13 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
-var defaultLocalPulumiConfigs = runner.ConfigMap{
+var defaultPulumiConfigs = runner.ConfigMap{
 	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")},
 }
 var defaultCIPulumiConfigs = runner.ConfigMap{
-	"aws:skipCredentialsValidation": auto.ConfigValue{Value: "true"},
-	"aws:skipMetadataApiCheck":      auto.ConfigValue{Value: "false"},
+	"aws:skipCredentialsValidation":     auto.ConfigValue{Value: "true"},
+	"aws:skipMetadataApiCheck":          auto.ConfigValue{Value: "false"},
+	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("AWS_PRIVATE_KEY_FILE")},
 }
 
 type E2EEnv struct {
@@ -101,6 +102,7 @@ func SetupConfig() (runner.ConfigMap, error) {
 	res := runner.ConfigMap{}
 	configs := parseE2EConfigParams()
 	if os.Getenv("E2E_PROFILE") == "ci" {
+		res.Merge(defaultPulumiConfigs)
 		res.Merge(defaultCIPulumiConfigs)
 	} else {
 		// use "local" E2E profile for local testing
@@ -111,7 +113,7 @@ func SetupConfig() (runner.ConfigMap, error) {
 		if !e2eApiKeyBool || !e2eAppKeyBool || !e2eAwsKeypairNameBool {
 			return nil, fmt.Errorf("missing required environment variables. Must set `E2E_API_KEY`, `E2E_APP_KEY`, and `AWS_KEYPAIR_NAME` for the local E2E profile")
 		} else {
-			res.Merge(defaultLocalPulumiConfigs)
+			res.Merge(defaultPulumiConfigs)
 		}
 	}
 

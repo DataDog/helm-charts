@@ -155,24 +155,14 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces (eq (include "cluster-agent-enabled" .) "false")}}
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You are using datadog.apm.instrumentation.enabledNamespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
-To enable it please set clusterAgent.enabled to 'true'.
-{{- end }}
-
-{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabledNamespaces }}
-
-#################################################################
-####               WARNING: Configuration notice             ####
-#################################################################
-
-The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabledNamespaces` are set together.
-APM Single Step Instrumentation will be enabled in the whole cluster.
+The option `datadog.apm.instrumentation.enabledNamespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
+APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
@@ -534,7 +524,7 @@ To send OTLP data to the Agent use the Service created by specifying "http://{{ 
 #################################################################
 ####               WARNING: Incompatibility                  ####
 #################################################################
-You have enabled creataion of PodSecurityPolicy, however PSP have been removed from Kubernetes >= 1.25, thus PSP will not be created.
+You have enabled creation of PodSecurityPolicy, however PSP have been removed from Kubernetes >= 1.25, thus PSP will not be created.
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
 {{- end }}

@@ -108,6 +108,12 @@ spec:
           {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
             - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
           {{- end }}
+          {{- if (semverCompare ">=1.4.0" .Values.image.tag) }}
+            - "-introspectionEnabled={{ .Values.introspection.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.5.0" .Values.image.tag) }}
+            - "-datadogAgentProfileEnabled={{ .Values.datadogAgentProfile.enabled }}"
+          {{- end }}
             - "-datadogMonitorEnabled={{ .Values.datadogMonitor.enabled }}"
           {{- if (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
             - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"

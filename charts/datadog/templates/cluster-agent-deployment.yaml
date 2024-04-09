@@ -38,6 +38,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: cluster-agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
@@ -234,19 +235,20 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
           {{- end }}
+          {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabled }}
           - name: DD_APM_INSTRUMENTATION_ENABLED
-            value: "true"
+            value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
           {{- end }}
-          {{- if ne (include "apmInstrumentation.enabledNamespaces" .) "" }}
+          {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
-            value: {{ include "apmInstrumentation.enabledNamespaces" . }}
+            value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
           {{- end }}
-          {{- if ne (include "apmInstrumentation.disabledNamespaces" .) "" }}
+          {{- if .Values.datadog.apm.instrumentation.disabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_DISABLED_NAMESPACES
-            value: {{ include "apmInstrumentation.disabledNamespaces" . }}
+            value: {{ .Values.datadog.apm.instrumentation.disabledNamespaces | toJson | quote }}
           {{- end }}
           {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
@@ -306,6 +308,8 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
+            value: {{ include "language-detection-enabled" .  | quote }}
           {{- if eq  (include "should-enable-security-agent" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
             value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}

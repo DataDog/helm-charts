@@ -46,15 +46,23 @@ vet:
 
 .PHONY: unit-test
 unit-test:
-	go test -C test ./... -count=1 -skip=E2E
+	go test -C test ./... -count=1
+
+.PHONY: unit-test-operator
+unit-test-operator:
+	go test -C test ./datadog-operator -count=1
 
 .PHONY: update-test-baselines
 update-test-baselines:
-	go test -C test ./... -count=1 -skip=E2E -args -updateBaselines=true
+	go test -C test ./... -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-operator
+update-test-baselines-operator:
+	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:
-	go test -C test/integ --tags=integration -skip=E2E -count=1 -v
+	go test -C test/integ --tags=integration -count=1 -v
 
 # Running E2E tests locally:
 ## Must be connected to appgate
@@ -67,14 +75,14 @@ test-e2e: fmt vet e2e-test
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test
 .PHONY: e2e-test
 e2e-test:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1
 
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
 .PHONY: e2e-test-preserve-stacks
 e2e-test-preserve-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1 -args -preserveStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -preserveStacks=true
 
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
 .PHONY: e2e-test-cleanup-stacks
 e2e-test-cleanup-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test ./... -v -run=E2E -vet=off -timeout 1h -count=1 -args -destroyStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -destroyStacks=true
