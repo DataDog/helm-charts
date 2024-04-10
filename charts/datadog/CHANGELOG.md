@@ -1,10 +1,15 @@
 # Datadog changelog
 
+## 3.59.5
+
+* Set default `Agent` and `Cluster-Agent` version to `7.52.1`.
+
 ## 3.59.4
 
 * Add language detection enable option for `APM` instrumentation.
 
 ## 3.59.3
+
 * Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
 
 ## 3.59.2
