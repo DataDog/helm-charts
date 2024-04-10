@@ -43,6 +43,7 @@
 | operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
+| podSecurityContext | object | `{}` | A security context defines privileges and access control settings for a pod. |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
