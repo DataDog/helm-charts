@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.5
+
+* Change resolution path for `datadog.admissionController.configMode`
+
 ## 3.59.4
 
 * Add language detection enable option for `APM` instrumentation.
