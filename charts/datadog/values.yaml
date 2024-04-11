@@ -480,6 +480,9 @@ datadog:
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
       libVersions: {}
 
+      # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
+      skipKPITelemetry: false
+
       # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
       # It requires Agent 7.52+ and Cluster Agent 7.52+
       language_detection:
