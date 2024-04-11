@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.6
+
+* Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
+
 ## 3.59.5
 
 * Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
@@ -9,6 +13,7 @@
 * Add language detection enable option for `APM` instrumentation.
 
 ## 3.59.3
+
 * Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
 
 ## 3.59.2
