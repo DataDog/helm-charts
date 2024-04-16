@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.16.1
+
+* Update private location image version to `1.47.0`.
+
 ## 0.16.0
 
 * Add `podLabels` value to allow setting labels that only appear on the pods managed by the deployment.
