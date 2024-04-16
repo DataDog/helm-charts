@@ -6,7 +6,7 @@
 
 ## 3.59.5
 
-* Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
+* Set default `Agent` and `Cluster-Agent` version to `7.52.1`.
 
 ## 3.59.4
 
