@@ -140,6 +140,7 @@
 {{- if or .Values.datadog.processAgent.enabled (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:
     path: /etc/passwd
+    type: File
   name: passwd
 {{- end }}
 {{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.serviceMonitoring.enabled) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}

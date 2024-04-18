@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.59.7
+
+* Change the `etc/passwd/` `hostPath` volume to include `type: File` for cases where the process agent crashes in EKS Bottlerocket OS environments.
+
 ## 3.59.6
 
 * Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
