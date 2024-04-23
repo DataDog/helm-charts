@@ -5896,6 +5896,13 @@ spec:
                       properties:
                         agentCommunicationMode:
                           type: string
+                        cwsInstrumentation:
+                          properties:
+                            enabled:
+                              type: boolean
+                            mode:
+                              type: string
+                          type: object
                         enabled:
                           type: boolean
                         failurePolicy:
