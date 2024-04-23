@@ -6,15 +6,15 @@
 replicaCount: 1
 
 # apiKey -- Your Datadog API key
-apiKey:  # <DATADOG_API_KEY>
+apiKey: # <DATADOG_API_KEY>
 
 # apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
 
 ## If set, this parameter takes precedence over "apiKey".
-apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+apiKeyExistingSecret: # <DATADOG_API_KEY_SECRET>
 
 # appKey -- Your Datadog APP key
-appKey:  # <DATADOG_APP_KEY>
+appKey: # <DATADOG_APP_KEY>
 
 # site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
 
@@ -24,12 +24,12 @@ appKey:  # <DATADOG_APP_KEY>
 ## Set to 'us5.datadoghq.com' to send data to the US5 site.
 ## Set to 'ddog-gov.com' to send data to the US1-FED site.
 ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
-site:  # datadoghq.com
+site: # datadoghq.com
 
 # dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
 
 ## Overrides the site setting defined in "site".
-dd_url:  # <DATADOG_API_ENDPOINT>
+dd_url: # <DATADOG_API_ENDPOINT>
 
 # env -- Define any environment variables to be passed to the operator.
 env: []
@@ -37,7 +37,7 @@ env: []
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
 
 ## If set, this parameter takes precedence over "appKey".
-appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+appKeyExistingSecret: # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
@@ -57,12 +57,11 @@ logLevel: "info"
 # maximumGoroutines -- Override default goroutines threshold for the health check failure.
 maximumGoroutines:
 
-
 introspection:
-# introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  # introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
   enabled: false
 datadogAgentProfile:
-# datadogAgentProfile.enabled -- If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+
+  # datadogAgentProfile.enabled -- If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+
   enabled: false
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
@@ -157,6 +156,9 @@ watchNamespaces: []
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
 containerSecurityContext: {}
+
+# podSecurityContext -- A security context defines privileges and access control settings for a pod.
+podSecurityContext: {}
 
 # volumes -- Specify additional volumes to mount in the container
 volumes: []

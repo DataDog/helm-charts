@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+* Add podSecurityContext to deployment template
+
 ## 1.6.0
 
 * Update Datadog Operator version to 1.5.0.
