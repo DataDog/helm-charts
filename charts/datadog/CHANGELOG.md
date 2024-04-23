@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.82.0
+
+* Add `pods/exec` RBAC to the `Cluster-Agent` when needed and inject the service account name of the `Cluster-Agent` as environment variable.
+
 ## 3.81.2
 
 * Fix ci values.yaml files name to be taken into account by the ci job.

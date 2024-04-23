@@ -196,3 +196,7 @@ clusterRole:
   # allowReadAllResources is required to allow the operator to view all custom resources.
   # If collecting CRDs in the Kubernetes Explorer this is required
   allowReadAllResources: false
+
+# addCWSInstrumentationRBAC -- Defines if the operator should be deployed with the RBAC required for the cluster-agent
+# CWSInstrumentation feature.
+addCWSInstrumentationRBAC: false
