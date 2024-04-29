@@ -696,7 +696,7 @@ rules:
   verbs:
   - list
   - watch
-{{- if .Values.enableDatadogAgentProfile }}
+{{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
   resources:
