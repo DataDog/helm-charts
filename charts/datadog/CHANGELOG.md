@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.60.0
+## 3.61.0
+
 * Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
   Note: this requires agent/cluster agent version 7.53.0+
+
+## 3.60.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.53.0`
 
 ## 3.59.7
 
