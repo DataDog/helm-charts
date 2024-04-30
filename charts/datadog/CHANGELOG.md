@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.59.7
+
+* Add configuration option to specify clusterAgent.admissionController.containerRegistry, which defaults to registry
+* No longer set `DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY` to registry as a fallback,
+  that option is implicit from us now setting the higher level `clusterAgent.admissionController.containerRegistry`.
+
 ## 3.59.6
 
 * Add configuration option datadog.apm.instrumentation.skipKPITelemetry.

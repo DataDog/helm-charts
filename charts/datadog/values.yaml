@@ -1062,6 +1062,12 @@ clusterAgent:
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
 
+    # clusterAgent.admissionController.containerRegistry -- Override the default registry for the admission controller.
+
+    ## The clusterAgent uses this configuration for apm.instrumentation, agentSidecar, and cwsInstrumentation, if
+    ## not otherwise specified.
+    containerRegistry:
+
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
@@ -1086,7 +1092,7 @@ clusterAgent:
       # clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled -- Enable communication between Agent sidecars and the Cluster Agent.
       clusterAgentCommunicationEnabled: true
 
-      # clusterAgent.admissionController.containerRegistry -- Override the default registry for the sidecar Agent.
+      # clusterAgent.admissionController.agentSidecarInjection.containerRegistry -- Override the default registry for the sidecar Agent.
       containerRegistry:
 
       # clusterAgent.admissionController.imageName -- Override the default agents.image.name for the Agent sidecar.
