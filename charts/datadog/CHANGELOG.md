@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.65.3
+
+* Add RBAC rules for collection of StorageClass and LimitRange resources in the Orchestrator Explorer.
+
 ## 3.65.2
 
 * Do not enable live process collection by default when language detection is enabled for `APM SSI`.
@@ -85,7 +89,6 @@
 * `datadog.apm.instrumentation.enabled` - set to `true` to enable automatic instrumentation.
 * `datadog.apm.instrumentation.enabledNamespaces` - optional; list of namespaces to enable automatic instrumentation in. If not provided, every namespace in the cluster will be instrumented.
 * `datadog.apm.instrumentation.disabledNamespaces` - optional; list of namespaces to disable automatic instrumentation in.
-
 
 ## 3.57.3
 
