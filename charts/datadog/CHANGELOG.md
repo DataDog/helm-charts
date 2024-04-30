@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.60.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.53.0`
+
 ## 3.59.7
 
 * Add configuration option to specify clusterAgent.admissionController.containerRegistry, which defaults to registry
