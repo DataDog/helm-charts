@@ -48,9 +48,17 @@ vet:
 unit-test:
 	go test -C test ./... -count=1
 
+.PHONY: unit-test-operator
+unit-test-operator:
+	go test -C test ./datadog-operator -count=1
+
 .PHONY: update-test-baselines
 update-test-baselines:
 	go test -C test ./... -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-operator
+update-test-baselines-operator:
+	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:

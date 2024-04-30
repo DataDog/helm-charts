@@ -17,6 +17,9 @@ spec:
     {{- end }}
       labels:
         {{- include "synthetics-private-location.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{ if .Values.dnsPolicy }}
       dnsPolicy: {{ .Values.dnsPolicy}}
@@ -65,14 +68,20 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-{{- if .Values.envFrom }}
+      {{- if .Values.envFrom }}
           envFrom:
-{{ toYaml .Values.envFrom | indent 12 }}
-{{- end }}
-{{- if .Values.env }}
+      {{- toYaml .Values.envFrom | nindent 12 }}
+      {{- end }}
+      {{- if or (.Values.env) (.Values.enableStatusProbes) }}
           env:
-{{ toYaml .Values.env | indent 12 }}
-{{- end }}
+      {{- if .Values.enableStatusProbes }}
+            - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
+              value: {{ .Values.enableStatusProbes | quote }}
+      {{- end }}
+      {{- if .Values.env }}
+      {{- toYaml .Values.env | nindent 12 }}
+      {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
