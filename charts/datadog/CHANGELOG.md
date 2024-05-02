@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.62.0
+
+* Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default
+
 ## 3.61.0
 
 * Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
