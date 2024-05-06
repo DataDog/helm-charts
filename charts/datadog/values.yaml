@@ -906,6 +906,8 @@ datadog:
     # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
     enabled: true
 
+  agentDataPlane:
+    enabled: false
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1721,6 +1723,46 @@ agents:
       #    memory: 300Mi
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
+    agentDataPlane:
+      # agents.containers.agentDataPlane.env -- Additional environment variables for the agent-data-plane container
+      env: []
+
+      # agents.containers.agentDataPlane.envFrom -- Set environment variables specific to agent-data-plane from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # agents.containers.agentDataPlane.envDict -- Set environment variables specific to agent-data-plane defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # agents.containers.agentDataPlane.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, and error
+      logLevel:  # INFO
+
+      # agents.containers.agentDataPlane.resources -- Resource requests and limits for the agent-data-plane container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # agents.containers.agentDataPlane.livenessProbe -- Override default agent liveness probe settings
+      # @default -- Every 15s
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+
+      # agents.containers.agentDataPlane.securityContext -- Allows you to overwrite the default container SecurityContext for the agent-data-plane container.
+      securityContext: {}
+
+      # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
     initContainers:

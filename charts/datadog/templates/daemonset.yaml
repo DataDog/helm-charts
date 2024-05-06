@@ -128,6 +128,9 @@ spec:
         {{- if eq  (include "should-enable-security-agent" .) "true" }}
           {{- include "container-security-agent" . | nindent 6 }}
         {{- end }}
+        {{- if .Values.datadog.agentDataPlane.enabled }}
+          {{- include "container-agent-data-plane" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
