@@ -1,4 +1,4 @@
-{{- define "containers-dogstatsd" -}}
+{{- define "containers-dogstatsd-env" -}}
 {{- if .Values.datadog.dogstatsd.port }}
 - name: DD_DOGSTATSD_PORT
   value: {{ .Values.datadog.dogstatsd.port | quote }}
