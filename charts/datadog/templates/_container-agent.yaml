@@ -184,6 +184,10 @@
       value: /host
     {{- end }}
     {{- end }}
+    {{- if .Values.datadog.kubelet.coreCheckEnabled }}
+    - name: DD_KUBELET_CORE_CHECK_ENABLED
+      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
