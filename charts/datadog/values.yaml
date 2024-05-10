@@ -249,6 +249,10 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
+  # datadog.collectKubernetesNamespaces -- Toggle if kubernetes namespace information should be collected. (Requires Agent/Cluster Agent 7.55.0+)
+  # @default -- false
+  collectKubernetesNamespaces: false
+
   # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
 
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/

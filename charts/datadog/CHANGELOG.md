@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.62.1
+
+* Add `datadog.collectKubernetesNamespaces` config to enable collection of kubernetes namespace information
+
 ## 3.62.0
 
 * Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default

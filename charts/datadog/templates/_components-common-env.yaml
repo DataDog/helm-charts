@@ -42,6 +42,10 @@
 - name: DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS
   value: '{{ toJson .Values.datadog.namespaceLabelsAsTags }}'
 {{- end }}
+{{- if .Values.datadog.collectKubernetesNamespaces }}
+- name: DD_KUBERNETES_NAMESPACE_COLLECTION_ENABLED
+  value: {{ .Values.datadog.kubelet.collectKubernetesNamespaces | quote }}
+{{- end }}
 - name: KUBERNETES
   value: "yes"
 {{- if .Values.datadog.site }}
