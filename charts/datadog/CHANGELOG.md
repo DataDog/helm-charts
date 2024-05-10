@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.64.0
+
+* Add `datadog.originDetectionUnified.enabled` setting to enable unified origin detection for container tagging. Disabled by default
+
 ## 3.63.0
 
 * Set kubelet core check to be enabled by default
