@@ -169,3 +169,7 @@ volumeMounts: []
 #   - name: <VOLUME_NAME>
 #     mountPath: <CONTAINER_PATH>
 #     readOnly: true
+
+# addCWSInstrumentationRBAC -- Defines if the operator should be deployed with the RBAC required for the cluster-agent
+# CWSInstrumentation feature.
+addCWSInstrumentationRBAC: false

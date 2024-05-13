@@ -1099,6 +1099,14 @@ clusterAgent:
     # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
     port: 8000
 
+    cwsInstrumentation:
+      # clusterAgent.admissionController.cwsInstrumentation.enabled -- Enable the CWS Instrumentation admission controller endpoint.
+      enabled: false
+
+      # clusterAgent.admissionController.cwsInstrumentation.mode -- Mode defines how the CWS Instrumentation should behave.
+      # Options are "remote_copy" or "init_container"
+      mode: remote_copy
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 

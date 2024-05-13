@@ -17,7 +17,7 @@ maintainers:
   email: support@datadoghq.com
 dependencies:
 - name: datadog-crds
-  version: "=1.5.0"
+  version: "=1.5.1"
   alias: datadogCRDs
   repository: https://helm.datadoghq.com
   condition: installCRDs

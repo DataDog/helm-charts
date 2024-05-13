@@ -251,6 +251,11 @@ rules:
 - apiGroups: ["apps"]
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
+{{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+{{- end }}
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}

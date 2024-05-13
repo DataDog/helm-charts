@@ -6,6 +6,7 @@
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| addCWSInstrumentationRBAC | bool | `false` | Defines if the operator should be deployed with the RBAC required for the cluster-agent CWSInstrumentation feature. |
 | affinity | object | `{}` | Allows to specify affinity for Datadog Operator PODs |
 | apiKey | string | `nil` | Your Datadog API key |
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |

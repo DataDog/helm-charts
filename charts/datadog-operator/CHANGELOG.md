@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.2
+
+* Add configuration to grand to the operator the necessary RBAC for the CWS Instrumentation admission controller feature in the Cluster-Agent to work.
+
 ## 1.6.1
 
 * Fix clusterRole when DatadogAgentProfiles are enabled.

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.62.0](https://img.shields.io/badge/Version-3.62.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.63.0](https://img.shields.io/badge/Version-3.63.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -554,6 +554,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines the pod selector for sidecar injection, currently only one rule is supported. |
 | clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", or "socket". |
 | clusterAgent.admissionController.containerRegistry | string | `nil` | Override the default registry for the admission controller. |
+| clusterAgent.admissionController.cwsInstrumentation.enabled | bool | `false` | Enable the CWS Instrumentation admission controller endpoint. |
+| clusterAgent.admissionController.cwsInstrumentation.mode | string | `"remote_copy"` | Mode defines how the CWS Instrumentation should behave. Options are "remote_copy" or "init_container" |
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |

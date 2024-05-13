@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.63.0
+
+* Add `pods/exec` RBAC to the `Cluster-Agent` when needed and inject the service account name of the `Cluster-Agent` as environment variable.
+
 ## 3.62.0
 
 * Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default

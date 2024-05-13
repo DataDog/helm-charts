@@ -730,4 +730,9 @@ rules:
   verbs:
   - update
 {{- end }}
+{{- if .Values.addCWSInstrumentationRBAC }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+{{- end }}
 {{- end -}}

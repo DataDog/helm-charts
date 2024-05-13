@@ -160,6 +160,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
@@ -234,6 +238,12 @@ spec:
           {{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
+          {{- end }}
+          {{- if .Values.clusterAgent.admissionController.cwsInstrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_MODE
+            value: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode | quote }}
           {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
