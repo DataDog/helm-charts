@@ -782,6 +782,9 @@ datadog:
       # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
       fimEnabled: false
 
+      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the new improved agent events explorer
+      useSecruntimeTrack: false
+
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
         configMap:
