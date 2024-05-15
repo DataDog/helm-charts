@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.62.1
+
+* Update `fips.image.tag` to `1.1.2`
+
 ## 3.62.0
 
 * Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default
