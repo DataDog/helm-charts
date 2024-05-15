@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0
+
+* Update Datadog Operator version to 1.6.0.
+
 ## 1.6.1
 
 * Fix clusterRole when DatadogAgentProfiles are enabled.

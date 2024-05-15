@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.6.1](https://img.shields.io/badge/Version-1.6.1-informational?style=flat-square) ![AppVersion: 1.5.0](https://img.shields.io/badge/AppVersion-1.5.0-informational?style=flat-square)
+![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![AppVersion: 1.6.0](https://img.shields.io/badge/AppVersion-1.6.0-informational?style=flat-square)
 
 ## Values
 
@@ -31,7 +31,7 @@
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.5.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.6.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -122,7 +122,7 @@ You can update with the following:
 ```
 helm upgrade \
     datadog-operator datadog/datadog-operator \
-    --set image.tag=1.5.0 \
+    --set image.tag=1.6.0 \
     --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
     --set datadogCRDs.migration.datadogAgents.useCertManager=true \
     --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true
