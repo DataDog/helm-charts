@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.63.0
+
+* Set kubelet core check to be enabled by default
+
 ## 3.62.1
 
 * Update `fips.image.tag` to `1.1.2`
