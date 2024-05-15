@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.64.1
+
+* Add `datadog.securityAgent.runtime.useSecruntimeTrack` config to start sending CWS events directly to the new secruntime track (and to the new agent events explorer).
+
 ## 3.64.0
 
 * Add `datadog.originDetectionUnified.enabled` setting to enable unified origin detection for container tagging. Disabled by default
