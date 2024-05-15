@@ -249,6 +249,10 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
+  originDetectionUnified:
+    # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
+    enabled: false
+
   # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
 
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/
