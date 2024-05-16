@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.64.1](https://img.shields.io/badge/Version-3.64.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.65.0](https://img.shields.io/badge/Version-3.65.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -556,6 +556,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.containerRegistry | string | `nil` | Override the default registry for the admission controller. |
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
+| clusterAgent.admissionController.injectConfig.injectContainerName | bool | `false` | Injects the container name along with the pod uid in `DD_ENTITY_ID` if it was not set manually. Default: false. (Requires Agent 7.54.0+). |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
 | clusterAgent.admissionController.port | int | `8000` | Set port of cluster-agent admission controller service |
 | clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config. # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |

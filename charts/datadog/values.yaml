@@ -1091,6 +1091,10 @@ clusterAgent:
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
 
+    injectConfig:
+      # clusterAgent.admissionController.injectConfig.injectContainerName -- Injects the container name along with the pod uid in `DD_ENTITY_ID` if it was not set manually. Default: false. (Requires Agent 7.54.0+).
+      injectContainerName: false
+
     # clusterAgent.admissionController.containerRegistry -- Override the default registry for the admission controller.
 
     ## The clusterAgent uses this configuration for apm.instrumentation, agentSidecar, and cwsInstrumentation, if

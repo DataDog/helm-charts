@@ -222,6 +222,10 @@ spec:
             {{- end }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: {{ template "localService.name" . }}
+          {{- if .Values.clusterAgent.admissionController.injectConfig.injectContainerName }}
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_INJECT_CONTAINER_NAME
+            value: {{ .Values.clusterAgent.admissionController.injectConfig.injectContainerName | quote }}
+          {{- end }}
           {{- if .Values.providers.aks.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ADD_AKS_SELECTORS
             value: "true"

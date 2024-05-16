@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.65.0
+
+* Add `clusterAgent.admissionController.injectConfig.injectContainerName` setting to enable injection of the container name along with the pod uid in `DD_ENTITY_ID`. Disabled by default
+
 ## 3.64.1
 
 * Add `datadog.securityAgent.runtime.useSecruntimeTrack` config to start sending CWS events directly to the new secruntime track (and to the new agent events explorer).
