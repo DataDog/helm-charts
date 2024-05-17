@@ -783,7 +783,7 @@ datadog:
       fimEnabled: false
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
-      useSecruntimeTrack: false
+      useSecruntimeTrack: true
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
