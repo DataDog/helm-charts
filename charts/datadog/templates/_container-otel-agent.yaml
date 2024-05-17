@@ -1,0 +1,88 @@
+{{- define "container-otel-agent" -}}
+- name: otel-agent
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["otel-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["otel-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  resources:
+{{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
+  ports:
+  - containerPort: {{ .Values.datadog.apm.port }}
+  {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
+    hostPort: {{ .Values.datadog.apm.port }}
+  {{- end }}
+    name: traceport
+    protocol: TCP
+{{- if .Values.agents.containers.traceAgent.ports }}
+{{ toYaml .Values.agents.containers.traceAgent.ports | indent 2 }}
+{{- end }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.envFrom }}
+{{ .Values.agents.containers.traceAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
+  volumeMounts:
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: true
+    {{- end }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
+    - name: otel-config-yaml
+      mountPath: {{ template "datadog.confPath" . }}/otel-config.yaml
+      subPath: otel-config.yaml
+      readOnly: true
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.autopilot }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW for tmp directory
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false # Need RW for UDS DSD socket
+    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+  livenessProbe:
+{{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
+{{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}
+{{- end -}}

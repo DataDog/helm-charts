@@ -510,6 +510,10 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
+  ## OTel collector related configuration
+  otelcollector:
+    enabled: false
+    config: {}
 
   ## OTLP ingest related configuration
   otlp:

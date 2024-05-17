@@ -128,6 +128,9 @@ spec:
         {{- if eq  (include "should-enable-security-agent" .) "true" }}
           {{- include "container-security-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-otel-agent" .) "true" }}
+          {{- include "container-otel-agent" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
@@ -163,6 +166,14 @@ spec:
       {{- end }}
       {{- if eq .Values.targetSystem "linux" }}
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.datadog.otelcollector.enabled }}
+      - name: otel-config-yaml
+        configMap:
+          name: {{ include "agents-install-otel-configmap-name" . }}
+          items:
+          - key: otel-config.yaml
+            path: otel-config.yaml
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}

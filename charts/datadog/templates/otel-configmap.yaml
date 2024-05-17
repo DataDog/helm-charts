@@ -1,0 +1,15 @@
+{{- if eq (include "should-enable-otel-agent" .) "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "agents-install-otel-configmap-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "datadog.labels" . | nindent 4 }}
+  annotations:
+    checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
+    checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
+data:
+  otel-config.yaml: |-
+    {{ .Values.datadog.otelcollector.config | nindent 4 }}
+{{- end }}
