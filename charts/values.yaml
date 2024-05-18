@@ -1,20 +1,12 @@
 agents:
   image:
-    tagSuffix: jmx
+    repository: dineshgurumurthydd/dd-otel-agent
+    tag: 7.54
 datadog:
   apiKey: $DD_API_KEY
   logs:
     enabled: true
     containerCollectAll: true
-  otlp:
-    logs:
-      enabled: true
-    receiver:
-      protocols:
-        grpc:
-          enabled: true
-        http:
-          enabled: true
   orchestratorExplorer:
     enabled: true
   clusterAgent:
@@ -34,9 +26,5 @@ datadog:
   otelcollector:
     enabled: true
   env:
-    - name: DD_API_KEY
-      valueFrom:
-        secretKeyRef:
-          name: datadog-secrets
-          key: dd-api-key
-          optional: false
+    - name: DD_HOSTNAME
+      value: "dd-agent"

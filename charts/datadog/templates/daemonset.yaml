@@ -168,7 +168,7 @@ spec:
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
       {{- end }}
       {{- if .Values.datadog.otelcollector.enabled }}
-      - name: otel-config-yaml
+      - name: otelconfig
         configMap:
           name: {{ include "agents-install-otel-configmap-name" . }}
           items:

@@ -211,6 +211,18 @@ C:/ProgramData/Datadog
 {{- end -}}
 
 {{/*
+Return agent config path
+*/}}
+{{- define "datadog.otelconfPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/etc/otel-agent
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return agent host mount root
 */}}
 {{- define "datadog.hostMountRoot" -}}
