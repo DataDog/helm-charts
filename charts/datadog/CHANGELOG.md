@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.65.1
+
+* Make sure the security agent is aware of `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
 ## 3.65.0
 
 * Default `datadog.securityAgent.runtime.useSecruntimeTrack` to `true`, sending CWS events directly to the new secruntime track (and to the new agent events explorer).
