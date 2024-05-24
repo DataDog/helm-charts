@@ -12,15 +12,10 @@
   resources:
 {{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
   ports:
-  - containerPort: {{ .Values.datadog.apm.port }}
-  {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
-    hostPort: {{ .Values.datadog.apm.port }}
-  {{- end }}
-    name: traceport
-    protocol: TCP
-{{- if .Values.agents.containers.traceAgent.ports }}
-{{ toYaml .Values.agents.containers.traceAgent.ports | indent 2 }}
-{{- end }}
+    {{- range .Values.datadog.otelcollector.ports }}
+      - containerPort: {{ .containerPort }}
+        hostPort: {{ .hostPort }}
+    {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}

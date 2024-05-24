@@ -1,7 +1,7 @@
 agents:
   image:
     repository: dineshgurumurthydd/dd-otel-agent
-    tag: 7.54
+    tag: 7.54.8
 datadog:
   apiKey: $DD_API_KEY
   logs:
@@ -23,8 +23,3 @@ datadog:
     peer_tags_aggregation: true
     compute_stats_by_span_kind: true
     peer_service_aggregation: true
-  otelcollector:
-    enabled: true
-  env:
-    - name: DD_HOSTNAME
-      value: "dd-agent"

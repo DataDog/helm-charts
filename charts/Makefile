@@ -1,7 +1,6 @@
 install-agent:
 	@echo "Installing agent..."
-	helm install dd -f values.yaml ./datadog  --set-file datadog.otelcollector.config=config.yaml --set datadog.apiKey=${DD_API_KEY}
-	@chmod +x /usr/local/bin/agent
+	helm install dd -f values.yaml ./datadog  --set datadog.otelcollector.enabled=true --set-file datadog.otelcollector.config=config.yaml --set datadog.apiKey=${DD_API_KEY}
 	@echo "Agent installed successfully."
 
 uninstall-agent:

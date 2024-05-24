@@ -1,25 +1,11 @@
 receivers:
-  hostmetrics:
-    scrapers:
-      paging:
-        metrics:
-          system.paging.utilization:
-            enabled: true
-      cpu:
-        metrics:
-          system.cpu.utilization:
-            enabled: true
-          system.cpu.physical.count:
-            enabled: true
-          system.cpu.logical.count:
-            enabled: true
-          system.cpu.frequency:
-            enabled: true
-      disk:
-      load:
-      memory:
-      network:
-      processes:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "otelcol"
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
   otlp:
     protocols:
       grpc:
@@ -34,31 +20,40 @@ exporters:
   datadog:
     api:
       key: $DD_API_KEY
+    traces:
+      endpoint: "https://trace.agent.datadoghq.com"
 processors:
+  infraattributes:
+    cardinality: 2
   probabilistic_sampler:
     hash_seed: 22
     sampling_percentage: 15.3
   batch:
     timeout: 10s
-  resourcedetection:
-    detectors: [system, env]
 connectors:
-  spanmetrics/connector:
+  datadog/connector:
+    traces:
+      compute_top_level_by_span_kind: true
+      peer_tags_aggregation: true
+      compute_stats_by_span_kind: true
 service:
+  telemetry:
+    logs:
+      level: debug
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, batch]
-      exporters: [spanmetrics/connector]
+      processors: [batch]
+      exporters: [datadog/connector]
     traces/sampled:
       receivers: [otlp]
-      processors: [probabilistic_sampler, batch]
-      exporters: [debug]
+      processors: [probabilistic_sampler, infraattributes, batch]
+      exporters: [datadog]
     metrics:
-      receivers: [otlp, spanmetrics/connector]
-      processors: [resourcedetection, batch]
+      receivers: [otlp, datadog/connector, prometheus]
+      processors: [infraattributes, batch]
       exporters: [datadog]
     logs:
       receivers: [otlp]
-      processors: [batch, resourcedetection]
+      processors: [infraattributes, batch]
       exporters: [datadog]
