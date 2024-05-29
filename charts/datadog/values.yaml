@@ -494,7 +494,7 @@ datadog:
       # It requires Agent 7.52+ and Cluster Agent 7.52+
       language_detection:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
-        enabled: true
+        enabled: false
 
   ## Application Security Managment (ASM) configuration
   ##

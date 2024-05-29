@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.66.0
+
+* Disable language detection by default for `APM Single Step Instrumentation`
+
 ## 3.65.1
 
 * Make sure the security agent is aware of `datadog.securityAgent.runtime.useSecruntimeTrack`.
