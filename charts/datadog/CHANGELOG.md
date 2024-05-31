@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.65.2
+
+* Do not enable live process collection by default when language detection is enabled for `APM SSI`.
+
 ## 3.65.1
 
 * Make sure the security agent is aware of `datadog.securityAgent.runtime.useSecruntimeTrack`.
