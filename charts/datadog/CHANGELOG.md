@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.65.3
+
+* Set default `Agent` and `Cluster-Agent` version to `7.54.0`
+
 ## 3.65.2
 
 * Do not enable live process collection by default when language detection is enabled for `APM SSI`.
