@@ -13,8 +13,18 @@ receivers:
 exporters:
   debug:
     verbosity: detailed
+    #opensearch:
+    #http:
+    # endpoint: http://otel-demo-opensearch:9200
+    # tls:
+    #   insecure: true
+    # logs_index: otel
   otlp:
-    endpoint: localhost:4317
+    endpoint: "otel-demo-jaeger-collector:4317"
+    tls:
+      insecure: true
+  otlphttp/prometheus:
+    endpoint: http://otel-demo-prometheus-server:9090/api/v1/otlp
     tls:
       insecure: true
   datadog:
@@ -49,11 +59,23 @@ service:
       receivers: [otlp]
       processors: [probabilistic_sampler, infraattributes, batch]
       exporters: [datadog]
+    traces/jaeger:
+      receivers: [otlp]
+      processors: [probabilistic_sampler, batch]
+      exporters: [otlp]
     metrics:
       receivers: [otlp, datadog/connector, prometheus]
       processors: [infraattributes, batch]
       exporters: [datadog]
+    metrics/prometheus:
+      receivers: [prometheus, otlp]
+      processors: [batch]
+      exporters: [otlphttp/prometheus]
     logs:
       receivers: [otlp]
       processors: [infraattributes, batch]
       exporters: [datadog]
+      #logs/opensearch:
+      #receivers: [otlp]
+      #processors: [batch]
+      #exporters: [opensearch]
