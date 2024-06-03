@@ -13,12 +13,12 @@ receivers:
 exporters:
   debug:
     verbosity: detailed
-    #opensearch:
-    #http:
-    # endpoint: http://otel-demo-opensearch:9200
-    # tls:
-    #   insecure: true
-    # logs_index: otel
+  opensearch:
+    http:
+      endpoint: http://otel-demo-opensearch:9200
+      tls:
+        insecure: true
+    logs_index: otel
   otlp:
     endpoint: "otel-demo-jaeger-collector:4317"
     tls:
@@ -75,7 +75,7 @@ service:
       receivers: [otlp]
       processors: [infraattributes, batch]
       exporters: [datadog]
-      #logs/opensearch:
-      #receivers: [otlp]
-      #processors: [batch]
-      #exporters: [opensearch]
+    logs/opensearch:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [opensearch]
