@@ -15,6 +15,7 @@ rules:
   - nodes
   - namespaces
   - componentstatuses
+  - limitranges
   verbs:
   - get
   - list
@@ -194,6 +195,14 @@ rules:
   - rolebindings
   - clusterroles
   - clusterrolebindings
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - "storage.k8s.io"
+  resources:
+  - storageclasses
   verbs:
   - list
   - get
