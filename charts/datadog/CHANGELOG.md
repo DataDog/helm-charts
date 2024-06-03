@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.66.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
+
 ## 3.65.3
 
 * Add RBAC rules for collection of StorageClass and LimitRange resources in the Orchestrator Explorer.
