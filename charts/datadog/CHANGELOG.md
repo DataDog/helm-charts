@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.67.0
+
+* Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache 
+in the Kube State Metrics Core check.
+
 ## 3.66.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
