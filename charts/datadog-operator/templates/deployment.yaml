@@ -62,6 +62,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            {{- if (semverCompare ">=1.7.0-0" .Values.image.tag) }}
+            - name: DD_TOOL_VERSION
+              value: "helm"
+            {{- end }}
             {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
             - name: DD_API_KEY
               valueFrom:
