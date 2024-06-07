@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.1
+
+* Add `DD_TOOL_VERSION` to operator deployment.
+
 ## 1.7.0
 
 * Update Datadog Operator version to 1.6.0.
