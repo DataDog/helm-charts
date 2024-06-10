@@ -368,6 +368,9 @@ spec:
         readinessProbe:
 {{- $ready := .Values.clusterAgent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 10 }}
+        startupProbe:
+{{- $startup := .Values.clusterAgent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 10 }}
 {{- if .Values.clusterAgent.containers.clusterAgent.securityContext }}
         securityContext:
 {{ toYaml .Values.clusterAgent.containers.clusterAgent.securityContext | indent 10 }}
