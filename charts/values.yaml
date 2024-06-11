@@ -1,28 +1,36 @@
 agents:
+  useConfigMap: trueval
   image:
     repository: dineshgurumurthydd/dd-otel-agent
-    tag: 7.55.4
+    tag: 7.55.5
+  containers:
+    agent:
+      env:
+        - name: DD_OTEL_ENABLED
+          value: "true"
+        - name: DD_OTEL_SUBMIT_DUMMY_INVENTORIES_PAYLOAD
+          value: "true"
+clusterAgent:
+  replicas: 2
+  enabled: true
+  rbac:
+    create: true
 datadog:
   apiKey: $DD_API_KEY
+  otlp:
+    enabled: enabled
   logs:
     enabled: true
     containerCollectAll: true
   orchestratorExplorer:
     enabled: true
-  clusterAgent:
-    enabled: true
-    rbac:
-      create: true
   processAgent:
     enabled: true
     processCollection: true
   networkMonitoring:
     enabled: true
-  apm_config:
-    enabled: true
+  apm:
+    portEnabled: true
     peer_tags_aggregation: true
     compute_stats_by_span_kind: true
     peer_service_aggregation: true
-env:
-  - name: DD_OTEL_COLLECTOR_REMOTE_TAGGER
-    value: "true"
