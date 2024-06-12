@@ -278,6 +278,10 @@ spec:
           - name: DD_LOG_LEVEL
             value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
+          {{- if eq .Values.datadog.logFormat "json" }}
+          - name: DD_LOG_FORMAT_JSON
+            value: "true"
+          {{- end }}
           - name: DD_LEADER_ELECTION
             value: {{ .Values.datadog.leaderElection | quote}}
           - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE

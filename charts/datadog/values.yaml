@@ -123,6 +123,9 @@ datadog:
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
   logLevel: INFO
 
+  # datadog.logFormat -- Set logging format to text (default) or JSON
+  logFormat: text
+
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
