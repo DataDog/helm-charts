@@ -63,6 +63,10 @@ containers:
         value: {{ .Values.datadog.workerAPI.playground | quote }}
       - name: DD_OP_API_ADDRESS
         value: {{ .Values.datadog.workerAPI.address | quote }}
+      {{- if .Values.datadog.pciCompliant }}
+      - name: DD_OP_PCI_COMPLIANT
+        value: "true"
+      {{- end }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
