@@ -92,6 +92,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.apiKey | string | `nil` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
+| datadog.pciCompliant | bool | `false` | Sets the DD_OP_PCI_COMPLIANT to true when enabled. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | datadog.workerAPI.address | string | `"127.0.0.1:8686"` | Local address to bind the Worker's API to. |
