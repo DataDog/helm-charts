@@ -1,0 +1,26 @@
+# Datadog Agent with Prometheus Scrape configurations
+
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  
+  # See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#metric-collection-with-prometheus-annotations
+  prometheusScrape:
+    enabled: true
+
+    # Optional settings for Prometheus scrape
+    # See: https://docs.datadoghq.com/containers/kubernetes/prometheus/?tab=kubernetesadv2#advanced-configuration
+    additionalConfigs:
+      - configurations:
+        - send_distribution_buckets: true
+          ## Metrics namespace used for Prometheus metrics
+          namespace: promtest
+          ## Limit the number of metrics to be collected
+          max_returned_metrics: 200
+          ## Metrics filter and name mapping
+          metrics: 
+            - go_threads: go.threads
+            - promhttp_metric_handler_requests
+
