@@ -3,26 +3,26 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["/otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"]
+  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
-{{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
+{{ toYaml .Values.agents.containers.otelAgent.resources | indent 4 }}
   ports:
     {{- range .Values.datadog.otelcollector.ports }}
       - containerPort: {{ .containerPort }}
         hostPort: {{ .hostPort }}
     {{- end }}
-{{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.otelAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}
 {{ .Values.datadog.envFrom | toYaml | indent 4 }}
 {{- end }}
-{{- if .Values.agents.containers.traceAgent.envFrom }}
-{{ .Values.agents.containers.traceAgent.envFrom | toYaml | indent 4 }}
+{{- if .Values.agents.containers.otelAgent.envFrom }}
+{{ .Values.agents.containers.otelAgent.envFrom | toYaml | indent 4 }}
 {{- end }}
 {{- end }}
   env:
@@ -30,9 +30,9 @@
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
-    {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
+      value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.otelAgent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.otelAgent.envDict | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -75,6 +75,6 @@
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
   livenessProbe:
-{{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
+{{- $live := .Values.agents.containers.otelAgent.livenessProbe }}
 {{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}
 {{- end -}}

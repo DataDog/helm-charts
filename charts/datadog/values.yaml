@@ -1626,6 +1626,45 @@ agents:
       # agents.containers.processAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+    otelAgent:
+      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
+      env: []
+
+      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
+      logLevel: # INFO
+
+      # agents.containers.traceAgent.resources -- Resource requests and limits for the trace-agent container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # agents.containers.traceAgent.livenessProbe -- Override default agent liveness probe settings
+      # @default -- Every 15s
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+
+      # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
+      securityContext: {}
+
+      # agents.containers.traceAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env: []

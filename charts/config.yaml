@@ -46,7 +46,16 @@ connectors:
       compute_top_level_by_span_kind: true
       peer_tags_aggregation: true
       compute_stats_by_span_kind: true
+extensions:
+  health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+  zpages:
+    endpoint: 0.0.0.0:55679
+  datadog:
+    endpoint: 0.0.0.0:7777
 service:
+  extensions: [health_check, zpages, datadog, pprof]
   telemetry:
     logs:
       level: debug
@@ -58,7 +67,7 @@ service:
     traces/sampled:
       receivers: [otlp]
       processors: [probabilistic_sampler, infraattributes, batch]
-      exporters: [datadog]
+      exporters: [debug]
     traces/jaeger:
       receivers: [otlp]
       processors: [probabilistic_sampler, batch]
