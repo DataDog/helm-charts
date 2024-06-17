@@ -42,6 +42,7 @@ kubernetes_state_core.yaml.default: |-
       - storageclasses
       - volumeattachments
       - ingresses
+      use_api_server_cache: {{ .Values.datadog.kubeStateMetricsCore.useApiServerCache }}
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
       skip_leader_election: true
 {{- end }}
