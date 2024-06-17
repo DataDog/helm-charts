@@ -64,7 +64,7 @@ spec:
                   fieldPath: metadata.name
             {{- if (semverCompare ">=1.7.0-0" .Values.image.tag) }}
             - name: DD_TOOL_VERSION
-              value: "helm"
+              value: {{ .Values.toolVersion | default "helm" }}
             {{- end }}
             {{- if .Values.clusterName }}
             - name: DD_CLUSTER_NAME
