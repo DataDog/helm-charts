@@ -62,6 +62,10 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
+    {{- if eq .Values.datadog.logFormat "json" }}
+    - name: DD_LOG_FORMAT_JSON
+      value: "true"
+    {{- end }}
     {{- if .Values.datadog.dogstatsd.port }}
     - name: DD_DOGSTATSD_PORT
       value: {{ .Values.datadog.dogstatsd.port | quote }}

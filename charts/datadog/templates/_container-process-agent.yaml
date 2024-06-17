@@ -40,6 +40,10 @@
     {{- end }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- if eq .Values.datadog.logFormat "json" }}
+    - name: DD_LOG_FORMAT_JSON
+      value: "true"
+    {{- end }}
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- if .Values.datadog.networkMonitoring.enabled }}

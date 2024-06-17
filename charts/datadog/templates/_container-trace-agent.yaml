@@ -36,6 +36,10 @@
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- if eq .Values.datadog.logFormat "json" }}
+    - name: DD_LOG_FORMAT_JSON
+      value: "true"
+    {{- end }}
     - name: DD_APM_ENABLED
       value: "true"
     - name: DD_APM_NON_LOCAL_TRAFFIC
