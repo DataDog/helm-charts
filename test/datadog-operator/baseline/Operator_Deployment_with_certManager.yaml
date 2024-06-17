@@ -46,6 +46,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_TOOL_VERSION
+              value: "helm"
           args:
             - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
