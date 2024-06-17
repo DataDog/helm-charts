@@ -66,6 +66,10 @@ spec:
             - name: DD_TOOL_VERSION
               value: "helm"
             {{- end }}
+            {{- if .Values.clusterName }}
+            - name: DD_CLUSTER_NAME
+              value: {{ .Values.clusterName }}
+            {{- end }}
             {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
             - name: DD_API_KEY
               valueFrom:
@@ -124,6 +128,9 @@ spec:
           {{- end }}
           {{- if (semverCompare ">=1.3.0" .Values.image.tag) }}
             - "-datadogSLOEnabled={{ .Values.datadogSLO.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.7.0" .Values.image.tag) }}
+            - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
           ports:
             - name: metrics
