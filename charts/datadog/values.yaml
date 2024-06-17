@@ -419,8 +419,14 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/#log-collection-setup
     enabled: false
 
-    # datadog.logs.containerCollectAll -- Enable this to allow log collection for all containers
+    kubelet:
+    # datadog.logs.kubelet.enabled -- Enables this to activate Datadog Agent log collection for the Kubelet
+      enabled: false
+    # datadog.logs.kubelet.hostPath -- Sets the hostPath for the kubelet logs directory
+      hostPath: ""
 
+    # datadog.logs.containerCollectAll -- Enable this to allow log collection for all containers
+ 
     ## ref: https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/#log-collection-setup
     containerCollectAll: false
 

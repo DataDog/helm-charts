@@ -190,6 +190,10 @@
 - hostPath:
     path: /var/log/containers
   name: logscontainerspath
+{{- if .Values.datadog.logs.kubelet.enabled }}
+- hostpath:
+    path: {{ .Values.datadog.logs.kubelet.hostPath  }}
+  name: logskubeletpath
 {{- if not .Values.datadog.criSocketPath }}
 - hostPath:
     path: /var/lib/docker/containers
