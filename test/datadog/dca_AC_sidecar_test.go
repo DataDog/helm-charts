@@ -91,7 +91,7 @@ func verifyDeploymentFargateMinimal(t *testing.T, manifest string) {
 	// Default will be set by DCA
 	assert.Empty(t, acConfigEnv[DDSidecarRegistry])
 	assert.Equal(t, "agent", acConfigEnv[DDSidecarImageName])
-	assert.Equal(t, "7.53.0", acConfigEnv[DDSidecarImageTag])
+	assert.Equal(t, "7.54.0", acConfigEnv[DDSidecarImageTag])
 	assert.Empty(t, acConfigEnv[DDSidecarSelectors])
 	assert.Empty(t, acConfigEnv[DDSidecarProfiles])
 }

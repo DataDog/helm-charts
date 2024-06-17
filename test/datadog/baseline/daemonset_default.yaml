@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.64.1'
+    helm.sh/chart: 'datadog-3.66.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: a35e0fc3c9cc5d2684bce9d9cc6a3c694647a2ab9e7135057afd317d893a8771
-        checksum/install_info: f2cb33b54b5eb5df4f4e7285e408f6d4ee343c8a98a644780e18ab457ac4207f
+        checksum/clusteragent_token: 6f8939afb1a8bca4c40c75a43a7e0b7995b0832814af2ba85a32bd891f20d0c6
+        checksum/install_info: 4b7ec9616456fc79cafc6e8f64bda4671d2b86f7e48196ab808e5edc4d2e42b8
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -42,7 +42,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.53.0"
+        image: "gcr.io/datadoghq/agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -182,7 +182,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.53.0"
+        image: "gcr.io/datadoghq/agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -288,7 +288,7 @@ spec:
             port: 8126
           timeoutSeconds: 5
       - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.53.0"
+        image: "gcr.io/datadoghq/agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -335,9 +335,7 @@ spec:
           - name: DD_DOGSTATSD_SOCKET
             value: "/var/run/datadog/dsd.socket"
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-            value: "true"
-          - name: DD_PROCESS_AGENT_PROCESS_COLLECTION_ENABLED
-            value: "false"        
+            value: "true"        
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -379,7 +377,7 @@ spec:
           
       - name: init-volume
         
-        image: "gcr.io/datadoghq/agent:7.53.0"
+        image: "gcr.io/datadoghq/agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -392,7 +390,7 @@ spec:
           {}
       - name: init-config
         
-        image: "gcr.io/datadoghq/agent:7.53.0"
+        image: "gcr.io/datadoghq/agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash
