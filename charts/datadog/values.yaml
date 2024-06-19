@@ -1133,7 +1133,7 @@ clusterAgent:
       # clusterAgent.admissionController.agentSidecarInjection.selectors -- Defines the pod selector for sidecar injection, currently only one rule is supported.
       selectors: []
         # - objectSelector:
-        #   matchLabels:
+        #     matchLabels:
         #       "podlabelKey1": podlabelValue1
         #       "podlabelKey2": podlabelValue2
         #   namespaceSelector:

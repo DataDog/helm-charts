@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.66.1
+
+* Fixes indentation for `agentSidecarInjection.selectors`.
+  
 ## 3.66.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
