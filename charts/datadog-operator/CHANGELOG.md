@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.1
+
+* Configure tool version.
+
 ## 1.8.0
 
 * Update Datadog Operator version to 1.7.0.
