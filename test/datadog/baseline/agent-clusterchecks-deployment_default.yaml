@@ -36,7 +36,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 3459e971a8ca6563795d449c569bef1d0cb8d8038bb60cc2ca805b61c2f2db26
+        checksum/clusteragent_token: 3311b8d388729d2be4c2aa4b20cb7b39806de9cd47624b4a9caae3c1e07a76c9
         checksum/install_info: 4b7ec9616456fc79cafc6e8f64bda4671d2b86f7e48196ab808e5edc4d2e42b8
     spec:
       serviceAccountName: datadog-cluster-checks
