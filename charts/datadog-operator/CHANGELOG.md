@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.2
+
+* Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.
+
 ## 1.8.1
 
 * Configure tool version.

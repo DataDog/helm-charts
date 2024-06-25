@@ -62,7 +62,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            {{- if (semverCompare ">=1.7.0-0" .Values.image.tag) }}
+            {{- $version := include "check-image-tag" . }}
+            {{- if (semverCompare ">=1.7.0-0" $version) }}
             - name: DD_TOOL_VERSION
               value: {{ .Values.toolVersion | default "helm" }}
             {{- end }}
@@ -102,7 +103,7 @@ spec:
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
             - "-operatorMetricsEnabled={{ .Values.operatorMetricsEnabled }}"
-          {{- if and (not (empty .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled)) (semverCompare ">=1.0.0-0" .Values.image.tag ) }}
+          {{- if and (not (empty .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled)) (semverCompare ">=1.0.0-0" $version ) }}
             - "-webhookEnabled={{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled }}"
           {{- else }}
             - "-webhookEnabled=false"
@@ -113,23 +114,23 @@ spec:
           {{- if .Values.secretBackend.arguments }}
             - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
           {{- end }}
-          {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
+          {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" $version) }}
             - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
           {{- end }}
-          {{- if (semverCompare ">=1.4.0" .Values.image.tag) }}
+          {{- if (semverCompare ">=1.4.0" $version) }}
             - "-introspectionEnabled={{ .Values.introspection.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.5.0" .Values.image.tag) }}
+          {{- if (semverCompare ">=1.5.0" $version) }}
             - "-datadogAgentProfileEnabled={{ .Values.datadogAgentProfile.enabled }}"
           {{- end }}
             - "-datadogMonitorEnabled={{ .Values.datadogMonitor.enabled }}"
-          {{- if (semverCompare ">=1.0.0-rc.13" .Values.image.tag) }}
+          {{- if (semverCompare ">=1.0.0-rc.13" $version) }}
             - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.3.0" .Values.image.tag) }}
+          {{- if (semverCompare ">=1.3.0" $version) }}
             - "-datadogSLOEnabled={{ .Values.datadogSLO.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.7.0" .Values.image.tag) }}
+          {{- if (semverCompare ">=1.7.0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
           ports:
