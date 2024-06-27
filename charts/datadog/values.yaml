@@ -249,6 +249,11 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
+  # datadog.namespaceAnnotationsAsTags -- Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags
+  namespaceAnnotationsAsTags: {}
+  #   env: environment
+  #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
+
   originDetectionUnified:
     # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
     enabled: false
