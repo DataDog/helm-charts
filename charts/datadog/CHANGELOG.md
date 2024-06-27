@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.66.2
+
+* Update `fips.image.tag` to `1.1.3`
+
 ## 3.66.1
 
 * Add 'datadog.namespaceAnnotationsAsTags' to assign namespace annotations as tags on pod entities in the tagger.
