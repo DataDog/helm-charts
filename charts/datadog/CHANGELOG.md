@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.1
+
+* Update `fips.image.tag` to `1.1.3`
+
 ## 3.67.0
 
 * Add startup probe for `Agent`, `Cluster-Agent` and `Cluster-Check-Runner`.
