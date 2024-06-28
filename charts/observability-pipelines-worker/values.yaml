@@ -30,6 +30,8 @@ datadog:
   site: datadoghq.com
   # datadog.dataDir -- The data directory for OPW to store runtime data in.
   dataDir: "/var/lib/observability-pipelines-worker"
+  # datadog.pciCompliant -- Sets the DD_OP_PCI_COMPLIANT to true when enabled.
+  pciCompliant: false
   workerAPI:
     # datadog.workerAPI.enabled -- Whether to enable the Worker's API.
     enabled: false
@@ -80,7 +82,8 @@ autoscaling:
   # autoscaling.targetMemoryUtilizationPercentage -- (int) Specify the target memory utilization.
   targetMemoryUtilizationPercentage:
   # autoscaling.behavior -- Configure separate scale-up and scale-down behaviors.
-  behavior: {}
+  behavior:
+    {}
     # scaleDown:
     #   stabilizationWindowSeconds: 300
 
@@ -149,7 +152,8 @@ envFrom: []
 containerPorts: []
 
 # resources -- Specify resource requests and limits.
-resources: {}
+resources:
+  {}
   # requests:
   #   cpu: 200m
   #   memory: 256Mi
@@ -158,7 +162,8 @@ resources: {}
   #   memory: 256Mi
 
 # lifecycle -- Specify lifecycle hooks for Containers.
-lifecycle: {}
+lifecycle:
+  {}
   # preStop:
   #   exec:
   #     command:
@@ -232,7 +237,8 @@ ingress:
   # requires Kubernetes >= 1.18.
   className: ""
   # ingress.annotations -- Specify annotations for the Ingress.
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   # ingress.hosts -- Configure the hosts and paths for the Ingress.
