@@ -330,4 +330,7 @@
   readinessProbe:
 {{- $ready := .Values.agents.containers.agent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
+  startupProbe:
+{{- $startup := .Values.agents.containers.agent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
 {{- end -}}

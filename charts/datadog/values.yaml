@@ -1249,6 +1249,15 @@ clusterAgent:
     successThreshold: 1
     failureThreshold: 6
 
+  # clusterAgent.startupProbe -- Override default Cluster Agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+  startupProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
   # clusterAgent.strategy -- Allow the Cluster Agent deployment to perform a rolling update on helm update
 
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
@@ -1579,6 +1588,15 @@ agents:
       # agents.containers.agent.readinessProbe -- Override default agent readiness probe settings
       # @default -- Every 15s / 6 KO / 1 OK
       readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # agents.containers.agent.startupProbe -- Override default agent startup probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      startupProbe:
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
@@ -2022,6 +2040,23 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   readinessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
+  # clusterChecksRunner.startupProbe -- Override default agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+
+  ## In case of issues with the probe, you can disable it with the
+  ## following values, to allow easier investigating:
+  #
+  # startupProbe:
+  #   exec:
+  #     command: ["/bin/true"]
+  #
+  startupProbe:
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5
