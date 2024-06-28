@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.0
+* Update CRDs from Datadog Operator v1.7.0 tag.
+
+## 1.6.0
+* Update CRDs from Datadog Operator v1.6.0 tag.
+
+## 1.5.0
+* Update CRDs from Datadog Operator v1.5.0 tag.
+
 ## 1.4.0
 * Update CRDs from Datadog Operator v1.4.0 tag.
 

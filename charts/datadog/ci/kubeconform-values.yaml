@@ -4,6 +4,7 @@ datadog:
   kubelet:
     hostCAPath: /foo/bar/cert.ca
     agentCAPath: /bar/foo/cert.ca
+    coreCheckEnabled: true
   env:
   - name: "DD_KUBELET_TLS_VERIFY"
     value: "false"
@@ -36,7 +37,7 @@ clusterAgent:
   enabled: true
   createPodDisruptionBudget: true
   nodeSelector:
-    kubernetes.io/os: linux
+    disktype: ssd
   metricsProvider:
     enabled: false
   admissionController:
@@ -46,10 +47,10 @@ clusterChecksRunner:
   enabled: true
   createPodDisruptionBudget: true
   nodeSelector:
-    kubernetes.io/os: linux
+    disktype: ssd
 agents:
   nodeSelector:
-    kubernetes.io/os: linux
+    disktype: ssd
   podSecurity:
     podSecurityPolicy:
       create: true

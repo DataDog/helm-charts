@@ -696,4 +696,44 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:
+    - ""
+  resources:
+    - pods/exec
+  verbs:
+    - create
+{{- if .Values.datadogAgentProfile.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - patch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentprofiles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentprofiles/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentprofiles/finalizers
+  verbs:
+  - update
+{{- end }}
 {{- end -}}

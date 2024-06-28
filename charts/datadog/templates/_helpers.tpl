@@ -67,11 +67,12 @@ true
 {{- end -}}
 
 {{- define "check-cluster-name" }}
-{{- $length := len .Values.datadog.clusterName -}}
+{{- $clusterName := tpl .Values.datadog.clusterName . -}}
+{{- $length := len $clusterName -}}
 {{- if (gt $length 80)}}
 {{- fail "Your `clusterName` isn’t valid it has to be below 81 chars." -}}
 {{- end}}
-{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" .Values.datadog.clusterName) -}}
+{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" $clusterName) -}}
 {{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
 {{- end -}}
 {{- end -}}
@@ -186,6 +187,18 @@ Return the container runtime socket
 {{- end -}}
 
 {{/*
+Return agent log directory path
+*/}}
+{{- define "datadog.logDirectoryPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/var/log/datadog
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog/logs
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return agent config path
 */}}
 {{- define "datadog.confPath" -}}
@@ -250,6 +263,23 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 {{- end -}}
 
 {{/*
+Return the proper registry based on datadog.site (requires .Values to be passed as .)
+*/}}
+{{- define "registry" -}}
+{{- if .registry -}}
+{{- .registry -}}
+{{- else if eq .datadog.site "datadoghq.eu" -}}
+eu.gcr.io/datadoghq
+{{- else if eq .datadog.site "ddog-gov.com" -}}
+public.ecr.aws/datadog
+{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+asia.gcr.io/datadoghq
+{{- else -}}
+gcr.io/datadoghq
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
@@ -257,7 +287,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.repository -}}
 {{- .image.repository -}}@{{ .image.digest }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}@{{ .image.digest }}
+{{ include "registry" .root }}/{{ .image.name }}@{{ .image.digest }}
 {{- end -}}
 {{- else -}}
 {{- $tagSuffix := "" -}}
@@ -267,15 +297,16 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
-{{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
+{{ include "registry" .root }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
 {{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -310,6 +341,17 @@ Return true if the fips side car container should be created.
 */}}
 {{- define "should-enable-fips" -}}
 {{- if and (not .Values.providers.gke.autopilot) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the fips side car configMap should be mounted.
+*/}}
+{{- define "should-mount-fips-configmap" -}}
+{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
 true
 {{- else -}}
 false
@@ -524,6 +566,14 @@ datadog-agent-checksd
 {{- end -}}
 {{- end -}}
 
+{{- define "fips-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-fips-config
+{{- else -}}
+{{ template "datadog.fullname" . }}-fips-config
+{{- end -}}
+{{- end -}}
+
 {{/*
 Common template labels
 */}}
@@ -632,7 +682,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.dataStreamsMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -706,7 +756,12 @@ securityContext:
   {{- end -}}
 {{- else }}
 securityContext:
+{{- if .sysAdmin }}
+{{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
+{{ toYaml (merge $capabilities .securityContext) | indent 2 }}
+{{- else }}
 {{ toYaml .securityContext | indent 2 }}
+{{- end -}}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
@@ -721,6 +776,9 @@ securityContext:
     {{- end }}
 {{- end -}}
 {{- end -}}
+{{- else if .sysAdmin }}
+securityContext:
+{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
 {{- end -}}
 {{- end -}}
 
@@ -783,7 +841,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if or .Values.remoteConfiguration.enabled .Values.datadog.remoteConfiguration.enabled -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) -}}
 true
 {{- else -}}
 false
@@ -794,9 +852,66 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if or .Values.remoteConfiguration.enabled .Values.clusterAgent.admissionController.remoteInstrumentation.enabled -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
 true
 {{- else -}}
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create RBACs for custom resources
+*/}}
+{{- define "orchestratorExplorer-config-crs" -}}
+{{- range $cr := .Values.datadog.orchestratorExplorer.customResources }}
+- apiGroups:
+  - {{ (splitList "/" $cr) | first | quote }}
+  resources:
+  - {{ (splitList "/" $cr) | last | quote }}
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+{{- end }}
+
+{{/*
+  Return true if container image collection is enabled
+*/}}
+{{- define "should-enable-container-image-collection" -}}
+  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
+    {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
+  {{- end -}}
+  {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM collection for container image is enabled
+*/}}
+{{- define "should-enable-sbom-container-image-collection" -}}
+  {{- if .Values.datadog.sbom.containerImage.enabled -}}
+    {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
+      {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
+    {{- end -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if language detection feature is enabled
+*/}}
+{{- define "language-detection-enabled" -}}
+  {{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+
