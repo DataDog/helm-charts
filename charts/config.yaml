@@ -1,0 +1,90 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "otelcol"
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+  otlp:
+    protocols:
+      grpc:
+      http:
+exporters:
+  debug:
+    verbosity: detailed
+  opensearch:
+    http:
+      endpoint: http://otel-demo-opensearch:9200
+      tls:
+        insecure: true
+    logs_index: otel
+  otlp:
+    endpoint: "otel-demo-jaeger-collector:4317"
+    tls:
+      insecure: true
+  otlphttp/prometheus:
+    endpoint: http://otel-demo-prometheus-server:9090/api/v1/otlp
+    tls:
+      insecure: true
+  datadog:
+    api:
+      key: $DD_API_KEY
+    traces:
+      endpoint: "https://trace.agent.datadoghq.com"
+processors:
+  infraattributes:
+    cardinality: 2
+  probabilistic_sampler:
+    hash_seed: 22
+    sampling_percentage: 15.3
+  batch:
+    timeout: 10s
+connectors:
+  datadog/connector:
+    traces:
+      compute_top_level_by_span_kind: true
+      peer_tags_aggregation: true
+      compute_stats_by_span_kind: true
+extensions:
+  health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+  zpages:
+    endpoint: 0.0.0.0:55679
+  datadog:
+    endpoint: 0.0.0.0:7777
+service:
+  extensions: [health_check, zpages, datadog, pprof]
+  telemetry:
+    logs:
+      level: debug
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [datadog/connector]
+    traces/sampled:
+      receivers: [otlp]
+      processors: [probabilistic_sampler, infraattributes, batch]
+      exporters: [debug]
+    traces/jaeger:
+      receivers: [otlp]
+      processors: [probabilistic_sampler, batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp, datadog/connector, prometheus]
+      processors: [infraattributes, batch]
+      exporters: [datadog]
+    metrics/prometheus:
+      receivers: [prometheus, otlp]
+      processors: [batch]
+      exporters: [otlphttp/prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [infraattributes, batch]
+      exporters: [datadog]
+    logs/opensearch:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [opensearch]
