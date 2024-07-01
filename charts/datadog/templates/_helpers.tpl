@@ -211,6 +211,18 @@ C:/ProgramData/Datadog
 {{- end -}}
 
 {{/*
+Return agent config path
+*/}}
+{{- define "datadog.otelconfPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/etc/otel-agent
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return agent host mount root
 */}}
 {{- define "datadog.hostMountRoot" -}}
@@ -574,6 +586,14 @@ datadog-agent-fips-config
 {{- end -}}
 {{- end -}}
 
+{{- define "agents-install-otel-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-otel-config
+{{- else -}}
+{{ template "datadog.fullname" . }}-otel-config
+{{- end -}}
+{{- end -}}
+
 {{/*
 Common template labels
 */}}
@@ -914,4 +934,16 @@ Create RBACs for custom resources
   {{- end -}}
 {{- end -}}
 
+
+
+{{/*
+Return true if the OTelAgent needs to be deployed
+*/}}
+{{- define "should-enable-otel-agent" -}}
+{{- if and .Values.datadog.otelcollector.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
