@@ -227,6 +227,9 @@ spec:
         readinessProbe:
 {{- $ready := .Values.clusterChecksRunner.readinessProbe }}
 {{ include "probe.http" (dict "settings" $ready "path" "/ready" "port" $healthPort) | indent 10 }}
+        startupProbe:
+{{- $startup := .Values.clusterChecksRunner.startupProbe }}
+{{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
         - name: installinfo
           configMap:

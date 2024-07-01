@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.67.1
+
+* Update `fips.image.tag` to `1.1.3`
+
+## 3.67.0
+
+* Add startup probe for `Agent`, `Cluster-Agent` and `Cluster-Check-Runner`.
+
+## 3.66.1
+
+* Add 'datadog.namespaceAnnotationsAsTags' to assign namespace annotations as tags on pod entities in the tagger.
+
 ## 3.66.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
