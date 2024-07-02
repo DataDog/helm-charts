@@ -38,7 +38,7 @@ spec:
 {{- end }}
 {{- if .Values.clusterAgent.admissionController.enabled }}
     - ports:
-        - port: 8000
+        - port: {{ .Values.clusterAgent.admissionController.port }}
 {{- end }}
 {{- if .Values.clusterAgent.metricsProvider.enabled }}
     - # Ingress from API server for external metrics

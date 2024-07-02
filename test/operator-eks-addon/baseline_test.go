@@ -22,7 +22,9 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/operator-eks-addon",
 				ShowOnly:    []string{},
 				Values:      []string{"../../charts/operator-eks-addon/values.yaml"},
-				Overrides:   map[string]string{},
+				Overrides:   map[string]string{
+					// "datadog-operator.image.tag": "1.7.0",
+				},
 			},
 			baselineManifestPath: "./baseline/chart_render_default.yaml",
 			assertions:           verify,

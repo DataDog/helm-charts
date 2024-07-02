@@ -19,6 +19,9 @@ data:
 {{ include "helmCheck-config" . | nindent 2 }}
 {{- end -}}
 {{ include "kubernetes_apiserver-config" . | nindent 2 }}
+{{- if .Values.datadog.orchestratorExplorer.enabled -}}
+{{ include "orchestratorExplorer-config" . | nindent 2 }}
+{{- end -}}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
   {{ printf "%s--%s: |" $integration $name }}

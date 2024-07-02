@@ -18,13 +18,15 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default gcr.io)
+# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | public.ecr.aws/datadog] depending on datadog.site value)
 
 ## Currently we offer Datadog Agent images on:
-## GCR - use gcr.io/datadoghq (default)
-## DockerHub - use docker.io/datadog
+## GCR US - use gcr.io/datadoghq
+## GCR Europe - use eu.gcr.io/datadoghq
+## GCR Asia - use asia.gcr.io/datadoghq
 ## AWS - use public.ecr.aws/datadog
-registry: gcr.io/datadoghq
+## DockerHub - use docker.io/datadog
+registry:  # gcr.io/datadoghq
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
@@ -152,6 +154,11 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectSecretMetrics: true
 
+    # datadog.kubeStateMetricsCore.collectConfigMaps -- Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    collectConfigMaps: true
+
     # datadog.kubeStateMetricsCore.collectVpaMetrics -- Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.*
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
@@ -242,6 +249,15 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
+  # datadog.namespaceAnnotationsAsTags -- Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags
+  namespaceAnnotationsAsTags: {}
+  #   env: environment
+  #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
+
+  originDetectionUnified:
+    # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
+    enabled: false
+
   # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
 
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/
@@ -273,8 +289,11 @@ datadog:
     # datadog.kubelet.podLogsPath -- Path (on host) where the PODs logs are located
     # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
     podLogsPath:
+    # datadog.kubelet.coreCheckEnabled -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
+    # @default -- true
+    coreCheckEnabled: true
 
-  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfer with the agentmetrics port from the cluster-agent, which defaults to 5000
+  # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
 
   ## dogstatsd configuration
@@ -386,10 +405,17 @@ datadog:
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
   leaderLeaseDuration:  # 60
 
+  # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
+  # Can be:
+  # * "lease" / "leases". Only supported in agent 7.47+
+  # * "configmap" / "configmaps".
+  # "" to automatically detect which one to use.
+  leaderElectionResource: configmap
+
   remoteConfiguration:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # Consider using remoteConfiguration.enabled instead
-    enabled: false
+    enabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -415,13 +441,15 @@ datadog:
     autoMultiLineDetection: false
 
   ## Enable apm agent and provide custom configs
+  ##
+  ## APM is enabled by default. If local service Internal Traffic Policy is allowed (Kubernetes v1.22+), the agent service is created with the APM local traceport.
   apm:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     socketEnabled: true
 
-    # datadog.apm.portEnabled -- Enable APM over TCP communication (port 8126 by default)
+    # datadog.apm.portEnabled -- Enable APM over TCP communication (hostPort 8126 by default)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
@@ -449,6 +477,49 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+    # APM Single Step Instrumentation
+    # This feature is in beta. It requires Cluster Agent 7.49+.
+    instrumentation:
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
+      enabled: false
+
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      enabledNamespaces: []
+
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      disabledNamespaces: []
+
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
+      libVersions: {}
+
+      # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
+      skipKPITelemetry: false
+
+      # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
+      # It requires Agent 7.52+ and Cluster Agent 7.52+
+      language_detection:
+        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
+        enabled: true
+
+  ## Application Security Managment (ASM) configuration
+  ##
+  ## ASM is disabled by default and can be enabled by setting the various `enabled` fields to `true` under the `datadog.asm` section.
+  ## Manually adding the various environment variables to a pod will take precedence over the ones in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed, either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation` section).
+  ## It requires Datadog Cluster Agent 7.53.0+.
+  asm:
+    threats:
+      # datadog.asm.threats.enabled -- Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    sca:
+      # datadog.asm.sca.enabled -- Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    iast:
+      # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -470,6 +541,9 @@ datadog:
           endpoint: "0.0.0.0:4318"
           # datadog.otlp.receiver.protocols.http.useHostPort -- Enable the Host Port for the OTLP/HTTP endpoint
           useHostPort: true
+    logs:
+      # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
+      enabled: false
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
@@ -532,7 +606,7 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
 
-    ## Note: /etc/passwd is automatically mounted to allow username resolution.
+    ## Note: /etc/passwd is automatically mounted when `processCollection` or `processDiscovery` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -617,6 +691,13 @@ datadog:
     # datadog.systemProbe.enableDefaultKernelHeadersPaths -- Enable mount of default paths where kernel headers are stored
     enableDefaultKernelHeadersPaths: true
 
+
+  containerImageCollection:
+    # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
+
+    # This parameter requires Agent version 7.46+
+    enabled: true
+
   orchestratorExplorer:
     # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
 
@@ -631,6 +712,15 @@ datadog:
     ## turning this option off will improve the situation.
     container_scrubbing:
       enabled: true
+
+    # datadog.orchestratorExplorer.customResources -- Defines custom resources for the orchestrator explorer to collect
+
+    # customResources is required for RBAC creation if a custom orchestrator explorer configuration is provided in `clusterAgent.confd` or `clusterAgent.advancedConfd`
+    # Each item should follow group/version/name, for example
+    # customResources:
+    #   - datadoghq.com/v1alpha1/datadogmetrics
+    #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
+    customResources: []
 
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
@@ -654,9 +744,21 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
-  dataStreamsMonitoring:
-    # datadog.dataStreamsMonitoring.enabled -- Enable Data Streams Monitoring.
-    enabled: false
+  # Software Bill of Materials configuration
+  sbom:
+    containerImage:
+      # datadog.sbom.containerImage.enabled -- Enable SBOM collection for container images
+      enabled: false
+
+      # datadog.sbom.containerImage.uncompressedLayersSupport -- Use container runtime snapshotter
+      # This should be set to true when using EKS, GKE or if containerd is configured to
+      # discard uncompressed layers.
+      # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
+      uncompressedLayersSupport: false
+
+    host:
+      # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
+      enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -670,8 +772,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
-      # datadog.securityAgent.compliance.xccdf.enabled -- Set to true to enable XCCDF (this feature is supported from Agent 7.45, and requires 160 MB extra memory for the `security-agent` container)
+      # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
+        enabled: false
+
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      host_benchmarks:
         enabled: false
 
     runtime:
@@ -680,6 +786,9 @@ datadog:
 
       # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
       fimEnabled: false
+
+      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
+      useSecruntimeTrack: true
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
@@ -709,6 +818,18 @@ datadog:
         pathMerge:
           # datadog.securityAgent.runtime.activityDump.pathMerge.enabled -- Set to true to enable the merging of similar paths
           enabled: false
+
+      securityProfile:
+        # datadog.securityAgent.runtime.securityProfile.enabled -- Set to true to enable CWS runtime security profiles
+        enabled: true
+
+        anomalyDetection:
+          # datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled -- Set to true to enable CWS runtime drift events
+          enabled: true
+
+        autoSuppression:
+          # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
+          enabled: true
 
   ## Manage NetworkPolicy
   networkPolicy:
@@ -765,39 +886,37 @@ datadog:
   #  - redisdb
   #  - kubernetes_state
 
-  # datadog.containerExclude -- Exclude containers from the Agent
-  # Autodiscovery, as a space-sepatered list
+  # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
 
-  # datadog.containerInclude -- Include containers in the Agent Autodiscovery,
-  # as a space-separated list.  If a container matches an include rule, it’s
-  # always included in the Autodiscovery
+  # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
+  # If a container matches an include rule, it’s always included in Autodiscovery
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
-  # datadog.containerExcludeLogs -- Exclude logs from the Agent Autodiscovery,
-  # as a space-separated list
+  # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
   containerExcludeLogs:
 
-  # datadog.containerIncludeLogs -- Include logs in the Agent Autodiscovery, as
-  # a space-separated list
+  # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
   containerIncludeLogs:
 
-  # datadog.containerExcludeMetrics -- Exclude metrics from the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerExcludeMetrics -- Exclude metrics from Agent Autodiscovery, as a space-separated list
   containerExcludeMetrics:
 
-  # datadog.containerIncludeMetrics -- Include metrics in the Agent
-  # Autodiscovery, as a space-separated list
+  # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
-  # datadog.excludePauseContainer -- Exclude pause containers from the Agent Autodiscovery.
+  # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
+
+  containerLifecycle:
+    # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
+    enabled: true
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
@@ -816,7 +935,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.45.0
+    tag: 7.54.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -901,6 +1020,9 @@ clusterAgent:
     # clusterAgent.metricsProvider.enabled -- Set this to true to enable Metrics Provider
     enabled: false
 
+    # clusterAgent.metricsProvider.registerAPIService -- Set this to false to disable external metrics registration as an APIService
+    registerAPIService: true
+
     # clusterAgent.metricsProvider.wpaController -- Enable informer and controller of the watermark pod autoscaler
 
     ## Note: You need to install the `WatermarkPodAutoscaler` CRD before
@@ -952,6 +1074,9 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
+    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    webhookName: datadog-webhook
+
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
@@ -971,11 +1096,70 @@ clusterAgent:
     ## Setting to Fail will require the admission controller to be present and pods to be injected before they are allowed to run.
     failurePolicy: Ignore
 
+    # clusterAgent.admissionController.containerRegistry -- Override the default registry for the admission controller.
+
+    ## The clusterAgent uses this configuration for apm.instrumentation, agentSidecar, and cwsInstrumentation, if
+    ## not otherwise specified.
+    containerRegistry:
+
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
       ## Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster.
       enabled: false
+
+    # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
+    port: 8000
+
+    agentSidecarInjection:
+      # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
+
+      ## When enabled, the admission controller mutating webhook will inject an Agent sidecar with minimal configuration in every pod meeting the configured criteria.
+      enabled: false
+
+      # clusterAgent.admissionController.agentSidecarInjection.provider -- Used by the admission controller to add infrastructure provider-specific configurations to the Agent sidecar.
+
+      ## Currently only "fargate" is supported. To use the feature in other environments (including local testing) omit the config.
+      ## ref: https://docs.datadoghq.com/integrations/eks_fargate
+      provider:
+
+      # clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled -- Enable communication between Agent sidecars and the Cluster Agent.
+      clusterAgentCommunicationEnabled: true
+
+      # clusterAgent.admissionController.agentSidecarInjection.containerRegistry -- Override the default registry for the sidecar Agent.
+      containerRegistry:
+
+      # clusterAgent.admissionController.imageName -- Override the default agents.image.name for the Agent sidecar.
+      imageName:
+
+      # clusterAgent.admissionController.imageTag -- Override the default agents.image.tag for the Agent sidecar.
+      imageTag:
+
+      # clusterAgent.admissionController.agentSidecarInjection.selectors -- Defines the pod selector for sidecar injection, currently only one rule is supported.
+      selectors: []
+        # - objectSelector:
+        #   matchLabels:
+        #       "podlabelKey1": podlabelValue1
+        #       "podlabelKey2": podlabelValue2
+        #   namespaceSelector:
+        #     matchLabels:
+        #       "nsLabelKey1": nsLabelValue1
+        #       "nsLabelKey2": nsLabelValue2
+
+      # clusterAgent.admissionController.agentSidecarInjection.profiles -- Defines the sidecar configuration override, currently only one profile is supported.
+
+      ## This setting allows overriding the sidecar Agent configuration by adding environment variables and providing resource settings.
+      profiles: []
+        # - env:
+        #     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+        #       value: "true"
+        #   resources:
+        #     requests:
+        #       cpu: "1"
+        #       memory: "512Mi"
+        #     limits:
+        #       cpu: "2"
+        #       memory: "1024Mi"
 
   # clusterAgent.confd -- Provide additional cluster check configurations. Each key will become a file in /conf.d.
 
@@ -1065,6 +1249,15 @@ clusterAgent:
     successThreshold: 1
     failureThreshold: 6
 
+  # clusterAgent.startupProbe -- Override default Cluster Agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+  startupProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
   # clusterAgent.strategy -- Allow the Cluster Agent deployment to perform a rolling update on helm update
 
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
@@ -1128,6 +1321,19 @@ clusterAgent:
   additionalLabels: {}
     # key: "value"
 
+  # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
+  # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # clusterAgent.containerInclude -- Include containers in the Cluster Agent Autodiscovery,
+  # as a space-separated list.  If a container matches an include rule, it’s
+  # always included in the Autodiscovery. (Requires Agent/Cluster Agent 7.50.0+)
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
+
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
@@ -1146,19 +1352,21 @@ existingClusterAgent:
 
 # fips is used to enable the fips sidecar container for GOVCLOUD environments.
 fips:
-
+  # fips.enabled -- Enable fips sidecar
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
-  # fips.port specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
   port: 9803
 
-  # fips.portRange specifies the number of ports used, defaults to 13  https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
   portRange: 15
 
+  # fips.use_https -- Option to enable https
   use_https: false
+
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
   resources: {}
     # limits:
@@ -1168,14 +1376,16 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
+  # fips.local_address -- Set local IP address
   local_address: "127.0.0.1"
+
   ## Define the Datadog image to work with
   image:
     ## fips.image.name -- Define the FIPS sidecar container image name.
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 0.5.3
+    tag: 1.1.2
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1183,8 +1393,16 @@ fips:
     # fips.image.digest -- Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified.
     digest: ""
 
-    # agents.image.repository -- Override default registry + image.name for Agent
+    # fips.image.repository -- Override default registry + image.name for the FIPS sidecar container.
     repository:
+
+  # fips.customFipsConfig -- Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used.
+
+  ## Note: Use `|` to declare multi-line configuration.
+  ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
+  customFipsConfig: {}  # |
+  #  foobar
+  #     foo bar baz
 
 agents:
   # agents.enabled -- You should keep Datadog DaemonSet enabled!
@@ -1210,7 +1428,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.45.0
+    tag: 7.54.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1370,6 +1588,15 @@ agents:
       # agents.containers.agent.readinessProbe -- Override default agent readiness probe settings
       # @default -- Every 15s / 6 KO / 1 OK
       readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # agents.containers.agent.startupProbe -- Override default agent startup probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      startupProbe:
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
@@ -1537,6 +1764,8 @@ agents:
       #    memory: 200Mi
       # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
       securityContext: {}
+      # agents.containers.initContainers.volumeMounts -- Specify additional volumes to mount for the init containers
+      volumeMounts: []
 
   # agents.volumes -- Specify additional volumes to mount in the dd-agent container
   volumes: []
@@ -1676,7 +1905,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.45.0
+    tag: 7.54.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1817,6 +2046,23 @@ clusterChecksRunner:
     successThreshold: 1
     failureThreshold: 6
 
+  # clusterChecksRunner.startupProbe -- Override default agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+
+  ## In case of issues with the probe, you can disable it with the
+  ## following values, to allow easier investigating:
+  #
+  # startupProbe:
+  #   exec:
+  #     command: ["/bin/true"]
+  #
+  startupProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
   # clusterChecksRunner.deploymentAnnotations -- Annotations to add to the cluster-checks-runner's Deployment
   deploymentAnnotations: {}
   #   key: "value"
@@ -1909,14 +2155,6 @@ kube-state-metrics:
   nodeSelector:
     kubernetes.io/os: linux
 
-  # # kube-state-metrics.image -- Override default image information for the kube-state-metrics container.
-  # image:
-  #  # kube-state-metrics.repository -- Override default image registry for the kube-state-metrics container.
-  #  repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-  #  # kube-state-metrics.tag -- Override default image tag for the kube-state-metrics container.
-  #  tag: v1.9.8
-  #  # kube-state-metrics.pullPolicy -- Override default image pullPolicy for the kube-state-metrics container.
-  #  pullPolicy: IfNotPresent
 providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
@@ -1930,15 +2168,15 @@ providers:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
       ## When deploying to EC2-backed EKS infrastructure, there are situations where the
-      ## IMDS metadata endpoint is not accesible to containers. This flag mounts the host's
+      ## IMDS metadata endpoint is not accessible to containers. This flag mounts the host's
       ## `/var/lib/cloud/data/instance-id` and uses that for Agent's hostname instead.
       useHostnameFromFile: false
   aks:
-    # providers.aks.enabled -- Activate all specifities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
 
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
-  # This will override `datadog.remoteConfiguration.enabled` and `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+  # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
-  enabled: false
+  enabled: true

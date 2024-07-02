@@ -1,0 +1,12 @@
+{{- if eq (include "should-mount-fips-configmap" .) "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "fips-useConfigMap-configmap-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+data:
+  datadog-fips-proxy.cfg: |
+{{ tpl (.Values.fips.customFipsConfig) . | indent 4 }}
+{{- end }}

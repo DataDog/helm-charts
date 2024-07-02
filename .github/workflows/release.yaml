@@ -27,3 +27,4 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          CR_SKIP_EXISTING: true # Ignore chart changes when version was not updated (documentation)

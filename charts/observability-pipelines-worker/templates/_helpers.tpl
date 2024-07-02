@@ -40,14 +40,6 @@ Return the API key Secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
-Return the configuration key Secret name to be used based on provided values.
-*/}}
-{{- define "opw.configKeySecretName" -}}
-{{- $fullName := printf "%s-configkey" (include "opw.fullname" .) -}}
-{{- default $fullName .Values.datadog.configKeyExistingSecret | quote -}}
-{{- end -}}
-
-{{/*
 Common template labels.
 */}}
 {{- define "opw.template-labels" -}}
@@ -104,6 +96,27 @@ Return the appropriate apiVersion for HPA autoscaling APIs.
 {{- end -}}
 
 {{/*
+Return a Service.Port for the Worker API
+*/}}
+{{- define "opw.api.servicePort" -}}
+{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.workerAPI.address) }}
+- name: api
+  port: {{ $port }}
+  protocol: TCP
+  targetPort: {{ $port }}
+{{- end -}}
+
+{{/*
+Return a Container.Port for the Worker API
+*/}}
+{{- define "opw.api.containerPort" -}}
+{{- $port := int (mustRegexFind "[0-9]+$" .Values.datadog.workerAPI.address) }}
+- name: api
+  containerPort: {{ $port }}
+  protocol: TCP
+{{- end -}}
+
+{{/*
 The helpers below are used to attempt to parse the configuration passed into the `config` option and construct
 the Container and Service Ports without manual specification.
 
@@ -122,13 +135,6 @@ Generate an array of Service.Ports based on `.Values.pipelineConfig`.
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
       {{- tuple $components "_helper.generatePort" | include "_helper.componentIter" }}
-    {{- else if eq $componentKind "api" }}
-      {{- if $components.enabled }}
-- name: api
-  port: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-  protocol: TCP
-  targetPort: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
@@ -172,12 +178,6 @@ Generate an array of Container.Ports based on `.Values.pipelineConfig`.
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
     {{- else if eq $componentKind "sinks" }}
       {{- tuple $components "_helper.generateContainerPort" | include "_helper.componentIter" }}
-    {{- else if eq $componentKind "api" }}
-      {{- if $components.enabled }}
-- name: api
-  containerPort: {{ mustRegexFind "[0-9]+$" (get $components "address") }}
-  protocol: TCP
-      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}

@@ -1,0 +1,2 @@
+datadog-operator:
+  toolVersion: eks-addon

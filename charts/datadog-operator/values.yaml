@@ -16,6 +16,10 @@ apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 # appKey -- Your Datadog APP key
 appKey:  # <DATADOG_APP_KEY>
 
+
+# clusterName -- Set a unique cluster name reporting from the Datadog Operator.
+clusterName:
+
 # site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
 
 ## Set to 'datadoghq.com' to send data to the US1 site (default).
@@ -43,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.4.0
+  tag: 1.7.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
@@ -60,6 +64,9 @@ maximumGoroutines:
 
 introspection:
 # introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  enabled: false
+datadogAgentProfile:
+# datadogAgentProfile.enabled -- If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+
   enabled: false
 # supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
 supportExtendedDaemonset: "false"
@@ -83,6 +90,10 @@ datadogMonitor:
 datadogSLO:
   # datadogSLO.enabled -- Enables the Datadog SLO controller
   enabled: false
+remoteConfiguration:
+  # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
+  enabled: false
+
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true

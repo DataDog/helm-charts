@@ -34,20 +34,24 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-    {{- if .Values.datadog.securityAgent.compliance.xccdf.enabled }}
+    {{- if or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
     - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
-      value:  {{ .Values.datadog.securityAgent.compliance.xccdf.enabled | quote }}
+      value:  "true"
+    - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+      value:  "true"
     {{- end }}
     - name: HOST_ROOT
       value: /host/root
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-      value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
+      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
       value: /var/run/sysprobe/runtime-security.sock
+    - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+      value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
@@ -59,6 +63,9 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -68,9 +75,6 @@
       readOnly: false # Need RW for UDS DSD socket
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to tmp directory

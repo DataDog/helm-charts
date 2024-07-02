@@ -57,7 +57,9 @@ spec:
     app: {{ template "datadog.fullname" . }}-cluster-agent
   ports:
   - port: 443
-    targetPort: 8000
+    targetPort: {{ .Values.clusterAgent.admissionController.port }}
+    name: datadog-webhook
+    protocol: TCP
 {{ end }}
 
 {{- if eq (include "enable-service-internal-traffic-policy" .) "true" }}
@@ -82,12 +84,10 @@ spec:
       port: {{ .Values.datadog.dogstatsd.port }}
       targetPort: {{ .Values.datadog.dogstatsd.port }}
       name: dogstatsdport
-{{- if eq  (include "trace-agent-use-tcp-port" .) "true" }}
     - protocol: TCP
       port: {{ .Values.datadog.apm.port }}
       targetPort: {{ .Values.datadog.apm.port }}
       name: traceport
-{{- end }}
 {{- if .Values.datadog.otlp.receiver.protocols.grpc.enabled }}
     - protocol: TCP
       port: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}

@@ -1,0 +1,47 @@
+{{- define "orchestratorExplorer-add-crd-collection-config" -}}
+
+{{- $useCRDConfig := true -}}
+
+{{/*
+If custom config is provided in `clusterAgent.confd`, then we don't add crd collection config.
+*/}}
+{{- range $k, $v := .Values.clusterAgent.confd -}}
+{{- if or (eq "orchestrator.yaml" $k) (eq "orchestrator.yaml.default" $k)  -}}
+{{- $useCRDConfig = false -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+If custom config is provided in `clusterAgent.advancedConfd`, then we don't add crd collection config.
+*/}}
+{{- range $integration, $configs := .Values.clusterAgent.advancedConfd -}}
+{{- if and (eq "orchestrator.d" $integration) (gt (len $configs) 0) -}}
+{{- $useCRDConfig = false -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+If customResources is empty, then we don't add crd collection config.
+*/}}
+{{- if eq $useCRDConfig true  -}}
+{{- if eq (len $.Values.datadog.orchestratorExplorer.customResources) 0 }}
+{{- $useCRDConfig = false -}}
+{{- end -}}
+{{- end -}}
+
+{{- $useCRDConfig -}}
+
+{{- end -}}
+
+
+{{- define "orchestratorExplorer-config" -}}
+
+{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" -}}
+orchestrator.yaml: |-
+  init_config:
+  instances: 
+    - crd_collectors:
+      {{- toYaml $.Values.datadog.orchestratorExplorer.customResources | nindent 8 -}}
+{{- end -}}
+
+{{- end -}}

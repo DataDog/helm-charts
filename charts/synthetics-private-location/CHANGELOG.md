@@ -1,5 +1,85 @@
 # Datadog changelog
 
+## 0.16.2
+
+* Update private location image version to `1.48.0`.
+
+## 0.16.1
+
+* Update private location image version to `1.47.0`.
+
+## 0.16.0
+
+* Add `podLabels` value to allow setting labels that only appear on the pods managed by the deployment.
+
+## 0.15.31
+
+* Fix `env` indentation in Deployment template.
+
+## 0.15.30
+
+* Fix `envFrom` indentation in Deployment template.
+
+## 0.15.29
+
+* Update Kubernetes deployment template to set `DATADOG_WORKER_ENABLE_STATUS_PROBES` environment variable when `enableStatusProbes` value is defined.
+
+## 0.15.28
+
+* Update private location image version to `1.46.0`.
+
+## 0.15.27
+
+* Update private location image version to `1.45.0`.
+
+## 0.15.26
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 0.15.25
+
+* Update private location image version to `1.44.0`.
+
+## 0.15.24
+
+* Clarify the usage of `configSecret`
+
+## 0.15.23
+
+* Add `priorityClassName` value to specify PriorityClass for pods.
+
+## 0.15.22
+
+* Update private location image version to `1.43.0`.
+
+## 0.15.21
+
+* Update private location image version to `1.42.0`.
+
+## 0.15.20
+
+* Support `dnsPolicy` configuration.
+
+## 0.15.19
+
+* Update private location image version to `1.41.0`.
+
+## 0.15.18
+
+* Update private location image version to `1.40.0`.
+
+## 0.15.17
+
+* Update private location image version to `1.39.0`.
+
+## 0.15.16
+
+* Update private location image version to `1.38.0`.
+
+## 0.15.15
+
+* Update private location image version to `1.37.0`.
+
 ## 0.15.14
 
 * Update private location image version to `1.36.0`.

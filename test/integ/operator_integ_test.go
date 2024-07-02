@@ -101,7 +101,7 @@ func verifyOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 }
 
 func verifyAgent(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
-	verifyNumPodsForSelector(t, kubectlOptions, 2, "agent.datadoghq.com/component=agent")
+	verifyNumPodsForSelector(t, kubectlOptions, 1, "agent.datadoghq.com/component=agent")
 	verifyNumPodsForSelector(t, kubectlOptions, 1, "agent.datadoghq.com/component=cluster-agent")
 	verifyNumPodsForSelector(t, kubectlOptions, 1, "agent.datadoghq.com/component=cluster-checks-runner")
 }

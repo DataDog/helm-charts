@@ -34,7 +34,7 @@
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
     - name: logdatadog
-      mountPath: /var/log/datadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
