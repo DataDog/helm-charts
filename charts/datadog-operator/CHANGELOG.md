@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.2
+
+* Deprecate `webhookEnabled` flag for 1.7.0.
+
 ## 1.8.1
 
 * Configure tool version.
