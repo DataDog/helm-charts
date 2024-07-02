@@ -10607,7 +10607,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
-              value: helm
+              value: eks-addon
           args:
             - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
