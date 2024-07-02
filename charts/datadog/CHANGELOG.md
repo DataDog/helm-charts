@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.5
+
+* Add support for `processAgent.runInCoreAgent` as an experimental feature.
+
 ## 3.67.4
 
 * Overwrite the securityContext for the `seccomp-setup` initContainer with `agents.containers.initContainers.securityContext`.

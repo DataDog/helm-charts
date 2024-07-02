@@ -58,6 +58,7 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -248,6 +249,11 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if .Values.datadog.processAgent.runInCoreAgent }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
