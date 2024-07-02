@@ -19,6 +19,8 @@ image:
 
 # dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
 dnsPolicy: ClusterFirst
+# dnsConfig -- DNS Config to set to the Datadog Synthetics Private Location PODs
+dnsConfig: {}
 
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
