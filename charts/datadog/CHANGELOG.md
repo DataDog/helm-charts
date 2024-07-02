@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.2
+
+* Remove startup probe for `Agent` in GKE AutoPilot due to deployment restrictions
+
 ## 3.67.1
 
 * Update `fips.image.tag` to `1.1.3`
