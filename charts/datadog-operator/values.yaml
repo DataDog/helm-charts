@@ -73,7 +73,7 @@ supportExtendedDaemonset: "false"
 
 # not enabled in addon
 # operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
-operatorMetricsEnabled: "true"
+operatorMetricsEnabled: "false"
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:
@@ -134,7 +134,7 @@ datadogCRDs:
     # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
     # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
-    datadogMonitors: true
+    datadogMonitors: false
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
   migration:
