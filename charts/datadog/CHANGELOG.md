@@ -1,5 +1,449 @@
 # Datadog changelog
 
+## 3.67.0
+
+* Add startup probe for `Agent`, `Cluster-Agent` and `Cluster-Check-Runner`.
+
+## 3.66.1
+
+* Add 'datadog.namespaceAnnotationsAsTags' to assign namespace annotations as tags on pod entities in the tagger.
+
+## 3.66.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
+
+## 3.65.3
+
+* Add RBAC rules for collection of StorageClass and LimitRange resources in the Orchestrator Explorer.
+
+## 3.65.2
+
+* Do not enable live process collection by default when language detection is enabled for `APM SSI`.
+
+## 3.65.1
+
+* Make sure the security agent is aware of `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
+## 3.65.0
+
+* Default `datadog.securityAgent.runtime.useSecruntimeTrack` to `true`, sending CWS events directly to the new secruntime track (and to the new agent events explorer).
+
+## 3.64.1
+
+* Add `datadog.securityAgent.runtime.useSecruntimeTrack` config to start sending CWS events directly to the new secruntime track (and to the new agent events explorer).
+
+## 3.64.0
+
+* Add `datadog.originDetectionUnified.enabled` setting to enable unified origin detection for container tagging. Disabled by default
+
+## 3.63.0
+
+* Set kubelet core check to be enabled by default
+
+## 3.62.1
+
+* Update `fips.image.tag` to `1.1.2`
+
+## 3.62.0
+
+* Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default
+
+## 3.61.0
+
+* Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
+  Note: this requires agent/cluster agent version 7.53.0+
+
+## 3.60.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.53.0`
+
+## 3.59.7
+
+* Add configuration option to specify clusterAgent.admissionController.containerRegistry, which defaults to registry
+* No longer set `DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY` to registry as a fallback,
+  that option is implicit from us now setting the higher level `clusterAgent.admissionController.containerRegistry`.
+
+## 3.59.6
+
+* Add configuration option datadog.apm.instrumentation.skipKPITelemetry.
+
+## 3.59.5
+
+* Set default `Agent` and `Cluster-Agent` version to `7.52.1`.
+
+## 3.59.4
+
+* Add language detection enable option for `APM` instrumentation.
+
+## 3.59.3
+
+* Add `contimage-intake.datadoghq.com` & `contlcycle-intake.datadoghq.com` endpoints to the `Agent` cilium network policy.
+
+## 3.59.2
+
+* Disable language detection reporting by default in Cluster Agent with Agent 7.52+.
+
+## 3.59.1
+
+* Add support for configuring Agent sidecar injection using Admission Controller.
+
+## 3.59.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.52.0`.
+
+## 3.58.1
+
+* Fix typo in PodSecurityPolicy warning note.
+
+## 3.58.0
+
+* Change configuration options for APM Instrumentation. Starting from Agent and Cluster-Agent version `7.51.0` APM Instrumentation needs to be configured using the following configuration options:
+* `datadog.apm.instrumentation.enabled` - set to `true` to enable automatic instrumentation.
+* `datadog.apm.instrumentation.enabledNamespaces` - optional; list of namespaces to enable automatic instrumentation in. If not provided, every namespace in the cluster will be instrumented.
+* `datadog.apm.instrumentation.disabledNamespaces` - optional; list of namespaces to disable automatic instrumentation in.
+
+## 3.57.3
+
+* Exclude agent, cluster agent and agent clusterchecks pods from injection from the admission controller.
+
+## 3.57.2
+
+* Add `networkpolicies` default permission for the cluster agent.
+
+## 3.57.1
+
+* Allow configuring CWS security profile based auto suppression feature and enable it by default.
+
+## 3.57.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.51.0`.
+
+## 3.56.0
+
+* Allow templating of `datadog.clusterName`.
+
+## 3.55.0
+
+* Modify `datadog.dogstatsd.originDetection` to also support container tagging for origin detection enabled clients.
+
+## 3.54.2
+
+* Set `DD_APM_ENABLED` value in the core agent container to properly report its value.
+
+## 3.54.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 3.53.3
+
+* Update `fips.image.tag` to `1.1.1`
+
+## 3.53.2
+
+* Exclude agent pod from labels injection from the admission controller.
+
+## 3.53.1
+
+* Update `fips.image.tag` to `1.1.0`
+
+## 3.53.0
+
+* Add `otlp.logs.enabled` option to datadog agent to set the `DD_OTLP_CONFIG_LOGS_ENABLED` env variable.
+
+## 3.52.0
+
+* Allow configuring CWS security profile features and enable drift events by default
+
+## 3.51.2
+
+* Use correct kpi-telemetry-configmap in Cluster Agent and Trace Agent.
+
+## 3.51.1
+
+* Parametrize the name of kpi-telemetry-configmap.
+
+## 3.51.0
+
+* Add `DD_INSTRUMENTATION_INSTALL_TIME`, `DD_INSTRUMENTATION_INSTALL_ID`, `DD_INSTRUMENTATION_INSTALL_TYPE` env variables to the Trace and Cluster agents to support APM Telemetry KPIs.
+
+## 3.50.5
+
+* Add option to use containerd snapshotter to generate SBOMs.
+
+## 3.50.4
+
+* Mount host files for proper OS detection in SBOMs.
+
+## 3.50.3
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.3`.
+
+## 3.50.2
+
+* Support automatic registry selection based on `datadog.site` on GKE Autopilot.
+
+## 3.50.1
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.2`.
+
+## 3.50.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.50.1`.
+
+## 3.49.9
+
+* Update `fips.image.tag` to `1.0.1`
+
+## 3.49.8
+
+* Mount host package manager database when host SBOM is enabled.
+
+## 3.49.7
+
+Fix NOTES warning for APM Instrumentation
+
+## 3.49.6
+
+Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in lastest versions of the agent.
+
+## 3.49.5
+
+* Fix registry selection with GKE Autopilot until new registries are allowed.
+
+## 3.49.4
+
+* Exclude a namespace with Datadog resources from APM Single Step Instrumentation
+
+## 3.49.3
+
+* Fix NOTES warning for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
+## 3.49.2
+
+* Fix check for APM Instrumentation when apm.intrumentation.disabledNamespaces is set
+
+## 3.49.1
+
+* Update `fips.image.tag` to `1.0.0`
+
+## 3.49.0
+
+* Beta: Add `datadog.apm.instrumentation` section to configure APM Single Step Instrumentation
+
+## 3.48.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.49.1`.
+
+## 3.47.2
+
+* Fix CI following enabling container image collection by default.
+
+## 3.47.1
+
+* Fix `registry` being ignored even if set.
+
+## 3.47.0
+
+* `registry` is now set automatically adapted based on `datadog.site` value. Still default to `gcr.io/datadoghq` if not set.
+
+## 3.46.0
+
+* Enable container image collection by default.
+
+## 3.45.0
+
+* Separate values for `DD_CONTAINER_INCLUDE` and `DD_CONTAINER_EXCLUDE` in `Agent` and `Cluster-Agent`
+  Note: this requires agent/cluster agent version 7.50.0+
+
+## 3.44.1
+
+* Fix local agent Kubernetes service to include APM traceport
+
+## 3.44.0
+
+* Remove buggy `chmod` directive in the init container of the cluster agent.
+
+## 3.43.2
+
+* Remove line break in helpers tpl file that prevents the chart from rendering in older Helm versions.
+
+## 3.43.1
+
+* Fix docstring typos and remove unneeded lines.
+
+## 3.43.0
+
+* Default `Agent` and `Cluster-Agent` to `7.49.0` version.
+
+## 3.42.1
+
+* Bump FIPS proxy OpenSSL version to 3.0.12
+
+## 3.42.0
+
+* Allow enabling SBOM collection for host and container images.
+
+## 3.41.0
+
+* Enable container lifecycle events collection by default.
+
+## 3.40.4
+
+* Add the option `clusterAgent.metricsProvider.registerAPIService` to allow user to disable registering external-metrics server as an `APIService`
+
+## 3.40.3
+
+* Default `Agent` and `Cluster-Agent` to `7.48.1` version.
+
+## 3.40.2
+
+* Gate `PodSecurityPolicy` RBAC for k8s versions which no longer support this deprecated API.
+
+## 3.40.1
+
+* Add support for initContainer volume mounts
+
+## 3.40.0
+
+* Default `Agent` and `Cluster-Agent` to `7.48.0` version.
+
+## 3.39.3
+
+* Omit cluster check and leader election in orchestrator check configuration if custom resources are provided
+
+## 3.39.2
+
+* Support custom resources and custom resource definitions collection in orchestrator explorer
+
+## 3.39.1
+
+* Add `kubeStateMetricsCore.collectConfigMaps` config field to the Agent
+
+## 3.39.0
+
+* Add a new parameter `datadog.leaderElectionResource` to select which resource lock to use in the leader election. Can be `leases(s)` in agent 7.47+, `configmap(s)`, or empty for auto detection.
+
+## 3.38.4
+
+* Add `orchestrator_explorer.enabled` for the Agent
+
+## 3.38.3
+
+* Update `fips.image.tag` to `0.6.0`
+
+## 3.38.2
+
+* Skip references to PodSecurityPolicy where the support of this API has been dropped.
+
+## 3.38.1
+
+* Enable Remote Config by default on the host agent only
+
+## 3.38.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.1` version.
+
+## 3.37.1
+
+* Temporarily revert enabling Remote Config by default
+
+## 3.37.0
+
+* Rename `datadog.securityAgent.compliance.xccdf.enabled` parameter to `datadog.securityAgent.compliance.host_benchmarks.enabled`.
+
+## 3.36.4
+
+* Disable Remote Config on the cluster checks runner
+
+## 3.36.3
+
+* Mount `/etc/passwd` in process agent only if `datadog.processAgent.processCollection` or `datadog.processAgent.processDiscovery` is enabled.
+
+## 3.36.2
+
+* Update `fips.image.tag` to `0.5.5` which upgrades HAProxy to 2.4.24 and zlib to 1.3
+
+## 3.36.1
+
+* Add option to enable CWS security profiles (runtime anomaly detection)
+
+## 3.36.0
+
+* Enable Remote Config by default
+
+## 3.35.2
+
+* Fix Agent Service Account Name used in `RoleBinding` for Secret Backend permissions when in GKE Autopliot
+
+## 3.35.1
+
+* Add permissions to curl `/metrics/slis` to agent cluster role.
+
+## 3.35.0
+
+* Default `Agent` and `Cluster-Agent` to `7.47.0` version.
+
+## 3.34.3
+
+* Fix extra empty line in helmchecks, issue [#953](https://github.com/DataDog/helm-charts/issues/953).
+
+## 3.34.2
+
+* Add containerPort 8000/TCP to `cluster-agent` deployment for Admission Controller.
+
+## 3.34.1
+
+* Fix `clusterAgent.admissionController.webhookName` RBAC to avoid restricting `create` by resource name.
+
+## 3.34.0
+
+* Introduced a new parameter `clusterAgent.admissionController.webhookName` for selecting the name of the mutating webhook.
+* Narrowed the admission controller's RBAC scope in the cluster agent to only include a single resourceName, specifically `clusterAgent.admissionController.webhookName`.
+
+## 3.33.10
+
+* Avoid creating the `DD_PROVIDER_KIND` environment variable twice for containers.
+
+## 3.33.9
+
+* Add `fips.customFipsConfig` parameter to allow configuring FIPS proxy sidecar `datadog-fips-proxy.cfg` using a ConfigMap.
+
+## 3.33.8
+
+* Remove `mountPropagation` for `/etc/os-release` files.
+
+## 3.33.7
+
+* Add additional intakes into `CiliumNetworkPolicy` for node Agent and Cluster Check Runner for profiling, network monitoring, dbm, and remote config
+
+## 3.33.6
+
+* Ensure the core agent is aware that CSPM is enabled (for inventories purposes).
+
+## 3.33.5
+
+* Daemonset includes `logdatadog` volume when rendered for `targetSystem: "windows"`
+
+## 3.33.4
+
+* Update `fips.image.tag` to `0.5.4` increasing the health checks interval from 2 to 10 seconds in the FIPS compliant side car container
+
+## 3.33.3
+
+* Remove `datadog.dataStreamsMonitoring.enabled` parameter.
+
+## 3.33.2
+
+* Add emptyDir and volumeMounts for Agent log files in Windows containers to fix log file access
+
+# 3.33.0
+
+* Default `Agent` and `Cluster-Agent` to `7.46.0` version.
+
+## 3.32.8
+
+* Always set the Remote Configuration environment variable
+
 ## 3.32.7
 
 * Update the cluster agent network policy to allow telemetry submission.
@@ -27,7 +471,7 @@
 ## 3.32.1
 
 * Add AP1 Site Comment at `value.yaml`.
-* Fix CVE in the FIPS compliant side car container  
+* Fix CVE in the FIPS compliant side car container
 
 ## 3.32.0
 

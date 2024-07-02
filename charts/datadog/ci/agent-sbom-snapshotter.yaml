@@ -1,0 +1,8 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.eu
+  sbom:
+    containerImage:
+      enabled: true
+      uncompressedLayersSupport: true

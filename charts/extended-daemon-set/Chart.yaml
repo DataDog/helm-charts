@@ -1,16 +1,16 @@
 apiVersion: v1
-appVersion: v0.7.0
+appVersion: v0.8.0
 description: Extended Daemonset Controller
 name: extendeddaemonset
-version: v0.2.2
+version: v0.3.1
 keywords:
-- monitoring
-- alerting
-- metric
+  - monitoring
+  - alerting
+  - metric
 home: https://www.datadoghq.com
 icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
 sources:
-- https://github.com/DataDog/extendeddaemonset
+  - https://github.com/DataDog/extendeddaemonset
 maintainers:
-- name: Datadog
-  email: support@datadoghq.com
+  - name: Datadog
+    email: support@datadoghq.com

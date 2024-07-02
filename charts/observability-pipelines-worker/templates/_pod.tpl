@@ -48,14 +48,7 @@ containers:
             name: {{ template "opw.apiSecretName" . }}
             key: api-key
       - name: DD_OP_PIPELINE_ID
-      {{- if or .Values.datadog.configKey .Values.datadog.configKeyExistingSecret }}
-        valueFrom:
-          secretKeyRef:
-            name: {{ template "opw.configKeySecretName" . }}
-            key: config-key
-      {{- else }}
         value: {{ .Values.datadog.pipelineId | quote }}
-      {{- end }}
       {{- with .Values.datadog.site }}
       - name: DD_SITE
         value: {{ . | quote }}
@@ -64,8 +57,12 @@ containers:
       - name: DD_OP_DATA_DIR
         value: {{ . | quote }}
       {{- end }}
-      - name: DD_OP_REMOTE_CONFIGURATION_ENABLED
-        value: {{ .Values.datadog.remoteConfigurationEnabled | quote }}
+      - name: DD_OP_API_ENABLED
+        value: {{ .Values.datadog.workerAPI.enabled | quote }}
+      - name: DD_OP_API_PLAYGROUND
+        value: {{ .Values.datadog.workerAPI.playground | quote }}
+      - name: DD_OP_API_ADDRESS
+        value: {{ .Values.datadog.workerAPI.address | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -75,8 +72,9 @@ containers:
     ports:
 {{- if .Values.containerPorts }}
 {{ toYaml .Values.containerPorts | indent 6 }}
-{{- else if .Values.pipelineConfig }}
-{{- include "opw.containerPorts" . | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.workerAPI.enabled }}
+{{ include "opw.api.containerPort" . | indent 6 }}
 {{- end }}
 {{- if .Values.livenessProbe }}
     livenessProbe: {{ toYaml .Values.livenessProbe | trim | nindent 6 }}
@@ -93,11 +91,6 @@ containers:
     volumeMounts:
       - name: data
         mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
-      {{- if not .Values.datadog.remoteConfigurationEnabled }}
-      - name: config
-        mountPath: "/etc/observability-pipelines-worker/"
-        readOnly: true
-      {{- end }}
 {{- if .Values.extraVolumeMounts }}
 {{ toYaml .Values.extraVolumeMounts | indent 6 }}
 {{- end }}
@@ -127,13 +120,6 @@ volumes:
 {{- else }}
   - name: data
     emptyDir: {}
-{{- end }}
-{{- if not .Values.datadog.remoteConfigurationEnabled }}
-  - name: config
-    projected:
-      sources:
-        - configMap:
-            name: {{ template "opw.fullname" . }}
 {{- end }}
 {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 2 }}

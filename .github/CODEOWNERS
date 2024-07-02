@@ -6,12 +6,14 @@
 *.md             @DataDog/documentation @DataDog/container-helm-chart-maintainers
 
 # Charts
-charts/datadog-crds                                  @DataDog/container-ecosystems
-charts/datadog-operator                              @DataDog/container-ecosystems
-charts/extended-daemon-set                           @DataDog/container-ecosystems
-charts/datadog                                       @DataDog/container-helm-chart-maintainers
-charts/datadog/templates/container-system-probe.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
-charts/datadog/templates/system-probe-configmap.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
-charts/datadog/templates/system-probe-init.yaml      @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
-charts/synthetics-private-location/                  @Datadog/synthetics
-charts/observability-pipelines-worker                @DataDog/observability-pipelines-worker
+charts/datadog-crds                                    @DataDog/container-ecosystems
+charts/datadog-operator                                @DataDog/container-ecosystems
+charts/extended-daemon-set                             @DataDog/container-ecosystems
+charts/datadog                                         @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_container-process-agent.yaml @DataDog/processes @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_container-system-probe.yaml  @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_container-trace-agent.yaml   @DataDog/agent-apm @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_system-probe-init.yaml       @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/system-probe-configmap.yaml   @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/synthetics-private-location/                    @Datadog/synthetics
+charts/observability-pipelines-worker                  @DataDog/observability-pipelines

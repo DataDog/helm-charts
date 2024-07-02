@@ -1,0 +1,16 @@
+name: Labeler
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  label:
+    name: Add label for PRs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/workflows/labeler/labels.yaml

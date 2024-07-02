@@ -50,12 +50,30 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
+    - name: DD_INSTRUMENTATION_INSTALL_TIME
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_time
+    - name: DD_INSTRUMENTATION_INSTALL_ID
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_id
+    - name: DD_INSTRUMENTATION_INSTALL_TYPE
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_type
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
@@ -78,9 +96,6 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW for tmp directory
