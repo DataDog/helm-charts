@@ -135,6 +135,8 @@ datadogCRDs:
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
+
+  # v1alpha1 to v2alpha1 CRD conversion is deprecated in v1.7.0
   migration:
     datadogAgents:
       conversionWebhook:
