@@ -231,7 +231,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: {{ .Values.clusterAgent.admissionController.port | quote }}
           {{- end }}
-          {{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
+          {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
           {{- end }}
@@ -343,6 +343,10 @@ spec:
           - name: DD_PROMETHEUS_SCRAPE_VERSION
             value: {{ .Values.datadog.prometheusScrape.version | quote }}
           {{- end }}
+          {{- end }}
+          {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+          - name: DD_AUTOSCALING_WORKLOAD_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:

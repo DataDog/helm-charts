@@ -136,6 +136,8 @@ datadogCRDs:
     datadogAgents: true
     # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
     datadogMetrics: true
+    # datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+    datadogPodAutoscalers: true
     # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD

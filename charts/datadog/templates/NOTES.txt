@@ -177,6 +177,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
+{{- if and (((.Values.datadog.autoscaling).workload).enabled) (not .Values.remoteConfiguration.enabled) }}
+
+###################################################################################
+####               ERROR: Container Autoscaling misconfiguration               ####
+###################################################################################
+
+{{- fail "Workload autoscaling is activated without remote configuration. Remote configuration is required (remoteConfiguration.enabled = true)" }}
+
+{{- end }}
+
 {{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
