@@ -18936,6 +18936,26 @@ entries:
   extendeddaemonset:
   - apiVersion: v1
     appVersion: v0.8.0
+    created: "2024-07-03T15:17:02.725617635Z"
+    description: Extended Daemonset Controller
+    digest: aae6817ef18c466996414bb7d3d77875fa39fa40b975f1e62512d479ef4e8fdd
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: extendeddaemonset
+    sources:
+    - https://github.com/DataDog/extendeddaemonset
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/extendeddaemonset-v0.3.2/extendeddaemonset-v0.3.2.tgz
+    version: v0.3.2
+  - apiVersion: v1
+    appVersion: v0.8.0
     created: "2024-02-13T08:28:02.846708904Z"
     description: Extended Daemonset Controller
     digest: 960ce0b42e68ede67b1d56baba9df74ad82f634b934617560fb46c6b59e4c095
@@ -20837,4 +20857,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-03T09:02:31.182909096Z"
+generated: "2024-07-03T15:17:02.72651853Z"
