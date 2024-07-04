@@ -1,7 +1,7 @@
 apiVersion: v2
 name: synthetics-private-location
-version: 0.16.3
-appVersion: 1.48.0
+version: 0.16.4
+appVersion: 1.49.0
 description: Datadog Synthetics Private Location
 keywords:
 - monitoring
