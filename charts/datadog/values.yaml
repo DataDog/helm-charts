@@ -625,8 +625,8 @@ datadog:
     processDiscovery: true
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
-    # This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation.
-    # If Orchestrator Explorer, Network Performance Monitoring is not being used, processAgent.enabled should be set to false to remove the process-agent container.
+    ## This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation.
+    ## If Orchestrator Explorer, Network Performance Monitoring is not being used, processAgent.enabled should be set to false to remove the process-agent container.
     runInCoreAgent: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file
