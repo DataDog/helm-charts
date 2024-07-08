@@ -54,7 +54,6 @@ spec:
             - "-metrics-addr=:8383"
             - "-loglevel=info"
             - "-operatorMetricsEnabled=true"
-            - "-webhookEnabled=true"
             - "-introspectionEnabled=false"
             - "-datadogAgentProfileEnabled=false"
             - "-datadogMonitorEnabled=false"

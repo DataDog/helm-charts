@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.8.2
+## 1.8.3
 
 * Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.
+
+## 1.8.2
+
+* Deprecate `webhookEnabled` flag for 1.7.0.
 
 ## 1.8.1
 

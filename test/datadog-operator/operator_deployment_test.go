@@ -132,7 +132,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
 	assert.Equal(t, "gcr.io/datadoghq/operator:1.7.0", operatorContainer.Image)
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
@@ -155,14 +155,14 @@ func verifyConversionWebhookEnabledTrue(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=true")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
 
 func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyAll(t *testing.T, manifest string) {
