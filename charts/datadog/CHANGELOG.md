@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.3
+
+* Make sure that disabling CSPM host benchmarks is propagated to the agent.
+
 ## 3.67.2
 
 * Remove startup probe for `Agent` in GKE AutoPilot due to deployment restrictions
