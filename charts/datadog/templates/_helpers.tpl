@@ -914,4 +914,33 @@ Create RBACs for custom resources
   {{- end -}}
 {{- end -}}
 
+{{- define "process-checks-enabled" -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
 
+{{- define "should-enable-process-agent" -}}
+  {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
+    true
+  {{- else if and (eq .Values.targetSystem "windows") (eq (include "process-checks-enabled" .) "true") -}}
+    true
+  {{- else if not .Values.agents.image.doNotCheckTag -}}
+    {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+    {{- $length := len (split "." $version) -}}
+    {{- if and (eq $length 1) (eq $version "latest") -}}
+      {{- $version = "7.54.0" -}}
+    {{- end -}}
+    {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" $version) -}}
+      true
+    {{- else if and .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" $version) -}}
+      false
+    {{- else -}}
+      {{- include "process-checks-enabled" . -}}
+    {{- end -}}
+  {{- else -}}
+    {{- include "process-checks-enabled" . -}}
+  {{- end -}}
+{{- end -}}
