@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.3
+
+* Overwrite the securityContext for the `seccomp-setup` initContainer with `agents.containers.initContainers.securityContext`.
+
 ## 3.67.2
 
 * Remove startup probe for `Agent` in GKE AutoPilot due to deployment restrictions
