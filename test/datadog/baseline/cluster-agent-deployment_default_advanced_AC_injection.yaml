@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 4346a3b2296816f215f49f92dacbfc80c251f39de46749c9d0b7501bf0d53a0d
+        checksum/clusteragent_token: 67e4d0f698b3aa3de4284df979579da158e2f37bc782d043839dcfed40456d1d
         checksum/clusteragent-configmap: 38c28d057b0213196d86e6f2f2b1b2ad36f0d9b33470874ebdda7433c43fbe1d
         checksum/api_key: 8be381f5996d772c4c4a96e3f6b7815f455cd0d0b2c4fbe5494c38cd68300724
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
