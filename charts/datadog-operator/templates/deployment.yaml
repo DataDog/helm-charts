@@ -3,6 +3,10 @@ kind: Deployment
 metadata:
   name: {{ include "datadog-operator.fullname" . }}
   namespace: {{ .Release.Namespace }}
+{{- if .Values.deployment.annotations }}
+  annotations:
+{{ toYaml .Values.deployment.annotations | indent 4 }}
+{{- end }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:

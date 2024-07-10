@@ -94,6 +94,9 @@ remoteConfiguration:
   # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
   enabled: false
 
+deployment:
+  # deployment.annotations -- Allows setting additional annotations for the deployment resource
+  annotations: {}
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
