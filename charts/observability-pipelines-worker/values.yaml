@@ -262,7 +262,7 @@ extraVolumes:
     secret:
       secretName: google-credentials
       items:
-      - key: chronicle-credentials.json
+      - key: google-credentials.json
         path: google-credentials.json
 
 
