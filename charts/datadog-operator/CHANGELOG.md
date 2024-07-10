@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.4
+
+* Add option to specify `deployment.annotations`.
+
 ## 1.8.3
 
 * Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.
