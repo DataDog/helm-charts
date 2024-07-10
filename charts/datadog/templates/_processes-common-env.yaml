@@ -1,0 +1,17 @@
+# Defines set of environment variables for Processes-related checks.
+{{- define "processes-common-envs" -}}
+{{- if .Values.datadog.processAgent.processCollection }}
+- name: DD_PROCESS_AGENT_ENABLED
+  value: "true"
+{{- end }}
+- name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+  value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
+{{- if .Values.datadog.processAgent.stripProcessArguments }}
+- name: DD_STRIP_PROCESS_ARGS
+  value: "true"
+{{- end }}
+{{- if eq .Values.targetSystem "linux" }}
+- name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+  value: {{ .Values.datadog.processAgent.runInCoreAgent | quote }}
+{{- end }}  
+{{- end -}}
