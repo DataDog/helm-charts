@@ -42,7 +42,7 @@ image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 2.0.2
+  tag: 2.1.0
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -129,9 +129,15 @@ args:
   - run
 
 # env -- Define environment variables.
-env: []
-#  - name: <ENV_VAR_NAME>
-#    value: <ENV_VAR_VALUE>
+env:
+ - name: DD_OP_DESTINATION_ELASTICSEARCH_USERNAME
+   value: adfsdf
+ - name: DD_OP_DESTINATION_ELASTICSEARCH_PASSWORD
+   value: asdfsdf
+ - name: DD_OP_DESTINATION_ELASTICSEARCH_ENDPOINT_URL
+   value: https://localhost:2334
+ - name: DD_OP_SOURCE_DATADOG_AGENT_ADDRESS
+   value: 0.0.0.0:8282
 #  - name: <ENV_VAR_NAME>
 #    valueFrom:
 #      secretKeyRef:
@@ -146,7 +152,10 @@ envFrom: []
 #     name: <SECRET_NAME>
 
 # containerPorts -- Manually define ContainerPort array, overriding automated generation of ContainerPorts.
-containerPorts: []
+containerPorts:   
+  - name: override
+    containerPort: 8282
+    protocol: TCP
 
 # resources -- Specify resource requests and limits.
 resources: {}
@@ -158,12 +167,7 @@ resources: {}
   #   memory: 256Mi
 
 # lifecycle -- Specify lifecycle hooks for Containers.
-lifecycle: {}
-  # preStop:
-  #   exec:
-  #     command:
-  #     - /bin/sleep
-  #     - "10"
+
 
 # updateStrategy -- Customize the
 # [updateStrategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec).
@@ -253,10 +257,19 @@ ingress:
   #      - chart-example.local
 
 # extraVolumes -- Specify additional Volumes to use.
-extraVolumes: []
+extraVolumes:
+  - name: google-credentials
+    secret:
+      secretName: google-credentials
+      items:
+      - key: chronicle-credentials.json
+        path: google-credentials.json
+
 
 # extraVolumeMounts -- Specify Additional VolumeMounts to use.
-extraVolumeMounts: []
+extraVolumeMounts:
+  - name: google-credentials
+    mountPath: /var/lib/observability-pipelines-worker/config/
 
 # initContainers -- Specify initContainers to be added.
 initContainers: []
