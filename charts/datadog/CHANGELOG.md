@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.67.4
+
+* Overwrite the securityContext for the `seccomp-setup` initContainer with `agents.containers.initContainers.securityContext`.
+
 ## 3.67.3
 
 * Make sure that disabling CSPM host benchmarks is propagated to the agent.
