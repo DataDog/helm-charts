@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.8.2](https://img.shields.io/badge/Version-1.8.2-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
+![Version: 1.8.3](https://img.shields.io/badge/Version-1.8.3-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 ## Values
 
@@ -30,6 +30,7 @@
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
+| image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
 | image.tag | string | `"1.7.0"` | Define the Datadog Operator version to use |

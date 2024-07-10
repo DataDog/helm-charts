@@ -50,6 +50,8 @@ image:
   tag: 1.7.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
+  # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
+  doNotCheckTag: false
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
 # nameOverride -- Override name of app

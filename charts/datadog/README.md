@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.67.3](https://img.shields.io/badge/Version-3.67.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.67.4](https://img.shields.io/badge/Version-3.67.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -793,7 +793,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
-| datadog.securityAgent.compliance.host_benchmarks.enabled | bool | `false` | Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container) |
+| datadog.securityAgent.compliance.host_benchmarks.enabled | bool | `true` | Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+) |
 | datadog.securityAgent.compliance.xccdf.enabled | bool | `false` |  |
 | datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` | Set to the desired duration of a single container tracing (in minutes) |
 | datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` | Set to the size of the wait list for already traced containers |
