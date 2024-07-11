@@ -610,7 +610,7 @@ datadog:
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
-    # datadog.processAgent.processCollection -- Set this to true to enable process collection in process monitoring agent
+    # datadog.processAgent.processCollection -- Set this to true to enable process collection
     processCollection: false
 
     # datadog.processAgent.stripProcessArguments -- Set this to scrub all arguments from collected processes
