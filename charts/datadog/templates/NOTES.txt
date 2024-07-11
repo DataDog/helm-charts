@@ -281,14 +281,6 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 * The serviceAccountName must be "datadog-agent".
 * All ConfigMap names mounted must be hardcode.
 
-{{- if eq (include "system-probe-feature" .) "true" }}
-
-#####################################################################
-####   WARNING: System Probe is not supported on GKE Autopilot   ####
-#####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
-
-{{- end }}
 
 {{- if and .Values.providers.gke.cos .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
 #################################################################################
@@ -343,16 +335,6 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 ##############################################################################
 ####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
 ##############################################################################
-
-{{- end }}
-
-{{- if .Values.datadog.networkMonitoring.enabled }}
-
-#######################################################################################
-####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
-#######################################################################################
-
-{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
 
 {{- end }}
 
