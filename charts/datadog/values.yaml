@@ -614,7 +614,7 @@ datadog:
     processCollection: false
 
     # datadog.processAgent.stripProcessArguments -- Set this to scrub all arguments from collected processes
-    ## Requires processAgent.processCollection to be set to true to have any effect
+    ## Requires datadog.processAgent.processCollection to be set to true to have any effect
     ## ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing
     stripProcessArguments: false
 
