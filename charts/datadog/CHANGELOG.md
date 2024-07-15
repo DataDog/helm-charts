@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.68.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.55.1`.
+
 ## 3.67.5
 
 * Add support for `processAgent.runInCoreAgent` as an experimental feature.
