@@ -605,7 +605,7 @@ datadog:
   ## Enable process agent and provide custom configs
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
-    # DEPRECATED. Set `processCollection` or `containerCollection` instead.
+    # DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead.
     ## Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
