@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-1.6.0
+    helm.sh/chart: datadog-operator-1.8.3
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.5.0"
+    app.kubernetes.io/version: "1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
-          image: "gcr.io/datadoghq/operator:1.5.0"
+          image: "gcr.io/datadoghq/operator:1.7.0"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
@@ -46,18 +46,20 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_TOOL_VERSION
+              value: helm
           args:
             - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
             - "-metrics-addr=:8383"
             - "-loglevel=info"
             - "-operatorMetricsEnabled=true"
-            - "-webhookEnabled=false"
             - "-introspectionEnabled=false"
             - "-datadogAgentProfileEnabled=false"
             - "-datadogMonitorEnabled=false"
             - "-datadogAgentEnabled=true"
             - "-datadogSLOEnabled=false"
+            - "-remoteConfigEnabled=false"
           ports:
             - name: metrics
               containerPort: 8383

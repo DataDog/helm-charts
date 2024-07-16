@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.59.5'
+    helm.sh/chart: 'datadog-3.67.3'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 2fa601d9e096c193a20fc2206befc84edbdb2d0734a436ba8756f1810ea38757
-        checksum/clusteragent-configmap: e76c6e387906993bf00147d7686dc3c64be7714d069bb1a2cbf88240ef996268
-        checksum/api_key: 285e50be97a9ee27ecdd3466635dcedc8b3d08f9db978c1d427bf3bc39d2de0c
+        checksum/clusteragent_token: 7a0ca4e15723140df2c3fc4bf3aac52589061ce45538b1db674ddcc72273e0b4
+        checksum/clusteragent-configmap: fc0dc6008f97f0f0bbf7ff0d570e8f2aa1fe695c1d6e2ca0d4d014040fbdb06e
+        checksum/api_key: d625c7eeff65b2ba930348cd0cccd7158d616f7e71f4befd49eb3734387f2388
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: ff7899c74b353510429944625eb16f8e592229bb5787e83e275316fa810fb729
+        checksum/install_info: f50ea8a79f0564dc664ff870e2b565a24e874dd107024252b8439ef2771dc70c
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.52.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.54.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.52.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.54.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -119,7 +119,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
             value: agent
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-            value: 7.52.1
+            value: 7.54.0
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -193,6 +193,16 @@ spec:
           failureThreshold: 6
           httpGet:
             path: /ready
+            port: 5556
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 5
+        startupProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /startup
             port: 5556
             scheme: HTTP
           initialDelaySeconds: 15

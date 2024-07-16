@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 0.16.4
+
+* Update private location image version to `1.49.0`.
+
+## 0.16.3
+
+* Add dnsConfig to DD private location Pod
+
+## 0.16.2
+
+* Update private location image version to `1.48.0`.
+
 ## 0.16.1
 
 * Update private location image version to `1.47.0`.

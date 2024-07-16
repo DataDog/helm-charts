@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/DataDog/helm-charts/test/common"
 )
 
 const (
@@ -90,7 +91,7 @@ func verifyDeploymentFargateMinimal(t *testing.T, manifest string) {
 	// Default will be set by DCA
 	assert.Empty(t, acConfigEnv[DDSidecarRegistry])
 	assert.Equal(t, "agent", acConfigEnv[DDSidecarImageName])
-	assert.Equal(t, "7.52.1", acConfigEnv[DDSidecarImageTag])
+	assert.Equal(t, "7.54.0", acConfigEnv[DDSidecarImageTag])
 	assert.Empty(t, acConfigEnv[DDSidecarSelectors])
 	assert.Empty(t, acConfigEnv[DDSidecarProfiles])
 }

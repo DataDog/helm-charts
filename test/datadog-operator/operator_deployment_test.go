@@ -3,10 +3,11 @@ package datadog_operator
 import (
 	"testing"
 
-	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+
+	"github.com/DataDog/helm-charts/test/common"
 )
 
 // This test will produce two renderings for two versions of DatadogAgent.
@@ -130,8 +131,8 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "gcr.io/datadoghq/operator:1.5.0", operatorContainer.Image)
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
+	assert.Equal(t, "gcr.io/datadoghq/operator:1.7.0", operatorContainer.Image)
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
@@ -154,14 +155,14 @@ func verifyConversionWebhookEnabledTrue(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=true")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
 
 func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyAll(t *testing.T, manifest string) {

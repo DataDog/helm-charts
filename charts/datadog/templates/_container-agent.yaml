@@ -58,6 +58,7 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -75,6 +76,10 @@
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    {{- end }}
+    {{- if .Values.datadog.originDetectionUnified.enabled }}
+    - name: DD_ORIGIN_DETECTION_UNIFIED
+      value: {{ .Values.datadog.originDetectionUnified.enabled | quote }}
     {{- end }}
     {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
@@ -244,6 +249,11 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if .Values.datadog.processAgent.runInCoreAgent }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
@@ -326,4 +336,9 @@
   readinessProbe:
 {{- $ready := .Values.agents.containers.agent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
+{{- if (not .Values.providers.gke.autopilot) }}
+  startupProbe:
+{{- $startup := .Values.agents.containers.agent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
+{{- end }}
 {{- end -}}

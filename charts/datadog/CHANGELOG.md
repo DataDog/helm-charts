@@ -1,5 +1,77 @@
 # Datadog changelog
 
+## 3.68.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.55.1`.
+
+## 3.67.5
+
+* Add support for `processAgent.runInCoreAgent` as an experimental feature.
+
+## 3.67.4
+
+* Overwrite the securityContext for the `seccomp-setup` initContainer with `agents.containers.initContainers.securityContext`.
+
+## 3.67.3
+
+* Make sure that disabling CSPM host benchmarks is propagated to the agent.
+
+## 3.67.2
+
+* Remove startup probe for `Agent` in GKE AutoPilot due to deployment restrictions
+
+## 3.67.1
+
+* Update `fips.image.tag` to `1.1.3`
+
+## 3.67.0
+
+* Add startup probe for `Agent`, `Cluster-Agent` and `Cluster-Check-Runner`.
+
+## 3.66.1
+
+* Add 'datadog.namespaceAnnotationsAsTags' to assign namespace annotations as tags on pod entities in the tagger.
+
+## 3.66.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.54.0`.
+
+## 3.65.3
+
+* Add RBAC rules for collection of StorageClass and LimitRange resources in the Orchestrator Explorer.
+
+## 3.65.2
+
+* Do not enable live process collection by default when language detection is enabled for `APM SSI`.
+
+## 3.65.1
+
+* Make sure the security agent is aware of `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
+## 3.65.0
+
+* Default `datadog.securityAgent.runtime.useSecruntimeTrack` to `true`, sending CWS events directly to the new secruntime track (and to the new agent events explorer).
+
+## 3.64.1
+
+* Add `datadog.securityAgent.runtime.useSecruntimeTrack` config to start sending CWS events directly to the new secruntime track (and to the new agent events explorer).
+
+## 3.64.0
+
+* Add `datadog.originDetectionUnified.enabled` setting to enable unified origin detection for container tagging. Disabled by default
+
+## 3.63.0
+
+* Set kubelet core check to be enabled by default
+
+## 3.62.1
+
+* Update `fips.image.tag` to `1.1.2`
+
+## 3.62.0
+
+* Add `datadog.asm` section to configure various features of the ASM Security Product. Disabled by default
+
 ## 3.61.0
 
 * Add `datadog.kubelet.core_check` option to configure whether the kubelet core check should be used
@@ -53,7 +125,6 @@
 * `datadog.apm.instrumentation.enabled` - set to `true` to enable automatic instrumentation.
 * `datadog.apm.instrumentation.enabledNamespaces` - optional; list of namespaces to enable automatic instrumentation in. If not provided, every namespace in the cluster will be instrumented.
 * `datadog.apm.instrumentation.disabledNamespaces` - optional; list of namespaces to disable automatic instrumentation in.
-
 
 ## 3.57.3
 

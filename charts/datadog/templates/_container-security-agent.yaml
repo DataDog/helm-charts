@@ -34,22 +34,22 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-    {{- if or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
     - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
-      value:  "true"
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
     - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
-      value:  "true"
-    {{- end }}
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
     - name: HOST_ROOT
       value: /host/root
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-      value:  {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
+      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
       value: /var/run/sysprobe/runtime-security.sock
+    - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+      value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET

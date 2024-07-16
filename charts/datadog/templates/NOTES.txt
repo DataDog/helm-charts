@@ -27,6 +27,7 @@ Then run:
 {{- end }}
 
 {{- $healthPort := .Values.agents.containers.agent.healthPort }}
+
 {{- with $liveness := .Values.agents.containers.agent.livenessProbe.httpGet }}
 {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -37,6 +38,7 @@ Then run:
 Node Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
 {{- with $readiness := .Values.agents.containers.agent.readinessProbe.httpGet }}
 {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -47,6 +49,18 @@ Node Agent liveness probe port ({{ $liveness.port }}) is different from the conf
 Node Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
+{{- with $startup := .Values.agents.containers.agent.startupProbe.httpGet }}
+{{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Node Agent startup probe misconfiguration       ####
+##############################################################################
+
+Node Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+{{- end }}
+{{- end }}
+
 {{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 
   {{- if .Values.clusterAgent.metricsProvider.enabled }}
@@ -65,6 +79,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
   {{- end }}
   {{- $healthPort := .Values.clusterAgent.healthPort }}
+
   {{- with $liveness := .Values.clusterAgent.livenessProbe.httpGet }}
   {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -75,6 +90,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
 Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
   {{- with $readiness := .Values.clusterAgent.readinessProbe.httpGet }}
   {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -85,8 +101,21 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
+  {{- with $startup := .Values.clusterAgent.startupProbe.httpGet }}
+  {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Cluster Agent startup probe misconfiguration    ####
+##############################################################################
+
+Cluster Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+  {{- end }}
+  {{- end }}
+
   {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
     {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+
     {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
     {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -97,6 +126,7 @@ Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the
 Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
     {{- with $readiness := .Values.clusterChecksRunner.readinessProbe.httpGet }}
     {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -107,6 +137,18 @@ Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different fr
 Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
+    {{- with $startup := .Values.clusterChecksRunner.startupProbe.httpGet }}
+    {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+#####################################################################################
+####               ERROR: Cluster Checks Runner startup probe misconfiguration   ####
+#####################################################################################
+
+Cluster Checks Runner readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+    {{- end }}
+    {{- end }}
+
   {{- end }}
 {{- end }}
 {{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}

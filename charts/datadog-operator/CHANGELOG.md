@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.8.3
+
+* Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.
+
+## 1.8.2
+
+* Deprecate `webhookEnabled` flag for 1.7.0.
+
+## 1.8.1
+
+* Configure tool version.
+
+## 1.8.0
+
+* Update Datadog Operator version to 1.7.0.
+
+## 1.7.1
+
+* Add `DD_TOOL_VERSION` to operator deployment.
+
+## 1.7.0
+
+* Update Datadog Operator version to 1.6.0.
+
+## 1.6.1
+
+* Fix clusterRole when DatadogAgentProfiles are enabled.
+
 ## 1.6.0
 
 * Update Datadog Operator version to 1.5.0.

@@ -696,7 +696,13 @@ rules:
   verbs:
   - list
   - watch
-{{- if .Values.enableDatadogAgentProfile }}
+- apiGroups:
+    - ""
+  resources:
+    - pods/exec
+  verbs:
+    - create
+{{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
   resources:

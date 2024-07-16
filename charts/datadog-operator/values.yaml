@@ -16,6 +16,10 @@ apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
 # appKey -- Your Datadog APP key
 appKey:  # <DATADOG_APP_KEY>
 
+
+# clusterName -- Set a unique cluster name reporting from the Datadog Operator.
+clusterName:
+
 # site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
 
 ## Set to 'datadoghq.com' to send data to the US1 site (default).
@@ -43,9 +47,11 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.5.0
+  tag: 1.7.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
+  # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
+  doNotCheckTag: false
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
 # nameOverride -- Override name of app
@@ -84,6 +90,10 @@ datadogMonitor:
 datadogSLO:
   # datadogSLO.enabled -- Enables the Datadog SLO controller
   enabled: false
+remoteConfiguration:
+  # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
+  enabled: false
+
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
@@ -127,6 +137,8 @@ datadogCRDs:
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
+
+  # v1alpha1 to v2alpha1 CRD conversion is deprecated in v1.7.0
   migration:
     datadogAgents:
       conversionWebhook:

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0
+
+* Official image `2.1.0`
+
+## 2.0.2
+
+* Official image `2.0.2`
+
+## 2.0.1
+
+* Official image `2.0.1`
+
 ## 2.0.0
 
 * GA release of Observability Pipelines Worker v2

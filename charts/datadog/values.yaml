@@ -249,6 +249,15 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_LABEL>: <DATADOG_TAG_KEY>
 
+  # datadog.namespaceAnnotationsAsTags -- Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags
+  namespaceAnnotationsAsTags: {}
+  #   env: environment
+  #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
+
+  originDetectionUnified:
+    # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
+    enabled: false
+
   # datadog.tags -- List of static tags to attach to every metric, event and service check collected by this Agent.
 
   ## Learn more about tagging: https://docs.datadoghq.com/tagging/
@@ -280,9 +289,9 @@ datadog:
     # datadog.kubelet.podLogsPath -- Path (on host) where the PODs logs are located
     # @default -- /var/log/pods on Linux, C:\var\log\pods on Windows
     podLogsPath:
-    # datadog.kubelet.coreCheck -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
-    # @default -- false
-    coreCheckEnabled: false
+    # datadog.kubelet.coreCheckEnabled -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
+    # @default -- true
+    coreCheckEnabled: true
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
@@ -492,6 +501,25 @@ datadog:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
         enabled: true
 
+  ## Application Security Managment (ASM) configuration
+  ##
+  ## ASM is disabled by default and can be enabled by setting the various `enabled` fields to `true` under the `datadog.asm` section.
+  ## Manually adding the various environment variables to a pod will take precedence over the ones in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed, either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation` section).
+  ## It requires Datadog Cluster Agent 7.53.0+.
+  asm:
+    threats:
+      # datadog.asm.threats.enabled -- Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    sca:
+      # datadog.asm.sca.enabled -- Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
+    iast:
+      # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
+      enabled: false
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -595,6 +623,11 @@ datadog:
 
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
     processDiscovery: true
+
+    # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
+    ## This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation.
+    ## If Network Performance Monitoring is not being used, processAgent.enabled should be set to false to remove the process-agent container.
+    runInCoreAgent: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file
   osReleasePath: /etc/os-release
@@ -748,9 +781,9 @@ datadog:
       xccdf:
         enabled: false
 
-      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to true to enable host benchmarks (this feature is supported from Agent 7.47, and requires 160 MB extra memory for the `security-agent` container)
+      # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+)
       host_benchmarks:
-        enabled: false
+        enabled: true
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -758,6 +791,9 @@ datadog:
 
       # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
       fimEnabled: false
+
+      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
+      useSecruntimeTrack: true
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
@@ -904,7 +940,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.53.0
+    tag: 7.55.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1218,6 +1254,15 @@ clusterAgent:
     successThreshold: 1
     failureThreshold: 6
 
+  # clusterAgent.startupProbe -- Override default Cluster Agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+  startupProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
   # clusterAgent.strategy -- Allow the Cluster Agent deployment to perform a rolling update on helm update
 
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
@@ -1345,7 +1390,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.1
+    tag: 1.1.3
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1388,7 +1433,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.53.0
+    tag: 7.55.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1548,6 +1593,15 @@ agents:
       # agents.containers.agent.readinessProbe -- Override default agent readiness probe settings
       # @default -- Every 15s / 6 KO / 1 OK
       readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # agents.containers.agent.startupProbe -- Override default agent startup probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      startupProbe:
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
@@ -1856,7 +1910,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.53.0
+    tag: 7.55.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1991,6 +2045,23 @@ clusterChecksRunner:
   #     command: ["/bin/true"]
   #
   readinessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+
+  # clusterChecksRunner.startupProbe -- Override default agent startup probe settings
+  # @default -- Every 15s / 6 KO / 1 OK
+
+  ## In case of issues with the probe, you can disable it with the
+  ## following values, to allow easier investigating:
+  #
+  # startupProbe:
+  #   exec:
+  #     command: ["/bin/true"]
+  #
+  startupProbe:
     initialDelaySeconds: 15
     periodSeconds: 15
     timeoutSeconds: 5

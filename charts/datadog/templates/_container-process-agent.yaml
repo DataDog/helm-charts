@@ -28,16 +28,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    {{- if .Values.datadog.processAgent.processCollection }}
-    - name: DD_PROCESS_AGENT_ENABLED
-      value: "true"
-    {{- end }}
-    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
-    {{- if .Values.datadog.processAgent.stripProcessArguments }}
-    - name: DD_STRIP_PROCESS_ARGS
-      value: "true"
-    {{- end }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -52,8 +43,6 @@
     {{- end }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
-    - name: DD_PROCESS_AGENT_PROCESS_COLLECTION_ENABLED
-      value: {{ include "language-detection-enabled" .  | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.processAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.processAgent.envDict | indent 4 }}
   volumeMounts:

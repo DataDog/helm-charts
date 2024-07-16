@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.16.1](https://img.shields.io/badge/Version-0.16.1-informational?style=flat-square) ![AppVersion: 1.47.0](https://img.shields.io/badge/AppVersion-1.47.0-informational?style=flat-square)
+![Version: 0.16.4](https://img.shields.io/badge/Version-0.16.4-informational?style=flat-square) ![AppVersion: 1.49.0](https://img.shields.io/badge/AppVersion-1.49.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations/?tab=helmchart).
 
@@ -30,6 +30,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worker for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
 | configSecret | string | `""` | Name of the secret that stores the configuration of the private location worker for the deployment. Use it only if you want to manage the secret outside of the Helm chart as using `configFile` will create a secret. The `data` inside the secret needs to have the key `synthetics-check-runner.json`. |
+| dnsConfig | object | `{}` | DNS Config to set to the Datadog Synthetics Private Location PODs |
 | dnsPolicy | string | `"ClusterFirst"` | DNS Policy to set to the Datadog Synthetics Private Location PODs |
 | enableStatusProbes | bool | `false` | Enable both liveness and readiness probes (minimal private location image version required: 1.12.0) |
 | env | list | `[]` | Set environment variables |
@@ -40,7 +41,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | hostAliases | list | `[]` | Add entries to Datadog Synthetics Private Location PODs' /etc/hosts |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
-| image.tag | string | `"1.47.0"` | Define the Datadog Synthetics Private Location version to use |
+| image.tag | string | `"1.49.0"` | Define the Datadog Synthetics Private Location version to use |
 | imagePullSecrets | list | `[]` | Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials) |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Synthetics Private Location on specific nodes |
