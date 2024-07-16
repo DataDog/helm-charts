@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.0
+
+* Allow configuration of the security context of the security agent, as is already the case for other agents.
+
 ## 3.68.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.55.1`.
