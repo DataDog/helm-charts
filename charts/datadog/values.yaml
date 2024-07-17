@@ -1755,6 +1755,12 @@ agents:
       #    cpu: 100m
       #    memory: 300Mi
 
+      ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
+      securityContext:
+        privileged: false
+        capabilities:
+          add: ["AUDIT_CONTROL", "AUDIT_READ"]
+
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 

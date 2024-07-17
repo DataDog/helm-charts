@@ -2,11 +2,7 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  {{- if eq  (include "should-enable-compliance" .) "true" }}
-  securityContext:
-    capabilities:
-      add: ["AUDIT_CONTROL", "AUDIT_READ"]
-  {{- end }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.securityAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
