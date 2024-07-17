@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.16.4](https://img.shields.io/badge/Version-0.16.4-informational?style=flat-square) ![AppVersion: 1.49.0](https://img.shields.io/badge/AppVersion-1.49.0-informational?style=flat-square)
+![Version: 0.17.0](https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square) ![AppVersion: 1.49.0](https://img.shields.io/badge/AppVersion-1.49.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations/?tab=helmchart).
 
@@ -46,6 +46,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Synthetics Private Location on specific nodes |
 | podAnnotations | object | `{}` | Annotations to set to Datadog Synthetics Private Location PODs |
+| podDisruptionBudget | object | `{"enabled":false,"minAvailable":1}` | Allows to create and configure PodDisruptionBudget for Datadog Synthetics Private Location deployment |
 | podLabels | object | `{}` | Labels to be placed on pods managed by the deployment |
 | podSecurityContext | object | `{}` | Security context to set to Datadog Synthetics Private Location PODs |
 | priorityClassName | string | `""` | Allows to specify PriorityClass for Datadog Synthetics Private Location PODs |
