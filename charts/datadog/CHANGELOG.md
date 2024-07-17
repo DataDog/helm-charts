@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.0
+
+* Enable `system-probe` container on GKE Autopilot
+
 ## 3.68.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.55.1`.

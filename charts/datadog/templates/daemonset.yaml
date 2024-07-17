@@ -62,6 +62,9 @@ spec:
         {{- if and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
+        {{- if .Values.providers.gke.autopilot }}
+        autopilot.gke.io/no-connect: "false"
+        {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
