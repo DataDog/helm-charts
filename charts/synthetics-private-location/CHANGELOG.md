@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.0
+
+* Add `podDisruptionBudget` to allow creating and configuring PodDisruptionBudget for deployment.
+
 ## 0.16.4
 
 * Update private location image version to `1.49.0`.
