@@ -124,3 +124,9 @@ enableStatusProbes: false
 
 # priorityClassName -- Allows to specify PriorityClass for Datadog Synthetics Private Location PODs
 priorityClassName: ""
+
+# podDisruptionBudget -- Allows to create and configure PodDisruptionBudget for Datadog Synthetics Private Location deployment
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

@@ -1,0 +1,17 @@
+{{- if .Values.podDisruptionBudget.enabled -}}
+apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+{{- if .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- if .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
+{{- end }}
+  selector:
+    matchLabels: {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+{{- end -}}
