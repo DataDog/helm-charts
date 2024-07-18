@@ -932,7 +932,7 @@ Create RBACs for custom resources
   {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
   {{- $length := len (split "." $version) -}}
   {{- if and (eq $length 1) (eq $version "latest") -}}
-    "7.54.0"
+    "7.55.1"
   {{- else -}}
     {{- $version -}}
   {{- end -}}

@@ -1,4 +1,5 @@
 # Datadog changelog
+
 ## 3.68.1
 
 * Add automatic detection for enablement of process agent container.
