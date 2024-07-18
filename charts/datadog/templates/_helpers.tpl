@@ -1,18 +1,28 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "check-version" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{/*
+  Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-agent-version" -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.36.0" -}}
+{{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.36.0" -}}
+{{- $version = "7.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.36.0" -}}
+{{- $version = "7.55.1" -}}
+{{- else -}}
+{{- $version -}}
 {{- end -}}
+{{- end -}}
+
+
+{{- define "check-version" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -45,17 +55,7 @@ false
 
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
 true
 {{- else -}}
@@ -922,19 +922,6 @@ Create RBACs for custom resources
     true
   {{- else -}}
     false
-  {{- end -}}
-{{- end -}}
-
-{{/*
-  Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
-*/}}
-{{- define "get-agent-version" -}}
-  {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-  {{- $length := len (split "." $version) -}}
-  {{- if and (eq $length 1) (eq $version "latest") -}}
-    "7.55.1"
-  {{- else -}}
-    {{- $version -}}
   {{- end -}}
 {{- end -}}
 
