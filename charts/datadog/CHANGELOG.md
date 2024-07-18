@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.68.1
+
+* Add automatic detection for enablement of process agent container.
+
 ## 3.68.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.55.1`.

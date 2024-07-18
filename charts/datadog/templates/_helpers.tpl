@@ -1,18 +1,24 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "check-version" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{/*
+  Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-agent-version" -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.36.0" -}}
+{{- $version = "6.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.36.0" -}}
+{{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
+{{- $version = "7.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.36.0" -}}
+{{- $version -}}
 {{- end -}}
+
+
+{{- define "check-version" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -45,17 +51,7 @@ false
 
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
 true
 {{- else -}}
@@ -914,4 +910,35 @@ Create RBACs for custom resources
   {{- end -}}
 {{- end -}}
 
+{{/*
+  Return true if any process-related check is enabled
+*/}}
+{{- define "process-checks-enabled" -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
 
+{{/*
+  Returns true if the process-agent container should be created.
+*/}}
+{{- define "should-enable-process-agent" -}}
+  {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
+    true
+  {{- else if and (eq .Values.targetSystem "windows") (eq (include "process-checks-enabled" .) "true") -}}
+    true
+  {{- else if not .Values.agents.image.doNotCheckTag -}}
+    {{- $version := (include "get-agent-version" .) -}}
+    {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" $version) -}}
+      true
+    {{- else if and .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" $version) -}}
+      false
+    {{- else -}}
+      {{- include "process-checks-enabled" . -}}
+    {{- end -}}
+  {{- else -}}
+    {{- include "process-checks-enabled" . -}}
+  {{- end -}}
+{{- end -}}
