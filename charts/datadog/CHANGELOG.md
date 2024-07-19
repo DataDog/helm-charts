@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.68.2
+* Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
+
 ## 3.68.1
 
 * Add automatic detection for enablement of process agent container.

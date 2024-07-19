@@ -157,10 +157,8 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
-    {{- if .Values.datadog.containerLifecycle.enabled }}
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
-      value: {{ .Values.datadog.containerLifecycle.enabled | quote }}
-    {{- end }}
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}  
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
