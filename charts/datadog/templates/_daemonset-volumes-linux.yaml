@@ -137,7 +137,7 @@
   name: btf-path
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.processAgent.enabled .Values.datadog.processAgent.runInCoreAgent (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
+{{- if or (eq (include "process-checks-enabled" .) "true") .Values.datadog.processAgent.runInCoreAgent (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
 - hostPath:
     path: /etc/passwd
   name: passwd
