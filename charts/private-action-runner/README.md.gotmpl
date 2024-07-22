@@ -1,0 +1,32 @@
+# Private action runner Helm chart
+
+This Helm Chart will deploy the Datadog Private Action runner inside a Kubernetes cluster.
+You will be able to use private actions from the Datadog Workflow and Datadog App Builder products.
+When deploying this chart, you will be able to give permissions to the runner in order to be able to run Kubernetes actions.
+
+## Requirements
+* A Datadog account with private actions enabled
+* The kubectl cli
+* Helm
+* Sufficient permissions to the kubernetes cluster
+
+## In order to use this chart
+
+* Go to the private action runner tab https://app.datadoghq.com/workflow/private-action-runners
+* Create a new private action runner
+* Follow the instructions and you should have a running docker container and `config/config.yaml` file
+* Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`)
+* Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` from the chart's `values.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
+* Create the kubernetes namespace `kubectl create namespace private-action-runner`
+* Install the Helm chart `helm install <name> .`
+* Go to the workflow connections https://app.datadoghq.com/workflow/connections
+* Create a new connection, select your private action runner and use `Service account authentication`
+* Create a new workflow and use a kubernetes action like `List pod` / `List deployment`
+
+
+## Going further
+* Adjust the service account permissions according to your needs, you can find more informations about kubernetes RBAC here https://kubernetes.io/docs/reference/access-authn-authz/rbac
+* Deploy several runners with different permissions / create different connections according to your needs
+* Private actions documentation https://docs.datadoghq.com/service_management/app_builder/private_actions
+
+{{ template "chart.valuesSection" . }}

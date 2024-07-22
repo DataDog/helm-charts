@@ -1,0 +1,9 @@
+{{- range $_, $runner := $.Values.runners }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  namespace: {{ $.Values.common.namespace }}
+  name: {{ include "chart.roleName" $runner.name }}
+rules: {{ $runner.kubernetesPermissions | toJson }}
+{{- end }}
