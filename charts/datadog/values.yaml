@@ -1339,6 +1339,10 @@ clusterAgent:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
+  # clusterAgent.terminationGracePeriodSeconds -- Set terminationGracePeriodSeconds for cluster agent pod
+  # See: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+  terminationGracePeriodSeconds:
+
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
@@ -1548,6 +1552,10 @@ agents:
 
     # agents.podSecurity.defaultApparmor -- Default AppArmor profile for all containers but system-probe
     defaultApparmor: runtime/default
+
+  # agents.terminationGracePeriodSeconds -- Set terminationGracePeriodSeconds for agent pod
+  # See: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+  terminationGracePeriodSeconds:
 
   containers:
     agent:
@@ -2123,6 +2131,10 @@ clusterChecksRunner:
 
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
+
+  # clusterChecksRunner.terminationGracePeriodSeconds -- Set terminationGracePeriodSeconds for cluster checks runner pod
+  # See: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+  terminationGracePeriodSeconds:
 
 datadog-crds:
   crds:
