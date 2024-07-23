@@ -119,4 +119,10 @@
   livenessProbe:
 {{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
 {{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}
+  {{- if .Values.agents.terminationGracePeriodSeconds }}
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
+  {{- end }}
 {{- end -}}
