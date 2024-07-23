@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.0
+
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector. 
+
 ## 3.68.2
 * Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
 

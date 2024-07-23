@@ -107,6 +107,19 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Return true if the OTelAgent needs to be deployed
+*/}}
+{{- define "should-enable-otel-agent" -}}
+{{- if and .Values.datadog.otelCollector.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
+
+{{/*
 Return secret name to be used based on provided values.
 */}}
 {{- define "datadog.apiSecretName" -}}
@@ -200,6 +213,18 @@ Return agent config path
 {{- define "datadog.confPath" -}}
 {{- if eq .Values.targetSystem "linux" -}}
 /etc/datadog-agent
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return agent config path
+*/}}
+{{- define "datadog.otelconfPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/etc/otel-agent
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog
@@ -568,6 +593,10 @@ datadog-agent-fips-config
 {{- else -}}
 {{ template "datadog.fullname" . }}-fips-config
 {{- end -}}
+{{- end -}}
+
+{{- define "agents-install-otel-configmap-name" -}}
+{{ template "datadog.fullname" . }}-otel-config
 {{- end -}}
 
 {{/*
@@ -941,4 +970,14 @@ Create RBACs for custom resources
   {{- else -}}
     {{- include "process-checks-enabled" . -}}
   {{- end -}}
+{{- end -}}
+
+
+{{- define "get-port-number-from-name" -}}
+{{- $portName := .portName -}}
+{{- range .ports -}}
+  {{- if eq .name $portName -}}
+    {{ .containerPort }}
+  {{- end -}}
+{{- end -}}
 {{- end -}}
