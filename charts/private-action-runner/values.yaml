@@ -37,7 +37,7 @@ runners:
           # - "patch"
           # - "update"
           # - "delete"
-    # -- This is the default configuration for the Datadog Private Action Runner
+    # -- This is the configuration for the Datadog Private Action Runner
     config:
       # -- The base URL of the Datadog
       ddBaseURL: "https://app.datadoghq.com"
