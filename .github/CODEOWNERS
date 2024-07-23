@@ -17,3 +17,4 @@ charts/datadog/templates/_system-probe-init.yaml       @DataDog/ebpf-platform @D
 charts/datadog/templates/system-probe-configmap.yaml   @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
+charts/private-action-runner                            @DataDog/action-platform
