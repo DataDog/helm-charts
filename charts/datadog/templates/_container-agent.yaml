@@ -339,4 +339,10 @@
 {{- $startup := .Values.agents.containers.agent.startupProbe }}
 {{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
 {{- end }}
+  {{- if .Values.agents.terminationGracePeriodSeconds }}
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
+  {{- end }}
 {{- end -}}
