@@ -4,7 +4,7 @@
 
 common:
   # -- The namespace where the Datadog Private Action Runner will be deployed
-  namespace: private-action-runner
+  namespace: default
   # -- Current Datadog Private Action Runner image
   image: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha22
 

@@ -17,7 +17,8 @@ When deploying this chart, you will be able to give permissions to the runner in
 * Follow the instructions and you should have a running docker container and `config/config.yaml` file
 * Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`)
 * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` from the chart's `values.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
-* Create the kubernetes namespace `kubectl create namespace private-action-runner`
+* Create the kubernetes namespace for your runner `kubectl create namespace private-action-runner`
+* Replace the `namespace` in the `values.yaml` with the namespace you just created
 * Install the Helm chart `helm install <name> .`
 * Go to the workflow connections https://app.datadoghq.com/workflow/connections
 * Create a new connection, select your private action runner and use `Service account authentication`
@@ -33,7 +34,7 @@ When deploying this chart, you will be able to give permissions to the runner in
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | common.image | string | `"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha22"` | Current Datadog Private Action Runner image |
-| common.namespace | string | `"private-action-runner"` | The namespace where the Datadog Private Action Runner will be deployed |
+| common.namespace | string | `"default"` | The namespace where the Datadog Private Action Runner will be deployed |
 | runners[0] | object | `{"config":{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"},"kubernetesPermissions":[{"apiGroups":[""],"resources":["pods"],"verbs":["list","get"]},{"apiGroups":["apps"],"resources":["deployments"],"verbs":["list","get"]}],"name":"default","replicas":1}` | Name of the Datadog Private Action Runner |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | This is the configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
