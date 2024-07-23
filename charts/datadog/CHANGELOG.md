@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.68.3
+* Add `agents.terminationGracePeriodSeconds`, `clusterAgent.terminationGracePeriodSeconds` and `clusterChecksRunner.terminationGracePeriodSeconds`
+
 ## 3.68.2
 * Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
 
