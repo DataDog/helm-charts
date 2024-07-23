@@ -71,6 +71,9 @@ spec:
       {{- if .Values.clusterAgent.shareProcessNamespace }}
       shareProcessNamespace: {{ .Values.clusterAgent.shareProcessNamespace }}
       {{- end }}
+      {{- if .Values.clusterAgent.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.clusterAgent.terminationGracePeriodSeconds }}
+      {{- end }}
       {{- if .Values.clusterAgent.priorityClassName }}
       priorityClassName: "{{ .Values.clusterAgent.priorityClassName }}"
       {{- end }}
@@ -129,6 +132,12 @@ spec:
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         resources:
 {{ toYaml .Values.clusterAgent.resources | indent 10 }}
+        {{- if .Values.agents.terminationGracePeriodSeconds }}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 10"]
+        {{- end }}
         ports:
         - containerPort: 5005
           name: agentport
