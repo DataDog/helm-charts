@@ -59,6 +59,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
+
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -180,6 +181,7 @@
     - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
       value: "true"
     {{- end }}
+
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
@@ -190,6 +192,10 @@
     {{- if .Values.datadog.kubelet.coreCheckEnabled }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote }}
+    {{- end }}
+    {{- if eq (include "should-enable-otel-agent" .) "true" }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}

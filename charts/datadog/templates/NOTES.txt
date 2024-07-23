@@ -580,3 +580,12 @@ You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
 {{- end }}
+
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.providers.gke.autopilot }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+OTel collector is not supported on GKE Autopilot.
+{{- fail "The OTel collector cannot be run on GKE Autopilot." }}
+{{- end }}
