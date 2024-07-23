@@ -104,4 +104,10 @@
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
+  {{- if .Values.agents.terminationGracePeriodSeconds }}
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
+  {{- end }}
 {{- end -}}
