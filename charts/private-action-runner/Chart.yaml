@@ -1,5 +1,5 @@
 apiVersion: v2
-name: workflow-automation-private-action-runner
+name: private-action-runner
 description: A Helm chart to deploy the private action runner
 
 type: application
