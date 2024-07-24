@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "chart.deploymentName" $runner.name }}
-  namespace: {{ $.Release.namespace }}
+  namespace: {{ $.Values.common.namespace }}
   labels:
     service: {{ include "chart.deploymentName" $runner.name }}
     app: {{ include "chart.deploymentName" $runner.name }}
