@@ -16,8 +16,8 @@ When deploying this chart, you will be able to give permissions to the runner in
 * Create a new private action runner
 * Follow the instructions and you should have a running docker container and `config/config.yaml` file
 * Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`)
-* Some default values must be overridden for proper functionality. An example `values.override.yaml` file is provided in the `examples` directory.
-    * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the chart's values.override.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
+* Some default values must be overridden for proper functionality. An example `values.override.yaml` file is provided in the `examples` directory
+    * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the chart's `values.override.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container
     * Create the kubernetes namespace for your runner `kubectl create namespace private-action-runner`
     * Replace the `namespace` in `values.override.yaml` with the namespace you just created
 * You need to add this repository to your Helm repositories:
@@ -25,7 +25,7 @@ When deploying this chart, you will be able to give permissions to the runner in
     helm repo add datadog https://helm.datadoghq.com
     helm repo update
     ```
-* Install the Helm chart
+* Install the Helm chart:
     ```bash
         helm install <RELEASE_NAME> datadog/private-action-runner -f ./values.override.yaml
     ```
