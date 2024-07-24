@@ -16,10 +16,19 @@ When deploying this chart, you will be able to give permissions to the runner in
 * Create a new private action runner
 * Follow the instructions and you should have a running docker container and `config/config.yaml` file
 * Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`)
-* Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` from the chart's `values.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
-* Create the kubernetes namespace for your runner `kubectl create namespace private-action-runner`
-* Replace the `namespace` in the `values.yaml` with the namespace you just created
-* Install the Helm chart `helm install <name> .`
+* Some default values must be overridden for proper functionality. An example `values.override.yaml` file is provided in the `examples` directory.
+    * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the chart's values.override.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
+    * Create the kubernetes namespace for your runner `kubectl create namespace private-action-runner`
+    * Replace the `namespace` in `values.override.yaml` with the namespace you just created
+* You need to add this repository to your Helm repositories:
+    ```
+    helm repo add datadog https://helm.datadoghq.com
+    helm repo update
+    ```
+* Install the Helm chart
+    ```bash
+        helm install <RELEASE_NAME> datadog/private-action-runner -f ./values.override.yaml
+    ```
 * Go to the workflow connections https://app.datadoghq.com/workflow/connections
 * Create a new connection, select your private action runner and use `Service account authentication`
 * Create a new workflow and use a kubernetes action like `List pod` / `List deployment`
