@@ -1,6 +1,3 @@
-common:
-  namespace: your-namespace
-
 runners:
   - name: "custom-runner"
     replicas: 2
