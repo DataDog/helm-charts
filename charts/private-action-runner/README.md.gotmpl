@@ -16,8 +16,9 @@ When deploying this chart, you will be able to give permissions to the runner in
 * Create a new private action runner
 * Follow the instructions and you should have a running docker container and `config/config.yaml` file
 * Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`)
-* Some default values must be overridden for proper functionality. An example `values.override.yaml` file is provided in the `examples` directory
-    * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the chart's `config.yaml` with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container
+* You must create a `config.yaml` file with the appropriate values. An example `config.yaml` file is provided in the `examples` directory for you to copy.
+    * You must replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the example file with with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container
+    * Other values can be re-configured as well, but you can also choose to stick with the defaults in the example
 * You need to add this repository to your Helm repositories:
     ```
     helm repo add datadog https://helm.datadoghq.com
