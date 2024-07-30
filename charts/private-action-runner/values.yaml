@@ -46,7 +46,8 @@ runners:
       # -- Modes that the runner can run in
       modes: ["workflowAutomation", "appBuilder"]
       appBuilder:
-        port: 9016 # -- Required port for App Builder Mode
+        # -- Required port for App Builder Mode
+        port: 9016
       # -- List of actions that the Datadog Private Action Runner is allowed to execute
       actionsAllowlist:
         - com.datadoghq.kubernetes.core.listPod

@@ -42,6 +42,7 @@ This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cl
 | common.image | string | `"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha22"` | Current Datadog Private Action Runner image |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
+| runners[0].config.appBuilder.port | int | `9016` | Required port for App Builder Mode |
 | runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
 | runners[0].config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
 | runners[0].config.privateKey | string | `"PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
