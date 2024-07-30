@@ -7,10 +7,8 @@ common:
   image: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha22
 
 runners:
-  # -- Name of the Datadog Private Action Runner
-  - name: "default"
-    # -- Number of instances of Datadog Private Action Runner
-    replicas: 1
+  - name: "default" # -- Name of the Datadog Private Action Runner
+    replicas: 1  # -- Number of instances of Datadog Private Action Runner
     # -- List of Kubernetes permissions that the Datadog Private Action Runner will have
     kubernetesPermissions:
       - apiGroups:
@@ -37,17 +35,12 @@ runners:
           # - "delete"
     # -- This is the configuration for the Datadog Private Action Runner
     config:
-      # -- The base URL of the Datadog
-      ddBaseURL: "https://app.datadoghq.com"
-      # -- User to specify the runner's URN from the enrollment page
-      urn: "URN_FROM_CONFIG"
-      # -- User to specify the runner's privateKey from the enrollment page
-      privateKey: "PRIVATE_KEY_FROM_CONFIG"
-      # -- Modes that the runner can run in
-      modes: ["workflowAutomation", "appBuilder"]
+      ddBaseURL: "https://app.datadoghq.com" # -- The base URL of the Datadog
+      urn: "URN_FROM_CONFIG" # -- User to specify the runner's URN from the enrollment page
+      privateKey: "PRIVATE_KEY_FROM_CONFIG" # -- User to specify the runner's privateKey from the enrollment page
+      modes: ["workflowAutomation", "appBuilder"]  # -- Modes that the runner can run in
       appBuilder:
-        # -- Required port for App Builder Mode
-        port: 9016
+        port: 9016 # -- Required port for App Builder Mode
       # -- List of actions that the Datadog Private Action Runner is allowed to execute
       actionsAllowlist:
         - com.datadoghq.kubernetes.core.listPod
