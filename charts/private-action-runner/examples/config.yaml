@@ -1,6 +1,5 @@
 runners:
   - name: "custom-runner"
-    replicas: 2
     kubernetesPermissions:
       - apiGroups:
           - ""
