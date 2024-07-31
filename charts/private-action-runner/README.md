@@ -6,7 +6,7 @@ This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cl
 
 ## Requirements
 * A Datadog account with private actions enabled
-* The kubectl cli
+* The `kubectl` cli
 * Helm
 * Sufficient permissions to the Kubernetes cluster
 
