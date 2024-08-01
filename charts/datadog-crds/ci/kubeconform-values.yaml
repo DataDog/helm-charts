@@ -2,3 +2,6 @@ crds:
   datadogMetrics: true
   datadogAgents: true
   datadogMonitors: true
+  datadogSLOs: true
+  datadogAgentProfiles: true
+  datadogPodAutoscalers: true
