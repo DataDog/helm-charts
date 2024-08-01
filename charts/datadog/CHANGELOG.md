@@ -1,6 +1,15 @@
 # Datadog changelog
 
+## 3.69.1
+
+* Set default `Agent` and `Cluster-Agent` version to `7.55.2`.
+
+## 3.69.0
+
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector. 
+
 ## 3.68.2
+
 * Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
 
 ## 3.68.1
