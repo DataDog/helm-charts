@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.69.1](https://img.shields.io/badge/Version-3.69.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.69.2](https://img.shields.io/badge/Version-3.69.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -668,6 +668,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.volumes | list | `[]` | Specify additional volumes to mount in the cluster checks container |
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
+| datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
@@ -791,7 +792,7 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.enabled | bool | `false` | Enable autodiscovering pods and services exposing prometheus metrics. |
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
-| datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. Consider using remoteConfiguration.enabled instead |
+| datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. DEPRECATED: Consider using remoteConfiguration.enabled instead |
 | datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
 | datadog.sbom.containerImage.uncompressedLayersSupport | bool | `false` | Use container runtime snapshotter This should be set to true when using EKS, GKE or if containerd is configured to discard uncompressed layers. This feature will cause the SYS_ADMIN capability to be added to the Agent container. |
 | datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
@@ -871,7 +872,7 @@ helm install <RELEASE_NAME> \
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | public.ecr.aws/datadog] depending on datadog.site value) |
-| remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`. Preferred way to enable Remote Configuration. |
+| remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 
 ## Configuration options for Windows deployments

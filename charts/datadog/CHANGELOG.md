@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.2
+
+* Allow activation of autoscaling.
+
 ## 3.69.1
 
 * Set default `Agent` and `Cluster-Agent` version to `7.55.2`.

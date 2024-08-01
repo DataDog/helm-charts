@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.8.4](https://img.shields.io/badge/Version-1.8.4-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
+![Version: 1.8.5](https://img.shields.io/badge/Version-1.8.5-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 ## Values
 
@@ -19,6 +19,7 @@
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |

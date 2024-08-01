@@ -63,3 +63,4 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogslos datado
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogslos datadogSLOs v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentprofiles datadogAgentProfiles v1beta1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentprofiles datadogAgentProfiles v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscalers datadogPodAutoscalers v1
