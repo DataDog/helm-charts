@@ -1,0 +1,57 @@
+{{- range $_, $runner := $.Values.runners }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.deploymentName" $runner.name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    service: {{ include "chart.deploymentName" $runner.name }}
+    app: {{ include "chart.deploymentName" $runner.name }}
+spec:
+  minReadySeconds: 10
+  replicas: {{ $runner.replicas }}
+  selector:
+    matchLabels:
+      service: {{ include "chart.deploymentName" $runner.name }}
+  template:
+    metadata:
+      labels:
+        service: {{ include "chart.deploymentName" $runner.name }}
+      annotations:
+        config-hash: {{ $runner.config | toJson | sha256sum }}
+    spec:
+      serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
+      tolerations:
+        - effect: NoSchedule
+          key: node
+          operator: Equal
+          value: nodeless
+      containers:
+        - name: runner
+          image: {{ $.Values.common.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9016
+          resources:
+            limits:
+              cpu: 250m
+              memory: 2Gi
+            requests:
+              cpu: 250m
+              memory: 2Gi
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner
+          env:
+            # Node memory limits
+            - name: NODE_OPTIONS
+              # See https://nodejs.org/docs/latest-v16.x/api/cli.html#--max-old-space-sizesize-in-megabytes
+              # 75% of memory limit/request
+              value: "--max-old-space-size=1536"
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ include "chart.secretName" $runner.name }}
+{{- end }}
