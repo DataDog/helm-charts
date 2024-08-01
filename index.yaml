@@ -20022,6 +20022,28 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/observability-pipelines-worker-0.1.0/observability-pipelines-worker-0.1.0.tgz
     version: 0.1.0
+  private-action-runner:
+  - apiVersion: v2
+    appVersion: 1.22.0
+    created: "2024-08-01T17:47:29.988738637Z"
+    description: A Helm chart to deploy the private action runner
+    digest: 7ef3d024128e100252968430900989af3fe2ce4b6ee51069f85986c954721be2
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - app builder
+    - workflow automation
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: private-action-runner
+    sources:
+    - https://docs.datadoghq.com/service_management/workflows/private_actions
+    - https://app.datadoghq.com/app-builder/private-action-runners
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/private-action-runner-0.1.0/private-action-runner-0.1.0.tgz
+    version: 0.1.0
   synthetics-private-location:
   - apiVersion: v2
     appVersion: 1.49.0
@@ -21283,4 +21305,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-29T15:52:22.158263624Z"
+generated: "2024-08-01T17:47:29.990745325Z"
