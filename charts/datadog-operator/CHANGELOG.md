@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.5
+
+* Update `datadog-crds` dependency to `1.7.2`.
+
 ## 1.8.4
 
 * Add option to specify `deployment.annotations`.

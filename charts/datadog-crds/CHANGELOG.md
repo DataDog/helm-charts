@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.2
+
+* Remove XValidation as requires K8S >= 1.25.
+
+## 1.7.1
+
+* Add DPA CRD.
+
 ## 1.7.0
 * Update CRDs from Datadog Operator v1.7.0 tag.
 
