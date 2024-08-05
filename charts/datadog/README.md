@@ -772,7 +772,7 @@ helm install <RELEASE_NAME> \
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | object | `{}` | OTel collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
-| datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc"},{"containerPort":"4318","name":"otel-http"}]` | Ports that OTel Collector is listening |
+| datadog.otelCollector.ports | list | `[{"containerPort":"4317","hostPort":"4317","name":"otel-grpc"},{"containerPort":"4318","hostPort":"4318","name":"otel-http"}]` | Ports that OTel Collector is listening |
 | datadog.otlp.logs.enabled | bool | `false` | Enable logs support in the OTLP ingest endpoint |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |

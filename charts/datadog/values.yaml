@@ -526,12 +526,13 @@ datadog:
     enabled: false
     # datadog.otelCollector.ports -- Ports that OTel Collector is listening
     ports:
-
         # Default GRPC port of OTLP receiver
       - containerPort: "4317"
+        hostPort: "4317"
         name: otel-grpc
         # Default HTTP port of OTLP receiver
       - containerPort: "4318"
+        hostPort: "4318"
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: {}
