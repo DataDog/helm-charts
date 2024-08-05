@@ -2,6 +2,10 @@
 
 ## 3.69.3
 
+* Add hostPort `4317` and `4318` for otel agent.
+
+## 3.69.3
+
 * Update `datadog-crds` dependency to `1.7.2`.
 
 ## 3.69.2
