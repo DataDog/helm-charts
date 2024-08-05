@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.69.3
+## 3.69.4
 
 * Add hostPort `4317` and `4318` for otel agent.
 
