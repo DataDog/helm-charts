@@ -4,7 +4,7 @@
 
 common:
   # -- Current Datadog Private Action Runner image
-  image: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha25
+  image: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha24
 
 runners:
   # runners[0].name -- Name of the Datadog Private Action Runner

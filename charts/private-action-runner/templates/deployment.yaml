@@ -6,18 +6,19 @@ metadata:
   name: {{ include "chart.deploymentName" $runner.name }}
   namespace: {{ $.Release.Namespace }}
   labels:
-    service: {{ include "chart.deploymentName" $runner.name }}
+    service: {{ include "chart.serviceName" $runner.name }}
     app: {{ include "chart.deploymentName" $runner.name }}
 spec:
   minReadySeconds: 10
   replicas: {{ $runner.replicas }}
   selector:
     matchLabels:
-      service: {{ include "chart.deploymentName" $runner.name }}
+      app: {{ include "chart.deploymentName" $runner.name }}
   template:
     metadata:
       labels:
-        service: {{ include "chart.deploymentName" $runner.name }}
+        app: {{ include "chart.deploymentName" $runner.name }}
+        service: {{ include "chart.serviceName" $runner.name }}
       annotations:
         config-hash: {{ $runner.config | toJson | sha256sum }}
     spec:
