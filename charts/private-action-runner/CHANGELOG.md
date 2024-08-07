@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.6.0
+
+* Update private action image version to `v0.0.1-alpha27`.
+
 ### 0.5.0
 
 * Update private action image version to `v0.0.1-alpha26`.
