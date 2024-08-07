@@ -372,7 +372,9 @@ spec:
         readinessProbe:
 {{- $ready := .Values.clusterAgent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 10 }}
+{{- if semverCompare ">= 1.18-0" .Capabilities.KubeVersion.GitVersion }}
         startupProbe:
+{{- end }}
 {{- $startup := .Values.clusterAgent.startupProbe }}
 {{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 10 }}
 {{- if .Values.clusterAgent.containers.clusterAgent.securityContext }}

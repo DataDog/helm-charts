@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.69.4
+* Remove `startupProbe` for older Kubernetes clusters as the support for these started with v1.18
+
 ## 3.69.3
 
 * Update `datadog-crds` dependency to `1.7.2`.
