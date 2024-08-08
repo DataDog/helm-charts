@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.7.0
+
+* Simplify README instructions to reflect the new Kubernetes UI.
+
 ### 0.6.0
 
 * Update private action image version to `v0.0.1-alpha27`.
