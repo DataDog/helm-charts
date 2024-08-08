@@ -266,6 +266,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_IAST_ENABLED
             value: "true"
           {{- end }}
+          {{- if not (eq .Values.datadog.profiling.enabled nil) }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PROFILING_ENABLED
+            value: {{ .Values.datadog.profiling.enabled | quote }}
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
