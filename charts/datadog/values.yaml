@@ -560,6 +560,26 @@ datadog:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
 
+  ## Continuous Profiler configuration
+  ##
+  ## Continuous Profiler is disabled by default and can be enabled by setting the `enabled` field to
+  ## either `auto` or `true` value under the `datadog.profiling` section.
+  ## Manually adding the `DD_PROFILING_ENABLED` variable to a pod will take precedence over the
+  ## value in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed,
+  ## either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation`
+  ## section).
+  ## It requires Datadog Cluster Agent 7.57.0+.
+  profiling:
+    # datadog.profiling.enabled -- Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED`
+    # environment variable with the same value to all pods in the cluster
+    # Valid values are:
+    # - false: Profiler is turned off and can not be turned on by other means.
+    # - null: Profiler is turned off, but can be turned on by other means.
+    # - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling.
+    # - true: Profiler is turned on.
+    enabled: null
+
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
   ## envFrom to pass configmaps or secrets as environment
