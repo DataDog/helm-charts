@@ -30,6 +30,10 @@
 - name: DD_KUBERNETES_NODE_LABELS_AS_TAGS
   value: '{{ toJson .Values.datadog.nodeLabelsAsTags }}'
 {{- end }}
+{{- if .Values.datadog.nodeAnnotationsAsTags }}
+- name: DD_KUBERNETES_NODE_ANNOTATIONS_AS_TAGS
+  value: '{{ toJson .Values.datadog.nodeAnnotationsAsTags }}'
+{{- end }}
 {{- if .Values.datadog.podLabelsAsTags }}
 - name: DD_KUBERNETES_POD_LABELS_AS_TAGS
   value: '{{ toJson .Values.datadog.podLabelsAsTags }}'

@@ -233,6 +233,12 @@ datadog:
   #   kubernetes.io/role: kube_role
   #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
 
+  # datadog.nodeAnnotationsAsTags -- Provide a mapping of Kubernetes Node Annotations to Datadog Tags
+  nodeAnnotationsAsTags:
+    cluster.k8s.io/machine: kube_machine
+  #   cluster.k8s.io/machine: kube_machine
+  #   <KUBERNETES_NODE_ANNOTATION>: <DATADOG_TAG_KEY>
+
   # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
   podLabelsAsTags: {}
   #   app: kube_app
