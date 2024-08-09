@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.4
+
+* Add NetworkPolicy ingress rules for OTLP receivers(grpc & http)
+
 ## 3.69.3
 
 * Update `datadog-crds` dependency to `1.7.2`.
