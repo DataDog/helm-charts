@@ -1,5 +1,34 @@
 # Changelog
 
+## 2.1.2
+
+* Official image `2.1.2`
+
+## 2.1.1
+
+* Official image `2.1.1`
+
+## 2.1.0
+
+* Official image `2.1.0`
+
+## 2.0.2
+
+* Official image `2.0.2`
+
+## 2.0.1
+
+* Official image `2.0.1`
+
+## 2.0.0
+
+* GA release of Observability Pipelines Worker v2
+* Removed `datadog.remoteConfigurationEnabled` and `pipelineConfig` values
+
+## 1.8.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.8.0
 
 * Official image `1.8.0`

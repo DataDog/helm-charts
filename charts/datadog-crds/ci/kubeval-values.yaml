@@ -1,4 +1,0 @@
-crds:
-  datadogMetrics: true
-  datadogAgents: true
-  datadogMonitors: true

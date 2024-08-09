@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.7.2
+
+* Remove XValidation as requires K8S >= 1.25.
+
+## 1.7.1
+
+* Add DPA CRD.
+
+## 1.7.0
+* Update CRDs from Datadog Operator v1.7.0 tag.
+
+## 1.6.0
+* Update CRDs from Datadog Operator v1.6.0 tag.
+
+## 1.5.0
+* Update CRDs from Datadog Operator v1.5.0 tag.
+
+## 1.4.0
+* Update CRDs from Datadog Operator v1.4.0 tag.
+
+## 1.3.1
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.3.0
 * Update CRDs from Datadog Operator v1.3.0 tag.
 

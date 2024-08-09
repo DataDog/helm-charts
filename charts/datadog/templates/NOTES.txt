@@ -27,6 +27,7 @@ Then run:
 {{- end }}
 
 {{- $healthPort := .Values.agents.containers.agent.healthPort }}
+
 {{- with $liveness := .Values.agents.containers.agent.livenessProbe.httpGet }}
 {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -37,6 +38,7 @@ Then run:
 Node Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
 {{- with $readiness := .Values.agents.containers.agent.readinessProbe.httpGet }}
 {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -47,6 +49,18 @@ Node Agent liveness probe port ({{ $liveness.port }}) is different from the conf
 Node Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
+{{- with $startup := .Values.agents.containers.agent.startupProbe.httpGet }}
+{{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Node Agent startup probe misconfiguration       ####
+##############################################################################
+
+Node Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+{{- end }}
+{{- end }}
+
 {{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 
   {{- if .Values.clusterAgent.metricsProvider.enabled }}
@@ -65,6 +79,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
   {{- end }}
   {{- $healthPort := .Values.clusterAgent.healthPort }}
+
   {{- with $liveness := .Values.clusterAgent.livenessProbe.httpGet }}
   {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -75,6 +90,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
 Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
   {{- with $readiness := .Values.clusterAgent.readinessProbe.httpGet }}
   {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -85,8 +101,21 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
+  {{- with $startup := .Values.clusterAgent.startupProbe.httpGet }}
+  {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Cluster Agent startup probe misconfiguration    ####
+##############################################################################
+
+Cluster Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+  {{- end }}
+  {{- end }}
+
   {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
     {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+
     {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
     {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -97,6 +126,7 @@ Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the
 Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
     {{- with $readiness := .Values.clusterChecksRunner.readinessProbe.httpGet }}
     {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -107,6 +137,18 @@ Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different fr
 Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
+    {{- with $startup := .Values.clusterChecksRunner.startupProbe.httpGet }}
+    {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+#####################################################################################
+####               ERROR: Cluster Checks Runner startup probe misconfiguration   ####
+#####################################################################################
+
+Cluster Checks Runner readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+    {{- end }}
+    {{- end }}
+
   {{- end }}
 {{- end }}
 {{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
@@ -135,6 +177,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
+{{- if and (((.Values.datadog.autoscaling).workload).enabled) (not .Values.remoteConfiguration.enabled) }}
+
+###################################################################################
+####               ERROR: Container Autoscaling misconfiguration               ####
+###################################################################################
+
+{{- fail "Workload autoscaling is activated without remote configuration. Remote configuration is required (remoteConfiguration.enabled = true)" }}
+
+{{- end }}
+
 {{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
@@ -155,24 +207,14 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
-{{- if and .Values.datadog.apm.instrumentation.enabled_namespaces (eq (include "cluster-agent-enabled" .) "false")}}
+{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You are using datadog.apm.instrumentation.enabledNamespaces but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
-To enable it please set clusterAgent.enabled to 'true'.
-{{- end }}
-
-{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.enabledNamespaces }}
-
-#################################################################
-####               WARNING: Configuration notice             ####
-#################################################################
-
-The options `datadog.apm.instrumentation.enabled` and `datadog.apm.instrumentation.enabledNamespaces` are set together.
-APM Single Step Instrumentation will be enabled in the whole cluster.
+The option `datadog.apm.instrumentation.enabledNamespaces` is set while `datadog.apm.instrumentation.enabled` is disabled.
+APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
@@ -534,7 +576,7 @@ To send OTLP data to the Agent use the Service created by specifying "http://{{ 
 #################################################################
 ####               WARNING: Incompatibility                  ####
 #################################################################
-You have enabled creataion of PodSecurityPolicy, however PSP have been removed from Kubernetes >= 1.25, thus PSP will not be created.
+You have enabled creation of PodSecurityPolicy, however PSP have been removed from Kubernetes >= 1.25, thus PSP will not be created.
 
 You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.create and/or agents.podSecurity.podSecurityPolicy.create
 {{- end }}
@@ -547,4 +589,13 @@ You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.
 You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
+{{- end }}
+
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.providers.gke.autopilot }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+OTel collector is not supported on GKE Autopilot.
+{{- fail "The OTel collector cannot be run on GKE Autopilot." }}
 {{- end }}

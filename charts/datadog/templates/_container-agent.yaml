@@ -58,6 +58,8 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
+
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -73,6 +75,12 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    - name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
+      value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    {{- end }}
+    {{- if .Values.datadog.originDetectionUnified.enabled }}
+    - name: DD_ORIGIN_DETECTION_UNIFIED
+      value: {{ .Values.datadog.originDetectionUnified.enabled | quote }}
     {{- end }}
     {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
@@ -101,7 +109,7 @@
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_APM_ENABLED
-      value: "false"
+      value: {{ include "should-enable-trace-agent" . | quote }}
     - name: DD_LOGS_ENABLED
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
@@ -150,10 +158,8 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
-    {{- if .Values.datadog.containerLifecycle.enabled }}
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
-      value: {{ .Values.datadog.containerLifecycle.enabled | quote }}
-    {{- end }}
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}  
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
@@ -175,12 +181,21 @@
     - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
       value: "true"
     {{- end }}
+
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
     - name: HOST_ROOT
       value: /host
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.kubelet.coreCheckEnabled }}
+    - name: DD_KUBELET_CORE_CHECK_ENABLED
+      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote }}
+    {{- end }}
+    {{- if eq (include "should-enable-otel-agent" .) "true" }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
@@ -238,6 +253,11 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if .Values.datadog.processAgent.runInCoreAgent }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
@@ -320,4 +340,9 @@
   readinessProbe:
 {{- $ready := .Values.agents.containers.agent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
+{{- if (not .Values.providers.gke.autopilot) }}
+  startupProbe:
+{{- $startup := .Values.agents.containers.agent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
+{{- end }}
 {{- end -}}

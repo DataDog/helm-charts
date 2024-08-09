@@ -28,16 +28,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    {{- if .Values.datadog.processAgent.processCollection }}
-    - name: DD_PROCESS_AGENT_ENABLED
-      value: "true"
-    {{- end }}
-    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
-    {{- if .Values.datadog.processAgent.stripProcessArguments }}
-    - name: DD_STRIP_PROCESS_ARGS
-      value: "true"
-    {{- end }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -88,7 +79,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery}}
+    {{- if or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection}}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true

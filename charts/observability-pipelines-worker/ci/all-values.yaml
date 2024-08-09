@@ -57,30 +57,6 @@ topologySpreadConstraints:
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
 
-pipelineConfig:
-  sources:
-    datadog_agents:
-      address: 0.0.0.0:8282
-      type: datadog_agent
-      multiple_outputs: true
-  sinks:
-    datadog_logs:
-      type: datadog_logs
-      inputs:
-        - datadog_agents.logs
-      default_api_key: ${DD_API_KEY}
-      compression: gzip
-    datadog_metrics:
-      type: datadog_metrics
-      inputs:
-        - datadog_agents.metrics
-      default_api_key: ${DD_API_KEY}
-    datadog_traces:
-      type: datadog_traces
-      inputs:
-        - datadog_agents.traces
-      default_api_key: ${DD_API_KEY}
-
 persistence:
   enabled: true
   storageClassName: standard

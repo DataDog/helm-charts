@@ -1,5 +1,53 @@
 # Datadog changelog
 
+## 0.17.0
+
+* Add `podDisruptionBudget` to allow creating and configuring PodDisruptionBudget for deployment.
+
+## 0.16.4
+
+* Update private location image version to `1.49.0`.
+
+## 0.16.3
+
+* Add dnsConfig to DD private location Pod
+
+## 0.16.2
+
+* Update private location image version to `1.48.0`.
+
+## 0.16.1
+
+* Update private location image version to `1.47.0`.
+
+## 0.16.0
+
+* Add `podLabels` value to allow setting labels that only appear on the pods managed by the deployment.
+
+## 0.15.31
+
+* Fix `env` indentation in Deployment template.
+
+## 0.15.30
+
+* Fix `envFrom` indentation in Deployment template.
+
+## 0.15.29
+
+* Update Kubernetes deployment template to set `DATADOG_WORKER_ENABLE_STATUS_PROBES` environment variable when `enableStatusProbes` value is defined.
+
+## 0.15.28
+
+* Update private location image version to `1.46.0`.
+
+## 0.15.27
+
+* Update private location image version to `1.45.0`.
+
+## 0.15.26
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 0.15.25
 
 * Update private location image version to `1.44.0`.

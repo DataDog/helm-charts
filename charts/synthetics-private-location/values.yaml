@@ -15,10 +15,12 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.44.0
+  tag: 1.49.0
 
 # dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
 dnsPolicy: ClusterFirst
+# dnsConfig -- DNS Config to set to the Datadog Synthetics Private Location PODs
+dnsConfig: {}
 
 # imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
@@ -51,6 +53,9 @@ extraVolumeMounts: []
 
 # podAnnotations -- Annotations to set to Datadog Synthetics Private Location PODs
 podAnnotations: {}
+
+# podLabels -- Labels to be placed on pods managed by the deployment
+podLabels: {}
 
 # podSecurityContext -- Security context to set to Datadog Synthetics Private Location PODs
 podSecurityContext: {}
@@ -119,3 +124,9 @@ enableStatusProbes: false
 
 # priorityClassName -- Allows to specify PriorityClass for Datadog Synthetics Private Location PODs
 priorityClassName: ""
+
+# podDisruptionBudget -- Allows to create and configure PodDisruptionBudget for Datadog Synthetics Private Location deployment
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

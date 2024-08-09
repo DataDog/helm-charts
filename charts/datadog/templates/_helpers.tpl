@@ -1,18 +1,24 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "check-version" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{/*
+  Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-agent-version" -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.36.0" -}}
+{{- $version = "6.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.36.0" -}}
+{{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
+{{- $version = "7.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.36.0" -}}
+{{- $version -}}
 {{- end -}}
+
+
+{{- define "check-version" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -45,17 +51,7 @@ false
 
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
 true
 {{- else -}}
@@ -67,11 +63,12 @@ true
 {{- end -}}
 
 {{- define "check-cluster-name" }}
-{{- $length := len .Values.datadog.clusterName -}}
+{{- $clusterName := tpl .Values.datadog.clusterName . -}}
+{{- $length := len $clusterName -}}
 {{- if (gt $length 80)}}
 {{- fail "Your `clusterName` isn’t valid it has to be below 81 chars." -}}
 {{- end}}
-{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" .Values.datadog.clusterName) -}}
+{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" $clusterName) -}}
 {{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
 {{- end -}}
 {{- end -}}
@@ -108,6 +105,19 @@ Create chart name and version as used by the chart label.
 {{- define "datadog.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Return true if the OTelAgent needs to be deployed
+*/}}
+{{- define "should-enable-otel-agent" -}}
+{{- if and .Values.datadog.otelCollector.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
 
 {{/*
 Return secret name to be used based on provided values.
@@ -203,6 +213,18 @@ Return agent config path
 {{- define "datadog.confPath" -}}
 {{- if eq .Values.targetSystem "linux" -}}
 /etc/datadog-agent
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return agent config path
+*/}}
+{{- define "datadog.otelconfPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/etc/otel-agent
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog
@@ -573,6 +595,10 @@ datadog-agent-fips-config
 {{- end -}}
 {{- end -}}
 
+{{- define "agents-install-otel-configmap-name" -}}
+{{ template "datadog.fullname" . }}-otel-config
+{{- end -}}
+
 {{/*
 Common template labels
 */}}
@@ -851,7 +877,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (.Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (((.Values.datadog.autoscaling).workload).enabled)) -}}
 true
 {{- else -}}
 false
@@ -903,33 +929,55 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
-Return all namespaces with enabled Single Step Instrumentation. If instrumentation.enabledNamespaces contains the namespace where Datadog is installed,
-it will be removed.
+  Return true if language detection feature is enabled
 */}}
-{{- define "apmInstrumentation.enabledNamespaces" -}}
-{{- if and .Values.datadog.apm .Values.datadog.apm.instrumentation -}}
-{{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) -}}
-{{- if has .Release.Namespace .Values.datadog.apm.instrumentation.enabledNamespaces -}}
-{{- $ns := mustWithout .Values.datadog.apm.instrumentation.enabledNamespaces .Release.Namespace -}}
-{{- if $ns -}}
-{{- $ns | toJson | quote -}}
-{{- end -}}
-{{- else -}}
-{{- .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+{{- define "language-detection-enabled" -}}
+  {{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
 {{- end -}}
 
 {{/*
-Return all namespaces with disabled Single Step Instrumentation
+  Return true if any process-related check is enabled
 */}}
-{{- define "apmInstrumentation.disabledNamespaces" -}}
-{{- if and .Values.datadog.apm .Values.datadog.apm.instrumentation -}}
-{{- if and .Values.datadog.apm.instrumentation.disabledNamespaces .Values.datadog.apm.instrumentation.enabled -}}
-{{- append .Values.datadog.apm.instrumentation.disabledNamespaces .Release.Namespace | toJson | quote  -}}
-{{- else if .Values.datadog.apm.instrumentation.enabled -}}
-{{- list .Release.Namespace | toJson | quote -}}
+{{- define "process-checks-enabled" -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
 {{- end -}}
+
+{{/*
+  Returns true if the process-agent container should be created.
+*/}}
+{{- define "should-enable-process-agent" -}}
+  {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
+    true
+  {{- else if and (eq .Values.targetSystem "windows") (eq (include "process-checks-enabled" .) "true") -}}
+    true
+  {{- else if not .Values.agents.image.doNotCheckTag -}}
+    {{- $version := (include "get-agent-version" .) -}}
+    {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" $version) -}}
+      true
+    {{- else if and .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" $version) -}}
+      false
+    {{- else -}}
+      {{- include "process-checks-enabled" . -}}
+    {{- end -}}
+  {{- else -}}
+    {{- include "process-checks-enabled" . -}}
+  {{- end -}}
+{{- end -}}
+
+
+{{- define "get-port-number-from-name" -}}
+{{- $portName := .portName -}}
+{{- range .ports -}}
+  {{- if eq .name $portName -}}
+    {{ .containerPort }}
+  {{- end -}}
 {{- end -}}
 {{- end -}}

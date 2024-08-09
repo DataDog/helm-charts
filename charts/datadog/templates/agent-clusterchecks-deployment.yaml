@@ -27,6 +27,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-clusterchecks
         {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
@@ -194,7 +195,7 @@ spec:
           {{- if .Values.datadog.clusterName }}
           {{- template "check-cluster-name" . }}
           - name: DD_CLUSTER_NAME
-            value: {{ .Values.datadog.clusterName | quote }}
+            value: {{ tpl .Values.datadog.clusterName . | quote }}
           {{- end }}
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
@@ -226,6 +227,9 @@ spec:
         readinessProbe:
 {{- $ready := .Values.clusterChecksRunner.readinessProbe }}
 {{ include "probe.http" (dict "settings" $ready "path" "/ready" "port" $healthPort) | indent 10 }}
+        startupProbe:
+{{- $startup := .Values.clusterChecksRunner.startupProbe }}
+{{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
         - name: installinfo
           configMap:

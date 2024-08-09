@@ -46,6 +46,7 @@ data:
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
+      use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
@@ -73,7 +74,7 @@ data:
         anomaly_detection:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled }}
         auto_suppression:
-          enabled: false
+          enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---

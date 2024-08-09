@@ -15,6 +15,7 @@ rules:
   - nodes
   - namespaces
   - componentstatuses
+  - limitranges
   verbs:
   - get
   - list
@@ -115,6 +116,17 @@ rules:
   - "get"
   - "watch"
 {{- end }}
+{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled }}
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  verbs:
+  - list
+  - get
+  - watch
+  - patch
+{{- end }}
 {{- if eq (include "should-enable-k8s-resource-monitoring" .) "true" }}
 - apiGroups:  # to get the kube-system namespace UID and generate a cluster ID
   - ""
@@ -155,7 +167,7 @@ rules:
   - list
   - get
   - watch
-{{- if eq (include "clusterAgent-remoteConfiguration-enabled" .) "true" }}
+{{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
   - patch
 {{- end }}
 - apiGroups:
@@ -171,6 +183,7 @@ rules:
   - networking.k8s.io
   resources:
   - ingresses
+  - networkpolicies
   verbs:
   - list
   - get
@@ -182,6 +195,14 @@ rules:
   - rolebindings
   - clusterroles
   - clusterrolebindings
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - "storage.k8s.io"
+  resources:
+  - storageclasses
   verbs:
   - list
   - get
@@ -396,6 +417,71 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: extension-apiserver-authentication-reader
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end -}}
+
+{{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+  namespace: {{ .Release.Namespace }}
+rules:
+# Access to own CRD
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogpodautoscalers"
+  - "datadogpodautoscalers/status"
+  verbs:
+  - "*"
+# Scale subresource for all resources
+- apiGroups:
+  - "*"
+  resources:
+  - "*/scale"
+  verbs:
+  - 'update'
+  - 'get'
+# Ability to generate events
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+# Patching POD to add annotations. TODO: Remove when we have a better way to generate single event
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - patch
+# Triggering rollout on Deployments
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - patch
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
 subjects:
   - kind: ServiceAccount
     name: {{ template "datadog.fullname" . }}-cluster-agent

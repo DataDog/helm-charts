@@ -2,11 +2,11 @@ name: Go Test
 on:
   push:
     paths:
-      - 'test/**'
+      - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
   pull_request:
     paths:
-      - 'test/**'
+      - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
 env:
   GO111MODULE: "on"
@@ -31,7 +31,7 @@ jobs:
     - name: run Go tests
       run: |
         helm dependency build ./charts/datadog-operator
-        make unit-test
+        make unit-test-operator
 
   integ-tests:
     if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
@@ -47,6 +47,9 @@ jobs:
           - v1.25.2
           - v1.26.6
           - v1.27.3
+          - v1.28.7
+          - v1.29.2
+          - v1.30.0
     steps:
       - name: Checkout
         uses: actions/checkout@v3

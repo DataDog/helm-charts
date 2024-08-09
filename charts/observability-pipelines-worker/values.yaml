@@ -30,8 +30,6 @@ datadog:
   site: datadoghq.com
   # datadog.dataDir -- The data directory for OPW to store runtime data in.
   dataDir: "/var/lib/observability-pipelines-worker"
-  # datadog.remoteConfigurationEnabled -- Whether to allow remote configuration of the worker from Datadog.
-  remoteConfigurationEnabled: false
   workerAPI:
     # datadog.workerAPI.enabled -- Whether to enable the Worker's API.
     enabled: false
@@ -44,7 +42,7 @@ image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 1.8.0
+  tag: 2.1.2
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -253,36 +251,6 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
-# pipelineConfig -- This section supports using Helm templates to populate dynamic values. See Observability Pipelines'
-# [configuration documentation](https://docs.datadoghq.com/observability_pipelines/reference/) for all options.
-pipelineConfig: {}
-#  sources:
-#    datadog_agents:
-#      type: datadog_agent
-#      address: 0.0.0.0:8282
-#      multiple_outputs: true
-#      store_api_key: false
-#  sinks:
-#    datadog_logs:
-#      type: datadog_logs
-#      inputs:
-#        - datadog_agents.logs
-#      compression: gzip
-#      default_api_key: ${DD_API_KEY}
-#      site: ${DD_SITE}
-#    datadog_metrics:
-#      type: datadog_metrics
-#      inputs:
-#        - datadog_agents.metrics
-#      default_api_key: ${DD_API_KEY}
-#      site: ${DD_SITE}
-#    datadog_traces:
-#      type: datadog_traces
-#      inputs:
-#        - datadog_agents.traces
-#      default_api_key: ${DD_API_KEY}
-#      site: ${DD_SITE}
 
 # extraVolumes -- Specify additional Volumes to use.
 extraVolumes: []

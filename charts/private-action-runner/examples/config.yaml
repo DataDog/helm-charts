@@ -1,0 +1,35 @@
+runners:
+  - name: "custom-runner"
+    kubernetesPermissions:
+      - apiGroups:
+          - ""
+        resources:
+          - "pods"
+        verbs:
+          - "list"
+          - "get"
+          - "create"
+          - "patch"
+          - "update"
+          - "delete"
+      - apiGroups:
+          - "apps"
+        resources:
+          - "deployments"
+        verbs:
+          - "list"
+          - "get"
+          - "create"
+          - "patch"
+          - "update"
+          - "delete"
+    config:
+      urn: "URN_FROM_CONFIG"
+      privateKey: "PRIVATE_KEY_FROM_CONFIG"
+      modes: ["workflowAutomation", "appBuilder"]
+      appBuilder:
+        port: 9016
+      actionsAllowlist:
+        - com.datadoghq.kubernetes.core.listPod
+        - com.datadoghq.http.request
+        - com.datadoghq.jenkins.buildJenkinsJob

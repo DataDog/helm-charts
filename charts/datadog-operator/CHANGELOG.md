@@ -1,5 +1,61 @@
 # Changelog
 
+## 1.8.5
+
+* Update `datadog-crds` dependency to `1.7.2`.
+
+## 1.8.4
+
+* Add option to specify `deployment.annotations`.
+
+## 1.8.3
+
+* Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.
+
+## 1.8.2
+
+* Deprecate `webhookEnabled` flag for 1.7.0.
+
+## 1.8.1
+
+* Configure tool version.
+
+## 1.8.0
+
+* Update Datadog Operator version to 1.7.0.
+
+## 1.7.1
+
+* Add `DD_TOOL_VERSION` to operator deployment.
+
+## 1.7.0
+
+* Update Datadog Operator version to 1.6.0.
+
+## 1.6.1
+
+* Fix clusterRole when DatadogAgentProfiles are enabled.
+
+## 1.6.0
+
+* Update Datadog Operator version to 1.5.0.
+
+## 1.5.2
+
+* Add deprecation warning for `DatadogAgent` `v1alpha1` CRD version.
+
+## 1.5.1
+
+* Add configuration for Operator flag `introspectionEnabled`: this parameter is used to enable the Introspection. It is disabled by default.
+
+## 1.5.0
+
+* Update Datadog Operator version to 1.4.0.
+
+## 1.4.2
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.4.1
 
 * Add configuration for Operator flag `datadogSLOEnabled` : this parameter is used to enable the Datadog SLO Controller. It is disabled by default.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2
+
+* Add RBAC for the leader election lease.
+
+## 0.3.1
+
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 0.3.0
 
 * Updated for EDS 0.8.0.

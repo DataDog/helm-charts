@@ -33,7 +33,9 @@ jobs:
           if [[ -n "$changed" ]]; then
             echo -n "Charts changed:"
             echo "$changed"
-            echo "::set-output name=changed::$changed"
+            echo "changed<<EOF" >> $GITHUB_OUTPUT
+            echo "$changed" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
           else
             echo "PR without any chart changes - failing"
             exit 1
@@ -68,7 +70,7 @@ jobs:
       - name: Run helm-docs
         run: .github/helm-docs.sh
 
-  kubeval-chart:
+  kubeconform-chart:
     runs-on: ubuntu-latest
     needs:
       - changed
@@ -80,12 +82,12 @@ jobs:
         # https://github.com/instrumenta/kubernetes-json-schema is no
         # longer updated
         k8s:
-          # - v1.14.10 (deprecated with kind 1.16)
-          - v1.16.15
+          - v1.16.4
           - v1.18.20
-          - v1.22.9
-          - v1.24.2
-          # v1.25.2 (when agent 7.40 is out)
+          - v1.22.17
+          - v1.24.17
+          - v1.25.16
+          - v1.26.13
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -95,26 +97,27 @@ jobs:
         run: helm repo add datadog https://helm.datadoghq.com && helm repo update
       - name: Add KSM helm repo
         run: helm repo add kube-state-metrics https://prometheus-community.github.io/helm-charts
-      - name: Run kubeval
+      - name: Run kubeconform
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
           CHANGED_CHARTS: ${{needs.changed.outputs.charts}}
-        run: .github/kubeval.sh
+        run: .github/kubeconform.sh
 
   install-chart:
     name: install-chart
     runs-on: ubuntu-20.04
+    timeout-minutes: 60
     needs:
       - lint-chart
-      - kubeval-chart
+      - kubeconform-chart
     strategy:
       matrix:
         k8s:
-          - v1.16.15
           - v1.18.20
           - v1.22.9
           - v1.24.2
-          - v1.25.2
+          - v1.25.16
+          - v1.26.13
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -124,6 +127,7 @@ jobs:
         uses: helm/kind-action@v1.5.0
         with:
           node_image: kindest/node:${{ matrix.k8s }}
+          config: .github/kind_config.yaml
       - uses: actions/setup-python@v4
         with:
           python-version: 3.7
