@@ -11,6 +11,8 @@ crds:
   datadogMonitors: false
   # crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
   datadogSLOs: false
+  # crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfiles CRD
+  datadogAgentProfiles: false
 
 migration:
   datadogAgents:
