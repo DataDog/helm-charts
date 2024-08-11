@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 1.5.1](https://img.shields.io/badge/Version-1.5.1-informational?style=flat-square) ![AppVersion: 1.4.0](https://img.shields.io/badge/AppVersion-1.4.0-informational?style=flat-square)
+![Version: 1.8.1](https://img.shields.io/badge/Version-1.8.1-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 ## Values
 
@@ -11,12 +11,14 @@
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
+| clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
+| datadogAgentProfile.enabled | bool | `false` | If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+ |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
-| datadogCRDs.crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
 | datadogCRDs.migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
@@ -29,8 +31,8 @@
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
-| image.repository | string | `"709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.4.0"` | Define the Datadog Operator version to use |
+| image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
+| image.tag | string | `"1.7.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -39,10 +41,11 @@
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
-| operatorMetricsEnabled | string | `"false"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
+| operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
+| remoteConfiguration.enabled | bool | `false` | If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set. |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
@@ -121,7 +124,7 @@ You can update with the following:
 ```
 helm upgrade \
     datadog-operator datadog/datadog-operator \
-    --set image.tag=1.4.0 \
+    --set image.tag=1.7.0 \
     --set datadogCRDs.migration.datadogAgents.version=v2alpha1 \
     --set datadogCRDs.migration.datadogAgents.useCertManager=true \
     --set datadogCRDs.migration.datadogAgents.conversionWebhook.enabled=true

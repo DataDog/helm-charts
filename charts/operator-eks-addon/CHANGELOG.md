@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9
+
+Release for Operator 1.7.0
+
+## 0.1.8
+
+Release for Operator 1.7.0
+
 ## 0.1.5
 * Bump datadog-operator chart dependency to v1.4.1
 
