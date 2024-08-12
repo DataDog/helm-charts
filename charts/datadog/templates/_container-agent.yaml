@@ -2,7 +2,12 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  command: ["agent", "run"]
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["env", "DD_LOG_LEVEL={{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel }}", "agent", "run"]
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["pwsh", "-Command", "$env:DD_LOG_LEVEL='{{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel }}'; & agent run"]
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" .Values.datadog.sbom.containerImage.uncompressedLayersSupport) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
@@ -60,10 +65,6 @@
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
 
-    {{- if .Values.datadog.logLevel }}
-    - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- end }}
     {{- if .Values.datadog.dogstatsd.port }}
     - name: DD_DOGSTATSD_PORT
       value: {{ .Values.datadog.dogstatsd.port | quote }}

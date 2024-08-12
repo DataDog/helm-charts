@@ -109,7 +109,7 @@ spec:
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
         args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec env DD_LOG_LEVEL={{ .Values.datadog.logLevel | quote }} agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
@@ -151,10 +151,6 @@ spec:
           {{- if .Values.datadog.dd_url }}
           - name: DD_DD_URL
             value: {{ .Values.datadog.dd_url | quote }}
-          {{- end }}
-          {{- if .Values.datadog.logLevel }}
-          - name: DD_LOG_LEVEL
-            value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
           - name: DD_EXTRA_CONFIG_PROVIDERS
             value: "clusterchecks"

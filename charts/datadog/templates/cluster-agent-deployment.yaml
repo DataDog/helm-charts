@@ -122,7 +122,10 @@ spec:
       - name: cluster-agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterAgent.image) }}"
         {{- with .Values.clusterAgent.command }}
-        command: {{ range . }}
+        command:
+          - env
+          - DD_LOG_LEVEL={{ $.Values.datadog.logLevel }}
+        {{- range . }}
           - {{ . | quote }}
         {{- end }}
         {{- end }}
@@ -273,10 +276,6 @@ spec:
             value: "kube_endpoints kube_services"
           - name: DD_EXTRA_LISTENERS
             value: "kube_endpoints kube_services"
-          {{- end }}
-          {{- if .Values.datadog.logLevel }}
-          - name: DD_LOG_LEVEL
-            value: {{ .Values.datadog.logLevel | quote }}
           {{- end }}
           - name: DD_LEADER_ELECTION
             value: {{ .Values.datadog.leaderElection | quote}}
