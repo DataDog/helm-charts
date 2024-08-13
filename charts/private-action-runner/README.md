@@ -36,7 +36,7 @@ helm repo update
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | string | `"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.0.1-alpha27"` | Current Datadog Private Action Runner image |
+| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha27"}` | Current Datadog Private Action Runner image |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runners[0].config.appBuilder.port | int | `9016` | Required port for App Builder Mode |
