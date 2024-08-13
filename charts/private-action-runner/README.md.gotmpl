@@ -14,14 +14,65 @@ helm repo update
 ```
 
 ## Requirements
-* A Datadog account with private actions enabled
-* The `kubectl` cli
-* Helm
-* Sufficient permissions to the Kubernetes cluster
+* `kubectl` CLI is installed on my machine
+* Helm is installed on my machine
+* The permissions of my Kubernetes environment allow the Datadog Private Action Runner to read and write using a Kubernetes service account
 
 ## Use this chart
 1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
 2. Create a new private action runner and follow the instructions for Kubernetes.
+
+## Use this chart with connection credentials
+1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
+2. Create a new private action runner and follow the instructions for Kubernetes but make some changes instead of running `helm install` in step 4.
+3. Download the chart locally.
+```bash
+helm pull datadog/private-action-runner --untar
+```
+4. Add connection credential json file to `templates/secrets.yaml` in the format corresponding to the credential type you want to use.
+
+For HTTP Basic Auth:
+```json
+{
+   auth_type: 'Basic Auth',
+   credentials: [
+      {
+         username: 'USERNAME',
+         password: 'PASSWORD',
+      },
+   ],
+}
+```
+For Jenkins:
+```json
+{
+   auth_type: 'Token Auth',
+   credentials: [
+      {
+         username: 'USERNAME',
+         token: 'TOKEN',
+         domain: 'DOMAIN',
+      },
+   ],
+}
+
+```
+For Postgres:
+```json
+{
+   auth_type: 'Token Auth',
+   credentials: [
+      {
+         tokenName: 'connectionUri',
+         tokenValue: 'postgres://usr:password@example_host:5432/example_db',
+      },
+   ],
+}
+```
+5. Install the chart locally:
+```bash
+helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
+```
 
 ## To use Kubernetes Actions
 1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
