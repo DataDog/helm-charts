@@ -20,12 +20,13 @@ helm repo update
 * Sufficient permissions to the Kubernetes cluster
 
 ## Use this chart
-
 1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
 2. Create a new private action runner and follow the instructions for Kubernetes.
-3. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
-4. Create a new connection, select your private action runner, and use **Service account authentication**.
-5. Create a new workflow and use a Kubernetes action like **List pod** or **List deployment**.
+
+## To use Kubernetes Actions
+1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
+2. Create a new connection, select your private action runner, and use **Service account authentication**.
+3. Create a new workflow and use a Kubernetes action like **List pod** or **List deployment**.
 
 ## Going further
 * Adjust the service account permissions according to your needs. Learn more about [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac).
