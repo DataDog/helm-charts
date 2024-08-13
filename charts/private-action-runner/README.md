@@ -32,7 +32,7 @@ helm pull datadog/private-action-runner --untar
 4. Add connection credential json file to `templates/secrets.yaml` in the format corresponding to the credential type you want to use.
 
 For HTTP Basic Auth:
-```json
+```
 {
    auth_type: 'Basic Auth',
    credentials: [
@@ -44,7 +44,7 @@ For HTTP Basic Auth:
 }
 ```
 For Jenkins:
-```json
+```
 {
    auth_type: 'Token Auth',
    credentials: [
@@ -55,10 +55,9 @@ For Jenkins:
       },
    ],
 }
-
 ```
 For Postgres:
-```json
+```
 {
    auth_type: 'Token Auth',
    credentials: [
