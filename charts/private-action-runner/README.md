@@ -19,12 +19,12 @@ helm repo update
 * The permissions of my Kubernetes environment allow the Datadog Private Action Runner to read and write using a Kubernetes service account
 
 ## Use this chart
-1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
-2. Create a new private action runner and follow the instructions for Kubernetes.
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners).
+2. Create a new Private Action Runner and follow the instructions for Kubernetes.
 
 ## Use this chart with connection credentials
-1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
-2. Create a new private action runner and follow the instructions for Kubernetes but make some changes instead of running `helm install` in step 4.
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners).
+2. Set up a new Private Action runner by following the Kubernetes instructions. When you reach step 4, instead of running `helm install`, make the following changes to the Helm chart.
 3. Download the chart locally.
 ```bash
 helm pull datadog/private-action-runner --untar
