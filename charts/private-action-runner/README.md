@@ -43,6 +43,18 @@ For HTTP Basic Auth:
    ],
 }
 ```
+For HTTP Token Auth:
+```
+{
+   auth_type: 'Token Auth',
+   credentials: [
+      {
+         tokenName: 'TOKEN1',
+         tokenValue: 'VALUE1',
+      },
+   ],
+}
+```
 For Jenkins:
 ```
 {
