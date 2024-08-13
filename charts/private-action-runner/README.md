@@ -85,7 +85,7 @@ Postgres:
 helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
 ```
 
-## To use Kubernetes Actions
+## To use Kubernetes actions
 1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
 2. Create a new connection, select your private action runner, and use **Service account authentication**.
 3. Create a new workflow and use a Kubernetes action like **List pod** or **List deployment**.
