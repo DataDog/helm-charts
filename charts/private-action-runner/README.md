@@ -29,9 +29,9 @@ helm repo update
 ```bash
 helm pull datadog/private-action-runner --untar
 ```
-4. Add connection credential json file to `templates/secrets.yaml` in the format corresponding to the credential type you want to use.
+4. Add connection credential json file to `templates/secrets.yaml` in the format corresponding to the credential and action types you want to use.
 
-For HTTP Basic Auth:
+HTTP Basic Auth:
 ```
 {
    auth_type: 'Basic Auth',
@@ -43,7 +43,7 @@ For HTTP Basic Auth:
    ],
 }
 ```
-For HTTP Token Auth:
+HTTP Token Auth:
 ```
 {
    auth_type: 'Token Auth',
@@ -55,7 +55,7 @@ For HTTP Token Auth:
    ],
 }
 ```
-For Jenkins:
+Jenkins:
 ```
 {
    auth_type: 'Token Auth',
@@ -68,7 +68,7 @@ For Jenkins:
    ],
 }
 ```
-For Postgres:
+Postgres:
 ```
 {
    auth_type: 'Token Auth',
@@ -80,7 +80,7 @@ For Postgres:
    ],
 }
 ```
-5. Install the chart locally:
+5. Install the chart locally.
 ```bash
 helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
 ```
