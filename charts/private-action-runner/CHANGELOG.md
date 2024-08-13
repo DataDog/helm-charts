@@ -2,7 +2,7 @@
 
 ### 0.7.0
 
-* Simplify README instructions to reflect the new Kubernetes UI.
+* Simplify README instructions to reflect the new Kubernetes UI. Split image value to be consistent with other charts.
 
 ### 0.6.0
 
