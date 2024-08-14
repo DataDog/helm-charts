@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.73.3
+
+* Fix a few typos on OTel Agent configs.
+
 ## 3.73.1
 
 * Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
