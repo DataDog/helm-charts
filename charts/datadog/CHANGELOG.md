@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.74.0
+
+* Simplify OTel Agent OOTB pipelines:
+  * Remove `traces/otlp` pipeline from the default OTel Agent config
+  * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
+
 ## 3.73.3
 
 * Fix a few typos on OTel Agent configs.
