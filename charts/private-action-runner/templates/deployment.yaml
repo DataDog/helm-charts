@@ -55,8 +55,7 @@ spec:
             - name: secrets
               mountPath: /etc/templates
             - name: config
-              mountPath: /etc/dd-action-runner/config.yaml
-              subPath: config.yaml
+              mountPath: /etc/dd-action-runner
           env:
             # Node memory limits
             - name: NODE_OPTIONS
