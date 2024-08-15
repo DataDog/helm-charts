@@ -29,11 +29,6 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
-| migration.datadogAgents.conversionWebhook.enabled | bool | `false` |  |
-| migration.datadogAgents.conversionWebhook.name | string | `"datadog-operator-webhook-service"` |  |
-| migration.datadogAgents.conversionWebhook.namespace | string | `"default"` |  |
-| migration.datadogAgents.useCertManager | bool | `false` |  |
-| migration.datadogAgents.version | string | `"v2alpha1"` |  |
 | nameOverride | string | `""` | Override name of app |
 
 ## Developers
