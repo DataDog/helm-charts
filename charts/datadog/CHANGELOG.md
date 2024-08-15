@@ -2,7 +2,7 @@
 
 ## 3.69.4
 
-* Add NetworkPolicy ingress rules for OTLP receivers(grpc & http)
+* Add NetworkPolicy ingress rules for OTLP receivers(gRPC & http)
 
 ## 3.69.3
 
