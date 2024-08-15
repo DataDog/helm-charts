@@ -30,7 +30,7 @@ spec:
           value: nodeless
       containers:
         - name: runner
-          image: {{ $.Values.common.image }}
+          image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
