@@ -2,7 +2,7 @@
 
 ### 0.7.0
 
-* Send HELM_DEPLOYMENT environment variable to container.
+* Send MANAGED_BY environment variable to container.
 
 ### 0.7.0
 

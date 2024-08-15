@@ -51,8 +51,8 @@ spec:
               # See https://nodejs.org/docs/latest-v16.x/api/cli.html#--max-old-space-sizesize-in-megabytes
               # 75% of memory limit/request
               value: "--max-old-space-size=1536"
-            - name: HELM_DEPLOYMENT
-              value: "true"
+            - name: MANAGED_BY
+              value: "helm"
       volumes:
         - name: secrets
           secret:
