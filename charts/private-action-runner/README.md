@@ -80,7 +80,7 @@ Postgres:
    ],
 }
 ```
-5. Install the chart locally.
+5. Install the chart.
 ```bash
 helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
 ```
