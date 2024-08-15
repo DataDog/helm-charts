@@ -31,6 +31,9 @@ spec:
       containers:
         - name: runner
           image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
+          args:
+            - -once
+            - -template=/etc/templates/config.yaml:/etc/dd-action-runner/config.yaml
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -44,7 +47,10 @@ spec:
               memory: 2Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
+              mountPath: /etc/templates
+            - name: config
+              mountPath: /etc/dd-action-runner/config.yaml
+              subPath: config.yaml
           env:
             # Node memory limits
             - name: NODE_OPTIONS
@@ -55,4 +61,7 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "chart.secretName" $runner.name }}
+        - name: config
+          emptyDir:
+            medium: Memory
 {{- end }}
