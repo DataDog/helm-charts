@@ -33,7 +33,7 @@ spec:
           image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
           command: [ 'sh', '-c', 'cp -r /etc/templates/* /etc/dd-action-runner/' ]
           volumeMounts:
-            - name: config-volume
+            - name: secrets
               mountPath: /etc/templates
             - name: config
               mountPath: /etc/dd-action-runner
