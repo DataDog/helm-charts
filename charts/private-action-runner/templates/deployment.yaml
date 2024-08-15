@@ -28,15 +28,6 @@ spec:
           key: node
           operator: Equal
           value: nodeless
-      initContainers:
-        - name: init-copy
-          image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
-          command: [ 'sh', '-c', 'cp -r /etc/templates/* /etc/dd-action-runner/' ]
-          volumeMounts:
-            - name: secrets
-              mountPath: /etc/templates
-            - name: config
-              mountPath: /etc/dd-action-runner
       containers:
         - name: runner
           image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
@@ -53,8 +44,6 @@ spec:
               memory: 2Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/templates
-            - name: config
               mountPath: /etc/dd-action-runner
           env:
             # Node memory limits
@@ -66,7 +55,4 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "chart.secretName" $runner.name }}
-        - name: config
-          emptyDir:
-            medium: Memory
 {{- end }}

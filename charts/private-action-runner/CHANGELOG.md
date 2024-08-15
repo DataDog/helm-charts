@@ -2,7 +2,7 @@
 
 ### 0.7.0
 
-* Simplify README instructions to reflect the new Kubernetes UI. Split image value to be consistent with other charts. Fix bug requiring port for Workflow mode. Open `/etc/dd-action-runner/` write access so template connection credential files can be generated.
+* Simplify README instructions to reflect the new Kubernetes UI. Split image value to be consistent with other charts. Fix bug requiring port for Workflow mode.
 
 ### 0.6.0
 
