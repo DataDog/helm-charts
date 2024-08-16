@@ -2,7 +2,7 @@
 
 ## 2.0.0
 
-* Update CRDs from Datadog Operator v1.7.0 tag.
+* Update CRDs from Datadog Operator v1.8.0 tag.
 * Remove support for DatadogAgent `v1alpha1` and conversion webhook.
 * Final update of Datadog CRDs with the `apiextensions.k8s.io/v1beta1` version of CustomResourceDefinition.
 
