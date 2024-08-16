@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.68.0'
+    helm.sh/chart: 'datadog-3.69.3'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 9970ddeb0c78cac061f61440e3235abd3701e14f4e3e4adbd5bd8ccf7b171042
-        checksum/clusteragent-configmap: 1870b1d37dffa2a9ff20295dd22d1ce1a0c508d09e47e7143bea43fbf3e6939e
-        checksum/api_key: 28e63a1c4b64c11f42208b7a22e1a9cac1e2c837cea1ca56788b8b748b370e5c
+        checksum/clusteragent_token: 1c7f1ed04182e5250ad3cdd92f5e0549d68b792b85514efd1343d473b4b0ed31
+        checksum/clusteragent-configmap: fa5c139d4a60573ab9b4ecd4827360c3718bde0bcaaf5c9f1eae8ae24ff48edf
+        checksum/api_key: 43fd540dba2ec5835bddb0920a960e152d63d0dc44c95cdb376dfd5c8c39bdd4
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 9a6b3a0afdc7e755915a24989677c6d492582d562fdd38a2270518ae18310357
+        checksum/install_info: 88c52cd7ef5158f4eb2738b4c3b575985b7d139c6b2a25213c46c5a6266e22e7
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.55.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.55.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.55.2"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -119,7 +119,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
             value: agent
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-            value: 7.55.1
+            value: 7.55.2
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED
