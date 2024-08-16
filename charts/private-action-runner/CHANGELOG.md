@@ -2,7 +2,7 @@
 
 ### 0.8.0
 
-* Send MANAGED_BY environment variable to container.
+* Send MANAGED_BY environment variable to container. Update private action image version to `v0.0.1-alpha28`.
 
 ### 0.7.0
 
