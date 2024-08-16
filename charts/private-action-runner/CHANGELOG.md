@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.8.0
+
+* Send MANAGED_BY environment variable to container. Update private action image version to `v0.0.1-alpha28`.
+
 ### 0.7.0
 
 * Simplify README instructions to reflect the new Kubernetes UI. Split image value to be consistent with other charts. Fix bug requiring port for Workflow mode.
