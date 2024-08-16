@@ -324,9 +324,6 @@ spec:
                     - kind
                     - name
                   type: object
-                  x-kubernetes-validations:
-                    - message: Modifying the targetRef is not allowed. Please delete and re-create the DatadogPodAutoscaler object.
-                      rule: self == oldSelf
                 targets:
                   description: |-
                     Targets are objectives to reach and maintain for the target resource.
