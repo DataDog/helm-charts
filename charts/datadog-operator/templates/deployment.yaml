@@ -107,9 +107,6 @@ spec:
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
             - "-operatorMetricsEnabled={{ .Values.operatorMetricsEnabled }}"
-          {{- if and (not (empty .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled)) (semverCompare ">=1.0.0-0" $version ) (semverCompare "<1.7.0-0" $version ) }}
-            - "-webhookEnabled={{ .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled }}"
-          {{- end }}
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
           {{- end }}
@@ -139,11 +136,6 @@ spec:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}
               protocol: TCP
-            {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
-            - name: webhook
-              containerPort: 9443
-              protocol: TCP
-            {{- end }}
           livenessProbe:
             httpGet:
               path: /healthz/
@@ -152,11 +144,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
-          - mountPath: /tmp/k8s-webhook-server/serving-certs
-            name: cert
-            readOnly: true
-          {{- end }}
           {{- if .Values.volumeMounts }}
           {{- toYaml .Values.volumeMounts | nindent 10 }}
           {{- end }}
@@ -177,12 +164,6 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
-      {{- if .Values.datadogCRDs.migration.datadogAgents.conversionWebhook.enabled  }}
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: {{ .Release.Name }}-webhook-server-cert
-      {{- end }}
       {{- if .Values.volumes }}
       {{- toYaml .Values.volumes | nindent 6 }}
       {{- end }}

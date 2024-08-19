@@ -8,6 +8,9 @@ metadata:
 rules:
 - nonResourceURLs:
   - /metrics
+  verbs:
+  - get
+- nonResourceURLs:
   - /metrics/slis
   verbs:
   - get
@@ -187,6 +190,13 @@ rules:
   - update
   - watch
 - apiGroups:
+  - '*'
+  resources:
+  - '*/scale'
+  verbs:
+  - get
+  - update
+- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
@@ -200,11 +210,20 @@ rules:
   - list
   - watch
 - apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - apiregistration.k8s.io
   resources:
   - apiservices
   verbs:
   - '*'
+  - list
+  - watch
 - apiGroups:
   - apps
   resources:
@@ -296,6 +315,12 @@ rules:
 - apiGroups:
   - authorization.k8s.io
   resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
   - rolebindings
   verbs:
   - create
@@ -328,14 +353,6 @@ rules:
   - autoscaling
   resources:
   - horizontalpodautoscalers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apiextensions.k8s.io
-  - extensions
-  resources:
-  - customresourcedefinitions
   verbs:
   - list
   - watch
@@ -475,6 +492,50 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogpodautoscalers
+  verbs:
+  - '*'
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogpodautoscalers/status
+  verbs:
+  - '*'
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogslos
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogslos/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogslos/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
   - extendeddaemonsetreplicasets
   verbs:
   - get
@@ -499,37 +560,12 @@ rules:
   - list
   - watch
 - apiGroups:
-    - datadoghq.com
+  - extensions
   resources:
-    - datadogslos
+  - customresourcedefinitions
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
-- apiGroups:
-    - datadoghq.com
-  resources:
-    - datadogslos/finalizers
-  verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
-- apiGroups:
-    - datadoghq.com
-  resources:
-    - datadogslos/status
-  verbs:
-    - get
-    - patch
-    - update
+  - list
+  - watch
 - apiGroups:
   - external.metrics.k8s.io
   resources:
@@ -696,12 +732,6 @@ rules:
   verbs:
   - list
   - watch
-- apiGroups:
-    - ""
-  resources:
-    - pods/exec
-  verbs:
-    - create
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
@@ -724,16 +754,23 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentprofiles/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
   - datadogagentprofiles/status
   verbs:
   - get
   - patch
   - update
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogagentprofiles/finalizers
-  verbs:
-  - update
 {{- end }}
-{{- end -}}
+{{- end }}
+

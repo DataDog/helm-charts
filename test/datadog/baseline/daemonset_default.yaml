@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.68.0'
+    helm.sh/chart: 'datadog-3.69.3'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 179d0baafb25372e797d4253ad5e40a628e62ad44086dcb4401a466741784615
-        checksum/install_info: 9a6b3a0afdc7e755915a24989677c6d492582d562fdd38a2270518ae18310357
+        checksum/clusteragent_token: de542da9e3ea422b2ed413961187c1fe5bd28d1608c78a8bb16a4bc64b508e9b
+        checksum/install_info: 88c52cd7ef5158f4eb2738b4c3b575985b7d139c6b2a25213c46c5a6266e22e7
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -42,7 +42,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.55.1"
+        image: "gcr.io/datadoghq/agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -76,9 +76,14 @@ spec:
             value: "false"
           
           
-          
+          - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+            value: "false"
+          - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+            value: "true"
           - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
             value: "true"
+          - name: DD_STRIP_PROCESS_ARGS
+            value: "false"
           - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
           - name: DD_LOG_LEVEL
@@ -117,7 +122,7 @@ spec:
           - name: DD_IGNORE_AUTOCONF
             value: "kubernetes_state"
           - name: DD_CONTAINER_LIFECYCLE_ENABLED
-            value: "true"
+            value: "true"  
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: "true"
           - name: DD_EXPVAR_PORT
@@ -197,7 +202,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.55.1"
+        image: "gcr.io/datadoghq/agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -303,7 +308,7 @@ spec:
             port: 8126
           timeoutSeconds: 5
       - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.55.1"
+        image: "gcr.io/datadoghq/agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -341,9 +346,14 @@ spec:
                   name: datadog-cluster-agent
                   key: token
           
-          
+          - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+            value: "false"
+          - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+            value: "true"
           - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
             value: "true"
+          - name: DD_STRIP_PROCESS_ARGS
+            value: "false"
           - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
           - name: DD_LOG_LEVEL
@@ -395,7 +405,7 @@ spec:
           
       - name: init-volume
         
-        image: "gcr.io/datadoghq/agent:7.55.1"
+        image: "gcr.io/datadoghq/agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -408,7 +418,7 @@ spec:
           {}
       - name: init-config
         
-        image: "gcr.io/datadoghq/agent:7.55.1"
+        image: "gcr.io/datadoghq/agent:7.55.2"
         imagePullPolicy: IfNotPresent
         command:
           - bash

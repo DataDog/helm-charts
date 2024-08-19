@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.7.0
+  tag: 1.8.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -142,16 +142,6 @@ datadogCRDs:
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
-
-  # v1alpha1 to v2alpha1 CRD conversion is deprecated in v1.7.0
-  migration:
-    datadogAgents:
-      conversionWebhook:
-        enabled: false
-        name: datadog-operator-webhook-service
-        namespace: default
-      useCertManager: false
-      version: "v2alpha1"
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
