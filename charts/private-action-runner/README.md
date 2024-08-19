@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![AppVersion: v0.0.1-alpha28](https://img.shields.io/badge/AppVersion-v0.0.1--alpha28-informational?style=flat-square)
+![Version: 0.9.0](https://img.shields.io/badge/Version-0.9.0-informational?style=flat-square) ![AppVersion: v0.0.1-alpha28](https://img.shields.io/badge/AppVersion-v0.0.1--alpha28-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -99,7 +99,7 @@ helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha28"}` | Current Datadog Private Action Runner image |
+| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha29"}` | Current Datadog Private Action Runner image |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runners[0].config.appBuilder.port | int | `9016` | Required port for App Builder Mode |
