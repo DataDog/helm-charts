@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.4
+
+* Add private beta note for OTel Collector. 
+
 ## 3.69.3
 
 * Update `datadog-crds` dependency to `1.7.2`.
