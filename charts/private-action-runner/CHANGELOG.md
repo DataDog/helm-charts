@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.8.1
+
+* Minor tweaks to YAML formatting in the runner configuration
+
 ### 0.8.0
 
 * Send MANAGED_BY environment variable to container. Update private action image version to `v0.0.1-alpha28`.
