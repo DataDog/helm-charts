@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.0`.
+
 ## 3.69.3
 
 * Update `datadog-crds` dependency to `1.7.2`.
