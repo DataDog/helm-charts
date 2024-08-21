@@ -3,10 +3,10 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  command: ["env", "DD_LOG_LEVEL={{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel }}", "trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  command: ["pwsh", "-Command", "$env:DD_LOG_LEVEL='{{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel }}'; & trace-agent -foreground -config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
@@ -34,8 +34,6 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_APM_ENABLED
       value: "true"
     - name: DD_APM_NON_LOCAL_TRAFFIC

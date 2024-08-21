@@ -7,7 +7,12 @@
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
   {{- end }}
-  command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["env", "DD_LOG_LEVEL={{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel }}", "security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["pwsh", "-Command", "$env:DD_LOG_LEVEL='{{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel }}'; & security-agent start -c ={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}
 {{- if .Values.agents.containers.securityAgent.ports }}
@@ -27,8 +32,6 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
       value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
     {{- if .Values.datadog.securityAgent.compliance.enabled }}

@@ -3,7 +3,12 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
-  command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+  {{- if eq .Values.targetSystem "linux" }}
+  command: ["env", "DD_LOG_LEVEL={{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel }}", "/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["pwsh", "-Command", "$env:DD_LOG_LEVEL='{{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel }}'; & /opt/datadog-agent/embedded/bin/system-probe --config=/etc/datadog-agent/system-probe.yaml"]
+  {{- end }}
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
@@ -19,8 +24,6 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
-    - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
     {{- if .Values.datadog.serviceMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"

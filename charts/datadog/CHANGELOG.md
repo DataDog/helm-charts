@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.69.4
+
+* Remove logs in the output of interactive CLI commands executed by users via `kubectl exec`.
+
 ## 3.69.3
 
 * Update `datadog-crds` dependency to `1.7.2`.
@@ -14,7 +18,7 @@
 
 ## 3.69.0
 
-* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector. 
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector.
 
 ## 3.68.2
 

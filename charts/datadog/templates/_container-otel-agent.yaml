@@ -3,10 +3,10 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"]
+  command: ["env", "DD_LOG_LEVEL={{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}", "otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/datadog.yaml"]
+  command: ["pwsh", "-Command", "$env:DD_LOG_LEVEL='{{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel }}'; & otel-agent -foreground -config={{ template "datadog.otelconfPath" . }}/datadog.yaml"]
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
@@ -33,8 +33,6 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    - name: DD_LOG_LEVEL
-      value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.otelAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.otelAgent.envDict | indent 4 }}
   volumeMounts:
