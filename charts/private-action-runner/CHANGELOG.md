@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.9.0
+
+* Update private action image version to `v0.0.1-alpha29`.
+
 ### 0.8.1
 
 * Minor tweaks to YAML formatting in the runner configuration
