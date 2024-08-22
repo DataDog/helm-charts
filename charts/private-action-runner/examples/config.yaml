@@ -26,7 +26,9 @@ runners:
     config:
       urn: "URN_FROM_CONFIG"
       privateKey: "PRIVATE_KEY_FROM_CONFIG"
-      modes: ["workflowAutomation", "appBuilder"]
+      modes:
+        - "workflowAutomation"
+        - "appBuilder"
       appBuilder:
         port: 9016
       actionsAllowlist:

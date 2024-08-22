@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.69.4
+## 3.70.1
 
 * Update `fips.image.tag` to `1.1.4`
+
+## 3.70.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.0`.
 
 ## 3.69.3
 
