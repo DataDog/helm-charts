@@ -97,16 +97,16 @@ helm install <RELEASE_NAME> ./private-action-runner -f ./config.yaml
 
 ## Values
 
-| Key | Type | Default                                                                                                                                                                                                                                        | Description |
-|-----|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
-| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha29"}`                                                                                                                                   | Current Datadog Private Action Runner image |
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha29"}` | Current Datadog Private Action Runner image |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"appBuilder":{"port":9016},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
-| runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]`                                                                                                                                                                                                    | List of actions that the Datadog Private Action Runner is allowed to execute |
-| runners[0].config.appBuilder.port | int | `9016`                                                                                                                                                                                                                                         | Required port for App Builder Mode |
-| runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"`                                                                                                                                                                                                                  | Base URL of the Datadog app |
-| runners[0].config.modes | list | `["workflowAutomation","appBuilder"]`                                                                                                                                                                                                          | Modes that the runner can run in |
-| runners[0].config.privateKey | string | `"PRIVATE_KEY_FROM_CONFIG"`                                                                                                                                                                                                                    | The runner's privateKey from the enrollment page |
-| runners[0].config.urn | string | `"URN_FROM_CONFIG"`                                                                                                                                                                                                                            | The runner's URN from the enrollment page |
-| runners[0].kubernetesPermissions | list | `[{"apiGroups":[""],"resources":["pods"],"verbs":["list","get"]},{"apiGroups":["apps"],"resources":["deployments"],"verbs":["list","get"]}]`                                                                                                   | List of Kubernetes permissions that the Datadog Private Action Runner has |
-| runners[0].name | string | `"default"`                                                                                                                                                                                                                                    | Name of the Datadog Private Action Runner |
-| runners[0].replicas | int | `1`                                                                                                                                                                                                                                            | Number of pod instances for the Datadog Private Action Runner |
+| runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
+| runners[0].config.appBuilder.port | int | `9016` | Required port for App Builder Mode |
+| runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
+| runners[0].config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
+| runners[0].config.privateKey | string | `"PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
+| runners[0].config.urn | string | `"URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runners[0].kubernetesPermissions | list | `[{"apiGroups":[""],"resources":["pods"],"verbs":["list","get"]},{"apiGroups":["apps"],"resources":["deployments"],"verbs":["list","get"]}]` | List of Kubernetes permissions that the Datadog Private Action Runner has |
+| runners[0].name | string | `"default"` | Name of the Datadog Private Action Runner |
+| runners[0].replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
