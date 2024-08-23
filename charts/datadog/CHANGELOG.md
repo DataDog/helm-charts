@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.2
+
+* Prevent high availability warning when `existingClusterAgent.join` is set to true.
+ 
 ## 3.70.1
 
 * Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
