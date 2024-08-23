@@ -422,7 +422,7 @@ https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
 {{- end }}
 
 
-{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) }}
+{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) (not .Values.existingClusterAgent.join) }}
 
 ###################################################################################
 ####   WARNING: Cluster-Agent should be deployed in high availability mode     ####
