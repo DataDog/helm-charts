@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.1
+
+* Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
+
 ## 3.70.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.0`.
@@ -22,7 +26,7 @@
 
 ## 3.68.2
 
-* Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
+* Fix datadog.containerLifecycle.enabled conditional statement to accept false value
 
 ## 3.68.1
 
