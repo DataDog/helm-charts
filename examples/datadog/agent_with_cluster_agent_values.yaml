@@ -1,37 +1,40 @@
 # Datadog Agent with Datadog Cluster Agent and
-# OrchestratorExplorer (Live Containers), Check Runners, and
-# External Metrics Server enabled
+# OrchestratorExplorer (Live Containers), Check Runners,
+# Admission Controller and External Metrics Server enabled
 
-targetSystem: "linux"
 datadog:
-  # apiKey: <DATADOG_API_KEY>
-  # appKey: <DATADOG_APP_KEY>
-  # If not using secrets, then use apiKey and appKey instead
-  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
-  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
   clusterName: <CLUSTER_NAME>
   tags: []
+  # Orchestrator Explorer
+  # This requires processAgent.enabled and clusterAgent.enabled to be set to true
+  # ref: https://docs.datadoghq.com/infrastructure/livecontainers/configuration/?tab=helm#kubernetes-resources
   orchestratorExplorer:
     enabled: true
+  processAgent:
+    enabled: true
+    
 clusterAgent:
-  replicas: 2
-  rbac:
-    create: true
-    serviceAccountName: default
+  enabled: true
+  
+  # External Metrics Server (HPA)
+  # ref: https://docs.datadoghq.com/containers/guide/cluster_agent_autoscaling_metrics/?tab=helm#overview
   metricsProvider:
     enabled: true
-    createReaderRbac: true
     useDatadogMetrics: true
     service:
       type: ClusterIP
       port: 8443
-agents:
-  rbac:
-    create: true
-    serviceAccountName: default
+      
+  # Admission Controller 
+  # ref: https://docs.datadoghq.com/containers/cluster_agent/admission_controller/?tab=operator
+  admissionController:
+    enabled: true
+    mutateUnlabelled: false
+
+# Cluster Check Runner
+# ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
 clusterChecksRunner:
   enabled: true
-  rbac:
-    create: true
-    serviceAccountName: default
   replicas: 2

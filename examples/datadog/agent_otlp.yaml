@@ -1,0 +1,18 @@
+## Datadog Agent with OTLP enabled
+
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  otlp:
+    receiver:
+      protocols:
+        grpc:
+          enabled: true
+          endpoint: "0.0.0.0:4317"
+          useHostPort: true
+        http:
+          enabled: true
+          endpoint: "0.0.0.0:4318"
+          useHostPort: true

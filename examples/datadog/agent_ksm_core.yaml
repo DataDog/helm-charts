@@ -1,0 +1,24 @@
+## Datadog Agent with KSM Core check enabled
+
+datadog:
+  apiKey: <DATADOG_API_KEY>
+  appKey: <DATADOG_APP_KEY>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  
+  ## KSM Legacy should be disabled
+  kubeStateMetricsEnabled: false
+
+  ## KSM Core Check
+  kubeStateMetricsCore:
+    enabled: true
+    ignoreLegacyKSMCheck: true
+    collectSecretMetrics: true
+    collectVpaMetrics: false
+    useClusterCheckRunners: false
+    labelsAsTags: {}
+
+## KSM Core is handled by Cluster agent
+clusterAgent:
+  enabled: true
+  
