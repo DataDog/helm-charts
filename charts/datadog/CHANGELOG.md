@@ -2,6 +2,10 @@
 
 ## 3.70.2
 
+* Improve support for `processAgent.runInCoreAgent` feature.
+
+## 3.70.2
+
 * Add admission controller port to cilium network policy for the cluster agent
 
 ## 3.70.1
