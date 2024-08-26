@@ -965,7 +965,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if and (ne .Values.targetSystem "linux") (eq (include "process-checks-enabled" .) "true") -}}
+  {{- if ne .Values.targetSystem "linux" -}}
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
