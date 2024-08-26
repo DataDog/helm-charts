@@ -943,8 +943,34 @@ Create RBACs for custom resources
   Return true if any process-related check is enabled
 */}}
 {{- define "process-checks-enabled" -}}
-  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.apm.instrumentation.language_detection.enabled -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true") -}}
     true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return value of "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" env var in core agent container.
+*/}}
+{{- define "get-process-checks-in-core-agent-envvar" -}}
+  {{- range .Values.agents.containers.agent.env -}}
+    {{- if eq .name "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" -}}
+      {{- .value -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if process-related checks should run on the core agent.
+*/}}
+{{- define "should-run-process-checks-on-core-agent" -}}
+  {{- if and (ne .Values.targetSystem "linux") (eq (include "process-checks-enabled" .) "true") -}}
+    false
+  {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
+    {{- include "get-process-checks-in-core-agent-envvar" . -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" (include "get-agent-version" .)) -}}
+      true
   {{- else -}}
     false
   {{- end -}}
@@ -956,17 +982,10 @@ Create RBACs for custom resources
 {{- define "should-enable-process-agent" -}}
   {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
     true
-  {{- else if and (eq .Values.targetSystem "windows") (eq (include "process-checks-enabled" .) "true") -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" (include "get-agent-version" .)) -}}
     true
-  {{- else if not .Values.agents.image.doNotCheckTag -}}
-    {{- $version := (include "get-agent-version" .) -}}
-    {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" $version) -}}
-      true
-    {{- else if and .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" $version) -}}
-      false
-    {{- else -}}
-      {{- include "process-checks-enabled" . -}}
-    {{- end -}}
+  {{- else if (eq (include "should-run-process-checks-on-core-agent" .) "true") -}}
+    false
   {{- else -}}
     {{- include "process-checks-enabled" . -}}
   {{- end -}}
