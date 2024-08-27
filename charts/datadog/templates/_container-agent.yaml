@@ -189,10 +189,8 @@
       value: /host
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.kubelet.coreCheckEnabled }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
-      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote }}
-    {{- end }}
+      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
     {{- if eq (include "should-enable-otel-agent" .) "true" }}
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"

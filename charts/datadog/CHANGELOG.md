@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.70.1
+## 3.70.2
 
 * Update `fips.image.tag` to `1.1.4`
+
+## 3.70.1
+
+* Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
 
 ## 3.70.0
 
@@ -26,7 +30,7 @@
 
 ## 3.68.2
 
-* Fix datadog.containerLifecycle.enabled conditional statement to accept flase value
+* Fix datadog.containerLifecycle.enabled conditional statement to accept false value
 
 ## 3.68.1
 
