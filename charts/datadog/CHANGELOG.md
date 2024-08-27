@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.3
+
+* Update `fips.image.tag` to `1.1.4`
+
 ## 3.70.2
 
 * Add admission controller port to cilium network policy for the cluster agent
