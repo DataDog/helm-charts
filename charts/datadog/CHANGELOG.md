@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.2
+
+* Add admission controller port to cilium network policy for the cluster agent
+
 ## 3.70.1
 
 * Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
