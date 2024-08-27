@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.70.2
+## 3.70.3
 
 * Improve support for `processAgent.runInCoreAgent` feature.
 
