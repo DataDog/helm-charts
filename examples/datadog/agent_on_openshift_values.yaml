@@ -1,4 +1,4 @@
-# Datadog Agent with Logs, APM, Processes
+# Datadog Agent with Logs, APM, and Processes
 # with specific configurations to work on OpenShift 4.
 # When installing the chart, install onto a non-default namespace with
 # `helm install --namespace <your_ns>` due to existing SecurityContextConstraints
