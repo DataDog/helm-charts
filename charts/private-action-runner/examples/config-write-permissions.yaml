@@ -8,6 +8,10 @@ runners:
         verbs:
           - "list"
           - "get"
+          - "create"
+          - "patch"
+          - "update"
+          - "delete"
       - apiGroups:
           - "apps"
         resources:
@@ -15,6 +19,10 @@ runners:
         verbs:
           - "list"
           - "get"
+          - "create"
+          - "patch"
+          - "update"
+          - "delete"
     config:
       urn: "URN_FROM_CONFIG"
       privateKey: "PRIVATE_KEY_FROM_CONFIG"
@@ -25,7 +33,9 @@ runners:
         port: 9016
       actionsAllowlist:
         - com.datadoghq.kubernetes.core.listPod
-        - com.datadoghq.kubernetes.core.listDeployment
+        - com.datadoghq.kubernetes.apps.listDeployment
+        - com.datadoghq.kubernetes.apps.patchDeployment
+        - com.datadoghq.kubernetes.apps.restartDeployment
         - com.datadoghq.http.request
         - com.datadoghq.jenkins.buildJenkinsJob
         - com.datadoghq.jenkins.getJobStatus
