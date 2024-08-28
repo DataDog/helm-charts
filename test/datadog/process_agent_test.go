@@ -230,6 +230,23 @@ func Test_processAgentConfigs(t *testing.T) {
 			},
 			assertions: verifyLinuxRunInCoreAgentOld,
 		},
+		{
+			name: "enable process checks in core agent -- env var override",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml", "values/process-run-in-core-envvars.yaml" },
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":        "datadog-secret",
+					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"datadog.processAgent.runInCoreAgent": "false",
+					"agents.image.doNotCheckTag":          "true",
+					"datadog.processAgent.processCollection": "true",
+				},
+			},
+			assertions: verifyLinuxRunInCoreAgent,
+		},
 	}
 
 	for _, tt := range tests {
@@ -368,14 +385,14 @@ func verifyLinuxRunInCoreAgentOld(t *testing.T, manifest string) {
 	assert.True(t, ok)
 	coreEnvs := getEnvVarMap(coreAgentContainer.Env)
 	assertDefaultCommonProcessEnvs(t, coreEnvs)
-	assert.Equal(t, "true", coreEnvs[DDProcessRunInCoreAgentEnabled])
-	assert.True(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
+	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.False(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
 
 	processAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "process-agent")
 	assert.True(t, ok)
 	processEnvs := getEnvVarMap(processAgentContainer.Env)
 	assertDefaultCommonProcessEnvs(t, processEnvs)
-	assert.Equal(t, "true", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
 }
 

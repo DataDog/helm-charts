@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.4
+
+* Improve support for `processAgent.runInCoreAgent` feature.
+
 ## 3.70.3
 
 * Update `fips.image.tag` to `1.1.4`
