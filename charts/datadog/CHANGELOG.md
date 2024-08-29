@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 3.70.5
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.1`.
+
+## 3.70.4
+
+* Improve support for `processAgent.runInCoreAgent` feature.
+
+## 3.70.3
+
+* Update `fips.image.tag` to `1.1.4`
+
+## 3.70.2
+
+* Add admission controller port to cilium network policy for the cluster agent
+
 ## 3.70.1
 
 * Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
