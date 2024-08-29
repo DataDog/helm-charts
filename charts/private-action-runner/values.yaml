@@ -110,3 +110,17 @@ runners:
         # - com.datadoghq.temporal.getWorkflowResult
         # - com.datadoghq.temporal.listWorkflows
         # - com.datadoghq.temporal.runWorkflow
+
+connectionCredentials:
+  basicAuth:
+    # -- List of credentials for Basic Auth
+    credentials: []
+  tokenAuth:
+    # -- List of credentials for Token Auth
+    credentials: []
+  jenkinsAuth:
+    # -- List of credentials for Jenkins Auth
+    credentials: []
+  postgresAuth:
+    # -- List of credentials for Postgres Auth
+    credentials: []

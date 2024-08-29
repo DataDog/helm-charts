@@ -35,3 +35,29 @@ runners:
         - com.datadoghq.kubernetes.core.listPod
         - com.datadoghq.http.request
         - com.datadoghq.jenkins.buildJenkinsJob
+
+connectionCredentials:
+  basicAuth:
+    credentials:
+      - key: "basic.json"
+        username: "username"
+        password: "password"
+      - key: "another_basic.json"
+        username: "another_username"
+        password: "another_password"
+  tokenAuth:
+    credentials:
+      - key: "token.json"
+        tokenName: "name"
+        tokenValue: "value"
+  jenkinsAuth:
+    credentials:
+      - key: "jenkins.json"
+        username: "username"
+        token: "token"
+        domain: "domain"
+  postgresAuth:
+    credentials:
+      - key: "postgres.json"
+        tokenName: "name"
+        tokenValue: "value"
