@@ -10,13 +10,13 @@
 {{- range $c := $.Values.connectionCredentials.basicAuth.credentials }}
 {{ $c.fileName }}: |
   {
-     auth_type: 'Basic Auth',
-     credentials: [
-        {
-           username: {{ $c.username }},
-           password: {{ $c.password }},
-        },
-     ],
+    auth_type: 'Basic Auth',
+    credentials: [
+      {
+        username: {{ $c.username | quote }},
+        password: {{ $c.password | quote }}
+      },
+    ],
   }
 {{- end -}}
 {{- end -}}
@@ -27,13 +27,13 @@
 {{- range $c := $.Values.connectionCredentials.tokenAuth.credentials }}
 {{ $c.fileName }}: |
   {
-     auth_type: 'Token Auth',
-     credentials: [
-        {
-           tokenName: {{ $c.tokenName }},
-           tokenValue: {{ $c.tokenValue }},
-        },
-     ],
+    auth_type: 'Token Auth',
+    credentials: [
+      {
+        tokenName: {{ $c.tokenName | quote }},
+        tokenValue: {{ $c.tokenValue | quote }}
+      },
+    ],
   }
 {{- end -}}
 {{- end -}}
@@ -44,36 +44,64 @@
 {{- range $c := $.Values.connectionCredentials.jenkinsAuth.credentials }}
 {{ $c.fileName }}: |
   {
-     auth_type: 'Token Auth',
-     credentials: [
-        {
-           username: {{ $c.username }},
-           token: {{ $c.token }},
-           domain: {{ $c.domain }},
-        },
-     ],
+    auth_type: 'Token Auth',
+    credentials: [
+      {
+        username: {{ $c.username | quote }},
+        token: {{ $c.token | quote }},
+        domain: {{ $c.domain | quote }}
+      },
+    ],
   }
 {{- end -}}
 {{- end -}}
 {{- end -}}
-
 
 {{- define "chart.postgresAuth" -}}
 {{- if hasKey $.Values.connectionCredentials.postgresAuth "credentials" }}
 {{- range $c := $.Values.connectionCredentials.postgresAuth.credentials }}
 {{ $c.fileName }}: |
   {
-     auth_type: 'Token Auth',
-     credentials: [
-        {
-           host: {{ $c.host }}
-           port: {{ $c.port }}
-           user: {{ $c.user }}
-           password: {{ $c.password }}
-           database: {{ $c.database }}
-           sslMode: {{ $c.sslMode }}
-        },
-     ],
+    auth_type: 'Token Auth',
+    credentials: [
+      {
+        "tokenName": "host",
+        "tokenValue": {{ $c.host | quote }}
+      },
+      {
+        "tokenName": "port",
+        "tokenValue": {{ $c.port | quote }}
+      },
+      {
+        "tokenName": "user",
+        "tokenValue": {{ $c.user | quote }}
+      },
+      {
+        "tokenName": "password",
+        "tokenValue": {{ $c.password | quote }}
+      },
+      {
+        "tokenName": "database",
+        "tokenValue": {{ $c.database | quote }}
+      },
+      {
+        "tokenName": "sslmode",
+        "tokenValue": {{ $c.sslMode | quote }}
+      },
+    {{- if $c.applicationName }}
+      {
+        "tokenName": "applicationName",
+        "tokenValue": {{ $c.applicationName | quote }}
+      },
+    {{ end }}
+    {{- if $c.searchPath }}
+      {
+      {
+        "tokenName": "searchPath",
+        "tokenValue": {{ $c.searchPath | quote }}
+      }
+    {{ end }}
+    ],
   }
 {{- end -}}
 {{- end -}}

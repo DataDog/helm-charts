@@ -39,29 +39,31 @@ runners:
 connectionCredentials:
   basicAuth:
     credentials:
-      - fileName: "basic.json"
+      - fileName: "creds/http_basic_creds.json"
         username: "username"
         password: "password"
-      - fileName: "another_basic.json"
+      - fileName: "creds/another_http_basic_creds.json"
         username: "another_username"
         password: "another_password"
   tokenAuth:
     credentials:
-      - fileName: "token.json"
+      - fileName: "creds/http_token_creds.json"
         tokenName: "name"
         tokenValue: "value"
   jenkinsAuth:
     credentials:
-      - fileName: "jenkins.json"
+      - fileName: "creds/jenkins_creds.json"
         username: "username"
         token: "token"
         domain: "domain"
   postgresAuth:
     credentials:
-      - fileName: "postgres.json"
+      - fileName: "creds/creds.pgpass"
         host: "host"
         port: "port"
         user: "user"
         password: "password"
         database: "database"
         sslMode: "sslMode"
+        applicationName: "applicationName"
+        searchPath: "searchPath"

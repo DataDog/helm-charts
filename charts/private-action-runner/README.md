@@ -22,6 +22,11 @@ helm repo update
 1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners).
 2. Create a new Private Action Runner and follow the instructions for Kubernetes.
 
+## Use this chart with connection credentials
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners).
+2. Create a new Private Action Runner and follow the instructions for Kubernetes.
+3. Configure [connection credentials](https://docs.datadoghq.com/service_management/workflows/private_actions/private_action_credentials) for the selected private actions via `config.yaml`.
+
 ## To use Kubernetes actions
 1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
 2. Create a new connection, select your private action runner, and use **Service account authentication**.
