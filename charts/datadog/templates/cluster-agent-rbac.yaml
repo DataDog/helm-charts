@@ -385,6 +385,47 @@ subjects:
 {{- end }}
 {{- end }}
 
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create }}
+{{- range $role := .Values.datadog.secretBackend.roles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "datadog.fullname" $ }}-dca-secret-reader-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    resourceNames: {{ toYaml $role.secrets | nindent 6 }}
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "datadog.fullname" $ }}-dca-read-secrets-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" $ }}-cluster-agent
+    apiGroup: ""
+    namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "datadog.fullname" $ }}-dca-secret-reader-{{ $role.namespace }}
+  apiGroup: ""
+{{- end }} # end range $role := .Values.datadog.secretBackend.roles
+{{- end }}
+
+
 {{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
