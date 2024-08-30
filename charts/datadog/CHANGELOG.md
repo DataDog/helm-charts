@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.6
+
+*  Add `Role` and `RoleBinding` to `Cluster-Agent` when `datadog.secretBackend.roles` is enabled, allowing the cluster Agent to access specified secrets. It was previously only enabled for `Agent`.
+
 ## 3.70.5
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.1`.
