@@ -8,7 +8,7 @@
 {{- define "chart.basicAuth" -}}
 {{- if hasKey $.Values.connectionCredentials.basicAuth "credentials" }}
 {{- range $c := $.Values.connectionCredentials.basicAuth.credentials }}
-{{ $c.key }}: |
+{{ $c.fileName }}: |
   {
      auth_type: 'Basic Auth',
      credentials: [
@@ -25,7 +25,7 @@
 {{- define "chart.tokenAuth" -}}
 {{- if hasKey $.Values.connectionCredentials.tokenAuth "credentials" }}
 {{- range $c := $.Values.connectionCredentials.tokenAuth.credentials }}
-{{ $c.key }}: |
+{{ $c.fileName }}: |
   {
      auth_type: 'Token Auth',
      credentials: [
@@ -42,7 +42,7 @@
 {{- define "chart.jenkinsAuth" -}}
 {{- if hasKey $.Values.connectionCredentials.jenkinsAuth "credentials" }}
 {{- range $c := $.Values.connectionCredentials.jenkinsAuth.credentials }}
-{{ $c.key }}: |
+{{ $c.fileName }}: |
   {
      auth_type: 'Token Auth',
      credentials: [
@@ -61,13 +61,17 @@
 {{- define "chart.postgresAuth" -}}
 {{- if hasKey $.Values.connectionCredentials.postgresAuth "credentials" }}
 {{- range $c := $.Values.connectionCredentials.postgresAuth.credentials }}
-{{ $c.key }}: |
+{{ $c.fileName }}: |
   {
      auth_type: 'Token Auth',
      credentials: [
         {
-           tokenName: {{ $c.tokenName }},
-           tokenValue: {{ $c.tokenValue }},
+           host: {{ $c.host }}
+           port: {{ $c.port }}
+           user: {{ $c.user }}
+           password: {{ $c.password }}
+           database: {{ $c.database }}
+           sslMode: {{ $c.sslMode }}
         },
      ],
   }
