@@ -108,5 +108,8 @@ spec:
       name: {{ .name }}
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.ports }}
+{{ toYaml .Values.datadog.ports | indent 4 }}
+{{- end }}
   internalTrafficPolicy: Local
 {{ end }}
