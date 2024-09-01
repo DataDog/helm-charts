@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.69.3'
+    helm.sh/chart: 'datadog-3.70.6'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: de542da9e3ea422b2ed413961187c1fe5bd28d1608c78a8bb16a4bc64b508e9b
-        checksum/install_info: 88c52cd7ef5158f4eb2738b4c3b575985b7d139c6b2a25213c46c5a6266e22e7
+        checksum/clusteragent_token: f82ea2c0ae9ef33f3b46ba0bebd48e0b6cc718f4da6dfa859c892e6bf96ac9d6
+        checksum/install_info: 9cbfca13f025c4eb025c8f40564b8908b1f9fe4d7b8dad4414173caac26b86f9
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -42,7 +42,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.56.1"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -202,7 +202,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.56.1"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -308,7 +308,7 @@ spec:
             port: 8126
           timeoutSeconds: 5
       - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.56.1"
         imagePullPolicy: IfNotPresent
         command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -405,7 +405,7 @@ spec:
           
       - name: init-volume
         
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.56.1"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -418,7 +418,7 @@ spec:
           {}
       - name: init-config
         
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.56.1"
         imagePullPolicy: IfNotPresent
         command:
           - bash
