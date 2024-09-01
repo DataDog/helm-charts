@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.6
+
+* Add values parameter that allows to specify extra ports for the agent service
+
 ## 3.70.5
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.1`.
