@@ -1,4 +1,7 @@
 # Datadog changelog
+## 3.73.1
+
+* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
 
 ## 3.73.0
 
