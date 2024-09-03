@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0
+
+* Update Datadog Operator version to 1.8.0.
+* Drop support for DatadogAgent `v1alpha1` and conversion webhook.
+
+## 1.8.5
+
+* Update `datadog-crds` dependency to `1.7.2`.
+
+## 1.8.4
+
+* Add option to specify `deployment.annotations`.
+
 ## 1.8.3
 
 * Add `image.doNotCheckTag` option to permit skipping operator image tag compatibility.

@@ -45,60 +45,6 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "Verify Operator 1.0 cert secret name",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			assertions: verifyDeploymentCertSecretName,
-			skipTest:   SkipTest,
-		},
-		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=true",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			assertions: verifyConversionWebhookEnabledTrue,
-			skipTest:   SkipTest,
-		},
-		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=false",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "false",
-				},
-			},
-			assertions: verifyConversionWebhookEnabledFalse,
-			skipTest:   SkipTest,
-		},
-		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled default",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-			},
-			assertions: verifyConversionWebhookEnabledFalse,
-			skipTest:   SkipTest,
-		},
-		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -131,38 +77,9 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "gcr.io/datadoghq/operator:1.7.0", operatorContainer.Image)
+	assert.Equal(t, "gcr.io/datadoghq/operator:1.8.0", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
-}
-
-func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
-	var deployment appsv1.Deployment
-	common.Unmarshal(t, manifest, &deployment)
-
-	var mode = int32(420)
-	assert.Contains(t, deployment.Spec.Template.Spec.Volumes, v1.Volume{
-		Name: "cert",
-		VolumeSource: v1.VolumeSource{
-			Secret: &v1.SecretVolumeSource{
-				DefaultMode: &mode,
-				SecretName:  "random-string-as-release-name-webhook-server-cert",
-			},
-		},
-	})
-}
-
-func verifyConversionWebhookEnabledTrue(t *testing.T, manifest string) {
-	var deployment appsv1.Deployment
-	common.Unmarshal(t, manifest, &deployment)
-	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
-}
-
-func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {
-	var deployment appsv1.Deployment
-	common.Unmarshal(t, manifest, &deployment)
-	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyAll(t *testing.T, manifest string) {

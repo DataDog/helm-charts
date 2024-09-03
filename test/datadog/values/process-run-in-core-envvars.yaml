@@ -1,0 +1,10 @@
+agents:
+  containers:
+    agent:
+      env:
+        - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+          value: "true"
+    processAgent:
+      env:
+        - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+          value: "true"

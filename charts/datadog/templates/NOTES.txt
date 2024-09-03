@@ -177,6 +177,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
+{{- if and (((.Values.datadog.autoscaling).workload).enabled) (not .Values.remoteConfiguration.enabled) }}
+
+###################################################################################
+####               ERROR: Container Autoscaling misconfiguration               ####
+###################################################################################
+
+{{- fail "Workload autoscaling is activated without remote configuration. Remote configuration is required (remoteConfiguration.enabled = true)" }}
+
+{{- end }}
+
 {{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
@@ -561,4 +571,21 @@ You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.
 You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
+{{- end }}
+
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.providers.gke.autopilot }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+OTel collector is not supported on GKE Autopilot.
+{{- fail "The OTel collector cannot be run on GKE Autopilot." }}
+{{- end }}
+
+
+{{- if (eq (include "should-enable-otel-agent" .) "true")  }}
+#################################################################
+####               WARNING: Private Beta notice              ####
+#################################################################
+OTel collector is in private beta. Please reach out to your Datadog representative for more information.
 {{- end }}

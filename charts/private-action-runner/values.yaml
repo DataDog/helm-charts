@@ -1,0 +1,112 @@
+# Default values for private-action-runner.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+common:
+  # -- Current Datadog Private Action Runner image
+  image:
+    repository: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner
+    tag: v0.0.1-alpha29
+
+runners:
+  # runners[0].name -- Name of the Datadog Private Action Runner
+  - name: "default"
+    # -- Number of pod instances for the Datadog Private Action Runner
+    replicas: 1
+    # -- List of Kubernetes permissions that the Datadog Private Action Runner has
+    kubernetesPermissions:
+      - apiGroups:
+          - ""
+        resources:
+          - "pods"
+        verbs:
+          - "list"
+          - "get"
+          # - "create"
+          # - "patch"
+          # - "update"
+          # - "delete"
+      - apiGroups:
+          - "apps"
+        resources:
+          - "deployments"
+        verbs:
+          - "list"
+          - "get"
+          # - "create"
+          # - "patch"
+          # - "update"
+          # - "delete"
+    # -- Configuration for the Datadog Private Action Runner
+    config:
+      # -- Base URL of the Datadog app
+      ddBaseURL: "https://app.datadoghq.com"
+      # -- The runner's URN from the enrollment page
+      urn: "URN_FROM_CONFIG"
+      # -- The runner's privateKey from the enrollment page
+      privateKey: "PRIVATE_KEY_FROM_CONFIG"
+      # -- Modes that the runner can run in
+      modes:
+        - "workflowAutomation"
+        - "appBuilder"
+      appBuilder:
+        # -- Required port for App Builder Mode
+        port: 9016
+      # -- List of actions that the Datadog Private Action Runner is allowed to execute
+      actionsAllowlist:
+        - com.datadoghq.kubernetes.core.listPod
+        # you can also add from the following list
+        # - com.datadoghq.http.request
+        # - com.datadoghq.jenkins.buildJenkinsJob
+        # - com.datadoghq.jenkins.deleteJenkinsJob
+        # - com.datadoghq.jenkins.getJobStatus
+        # - com.datadoghq.kubernetes.apps.createDeployment
+        # - com.datadoghq.kubernetes.apps.getControllerRevision
+        # - com.datadoghq.kubernetes.apps.getDaemonSet
+        # - com.datadoghq.kubernetes.apps.getDeployment
+        # - com.datadoghq.kubernetes.apps.getReplicaSet
+        # - com.datadoghq.kubernetes.apps.getStatefulSet
+        # - com.datadoghq.kubernetes.apps.listControllerRevision
+        # - com.datadoghq.kubernetes.apps.listDaemonSet
+        # - com.datadoghq.kubernetes.apps.listDeployment
+        # - com.datadoghq.kubernetes.apps.listReplicaSet
+        # - com.datadoghq.kubernetes.apps.listStatefulSet
+        # - com.datadoghq.kubernetes.apps.restartDeployment
+        # - com.datadoghq.kubernetes.apps.updateDeployment
+        # - com.datadoghq.kubernetes.apps.updateReplicaSet
+        # - com.datadoghq.kubernetes.core.createNode
+        # - com.datadoghq.kubernetes.core.createPod
+        # - com.datadoghq.kubernetes.core.deleteMultiplePods
+        # - com.datadoghq.kubernetes.core.deletePod
+        # - com.datadoghq.kubernetes.core.getConfigMap
+        # - com.datadoghq.kubernetes.core.getEndpoints
+        # - com.datadoghq.kubernetes.core.getEvent
+        # - com.datadoghq.kubernetes.core.getLimitRange
+        # - com.datadoghq.kubernetes.core.getNamespace
+        # - com.datadoghq.kubernetes.core.getNode
+        # - com.datadoghq.kubernetes.core.getPersistentVolume
+        # - com.datadoghq.kubernetes.core.getPersistentVolumeClaim
+        # - com.datadoghq.kubernetes.core.getPod
+        # - com.datadoghq.kubernetes.core.getPodTemplate
+        # - com.datadoghq.kubernetes.core.getReplicationController
+        # - com.datadoghq.kubernetes.core.getResourceQuota
+        # - com.datadoghq.kubernetes.core.getService
+        # - com.datadoghq.kubernetes.core.getServiceAccount
+        # - com.datadoghq.kubernetes.core.listConfigMap
+        # - com.datadoghq.kubernetes.core.listEndpoints
+        # - com.datadoghq.kubernetes.core.listEvent
+        # - com.datadoghq.kubernetes.core.listLimitRange
+        # - com.datadoghq.kubernetes.core.listNamespace
+        # - com.datadoghq.kubernetes.core.listNode
+        # - com.datadoghq.kubernetes.core.listPersistentVolume
+        # - com.datadoghq.kubernetes.core.listPersistentVolumeClaim
+        # - com.datadoghq.kubernetes.core.listPodTemplate
+        # - com.datadoghq.kubernetes.core.listReplicationController
+        # - com.datadoghq.kubernetes.core.listResourceQuota
+        # - com.datadoghq.kubernetes.core.listService
+        # - com.datadoghq.kubernetes.core.listServiceAccount
+        # - com.datadoghq.kubernetes.core.updatePod
+        # - com.datadoghq.postgresql.select
+        # - com.datadoghq.temporal.getWorkflowResult
+        # - com.datadoghq.temporal.listWorkflows
+        # - com.datadoghq.temporal.runWorkflow

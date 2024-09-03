@@ -1,18 +1,24 @@
 {{/* vim: set filetype=mustache: */}}
 
-{{- define "check-version" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{/*
+  Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-agent-version" -}}
 {{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.36.0" -}}
+{{- $version = "6.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.36.0" -}}
+{{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
+{{- $version = "7.55.1" -}}
 {{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.36.0" -}}
+{{- $version -}}
 {{- end -}}
+
+
+{{- define "check-version" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -45,17 +51,7 @@ false
 
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "6") -}}
-{{- $version = "6.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "7") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.27.0" -}}
-{{- end -}}
+{{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
 true
 {{- else -}}
@@ -109,6 +105,19 @@ Create chart name and version as used by the chart label.
 {{- define "datadog.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Return true if the OTelAgent needs to be deployed
+*/}}
+{{- define "should-enable-otel-agent" -}}
+{{- if and .Values.datadog.otelCollector.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+
 
 {{/*
 Return secret name to be used based on provided values.
@@ -204,6 +213,18 @@ Return agent config path
 {{- define "datadog.confPath" -}}
 {{- if eq .Values.targetSystem "linux" -}}
 /etc/datadog-agent
+{{- end -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/ProgramData/Datadog
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return agent config path
+*/}}
+{{- define "datadog.otelconfPath" -}}
+{{- if eq .Values.targetSystem "linux" -}}
+/etc/otel-agent
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog
@@ -574,6 +595,10 @@ datadog-agent-fips-config
 {{- end -}}
 {{- end -}}
 
+{{- define "agents-install-otel-configmap-name" -}}
+{{ template "datadog.fullname" . }}-otel-config
+{{- end -}}
+
 {{/*
 Common template labels
 */}}
@@ -852,7 +877,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (.Values.clusterAgent.admissionController.remoteInstrumentation.enabled) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (((.Values.datadog.autoscaling).workload).enabled)) -}}
 true
 {{- else -}}
 false
@@ -912,4 +937,65 @@ Create RBACs for custom resources
   {{- else -}}
     false
   {{- end -}}
+{{- end -}}
+{{/*
+  Return true if any process-related check is enabled
+*/}}
+{{- define "process-checks-enabled" -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true") -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return value of "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" env var in core agent container.
+*/}}
+{{- define "get-process-checks-in-core-agent-envvar" -}}
+  {{- range .Values.agents.containers.agent.env -}}
+    {{- if eq .name "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" -}}
+      {{- .value -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if process-related checks should run on the core agent.
+*/}}
+{{- define "should-run-process-checks-on-core-agent" -}}
+  {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
+    {{- include "get-process-checks-in-core-agent-envvar" . -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" (include "get-agent-version" .)) -}}
+      true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the process-agent container should be created.
+*/}}
+{{- define "should-enable-process-agent" -}}
+  {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
+    true
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" (include "get-agent-version" .)) -}}
+    true
+  {{- else if (eq (include "should-run-process-checks-on-core-agent" .) "true") -}}
+    false
+  {{- else -}}
+    {{- include "process-checks-enabled" . -}}
+  {{- end -}}
+{{- end -}}
+
+
+{{- define "get-port-number-from-name" -}}
+{{- $portName := .portName -}}
+{{- range .ports -}}
+  {{- if eq .name $portName -}}
+    {{ .containerPort }}
+  {{- end -}}
+{{- end -}}
 {{- end -}}

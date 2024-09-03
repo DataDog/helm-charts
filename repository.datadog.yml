@@ -3,6 +3,7 @@ schema-version: v1
 kind: mergequeue
 gitlab_check_enable: false
 github_teams_restrictions:
+  - action-platform
   - agent-all
   - container-app
   - container-ecosystems

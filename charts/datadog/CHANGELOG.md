@@ -1,8 +1,64 @@
 # Datadog changelog
 
-## 3.69.0
+## 3.70.8
 
 * Enable `system-probe` container on GKE Autopilot
+
+## 3.70.7
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.2`.
+
+## 3.70.6
+
+* Add private beta note for OTel Collector.
+
+## 3.70.5
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.1`.
+
+## 3.70.4
+
+* Improve support for `processAgent.runInCoreAgent` feature.
+
+## 3.70.3
+
+* Update `fips.image.tag` to `1.1.4`
+
+## 3.70.2
+
+* Add admission controller port to cilium network policy for the cluster agent
+
+## 3.70.1
+
+* Fix datadog.kubelet.coreCheckEnabled conditional statement to accept false value
+
+## 3.70.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.0`.
+
+## 3.69.3
+
+* Update `datadog-crds` dependency to `1.7.2`.
+
+## 3.69.2
+
+* Allow activation of autoscaling.
+
+## 3.69.1
+
+* Set default `Agent` and `Cluster-Agent` version to `7.55.2`.
+
+## 3.69.0
+
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector.
+
+## 3.68.2
+
+* Fix datadog.containerLifecycle.enabled conditional statement to accept false value
+
+## 3.68.1
+
+* Add automatic detection for enablement of process agent container.
 
 ## 3.68.0
 

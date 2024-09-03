@@ -13,15 +13,8 @@ crds:
   datadogSLOs: false
   # crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfiles CRD
   datadogAgentProfiles: false
-
-migration:
-  datadogAgents:
-    conversionWebhook:
-      enabled: false
-      name: datadog-operator-webhook-service
-      namespace: default
-    useCertManager: false
-    version: "v2alpha1"
+  # crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+  datadogPodAutoscalers: false
 
 # nameOverride -- Override name of app
 nameOverride: ""
