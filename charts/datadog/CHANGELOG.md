@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.7
+
+* Set default `Agent` and `Cluster-Agent` version to `7.56.2`.
+
 ## 3.70.6
 
 * Add private beta note for OTel Collector.
