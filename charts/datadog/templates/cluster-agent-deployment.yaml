@@ -447,7 +447,7 @@ spec:
             - key: helm.yaml
               path: helm.yaml
 {{- end }}
-{{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents }}
+{{- if .Values.datadog.collectEvents }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}
