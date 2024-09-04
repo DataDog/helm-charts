@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.70.8
+## 3.71.0
 
 * Enable `system-probe` container on GKE Autopilot
 
