@@ -13,30 +13,22 @@ runners:
   - name: "default"
     # -- Number of pod instances for the Datadog Private Action Runner
     replicas: 1
-    # -- List of Kubernetes permissions that the Datadog Private Action Runner has
-    kubernetesPermissions:
-      - apiGroups:
-          - ""
-        resources:
-          - "pods"
-        verbs:
-          - "list"
-          - "get"
-          # - "create"
-          # - "patch"
-          # - "update"
-          # - "delete"
-      - apiGroups:
-          - "apps"
-        resources:
-          - "deployments"
-        verbs:
-          - "list"
-          - "get"
-          # - "create"
-          # - "patch"
-          # - "update"
-          # - "delete"
+    # -- Explicitly set Kubernetes permissions that the Datadog Private Action Runner has
+    # kubernetesPermissions:
+    #   - apiGroups:
+    #       - ""
+    #     resources:
+    #       - "pods"
+    #     verbs:
+    #       - "list"
+    #       - "get"
+    #   - apiGroups:
+    #       - "apps"
+    #     resources:
+    #       - "deployments"
+    #     verbs:
+    #       - "list"
+    #       - "get"
     # -- Configuration for the Datadog Private Action Runner
     config:
       # -- Base URL of the Datadog app

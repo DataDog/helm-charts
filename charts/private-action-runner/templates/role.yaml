@@ -5,5 +5,27 @@ kind: ClusterRole
 metadata:
   namespace: {{ $.Release.Namespace }}
   name: {{ include "chart.roleName" $runner.name }}
-rules: {{ $runner.kubernetesPermissions | toJson }}
+rules:
+{{- if $runner.kubernetesPermissions }}
+{{ $runner.kubernetesPermissions | toYaml}}
+{{- else }}
+  - apiGroups:
+      - ""
+    resources:
+      - "pods"
+    verbs:
+      - "list"
+      - "get"
+  - apiGroups:
+      - "apps"
+    resources:
+      - "deployments"
+    verbs:
+      - "list"
+      - "get"
+{{- if has "com.datadoghq.kubernetes.apps.updateDeployment" $runner.config.actionsAllowlist  }}
+      - "patch"
+      - "update"
+{{- end }}
+{{- end }}
 {{- end }}
