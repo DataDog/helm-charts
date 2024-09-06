@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.9.1
+
+* Simplified user configuration for Private Action Runner RBAC using `actionsAllowlist```
+
 ### 0.9.0
 
 * Update private action image version to `v0.0.1-alpha29`.
