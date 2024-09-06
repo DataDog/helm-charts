@@ -8,24 +8,14 @@ metadata:
 rules:
 {{- if $runner.kubernetesPermissions }}
 {{ $runner.kubernetesPermissions | toYaml}}
-{{- else }}
-  - apiGroups:
-      - ""
-    resources:
-      - "pods"
-    verbs:
-      - "list"
-      - "get"
-  - apiGroups:
-      - "apps"
-    resources:
-      - "deployments"
-    verbs:
-      - "list"
-      - "get"
-{{- if has "com.datadoghq.kubernetes.apps.updateDeployment" $runner.config.actionsAllowlist  }}
-      - "patch"
-      - "update"
 {{- end }}
+{{- if has "com.datadoghq.kubernetes.core.listPod" $runner.config.actionsAllowlist }}
+{{ include "rbacRule" (dict "apiGroup" "" "resource" "pod" "verbs" (list "list")) }}
+{{- end }}
+{{- if has "com.datadoghq.kubernetes.apps.updateDeployment" $runner.config.actionsAllowlist }}
+{{- include "rbacRule" (dict "apiGroup" "apps" "resource" "deployment" "verbs" (list "update"))}}
+{{- end }}
+{{- if has "com.datadoghq.kubernetes.apps.patchDeployment" $runner.config.actionsAllowlist }}
+{{- include "rbacRule" (dict "apiGroup" "apps" "resource" "deployment" "verbs" (list "patch"))}}
 {{- end }}
 {{- end }}
