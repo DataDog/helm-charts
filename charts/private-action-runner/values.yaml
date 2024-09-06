@@ -73,6 +73,7 @@ runners:
         # - com.datadoghq.kubernetes.apps.listStatefulSet
         # - com.datadoghq.kubernetes.apps.restartDeployment
         # - com.datadoghq.kubernetes.apps.updateDeployment
+        # - com.datadoghq.kubernetes.apps.patchDeployment
         # - com.datadoghq.kubernetes.apps.updateReplicaSet
         # - com.datadoghq.kubernetes.core.createNode
         # - com.datadoghq.kubernetes.core.createPod

@@ -9,13 +9,16 @@ rules:
 {{- if $runner.kubernetesPermissions }}
 {{ $runner.kubernetesPermissions | toYaml}}
 {{- end }}
-{{- if has "com.datadoghq.kubernetes.core.listPod" $runner.config.actionsAllowlist }}
-{{ include "rbacRule" (dict "apiGroup" "" "resource" "pod" "verbs" (list "list")) }}
+{{- if has "com.datadoghq.kubernetes.apps.getDeployment" $runner.config.actionsAllowlist }}
+{{- include "rbacGetRule" (dict "apiGroup" "apps" "resource" "deployments")}}
 {{- end }}
-{{- if has "com.datadoghq.kubernetes.apps.updateDeployment" $runner.config.actionsAllowlist }}
-{{- include "rbacRule" (dict "apiGroup" "apps" "resource" "deployment" "verbs" (list "update"))}}
+{{- if has "com.datadoghq.kubernetes.apps.listDeployment" $runner.config.actionsAllowlist }}
+{{- include "rbacListRule" (dict "apiGroup" "apps" "resource" "deployments")}}
 {{- end }}
 {{- if has "com.datadoghq.kubernetes.apps.patchDeployment" $runner.config.actionsAllowlist }}
-{{- include "rbacRule" (dict "apiGroup" "apps" "resource" "deployment" "verbs" (list "patch"))}}
+{{- include "rbacPatchRule" (dict "apiGroup" "apps" "resource" "deployments")}}
+{{- end }}
+{{- if has "com.datadoghq.kubernetes.apps.restartDeployment" $runner.config.actionsAllowlist }}
+{{- include "rbacUpdateRule" (dict "apiGroup" "apps" "resource" "deployments")}}
 {{- end }}
 {{- end }}
