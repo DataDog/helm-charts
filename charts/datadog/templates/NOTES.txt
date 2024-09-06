@@ -323,7 +323,9 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if .Values.providers.gke.autopilot}}
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc}}
+
+{{- if not .Values.providers.gke.gdc}}
 
 ###########################################################################################
 ####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
@@ -333,12 +335,23 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 * The serviceAccountName must be "datadog-agent".
 * All ConfigMap names mounted must be hardcode.
 
+{{- end }}
+
+{{- if and (not .Values.providers.gke.autopilot) (not .Values.datadog.clusterName)}}
+
+###########################################################################
+####   WARNING: Cluster name must be set on Google Distributed Cloud   ####
+###########################################################################
+{{- fail "On Google Distributed Cloud environments, cluster name must be set with `datadog.clusterName`." }}
+
+{{- end }}
+
 {{- if eq (include "system-probe-feature" .) "true" }}
 
-#####################################################################
-####   WARNING: System Probe is not supported on GKE Autopilot   ####
-#####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
+##################################################################################################
+####   WARNING: System Probe is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+##################################################################################################
+{{- fail "On GKE Autopilot and Google Distributed Cloud environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -354,57 +367,67 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
 
-######################################################################################
-####   WARNING: Cloud Workload Security (CWS) is not supported on GKE Autopilot   ####
-######################################################################################
+###################################################################################################################
+####   WARNING: Cloud Workload Security (CWS) is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+###################################################################################################################
 
-{{- fail "On GKE Autopilot environments, Cloud Workload Security (CWS) is not supported. The options 'datadog.securityAgent.runtime.enabled' and 'datadog.securityAgent.runtime.fimEnabled' must be set 'false'" }}
+{{- fail "On GKE Autopilot and Google Distributed Cloud environments, Cloud Workload Security (CWS) is not supported. The options 'datadog.securityAgent.runtime.enabled' and 'datadog.securityAgent.runtime.fimEnabled' must be set 'false'" }}
 
 {{- end }}
 
 {{- if .Values.agents.containers.initContainers.securityContext }}
 
 ######################################################################################################
-####   WARNING: Overwriting security contexts at container level not supported on GKE autopilot   ####
+####   WARNING: Overwriting security contexts at container level not supported on GKE Autopilot nor Google Distributed Cloud   ####
 ######################################################################################################
 
-{{- fail "On GKE autopilot environments, overwriting default security context is not supported, these options will be ignored" }}
+{{- fail "On GKE Autopilot and Google Distributed Cloud environments, overwriting default security context is not supported, these options will be ignored" }}
 
 {{- end }}
 
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
 
-#################################################################################################
-####   WARNING: Cloud Security Posture Management (CSPM) is not supported on GKE Autopilot   ####
-#################################################################################################
+##############################################################################################################################
+####   WARNING: Cloud Security Posture Management (CSPM) is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+##############################################################################################################################
 
-{{- fail "On GKE autopilot environments, Cloud Security Posture Management (CSPM) is not supported. The option 'datadog.securityAgent.compliance.enabled' must be set to 'false'" }}
+{{- fail "On GKE Autopilot and Google Distributed Cloud environments, Cloud Security Posture Management (CSPM) is not supported. The option 'datadog.securityAgent.compliance.enabled' must be set to 'false'" }}
 
 {{- end }}
 
 {{- if .Values.datadog.dogstatsd.useSocketVolume }}
 
-###################################################################################
-####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
-###################################################################################
+################################################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+################################################################################################################
 
 {{- end }}
 
 {{- if .Values.datadog.apm.socketEnabled }}
 
-##############################################################################
-####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
-##############################################################################
+##########################################################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+##########################################################################################################
 
 {{- end }}
 
 {{- if .Values.datadog.networkMonitoring.enabled }}
 
-#######################################################################################
-####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
-#######################################################################################
+####################################################################################################################
+####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot nor Google Distributed Cloud   ####
+####################################################################################################################
 
-{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+{{- fail "On GKE Autopilot and Google Distributed Cloud environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+
+{{- end }}
+
+{{- if eq (include "should-enable-otel-agent" .) "true" }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+OTel collector is not supported on GKE Autopilot nor Google Distributed Cloud.
+{{- fail "The OTel collector cannot be run on GKE Autopilot nor Google Distributed Cloud." }}
 
 {{- end }}
 
@@ -589,15 +612,6 @@ You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.
 You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
-{{- end }}
-
-
-{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.providers.gke.autopilot }}
-#################################################################
-####               WARNING: Configuration notice             ####
-#################################################################
-OTel collector is not supported on GKE Autopilot.
-{{- fail "The OTel collector cannot be run on GKE Autopilot." }}
 {{- end }}
 
 

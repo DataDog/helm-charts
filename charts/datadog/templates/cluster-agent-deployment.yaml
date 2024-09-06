@@ -208,7 +208,7 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.mutateUnlabelled | quote }}
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
             {{- if .Values.clusterAgent.admissionController.configMode }}
             value: {{ .Values.clusterAgent.admissionController.configMode }}
             {{- else if eq (include "trace-agent-use-uds" .) "true" }}

@@ -198,17 +198,16 @@
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
+    {{- if not .Values.providers.gke.gdc }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
+    {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    - name: tmpdir
-      mountPath: /tmp
-      readOnly: false # Need RW to write to /tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- if eq (include "should-mount-fips-configmap" .) "true" }}
     {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
@@ -222,7 +221,12 @@
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: false # Need RW to write auth token
     {{- end }}
+    {{- if not .Values.providers.gke.gdc }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW to write to /tmp directory
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
@@ -230,7 +234,7 @@
       subPath: datadog.yaml
       readOnly: true
     {{- end }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc)}}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
@@ -256,7 +260,7 @@
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
-    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+    {{- if and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled) (not .Values.providers.gke.gdc)}}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

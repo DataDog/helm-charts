@@ -86,7 +86,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not .Values.providers.gke.autopilot }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -96,6 +96,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW for tmp directory
@@ -109,6 +110,7 @@
     {{- end }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}

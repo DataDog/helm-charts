@@ -167,7 +167,7 @@ spec:
       {{- if eq .Values.targetSystem "windows" }}
         {{ include "daemonset-volumes-windows" . | nindent 6 }}
       {{- end }}
-      {{- if eq .Values.targetSystem "linux" }}
+      {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
       {{- end }}
       {{- if eq (include "should-enable-otel-agent" .) "true" }}
