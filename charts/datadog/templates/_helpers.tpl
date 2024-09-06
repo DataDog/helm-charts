@@ -338,7 +338,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (not .Values.providers.gke.autopilot) (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
+{{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
 true
 {{- else -}}
 false
@@ -938,7 +938,6 @@ Create RBACs for custom resources
     false
   {{- end -}}
 {{- end -}}
-
 {{/*
   Return true if any process-related check is enabled
 */}}
