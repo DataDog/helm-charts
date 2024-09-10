@@ -241,6 +241,8 @@ spec:
           {{- if .Values.datadog.apm.instrumentation.enabled }}
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_INIT_RESOURCES_MEMORY
+            value: 128Mi
           {{- end }}
           {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
