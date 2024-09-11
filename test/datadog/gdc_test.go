@@ -1,7 +1,6 @@
 package datadog
 
 import (
-	"fmt"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
@@ -77,5 +76,5 @@ func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
 			}
 		}
 	}
-	assert.False(t, hasHostPort, fmt.Sprintf("Daemonset has restricted hostPort mounted."))
+	assert.False(t, hasHostPort, "Daemonset has restricted hostPort mounted.")
 }
