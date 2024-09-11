@@ -35,3 +35,35 @@ runners:
         - com.datadoghq.kubernetes.core.listPod
         - com.datadoghq.http.request
         - com.datadoghq.jenkins.buildJenkinsJob
+
+connectionCredentials:
+  basicAuth:
+    credentials:
+      - fileName: "http_basic_creds.json"
+        username: "username"
+        password: "password"
+      - fileName: "another_http_basic_creds.json"
+        username: "another_username"
+        password: "another_password"
+  tokenAuth:
+    credentials:
+      - fileName: "http_token_creds.json"
+        tokenName: "name"
+        tokenValue: "value"
+  jenkinsAuth:
+    credentials:
+      - fileName: "jenkins_creds.json"
+        username: "username"
+        token: "token"
+        domain: "domain"
+  postgresAuth:
+    credentials:
+      - fileName: "creds.pgpass"
+        host: "host"
+        port: "port"
+        user: "user"
+        password: "password"
+        database: "database"
+        sslMode: "sslMode"
+        applicationName: "applicationName"
+        searchPath: "searchPath"
