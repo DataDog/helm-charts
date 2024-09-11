@@ -869,7 +869,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
@@ -946,7 +946,7 @@ Create RBACs for custom resources
   Return true if any process-related check is enabled
 */}}
 {{- define "process-checks-enabled" -}}
-  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true") -}}
+  {{- if and (or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true")) (not .Values.providers.gke.gdc) -}}
     true
   {{- else -}}
     false
@@ -974,6 +974,8 @@ Create RBACs for custom resources
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
   {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" (include "get-agent-version" .)) -}}
       true
+  {{- else if .Values.providers.gke.gdc }}
+      false
   {{- else -}}
     false
   {{- end -}}
@@ -989,8 +991,10 @@ Create RBACs for custom resources
     true
   {{- else if (eq (include "should-run-process-checks-on-core-agent" .) "true") -}}
     false
-  {{- else -}}
+  {{- else if (not .Values.providers.gke.gdc) -}}
     {{- include "process-checks-enabled" . -}}
+  {{- else -}}
+    false
   {{- end -}}
 {{- end -}}
 

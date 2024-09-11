@@ -337,7 +337,7 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 
 {{- end }}
 
-{{- if and (not .Values.providers.gke.autopilot) (not .Values.datadog.clusterName)}}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.datadog.clusterName)}}
 
 ###########################################################################
 ####   WARNING: Cluster name must be set on Google Distributed Cloud   ####

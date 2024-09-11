@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.69.3'
+    helm.sh/chart: 'datadog-3.71.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 7991408bb52fa0f7419e6e11edf9a98b11a769fe9fd4574652c99d896a836f3a
-        checksum/clusteragent-configmap: fa5c139d4a60573ab9b4ecd4827360c3718bde0bcaaf5c9f1eae8ae24ff48edf
-        checksum/api_key: 43fd540dba2ec5835bddb0920a960e152d63d0dc44c95cdb376dfd5c8c39bdd4
+        checksum/clusteragent_token: 5119315b86cd6b16ea696fa313fa8f63aeffc70c1bea6abaffacbfcf1692b436
+        checksum/clusteragent-configmap: d0ab6e789c44fc4f5881e7244c4d00814ae7191b94560405bec45d3c2f0923c4
+        checksum/api_key: 0a9725cd842dfab442be71cd22846bead912297242cfcb3f60c3a2b7513a4fc5
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 88c52cd7ef5158f4eb2738b4c3b575985b7d139c6b2a25213c46c5a6266e22e7
+        checksum/install_info: d981b555be4a75e224267a779d6b633b9cde1b8258e49b0b42aada13ebc04f41
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.55.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.55.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -100,7 +100,7 @@ spec:
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: datadog-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
             value: socket
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: datadog

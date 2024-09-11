@@ -139,7 +139,7 @@ spec:
           {{ include "containers-init-windows" . | nindent 6 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
-          {{ include "containers-init-linux" . | nindent 6 }}
+          {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
@@ -167,7 +167,7 @@ spec:
       {{- if eq .Values.targetSystem "windows" }}
         {{ include "daemonset-volumes-windows" . | nindent 6 }}
       {{- end }}
-      {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
+      {{- if and (eq .Values.targetSystem "linux") }}
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
       {{- end }}
       {{- if eq (include "should-enable-otel-agent" .) "true" }}

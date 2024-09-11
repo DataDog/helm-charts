@@ -57,9 +57,8 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
-    {{- include "fips-envvar" . | nindent 4 }}
-    {{- include "processes-common-envs" . | nindent 4 }}
-
+    {{- include "fips-envvar" . | indent 4 }}
+    {{- include "processes-common-envs" . | indent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -121,7 +120,7 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -208,7 +207,7 @@
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- include "linux-container-host-release-volumemounts" . | indent 4 }}
     {{- if eq (include "should-mount-fips-configmap" .) "true" }}
     {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
     {{- end }}
@@ -220,7 +219,7 @@
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: false # Need RW to write auth token
-    {{- end }}
+    {{- end -}}
     {{- if not .Values.providers.gke.gdc }}
     - name: tmpdir
       mountPath: /tmp
