@@ -599,3 +599,11 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 OTel collector is not supported on GKE Autopilot.
 {{- fail "The OTel collector cannot be run on GKE Autopilot." }}
 {{- end }}
+
+
+{{- if (eq (include "should-enable-otel-agent" .) "true")  }}
+#################################################################
+####               WARNING: Private Beta notice              ####
+#################################################################
+OTel collector is in private beta. Please reach out to your Datadog representative for more information.
+{{- end }}
