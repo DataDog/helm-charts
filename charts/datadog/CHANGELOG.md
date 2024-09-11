@@ -12,7 +12,6 @@
 
 * Add private beta note for OTel Collector.
 
-
 ## 3.70.5
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.1`.
