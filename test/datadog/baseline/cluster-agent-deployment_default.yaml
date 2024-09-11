@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.70.6'
+    helm.sh/chart: 'datadog-3.70.8'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: fe7a9a58193b8e5398a9890ea8b699da694a4d9591065a29dccce76e5093e191
-        checksum/clusteragent-configmap: 080a9b0185ca8c0eeca383fa7ad32a0e104f62cb4e96197bbfc7eeafa4444eb1
-        checksum/api_key: bfb858a331d32e9dc7764e839150b92fd55f186e6124617bf9824fbaccf0f66e
+        checksum/clusteragent_token: 47e0bb24523292d261d4bb3347327d09287799cd8e500b894a917a0023832c13
+        checksum/clusteragent-configmap: 426549105ca904a97575088db5249fe03af78664142431fa065e64ac4d57cf04
+        checksum/api_key: 10434b9613a59d5cfbeefd999d5117428d7b00793e352ceb1de7edfbf89dc4a8
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 9cbfca13f025c4eb025c8f40564b8908b1f9fe4d7b8dad4414173caac26b86f9
+        checksum/install_info: e7ffc3dd31af73f85f3f8a3c3015a42074c42bd9d82cfa0654e4ff82beb9dcf8
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.56.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.56.1"
+        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
         imagePullPolicy: IfNotPresent
         resources:
           {}
