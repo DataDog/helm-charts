@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.70.8
+
+* Increased the default memory request/limit values for APM Auto-Instrumentation init-containers to `128Mi` to prevent Out-of-Memory errors with certain APM library languages. The previous default value in agent version `v5.57.0` was `20Mi`.
+
 ## 3.70.7
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.2`.
