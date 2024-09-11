@@ -3,13 +3,15 @@
   emptyDir: {}
 - name: tmpdir
   emptyDir: {}
+{{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
   name: procdir
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
+{{- end }}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
@@ -181,6 +183,18 @@
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if .Values.providers.gke.gdc }}
+- name: pointerdir
+  emptyDir: {}
+- name: logpodpath
+  emptyDir: {}
+- name: logscontainerspath
+  emptyDir: {}
+{{- if not .Values.datadog.criSocketPath }}
+- name: logdockercontainerpath
+  emptyDir: {}
+{{- end }}
+{{ else }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
@@ -196,7 +210,8 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+{{- end }}
+{{- if and (.Values.datadog.containerRuntimeSupport.enabled) (not .Values.providers.gke.gdc) }}
 - hostPath:
     path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
   name: runtimesocketdir

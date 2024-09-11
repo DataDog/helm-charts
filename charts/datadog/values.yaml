@@ -2214,6 +2214,9 @@ providers:
     # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
     cos: false
 
+    # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
+    gdc: false
+
   eks:
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.

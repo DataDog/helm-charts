@@ -3,7 +3,7 @@
 - name: os-release-file
   mountPath: /host{{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   readOnly: true
-{{- else if not .Values.providers.gke.autopilot}}
+{{- else if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
 - name: os-release-file
   mountPath: /host{{ .Values.datadog.osReleasePath }}
   readOnly: true

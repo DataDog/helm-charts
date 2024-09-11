@@ -29,6 +29,12 @@
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_HOSTNAME
+  valueFrom:
+    fieldRef:
+      fieldPath: spec.nodeName
+{{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
 - name: DD_HOSTNAME_FILE
