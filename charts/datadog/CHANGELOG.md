@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.71.0
+
+* Add `datadog.profiling` section to configure Continuous Profiler. Disabled by default.
+
 ## 3.70.7
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.2`.
@@ -46,7 +50,7 @@
 
 ## 3.69.0
 
-* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector. 
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector.
 
 ## 3.68.2
 
