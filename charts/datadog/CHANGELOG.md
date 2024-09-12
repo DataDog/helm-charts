@@ -2,7 +2,7 @@
 
 ## 3.71.1
 
-* Update `fips.image.tag` to `0.5.4` updating openSSL version to 3.0.15
+* Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
 
 ## 3.71.0
 
