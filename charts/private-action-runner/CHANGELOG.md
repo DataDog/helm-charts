@@ -6,7 +6,7 @@
 
 ### 0.9.1
 
-- Added ability to configure connection credentials in `config.yaml`.
+* Added ability to configure connection credentials in `config.yaml`.
 
 ### 0.9.0
 
