@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.72.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.0`.
+* Increased the default memory request/limit values for APM Auto-Instrumentation init-containers to `100Mi` to prevent Out-of-Memory errors with certain APM library languages. The previous default value in Agent version was `20Mi`.
+
 ## 3.71.1
 
 * Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
