@@ -1,5 +1,9 @@
 # Datadog changelog
 
+### 0.10.0
+
+* Update private action image version to `v0.0.1-alpha30`.
+
 ### 0.9.1
 
 - Added ability to configure connection credentials in `config.yaml`.
