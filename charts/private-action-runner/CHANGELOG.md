@@ -2,7 +2,7 @@
 
 ### 0.10.0
 
-* Update private action image version to `v0.0.1-alpha30`.
+* Update private action image version to `v0.0.1-alpha31`.
 
 ### 0.9.1
 
