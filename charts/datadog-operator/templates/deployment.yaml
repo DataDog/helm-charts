@@ -138,7 +138,7 @@ spec:
               protocol: TCP
           livenessProbe:
           {{- $live := .Values.livenessProbe }}
-          {{ include "probe.http" (dict "settings" $live "path" "/live" "port" .Values.healthPort) | indent 12}}
+          {{- include "probe.http" (dict "settings" $live "path" "/live" "port" .Values.healthPort) | nindent 12}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

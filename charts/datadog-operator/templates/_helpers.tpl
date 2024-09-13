@@ -95,9 +95,9 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 */}}
 {{- define "probe.http" -}}
 {{ if or .settings.httpGet .settings.tcpSocket .settings.exec }}
-{{ toYaml .settings }}
+{{- toYaml .settings -}}
 {{- else -}}
-{{ $handler := dict "httpGet" (dict "port" .port "path" "/healthz/") }}
+{{- $handler := dict "httpGet" (dict "port" .port "path" "/healthz/") -}}
 {{ toYaml (merge $handler .settings) }}
 {{- end -}}
 {{- end -}}
