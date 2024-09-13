@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+* Add `livenessProbe` in `values.yaml`.
+
 ## 2.0.0
 
 * Update Datadog Operator version to 1.8.0.
