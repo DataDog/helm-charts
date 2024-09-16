@@ -29,8 +29,7 @@ runners:
       modes:
         - "workflowAutomation"
         - "appBuilder"
-      appBuilder:
-        port: 9016
+      port: 9016
       actionsAllowlist:
         - com.datadoghq.kubernetes.core.listPod
         - com.datadoghq.http.request
