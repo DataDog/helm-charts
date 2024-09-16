@@ -41,7 +41,7 @@ helm repo update
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha29"}` | Current Datadog Private Action Runner image |
+| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.0.1-alpha31"}` | Current Datadog Private Action Runner image |
 | connectionCredentials.basicAuth.credentials | list | `[]` | List of credentials for Basic Auth |
 | connectionCredentials.jenkinsAuth.credentials | list | `[]` | List of credentials for Jenkins Auth |
 | connectionCredentials.postgresAuth.credentials | list | `[]` | List of credentials for Postgres Auth |
