@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.11.0
+
+* Added top level `port` configuration option, superseding `appBuilder.port`. Update the private action image to the beta image, `v0.1.0-beta`.
+
 ### 0.10.0
 
 * Update private action image version to `v0.0.1-alpha31`.
