@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.13.0
+
+* Add support for `kubernetesActions`.
+
 ## 0.12.0
 
 * Introduced `credentialFiles` key in `values.yaml` for secret management. Deprecated the `connectionCredentials` key

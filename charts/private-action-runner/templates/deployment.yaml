@@ -20,7 +20,7 @@ spec:
         app: {{ include "chart.deploymentName" $runner.name }}
         service: {{ include "chart.serviceName" $runner.name }}
       annotations:
-        config-hash: {{ $runner.config | toJson | sha256sum }}
+        config-hash: {{ $runner | toJson | sha256sum }}
     spec:
       serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
       tolerations:
