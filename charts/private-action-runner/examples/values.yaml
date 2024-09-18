@@ -1,5 +1,16 @@
 runners:
   - name: "custom-runner"
+    # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
+    config:
+      ddBaseURL: "https://app.datadoghq.com"
+      urn: "CHANGE_ME_URN_FROM_CONFIG"
+      privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
+      modes:
+        - appBuilder
+        - workflowAutomation
+      port: 9016
+      actionsAllowlist:
+        - com.datadoghq.http.request
     kubernetesPermissions:
       - apiGroups:
           - ""
@@ -23,18 +34,6 @@ runners:
           - "patch"
           - "update"
           - "delete"
-    config:
-      urn: "URN_FROM_CONFIG"
-      privateKey: "PRIVATE_KEY_FROM_CONFIG"
-      modes:
-        - "workflowAutomation"
-        - "appBuilder"
-      appBuilder:
-        port: 9016
-      actionsAllowlist:
-        - com.datadoghq.kubernetes.core.listPod
-        - com.datadoghq.http.request
-        - com.datadoghq.jenkins.buildJenkinsJob
 
 connectionCredentials:
   basicAuth:
