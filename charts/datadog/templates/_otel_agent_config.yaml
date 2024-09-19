@@ -1,5 +1,5 @@
 {{- define "otel-agent-config-configmap-content" -}}
-otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Values.datadog.otelCollector.config | indent 4 }}
+otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Values.datadog.otelCollector.config }}
   {{- else }} |
     receivers:
       prometheus:
