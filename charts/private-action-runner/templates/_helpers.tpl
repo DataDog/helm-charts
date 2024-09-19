@@ -5,65 +5,74 @@
 {{- define "chart.serviceName" }} "private-action-runner-{{.}}-service" {{ end }}
 {{- define "chart.secretName" }} "private-action-runner-{{.}}-secrets" {{ end }}
 
+{{- define "chart.credentialFiles" -}}
+{{- if hasKey $.Values "credentialFiles" }}
+{{- range $c := $.Values.credentialFiles }}
+{{ $c.fileName }}: |
+{{ $c.data | indent 2 }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "chart.basicAuth" -}}
-{{- if hasKey $.Values.connectionCredentials.basicAuth "credentials" }}
+{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.basicAuth $.Values.connectionCredentials.basicAuth.credentials }}
 {{- range $c := $.Values.connectionCredentials.basicAuth.credentials }}
 {{ $c.fileName }}: |
   {
-    auth_type: 'Basic Auth',
-    credentials: [
+    "auth_type": "Basic Auth",
+    "credentials": [
       {
-        username: {{ $c.username | quote }},
-        password: {{ $c.password | quote }}
-      },
-    ],
+        "username": {{ $c.username | quote }},
+        "password": {{ $c.password | quote }}
+      }
+    ]
   }
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "chart.tokenAuth" -}}
-{{- if hasKey $.Values.connectionCredentials.tokenAuth "credentials" }}
+{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.tokenAuth $.Values.connectionCredentials.tokenAuth.credentials }}
 {{- range $c := $.Values.connectionCredentials.tokenAuth.credentials }}
 {{ $c.fileName }}: |
   {
-    auth_type: 'Token Auth',
-    credentials: [
+    "auth_type": "Token Auth",
+    "credentials": [
       {
-        tokenName: {{ $c.tokenName | quote }},
-        tokenValue: {{ $c.tokenValue | quote }}
-      },
-    ],
+        "tokenName": {{ $c.tokenName | quote }},
+        "tokenValue": {{ $c.tokenValue | quote }}
+      }
+    ]
   }
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "chart.jenkinsAuth" -}}
-{{- if hasKey $.Values.connectionCredentials.jenkinsAuth "credentials" }}
+{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.jenkinsAuth $.Values.connectionCredentials.jenkinsAuth.credentials }}
 {{- range $c := $.Values.connectionCredentials.jenkinsAuth.credentials }}
 {{ $c.fileName }}: |
   {
-    auth_type: 'Token Auth',
-    credentials: [
+    "auth_type": "Token Auth",
+    "credentials": [
       {
-        username: {{ $c.username | quote }},
-        token: {{ $c.token | quote }},
-        domain: {{ $c.domain | quote }}
-      },
-    ],
+        "username": {{ $c.username | quote }},
+        "token": {{ $c.token | quote }},
+        "domain": {{ $c.domain | quote }}
+      }
+    ]
   }
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "chart.postgresAuth" -}}
-{{- if hasKey $.Values.connectionCredentials.postgresAuth "credentials" }}
+{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.postgresAuth $.Values.connectionCredentials.postgresAuth.credentials }}
 {{- range $c := $.Values.connectionCredentials.postgresAuth.credentials }}
 {{ $c.fileName }}: |
   {
-    auth_type: 'Token Auth',
-    credentials: [
+    "auth_type": "Token Auth",
+    "credentials": [
       {
         "tokenName": "host",
         "tokenValue": {{ $c.host | quote }}
@@ -96,12 +105,11 @@
     {{ end }}
     {{- if $c.searchPath }}
       {
-      {
         "tokenName": "searchPath",
         "tokenValue": {{ $c.searchPath | quote }}
       }
     {{ end }}
-    ],
+    ]
   }
 {{- end -}}
 {{- end -}}

@@ -35,34 +35,125 @@ runners:
           - "update"
           - "delete"
 
-connectionCredentials:
-  basicAuth:
-    credentials:
-      - fileName: "http_basic_creds.json"
-        username: "username"
-        password: "password"
-      - fileName: "another_http_basic_creds.json"
-        username: "another_username"
-        password: "another_password"
-  tokenAuth:
-    credentials:
-      - fileName: "http_token_creds.json"
-        tokenName: "name"
-        tokenValue: "value"
-  jenkinsAuth:
-    credentials:
-      - fileName: "jenkins_creds.json"
-        username: "username"
-        token: "token"
-        domain: "domain"
-  postgresAuth:
-    credentials:
-      - fileName: "creds.pgpass"
-        host: "host"
-        port: "port"
-        user: "user"
-        password: "password"
-        database: "database"
-        sslMode: "sslMode"
-        applicationName: "applicationName"
-        searchPath: "searchPath"
+# credential files provided here will be mounted in /etc/dd-action-runner/
+# it is safe to remove unneeded files from this section
+credentialFiles:
+  - fileName: "http_basic_creds.json"
+    data: |
+      {
+        "auth_type": "Basic Auth",
+        "credentials": [
+          {
+            "username": "USERNAME",
+            "password": "PASSWORD"
+          }
+        ]
+      }
+  - fileName: "http_token_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "TOKEN1",
+            "tokenValue": "VALUE1"
+          }
+        ]
+      }
+  - fileName: "jenkins_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "username": "localhost:7233",
+            "token": "TOKEN",
+            "domain": "DOMAIN"
+          }
+        ]
+      }
+  - fileName: "creds.pgpass"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "host",
+            "tokenValue": "HOST"
+          },
+          {
+            "tokenName": "port",
+            "tokenValue": "5432"
+          },
+          {
+            "tokenName": "user",
+            "tokenValue": "USER"
+          },
+          {
+            "tokenName": "password",
+            "tokenValue": "PASSWORD"
+          },
+          {
+            "tokenName": "database",
+            "tokenValue": "DATABASE"
+          },
+          {
+            "tokenName": "sslmode",
+            "tokenValue": "verify-full"
+          },
+          {
+            "tokenName": "applicationName",
+            "tokenValue": "OPTIONAL: application name"
+          },
+          {
+            "tokenName": "searchPath",
+            "tokenValue": "OPTIONAL: search path"
+          }
+        ]
+      }
+  - fileName: "temporal_mtls_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "serverAddress",
+            "tokenValue": "SERVERADDRESS"
+          },
+          {
+            "tokenName": "serverNameOverride",
+            "tokenValue": "SERVERNAMEOERRIDE"
+          },
+          {
+            "tokenName": "serverRootCACertificate",
+            "tokenValue": "SERVERROOTCACERTIFICATE"
+          },
+          {
+            "tokenName": "clientCertPairCrt",
+            "tokenValue": "CLIENTCERTPAIRCRT"
+          },
+          {
+            "tokenName": "clientCertPairKey",
+            "tokenValue": "CLIENTCERTPAIRKEY"
+          }
+        ]
+      }
+  - fileName: "temporal_tls_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "serverAddress",
+            "tokenValue": "SERVERADDRESS"
+          },
+          {
+            "tokenName": "serverNameOverride",
+            "tokenValue": "SERVERNAMEOERRIDE"
+          },
+          {
+            "tokenName": "serverRootCACertificate",
+            "tokenValue": "CLIENTCERTPAIRKEY"
+          }
+        ]
+      }
