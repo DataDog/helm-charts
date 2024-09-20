@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.11.0](https://img.shields.io/badge/Version-0.11.0-informational?style=flat-square) ![AppVersion: v0.1.0-beta](https://img.shields.io/badge/AppVersion-v0.1.0--beta-informational?style=flat-square)
+![Version: 0.12.0](https://img.shields.io/badge/Version-0.12.0-informational?style=flat-square) ![AppVersion: v0.1.0-beta](https://img.shields.io/badge/AppVersion-v0.1.0--beta-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -25,7 +25,7 @@ helm repo update
 ## Use this chart with connection credentials
 1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners).
 2. Create a new Private Action Runner and follow the instructions for Kubernetes.
-3. Configure [connection credentials](https://docs.datadoghq.com/service_management/workflows/private_actions/private_action_credentials) for the selected private actions via `config.yaml`.
+3. Configure [connection credentials](https://docs.datadoghq.com/service_management/workflows/private_actions/private_action_credentials) for the selected private actions via `values.yaml`.
 
 ## To use Kubernetes actions
 1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
@@ -42,10 +42,7 @@ helm repo update
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.1.0-beta"}` | Current Datadog Private Action Runner image |
-| connectionCredentials.basicAuth.credentials | list | `[]` | List of credentials for Basic Auth |
-| connectionCredentials.jenkinsAuth.credentials | list | `[]` | List of credentials for Jenkins Auth |
-| connectionCredentials.postgresAuth.credentials | list | `[]` | List of credentials for Postgres Auth |
-| connectionCredentials.tokenAuth.credentials | list | `[]` | List of credentials for Token Auth |
+| credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runners[0].config | object | `{"actionsAllowlist":["com.datadoghq.kubernetes.core.listPod"],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"PRIVATE_KEY_FROM_CONFIG","urn":"URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `["com.datadoghq.kubernetes.core.listPod"]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |

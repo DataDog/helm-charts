@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 0.12.0
+
+* Introduced `credentialFiles` key in `values.yaml` for secret management. Deprecated the `connectionCredentials` key
+* Fixed issue where specifying connection secrets under `connectionCredentials` can result in the Helm chart generating malformed JSON
+
 ## 0.11.0
 
 * Added top level `port` configuration option, superseding `appBuilder.port`. Update the private action image to the beta image, `v0.1.0-beta`.
