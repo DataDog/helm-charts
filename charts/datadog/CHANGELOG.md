@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.71.2
+
+* Add values parameter that allows to specify extra ports for the agent service
+
 ## 3.71.1
 
 * Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
