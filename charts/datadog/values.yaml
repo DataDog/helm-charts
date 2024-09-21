@@ -534,7 +534,7 @@ datadog:
       - containerPort: "4318"
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
-    config: {}
+    config: ""
   ## OTLP ingest related configuration
   otlp:
     receiver:
