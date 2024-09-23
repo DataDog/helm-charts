@@ -18,4 +18,3 @@ charts/datadog/templates/system-probe-configmap.yaml   @DataDog/ebpf-platform @D
 charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
 charts/private-action-runner                           @DataDog/action-platform
-test/private-action-runner                             @DataDog/action-platform
