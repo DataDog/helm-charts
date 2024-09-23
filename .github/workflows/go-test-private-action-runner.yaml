@@ -31,4 +31,4 @@ jobs:
     - name: run Go tests
       run: |
         helm dependency build ./charts/private-action-runner
-        make unit-test-operator
+        make unit-test-private-action-runner
