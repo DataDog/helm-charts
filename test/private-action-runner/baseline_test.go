@@ -1,22 +1,19 @@
 package private_action_runner
 
 import (
-	appsv1 "k8s.io/api/apps/v1"
-	rbacv1 "k8s.io/api/rbac/v1"
+	"github.com/gruntwork-io/terratest/modules/helm"
 	"testing"
 
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
-	corev1 "k8s.io/api/core/v1"
 )
 
 func Test_baseline_manifests(t *testing.T) {
 	tests := []struct {
-		name                 string
-		command              common.HelmCommand
-		baselineManifestPath string
-		assertions           func(t *testing.T, baselineManifestPath, manifest string)
+		name         string
+		command      common.HelmCommand
+		snapshotName string
+		assertions   func(t *testing.T, manifest, snapshotName string)
 	}{
 		{
 			name: "Private Action Runner default",
@@ -26,8 +23,8 @@ func Test_baseline_manifests(t *testing.T) {
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				Overrides:   map[string]string{},
 			},
-			baselineManifestPath: "./baseline/Private_Action_Runner_default.yaml",
-			assertions:           verifyPrivateActionRunner,
+			snapshotName: "default",
+			assertions:   verifyPrivateActionRunner,
 		},
 		{
 			name: "Enable kubernetes actions",
@@ -45,8 +42,8 @@ func Test_baseline_manifests(t *testing.T) {
 					"runners[0].kubernetesPermissions[0].verbs":        "{list,get,create,patch,update,delete}",
 				},
 			},
-			baselineManifestPath: "./baseline/Kubernetes_Actions.yaml",
-			assertions:           verifyPrivateActionRunner,
+			snapshotName: "enable-kubernetes-actions",
+			assertions:   verifyPrivateActionRunner,
 		},
 	}
 
@@ -56,26 +53,15 @@ func Test_baseline_manifests(t *testing.T) {
 			assert.Nil(t, err, "couldn't render template")
 			t.Log("update baselines", common.UpdateBaselines)
 			if common.UpdateBaselines {
-				common.WriteToFile(t, tt.baselineManifestPath, manifest)
+				helm.UpdateSnapshot(t, &helm.Options{}, manifest, tt.snapshotName)
 			}
 
-			tt.assertions(t, tt.baselineManifestPath, manifest)
+			tt.assertions(t, manifest, tt.snapshotName)
 		})
 	}
 }
 
-func verifyPrivateActionRunner(t *testing.T, baselineManifestPath, manifest string) {
-	verifyBaseline(t, baselineManifestPath, manifest, appsv1.Deployment{}, appsv1.Deployment{})
-	verifyBaseline(t, baselineManifestPath, manifest, rbacv1.ClusterRole{}, rbacv1.ClusterRole{})
-	verifyBaseline(t, baselineManifestPath, manifest, rbacv1.RoleBinding{}, rbacv1.RoleBinding{})
-	verifyBaseline(t, baselineManifestPath, manifest, corev1.Secret{}, corev1.Secret{})
-	verifyBaseline(t, baselineManifestPath, manifest, corev1.Service{}, corev1.Service{})
-	verifyBaseline(t, baselineManifestPath, manifest, corev1.ServiceAccount{}, corev1.ServiceAccount{})
-}
-
-func verifyBaseline[T any](t *testing.T, baselineManifestPath, manifest string, baseline, actual T) {
-	common.Unmarshal(t, manifest, &actual)
-	common.LoadFromFile(t, baselineManifestPath, &baseline)
-
-	assert.True(t, cmp.Equal(baseline, actual, cmp.Options{}), cmp.Diff(baseline, actual))
+func verifyPrivateActionRunner(t *testing.T, manifest string, snapshotName string) {
+	diffCount := helm.DiffAgainstSnapshot(t, &helm.Options{}, manifest, snapshotName)
+	assert.Equal(t, 0, diffCount, "manifests are different")
 }
