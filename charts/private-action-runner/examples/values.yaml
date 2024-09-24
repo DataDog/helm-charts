@@ -11,30 +11,45 @@ runners:
       port: 9016
       actionsAllowlist:
         - com.datadoghq.http.request
+    # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
+    kubernetesActions:
+      controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart"]
+      replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      configMaps: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      endpoints: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      events: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      limitRanges: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      namespaces: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      nodes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      persistentVolumes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      persistentVolumeClaims: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      pods: ["get", "list" ] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      podTemplates: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      replicationControllers: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      resourceQuotas: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      services: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      serviceAccounts: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      customResourceDefinitions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
     kubernetesPermissions:
-      - apiGroups:
-          - ""
-        resources:
-          - "pods"
-        verbs:
-          - "list"
-          - "get"
-          - "create"
-          - "patch"
-          - "update"
-          - "delete"
-      - apiGroups:
-          - "apps"
-        resources:
-          - "deployments"
-        verbs:
-          - "list"
-          - "get"
-          - "create"
-          - "patch"
-          - "update"
-          - "delete"
-
+    # CRD example
+#      - apiGroups:
+#          - "example.com"
+#        resources:
+#          - "tests"
+#        verbs:
+#          - "list"
+#          - "get"
+#          - "create"
+#          - "patch"
+#          - "update"
+#          - "delete"
 # credential files provided here will be mounted in /etc/dd-action-runner/
 # it is safe to remove unneeded files from this section
 credentialFiles:
