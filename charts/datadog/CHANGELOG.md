@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.72.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
+
 ## 3.71.2
 
 * Add `datadog.kubernetesResourcesLabelsAsTags` to assign Kubernetes Resources Labels as tags in the tagger
