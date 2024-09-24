@@ -254,6 +254,28 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
+  # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
+  kubernetesResourcesLabelsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-label
+  #    pods:
+  #      x-ref: reference
+  #    namespaces:
+  #      kubernetes.io/metadata.name: name-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_LABEL>: <DATADOG_TAG_KEY>
+
+  # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
+  kubernetesResourcesAnnotationsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-annotation
+  #    pods:
+  #      x-ann: annotation-reference
+  #    namespaces:
+  #      stale-annotation: annotation-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_ANNOTATION>: <DATADOG_TAG_KEY>
+
   originDetectionUnified:
     # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
     enabled: false
