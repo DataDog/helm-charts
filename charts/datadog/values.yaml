@@ -254,6 +254,28 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
+  # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
+  kubernetesResourcesLabelsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-label
+  #    pods:
+  #      x-ref: reference
+  #    namespaces:
+  #      kubernetes.io/metadata.name: name-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_LABEL>: <DATADOG_TAG_KEY>
+
+  # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
+  kubernetesResourcesAnnotationsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-annotation
+  #    pods:
+  #      x-ann: annotation-reference
+  #    namespaces:
+  #      stale-annotation: annotation-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_ANNOTATION>: <DATADOG_TAG_KEY>
+
   originDetectionUnified:
     # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
     enabled: false
@@ -561,6 +583,26 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+
+  ## Continuous Profiler configuration
+  ##
+  ## Continuous Profiler is disabled by default and can be enabled by setting the `enabled` field to
+  ## either `auto` or `true` value under the `datadog.profiling` section.
+  ## Manually adding the `DD_PROFILING_ENABLED` variable to a pod will take precedence over the
+  ## value in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed,
+  ## either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation`
+  ## section).
+  ## It requires Datadog Cluster Agent 7.57.0+.
+  profiling:
+    # datadog.profiling.enabled -- Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED`
+    # environment variable with the same value to all pods in the cluster
+    # Valid values are:
+    # - false: Profiler is turned off and can not be turned on by other means.
+    # - null: Profiler is turned off, but can be turned on by other means.
+    # - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling.
+    # - true: Profiler is turned on.
+    enabled: null
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
@@ -957,7 +999,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.56.2
+    tag: 7.57.2
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1407,7 +1449,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.4
+    tag: 1.1.5
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1450,7 +1492,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.56.2
+    tag: 7.57.2
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1956,7 +1998,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.56.2
+    tag: 7.57.2
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

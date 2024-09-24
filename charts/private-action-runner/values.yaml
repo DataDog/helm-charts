@@ -6,107 +6,81 @@ common:
   # -- Current Datadog Private Action Runner image
   image:
     repository: us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner
-    tag: v0.0.1-alpha29
+    tag: v0.1.1-beta
 
 runners:
   # runners[0].name -- Name of the Datadog Private Action Runner
   - name: "default"
     # -- Number of pod instances for the Datadog Private Action Runner
     replicas: 1
-    # -- List of Kubernetes permissions that the Datadog Private Action Runner has
-    kubernetesPermissions:
-      - apiGroups:
-          - ""
-        resources:
-          - "pods"
-        verbs:
-          - "list"
-          - "get"
-          # - "create"
-          # - "patch"
-          # - "update"
-          # - "delete"
-      - apiGroups:
-          - "apps"
-        resources:
-          - "deployments"
-        verbs:
-          - "list"
-          - "get"
-          # - "create"
-          # - "patch"
-          # - "update"
-          # - "delete"
     # -- Configuration for the Datadog Private Action Runner
     config:
       # -- Base URL of the Datadog app
       ddBaseURL: "https://app.datadoghq.com"
       # -- The runner's URN from the enrollment page
-      urn: "URN_FROM_CONFIG"
+      urn: "CHANGE_ME_URN_FROM_CONFIG"
       # -- The runner's privateKey from the enrollment page
-      privateKey: "PRIVATE_KEY_FROM_CONFIG"
+      privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
       # -- Modes that the runner can run in
       modes:
         - "workflowAutomation"
         - "appBuilder"
-      appBuilder:
-        # -- Required port for App Builder Mode
-        port: 9016
+      # -- Port for HTTP server liveness checks and App Builder mode
+      port: 9016
       # -- List of actions that the Datadog Private Action Runner is allowed to execute
-      actionsAllowlist:
-        - com.datadoghq.kubernetes.core.listPod
-        # you can also add from the following list
-        # - com.datadoghq.http.request
-        # - com.datadoghq.jenkins.buildJenkinsJob
-        # - com.datadoghq.jenkins.deleteJenkinsJob
-        # - com.datadoghq.jenkins.getJobStatus
-        # - com.datadoghq.kubernetes.apps.createDeployment
-        # - com.datadoghq.kubernetes.apps.getControllerRevision
-        # - com.datadoghq.kubernetes.apps.getDaemonSet
-        # - com.datadoghq.kubernetes.apps.getDeployment
-        # - com.datadoghq.kubernetes.apps.getReplicaSet
-        # - com.datadoghq.kubernetes.apps.getStatefulSet
-        # - com.datadoghq.kubernetes.apps.listControllerRevision
-        # - com.datadoghq.kubernetes.apps.listDaemonSet
-        # - com.datadoghq.kubernetes.apps.listDeployment
-        # - com.datadoghq.kubernetes.apps.listReplicaSet
-        # - com.datadoghq.kubernetes.apps.listStatefulSet
-        # - com.datadoghq.kubernetes.apps.restartDeployment
-        # - com.datadoghq.kubernetes.apps.updateDeployment
-        # - com.datadoghq.kubernetes.apps.updateReplicaSet
-        # - com.datadoghq.kubernetes.core.createNode
-        # - com.datadoghq.kubernetes.core.createPod
-        # - com.datadoghq.kubernetes.core.deleteMultiplePods
-        # - com.datadoghq.kubernetes.core.deletePod
-        # - com.datadoghq.kubernetes.core.getConfigMap
-        # - com.datadoghq.kubernetes.core.getEndpoints
-        # - com.datadoghq.kubernetes.core.getEvent
-        # - com.datadoghq.kubernetes.core.getLimitRange
-        # - com.datadoghq.kubernetes.core.getNamespace
-        # - com.datadoghq.kubernetes.core.getNode
-        # - com.datadoghq.kubernetes.core.getPersistentVolume
-        # - com.datadoghq.kubernetes.core.getPersistentVolumeClaim
-        # - com.datadoghq.kubernetes.core.getPod
-        # - com.datadoghq.kubernetes.core.getPodTemplate
-        # - com.datadoghq.kubernetes.core.getReplicationController
-        # - com.datadoghq.kubernetes.core.getResourceQuota
-        # - com.datadoghq.kubernetes.core.getService
-        # - com.datadoghq.kubernetes.core.getServiceAccount
-        # - com.datadoghq.kubernetes.core.listConfigMap
-        # - com.datadoghq.kubernetes.core.listEndpoints
-        # - com.datadoghq.kubernetes.core.listEvent
-        # - com.datadoghq.kubernetes.core.listLimitRange
-        # - com.datadoghq.kubernetes.core.listNamespace
-        # - com.datadoghq.kubernetes.core.listNode
-        # - com.datadoghq.kubernetes.core.listPersistentVolume
-        # - com.datadoghq.kubernetes.core.listPersistentVolumeClaim
-        # - com.datadoghq.kubernetes.core.listPodTemplate
-        # - com.datadoghq.kubernetes.core.listReplicationController
-        # - com.datadoghq.kubernetes.core.listResourceQuota
-        # - com.datadoghq.kubernetes.core.listService
-        # - com.datadoghq.kubernetes.core.listServiceAccount
-        # - com.datadoghq.kubernetes.core.updatePod
-        # - com.datadoghq.postgresql.select
-        # - com.datadoghq.temporal.getWorkflowResult
-        # - com.datadoghq.temporal.listWorkflows
-        # - com.datadoghq.temporal.runWorkflow
+      actionsAllowlist: []
+    # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
+    kubernetesActions:
+      # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      controllerRevisions: []
+      # -- Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      daemonSets: []
+      # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart")
+      deployments: []
+      # -- Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      replicaSets: []
+      # -- Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      statefulSets: []
+      # -- Actions related to cronJobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      cronJobs: []
+      # -- Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      configMaps: []
+      # -- Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      endpoints: []
+      # -- Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      events: []
+      # -- Actions related to limitRanges (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      limitRanges: []
+      # -- Actions related to namespaces (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      namespaces: []
+      # -- Actions related to nodes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      nodes: []
+      # -- Actions related to persistentVolumes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      persistentVolumes: []
+      # -- Actions related to persistentVolumeClaims (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      persistentVolumeClaims: []
+      # -- Actions related to pods (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      pods: ["get", "list"]
+      # -- Actions related to podTemplates (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      podTemplates: []
+      # -- Actions related to replicationControllers (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      replicationControllers: []
+      # -- Actions related to resourceQuotas (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      resourceQuotas: []
+      # -- Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      services: []
+      # -- Actions related to serviceAccounts (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      serviceAccounts: []
+      # -- Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      customResourceDefinitions: []
+      # -- Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+      jobs: []
+      # -- Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`.
+      customObjects: []
+    # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
+    kubernetesPermissions: []
+
+# -- List of credential files to be used by the Datadog Private Action Runner
+credentialFiles: []
+# see examples/values.yaml for examples on how to specify secrets
+# credential files provided here will be mounted in /etc/dd-action-runner/
