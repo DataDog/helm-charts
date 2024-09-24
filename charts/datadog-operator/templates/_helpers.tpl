@@ -94,7 +94,7 @@ Returns probe definition based on user settings and default HTTP port.
 Accepts a map with `port` (default port) and `settings` (probe settings).
 */}}
 {{- define "probe.http" -}}
-{{ if or .settings.httpGet .settings.tcpSocket .settings.exec }}
+{{ if or .settings.httpGet }}
 {{- toYaml .settings -}}
 {{- else -}}
 {{- $handler := dict "httpGet" (dict "port" .port "path" "/healthz/") -}}
