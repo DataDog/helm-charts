@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.72.1
+
+* Add configuration option for `datadog.KubernetesEvents.filteringEnabled` to only include pre-defined allowed events. Disabled by default.
+
 ## 3.72.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.57.2`.

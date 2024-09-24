@@ -391,6 +391,8 @@ datadog:
 
   # Configure Kubernetes events collection
   kubernetesEvents:
+    # datadog.kubernetesEvents.filteringEnabled -- Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+).
+    filteringEnabled: false
     # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
     unbundleEvents: false
     # datadog.kubernetesEvents.collectedEventTypes -- Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true.
