@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.72.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
+
 ## 3.71.1
 
 * Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
