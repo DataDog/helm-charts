@@ -750,6 +750,8 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.unbundleEvents | bool | `false` | Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+). |
+| datadog.kubernetesResourcesAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Annotations to Datadog Tags |
+| datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. Can be: * "lease" / "leases". Only supported in agent 7.47+ * "configmap" / "configmaps". "" to automatically detect which one to use. |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |

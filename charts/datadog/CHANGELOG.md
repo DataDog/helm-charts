@@ -4,6 +4,11 @@
 
 * Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
 
+## 3.71.2
+
+* Add `datadog.kubernetesResourcesLabelsAsTags` to assign Kubernetes Resources Labels as tags in the tagger
+* Add `datadog.kubernetesResourcesAnnotationsAsTags` to assign Kuberenetes Resources Annotations as tags in the tagger
+
 ## 3.71.1
 
 * Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
