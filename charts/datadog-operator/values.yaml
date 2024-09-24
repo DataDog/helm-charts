@@ -180,9 +180,10 @@ volumeMounts: []
 # livenessProbe -- Add default livenessProbe settings
 livenessProbe:
   periodSeconds: 10
-  httpGet:
-    path: /healthz/
-    port: 8081
+  initialDelaySeconds: 15
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 6
 
 # healthPort -- Port number to use in the Operator for the healthz endpoint
 healthPort: 8081
