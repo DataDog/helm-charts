@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.73.0
+
+* Add Azure Container Registry, enabled automatically when targeting `us3.datadoghq.com`.
+
 ## 3.72.1
 
 * Add configuration option for `datadog.KubernetesEvents.filteringEnabled` to only include pre-defined allowed events. Disabled by default.
