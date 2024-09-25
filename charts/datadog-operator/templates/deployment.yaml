@@ -137,8 +137,12 @@ spec:
               containerPort: {{ .Values.metricsPort }}
               protocol: TCP
           livenessProbe:
-          {{- $live := .Values.livenessProbe }}
-          {{- include "probe.http" (dict "settings" $live "path" "/live" "port" .Values.healthPort) | nindent 12}}
+            httpGet:
+              path: /healthz/
+              port: 8081
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

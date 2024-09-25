@@ -65,14 +65,10 @@ spec:
               containerPort: 8383
               protocol: TCP
           livenessProbe:
-            failureThreshold: 6
             httpGet:
               path: /healthz/
               port: 8081
-            initialDelaySeconds: 15
             periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 5
           resources:
             {}
           volumeMounts:

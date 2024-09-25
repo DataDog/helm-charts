@@ -2,7 +2,7 @@
 
 ## 2.0.1
 
-* Add `livenessProbe` in `values.yaml`.
+* Make Operator `livenessProbe` configurable.
 
 ## 2.0.0
 

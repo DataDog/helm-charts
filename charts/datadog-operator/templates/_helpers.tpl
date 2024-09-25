@@ -88,16 +88,3 @@ Check operator image tag version.
 {{ "1.8.0" }}
 {{- end -}}
 {{- end -}}
-
-{{/*
-Returns probe definition based on user settings and default HTTP port.
-Accepts a map with `port` (default port) and `settings` (probe settings).
-*/}}
-{{- define "probe.http" -}}
-{{ if or .settings.httpGet }}
-{{- toYaml .settings -}}
-{{- else -}}
-{{- $handler := dict "httpGet" (dict "port" .port "path" "/healthz/") -}}
-{{ toYaml (merge $handler .settings) }}
-{{- end -}}
-{{- end -}}

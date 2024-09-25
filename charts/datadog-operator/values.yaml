@@ -177,13 +177,6 @@ volumeMounts: []
 #     mountPath: <CONTAINER_PATH>
 #     readOnly: true
 
-# livenessProbe -- Add default livenessProbe settings
-livenessProbe:
+# livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
+livenessProbe: 
   periodSeconds: 10
-  initialDelaySeconds: 15
-  timeoutSeconds: 5
-  successThreshold: 1
-  failureThreshold: 6
-
-# healthPort -- Port number to use in the Operator for the healthz endpoint
-healthPort: 8081
