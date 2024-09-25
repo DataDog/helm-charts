@@ -178,5 +178,5 @@ volumeMounts: []
 #     readOnly: true
 
 # livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
-livenessProbe: 
+livenessProbe:
   periodSeconds: 10
