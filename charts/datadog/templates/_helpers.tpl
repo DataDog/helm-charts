@@ -295,6 +295,8 @@ eu.gcr.io/datadoghq
 public.ecr.aws/datadog
 {{- else if eq .datadog.site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
+{{- else if eq .datadog.site "us3.datadoghq.com" -}}
+datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
 {{- end -}}
