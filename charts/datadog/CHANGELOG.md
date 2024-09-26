@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.73.1
+
+* Add support for overlayfs direct scan for SBOMs.
+
 ## 3.73.0
 
 * Add Azure Container Registry, enabled automatically when targeting `us3.datadoghq.com`.

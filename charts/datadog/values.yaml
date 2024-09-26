@@ -821,6 +821,9 @@ datadog:
       # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
       uncompressedLayersSupport: false
 
+      # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
+      overlayFSDirectScan: false
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
