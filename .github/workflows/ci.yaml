@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "charts/**"
+    paths-ignore:
+      - 'test/**'
 
 jobs:
   changed:

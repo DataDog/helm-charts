@@ -1,0 +1,174 @@
+runners:
+  - name: "custom-runner"
+    # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
+    config:
+      ddBaseURL: "https://app.datadoghq.com"
+      urn: "CHANGE_ME_URN_FROM_CONFIG"
+      privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
+      modes:
+        - appBuilder
+        - workflowAutomation
+      port: 9016
+      actionsAllowlist:
+        - com.datadoghq.http.request
+    # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
+    kubernetesActions:
+      controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart"]
+      replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      configMaps: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      endpoints: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      events: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      limitRanges: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      namespaces: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      nodes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      persistentVolumes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      persistentVolumeClaims: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      pods: ["get", "list" ] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      podTemplates: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      replicationControllers: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      resourceQuotas: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      services: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      serviceAccounts: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      customResourceDefinitions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+      customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
+    kubernetesPermissions:
+    # CRD example
+#      - apiGroups:
+#          - "example.com"
+#        resources:
+#          - "tests"
+#        verbs:
+#          - "list"
+#          - "get"
+#          - "create"
+#          - "patch"
+#          - "update"
+#          - "delete"
+# credential files provided here will be mounted in /etc/dd-action-runner/
+# it is safe to remove unneeded files from this section
+credentialFiles:
+  - fileName: "http_basic_creds.json"
+    data: |
+      {
+        "auth_type": "Basic Auth",
+        "credentials": [
+          {
+            "username": "USERNAME",
+            "password": "PASSWORD"
+          }
+        ]
+      }
+  - fileName: "http_token_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "TOKEN1",
+            "tokenValue": "VALUE1"
+          }
+        ]
+      }
+  - fileName: "jenkins_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "username": "localhost:7233",
+            "token": "TOKEN",
+            "domain": "DOMAIN"
+          }
+        ]
+      }
+  - fileName: "creds.pgpass"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "host",
+            "tokenValue": "HOST"
+          },
+          {
+            "tokenName": "port",
+            "tokenValue": "5432"
+          },
+          {
+            "tokenName": "user",
+            "tokenValue": "USER"
+          },
+          {
+            "tokenName": "password",
+            "tokenValue": "PASSWORD"
+          },
+          {
+            "tokenName": "database",
+            "tokenValue": "DATABASE"
+          },
+          {
+            "tokenName": "sslmode",
+            "tokenValue": "verify-full"
+          },
+          {
+            "tokenName": "applicationName",
+            "tokenValue": "OPTIONAL: application name"
+          },
+          {
+            "tokenName": "searchPath",
+            "tokenValue": "OPTIONAL: search path"
+          }
+        ]
+      }
+  - fileName: "temporal_mtls_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "serverAddress",
+            "tokenValue": "SERVERADDRESS"
+          },
+          {
+            "tokenName": "serverNameOverride",
+            "tokenValue": "SERVERNAMEOERRIDE"
+          },
+          {
+            "tokenName": "serverRootCACertificate",
+            "tokenValue": "SERVERROOTCACERTIFICATE"
+          },
+          {
+            "tokenName": "clientCertPairCrt",
+            "tokenValue": "CLIENTCERTPAIRCRT"
+          },
+          {
+            "tokenName": "clientCertPairKey",
+            "tokenValue": "CLIENTCERTPAIRKEY"
+          }
+        ]
+      }
+  - fileName: "temporal_tls_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "serverAddress",
+            "tokenValue": "SERVERADDRESS"
+          },
+          {
+            "tokenName": "serverNameOverride",
+            "tokenValue": "SERVERNAMEOERRIDE"
+          },
+          {
+            "tokenName": "serverRootCACertificate",
+            "tokenValue": "CLIENTCERTPAIRKEY"
+          }
+        ]
+      }

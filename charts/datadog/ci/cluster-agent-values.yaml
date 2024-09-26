@@ -6,6 +6,7 @@ datadog:
   clusterChecks:
     enabled: true
   kubernetesEvents:
+    filteringEnabled: true
     unbundleEvents: true
   clusterTagger:
     collectKubernetesTags: true
