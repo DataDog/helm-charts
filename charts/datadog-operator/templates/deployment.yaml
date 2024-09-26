@@ -140,7 +140,9 @@ spec:
             httpGet:
               path: /healthz/
               port: 8081
-            periodSeconds: 10
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

@@ -176,3 +176,12 @@ volumeMounts: []
 #   - name: <VOLUME_NAME>
 #     mountPath: <CONTAINER_PATH>
 #     readOnly: true
+
+# livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
+livenessProbe:
+  periodSeconds: 10
+  # Example fields of livenessProbe that are also configurable:
+  # initialDelaySeconds: 15
+  # timeoutSeconds: 1
+  # successThreshold: 1
+  # failureThreshold: 3

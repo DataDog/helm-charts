@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
+![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![AppVersion: 1.8.0](https://img.shields.io/badge/AppVersion-1.8.0-informational?style=flat-square)
 
 ## Values
 
@@ -34,6 +34,7 @@
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
+| livenessProbe | object | `{"periodSeconds":10}` | Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator. |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
 | maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |

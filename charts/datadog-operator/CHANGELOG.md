@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+* Make Operator `livenessProbe` configurable.
+
 ## 2.0.0
 
 * Update Datadog Operator version to 1.8.0.

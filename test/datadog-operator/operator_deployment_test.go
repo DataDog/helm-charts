@@ -56,6 +56,34 @@ func Test_operator_chart(t *testing.T) {
 			assertions: verifyAll,
 			skipTest:   SkipTest,
 		},
+		{
+			name: "livenessProbe is correctly configured",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			assertions: verifyLivenessProbe,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "livenessProbe is correctly overriden",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"livenessProbe.timeoutSeconds":   "20",
+					"livenessProbe.periodSeconds":    "20",
+					"livenessProbe.failureThreshold": "3",
+				},
+			},
+			assertions: verifyLivenessProbeOverride,
+			skipTest:   SkipTest,
+		},
 	}
 
 	for _, tt := range tests {
@@ -73,7 +101,6 @@ func Test_operator_chart(t *testing.T) {
 func verifyDeployment(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
-
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
@@ -84,4 +111,23 @@ func verifyDeployment(t *testing.T, manifest string) {
 
 func verifyAll(t *testing.T, manifest string) {
 	assert.True(t, manifest != "")
+}
+
+func verifyLivenessProbe(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+}
+
+func verifyLivenessProbeOverride(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.PeriodSeconds)
+	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.TimeoutSeconds)
+	assert.Equal(t, int32(3), operatorContainer.LivenessProbe.FailureThreshold)
 }
