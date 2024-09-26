@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Add support for `overlayfs` direct scan for SBOMs.
+
 ## 3.76.0
 
 * Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
