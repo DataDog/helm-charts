@@ -312,6 +312,7 @@ rules:
   - patch
   - update
   - watch
+  - escalate
 - apiGroups:
   - authorization.k8s.io
   resources:
