@@ -73,7 +73,7 @@ spec:
       shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
       {{- end }}
       {{- if .Values.datadog.securityContext -}}
-      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version ) | nindent 6 }}
+      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 6 }}
       {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
       {{- if .Values.agents.podSecurity.securityContext }}
       {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}
