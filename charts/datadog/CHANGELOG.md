@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.73.1
+
+* Add role-based access control rules to Datadog Cluster Agent to read k8s resources annotations and labels to create tags.
+
 ## 3.73.0
 
 * Add Azure Container Registry, enabled automatically when targeting `us3.datadoghq.com`.
