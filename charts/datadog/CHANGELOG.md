@@ -2,6 +2,10 @@
 
 ## 3.73.1
 
+* Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
+
+## 3.73.1
+
 * Add role-based access control rules to Datadog Cluster Agent to read k8s resources annotations and labels to create tags.
 
 ## 3.73.0
