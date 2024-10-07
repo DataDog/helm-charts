@@ -199,16 +199,10 @@ rules:
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
+  - validatingwebhookconfigurations
   - mutatingwebhookconfigurations
   verbs:
   - '*'
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
-  - validatingwebhookconfigurations
-  verbs:
-  - list
-  - watch
 - apiGroups:
   - apiextensions.k8s.io
   resources:

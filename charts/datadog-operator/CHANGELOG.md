@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+* Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Operator.
+
 ## 2.0.1
 
 * Make Operator `livenessProbe` configurable.
