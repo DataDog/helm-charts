@@ -4,7 +4,7 @@
 
 * Fix a few typos on OTel Agent configs.
 
-## 3.73.1
+## 3.73.2
 
 * Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
 
