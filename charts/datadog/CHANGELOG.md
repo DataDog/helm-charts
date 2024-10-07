@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.1
+
+* Pass components env variables to the cluster checks runner deployment pod spec.
+
 ## 3.74.0
 
 * Simplify OTel Agent OOTB pipelines:

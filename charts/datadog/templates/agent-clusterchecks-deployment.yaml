@@ -125,6 +125,7 @@ spec:
 {{- end }}
 {{- end }}
         env:
+          {{- include "components-common-env" . | nindent 10 }}
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
