@@ -26,6 +26,18 @@ spec:
         - port: {{ $.Values.datadog.apm.port }}
           protocol: TCP
 {{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.grpc.enabled }}
+    - # Ingress for gRPC OTLP
+      ports:
+        - port: {{  .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+          protocol: TCP
+{{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.http.enabled }}
+    - # Ingress for HTTP OTLP
+      ports:
+        - port: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+          protocol: TCP
+{{- end }}
   egress:
     - # Egress to
       # * Datadog intake
