@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+* Official image `2.2.0`
+
 ## 2.1.2
 
 * Official image `2.1.2`
