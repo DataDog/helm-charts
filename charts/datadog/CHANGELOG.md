@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.1
+* Add a new option to disable hostPorts for the trace-agent with `datadog.apm.useLocalService`.
+* This is for K8s clusters that restrict hostPorts and hostPaths volumes, therefore can only use the K8s local service to send traces.
+
 ## 3.74.0
 
 * Simplify OTel Agent OOTB pipelines:
