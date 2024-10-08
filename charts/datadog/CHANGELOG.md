@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.0
+* Fix warning message displayed when installing/upgrading the Agent with OTel collector. 
+* Add preview message in values.yaml file 
+
 ## 3.74.0
 
 * Simplify OTel Agent OOTB pipelines:
