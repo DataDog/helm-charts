@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.73.2](https://img.shields.io/badge/Version-3.73.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.73.3](https://img.shields.io/badge/Version-3.73.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -471,12 +471,12 @@ helm install <RELEASE_NAME> \
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
 | agents.containers.initContainers.volumeMounts | list | `[]` | Specify additional volumes to mount for the init containers |
-| agents.containers.otelAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
-| agents.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
-| agents.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets |
+| agents.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container |
+| agents.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict |
+| agents.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets |
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
-| agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the trace-agent container |
-| agents.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the trace-agent container. |
+| agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
+| agents.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |

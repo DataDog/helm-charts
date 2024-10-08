@@ -1709,21 +1709,21 @@ agents:
       ports: []
 
     otelAgent:
-      # agents.containers.otelAgent.env -- Additional environment variables for the trace-agent container
+      # agents.containers.otelAgent.env -- Additional environment variables for the otel-agent container
       env: []
 
-      # agents.containers.otelAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      # agents.containers.otelAgent.envFrom -- Set environment variables specific to otel-agent from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.otelAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      # agents.containers.otelAgent.envDict -- Set environment variables specific to otel-agent defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
-      # agents.containers.otelAgent.resources -- Resource requests and limits for the trace-agent container
+      # agents.containers.otelAgent.resources -- Resource requests and limits for the otel-agent container
       resources: {}
       #  requests:
       #    cpu: 100m
@@ -1732,7 +1732,7 @@ agents:
       #    cpu: 100m
       #    memory: 200Mi
 
-      # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
+      # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
       securityContext: {}
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
