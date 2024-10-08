@@ -466,7 +466,7 @@ false
 Return true if a trace-agent needs to be deployed.
 */}}
 {{- define "should-enable-trace-agent" -}}
-{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") -}}
+{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") (eq (include "trace-agent-use-local-service")) -}}
 true
 {{- else -}}
 false
@@ -502,9 +502,17 @@ false
 {{- end -}}
 
 {{/*
-Return true if a traffic over TCP is configured for APM.
+Return true if APM is configured to only use local service via the trace-agent's containerPort otherwise matches datadog.apm.portEnabled.
 */}}
-{{- define "trace-agent-use-tcp-port" -}}
+{{- define "trace-agent-use-local-service" -}}
+{{- default (include "trace-agent-use-host-port" .) .Values.datadog.apm.useLocalService -}}
+{{- end -}}
+
+
+{{/*
+Return true if a host port is desired for APM.
+*/}}
+{{- define "trace-agent-use-host-port" -}}
 {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
 true
 {{- else -}}
@@ -512,6 +520,16 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return true if a traffic over TCP is configured for APM.
+*/}}
+{{- define "trace-agent-use-tcp-port" -}}
+{{- if or (eq  (include "trace-agent-use-host-port" .) "true") (eq  (include "trace-agent-use-local-service" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{/*
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.

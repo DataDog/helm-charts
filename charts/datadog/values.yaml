@@ -479,6 +479,12 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
 
+    # datadog.apm.useLocalService -- Enable APM over TCP communication use the local service only (requires Kubernetes v1.22+)
+    # Note: The hostPort 8126 is disabled when this is enabled.
+
+    ## ref: https://docs.datadoghq.com/tracing/guide/setting_up_apm_with_kubernetes_service/?tab=helm
+    useLocalService: false
+
     # datadog.apm.enabled -- Enable this to enable APM and tracing, on port 8126
     # DEPRECATED. Use datadog.apm.portEnabled instead
 
@@ -1150,6 +1156,7 @@ clusterAgent:
     ## If clusterAgent.admissionController.configMode is not set:
     ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
     ##   * and datadog.apm.portEnabled is true, the Admission Controller uses hostip.
+    ##   * and datadog.apm.useLocalService is true and the aformentioned two are false, the Admission Controller uses service.
     ##   * Otherwise, the Admission Controller defaults to hostip.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
