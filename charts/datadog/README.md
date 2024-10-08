@@ -450,6 +450,9 @@ helm install <RELEASE_NAME> \
   --set datadog.apiKey=<DATADOG_API_KEY>,datadog.logLevel=DEBUG \
   datadog/datadog
 ```
+## OTel Collector
+
+The OTel collector is in preview. Please reach out to your Datadog representative for more information. You can use OTLP ingest, a GA feature for sending OTLP data to Agent.
 
 ## Values
 

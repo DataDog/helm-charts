@@ -569,7 +569,7 @@ datadog:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
   ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
-  ## For sending OTLP data to Datadog, you can use the Datadog OTLP ingest.
+  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
   ## OTel collector related configuration
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
