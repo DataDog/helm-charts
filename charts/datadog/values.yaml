@@ -544,22 +544,6 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
-
-  ## OTel collector related configuration
-  otelCollector:
-    # datadog.otelCollector.enabled -- Enable the OTel Collector
-    enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
-    ports:
-
-        # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
-        name: otel-grpc
-        # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
-        name: otel-http
-    # datadog.otelCollector.config -- OTel collector configuration
-    config: {}
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -584,6 +568,23 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
+  ## For sending OTLP data to Datadog, you can use the Datadog OTLP ingest.
+  ## OTel collector related configuration
+  otelCollector:
+    # datadog.otelCollector.enabled -- Enable the OTel Collector
+    enabled: false
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    ports:
+
+        # Default GRPC port of OTLP receiver
+      - containerPort: "4317"
+        name: otel-grpc
+        # Default HTTP port of OTLP receiver
+      - containerPort: "4318"
+        name: otel-http
+    # datadog.otelCollector.config -- OTel collector configuration
+    config: null
 
   ## Continuous Profiler configuration
   ##
