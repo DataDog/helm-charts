@@ -9,4 +9,3 @@ datadog:
     portEnabled: false
     socketEnabled: false
     useLocalService: true
-    
