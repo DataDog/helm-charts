@@ -1,6 +1,6 @@
 # Datadog CRDs
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
 This chart was designed to allow other "datadog" charts to share `CustomResourceDefinitions` such as the `DatadogMetric`.
 
@@ -24,6 +24,7 @@ But the recommended Kubernetes versions are `1.16+`.
 |-----|------|---------|-------------|
 | crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfiles CRD |
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboards CRD |
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
 | crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
