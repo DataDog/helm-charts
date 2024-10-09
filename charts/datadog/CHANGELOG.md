@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.1
+
+* Use container runtime snapshotter by default on EKS and GKE.
+
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
