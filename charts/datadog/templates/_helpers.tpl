@@ -466,7 +466,7 @@ false
 Return true if a trace-agent needs to be deployed.
 */}}
 {{- define "should-enable-trace-agent" -}}
-{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") (eq (include "trace-agent-use-local-service")) -}}
+{{- if or (eq  (include "trace-agent-use-tcp-port" .) "true") (eq  (include "trace-agent-use-uds" .) "true") (eq (include "trace-agent-use-local-service" .) "true") -}}
 true
 {{- else -}}
 false
