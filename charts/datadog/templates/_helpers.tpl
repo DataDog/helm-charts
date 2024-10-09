@@ -931,6 +931,20 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
+  Return true if container runtime is known to discard uncompressed layers
+*/}}
+{{- define "should-support-discard-uncompressed-layers" -}}
+  {{- if or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan (and .Values.datadog.sbom.containerImage.enabled (or (contains "-gke." .Capabilities.KubeVersion.GitVersion) (contains "-eks." .Capabilities.KubeVersion.GitVersion))) -}}
+    {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
+      {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
+    {{- end -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
   Return true if language detection feature is enabled
 */}}
 {{- define "language-detection-enabled" -}}
