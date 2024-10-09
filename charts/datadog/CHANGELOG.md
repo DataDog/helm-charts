@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.2
+
+* Use container runtime snapshotter by default on EKS and GKE.
+
 ## 3.74.1
 
 * Pass components env variables to the cluster checks runner deployment pod spec.
