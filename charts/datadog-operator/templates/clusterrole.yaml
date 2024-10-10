@@ -200,15 +200,9 @@ rules:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
-  verbs:
-  - '*'
-- apiGroups:
-  - admissionregistration.k8s.io
-  resources:
   - validatingwebhookconfigurations
   verbs:
-  - list
-  - watch
+  - '*'
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -767,6 +761,34 @@ rules:
   - datadoghq.com
   resources:
   - datadogagentprofiles/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogDashboard.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/status
   verbs:
   - get
   - patch
