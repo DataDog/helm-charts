@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.2
+
+* Mount /usr/lib/sysimage/rpm when using host SBOM feature.
+
 ## 3.74.1
 
 * Pass components env variables to the cluster checks runner deployment pod spec.
