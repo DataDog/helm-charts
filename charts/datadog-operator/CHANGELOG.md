@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2
+* Add the `escalate` verb to `clusterroles` so the operator can update the orchestrator check's cluster role to collect custom resources.
+
 ## 2.0.1
 
 * Make Operator `livenessProbe` configurable.
