@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+
+* Update CRDs from Datadog Operator v1.9.0 tag.
+* Add DatadogDashboards CRD.
+
 ## 2.0.0
 
 * Update CRDs from Datadog Operator v1.8.0 tag.
