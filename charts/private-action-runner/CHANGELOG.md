@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.14.1
+
+* Update private action image version to `v0.1.2-beta`
+
 ## 0.14.0
 
 * Add support for `kubernetesActions`.
