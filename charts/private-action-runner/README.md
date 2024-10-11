@@ -42,7 +42,7 @@ helm repo update
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.1.1-beta"}` | Current Datadog Private Action Runner image |
+| common.image | object | `{"repository":"us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner","tag":"v0.1.2-beta"}` | Current Datadog Private Action Runner image |
 | credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runners[0].config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
