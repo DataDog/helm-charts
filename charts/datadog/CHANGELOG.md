@@ -1,6 +1,20 @@
 # Datadog changelog
 
-## 3.73.1
+## 3.74.1
+
+* Pass components env variables to the cluster checks runner deployment pod spec.
+
+## 3.74.0
+
+* Simplify OTel Agent OOTB pipelines:
+  * Remove `traces/otlp` pipeline from the default OTel Agent config
+  * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
+
+## 3.73.3
+
+* Fix a few typos on OTel Agent configs.
+
+## 3.73.2
 
 * Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
 

@@ -766,5 +766,33 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if .Values.datadogDashboard.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
 {{- end }}
 

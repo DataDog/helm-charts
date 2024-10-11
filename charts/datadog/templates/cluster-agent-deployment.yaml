@@ -170,6 +170,7 @@ spec:
                 key: api-key
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
+          {{- include "language-detection-common-env" . | nindent 10 }}
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_APP_KEY
             valueFrom:

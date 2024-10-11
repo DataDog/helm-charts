@@ -1,8 +1,13 @@
 # Changelog
 
-## 2.0.2
+## 2.1.1
 
 * Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Operator.
+
+## 2.1.0
+
+* Update Datadog Operator version to 1.9.0.
+* Add DatadogDashboard configuration.
 
 ## 2.0.1
 
