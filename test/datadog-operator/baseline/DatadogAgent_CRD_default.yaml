@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.14.0
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.0.0'
+    helm.sh/chart: 'datadogCRDs-2.1.0'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
