@@ -162,9 +162,6 @@
 - hostPath:
     path: /var/lib/rpm
   name: host-rpm-dir
-- hostPath:
-    path: /usr/lib/sysimage/rpm
-  name: host-sysimage-rpm
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}

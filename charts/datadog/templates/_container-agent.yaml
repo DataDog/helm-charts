@@ -291,9 +291,6 @@
     - name: host-rpm-dir
       mountPath: /host/var/lib/rpm
       readOnly: true
-    - name: host-sysimage-rpm
-      mountPath: /host/usr/lib/sysimage/rpm
-      readOnly: true
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
