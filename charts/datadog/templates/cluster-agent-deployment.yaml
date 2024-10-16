@@ -302,10 +302,8 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
-          {{- if .Values.datadog.kubernetesEvents.sourceDetectionEnabled }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
-          {{- end }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent
           - name: DD_CLUSTER_AGENT_AUTH_TOKEN
