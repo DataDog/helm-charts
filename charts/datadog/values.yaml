@@ -1141,6 +1141,16 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
+    # clusterAgent.admissionController.validation -- Validation Webhook configuration options
+    validation:
+      # clusterAgent.admissionController.validation.enabled -- Enabled enables the Admission Controller validation webhook. Default: true. (Requires Agent 7.59.0+).
+      enabled: true
+
+    # clusterAgent.admissionController.mutation -- Mutation Webhook configuration options
+    mutation:
+      # clusterAgent.admissionController.mutation.enabled -- Enabled enables the Admission Controller mutation webhook. Default: true. (Requires Agent 7.59.0+).
+      enabled: true
+
     # clusterAgent.admissionController.webhookName -- Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent
     webhookName: datadog-webhook
 

@@ -203,6 +203,10 @@ spec:
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
+            value: {{ .Values.clusterAgent.admissionController.validation.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
+            value: {{ .Values.clusterAgent.admissionController.mutation.enabled | quote }}
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
             value: {{ .Values.clusterAgent.admissionController.webhookName | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED

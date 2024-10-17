@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.0
+
+* Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
+
 ## 3.74.5
 
 * Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
