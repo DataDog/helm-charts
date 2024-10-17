@@ -392,6 +392,8 @@ datadog:
 
   # Configure Kubernetes events collection
   kubernetesEvents:
+    # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
+    sourceDetectionEnabled: false
     # datadog.kubernetesEvents.filteringEnabled -- Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+).
     filteringEnabled: false
     # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
