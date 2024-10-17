@@ -1,11 +1,12 @@
 # Datadog changelog
-## 3.73.4
 
-* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
+## 3.74.5
+
+* Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
 
 ## 3.74.4
 
-* Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
+* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
 
 ## 3.74.3
 
