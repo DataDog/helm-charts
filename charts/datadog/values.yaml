@@ -1773,6 +1773,13 @@ agents:
         periodSeconds: 15
         timeoutSeconds: 5
 
+      # agents.containers.traceAgent.readinessProbe -- Override default agent readiness probe settings
+      # @default -- Every 15s
+      readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+
       # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
       securityContext: {}
 
