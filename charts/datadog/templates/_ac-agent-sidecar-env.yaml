@@ -14,14 +14,6 @@
   value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
 {{- end }}
 
-{{- if .Values.clusterAgent.admissionController.containerRegistry }}
-- name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-  value: {{ .Values.clusterAgent.admissionController.containerRegistry }}
-{{- else if .Values.registry }}
-- name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-  value: {{ .Values.registry }}
-{{- end }}
-
 {{- if .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY
   value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
