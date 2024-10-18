@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.6
+
+* Fix error message for when System Probe is enabled on GKE Autopilot
+
 ## 3.74.5
 
 * Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
