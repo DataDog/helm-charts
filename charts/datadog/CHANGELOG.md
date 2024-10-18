@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.0
+
+* Add readiness probe configuration for the trace agent via `agents.containers.traceAgent.readinessProbe`. This allows users to define the readiness check parameters for the trace agent container to ensure it is ready before accepting traffic.
+
 ## 3.74.5
 
 * Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
