@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
+
 ## 3.74.6
 
 * Fix error message for when System Probe is enabled on GKE Autopilot
