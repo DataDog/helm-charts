@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.4
+
+* Add yaml-mapper tool that converts a helm `values.yaml` to one compatible with Datadog Operator, to promote transitioning from helm charts to the Operator.
+
 ## 3.74.3
 
 * Do not mount `/usr/lib/sysimage/rpm` (reverts https://github.com/DataDog/helm-charts/pull/1541): in some operating systems such as Bottlerocket, `/usr` is `read-only`, preventing the Agent from being deployed when `datadog.sbom.host.enabled` is set to `true` as kubelet cannot create the directory at this location if it does not exist.
