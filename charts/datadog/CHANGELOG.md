@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.74.7
+
+* Add yaml-mapper tool that converts a helm `values.yaml` to one compatible with Datadog Operator, to promote transitioning from helm charts to the Operator.
+
 ## 3.74.6
 
 * Fix error message for when System Probe is enabled on GKE Autopilot
