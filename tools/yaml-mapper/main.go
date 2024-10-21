@@ -135,7 +135,7 @@ func main() {
 		fmt.Println(out)
 	}
 
-	err = os.WriteFile(destFile, []byte(out), 0666)
+	err = os.WriteFile(destFile, []byte(out), 0660)
 	if err != nil {
 		fmt.Println(err)
 	}
