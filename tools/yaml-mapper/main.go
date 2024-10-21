@@ -81,7 +81,7 @@ func main() {
 	var destKey interface{}
 	var ok bool
 	interim := make(map[string]interface{})
-	for sourceKey, _ := range mappingValues {
+	for sourceKey := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
 		if pathVal == nil {
@@ -135,7 +135,7 @@ func main() {
 		fmt.Println(out)
 	}
 
-	err = os.WriteFile(destFile, []byte(out), 0666)
+	err = os.WriteFile(destFile, []byte(out), 0665)
 	if err != nil {
 		fmt.Println(err)
 	}
