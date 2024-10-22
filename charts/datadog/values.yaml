@@ -698,10 +698,10 @@ datadog:
      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
     containerCollection: true
 
-    # datadog.processAgent.disableOsReleaseFileMount -- Set this to true to disable mounting datadog.osReleasePath in processAgent container
-    disableOsReleaseFileMount: false
+  # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
+  disableDefaultOsReleasePaths: false
 
-  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in processAgent container
+  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in all containers
   disablePasswdMount: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file
@@ -765,6 +765,7 @@ datadog:
     # datadog.systemProbe.conntrackInitTimeout -- the time to wait for conntrack to initialize before failing
     conntrackInitTimeout: 10s
 
+    # DEPRECATED. Use datadog.disableDefaultOsReleasePaths instead.
     # datadog.systemProbe.enableDefaultOsReleasePaths -- enable default os-release files mount
     enableDefaultOsReleasePaths: true
 

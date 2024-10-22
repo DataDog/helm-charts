@@ -65,7 +65,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
-  {{- if .Values.datadog.systemProbe.enableDefaultOsReleasePaths }}
+    {{- if or .Values.datadog.systemProbe.enableDefaultOsReleasePaths (not .Values.datadog.disableDefaultOsReleasePaths) }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
