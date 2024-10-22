@@ -91,7 +91,7 @@
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
-    {{- if not .Values.datadog.processAgent.disablePasswdMount }}
+    {{- if not .Values.datadog.disablePasswdMount }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
