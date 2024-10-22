@@ -24,7 +24,7 @@ If the desired conversion is between the `datadog` Helm chart and a `DatadogAgen
 source.key: destination.key
 ```
 
-where both the key and value are period-delimited in lieu of nested/indented, as in a typical YAML file.
+Both the key and value are period-delimited instead of nested or indented, as in a typical YAML file.
 
 Pass the source file and mapping file to the command:
 
@@ -33,11 +33,11 @@ $ ./yaml-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
 
 ```
 
-The resulting file will be written to `destination.yaml`. To specify a destination file, use flag `-destFile=[filename.yaml]`.
+The resulting file is written to `destination.yaml`. To specify a destination file, use flag `-destFile=[<FILENAME>.yaml]`.
 
-Content from a file can be optionally prepended to the output. To specify the prefix file, use flag `-prefixFile=[filename.yaml]`
+Content from a file can be optionally prepended to the output. To specify the prefix file, use flag `-prefixFile=[<FILENAME>.yaml]`.
 
-By default the output will also be printed to STDOUT; to disable this use the flag `-printOutput=false`.
+By default the output is also printed to STDOUT; to disable this use the flag `-printOutput=false`.
 
 ## Example usage (using provided files)
 
