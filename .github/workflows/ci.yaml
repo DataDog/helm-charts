@@ -12,7 +12,7 @@ jobs:
       charts: ${{ steps.list-changed.outputs.changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Helm
@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@v2.6.1
       - name: Run chart-testing (list-changed)
         id: list-changed
         env:
@@ -47,14 +47,14 @@ jobs:
       - changed
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v4
         with:
           python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@v2.6.1
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
@@ -64,7 +64,7 @@ jobs:
       - changed
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Run helm-docs
@@ -87,10 +87,15 @@ jobs:
           - v1.22.17
           - v1.24.17
           - v1.25.16
-          - v1.26.13
+          - v1.26.15
+          - v1.27.16
+          - v1.28.13
+          - v1.29.8
+          - v1.30.4
+          - v1.31.1
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Add datadog helm repo
@@ -114,17 +119,22 @@ jobs:
       matrix:
         k8s:
           - v1.18.20
-          - v1.22.9
-          - v1.24.2
+          - v1.22.17
+          - v1.24.17
           - v1.25.16
-          - v1.26.13
+          - v1.26.15
+          - v1.27.16
+          - v1.28.13
+          - v1.29.8
+          - v1.30.4
+          - v1.31.1
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@v1.5.0
+        uses: helm/kind-action@v1.10.0
         with:
           node_image: kindest/node:${{ matrix.k8s }}
           config: .github/kind_config.yaml
@@ -132,7 +142,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@v2.6.1
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
 
