@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-HELM_DOCS_VERSION="1.10.0"
+HELM_DOCS_VERSION="1.14.2"
 OS=$(uname)
 ARCH=$(uname -m)
 

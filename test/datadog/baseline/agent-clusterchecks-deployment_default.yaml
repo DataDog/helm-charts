@@ -6,7 +6,7 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.73.0'
+    helm.sh/chart: 'datadog-3.75.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,8 +36,8 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: e95c3aa09253f021e31a1ac5c7ee014e6454d2d5fee0482b0f253e12dab68afd
-        checksum/install_info: 4431ead135ce20065fbe40abb5a6e6324fb9e43978cfd3ef1857d9fcaa613aa8
+        checksum/clusteragent_token: e662bb8d6708ee7d2bd21ce95572b12e19152da58e6c1640fbd706d505af5199
+        checksum/install_info: 0f26ba698ed19cfca67b345f53ad633320db3f86502c811b4c44738df3ee25a4
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
@@ -45,7 +45,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.57.2"
+        image: "gcr.io/datadoghq/agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -57,7 +57,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.57.2"
+        image: "gcr.io/datadoghq/agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -70,19 +70,20 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.57.2"
+        image: "gcr.io/datadoghq/agent:7.58.0"
         command: ["bash", "-c"]
         args:
           - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
+          
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
                 name: "datadog-secret"
                 key: api-key
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_LOG_LEVEL
             value: "INFO"
           - name: DD_EXTRA_CONFIG_PROVIDERS
