@@ -119,4 +119,7 @@
   livenessProbe:
 {{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
 {{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}
+  readinessProbe:
+{{- $ready := .Values.agents.containers.traceAgent.readinessProbe }}
+{{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $ready ) | indent 4 }}
 {{- end -}}

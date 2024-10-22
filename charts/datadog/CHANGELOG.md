@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.76.0
+
+* Add readiness probe configuration for the trace agent via `agents.containers.traceAgent.readinessProbe`. This allows users to define the readiness check parameters for the trace agent container to ensure it is ready before accepting traffic.
+
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
