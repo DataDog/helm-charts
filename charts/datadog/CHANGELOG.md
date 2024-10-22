@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.75.1
-
-* Add yaml-mapper tool that converts a helm `values.yaml` to one compatible with Datadog Operator, to promote transitioning from helm charts to the Operator.
-
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
