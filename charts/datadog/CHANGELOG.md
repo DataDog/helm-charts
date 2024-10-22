@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.2
+
+* Add  configuration values `datadog.processAgent.disableOsReleaseFileMount` and `datadog.processAgent.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` in processAgent container when underlying OS doesn't have these files (like talos.dev)
+
 ## 3.77.1
 
 * Modify command that removes the default conf.d directory from the Cluster Checks Runners and only removes the default YAML files.
