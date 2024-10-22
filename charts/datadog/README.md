@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.82.0](https://img.shields.io/badge/Version-3.82.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.83.0](https://img.shields.io/badge/Version-3.83.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -806,6 +806,8 @@ helm install <RELEASE_NAME> \
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
+| datadog.processAgent.disableOsReleaseFileMount | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in processAgent container |
+| datadog.processAgent.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in processAgent container |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |

@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 3.83.0
+
+* Added the configuration value `datadog.processAgent.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
+* Added the configuration value `datadog.processAgent.disableOsReleaseFileMount` to disable mounting the default "os-release" file paths from the host filesystem (e.g., `/etc/redhat-release`, `/etc/fedora-release`, etc.). 
+  Note that this change does not affect the `datadog.osReleasePath` option. To avoid mounting the `/etc/os-release` host path, set the `datadog.osReleasePath` configuration value to an empty string. This option should be
+  used when the underlying OS does not have these files (e.g., Talos OS). 
+
 ## 3.82.0
 
 * Add `pods/exec` RBAC to the `Cluster-Agent` when needed and inject the service account name of the `Cluster-Agent` as environment variable.
