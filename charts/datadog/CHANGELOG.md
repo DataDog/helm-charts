@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.76.1
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
 ## 3.76.0
 
 * Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
