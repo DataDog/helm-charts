@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.75.1
+
+* Add  configuration values `datadog.processAgent.disableOsReleaseFileMount` and `datadog.processAgent.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` in processAgent container when underlying OS doesn't have these files (like talos.dev)
+
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
