@@ -2,7 +2,7 @@
 
 ## 3.77.2
 
-* Add  configuration values `datadog.processAgent.disableOsReleaseFileMount` and `datadog.processAgent.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` in processAgent container when underlying OS doesn't have these files (like talos.dev)
+* Add  configuration values `datadog.processAgent.disableOsReleaseFileMount` and `datadog.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` mounts when underlying OS doesn't have these files (like talos.dev)
 
 ## 3.77.1
 
