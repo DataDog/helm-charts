@@ -792,7 +792,7 @@ helm install <RELEASE_NAME> \
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.runInCoreAgent | bool | `false` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation. |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes # Requires datadog.processAgent.processCollection to be set to true to have any effect # ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing |
-| datadog.processAgent.disableOsReleaseFileMount | bool | `false` | Disables mounting `datadog.osReleasePath` |
+| datadog.disableDefaultOsReleasePaths | bool | `false` | Disables mounting `datadog.osReleasePath` |
 | datadog.disablePasswdMount | bool | `false` | Disables mounting `/etc/passwd` |
 | datadog.profiling.enabled | string | `nil` | Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED` environment variable with the same value to all pods in the cluster Valid values are: - false: Profiler is turned off and can not be turned on by other means. - null: Profiler is turned off, but can be turned on by other means. - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling. - true: Profiler is turned on. |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
@@ -841,7 +841,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.debugPort | int | `0` | Specify the port to expose pprof and expvar for system-probe agent |
 | datadog.systemProbe.enableConntrack | bool | `true` | Enable the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data |
 | datadog.systemProbe.enableDefaultKernelHeadersPaths | bool | `true` | Enable mount of default paths where kernel headers are stored |
-| datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |
+| datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount DEPRECATED. Set `datadog.enableDefaultOsReleasePaths` instead. |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
 | datadog.systemProbe.maxTrackedConnections | int | `131072` | the maximum number of tracked connections |

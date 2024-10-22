@@ -2,7 +2,9 @@
 
 ## 3.77.2
 
-* Add  configuration values `datadog.processAgent.disableOsReleaseFileMount` and `datadog.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` mounts when underlying OS doesn't have these files (like talos.dev)
+* Add configuration values `datadog.disableDefaultOsReleasePaths` and `datadog.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` mounts when underlying OS doesn't have these files (like talos.dev).
+
+* Deprecate `datadog.systemProbe.enableDefaultOsReleasePaths` in favor of `datadog.disableDefaultOsReleasePaths`.
 
 ## 3.77.1
 
