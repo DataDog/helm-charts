@@ -98,6 +98,9 @@ func main() {
 	interim := make(map[string]interface{})
 	interimMap := make(map[string]interface{})
 
+	if updateMap {
+		interimMap = parseValues(sourceValues, make(map[string]interface{}), "")
+	}
 	for sourceKey, sourceVal := range mappingValues {
 		if updateMap {
 			if sourceVal == nil {
@@ -115,13 +118,9 @@ func main() {
 		destKey, ok = mappingValues[sourceKey]
 		rt := reflect.TypeOf(destKey)
 		if !ok || destKey == "" || destKey == nil {
-			// If updating mapping, add unknown key to interimMap
-			if updateMap {
-				interimMap[sourceKey] = ""
-				continue
-			}
 			// Continue through loop
 			fmt.Printf("Warning: key not found: %s\n", sourceKey)
+			continue
 		} else if rt.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys
 			for _, v := range destKey.([]interface{}) {
@@ -177,6 +176,10 @@ func main() {
 			fmt.Println(e)
 			return
 		}
+		newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
+
+` + newMapYaml
+
 		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
 		if e != nil {
 			fmt.Printf("Error updating default mapping yaml. %v", e)
@@ -257,7 +260,7 @@ func downloadYaml(url string, name string) string {
 		return ""
 	}
 
-	tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s.yaml*.", name))
+	tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s.yaml.*", name))
 	if err != nil {
 		fmt.Printf("Error creating temporary file: %v\n", err)
 		return ""
@@ -273,4 +276,20 @@ func downloadYaml(url string, name string) string {
 	fmt.Printf("File downloaded and saved to temporary file: %s\n", tmpFile.Name())
 
 	return tmpFile.Name()
+}
+
+// TODO: fix handling deprecated helm values keys
+// TODO: preserve comments
+
+func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}, prefix string) map[string]interface{} {
+	for key, value := range sourceValues {
+		currentKey := prefix + key
+		valuesMap[currentKey] = ""
+
+		// If the value is a map, recursive call to get nested keys.
+		if nestedMap, ok := value.(map[string]interface{}); ok {
+			parseValues(nestedMap, valuesMap, currentKey+".")
+		}
+	}
+	return valuesMap
 }
