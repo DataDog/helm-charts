@@ -8,6 +8,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"reflect"
 	"strings"
@@ -27,6 +29,7 @@ func main() {
 			fmt.Println("  -sourceFile (string)")
 			fmt.Println("  -destFile (string)")
 			fmt.Println("  -prefixFile (string)")
+			fmt.Println("  -updateMap (bool)")
 			return
 		}
 	}
@@ -37,10 +40,12 @@ func main() {
 	var sourceFile string
 	var destFile string
 	var prefixFile string
+	var updateMap bool
 	flag.StringVar(&mappingFile, "mappingFile", "mapping.yaml", "path to mapping YAML file")
 	flag.StringVar(&sourceFile, "sourceFile", "source.yaml", "path to source YAML file")
 	flag.StringVar(&destFile, "destFile", "destination.yaml", "path to destination YAML file")
 	flag.StringVar(&prefixFile, "prefixFile", "", "path to prefix YAML file. The content in this file will be prepended to the output")
+	flag.BoolVar(&updateMap, "updateMap", false, "Update default Mapping file with latest Datadog Helm Chart values")
 
 	flag.Parse()
 
@@ -48,10 +53,17 @@ func main() {
 	fmt.Println("sourceFile:", sourceFile)
 	fmt.Println("destFile:", destFile)
 	fmt.Println("prefixFile:", prefixFile)
+	fmt.Println("updateMap:", updateMap)
 	fmt.Println("printOutput:", *printPtr)
 	fmt.Println("")
 
 	// Read mapping file
+	tmpSourceFile := ""
+	if updateMap {
+		mappingFile = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+		tmpSourceFile = getLatestValuesFile()
+		sourceFile = tmpSourceFile
+	}
 	mapping, err := os.ReadFile(mappingFile)
 	if err != nil {
 		fmt.Println(err)
@@ -65,6 +77,9 @@ func main() {
 
 	// Read source yaml file
 	source, err := os.ReadFile(sourceFile)
+	if tmpSourceFile != "" {
+		defer os.Remove(tmpSourceFile)
+	}
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -81,7 +96,16 @@ func main() {
 	var destKey interface{}
 	var ok bool
 	interim := make(map[string]interface{})
-	for sourceKey := range mappingValues {
+	interimMap := make(map[string]interface{})
+
+	for sourceKey, sourceVal := range mappingValues {
+		if updateMap {
+			if sourceVal == nil {
+				interimMap[sourceKey] = ""
+			} else {
+				interimMap[sourceKey] = sourceVal
+			}
+		}
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
 		if pathVal == nil {
@@ -91,8 +115,13 @@ func main() {
 		destKey, ok = mappingValues[sourceKey]
 		rt := reflect.TypeOf(destKey)
 		if !ok || destKey == "" || destKey == nil {
-			fmt.Printf("Warning: key not found: %s\n", sourceKey)
+			// If updating mapping, add unknown key to interimMap
+			if updateMap {
+				interimMap[sourceKey] = ""
+				continue
+			}
 			// Continue through loop
+			fmt.Printf("Warning: key not found: %s\n", sourceKey)
 		} else if rt.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys
 			for _, v := range destKey.([]interface{}) {
@@ -104,44 +133,58 @@ func main() {
 	}
 
 	// Create final mapping with properly nested map keys (converted from period-delimited keys)
-	result := make(map[string]interface{})
-	for k, v := range interim {
-		result = makeTable(k, v, result)
-	}
+	if !updateMap {
+		result := make(map[string]interface{})
+		for k, v := range interim {
+			result = makeTable(k, v, result)
+		}
 
-	// Pretty print to YAML format
-	out, err := chartutil.Values(result).YAML()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// Read prefix yaml file
-	var prefix []byte
-	if prefixFile != "" {
-		prefix, err = os.ReadFile(prefixFile)
+		// Pretty print to YAML format
+		out, err := chartutil.Values(result).YAML()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+
+		// Read prefix yaml file
+		var prefix []byte
+		if prefixFile != "" {
+			prefix, err = os.ReadFile(prefixFile)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
+
+		if len(prefix) > 0 {
+			out = string(prefix) + out
+		}
+
+		if *printPtr {
+			fmt.Println("")
+			fmt.Println(out)
+		}
+
+		err = os.WriteFile(destFile, []byte(out), 0660)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("YAML file successfully written to", destFile)
+	} else {
+		newMapYaml, e := chartutil.Values(interimMap).YAML()
+		if e != nil {
+			fmt.Println(e)
+			return
+		}
+		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
+		if e != nil {
+			fmt.Printf("Error updating default mapping yaml. %v", e)
+			return
+		}
+
+		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
 	}
-
-	if len(prefix) > 0 {
-		out = string(prefix) + out
-	}
-
-	if *printPtr {
-		fmt.Println("")
-		fmt.Println(out)
-	}
-
-	err = os.WriteFile(destFile, []byte(out), 0660)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("YAML file successfully written to", destFile)
-
 	return
 }
 
@@ -182,3 +225,52 @@ func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
 }
 
 func parsePath(key string) []string { return strings.Split(key, ".") }
+
+func getLatestValuesFile() string {
+	chartVersion := getChartVersion()
+	chartValuesFile := downloadYaml(fmt.Sprintf("https://raw.githubusercontent.com/DataDog/helm-charts/refs/tags/datadog-%s/charts/datadog/values.yaml", chartVersion), "datadog-values")
+
+	return chartValuesFile
+}
+
+func getChartVersion() string {
+	chartYamlPath := downloadYaml("https://raw.githubusercontent.com/DataDog/helm-charts/main/charts/datadog/Chart.yaml", "datadog-Chart")
+
+	ddChart, err := chartutil.LoadChartfile(chartYamlPath)
+	defer os.Remove(chartYamlPath)
+	if err != nil {
+		fmt.Println(fmt.Printf("Error loading Chart.yaml: %s", err))
+	}
+	return ddChart.Version
+}
+
+func downloadYaml(url string, name string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Printf("Error fetching yaml file: %v\n", err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Failed to fetch yaml file %s: %v\n", url, resp.Status)
+		return ""
+	}
+
+	tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s.yaml*.", name))
+	if err != nil {
+		fmt.Printf("Error creating temporary file: %v\n", err)
+		return ""
+	}
+	defer tmpFile.Close()
+
+	_, err = io.Copy(tmpFile, resp.Body)
+	if err != nil {
+		fmt.Printf("Error saving file: %v\n", err)
+		return ""
+	}
+
+	fmt.Printf("File downloaded and saved to temporary file: %s\n", tmpFile.Name())
+
+	return tmpFile.Name()
+}

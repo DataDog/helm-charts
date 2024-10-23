@@ -2,6 +2,8 @@ module github.com/DataDog/helm-charts
 
 go 1.22.7
 
+require helm.sh/helm/v3 v3.16.2
+
 require (
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.1 // indirect
@@ -24,7 +26,6 @@ require (
 	golang.org/x/text v0.18.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	helm.sh/helm/v3 v3.16.2 // indirect
 	k8s.io/api v0.31.1 // indirect
 	k8s.io/apiextensions-apiserver v0.31.1 // indirect
 	k8s.io/apimachinery v0.31.1 // indirect
