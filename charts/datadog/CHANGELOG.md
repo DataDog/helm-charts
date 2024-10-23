@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Bump test
+
 ## 3.76.0
 
 * Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
