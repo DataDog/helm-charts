@@ -157,7 +157,9 @@ clusterAgent.securityContext: ""
 clusterAgent.shareProcessNamespace: ""
 clusterAgent.strategy: ""
 clusterAgent.token: spec.global.clusterAgentToken
-clusterAgent.tokenExistingSecret: spec.global.clusterAgentTokenSecret
+clusterAgent.tokenExistingSecret:
+- spec.global.clusterAgentTokenSecret.keyName
+- spec.global.clusterAgentTokenSecret.secretName
 clusterAgent.tolerations: spec.override.clusterAgent.tolerations
 clusterAgent.topologySpreadConstraints: ""
 clusterAgent.useHostNetwork: ""
@@ -203,14 +205,18 @@ clusterChecksRunner.volumes: spec.override.clusterChecksRunner.volumes
 commonLabels: ""
 datadog-crds.crds.datadogMetrics: ""
 datadog.apiKey: spec.global.credentials.apiKey
-datadog.apiKeyExistingSecret: spec.global.credentials.apiSecret
+datadog.apiKeyExistingSecret:
+- spec.global.credentials.apiSecret.keyName
+- spec.global.credentials.apiSecret.secretName
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
 datadog.apm.port: spec.features.apm.hostPortConfig.hostPort
 datadog.apm.portEnabled: spec.features.apm.hostPortConfig.enabled
 datadog.apm.socketEnabled: spec.features.apm.enabled
 datadog.apm.socketPath: ""
 datadog.appKey: spec.global.credentials.appKey
-datadog.appKeyExistingSecret: spec.global.credentials.appSecret
+datadog.appKeyExistingSecret:
+- spec.global.credentials.appSecret.keyName
+- spec.global.credentials.appSecret.secretName
 datadog.checksCardinality: ""
 datadog.checksd: spec.override.nodeAgent.extraChecksd
 datadog.clusterChecks.enabled: spec.features.clusterChecks.enabled
@@ -238,7 +244,9 @@ datadog.dogstatsd.port: ""
 datadog.dogstatsd.socketPath: spec.features.dogstatsd.unixDomainSocketConfig.path
 datadog.dogstatsd.tagCardinality: spec.features.dogstatsd.tagCardinality
 datadog.dogstatsd.tags: ""
-datadog.dogstatsd.useHostPort: spec.features.dogstatsd.hostPortConfig.enabled
+datadog.dogstatsd.useHostPort:
+- spec.features.dogstatsd.hostPortConfig.enabled
+- spec.features.dogstatsd.hostPortConfig.hostPort
 datadog.dogstatsd.useSocketVolume: spec.features.dogstatsd.unixDomainSocketConfig.enabled
 datadog.env: spec.override.nodeAgent.env
 datadog.envDict: ""
@@ -320,7 +328,9 @@ datadog.secretBackend.enableGlobalPermissions: ""
 datadog.secretBackend.roles: ""
 datadog.secretBackend.timeout: ""
 datadog.securityAgent.compliance.checkInterval: ""
-datadog.securityAgent.compliance.configMap: spec.features.cspm.customBenchmarks.configMap
+datadog.securityAgent.compliance.configMap:
+- spec.features.cspm.customBenchmarks.configMap.items
+- spec.features.cspm.customBenchmarks.configMap.name
 datadog.securityAgent.compliance.enabled: spec.features.cspm.enabled
 datadog.securityAgent.compliance.host_benchmarks.enabled: spec.features.cspm.hostBenchmarks.enabled
 datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout: ""
@@ -331,7 +341,9 @@ datadog.securityAgent.runtime.activityDump.tracedCgroupsCount: ""
 datadog.securityAgent.runtime.enabled: spec.features.cws.enabled
 datadog.securityAgent.runtime.fimEnabled: ""
 datadog.securityAgent.runtime.network.enabled: spec.features.cws.network.enabled
-datadog.securityAgent.runtime.policies.configMap: spec.features.cws.customPolicies.configMap
+datadog.securityAgent.runtime.policies.configMap:
+- spec.features.cws.customPolicies.configMap.items
+- spec.features.cws.customPolicies.configMap.name
 datadog.securityAgent.runtime.securityProfile.enabled: spec.features.cws.securityProfiles.enabled
 datadog.securityAgent.runtime.syscallMonitor.enabled: spec.features.cws.syscallMonitorEnabled
 datadog.securityContext: spec.global.securityContext
