@@ -284,11 +284,11 @@ func downloadYaml(url string, name string) string {
 func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}, prefix string) map[string]interface{} {
 	for key, value := range sourceValues {
 		currentKey := prefix + key
-		valuesMap[currentKey] = ""
-
 		// If the value is a map, recursive call to get nested keys.
 		if nestedMap, ok := value.(map[string]interface{}); ok {
 			parseValues(nestedMap, valuesMap, currentKey+".")
+		} else {
+			valuesMap[currentKey] = ""
 		}
 	}
 	return valuesMap
