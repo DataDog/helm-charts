@@ -118,7 +118,8 @@ jobs:
     strategy:
       matrix:
         k8s:
-          - v1.18.20
+          # TODO: `kind create cluster --config .github/kind_config.yaml --name chart-testing --wait 60s --image kindest/node:v1.18.20` fails
+          # - v1.18.20
           - v1.22.17
           - v1.24.17
           - v1.25.16
