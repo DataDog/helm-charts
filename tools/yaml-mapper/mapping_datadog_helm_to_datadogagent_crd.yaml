@@ -52,7 +52,8 @@ agents.containers.traceAgent.resources: spec.override.nodeAgent.containers.trace
 agents.containers.traceAgent.securityContext: spec.override.nodeAgent.containers.trace-agent.securityContext
 agents.customAgentConfig: spec.override.nodeAgent.customConfigurations.datadog.yaml.configData
 agents.daemonsetAnnotations: ""
-agents.dnsConfig: ""
+agents.dnsConfig: "" 
+# list of nameservers, options, searches?
 agents.enabled: ""
 agents.image.digest: ""
 agents.image.doNotCheckTag: ""
@@ -66,16 +67,19 @@ agents.localService.forceLocalServiceEnabled: spec.global.localService.forceEnab
 agents.localService.overrideName: spec.global.localService.nameOverride
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
-agents.podLabels: ""
+agents.podLabels: spec.override.nodeAgent.labels
 agents.podSecurity.allowedUnsafeSysctls: ""
 agents.podSecurity.apparmor.enabled: ""
 agents.podSecurity.apparmorProfiles: ""
 agents.podSecurity.capabilities: ""
+# list, capabilities add or drop
 agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
-agents.podSecurity.privileged: ""
+agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
 agents.podSecurity.seLinuxContext: ""
+# list, seLinuxOptions
 agents.podSecurity.seccompProfiles: ""
+# list, seccompProfiles
 agents.podSecurity.securityContextConstraints.create: ""
 agents.podSecurity.volumes: ""
 agents.priorityClassCreate: ""
@@ -90,6 +94,7 @@ agents.revisionHistoryLimit: ""
 agents.shareProcessNamespace: ""
 agents.tolerations: spec.override.nodeAgent.tolerations
 agents.updateStrategy: ""
+# rolling update, type
 agents.useConfigMap: ""
 agents.useHostNetwork: spec.override.nodeAgent.hostNetwork
 agents.volumeMounts:
@@ -240,22 +245,20 @@ datadog.dockerSocketPath: spec.global.dockerSocketPath
 datadog.dogstatsd.hostSocketPath: ""
 datadog.dogstatsd.nonLocalTraffic: ""
 datadog.dogstatsd.originDetection: spec.features.dogstatsd.originDetectionEnabled
-datadog.dogstatsd.port: ""
+datadog.dogstatsd.port: spec.features.dogstatsd.hostPortConfig.hostPort
 datadog.dogstatsd.socketPath: spec.features.dogstatsd.unixDomainSocketConfig.path
 datadog.dogstatsd.tagCardinality: spec.features.dogstatsd.tagCardinality
 datadog.dogstatsd.tags: ""
-datadog.dogstatsd.useHostPort:
-- spec.features.dogstatsd.hostPortConfig.enabled
-- spec.features.dogstatsd.hostPortConfig.hostPort
+datadog.dogstatsd.useHostPort: spec.features.dogstatsd.hostPortConfig.enabled
 datadog.dogstatsd.useSocketVolume: spec.features.dogstatsd.unixDomainSocketConfig.enabled
 datadog.env: spec.override.nodeAgent.env
 datadog.envDict: ""
-datadog.envFrom: ""
+datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
 datadog.expvarPort: ""
-datadog.helmCheck.collectEvents: ""
-datadog.helmCheck.enabled: ""
-datadog.helmCheck.valuesAsTags: ""
+datadog.helmCheck.collectEvents: spec.features.helmCheck.collectEvents
+datadog.helmCheck.enabled: spec.features.helmCheck.enabled
+datadog.helmCheck.valuesAsTags: spec.features.helmCheck.valuesAsTags
 datadog.hostVolumeMountPropagation: ""
 datadog.ignoreAutoConfig: ""
 datadog.kubeStateMetricsCore.annotationsAsTags: ""
@@ -277,9 +280,9 @@ datadog.kubelet.host: spec.global.kubelet.host
 datadog.kubelet.hostCAPath: spec.global.kubelet.hostCAPath
 datadog.kubelet.podLogsPath: ""
 datadog.kubelet.tlsVerify: spec.global.kubelet.tlsVerify
-datadog.kubernetesEvents.collectedEventTypes: ""
+datadog.kubernetesEvents.collectedEventTypes: spec.features.eventCollection.collectEventTypes
 datadog.kubernetesEvents.filteringEnabled: ""
-datadog.kubernetesEvents.unbundleEvents: ""
+datadog.kubernetesEvents.unbundleEvents: spec.features.eventCollection.unbundleEvents
 datadog.kubernetesResourcesAnnotationsAsTags: spec.global.kubernetesResourcesAnnotationsAsTags
 datadog.kubernetesResourcesLabelsAsTags: spec.global.kubernetesResourcesLabelsAsTags
 datadog.leaderElection: ""
@@ -322,12 +325,12 @@ datadog.remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 datadog.sbom.containerImage.enabled: spec.features.sbom.containerImage.enabled
 datadog.sbom.host.enabled: spec.features.sbom.host.enabled
 datadog.secretAnnotations: ""
-datadog.secretBackend.arguments: ""
-datadog.secretBackend.command: ""
-datadog.secretBackend.enableGlobalPermissions: ""
-datadog.secretBackend.roles: ""
-datadog.secretBackend.timeout: ""
-datadog.securityAgent.compliance.checkInterval: ""
+datadog.secretBackend.arguments: spec.global.secretBackend.args
+datadog.secretBackend.command: spec.global.secretBackend.command
+datadog.secretBackend.enableGlobalPermissions: spec.global.secretBackend.enableGlobalPermissions
+datadog.secretBackend.roles: spec.global.secretBackend.roles
+datadog.secretBackend.timeout: spec.global.secretBackend.timeout
+datadog.securityAgent.compliance.checkInterval: spec.features.cspm.checkInterval
 datadog.securityAgent.compliance.configMap:
 - spec.features.cspm.customBenchmarks.configMap.items
 - spec.features.cspm.customBenchmarks.configMap.name
@@ -346,7 +349,7 @@ datadog.securityAgent.runtime.policies.configMap:
 - spec.features.cws.customPolicies.configMap.name
 datadog.securityAgent.runtime.securityProfile.enabled: spec.features.cws.securityProfiles.enabled
 datadog.securityAgent.runtime.syscallMonitor.enabled: spec.features.cws.syscallMonitorEnabled
-datadog.securityContext: spec.global.securityContext
+datadog.securityContext: ""
 datadog.securityContext.runAsUser: ""
 datadog.serviceMonitoring.enabled: spec.features.usm.enabled
 datadog.site: spec.global.site
@@ -374,19 +377,21 @@ existingClusterAgent.join: ""
 existingClusterAgent.serviceName: ""
 existingClusterAgent.tokenSecretName: ""
 fips.customFipsConfig: ""
-fips.enabled: ""
+#  customFIPSConfig: data, items, name
+fips.enabled: spec.global.fips.enabled
 fips.image.digest: ""
-fips.image.name: ""
+fips.image.name: spec.global.fips.image.name
 fips.image.pullPolicy: ""
 fips.image.repository: ""
-fips.image.tag: ""
-fips.local_address: ""
-fips.port: ""
-fips.portRange: ""
+fips.image.tag: spec.global.fips.image.tag
+fips.local_address: spec.global.fips.localAddress
+fips.port: spec.global.fips.port
+fips.portRange: spec.global.fips.portRange
 fips.resources: ""
-fips.use_https: ""
+#resources claims, limits, requests
+fips.use_https: spec.global.fips.useHTTPS
 fullnameOverride: ""
-nameOverride: ""
+nameOverride: spec.global.localservice.nameOverride
 providers.aks.enabled: ""
 providers.eks.ec2.useHostnameFromFile: ""
 providers.gke.autopilot: ""
