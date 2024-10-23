@@ -794,7 +794,7 @@ rules:
   - patch
   - update
 {{- end }}
-{{- if .Values.orchestratorExplorer.listAndWatchAll }}
+{{- if .Values.clusterRole.allowReadAllResources }}
 - apiGroups:
   - '*'
   resources:

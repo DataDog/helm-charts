@@ -191,7 +191,8 @@ livenessProbe:
   # successThreshold: 1
   # failureThreshold: 3
 
-# orchestratorExplorer -- Set specific configuration for orchestratorExplorer in the operator
-orchestratorExplorer:
-  #listAndWatchAll is required to allow the operator to view all custom resources
-  listAndWatchAll: false
+# clusterRole -- Set specific configuration for the cluster role
+clusterRole:
+  # allowReadAllResources is required to allow the operator to view all custom resources.
+  # If collecting CRDs in the Kubernetes Explorer this is required
+  allowReadAllResources: false
