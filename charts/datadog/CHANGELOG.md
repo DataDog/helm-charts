@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.76.0 - do not merge
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
+
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
