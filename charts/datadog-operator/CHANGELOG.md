@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+* Add NODE_NAME envvar to the Datadog Operator deployment.
+
 ## 2.1.0
 
 * Update Datadog Operator version to 1.9.0.
