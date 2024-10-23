@@ -821,7 +821,9 @@ datadog:
       # This should be set to true when using EKS, GKE or if containerd is configured to
       # discard uncompressed layers.
       # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
-      uncompressedLayersSupport: false
+      # Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer.
+      # See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers
+      uncompressedLayersSupport: true
 
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
