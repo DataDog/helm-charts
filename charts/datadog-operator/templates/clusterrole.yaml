@@ -794,5 +794,20 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if .Values.orchestratorExplorer.listAndWatchAll }}
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
 {{- end }}
-
+{{- end }}

@@ -190,3 +190,8 @@ livenessProbe:
   # timeoutSeconds: 1
   # successThreshold: 1
   # failureThreshold: 3
+
+# orchestratorExplorer -- Set specific configuration for orchestratorExplorer in the operator
+orchestratorExplorer:
+  #listAndWatchAll is required to allow the operator to view all custom resources
+  listAndWatchAll: false
