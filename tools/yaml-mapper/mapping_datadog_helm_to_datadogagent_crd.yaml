@@ -125,10 +125,10 @@ clusterAgent.healthPort: spec.override.clusterAgent.containers.cluster-agent.hea
 clusterAgent.image.digest: ""
 clusterAgent.image.doNotCheckTag: ""
 clusterAgent.image.name: spec.override.clusterAgent.image.name
-clusterAgent.image.pullPolicy: spec.override.clusterAgent.pullPolicy
-clusterAgent.image.pullSecrets: spec.override.clusterAgent.pullSecrets
+clusterAgent.image.pullPolicy: spec.override.clusterAgent.image.pullPolicy
+clusterAgent.image.pullSecrets: spec.override.clusterAgent.image.pullSecrets
 clusterAgent.image.repository: ""
-clusterAgent.image.tag: spec.override.clusterAgent.tag
+clusterAgent.image.tag: spec.override.clusterAgent.image.tag
 clusterAgent.livenessProbe: spec.override.clusterAgent.containers.cluster-agent.livenessProbe
 clusterAgent.metricsProvider.aggregator: ""
 clusterAgent.metricsProvider.createReaderRbac: ""
@@ -168,7 +168,7 @@ clusterChecksRunner.affinity: spec.override.clusterChecksRunner.affinity
 clusterChecksRunner.createPodDisruptionBudget: ""
 clusterChecksRunner.deploymentAnnotations: ""
 clusterChecksRunner.dnsConfig: ""
-clusterChecksRunner.enabled: spec.features.clusterChecks.useClusterCheckRunners
+clusterChecksRunner.enabled: spec.features.clusterChecks.useClusterChecksRunners
 clusterChecksRunner.env: spec.override.clusterChecksRunner.env
 clusterChecksRunner.envDict: ""
 clusterChecksRunner.envFrom: ""
@@ -292,7 +292,7 @@ datadog.nodeLabelsAsTags: spec.global.nodeLabelsAsTags
 datadog.orchestratorExplorer.container_scrubbing.enabled: spec.features.orchestratorExplorer.scrubContainers
 datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer.customResources
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
-datadog.originDetectionUnified.enabled: spec.global.global.originDetectionUnified.enabled
+datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
 datadog.otlp.receiver.protocols.grpc.enabled: spec.features.otlp.receiver.protocols.grpc.enabled
 datadog.otlp.receiver.protocols.grpc.endpoint: spec.features.otlp.receiver.protocols.grpc.endpoint
@@ -319,10 +319,10 @@ datadog.secretBackend.command: ""
 datadog.secretBackend.enableGlobalPermissions: ""
 datadog.secretBackend.roles: ""
 datadog.secretBackend.timeout: ""
-datadog.securityAgent.compliance.checkInterval: spec.features.cspm.customBenchmarks.checkInterval
+datadog.securityAgent.compliance.checkInterval: ""
 datadog.securityAgent.compliance.configMap: spec.features.cspm.customBenchmarks.configMap
 datadog.securityAgent.compliance.enabled: spec.features.cspm.enabled
-datadog.securityAgent.compliance.host_benchmarks.enabled: spec.features.cspm.hostBenchmarks
+datadog.securityAgent.compliance.host_benchmarks.enabled: spec.features.cspm.hostBenchmarks.enabled
 datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout: ""
 datadog.securityAgent.runtime.activityDump.cgroupWaitListSize: ""
 datadog.securityAgent.runtime.activityDump.enabled: ""
@@ -353,7 +353,7 @@ datadog.systemProbe.enableTCPQueueLength: spec.features.tcpQueueLength.enabled
 datadog.systemProbe.maxTrackedConnections: ""
 datadog.systemProbe.mountPackageManagementDirs: ""
 datadog.systemProbe.runtimeCompilationAssetDir: ""
-datadog.systemProbe.seccomp: spec.override.nodeAgent.containers.system-probe.seccompConfig.customProfile
+datadog.systemProbe.seccomp: ""
 datadog.systemProbe.seccompRoot: spec.override.nodeAgent.containers.system-probe.seccompConfig.customRootPath
 datadog.tags: spec.global.tags
 datadog.useHostPID: spec.override.nodeAgent.hostPID
