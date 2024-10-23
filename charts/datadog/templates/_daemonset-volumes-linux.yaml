@@ -147,7 +147,7 @@
     path: /
   name: hostroot
 {{- end }}
-{{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+{{- if (eq (include "should-support-discard-uncompressed-layers" .) "true") }}
 - hostPath:
     path: /var/lib/containerd
   name: host-containerd-dir
