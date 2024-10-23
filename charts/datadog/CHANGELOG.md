@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.75.1
+
+* Add configuration values `datadog.disableDefaultOsReleasePaths` and `datadog.disablePasswdMount` to disable `/etc/passwd` and `datadog.osReleasePath` mounts when underlying OS doesn't have these files (like talos.dev).
+
+* Deprecate `datadog.systemProbe.enableDefaultOsReleasePaths` in favor of `datadog.disableDefaultOsReleasePaths`.
+
 ## 3.75.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
