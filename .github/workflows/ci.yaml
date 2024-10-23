@@ -117,27 +117,37 @@ jobs:
       - kubeconform-chart
     strategy:
       matrix:
-        k8s:
-          # TODO: `kind create cluster --config .github/kind_config.yaml --name chart-testing --wait 60s --image kindest/node:v1.18.20` fails
-          # - v1.18.20
-          - v1.22.17
-          - v1.24.17
-          - v1.25.16
-          - v1.26.15
-          - v1.27.16
-          - v1.28.13
-          - v1.29.8
-          - v1.30.4
-          - v1.31.1
+        versions:
+          - k8s: v1.18.20
+            kind: v0.17.0
+          - k8s: v1.22.17
+            kind: v0.22.0
+          - k8s: v1.24.17
+            kind: v0.22.0
+          - k8s: v1.25.16
+            kind: v0.22.0
+          - k8s: v1.26.15
+            kind: v0.22.0
+          - k8s: v1.27.16
+            kind: v0.22.0
+          - k8s: v1.28.13
+            kind: v0.22.0
+          - k8s: v1.29.8
+            kind: v0.22.0
+          - k8s: v1.30.4
+            kind: v0.22.0
+          - k8s: v1.31.1
+            kind: v0.22.0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Create kind ${{ matrix.k8s }} cluster
+      - name: Create kind ${{ matrix.versions.k8s }} cluster with kind version ${{ matrix.versions.kind }}
         uses: helm/kind-action@v1.10.0
         with:
-          node_image: kindest/node:${{ matrix.k8s }}
+          version: ${{ matrix.versions.kind }}
+          node_image: kindest/node:${{ matrix.versions.k8s}}
           config: .github/kind_config.yaml
       - uses: actions/setup-python@v4
         with:
