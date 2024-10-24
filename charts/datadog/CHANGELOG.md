@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.76.1
+
+* Gate `datadog.sbom.containerImage.uncompressedLayersSupport` feature behind `datadog.sbom.containerImage.enabled`: if the latter is not enabled (default), do not modify template based on `datadog.sbom.containerImage.uncompressedLayersSupport`.
+
 ## 3.76.0
 
 * Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
