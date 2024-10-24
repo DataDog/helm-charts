@@ -101,7 +101,7 @@ agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
 agents.podSecurity.seLinuxContext: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext
-agents.podSecurity.seLinuxContext.rule: 
+agents.podSecurity.seLinuxContext.rule: ""
 agents.podSecurity.seLinuxContext.seLinuxOptions.level: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.level
 agents.podSecurity.seLinuxContext.seLinuxOptions.role: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.role
 agents.podSecurity.seLinuxContext.seLinuxOptions.type: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.type
@@ -127,14 +127,14 @@ agents.updateStrategy.type: spec.override.nodeAgent.updateStrategy.type
 agents.useConfigMap: ""
 agents.useHostNetwork: spec.override.nodeAgent.hostNetwork
 agents.volumeMounts:
-- spec.override.nodeAgent.containers.node-agent.volumeMounts
+- spec.override.nodeAgent.containers.agent.volumeMounts
 - spec.override.nodeAgent.containers.process-agent.volumeMounts
 - spec.override.nodeAgent.containers.trace-agent.volumeMounts
 - spec.override.nodeAgent.containers.system-probe.volumeMounts
 - spec.override.nodeAgent.containers.security-agent.volumeMounts
 agents.volumes: spec.override.nodeAgent.volumes
 clusterAgent.additionalLabels: spec.override.clusterAgent.labels
-clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled: spec.features.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled 
+clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled: spec.features.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled
 clusterAgent.admissionController.agentSidecarInjection.containerRegistry: spec.features.admissionController.agentSidecarInjection.registry
 clusterAgent.admissionController.agentSidecarInjection.enabled: spec.features.admissionController.agentSidecarInjection.enabled
 clusterAgent.admissionController.agentSidecarInjection.imageName: spec.features.admissionController.agentSidecarInjection.image.name
@@ -277,7 +277,6 @@ clusterChecksRunner.startupProbe.initialDelaySeconds: ""
 clusterChecksRunner.startupProbe.periodSeconds: ""
 clusterChecksRunner.startupProbe.successThreshold: ""
 clusterChecksRunner.startupProbe.timeoutSeconds: ""
-clusterChecksRunner.strategy: spec.override.clusterChecksRunner.updateStrategy
 clusterChecksRunner.strategy.rollingUpdate.maxSurge: spec.override.clusterChecksRunner.updateStrategy.rollingUpdate.maxSurge
 clusterChecksRunner.strategy.rollingUpdate.maxUnavailable: spec.override.clusterChecksRunner.updateStrategy.rollingUpdate.maxUnavailable
 clusterChecksRunner.strategy.type: spec.override.clusterChecksRunner.updateStrategy.type
@@ -286,28 +285,28 @@ clusterChecksRunner.topologySpreadConstraints: ""
 clusterChecksRunner.volumeMounts: spec.override.clusterChecksRunner.containers.agent.volumeMounts
 clusterChecksRunner.volumes: spec.override.clusterChecksRunner.volumes
 commonLabels: ""
-datadog-crds.crds.datadogMetrics: ""
+datadog-crds.crds.datadogMetrics: spec.features.externalMetricsServer.useDatadogMetrics
 datadog-crds.crds.datadogPodAutoscalers: ""
 datadog.apiKey: spec.global.credentials.apiKey
 datadog.apiKeyExistingSecret: spec.global.credentials.apiSecret.secretName
-datadog.apm.enabled: ""
+datadog.apm.enabled: spec.features.apm.enabled
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
-datadog.apm.instrumentation.disabledNamespaces: ""
-datadog.apm.instrumentation.enabled: ""
-datadog.apm.instrumentation.enabledNamespaces: ""
-datadog.apm.instrumentation.language_detection.enabled: ""
-datadog.apm.instrumentation.libVersions: ""
+datadog.apm.instrumentation.disabledNamespaces: spec.features.apm.instrumentation.disabledNamespaces
+datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
+datadog.apm.instrumentation.enabledNamespaces: spec.features.apm.instrumentation.enabledNamespaces
+datadog.apm.instrumentation.language_detection.enabled: spec.features.apm.instrumentation.languageDetection.enabled
+datadog.apm.instrumentation.libVersions: spec.features.apm.instrumentation.libVersions
 datadog.apm.instrumentation.skipKPITelemetry: ""
 datadog.apm.port: spec.features.apm.hostPortConfig.hostPort
 datadog.apm.portEnabled: spec.features.apm.hostPortConfig.enabled
-datadog.apm.socketEnabled: spec.features.apm.enabled
+datadog.apm.socketEnabled: spec.features.apm.unixDomainSocketConfig.enabled
 datadog.apm.socketPath: ""
-datadog.apm.useSocketVolume: ""
+datadog.apm.useSocketVolume: spec.features.apm.unixDomainSocketConfig.enabled
 datadog.appKey: spec.global.credentials.appKey
 datadog.appKeyExistingSecret: spec.global.credentials.appSecret.secretName
-datadog.asm.iast.enabled: ""
-datadog.asm.sca.enabled: ""
-datadog.asm.threats.enabled: ""
+datadog.asm.iast.enabled: spec.features.asm.iast.enabled
+datadog.asm.sca.enabled: spec.features.asm.sca.enabled
+datadog.asm.threats.enabled: spec.features.asm.threats.enabled
 datadog.checksCardinality: ""
 datadog.checksd: spec.override.nodeAgent.extraChecksd
 datadog.clusterChecks.enabled: spec.features.clusterChecks.enabled
@@ -335,7 +334,7 @@ datadog.dogstatsd.port: spec.features.dogstatsd.hostPortConfig.hostPort
 datadog.dogstatsd.socketPath: spec.features.dogstatsd.unixDomainSocketConfig.path
 datadog.dogstatsd.tagCardinality: spec.features.dogstatsd.tagCardinality
 datadog.dogstatsd.tags: ""
-datadog.dogstatsd.useHostPID: ""
+datadog.dogstatsd.useHostPID: spec.override.nodeAgent.hostPID
 datadog.dogstatsd.useHostPort: spec.features.dogstatsd.hostPortConfig.enabled
 datadog.dogstatsd.useSocketVolume: spec.features.dogstatsd.unixDomainSocketConfig.enabled
 datadog.env: spec.override.nodeAgent.env
@@ -363,13 +362,13 @@ datadog.kubeStateMetricsEnabled: ""
 datadog.kubeStateMetricsNetworkPolicy.create: ""
 datadog.kubelet.agentCAPath: spec.global.kubelet.agentCAPath
 datadog.kubelet.coreCheckEnabled: ""
-datadog.kubelet.host: spec.global.kubelet.host
-datadog.kubelet.host.valueFrom.fieldRef.fieldPath: ""
+datadog.kubelet.host.valueFrom.fieldRef.fieldPath: global.kubelet.host.fieldRef.fieldPath
 datadog.kubelet.hostCAPath: spec.global.kubelet.hostCAPath
 datadog.kubelet.podLogsPath: ""
 datadog.kubelet.tlsVerify: spec.global.kubelet.tlsVerify
 datadog.kubernetesEvents.collectedEventTypes: spec.features.eventCollection.collectEventTypes
 datadog.kubernetesEvents.filteringEnabled: ""
+datadog.kubernetesEvents.sourceDetectionEnabled: ""
 datadog.kubernetesEvents.unbundleEvents: spec.features.eventCollection.unbundleEvents
 datadog.kubernetesResourcesAnnotationsAsTags: spec.global.kubernetesResourcesAnnotationsAsTags
 datadog.kubernetesResourcesLabelsAsTags: spec.global.kubernetesResourcesLabelsAsTags
@@ -394,6 +393,7 @@ datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
+datadog.otelCollector.config: ""
 datadog.otelCollector.enabled: ""
 datadog.otelCollector.ports: ""
 datadog.otlp.logs.enabled: ""
@@ -475,7 +475,6 @@ existingClusterAgent.join: ""
 existingClusterAgent.serviceName: ""
 existingClusterAgent.tokenSecretName: ""
 fips.customFipsConfig: ""
-#  customFIPSConfig: data, items, name
 fips.enabled: spec.global.fips.enabled
 fips.image.digest: ""
 fips.image.name: spec.global.fips.image.name
@@ -486,16 +485,15 @@ fips.local_address: spec.global.fips.localAddress
 fips.port: spec.global.fips.port
 fips.portRange: spec.global.fips.portRange
 fips.resources: ""
-#resources claims, limits, requests
 fips.use_https: spec.global.fips.useHTTPS
 fullnameOverride: ""
-nameOverride: spec.global.localservice.nameOverride
 kube-state-metrics.image: ""
 kube-state-metrics.image.repository: ""
 kube-state-metrics.nodeSelector.kubernetes.io/os: ""
 kube-state-metrics.rbac.create: ""
 kube-state-metrics.serviceAccount.create: ""
 kube-state-metrics.serviceAccount.name: ""
+nameOverride: spec.global.localservice.nameOverride
 providers.aks.enabled: ""
 providers.eks.ec2.useHostnameFromFile: ""
 providers.gke.autopilot: ""
