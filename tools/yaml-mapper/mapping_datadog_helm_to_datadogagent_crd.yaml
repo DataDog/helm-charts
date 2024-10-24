@@ -292,7 +292,6 @@ datadog-crds.crds.datadogMetrics: ""
 datadog-crds.crds.datadogPodAutoscalers: ""
 datadog.apiKey: spec.global.credentials.apiKey
 datadog.apiKeyExistingSecret: spec.global.credentials.apiSecret.secretName
-datadog.apm: ""
 datadog.apm.enabled: ""
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
 datadog.apm.instrumentation.disabledNamespaces: ""
@@ -308,8 +307,6 @@ datadog.apm.socketPath: ""
 datadog.apm.useSocketVolume: ""
 datadog.appKey: spec.global.credentials.appKey
 datadog.appKeyExistingSecret: spec.global.credentials.appSecret.secretName
-datadog.asm: ""
-datadog.asm.iast: ""
 datadog.asm.iast.enabled: ""
 datadog.asm.sca.enabled: ""
 datadog.asm.threats.enabled: ""
@@ -397,7 +394,6 @@ datadog.nodeLabelsAsTags: spec.global.nodeLabelsAsTags
 datadog.orchestratorExplorer.container_scrubbing.enabled: spec.features.orchestratorExplorer.scrubContainers
 datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer.customResources
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
-datadog.originDetectionUnified: ""
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
 datadog.otelCollector.enabled: ""
@@ -453,7 +449,7 @@ datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled: ""
 datadog.securityAgent.runtime.securityProfile.enabled: spec.features.cws.securityProfiles.enabled
 datadog.securityAgent.runtime.syscallMonitor.enabled: spec.features.cws.syscallMonitorEnabled
 datadog.securityAgent.runtime.useSecruntimeTrack: ""
-datadog.securityContext: ""
+datadog.securityContext: spec.global.securityContext
 datadog.securityContext.runAsUser: ""
 datadog.serviceMonitoring.enabled: spec.features.usm.enabled
 datadog.site: spec.global.site
