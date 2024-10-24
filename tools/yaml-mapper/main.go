@@ -100,15 +100,27 @@ func main() {
 
 	if updateMap {
 		interimMap = parseValues(sourceValues, make(map[string]interface{}), "")
-	}
-	for sourceKey, sourceVal := range mappingValues {
-		if updateMap {
-			if sourceVal == nil {
-				interimMap[sourceKey] = ""
-			} else {
-				interimMap[sourceKey] = sourceVal
-			}
+		updateMapping(mappingValues, interimMap)
+		newMapYaml, e := chartutil.Values(interimMap).YAML()
+		if e != nil {
+			fmt.Println(e)
+			return
 		}
+		newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
+
+` + newMapYaml
+
+		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
+		if e != nil {
+			fmt.Printf("Error updating default mapping yaml. %v", e)
+			return
+		}
+
+		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
+		return
+	}
+
+	for sourceKey, _ := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
 		if pathVal == nil {
@@ -129,66 +141,61 @@ func main() {
 		} else {
 			interim[destKey.(string)] = pathVal
 		}
+
 	}
 
 	// Create final mapping with properly nested map keys (converted from period-delimited keys)
-	if !updateMap {
-		result := make(map[string]interface{})
-		for k, v := range interim {
-			result = makeTable(k, v, result)
-		}
 
-		// Pretty print to YAML format
-		out, err := chartutil.Values(result).YAML()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		// Read prefix yaml file
-		var prefix []byte
-		if prefixFile != "" {
-			prefix, err = os.ReadFile(prefixFile)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-		}
-
-		if len(prefix) > 0 {
-			out = string(prefix) + out
-		}
-
-		if *printPtr {
-			fmt.Println("")
-			fmt.Println(out)
-		}
-
-		err = os.WriteFile(destFile, []byte(out), 0660)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		fmt.Println("YAML file successfully written to", destFile)
-	} else {
-		newMapYaml, e := chartutil.Values(interimMap).YAML()
-		if e != nil {
-			fmt.Println(e)
-			return
-		}
-		newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-
-` + newMapYaml
-
-		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
-		if e != nil {
-			fmt.Printf("Error updating default mapping yaml. %v", e)
-			return
-		}
-
-		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
+	result := make(map[string]interface{})
+	for k, v := range interim {
+		result = makeTable(k, v, result)
 	}
+
+	// Pretty print to YAML format
+	out, err := chartutil.Values(result).YAML()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Read prefix yaml file
+	var prefix []byte
+	if prefixFile != "" {
+		prefix, err = os.ReadFile(prefixFile)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+
+	if len(prefix) > 0 {
+		out = string(prefix) + out
+	}
+
+	if *printPtr {
+		fmt.Println("")
+		fmt.Println(out)
+	}
+
+	err = os.WriteFile(destFile, []byte(out), 0660)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("YAML file successfully written to", destFile)
+
 	return
+
+}
+
+func updateMapping(mappingValues chartutil.Values, interimMap map[string]interface{}) {
+	for sourceKey, sourceVal := range mappingValues {
+		if sourceVal == nil {
+			interimMap[sourceKey] = ""
+		} else {
+			interimMap[sourceKey] = sourceVal
+		}
+	}
 }
 
 func makeTable(path string, val interface{}, mapName map[string]interface{}) map[string]interface{} {
