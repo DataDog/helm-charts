@@ -8,6 +8,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"reflect"
 	"strings"
@@ -27,6 +29,7 @@ func main() {
 			fmt.Println("  -sourceFile (string)")
 			fmt.Println("  -destFile (string)")
 			fmt.Println("  -prefixFile (string)")
+			fmt.Println("  -updateMap (bool)")
 			return
 		}
 	}
@@ -37,10 +40,12 @@ func main() {
 	var sourceFile string
 	var destFile string
 	var prefixFile string
+	var updateMap bool
 	flag.StringVar(&mappingFile, "mappingFile", "mapping.yaml", "path to mapping YAML file")
 	flag.StringVar(&sourceFile, "sourceFile", "source.yaml", "path to source YAML file")
 	flag.StringVar(&destFile, "destFile", "destination.yaml", "path to destination YAML file")
 	flag.StringVar(&prefixFile, "prefixFile", "", "path to prefix YAML file. The content in this file will be prepended to the output")
+	flag.BoolVar(&updateMap, "updateMap", false, "Update default Mapping file with latest Datadog Helm Chart values")
 
 	flag.Parse()
 
@@ -48,9 +53,18 @@ func main() {
 	fmt.Println("sourceFile:", sourceFile)
 	fmt.Println("destFile:", destFile)
 	fmt.Println("prefixFile:", prefixFile)
+	fmt.Println("updateMap:", updateMap)
 	fmt.Println("printOutput:", *printPtr)
 	fmt.Println("")
 
+	// If updating default mapping:
+	// - Create a temp source file for the latest chart values.yaml and use it as the sourceFile
+	tmpSourceFile := ""
+	if updateMap {
+		mappingFile = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+		tmpSourceFile = getLatestValuesFile()
+		sourceFile = tmpSourceFile
+	}
 	// Read mapping file
 	mapping, err := os.ReadFile(mappingFile)
 	if err != nil {
@@ -65,6 +79,11 @@ func main() {
 
 	// Read source yaml file
 	source, err := os.ReadFile(sourceFile)
+
+	// Cleanup tmpSourceFile after it's been read
+	if tmpSourceFile != "" {
+		defer os.Remove(tmpSourceFile)
+	}
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -75,12 +94,47 @@ func main() {
 		return
 	}
 
-	// Create an interim map that that has period-delimited destination key as the key,
-	// and the value from the source.yaml for the value
+	// Create an interim map that that has period-delimited destination key as the key, and the value from the source.yaml for the value
 	var pathVal interface{}
 	var destKey interface{}
 	var ok bool
 	interim := make(map[string]interface{})
+
+	if updateMap {
+		// Populate interim map with keys from latest chart's values.yaml
+		interim = parseValues(sourceValues, make(map[string]interface{}), "")
+		// Add back existing key values from mapping file
+		for sourceKey, sourceVal := range mappingValues {
+			if sourceVal == nil {
+				interim[sourceKey] = ""
+			} else {
+				interim[sourceKey] = sourceVal
+			}
+		}
+		newMapYaml, e := chartutil.Values(interim).YAML()
+		if e != nil {
+			fmt.Println(e)
+			return
+		}
+		newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
+
+` + newMapYaml
+
+		if *printPtr {
+			fmt.Println("")
+			fmt.Println(newMapYaml)
+		}
+
+		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
+		if e != nil {
+			fmt.Printf("Error updating default mapping yaml. %v", e)
+			return
+		}
+
+		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
+		return
+	}
+	// Map values.yaml > DDA
 	for sourceKey := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
@@ -182,3 +236,64 @@ func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
 }
 
 func parsePath(key string) []string { return strings.Split(key, ".") }
+
+func getLatestValuesFile() string {
+	chartVersion := getChartVersion()
+	chartValuesFile := downloadYaml(fmt.Sprintf("https://raw.githubusercontent.com/DataDog/helm-charts/refs/tags/datadog-%s/charts/datadog/values.yaml", chartVersion), "datadog-values")
+
+	return chartValuesFile
+}
+
+func getChartVersion() string {
+	chartYamlPath := downloadYaml("https://raw.githubusercontent.com/DataDog/helm-charts/main/charts/datadog/Chart.yaml", "datadog-Chart")
+
+	ddChart, err := chartutil.LoadChartfile(chartYamlPath)
+	defer os.Remove(chartYamlPath)
+	if err != nil {
+		fmt.Println(fmt.Printf("Error loading Chart.yaml: %s", err))
+	}
+	return ddChart.Version
+}
+
+func downloadYaml(url string, name string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Printf("Error fetching yaml file: %v\n", err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Failed to fetch yaml file %s: %v\n", url, resp.Status)
+		return ""
+	}
+
+	tmpFile, err := os.CreateTemp("", fmt.Sprintf("%s.yaml.*", name))
+	if err != nil {
+		fmt.Printf("Error creating temporary file: %v\n", err)
+		return ""
+	}
+	defer tmpFile.Close()
+
+	_, err = io.Copy(tmpFile, resp.Body)
+	if err != nil {
+		fmt.Printf("Error saving file: %v\n", err)
+		return ""
+	}
+
+	// fmt.Printf("File downloaded and saved to temporary file: %s\n", tmpFile.Name())
+	return tmpFile.Name()
+}
+
+func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}, prefix string) map[string]interface{} {
+	for key, value := range sourceValues {
+		currentKey := prefix + key
+		// If the value is a map, recursive call to get nested keys.
+		if nestedMap, ok := value.(map[string]interface{}); ok {
+			parseValues(nestedMap, valuesMap, currentKey+".")
+		} else {
+			valuesMap[currentKey] = ""
+		}
+	}
+	return valuesMap
+}
