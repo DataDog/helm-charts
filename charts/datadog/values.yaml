@@ -825,6 +825,9 @@ datadog:
       # See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers
       uncompressedLayersSupport: true
 
+      # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
+      overlayFSDirectScan: false
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
