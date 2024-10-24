@@ -63,7 +63,7 @@ agents.containers.systemProbe.ports: ""
 agents.containers.systemProbe.resources: spec.override.nodeAgent.containers.system-probe.resources
 agents.containers.systemProbe.securityContext: spec.override.nodeAgent.containers.system-probe.securityContext
 agents.containers.systemProbe.securityContext.capabilities.add: spec.override.nodeAgent.containers.system-probe.securityContext.capabilities.add
-agents.containers.systemProbe.securityContext.privileged: spec.override.nodeAgent.containers.system-probe.securityContext.priveleged
+agents.containers.systemProbe.securityContext.privileged: spec.override.nodeAgent.containers.system-probe.securityContext.privileged
 agents.containers.traceAgent.env: spec.override.nodeAgent.containers.trace-agent.env
 agents.containers.traceAgent.envDict: ""
 agents.containers.traceAgent.envFrom: ""
@@ -93,7 +93,6 @@ agents.networkPolicy.create: ""
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
 agents.podLabels: spec.override.nodeAgent.labels
-agents.podSecurity: ""
 agents.podSecurity.allowedUnsafeSysctls: ""
 agents.podSecurity.apparmor.enabled: ""
 agents.podSecurity.apparmorProfiles: ""
@@ -107,8 +106,7 @@ agents.podSecurity.seLinuxContext.seLinuxOptions.level: spec.override.nodeAgent.
 agents.podSecurity.seLinuxContext.seLinuxOptions.role: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.role
 agents.podSecurity.seLinuxContext.seLinuxOptions.type: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.type
 agents.podSecurity.seLinuxContext.seLinuxOptions.user: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.user
-agents.podSecurity.seccompProfiles: spec.override.nodeAgent.containers.agent.securityContext.seccompProfile
-agents.podSecurity.securityContextConstraints: ""
+agents.podSecurity.seccompProfiles: ""
 agents.podSecurity.securityContextConstraints.create: ""
 agents.podSecurity.volumes: ""
 agents.priorityClassCreate: ""
