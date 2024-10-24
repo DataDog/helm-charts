@@ -605,5 +605,5 @@ OTel collector is not supported on GKE Autopilot.
 #################################################################
 ####               WARNING: Private Beta notice              ####
 #################################################################
-OTel collector is in private beta. Please reach out to your Datadog representative for more information.
+OTel collector is in preview. Please reach out to your Datadog representative for more information.
 {{- end }}
