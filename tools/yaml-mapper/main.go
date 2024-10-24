@@ -135,7 +135,7 @@ func main() {
 		return
 	}
 	// Map values.yaml > DDA
-	for sourceKey, _ := range mappingValues {
+	for sourceKey := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
 		if pathVal == nil {
