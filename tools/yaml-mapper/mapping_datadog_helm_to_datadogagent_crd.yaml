@@ -393,6 +393,7 @@ datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
+datadog.otelCollector.config: ""
 datadog.otelCollector.enabled: ""
 datadog.otelCollector.ports: ""
 datadog.otlp.logs.enabled: ""
