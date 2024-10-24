@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-KUBECONFORM_VERSION="v0.6.4"
+KUBECONFORM_VERSION="v0.6.7"
 # https://github.com/yannh/kubeconform/issues/51
 CRD_SPEC_URL="https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/v3/apis__apiextensions.k8s.io__v1_openapi.json"
 # Remove after v1.16 support / testing is dropped

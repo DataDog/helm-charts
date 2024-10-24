@@ -1,8 +1,41 @@
 # Datadog changelog
 
-## 3.75.0
+## 3.77.0
+
 * Fix warning message displayed when installing/upgrading the Agent with OTel collector. 
 * Add preview message in values.yaml file 
+
+## 3.76.0
+
+* Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
+
+## 3.75.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
+
+## 3.74.6
+
+* Fix error message for when System Probe is enabled on GKE Autopilot
+
+## 3.74.5
+
+* Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
+
+## 3.74.4
+
+* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
+
+## 3.74.3
+
+* Do not mount `/usr/lib/sysimage/rpm` (reverts https://github.com/DataDog/helm-charts/pull/1541): in some operating systems such as Bottlerocket, `/usr` is `read-only`, preventing the Agent from being deployed when `datadog.sbom.host.enabled` is set to `true` as kubelet cannot create the directory at this location if it does not exist.
+
+## 3.74.2
+
+* Mount `/usr/lib/sysimage/rpm` in the Agent DaemonSet when using host SBOM feature (required on hosts running Amazon Linux distributions).
+
+## 3.74.1
+
+* Pass components env variables to the cluster checks runner deployment pod spec.
 
 ## 3.74.0
 

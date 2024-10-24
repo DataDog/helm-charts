@@ -170,6 +170,7 @@ spec:
                 key: api-key
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
+          {{- include "language-detection-common-env" . | nindent 10 }}
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_APP_KEY
             valueFrom:
@@ -234,6 +235,12 @@ spec:
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
+          {{- end }}
+          - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+          {{- if .Values.clusterAgent.admissionController.containerRegistry }}
+            value: {{ .Values.clusterAgent.admissionController.containerRegistry | quote }}
+          {{- else }}
+            value: {{ include "registry" .Values | quote }}
           {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
@@ -301,6 +308,8 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
+            value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent
           - name: DD_CLUSTER_AGENT_AUTH_TOKEN

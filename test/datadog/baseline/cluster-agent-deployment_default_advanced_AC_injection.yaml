@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.73.0'
+    helm.sh/chart: 'datadog-3.75.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 146a7a7f2e304ae7637352cb1ecd1fd9b92739626753086c8a562b3a848904fa
-        checksum/clusteragent-configmap: a4b18a57220d8a10e808c1d1fb842d71eb6b72c99041c603784aecdd4d8003cc
-        checksum/api_key: fee83544b853e02ebb8f3fc57ab8c3a39bec4379bd187f18a27a58bbaca57208
+        checksum/clusteragent_token: 4faaaae681309cfb4836e070a4b35e8a718a1b3c012ffb338d2ec7a3cf4036b1
+        checksum/clusteragent-configmap: 0c1966cffe42a8ccb4671c256aa7db39c81c3dae6879d43317408155ad03110b
+        checksum/api_key: a65b0e9878ce3895aac0a8a39067aaceac970036603a52f6b4d3b8841fe562b9
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 4431ead135ce20065fbe40abb5a6e6324fb9e43978cfd3ef1857d9fcaa613aa8
+        checksum/install_info: 0f26ba698ed19cfca67b345f53ad633320db3f86502c811b4c44738df3ee25a4
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.57.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.57.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -86,12 +86,13 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
+          
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
             value: "false"
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
@@ -108,6 +109,8 @@ spec:
             value: "Ignore"
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: "8000"
+          - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+            value: "gcr.io/datadoghq"
           
           
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
@@ -144,6 +147,8 @@ spec:
             value: datadogtoken
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: "true"
+          - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
+            value: "false"
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: datadog-cluster-agent
           - name: DD_CLUSTER_AGENT_AUTH_TOKEN

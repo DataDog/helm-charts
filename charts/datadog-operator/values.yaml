@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.8.0
+  tag: 1.9.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -84,6 +84,9 @@ secretBackend:
 datadogAgent:
   # datadogAgent.enabled -- Enables Datadog Agent controller
   enabled: true
+datadogDashboard:
+  # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+  enabled: false
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
   enabled: false
@@ -142,6 +145,8 @@ datadogCRDs:
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
+    # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+    datadogDashboards: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
