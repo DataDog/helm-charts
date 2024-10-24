@@ -62,7 +62,7 @@ spec:
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
