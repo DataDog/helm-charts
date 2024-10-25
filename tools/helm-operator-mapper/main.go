@@ -136,11 +136,11 @@ func main() {
 
 		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
 		if e != nil {
-			fmt.Printf("Error updating default mapping yaml. %v", e)
+			fmt.Printf("Error updating mapping yaml. %v", e)
 			return
 		}
 
-		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
+		fmt.Printf("Mapping file, %s, successfully updated", mappingFile)
 		return
 	}
 	// Map values.yaml => DDA
