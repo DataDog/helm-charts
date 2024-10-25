@@ -1,3 +1,4 @@
+# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
 agents.additionalLabels: spec.override.nodeAgent.labels
 agents.affinity: spec.override.nodeAgent.affinity
 agents.containers.agent.env: spec.override.nodeAgent.containers.agent.env
@@ -393,6 +394,7 @@ datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
+datadog.otelCollector.config: ""
 datadog.otelCollector.enabled: ""
 datadog.otelCollector.ports: ""
 datadog.otlp.logs.enabled: ""
@@ -500,4 +502,3 @@ providers.gke.cos: ""
 registry: spec.global.registry
 remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 targetSystem: ""
-testKey.enabled: ""

@@ -124,8 +124,7 @@ func main() {
 			fmt.Println(e)
 			return
 		}
-
-		if mappingFile != defaultDDAMappingPath {
+		if mappingFile == defaultDDAMappingPath || tmpSourceFile != "" {
 			newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
 ` + newMapYaml
 		}
