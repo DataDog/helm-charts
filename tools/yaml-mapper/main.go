@@ -17,6 +17,8 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 )
 
+const defaultDDAMappingPath = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+
 func main() {
 
 	if len(os.Args) > 1 {
@@ -41,11 +43,11 @@ func main() {
 	var destFile string
 	var prefixFile string
 	var updateMap bool
-	flag.StringVar(&mappingFile, "mappingFile", "mapping.yaml", "path to mapping YAML file")
-	flag.StringVar(&sourceFile, "sourceFile", "source.yaml", "path to source YAML file")
-	flag.StringVar(&destFile, "destFile", "destination.yaml", "path to destination YAML file")
-	flag.StringVar(&prefixFile, "prefixFile", "", "path to prefix YAML file. The content in this file will be prepended to the output")
-	flag.BoolVar(&updateMap, "updateMap", false, "Update default Mapping file with latest Datadog Helm Chart values")
+	flag.StringVar(&mappingFile, "mappingFile", "", "path to mapping YAML file. Example: mapping.yaml")
+	flag.StringVar(&sourceFile, "sourceFile", "", "path to source YAML file. Example: source.yaml")
+	flag.StringVar(&destFile, "destFile", "destination.yaml", "path to destination YAML file.")
+	flag.StringVar(&prefixFile, "prefixFile", "example_prefix.yaml", "path to prefix YAML file. The content in this file will be prepended to the output")
+	flag.BoolVar(&updateMap, "updateMap", false, fmt.Sprintf("update 'mappingFile' with provided 'sourceFile'. (default false) If set to 'true', default mappingFile is %s and default sourceFile is latest published Datadog chart values.yaml", defaultDDAMappingPath))
 
 	flag.Parse()
 
@@ -57,14 +59,20 @@ func main() {
 	fmt.Println("printOutput:", *printPtr)
 	fmt.Println("")
 
-	// If updating default mapping:
-	// - Create a temp source file for the latest chart values.yaml and use it as the sourceFile
+	// If updating mapping:
+	// Use latest datadog chart values.yaml as sourceFile if none provided
+	// Use default mappingFile if none provided
 	tmpSourceFile := ""
 	if updateMap {
-		mappingFile = "mapping_datadog_helm_to_datadogagent_crd.yaml"
-		tmpSourceFile = getLatestValuesFile()
-		sourceFile = tmpSourceFile
+		if sourceFile == "" {
+			tmpSourceFile = getLatestValuesFile()
+			sourceFile = tmpSourceFile
+		}
+		if mappingFile == "" {
+			mappingFile = defaultDDAMappingPath
+		}
 	}
+
 	// Read mapping file
 	mapping, err := os.ReadFile(mappingFile)
 	if err != nil {
@@ -116,9 +124,11 @@ func main() {
 			fmt.Println(e)
 			return
 		}
-		newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
 
+		if mappingFile != defaultDDAMappingPath {
+			newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
 ` + newMapYaml
+		}
 
 		if *printPtr {
 			fmt.Println("")
@@ -134,7 +144,7 @@ func main() {
 		fmt.Printf("Default mapping file, %s, successfully updated", mappingFile)
 		return
 	}
-	// Map values.yaml > DDA
+	// Map values.yaml => DDA
 	for sourceKey := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
 		// If there is no corresponding key in the destination, then the pathVal will be nil
@@ -244,6 +254,7 @@ func getLatestValuesFile() string {
 	return chartValuesFile
 }
 
+// todo: get the local chart
 func getChartVersion() string {
 	chartYamlPath := downloadYaml("https://raw.githubusercontent.com/DataDog/helm-charts/main/charts/datadog/Chart.yaml", "datadog-Chart")
 
