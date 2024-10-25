@@ -1,5 +1,4 @@
 # This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-
 agents.additionalLabels: spec.override.nodeAgent.labels
 agents.affinity: spec.override.nodeAgent.affinity
 agents.containers.agent.env: spec.override.nodeAgent.containers.agent.env
@@ -101,7 +100,7 @@ agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
 agents.podSecurity.seLinuxContext: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext
-agents.podSecurity.seLinuxContext.rule: 
+agents.podSecurity.seLinuxContext.rule: ""
 agents.podSecurity.seLinuxContext.seLinuxOptions.level: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.level
 agents.podSecurity.seLinuxContext.seLinuxOptions.role: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.role
 agents.podSecurity.seLinuxContext.seLinuxOptions.type: spec.override.nodeAgent.containers.agent.securityContext.seLinuxContext.type
@@ -134,7 +133,7 @@ agents.volumeMounts:
 - spec.override.nodeAgent.containers.security-agent.volumeMounts
 agents.volumes: spec.override.nodeAgent.volumes
 clusterAgent.additionalLabels: spec.override.clusterAgent.labels
-clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled: spec.features.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled 
+clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled: spec.features.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled
 clusterAgent.admissionController.agentSidecarInjection.containerRegistry: spec.features.admissionController.agentSidecarInjection.registry
 clusterAgent.admissionController.agentSidecarInjection.enabled: spec.features.admissionController.agentSidecarInjection.enabled
 clusterAgent.admissionController.agentSidecarInjection.imageName: spec.features.admissionController.agentSidecarInjection.image.name
@@ -370,6 +369,7 @@ datadog.kubelet.podLogsPath: ""
 datadog.kubelet.tlsVerify: spec.global.kubelet.tlsVerify
 datadog.kubernetesEvents.collectedEventTypes: spec.features.eventCollection.collectEventTypes
 datadog.kubernetesEvents.filteringEnabled: ""
+datadog.kubernetesEvents.sourceDetectionEnabled: ""
 datadog.kubernetesEvents.unbundleEvents: spec.features.eventCollection.unbundleEvents
 datadog.kubernetesResourcesAnnotationsAsTags: spec.global.kubernetesResourcesAnnotationsAsTags
 datadog.kubernetesResourcesLabelsAsTags: spec.global.kubernetesResourcesLabelsAsTags
@@ -394,6 +394,7 @@ datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
+datadog.otelCollector.config: ""
 datadog.otelCollector.enabled: ""
 datadog.otelCollector.ports: ""
 datadog.otlp.logs.enabled: ""
@@ -475,7 +476,6 @@ existingClusterAgent.join: ""
 existingClusterAgent.serviceName: ""
 existingClusterAgent.tokenSecretName: ""
 fips.customFipsConfig: ""
-#  customFIPSConfig: data, items, name
 fips.enabled: spec.global.fips.enabled
 fips.image.digest: ""
 fips.image.name: spec.global.fips.image.name
@@ -486,16 +486,15 @@ fips.local_address: spec.global.fips.localAddress
 fips.port: spec.global.fips.port
 fips.portRange: spec.global.fips.portRange
 fips.resources: ""
-#resources claims, limits, requests
 fips.use_https: spec.global.fips.useHTTPS
 fullnameOverride: ""
-nameOverride: spec.global.localservice.nameOverride
 kube-state-metrics.image: ""
 kube-state-metrics.image.repository: ""
 kube-state-metrics.nodeSelector.kubernetes.io/os: ""
 kube-state-metrics.rbac.create: ""
 kube-state-metrics.serviceAccount.create: ""
 kube-state-metrics.serviceAccount.name: ""
+nameOverride: spec.global.localservice.nameOverride
 providers.aks.enabled: ""
 providers.eks.ec2.useHostnameFromFile: ""
 providers.gke.autopilot: ""
