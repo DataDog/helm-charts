@@ -12,11 +12,13 @@ The motivation for creating this tool was to provide a way to support Datadog us
 
 ```bash
 
-$ go build -o yaml-mapper .
+$ go build -o helm-operator-mapper .
 
 ```
 
 ## How to use
+
+### Mapping Helm YAML to DatadogAgent CRD Spec
 
 If the desired conversion is between the `datadog` Helm chart and a `DatadogAgent` spec, use the provided `mapping_datadog_helm_to_datadogagent_crd.yaml` file as the mapping file. Otherwise, create your own using the following format:
 
@@ -29,7 +31,7 @@ Both the key and value are period-delimited instead of nested or indented, as in
 Pass the source file and mapping file to the command:
 
 ```bash
-$ ./yaml-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
+$ ./helm-operator-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
 
 ```
 
@@ -42,5 +44,25 @@ By default the output is also printed to STDOUT; to disable this use the flag `-
 ## Example usage (using provided files)
 
 ```bash
-$ ./yaml-mapper -sourceFile=example_source.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=example_prefix.yaml
+$ ./helm-operator-mapper -sourceFile=example_source.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=example_prefix.yaml
+```
+
+### Updating Mapping File from a Source YAML
+
+#### Update default Datadog Helm to DatadogAgent CRD mapping file with latest published Datadog Helm chart values.yaml
+
+```bash
+./helm-operator-mapper -updateMap
+```
+
+#### Update default Datadog Helm to DatadogAgent CRD mapping file with local Datadog values.yaml
+
+```bash
+./helm-operator-mapper -updateMap -sourceFile=../../charts/datadog/values.yaml
+```
+
+#### Update custom mapping file with custom source YAML file
+
+```bash
+./helm-operator-mapper -updateMap -sourceFile=<YOUR_SOURCE_FILE> -mappingFile=<YOUR_MAPPING_FILE>
 ```
