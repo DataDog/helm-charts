@@ -144,7 +144,7 @@ spec:
           value: nodeless
       containers:
         - name: runner
-          image: "us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.1.2-beta"
+          image: "us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.1.3-beta"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
