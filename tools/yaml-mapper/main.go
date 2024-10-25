@@ -43,11 +43,11 @@ func main() {
 	var destFile string
 	var prefixFile string
 	var updateMap bool
-	flag.StringVar(&mappingFile, "mappingFile", "", "path to mapping YAML file. Example: mapping.yaml")
-	flag.StringVar(&sourceFile, "sourceFile", "", "path to source YAML file. Example: source.yaml")
-	flag.StringVar(&destFile, "destFile", "destination.yaml", "path to destination YAML file.")
-	flag.StringVar(&prefixFile, "prefixFile", "example_prefix.yaml", "path to prefix YAML file. The content in this file will be prepended to the output")
-	flag.BoolVar(&updateMap, "updateMap", false, fmt.Sprintf("update 'mappingFile' with provided 'sourceFile'. (default false) If set to 'true', default mappingFile is %s and default sourceFile is latest published Datadog chart values.yaml", defaultDDAMappingPath))
+	flag.StringVar(&mappingFile, "mappingFile", "", "Path to mapping YAML file. Example: mapping.yaml")
+	flag.StringVar(&sourceFile, "sourceFile", "", "Path to source YAML file. Example: source.yaml")
+	flag.StringVar(&destFile, "destFile", "destination.yaml", "Path to destination YAML file.")
+	flag.StringVar(&prefixFile, "prefixFile", "example_prefix.yaml", "Path to prefix YAML file. The content in this file will be prepended to the output.")
+	flag.BoolVar(&updateMap, "updateMap", false, fmt.Sprintf("Update 'mappingFile' with provided 'sourceFile'. (default false) If set to 'true', default mappingFile is %s and default sourceFile is latest published Datadog chart values.yaml.", defaultDDAMappingPath))
 
 	flag.Parse()
 
@@ -254,7 +254,6 @@ func getLatestValuesFile() string {
 	return chartValuesFile
 }
 
-// todo: get the local chart
 func getChartVersion() string {
 	chartYamlPath := downloadYaml("https://raw.githubusercontent.com/DataDog/helm-charts/main/charts/datadog/Chart.yaml", "datadog-Chart")
 
