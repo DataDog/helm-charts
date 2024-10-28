@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.75.0'
+    helm.sh/chart: 'datadog-3.77.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 83b5b1602b5e1169578e69dded647f78c781486cc5e8203a93bcd477148b6938
-        checksum/install_info: 0f26ba698ed19cfca67b345f53ad633320db3f86502c811b4c44738df3ee25a4
+        checksum/clusteragent_token: 6b7aaf26c3c7a20b688eb3152d5fe27ced042a260cfb237e786805a8c601237f
+        checksum/install_info: f403040e6025b96734be0a558887981234898c3cae7f36887aa7f3f4eefe5ea4
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -89,6 +89,8 @@ spec:
             value: "false"
           - name: DD_LOG_LEVEL
             value: "INFO"
+          - name: DD_USE_DOGSTATSD
+            value: "true"
           - name: DD_DOGSTATSD_PORT
             value: "8125"
           - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC

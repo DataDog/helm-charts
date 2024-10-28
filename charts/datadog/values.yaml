@@ -324,6 +324,10 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
   ## To emit custom metrics from your Kubernetes application, use DogStatsD.
   dogstatsd:
+
+    # datadog.dogstatsd.enabled -- Enable DogStatsD on port 8125 UDP
+    enabled: true
+
     # datadog.dogstatsd.port -- Override the Agent DogStatsD port
 
     ## Note: Make sure your client is sending to the same UDP port.
