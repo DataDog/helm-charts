@@ -7,12 +7,14 @@
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
   ports:
+  {{- if .Values.datadog.dogstatsd.enabled }}
   - containerPort: {{ .Values.datadog.dogstatsd.port }}
     {{- if .Values.datadog.dogstatsd.useHostPort }}
     hostPort: {{ .Values.datadog.dogstatsd.port }}
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+  {{- end }}
   {{- if .Values.datadog.otlp }}
   {{- if .Values.datadog.otlp.receiver }}
   {{- if .Values.datadog.otlp.receiver.protocols }}
@@ -63,6 +65,10 @@
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- end }}
+    {{- if .Values.datadog.dogstatsd.enabled }}
+    - name: DD_USE_DOGSTATSD
+      value: {{ .Values.datadog.dogstatsd.enabled | quote }}
     {{- end }}
     {{- if .Values.datadog.dogstatsd.port }}
     - name: DD_DOGSTATSD_PORT

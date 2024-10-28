@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Add dogstatsd.enabled flag to disable it when using a standalone DogStatsD.
+
 ## 3.76.2
 
 * Fix warning message displayed when installing/upgrading the Agent with OTel collector.
