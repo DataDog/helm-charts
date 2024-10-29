@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.3
+
+* Update version required for datadog.processAgent.runInCoreAgent and remove experimental status.
+
 ## 3.77.2
 
 * Add the ability to include Security Contexts at the container level for Cluster Checks Runners.
