@@ -286,6 +286,9 @@
     - name: host-containerd-dir
       mountPath: /host/var/lib/containerd
       readOnly: true
+    - name: host-docker-dir
+      mountPath: /host/var/lib/docker
+      readOnly: true
     {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: host-apk-dir
