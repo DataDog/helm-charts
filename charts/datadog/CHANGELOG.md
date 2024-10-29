@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Add experimental support for overlayfs direct scan for SBOMs
+
 ## 3.76.3
 
 * Add `podisruptionbudgets` RBAC to the Cluster Agent.

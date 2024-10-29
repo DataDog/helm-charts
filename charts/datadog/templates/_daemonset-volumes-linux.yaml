@@ -151,6 +151,9 @@
 - hostPath:
     path: /var/lib/containerd
   name: host-containerd-dir
+- hostPath:
+    path: /var/lib/docker
+  name: host-docker-dir
 {{- end }}
 {{- if .Values.datadog.sbom.host.enabled }}
 - hostPath:
