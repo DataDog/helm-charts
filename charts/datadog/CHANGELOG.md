@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.76.3
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
 ## 3.76.2
 
 * Fix warning message displayed when installing/upgrading the Agent with OTel collector.
