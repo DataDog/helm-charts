@@ -31,8 +31,15 @@
   value: "0"
 {{- end }}
 {{- if .Values.providers.gke.gdc }}
+- name: DD_NODE_NAME
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: spec.nodeName
 - name: DD_HOSTNAME
   value: "$(DD_NODE_NAME)-$(DD_CLUSTER_NAME)"
+- name: DD_LOGS_CONFIG_RUN_PATH # todo: gdc remove this?
+  value: {{ include "datadog.hostMountRoot" . }}
 {{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
@@ -131,10 +138,6 @@
 {{- end }}
 {{- if eq .Values.targetSystem "windows" }}
   value: npipe://{{ (include "datadog.dockerOrCriSocketPath" .) | replace "\\" "/" }}
-{{- end }}
-{{- if .Values.providers.gke.gdc }}
-- name: DD_LOGS_CONFIG_RUN_PATH
-  value: {{ include "datadog.hostMountRoot" . }}
 {{- end }}
 {{- end }}
 {{- end }}
