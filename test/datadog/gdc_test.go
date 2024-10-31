@@ -75,10 +75,12 @@ func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
 
 	validPorts := true
 	for _, container := range ds.Spec.Template.Spec.Containers {
-		for _, port := range container.Ports {
-			if port.HostPort > 0 {
-				validPorts = false
-				break
+		if container.Ports != nil {
+			for _, port := range container.Ports {
+				if port.HostPort > 0 {
+					validPorts = false
+					break
+				}
 			}
 		}
 	}
