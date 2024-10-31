@@ -1,6 +1,7 @@
 package datadog
 
 import (
+	"fmt"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
@@ -8,10 +9,10 @@ import (
 	"testing"
 )
 
-var allowedHostPaths = []string{
-	"/var/datadog/logs",
-	"/var/log/pods",
-	"/var/log/containers",
+var allowedHostPaths = map[string]interface{}{
+	"/var/datadog/logs":   nil,
+	"/var/log/pods":       nil,
+	"/var/log/containers": nil,
 }
 
 func Test_gdcConfigs(t *testing.T) {
@@ -64,18 +65,13 @@ func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
 
 	assert.NotNil(t, agentContainer)
 
-	var validHostPaths = true
+	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {
-			for _, path := range allowedHostPaths {
-				if volume.HostPath.Path != path {
-					validHostPaths = false
-					break
-				}
-			}
+			_, validHostPath = allowedHostPaths[volume.HostPath.Path]
+			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
 		}
 	}
-	assert.True(t, validHostPaths, "Daemonset has restricted hostPath mounted")
 
 	validPorts := true
 	for _, container := range ds.Spec.Template.Spec.Containers {

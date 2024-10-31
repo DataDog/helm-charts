@@ -6,7 +6,7 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.77.1'
+    helm.sh/chart: 'datadog-3.78.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,8 +36,8 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 2ce8b028cf95f2687b1cacdca90e200e44b269e92daadba85e1c02c09ce03129
-        checksum/install_info: dfd3ac8b35780ebef49adb181816db97dc19b20dec1af7f581176d260dbed2c8
+        checksum/clusteragent_token: 958753e1fe79f9ea7c2481c4be047646de2bc7e26faac865bb87d3571092b9e4
+        checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
