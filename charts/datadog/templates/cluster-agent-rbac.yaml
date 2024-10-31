@@ -245,6 +245,7 @@ rules:
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
+  - validatingwebhookconfigurations
   - mutatingwebhookconfigurations
   resourceNames:
     - {{ .Values.clusterAgent.admissionController.webhookName | quote }}
@@ -252,6 +253,7 @@ rules:
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
+  - validatingwebhookconfigurations
   - mutatingwebhookconfigurations
   verbs: ["create"]
 - apiGroups: ["batch"]
@@ -270,16 +272,17 @@ rules:
   - namespaces
   verbs:
   - list
-{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
   - "policy"
   resources:
+  - poddisruptionbudgets
+  {{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
   - podsecuritypolicies
+  {{- end }}
   verbs:
   - get
   - list
   - watch
-{{- end }}
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
@@ -482,6 +485,63 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end}}
+
+{{- if or .Values.datadog.kubernetesResourcesAnnotationsAsTags .Values.datadog.kubernetesResourcesLabelsAsTags}}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
+  namespace: {{ .Release.Namespace }}
+
+{{- $groupedResources := dict }}
+{{- $mergedResources := merge (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags) (default dict .Values.datadog.kubernetesResourcesLabelsAsTags)}}
+{{- range $resource, $labels := $mergedResources }}
+  {{- $parts := split "." $resource }}
+  {{- $apiGroup := "" }}
+  {{- $resourceName := $resource }}
+  {{- if eq (len $parts) 2 }}
+    {{- $apiGroup = index $parts "_1" }}
+    {{- $resourceName = index $parts "_0" }}
+  {{- end }}
+  {{- $existing := index $groupedResources $apiGroup | default (list) }}
+  {{- $groupedResources = set $groupedResources $apiGroup (append $existing $resourceName) }}
+{{- end }}
+
+rules:
+
+# Iterate through the apiGroups and create rules for each resource
+{{- range $apiGroup, $resources := $groupedResources }}
+- apiGroups:
+  - "{{ $apiGroup }}"
+  resources:
+  {{- range $resource := $resources }}
+  - {{ $resource }}
+  {{- end }}
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
 subjects:
   - kind: ServiceAccount
     name: {{ template "datadog.fullname" . }}-cluster-agent

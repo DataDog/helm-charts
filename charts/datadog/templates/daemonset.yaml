@@ -62,7 +62,7 @@ spec:
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
@@ -73,7 +73,7 @@ spec:
       shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
       {{- end }}
       {{- if .Values.datadog.securityContext -}}
-      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version ) | nindent 6 }}
+      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 6 }}
       {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
       {{- if .Values.agents.podSecurity.securityContext }}
       {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}

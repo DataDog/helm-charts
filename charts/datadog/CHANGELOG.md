@@ -1,5 +1,97 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Add experimental support for overlayfs direct scan for SBOMs
+
+## 3.76.3
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
+## 3.76.2
+
+* Fix warning message displayed when installing/upgrading the Agent with OTel collector.
+* Add preview message in values.yaml file.
+
+## 3.76.1
+
+* Gate `datadog.sbom.containerImage.uncompressedLayersSupport` feature behind `datadog.sbom.containerImage.enabled`: if the latter is not enabled (default), do not modify template based on `datadog.sbom.containerImage.uncompressedLayersSupport`.
+
+## 3.76.0
+
+* Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
+
+## 3.75.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
+
+## 3.74.6
+
+* Fix error message for when System Probe is enabled on GKE Autopilot
+
+## 3.74.5
+
+* Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
+
+## 3.74.4
+
+* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
+
+## 3.74.3
+
+* Do not mount `/usr/lib/sysimage/rpm` (reverts https://github.com/DataDog/helm-charts/pull/1541): in some operating systems such as Bottlerocket, `/usr` is `read-only`, preventing the Agent from being deployed when `datadog.sbom.host.enabled` is set to `true` as kubelet cannot create the directory at this location if it does not exist.
+
+## 3.74.2
+
+* Mount `/usr/lib/sysimage/rpm` in the Agent DaemonSet when using host SBOM feature (required on hosts running Amazon Linux distributions).
+
+## 3.74.1
+
+* Pass components env variables to the cluster checks runner deployment pod spec.
+
+## 3.74.0
+
+* Simplify OTel Agent OOTB pipelines:
+  * Remove `traces/otlp` pipeline from the default OTel Agent config
+  * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
+
+## 3.73.3
+
+* Fix a few typos on OTel Agent configs.
+
+## 3.73.2
+
+* Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
+
+## 3.73.1
+
+* Add role-based access control rules to Datadog Cluster Agent to read k8s resources annotations and labels to create tags.
+
+## 3.73.0
+
+* Add Azure Container Registry, enabled automatically when targeting `us3.datadoghq.com`.
+
+## 3.72.1
+
+* Add configuration option for `datadog.KubernetesEvents.filteringEnabled` to only include pre-defined allowed events. Disabled by default.
+
+## 3.72.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
+
+## 3.71.2
+
+* Add `datadog.kubernetesResourcesLabelsAsTags` to assign Kubernetes Resources Labels as tags in the tagger
+* Add `datadog.kubernetesResourcesAnnotationsAsTags` to assign Kuberenetes Resources Annotations as tags in the tagger
+
+## 3.71.1
+
+* Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
+
+## 3.71.0
+
+* Add `datadog.profiling` section to configure Continuous Profiler. Disabled by default.
+
 ## 3.70.7
 
 * Set default `Agent` and `Cluster-Agent` version to `7.56.2`.
@@ -46,7 +138,7 @@
 
 ## 3.69.0
 
-* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector. 
+* Add support OTel Agent container. OTel Agent is Datadog's distribution of OTel collector.
 
 ## 3.68.2
 

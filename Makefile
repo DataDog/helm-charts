@@ -52,6 +52,10 @@ unit-test:
 unit-test-operator:
 	go test -C test ./datadog-operator -count=1
 
+.PHONY: unit-test-private-action-runner
+unit-test-private-action-runner:
+	go test -C test ./private-action-runner -count=1
+
 .PHONY: update-test-baselines
 update-test-baselines:
 	go test -C test ./... -count=1 -args -updateBaselines=true

@@ -18,12 +18,13 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | public.ecr.aws/datadog] depending on datadog.site value)
+# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value)
 
 ## Currently we offer Datadog Agent images on:
 ## GCR US - use gcr.io/datadoghq
 ## GCR Europe - use eu.gcr.io/datadoghq
 ## GCR Asia - use asia.gcr.io/datadoghq
+## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
 registry:  # gcr.io/datadoghq
@@ -254,6 +255,28 @@ datadog:
   #   env: environment
   #   <KUBERNETES_NAMESPACE_ANNOTATIONS>: <DATADOG_TAG_KEY>
 
+  # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
+  kubernetesResourcesLabelsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-label
+  #    pods:
+  #      x-ref: reference
+  #    namespaces:
+  #      kubernetes.io/metadata.name: name-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_LABEL>: <DATADOG_TAG_KEY>
+
+  # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
+  kubernetesResourcesAnnotationsAsTags: {}
+  #    deployments.apps:
+  #      x-team: team-from-annotation
+  #    pods:
+  #      x-ann: annotation-reference
+  #    namespaces:
+  #      stale-annotation: annotation-as-tag
+  #    <RESOURCE_TYPE>:
+  #      <KUBERNETES_RESOURCE_ANNOTATION>: <DATADOG_TAG_KEY>
+
   originDetectionUnified:
     # datadog.originDetectionUnified.enabled -- Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+).
     enabled: false
@@ -369,6 +392,10 @@ datadog:
 
   # Configure Kubernetes events collection
   kubernetesEvents:
+    # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
+    sourceDetectionEnabled: false
+    # datadog.kubernetesEvents.filteringEnabled -- Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+).
+    filteringEnabled: false
     # datadog.kubernetesEvents.unbundleEvents -- Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+).
     unbundleEvents: false
     # datadog.kubernetesEvents.collectedEventTypes -- Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true.
@@ -519,22 +546,6 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
-
-  ## OTel collector related configuration
-  otelCollector:
-    # datadog.otelCollector.enabled -- Enable the OTel Collector
-    enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
-    ports:
-
-        # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
-        name: otel-grpc
-        # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
-        name: otel-http
-    # datadog.otelCollector.config -- OTel collector configuration
-    config: {}
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -559,6 +570,43 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
+  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
+  ## OTel collector related configuration
+  otelCollector:
+    # datadog.otelCollector.enabled -- Enable the OTel Collector
+    enabled: false
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    ports:
+
+        # Default GRPC port of OTLP receiver
+      - containerPort: "4317"
+        name: otel-grpc
+        # Default HTTP port of OTLP receiver
+      - containerPort: "4318"
+        name: otel-http
+    # datadog.otelCollector.config -- OTel collector configuration
+    config: null
+
+  ## Continuous Profiler configuration
+  ##
+  ## Continuous Profiler is disabled by default and can be enabled by setting the `enabled` field to
+  ## either `auto` or `true` value under the `datadog.profiling` section.
+  ## Manually adding the `DD_PROFILING_ENABLED` variable to a pod will take precedence over the
+  ## value in the Helm chart.
+  ## These will only have an effect on containers that have Datadog client libraries installed,
+  ## either manually or via Single Step Instrumentation (under the `datadog.apm.instrumentation`
+  ## section).
+  ## It requires Datadog Cluster Agent 7.57.0+.
+  profiling:
+    # datadog.profiling.enabled -- Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED`
+    # environment variable with the same value to all pods in the cluster
+    # Valid values are:
+    # - false: Profiler is turned off and can not be turned on by other means.
+    # - null: Profiler is turned off, but can be turned on by other means.
+    # - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling.
+    # - true: Profiler is turned on.
+    enabled: null
 
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
@@ -774,7 +822,12 @@ datadog:
       # This should be set to true when using EKS, GKE or if containerd is configured to
       # discard uncompressed layers.
       # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
-      uncompressedLayersSupport: false
+      # Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer.
+      # See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers
+      uncompressedLayersSupport: true
+
+      # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
+      overlayFSDirectScan: false
 
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
@@ -955,7 +1008,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.56.2
+    tag: 7.58.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1094,7 +1147,7 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
-    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    # clusterAgent.admissionController.webhookName -- Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent
     webhookName: datadog-webhook
 
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
@@ -1405,7 +1458,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.4
+    tag: 1.1.5
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1448,7 +1501,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.56.2
+    tag: 7.58.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1664,21 +1717,21 @@ agents:
       ports: []
 
     otelAgent:
-      # agents.containers.otelAgent.env -- Additional environment variables for the trace-agent container
+      # agents.containers.otelAgent.env -- Additional environment variables for the otel-agent container
       env: []
 
-      # agents.containers.otelAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      # agents.containers.otelAgent.envFrom -- Set environment variables specific to otel-agent from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.otelAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      # agents.containers.otelAgent.envDict -- Set environment variables specific to otel-agent defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
-      # agents.containers.otelAgent.resources -- Resource requests and limits for the trace-agent container
+      # agents.containers.otelAgent.resources -- Resource requests and limits for the otel-agent container
       resources: {}
       #  requests:
       #    cpu: 100m
@@ -1687,7 +1740,7 @@ agents:
       #    cpu: 100m
       #    memory: 200Mi
 
-      # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
+      # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
       securityContext: {}
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
@@ -1954,7 +2007,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.56.2
+    tag: 7.58.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

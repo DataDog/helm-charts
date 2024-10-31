@@ -126,6 +126,7 @@ spec:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     notifyNoData:
                       description: A Boolean indicating whether this monitor notifies when data stops reporting.
                       type: boolean
@@ -153,6 +154,7 @@ spec:
                         description: MonitorRenotifyStatusType The different statuses for which renotification is supported.
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     requireFullWindow:
                       description: |-
                         A Boolean indicating whether this monitor needs a full window of data before it’s evaluated. We highly
@@ -272,9 +274,11 @@ spec:
                 downtimeStatus:
                   description: DowntimeStatus defines whether the monitor is downtimed
                   properties:
-                    downtimeId:
+                    downtimeID:
+                      description: DowntimeID is the downtime ID.
                       type: integer
                     isDowntimed:
+                      description: IsDowntimed shows the downtime status of the monitor.
                       type: boolean
                   type: object
                 id:
@@ -295,14 +299,14 @@ spec:
                   description: MonitorStateLastUpdateTime is the last time the monitor state updated
                   format: date-time
                   type: string
+                monitorStateSyncStatus:
+                  description: MonitorStateSyncStatus shows the health of syncing the monitor state to Datadog
+                  type: string
                 primary:
                   description: |-
                     Primary defines whether the monitor is managed by the Kubernetes custom
                     resource (true) or outside Kubernetes (false)
                   type: boolean
-                syncStatus:
-                  description: MonitorStateSyncStatus shows the health of syncing the monitor state to Datadog
-                  type: string
                 triggeredState:
                   description: TriggeredState only includes details for monitor groups that are triggering
                   items:

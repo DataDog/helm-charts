@@ -250,7 +250,40 @@ spec:
                               If not specified, the pod priority will be default or zero if there is no
                               default.
                             type: string
+                          updateStrategy:
+                            description: |-
+                              The deployment strategy to use to replace existing pods with new ones.
+                              Valid types are `RollingUpdate` or `OnDelete` for DaemonSets
+                            properties:
+                              rollingUpdate:
+                                description: Configure the rolling update strategy of the Deployment or DaemonSet.
+                                properties:
+                                  maxSurge:
+                                    anyOf:
+                                      - type: integer
+                                      - type: string
+                                    description: |-
+                                      MaxSurge behaves differently based on the Kubernetes resource. Refer to the
+                                      Kubernetes API documentation for additional details.
+                                    x-kubernetes-int-or-string: true
+                                  maxUnavailable:
+                                    anyOf:
+                                      - type: integer
+                                      - type: string
+                                    description: |-
+                                      The maximum number of pods that can be unavailable during the update.
+                                      Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+                                      Refer to the Kubernetes API documentation for additional details..
+                                    x-kubernetes-int-or-string: true
+                                type: object
+                              type:
+                                description: |-
+                                  Type can be "RollingUpdate" or "OnDelete" for DaemonSets and "RollingUpdate"
+                                  or "Recreate" for Deployments
+                                type: string
+                            type: object
                         type: object
+                      description: Override the default configurations of the node agent.
                       type: object
                   type: object
                 profileAffinity:
@@ -373,6 +406,29 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                createStrategy:
+                  description: CreateStrategy is the state of the create strategy feature.
+                  properties:
+                    lastTransition:
+                      description: LastTransition is the last time the status was updated.
+                      format: date-time
+                      type: string
+                    maxUnavailable:
+                      description: MaxUnavailable shows the number of pods that can be in an unready state.
+                      format: int32
+                      type: integer
+                    nodesLabeled:
+                      description: NodesLabeled shows the number of nodes currently labeled.
+                      format: int32
+                      type: integer
+                    podsReady:
+                      description: PodsReady shows the number of pods in the ready state.
+                      format: int32
+                      type: integer
+                    status:
+                      description: Status shows the current state of the feature.
+                      type: string
+                  type: object
                 currentHash:
                   description: CurrentHash is the stored hash of the DatadogAgentProfile.
                   type: string

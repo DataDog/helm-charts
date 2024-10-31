@@ -13,6 +13,7 @@
   value: {{ template "datadog.confPath" . }}/auth/token
 {{- end }}
 {{ include "components-common-env" . }}
+{{ include "language-detection-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}

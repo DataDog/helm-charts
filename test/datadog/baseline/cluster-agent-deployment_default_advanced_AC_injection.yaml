@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.71.0'
+    helm.sh/chart: 'datadog-3.75.1'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 794628a422d8e7016d2e151e0a354d52bd915f3e60556c0fe73e4291b6b56888
-        checksum/clusteragent-configmap: d0ab6e789c44fc4f5881e7244c4d00814ae7191b94560405bec45d3c2f0923c4
-        checksum/api_key: 0a9725cd842dfab442be71cd22846bead912297242cfcb3f60c3a2b7513a4fc5
+        checksum/clusteragent_token: 7761a2e69537a90814c4a56ca749333ab0c0a9c23ca77b27bd22d8c58ac75da2
+        checksum/clusteragent-configmap: dc9ca8f8ed971495c8f225fcc46f1d0df999b38747fe4731c5bdc627cff6438f
+        checksum/api_key: 9ad68ca2a67a78240053d1d2c1a94d9276a5a93d72973717bb69dcd353960099
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: d981b555be4a75e224267a779d6b633b9cde1b8258e49b0b42aada13ebc04f41
+        checksum/install_info: 87589acc73e699de4d2ee4e2f2f47d1d08905e9467bb0e4fe318f79aa3947f3b
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.56.2"
+        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -86,12 +86,13 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
+
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
             value: "false"
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
@@ -100,7 +101,7 @@ spec:
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: datadog-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
             value: socket
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: datadog
@@ -108,7 +109,9 @@ spec:
             value: "Ignore"
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: "8000"
-          
+          - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+            value: "gcr.io/datadoghq"
+
           
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
@@ -144,6 +147,8 @@ spec:
             value: datadogtoken
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: "true"
+          - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
+            value: "false"
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: datadog-cluster-agent
           - name: DD_CLUSTER_AGENT_AUTH_TOKEN
@@ -251,6 +256,8 @@ spec:
             items:
             - key: kubernetes_state_core.yaml.default
               path: kubernetes_state_core.yaml.default
+            - key: kubernetes_apiserver.yaml
+              path: kubernetes_apiserver.yaml
         - name: config
           emptyDir: {}
       affinity:
