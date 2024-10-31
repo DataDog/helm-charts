@@ -802,12 +802,5 @@ rules:
   verbs:
   - list
   - watch
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
-  verbs:
-  - list
-  - watch
 {{- end }}
 {{- end }}
