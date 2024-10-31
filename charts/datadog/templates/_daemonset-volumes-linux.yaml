@@ -10,8 +10,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- end }}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
+{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
@@ -185,19 +184,13 @@
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
-{{- if .Values.providers.gke.gdc }}
-- name: pointerdir
-  emptyDir: {}
-- name: logpodpath
-  emptyDir: {}
-- name: logscontainerspath
-  emptyDir: {}
-{{- if not .Values.datadog.criSocketPath }}
-- name: logdockercontainerpath
-  emptyDir: {}
+{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+- hostPath:
+    path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
+  name: runtimesocketdir
 {{- end }}
-{{ else }}
+{{- end }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
@@ -207,16 +200,15 @@
 - hostPath:
     path: /var/log/containers
   name: logscontainerspath
-{{- if not .Values.datadog.criSocketPath }}
+{{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
 - hostPath:
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- end }}
-{{- if and (.Values.datadog.containerRuntimeSupport.enabled) (not .Values.providers.gke.gdc) }}
-- hostPath:
-    path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
-  name: runtimesocketdir
+{{- if .Values.providers.gke.gdc }}
+- secret:
+    secretName: datadog-kubelet-cert
+  name: kubelet-cert-volume
 {{- end }}
 {{- end -}}

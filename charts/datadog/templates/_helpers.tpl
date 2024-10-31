@@ -199,11 +199,26 @@ Return the container runtime socket
 Return agent log directory path
 */}}
 {{- define "datadog.logDirectoryPath" -}}
-{{- if eq .Values.targetSystem "linux" -}}
+{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
 /var/log/datadog
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog/logs
+{{- end -}}
+{{- if .Values.providers.gke.gdc -}}
+/var/datadog/log
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return linux agent logs run path
+*/}}
+{{- define "linux-logs-run-path" -}}
+{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
+/opt/datadog-agent/run
+{{- end -}}
+{{- if .Values.providers.gke.gdc -}}
+/var/datadog
 {{- end -}}
 {{- end -}}
 
@@ -237,6 +252,8 @@ Return agent host mount root
 {{- define "datadog.hostMountRoot" -}}
 {{- if .Values.providers.gke.autopilot -}}
 /var/autopilot/addon/datadog
+{{- else if .Values.providers.gke.gdc -}}
+/var/datadog
 {{- else -}}
 /var/lib/datadog-agent
 {{- end -}}

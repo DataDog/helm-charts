@@ -57,8 +57,9 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
-    {{- include "fips-envvar" . | indent 4 }}
-    {{- include "processes-common-envs" . | indent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
+
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -203,17 +204,18 @@
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
-    {{- if not .Values.providers.gke.gdc }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
-    {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
       readOnly: true
-    {{- include "linux-container-host-release-volumemounts" . | indent 4 }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW to write to /tmp directory
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- if eq (include "should-mount-fips-configmap" .) "true" }}
     {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
     {{- end }}
@@ -225,13 +227,8 @@
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: false # Need RW to write auth token
-    {{- end -}}
-    {{- if not .Values.providers.gke.gdc }}
-    - name: tmpdir
-      mountPath: /tmp
-      readOnly: false # Need RW to write to /tmp directory
-    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
@@ -239,7 +236,8 @@
       subPath: datadog.yaml
       readOnly: true
     {{- end }}
-    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc)}}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
@@ -265,9 +263,10 @@
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
-    {{- if and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled) (not .Values.providers.gke.gdc)}}
+    {{- end }}
+    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
-      mountPath: /opt/datadog-agent/run
+      mountPath: {{ include "linux-logs-run-path" . }}
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
@@ -278,7 +277,7 @@
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if not .Values.datadog.criSocketPath }}
+    {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -340,6 +339,10 @@
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+    {{- if .Values.providers.gke.gdc }}
+    - name: kubelet-cert-volume
+      mountPath: /certs
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
