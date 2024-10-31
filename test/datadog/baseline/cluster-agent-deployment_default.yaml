@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.75.1'
+    helm.sh/chart: 'datadog-3.77.1'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,11 +36,11 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: cca640a4dc199e529b846e953a6d37e8080ab2aeb4791125777661712c161032
-        checksum/clusteragent-configmap: dc9ca8f8ed971495c8f225fcc46f1d0df999b38747fe4731c5bdc627cff6438f
-        checksum/api_key: 9ad68ca2a67a78240053d1d2c1a94d9276a5a93d72973717bb69dcd353960099
+        checksum/clusteragent_token: 5fad34b0ce14762250b597db3379fd5fd781846665b68ce17e3e8ab64a79f9ac
+        checksum/clusteragent-configmap: 5b0b529782d92bbdfb9e82827a0390b221b451ba878ca88f3b8d3331e6bff0b2
+        checksum/api_key: 5027443ab0bfa48f073c442ef27ef6cb33aa31a1a30ee4383749f536e3489aee
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 87589acc73e699de4d2ee4e2f2f47d1d08905e9467bb0e4fe318f79aa3947f3b
+        checksum/install_info: dfd3ac8b35780ebef49adb181816db97dc19b20dec1af7f581176d260dbed2c8
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
@@ -86,7 +86,7 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -101,7 +101,7 @@ spec:
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: datadog-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
             value: socket
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: datadog
@@ -111,7 +111,7 @@ spec:
             value: "8000"
           - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
             value: "gcr.io/datadoghq"
-
+          
           
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"

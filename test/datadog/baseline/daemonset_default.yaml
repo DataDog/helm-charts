@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.75.1'
+    helm.sh/chart: 'datadog-3.77.1'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 961ab185a6d0f5b70b0e18b9c259c1ba532a15755b92a76561d20d95aac3787c
-        checksum/install_info: 87589acc73e699de4d2ee4e2f2f47d1d08905e9467bb0e4fe318f79aa3947f3b
+        checksum/clusteragent_token: c860e39c91a48d5a7554391e6a1987a4324d0d0adc01e9ef9604c9add4b7064d
+        checksum/install_info: dfd3ac8b35780ebef49adb181816db97dc19b20dec1af7f581176d260dbed2c8
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -75,6 +75,7 @@ spec:
                 fieldPath: status.hostIP
           - name: DD_OTLP_CONFIG_LOGS_ENABLED
             value: "false"
+          
           
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -349,6 +350,7 @@ spec:
                   name: datadog-cluster-agent
                   key: token
           
+          
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
             value: "false"
           - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -405,9 +407,7 @@ spec:
             mountPropagation: None
             readOnly: true
       initContainers:
-          
-      - name: init-volume
-        
+      - name: init-volume  
         image: "gcr.io/datadoghq/agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
@@ -419,8 +419,7 @@ spec:
             readOnly: false # Need RW for config path
         resources:
           {}
-      - name: init-config
-        
+      - name: init-config  
         image: "gcr.io/datadoghq/agent:7.58.0"
         imagePullPolicy: IfNotPresent
         command:
@@ -429,12 +428,12 @@ spec:
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
         volumeMounts:
-          - name: logdatadog
-            mountPath: /var/log/datadog
-            readOnly: false # Need RW to write logs
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW for config path
+          - name: logdatadog
+            mountPath: /var/log/datadog
+            readOnly: false # Need RW to write logs
           - name: procdir
             mountPath: /host/proc
             mountPropagation: None

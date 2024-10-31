@@ -6,7 +6,7 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.75.1'
+    helm.sh/chart: 'datadog-3.77.1'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,8 +36,8 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 46b1bd3e5501a2cfdd3d34f9f346042c26b3fcee8e32d95327c20a5101c1db66
-        checksum/install_info: 87589acc73e699de4d2ee4e2f2f47d1d08905e9467bb0e4fe318f79aa3947f3b
+        checksum/clusteragent_token: 2ce8b028cf95f2687b1cacdca90e200e44b269e92daadba85e1c02c09ce03129
+        checksum/install_info: dfd3ac8b35780ebef49adb181816db97dc19b20dec1af7f581176d260dbed2c8
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
@@ -76,7 +76,7 @@ spec:
           - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_API_KEY

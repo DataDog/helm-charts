@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.78.0
+
+* Add Logs Collection support for Google GKE on GDC
+
 ## 3.77.0
 
 * Add experimental support for overlayfs direct scan for SBOMs

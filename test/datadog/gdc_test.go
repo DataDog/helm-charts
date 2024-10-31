@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+var allowedHostPaths = []string{
+	"/var/datadog/logs",
+	"/var/log/pods",
+	"/var/log/containers",
+}
+
 func Test_gdcConfigs(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -58,23 +64,27 @@ func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
 
 	assert.NotNil(t, agentContainer)
 
-	hasHostPathVolume := false
+	var validHostPaths = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {
-			hasHostPathVolume = true
-			break
+			for _, path := range allowedHostPaths {
+				if volume.HostPath.Path != path {
+					validHostPaths = false
+					break
+				}
+			}
 		}
 	}
-	assert.False(t, hasHostPathVolume, "Daemonset has restricted hostPath mounted")
+	assert.True(t, validHostPaths, "Daemonset has restricted hostPath mounted")
 
-	hasHostPort := false
+	validPorts := true
 	for _, container := range ds.Spec.Template.Spec.Containers {
 		for _, port := range container.Ports {
 			if port.HostPort > 0 {
-				hasHostPort = true
+				validPorts = false
 				break
 			}
 		}
 	}
-	assert.False(t, hasHostPort, "Daemonset has restricted hostPort mounted.")
+	assert.True(t, validPorts, "Daemonset has restricted hostPort mounted.")
 }

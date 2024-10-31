@@ -211,18 +211,6 @@ C:/ProgramData/Datadog/logs
 {{- end -}}
 
 {{/*
-Return linux agent logs run path TODO: GDCE maybe remove this
-*/}}
-{{- define "linux-logs-run-path" -}}
-{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
-/opt/datadog-agent/run
-{{- end -}}
-{{- if .Values.providers.gke.gdc -}}
-/var/datadog
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return agent config path
 */}}
 {{- define "datadog.confPath" -}}
@@ -511,7 +499,7 @@ Return true if a APM over UDS is configured. Return always false on GKE Autopilo
 {{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
 false
 {{- end -}}
-{{- if or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume -}}
+{{- if and (or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -1013,7 +1001,7 @@ Create RBACs for custom resources
   {{- else if .Values.providers.gke.gdc }}
     false
   {{- else -}}
-    false
+    {{- include "process-checks-enabled" . -}}
   {{- end -}}
 {{- end -}}
 
