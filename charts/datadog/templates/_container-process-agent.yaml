@@ -49,7 +49,6 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
-    {{- if not .Values.providers.gke.gdc }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
@@ -58,17 +57,16 @@
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
-    {{- end }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket
-    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
-    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
@@ -76,7 +74,6 @@
       subPath: datadog.yaml
       readOnly: true
     {{- end }}
-    {{- if not .Values.providers.gke.gdc }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
@@ -91,7 +88,6 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- end }}
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe

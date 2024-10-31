@@ -44,7 +44,7 @@
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
-    {{- if (not .Values.providers.gke.autopilot) }} # TODO GDC?
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
@@ -53,7 +53,7 @@
       mountPath: {{ template "datadog.otelconfPath" . }}
       readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+    {{- if not .Values.providers.gke.autopilot }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -70,9 +70,7 @@
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: true
     {{- end }}
-    {{- if not .Values.providers.gke.gdc }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
-    {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}

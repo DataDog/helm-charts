@@ -110,7 +110,7 @@ Create chart name and version as used by the chart label.
 Return true if the OTelAgent needs to be deployed
 */}}
 {{- define "should-enable-otel-agent" -}}
-{{- if and .Values.datadog.otelCollector.enabled -}}
+{{- if and .Values.datadog.otelCollector.enabled  (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -211,7 +211,7 @@ C:/ProgramData/Datadog/logs
 {{- end -}}
 
 {{/*
-Return linux agent logs run path
+Return linux agent logs run path TODO: GDCE maybe remove this
 */}}
 {{- define "linux-logs-run-path" -}}
 {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
@@ -899,7 +899,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (((.Values.datadog.autoscaling).workload).enabled)) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (((.Values.datadog.autoscaling).workload).enabled)) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
@@ -926,7 +926,7 @@ Create RBACs for custom resources
   Return true if container image collection is enabled
 */}}
 {{- define "should-enable-container-image-collection" -}}
-  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
+  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) (not .Values.providers.gke.gdc) -}}
     {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
   {{- end -}}
   {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}
@@ -1010,8 +1010,8 @@ Create RBACs for custom resources
     true
   {{- else if (eq (include "should-run-process-checks-on-core-agent" .) "true") -}}
     false
-  {{- else if (not .Values.providers.gke.gdc) -}}
-    {{- include "process-checks-enabled" . -}}
+  {{- else if .Values.providers.gke.gdc }}
+    false
   {{- else -}}
     false
   {{- end -}}

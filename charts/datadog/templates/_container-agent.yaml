@@ -266,7 +266,7 @@
     {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
-      mountPath: {{ include "linux-logs-run-path" . }}
+      mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
