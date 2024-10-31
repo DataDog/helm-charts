@@ -109,8 +109,7 @@ spec:
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
         args:
-          # elements in "checks" should not have spaces
-          - checks="snmp"; for c in $checks; do mv /etc/datadog-agent/conf.d/$c.d/ /etc/datadog-agent; done && rm -rf /etc/datadog-agent/conf.d && mkdir /etc/datadog-agent/conf.d && for c in $checks; do mv /etc/datadog-agent/$c.d/ /etc/datadog-agent/conf.d; done && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
