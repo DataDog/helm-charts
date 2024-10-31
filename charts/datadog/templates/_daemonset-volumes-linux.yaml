@@ -147,10 +147,13 @@
     path: /
   name: hostroot
 {{- end }}
-{{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+{{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
 - hostPath:
     path: /var/lib/containerd
   name: host-containerd-dir
+- hostPath:
+    path: /var/lib/docker
+  name: host-docker-dir
 {{- end }}
 {{- if .Values.datadog.sbom.host.enabled }}
 - hostPath:

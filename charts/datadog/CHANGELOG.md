@@ -1,5 +1,22 @@
 # Datadog changelog
 
+## 3.77.0
+
+* Add experimental support for overlayfs direct scan for SBOMs
+
+## 3.76.3
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
+## 3.76.2
+
+* Fix warning message displayed when installing/upgrading the Agent with OTel collector.
+* Add preview message in values.yaml file.
+
+## 3.76.1
+
+* Gate `datadog.sbom.containerImage.uncompressedLayersSupport` feature behind `datadog.sbom.containerImage.enabled`: if the latter is not enabled (default), do not modify template based on `datadog.sbom.containerImage.uncompressedLayersSupport`.
+
 ## 3.76.0
 
 * Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.

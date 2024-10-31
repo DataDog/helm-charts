@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.14.2
+
+* Update private action image version to `v0.1.3-beta`
+
 ## 0.14.1
 
 * Update private action image version to `v0.1.2-beta`
