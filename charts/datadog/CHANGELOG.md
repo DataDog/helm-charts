@@ -4,6 +4,10 @@
 
 * Add Logs Collection support for Google GKE on GDC
 
+## 3.77.1
+
+* Modify command that removes the default conf.d directory from the Cluster Checks Runners and only removes the default YAML files.
+
 ## 3.77.0
 
 * Add experimental support for overlayfs direct scan for SBOMs
