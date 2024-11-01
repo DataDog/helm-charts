@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: ffc1fc0eddc12182f0fdb37b5085e397ddf02b94d9dba1c1ce99876726b502c2
+        checksum/clusteragent_token: a927dc2589059ac22a8567b9a9f13be5b564e116bad931f59fdb5cc7cf187b76
         checksum/clusteragent-configmap: 6fea41ac9179f9a526bbb2b5c3f168fd232111ff2c4bdf1cd922c31e45038c31
         checksum/api_key: 5aa9dfe916543cbcf1014dfa812cc46d36156564f56704b12c5f9e9c77afd266
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -101,7 +101,7 @@ spec:
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: datadog-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
             value: socket
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: datadog

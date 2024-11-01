@@ -199,14 +199,11 @@ Return the container runtime socket
 Return agent log directory path
 */}}
 {{- define "datadog.logDirectoryPath" -}}
-{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
+{{- if eq .Values.targetSystem "linux" -}}
 /var/log/datadog
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
 C:/ProgramData/Datadog/logs
-{{- end -}}
-{{- if .Values.providers.gke.gdc -}}
-/var/datadog/log
 {{- end -}}
 {{- end -}}
 
@@ -911,10 +908,21 @@ Create RBACs for custom resources
 {{- end }}
 
 {{/*
+  Return true if Container Runtime Support is enabled
+*/}}
+{{- define "container-runtime-support-enabled" -}}
+  {{- if and .Values.datadog.containerRuntimeSupport.enabled (not .Values.providers.gke.gdc) -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
   Return true if container image collection is enabled
 */}}
 {{- define "should-enable-container-image-collection" -}}
-  {{- if and (not .Values.datadog.containerRuntimeSupport.enabled) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) (not .Values.providers.gke.gdc) -}}
+  {{- if and (not (include "container-runtime-support-enabled" .)) (or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled) -}}
     {{- fail "Container runtime support has to be enabled for container image collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
   {{- end -}}
   {{- if or .Values.datadog.containerImageCollection.enabled .Values.datadog.sbom.containerImage.enabled -}}

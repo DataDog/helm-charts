@@ -1,5 +1,5 @@
 {{- define "container-crisocket-volumemounts" -}}
-{{- if and (.Values.datadog.containerRuntimeSupport.enabled) (not .Values.providers.gke.gdc) }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 {{- if eq .Values.targetSystem "linux" }}
 - name: runtimesocketdir
   mountPath: {{ print "/host/" (dir (include "datadog.dockerOrCriSocketPath" .)) | clean }}

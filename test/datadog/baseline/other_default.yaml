@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "eTBKSzJZQmltRXFGbHplRTR6YmVhZG9Bd3RXc2loOTI="
+  token: "TnlnSHRsTXpxUkFtN0tEVGtSZEVvanh2bWFmNG5ydEs="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -191,8 +191,8 @@ metadata:
     app.kubernetes.io/version: "7"
 data:
   install_type: k8s_manual
-  install_id: "29f1c2bd-eaa9-49cc-b83d-abd2debcbb58"
-  install_time: "1730416779"
+  install_id: "01fc96f2-1345-4d2c-a7f3-052fbe71e3dc"
+  install_time: "1730498377"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -824,7 +824,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: ce725c1500e06204ecabc4d8920440fec246dc988ecd2a011c1bf96b513d6b19
+        checksum/clusteragent_token: 7452f44c9c0c4dd0218a1ebe0f124f83cb7df2985ba704ba507910212ec6dbf8
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -1277,6 +1277,8 @@ spec:
         emptyDir: {}
       - name: tmpdir
         emptyDir: {}
+      - name: s6-run
+        emptyDir: {}
       - hostPath:
           path: /proc
         name: procdir
@@ -1294,8 +1296,6 @@ spec:
           path: /var/run/datadog/
           type: DirectoryOrCreate
         name: apmsocket
-      - name: s6-run
-        emptyDir: {}
       - hostPath:
           path: /etc/passwd
         name: passwd
@@ -1351,7 +1351,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: a135a79c414be084bc346e3ea1de06bae1f40767dbfd7156dc277840e0c41306
+        checksum/clusteragent_token: 453c30f5e539cb034a3d38f5d735a6ca5df8594bf52010d8cff233efc89fb544
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1388,7 +1388,7 @@ spec:
         image: "gcr.io/datadoghq/agent:7.58.0"
         command: ["bash", "-c"]
         args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
           
@@ -1543,7 +1543,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: e66d8ebada164ec21d7da9e8c6a3eb66ef3d8ae3d15cd7f12aee87c126d6804c
+        checksum/clusteragent_token: afefc7bc0324ab935909d2d605cba76470834c32c9c77e1a21ffd53ff6be67b7
         checksum/clusteragent-configmap: 18b94379f076d60b9b9aaa9bd8ebbc2fdc70563de1beae32de2018cacf2a237e
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
@@ -1606,7 +1606,7 @@ spec:
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
             value: datadog-cluster-agent-admission-controller
-          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE # TODO: gdc should use local service
+          - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
             value: socket
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
             value: datadog

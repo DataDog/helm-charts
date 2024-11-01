@@ -3,6 +3,13 @@
   emptyDir: {}
 - name: tmpdir
   emptyDir: {}
+- name: s6-run
+  emptyDir: {}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+- name: confd
+  configMap:
+    name: {{ include "agents.confd-configmap-name" . }}
+{{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
@@ -58,13 +65,6 @@
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
   name: apmsocket
-{{- end }}
-- name: s6-run
-  emptyDir: {}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
-- name: confd
-  configMap:
-    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
@@ -184,7 +184,7 @@
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 - hostPath:
     path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
   name: runtimesocketdir

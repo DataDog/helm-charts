@@ -36,7 +36,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 958753e1fe79f9ea7c2481c4be047646de2bc7e26faac865bb87d3571092b9e4
+        checksum/clusteragent_token: 7efa976c3ddd33fc2ff377977f40ac10df5f1d1d33765124d029f4190c34ce5c
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -73,7 +73,7 @@ spec:
         image: "gcr.io/datadoghq/agent:7.58.0"
         command: ["bash", "-c"]
         args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
           

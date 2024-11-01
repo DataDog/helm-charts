@@ -96,10 +96,10 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
-    {{- if not .Values.providers.gke.gdc }}
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW for tmp directory
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket

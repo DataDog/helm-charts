@@ -30,7 +30,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 8d640e0cdf79dd1a3d1bcd788f1d886fe42ff2a84388d55efe9da8a61ce436e2
+        checksum/clusteragent_token: 4a8a74c801aa18f91ab9ce4b074e6ad48234d98fd5513697eff57595f9ad030a
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -482,6 +482,8 @@ spec:
         emptyDir: {}
       - name: tmpdir
         emptyDir: {}
+      - name: s6-run
+        emptyDir: {}
       - hostPath:
           path: /proc
         name: procdir
@@ -499,8 +501,6 @@ spec:
           path: /var/run/datadog/
           type: DirectoryOrCreate
         name: apmsocket
-      - name: s6-run
-        emptyDir: {}
       - hostPath:
           path: /etc/passwd
         name: passwd
