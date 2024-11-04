@@ -2,7 +2,7 @@
 
 ## 3.77.2
 
-* Add ability to include security contexts in container level for cluster checks runners.
+* Add the ability to include security contexts in container level for cluster checks runners.
 
 ## 3.77.1
 
