@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.77.1](https://img.shields.io/badge/Version-3.77.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.77.2](https://img.shields.io/badge/Version-3.77.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -629,6 +629,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.volumes | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
+| clusterChecksRunner.containers.agent.securityContext | object | `{}` | Specify securityContext on the agent container |
+| clusterChecksRunner.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the init containers |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
 | clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
