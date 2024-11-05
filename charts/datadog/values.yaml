@@ -2034,14 +2034,6 @@ clusterChecksRunner:
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
   createPodDisruptionBudget: false
 
-  containers:
-    agent:
-      # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
-      securityContext: {}
-    initContainers:
-      # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
-      securityContext: {}
-
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:
     # clusterChecksRunner.rbac.create -- If true, create & use RBAC resources
@@ -2225,6 +2217,14 @@ clusterChecksRunner:
 
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
+
+  containers:
+    agent:
+      # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
+      securityContext: {}
+    initContainers:
+      # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
+      securityContext: {}
 
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
