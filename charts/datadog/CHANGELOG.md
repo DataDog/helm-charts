@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.77.2
+
+* Add the ability to include Security Contexts at the container level for Cluster Checks Runners.
+
 ## 3.77.1
 
 * Modify command that removes the default conf.d directory from the Cluster Checks Runners and only removes the default YAML files.
