@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.78.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.59.0`.
+
 ## 3.77.2
 
 * Add the ability to include Security Contexts at the container level for Cluster Checks Runners.
