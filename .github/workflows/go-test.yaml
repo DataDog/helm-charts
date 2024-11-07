@@ -8,6 +8,12 @@ on:
     paths:
       - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+  # packages: read
+
 env:
   GO111MODULE: "on"
   PROJECTNAME: "helm-charts"

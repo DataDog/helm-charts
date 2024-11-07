@@ -5,6 +5,11 @@ on:
     paths:
       - "charts/**"
 
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+  # packages: read
+
 jobs:
   changed:
     runs-on: ubuntu-latest
