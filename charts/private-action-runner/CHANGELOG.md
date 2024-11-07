@@ -2,7 +2,7 @@
 
 ## 0.14.3
 
-* Add GitLab private actions
+* Add GitLab private actions and fix image repository link.
 
 ## 0.14.2
 
