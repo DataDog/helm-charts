@@ -44,6 +44,7 @@ helm repo update
 |-----|------|---------|-------------|
 | common.image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v0.1.4-beta"}` | Current Datadog Private Action Runner image |
 | credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
+| noop | bool | `true` |  |
 | runners[0].config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |

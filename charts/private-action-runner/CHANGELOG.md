@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.14.4
+
+noop
+
 ## 0.14.3
 
 * Add GitLab private actions and fix image repository link.

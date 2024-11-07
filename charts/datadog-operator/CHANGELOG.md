@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.1
+noop
+
 ## 2.2.0
 
 * Add clusterRole.allowReadAllResources to allow viewing all resources. This is required for collecting custom resources in the Kubernetes Explorer
