@@ -19,6 +19,7 @@ const (
 	DDSystemProbeEnabled           = "DD_SYSTEM_PROBE_ENABLED"
 	DDNetworkMonitoringEnabled     = "DD_SYSTEM_PROBE_NETWORK_ENABLED"
 	DDOrchestratorEnabled          = "DD_ORCHESTRATOR_EXPLORER_ENABLED"
+	DDLanguageDetectionEnabled     = "DD_LANGUAGE_DETECTION_ENABLED"
 )
 
 func Test_processAgentConfigs(t *testing.T) {
@@ -247,6 +248,44 @@ func Test_processAgentConfigs(t *testing.T) {
 			},
 			assertions: verifyLinuxRunInCoreAgent,
 		},
+		{
+			name: "language detection on process agent",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":                           "datadog-secret",
+					"datadog.appKeyExistingSecret":                           "datadog-secret",
+					"datadog.processAgent.runInCoreAgent":                    "false",
+					"datadog.processAgent.processCollection":                 "true",
+					"agents.image.tag":                                       "7.56",
+					"datadog.apm.instrumentation.language_detection.enabled": "true",
+					"datadog.apm.instrumentation.enabled":                    "true",
+				},
+			},
+			assertions: verifyLanguageDetectionInProcessAgent,
+		},
+		{
+			name: "language detection on core agent",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":                           "datadog-secret",
+					"datadog.appKeyExistingSecret":                           "datadog-secret",
+					"datadog.processAgent.runInCoreAgent":                    "true",
+					"datadog.processAgent.processCollection":                 "true",
+					"agents.image.tag":                                       "7.57",
+					"datadog.apm.instrumentation.language_detection.enabled": "true",
+					"datadog.apm.instrumentation.enabled":                    "true",
+				},
+			},
+			assertions: verifyLanguageDetectionInCoreAgent,
+		},
 	}
 
 	for _, tt := range tests {
@@ -272,7 +311,7 @@ func verifyDaemonsetMinimal(t *testing.T, manifest string) {
 	assert.True(t, ok)
 	processEnvs := getEnvVarMap(processAgentContainer.Env)
 	assertDefaultCommonProcessEnvs(t, processEnvs)
-	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.Equal(t, "false", processEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
 }
 
@@ -307,6 +346,45 @@ func verifyLinuxRunInCoreAgent(t *testing.T, manifest string) {
 
 	_, ok = getContainer(t, deployment.Spec.Template.Spec.Containers, "process-agent")
 	assert.False(t, ok)
+}
+
+func verifyLanguageDetectionInCoreAgent(t *testing.T, manifest string) {
+	var deployment appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &deployment)
+	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+	assert.True(t, ok)
+	coreEnvs := getEnvVarMap(coreAgentContainer.Env)
+	assert.Equal(t, "true", coreEnvs[DDContainerCollectionEnabled])
+	assert.Equal(t, "true", coreEnvs[DDProcessCollectionEnabled])
+	assert.Equal(t, "true", coreEnvs[DDProcessDiscoveryEnabled])
+	assert.Equal(t, "false", coreEnvs[DDStripProcessArgs])
+	assert.Equal(t, "true", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.Equal(t, "true", coreEnvs[DDLanguageDetectionEnabled])
+	assert.True(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
+
+	_, ok = getContainer(t, deployment.Spec.Template.Spec.Containers, "process-agent")
+	assert.False(t, ok)
+}
+
+func verifyLanguageDetectionInProcessAgent(t *testing.T, manifest string) {
+	var deployment appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &deployment)
+	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+	assert.True(t, ok)
+	coreEnvs := getEnvVarMap(coreAgentContainer.Env)
+	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.False(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
+
+	processAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "process-agent")
+	assert.True(t, ok)
+	processEnvs := getEnvVarMap(processAgentContainer.Env)
+	assert.Equal(t, "true", processEnvs[DDContainerCollectionEnabled])
+	assert.Equal(t, "true", processEnvs[DDProcessCollectionEnabled])
+	assert.Equal(t, "true", processEnvs[DDProcessDiscoveryEnabled])
+	assert.Equal(t, "false", processEnvs[DDStripProcessArgs])
+	assert.Equal(t, "false", processEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.Equal(t, "true", processEnvs[DDLanguageDetectionEnabled])
+	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
 }
 
 func verifyChecksOff(t *testing.T, manifest string) {
