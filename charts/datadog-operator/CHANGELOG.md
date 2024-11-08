@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+
+* Update Datadog Operator version to 1.10.0.
+
 ## 2.2.0
 
 * Add clusterRole.allowReadAllResources to allow viewing all resources. This is required for collecting custom resources in the Kubernetes Explorer
