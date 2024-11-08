@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.14.0
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.1.0'
+    helm.sh/chart: 'datadogCRDs-2.2.0'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -701,6 +701,14 @@ spec:
                                       type: boolean
                                     endpoint:
                                       type: string
+                                    hostPortConfig:
+                                      properties:
+                                        enabled:
+                                          type: boolean
+                                        hostPort:
+                                          format: int32
+                                          type: integer
+                                      type: object
                                   type: object
                                 http:
                                   properties:
@@ -708,6 +716,14 @@ spec:
                                       type: boolean
                                     endpoint:
                                       type: string
+                                    hostPortConfig:
+                                      properties:
+                                        enabled:
+                                          type: boolean
+                                        hostPort:
+                                          format: int32
+                                          type: integer
+                                      type: object
                                   type: object
                               type: object
                           type: object
@@ -851,6 +867,73 @@ spec:
                         url:
                           type: string
                       type: object
+                    env:
+                      items:
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: string
+                          valueFrom:
+                            properties:
+                              configMapKeyRef:
+                                properties:
+                                  key:
+                                    type: string
+                                  name:
+                                    type: string
+                                  optional:
+                                    type: boolean
+                                required:
+                                  - key
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              fieldRef:
+                                properties:
+                                  apiVersion:
+                                    type: string
+                                  fieldPath:
+                                    type: string
+                                required:
+                                  - fieldPath
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              resourceFieldRef:
+                                properties:
+                                  containerName:
+                                    type: string
+                                  divisor:
+                                    anyOf:
+                                      - type: integer
+                                      - type: string
+                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                    x-kubernetes-int-or-string: true
+                                  resource:
+                                    type: string
+                                required:
+                                  - resource
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              secretKeyRef:
+                                properties:
+                                  key:
+                                    type: string
+                                  name:
+                                    type: string
+                                  optional:
+                                    type: boolean
+                                required:
+                                  - key
+                                type: object
+                                x-kubernetes-map-type: atomic
+                            type: object
+                        required:
+                          - name
+                        type: object
+                      type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
                     fips:
                       properties:
                         customFIPSConfig:
@@ -1006,6 +1089,18 @@ spec:
                         tlsVerify:
                           type: boolean
                       type: object
+                    kubernetesResourcesAnnotationsAsTags:
+                      additionalProperties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      type: object
+                    kubernetesResourcesLabelsAsTags:
+                      additionalProperties:
+                        additionalProperties:
+                          type: string
+                        type: object
+                      type: object
                     localService:
                       properties:
                         forceEnableLocalService:
@@ -1076,6 +1171,31 @@ spec:
                       type: object
                     registry:
                       type: string
+                    secretBackend:
+                      properties:
+                        args:
+                          type: string
+                        command:
+                          type: string
+                        enableGlobalPermissions:
+                          type: boolean
+                        roles:
+                          items:
+                            properties:
+                              namespace:
+                                type: string
+                              secrets:
+                                items:
+                                  type: string
+                                type: array
+                                x-kubernetes-list-type: set
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
+                        timeout:
+                          format: int32
+                          type: integer
+                      type: object
                     site:
                       type: string
                     tags:
@@ -1975,6 +2095,29 @@ spec:
                         x-kubernetes-list-map-keys:
                           - name
                         x-kubernetes-list-type: map
+                      envFrom:
+                        items:
+                          properties:
+                            configMapRef:
+                              properties:
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            prefix:
+                              type: string
+                            secretRef:
+                              properties:
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                              type: object
+                              x-kubernetes-map-type: atomic
+                          type: object
+                        type: array
                       extraChecksd:
                         properties:
                           configDataMap:
@@ -2136,6 +2279,10 @@ spec:
                               runAsUserName:
                                 type: string
                             type: object
+                        type: object
+                      serviceAccountAnnotations:
+                        additionalProperties:
+                          type: string
                         type: object
                       serviceAccountName:
                         type: string
@@ -3723,6 +3870,14 @@ spec:
                                           type: boolean
                                         endpoint:
                                           type: string
+                                        hostPortConfig:
+                                          properties:
+                                            enabled:
+                                              type: boolean
+                                            hostPort:
+                                              format: int32
+                                              type: integer
+                                          type: object
                                       type: object
                                     http:
                                       properties:
@@ -3730,6 +3885,14 @@ spec:
                                           type: boolean
                                         endpoint:
                                           type: string
+                                        hostPortConfig:
+                                          properties:
+                                            enabled:
+                                              type: boolean
+                                            hostPort:
+                                              format: int32
+                                              type: integer
+                                          type: object
                                       type: object
                                   type: object
                               type: object
