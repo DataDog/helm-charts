@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: datadog
-  namespace: datadog-agent
+  namespace: system
   labels:
     helm.sh/chart: 'datadog-3.78.0'
     app.kubernetes.io/name: "datadog"
@@ -30,7 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 01905d4e5606c62bbe2b5498c03cd61736ad85d2732cfb33d0ea31c9a5b2743d
+        checksum/clusteragent_token: 3a5278796ed08063bd1da0e97f08cc16bb3bd3a0ee73fc51a3b23d940a853976
+        checksum/api_key: fd213c757088a1f4752772505883aa679ff511a8c8abb187d2ae952ba3171238
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -56,7 +57,7 @@ spec:
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
-                name: "datadog-secret"
+                name: "datadog"
                 key: api-key
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "true"
@@ -79,7 +80,7 @@ spec:
           
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
-            value: "false"
+            value: "true"
           - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
             value: "true"
           - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
@@ -217,7 +218,7 @@ spec:
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
-                name: "datadog-secret"
+                name: "datadog"
                 key: api-key
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "true"
@@ -320,7 +321,7 @@ spec:
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
-                name: "datadog-secret"
+                name: "datadog"
                 key: api-key
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "true"
@@ -352,7 +353,7 @@ spec:
           
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
-            value: "false"
+            value: "true"
           - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
             value: "true"
           - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
@@ -447,7 +448,7 @@ spec:
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
-                name: "datadog-secret"
+                name: "datadog"
                 key: api-key
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "true"

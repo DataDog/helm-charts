@@ -961,7 +961,10 @@ Create RBACs for custom resources
   Return true if any process-related check is enabled
 */}}
 {{- define "process-checks-enabled" -}}
-  {{- if and (or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true")) (not .Values.providers.gke.gdc) -}}
+  {{- if .Values.providers.gke.gdc }}
+    false
+  {{- end -}}
+  {{- if or .Values.datadog.processAgent.containerCollection .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery (eq (include "language-detection-enabled" .) "true") -}}
     true
   {{- else -}}
     false
@@ -983,14 +986,15 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
+  {{- if .Values.providers.gke.gdc -}}
+    false
+  {{- end -}}
   {{- if ne .Values.targetSystem "linux" -}}
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
   {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" (include "get-agent-version" .)) -}}
       true
-  {{- else if .Values.providers.gke.gdc }}
-      false
   {{- else -}}
     false
   {{- end -}}
@@ -1000,13 +1004,14 @@ Create RBACs for custom resources
   Returns true if the process-agent container should be created.
 */}}
 {{- define "should-enable-process-agent" -}}
+  {{- if .Values.providers.gke.gdc -}}
+    false
+  {{- end -}}
   {{- if or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled -}}
     true
   {{- else if and (not .Values.agents.image.doNotCheckTag) (eq (include "should-enable-k8s-resource-monitoring" .) "true") (semverCompare "<=7.51.0-0" (include "get-agent-version" .)) -}}
     true
   {{- else if (eq (include "should-run-process-checks-on-core-agent" .) "true") -}}
-    false
-  {{- else if .Values.providers.gke.gdc }}
     false
   {{- else -}}
     {{- include "process-checks-enabled" . -}}
