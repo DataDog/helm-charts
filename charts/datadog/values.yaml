@@ -2229,6 +2229,12 @@ clusterChecksRunner:
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
 
+  # clusterChecksRunner.hostAliases -- Add entries to the agent container /etc/hosts file.
+  hostAliases: []
+  #  - ip: "10.0.0.1"
+  #    hostnames:
+  #    - "host.domain.com"
+
 datadog-crds:
   crds:
     # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD

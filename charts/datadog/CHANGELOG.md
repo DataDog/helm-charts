@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.78.1
+* Add hostAliases to clusterChecksRunner deployment.
+
 ## 3.78.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.59.0`.
