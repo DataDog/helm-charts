@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.55.1" -}}
+{{- $version = "7.58.1" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -993,7 +993,7 @@ Create RBACs for custom resources
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.53.0-0" (include "get-agent-version" .)) -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.57.0-0" (include "get-agent-version" .)) -}}
       true
   {{- else -}}
     false

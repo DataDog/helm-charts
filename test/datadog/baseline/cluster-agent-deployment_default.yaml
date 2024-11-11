@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: b918cf7367a1e2fc52a8e0afbedc1b0c02df29a97fbfe3953d08681636531394
+        checksum/clusteragent_token: 050ab49a451e1238668b8df86b20941fe655e87b3a55aa57497dea39ac9163c5
         checksum/clusteragent-configmap: 6fea41ac9179f9a526bbb2b5c3f168fd232111ff2c4bdf1cd922c31e45038c31
         checksum/api_key: 5aa9dfe916543cbcf1014dfa812cc46d36156564f56704b12c5f9e9c77afd266
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -46,7 +46,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}

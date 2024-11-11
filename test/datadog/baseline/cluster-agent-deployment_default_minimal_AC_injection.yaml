@@ -36,7 +36,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 275e23303298a3d620063622071ec143ffcbe274a4b53416b428b5be9f271f6b
+        checksum/clusteragent_token: 7d36a45b80acd6890bafa74cae91697ea7b85a2561cc27f38148d00607a734b4
         checksum/clusteragent-configmap: 6fea41ac9179f9a526bbb2b5c3f168fd232111ff2c4bdf1cd922c31e45038c31
         checksum/api_key: 5aa9dfe916543cbcf1014dfa812cc46d36156564f56704b12c5f9e9c77afd266
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -46,7 +46,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -122,7 +122,7 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
             value: agent
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-            value: 7.58.0
+            value: 7.59.0
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED

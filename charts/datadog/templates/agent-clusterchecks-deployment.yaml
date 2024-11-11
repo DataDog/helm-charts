@@ -78,6 +78,10 @@ spec:
         command: ["bash", "-c"]
         args:
           - cp -r /etc/datadog-agent /opt
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
@@ -90,6 +94,10 @@ spec:
         command: ["bash", "-c"]
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -177,6 +185,10 @@ spec:
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: installinfo
             subPath: install_info

@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "WmoxVDdWb2xUSnZON3J5ejFLenptdkMwWFE4VEliY1Y="
+  token: "b0pkcDdBWU9DZENhcDU1T2ZEbnRXMkxjbW9LT3phdEE="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -191,8 +191,8 @@ metadata:
     app.kubernetes.io/version: "7"
 data:
   install_type: k8s_manual
-  install_id: "c54ea8fe-f73a-4eb0-9481-615351ad524e"
-  install_time: "1731358148"
+  install_id: "417924d1-f1c7-4c44-b681-a4b82f54d07d"
+  install_time: "1731094912"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -824,7 +824,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: bdefcc7d8d859027136cc90e767b8e8d78fac016f81d05204c04c2733ef14104
+        checksum/clusteragent_token: dbcee8ba14e360a887c9426f7a91014cf4c59f37e317f7084bb28729aedcfb38
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -836,7 +836,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -869,7 +869,6 @@ spec:
                 fieldPath: status.hostIP
           - name: DD_OTLP_CONFIG_LOGS_ENABLED
             value: "false"
-          
           
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -999,7 +998,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -1106,7 +1105,7 @@ spec:
             port: 8126
           timeoutSeconds: 5
       - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -1144,7 +1143,6 @@ spec:
               secretKeyRef:
                   name: datadog-cluster-agent
                   key: token
-          
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
             value: "false"
@@ -1202,8 +1200,10 @@ spec:
             mountPropagation: None
             readOnly: true
       initContainers:
-      - name: init-volume  
-        image: "gcr.io/datadoghq/agent:7.58.0"
+          
+      - name: init-volume
+        
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -1214,8 +1214,9 @@ spec:
             readOnly: false # Need RW for config path
         resources:
           {}
-      - name: init-config  
-        image: "gcr.io/datadoghq/agent:7.58.0"
+      - name: init-config
+        
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash
@@ -1223,12 +1224,12 @@ spec:
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
         volumeMounts:
-          - name: config
-            mountPath: /etc/datadog-agent
-            readOnly: false # Need RW for config path
           - name: logdatadog
             mountPath: /var/log/datadog
             readOnly: false # Need RW to write logs
+          - name: config
+            mountPath: /etc/datadog-agent
+            readOnly: false # Need RW for config path
           - name: procdir
             mountPath: /host/proc
             mountPropagation: None
@@ -1277,8 +1278,6 @@ spec:
         emptyDir: {}
       - name: tmpdir
         emptyDir: {}
-      - name: s6-run
-        emptyDir: {}
       - hostPath:
           path: /proc
         name: procdir
@@ -1296,6 +1295,8 @@ spec:
           path: /var/run/datadog/
           type: DirectoryOrCreate
         name: apmsocket
+      - name: s6-run
+        emptyDir: {}
       - hostPath:
           path: /etc/passwd
         name: passwd
@@ -1351,7 +1352,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 0b5dbb555b4a8ba9d8391e26b519aa3e5b7efc07543c2fa96f1ab430638880a6
+        checksum/clusteragent_token: cc7c556be49df89c9540b1769bcc9af7f787d18b2770ccf885920cd3c3867fd2
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1360,7 +1361,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -1372,7 +1373,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -1385,7 +1386,7 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.58.0"
+        image: "gcr.io/datadoghq/agent:7.59.0"
         command: ["bash", "-c"]
         args:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
@@ -1543,7 +1544,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: f307ff702ac0458e3348fb60bcc9d098be8dec40df4411d106bf6d1882af55bc
+        checksum/clusteragent_token: 982bf49be535679f1005e6648f369a19b8525b1f802f5874952fcf32b5b56bfe
         checksum/clusteragent-configmap: 18b94379f076d60b9b9aaa9bd8ebbc2fdc70563de1beae32de2018cacf2a237e
         checksum/install_info: 8e66003a020dd0b648cc0ee91a46e96257f348938a3e1a58fd54ea6f86adbd5e
     spec:
@@ -1551,7 +1552,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -1564,7 +1565,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.58.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
