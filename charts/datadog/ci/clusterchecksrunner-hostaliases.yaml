@@ -1,0 +1,7 @@
+datadog:
+  clusterChecksRunner:
+    enabled: true
+    hostAliases:
+     - ip: "10.0.0.1"
+       hostnames:
+       - "host.domain.com"

@@ -71,6 +71,11 @@ spec:
       securityContext:
         {{ toYaml .Values.clusterChecksRunner.securityContext | nindent 8 }}
       {{- end }}
+      {{- if .Values.clusterChecksRunner.hostAliases }}
+      hostAliases:
+        {{ .Values.clusterChecksRunner.hostAliases | toYaml | nindent 8 }}
+      {{- end }}
+
       initContainers:
       - name: init-volume
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
