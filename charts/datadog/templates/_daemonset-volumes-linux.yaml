@@ -3,6 +3,14 @@
   emptyDir: {}
 - name: tmpdir
   emptyDir: {}
+- name: s6-run
+  emptyDir: {}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+- name: confd
+  configMap:
+    name: {{ include "agents.confd-configmap-name" . }}
+{{- end }}
+{{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
   name: procdir
@@ -57,13 +65,6 @@
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
   name: apmsocket
-{{- end }}
-- name: s6-run
-  emptyDir: {}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
-- name: confd
-  configMap:
-    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
@@ -183,6 +184,12 @@
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
 {{- end }}
 {{- end }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
+- hostPath:
+    path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
+  name: runtimesocketdir
+{{- end }}
+{{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
@@ -193,15 +200,15 @@
 - hostPath:
     path: /var/log/containers
   name: logscontainerspath
-{{- if not .Values.datadog.criSocketPath }}
+{{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
 - hostPath:
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
-- hostPath:
-    path: {{ dir (include "datadog.dockerOrCriSocketPath" .) }}
-  name: runtimesocketdir
+{{- if .Values.providers.gke.gdc }}
+- secret:
+    secretName: datadog-kubelet-cert
+  name: kubelet-cert-volume
 {{- end }}
 {{- end -}}

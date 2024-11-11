@@ -139,7 +139,7 @@ spec:
           {{ include "containers-init-windows" . | nindent 6 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
-          {{ include "containers-init-linux" . | nindent 6 }}
+          {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}

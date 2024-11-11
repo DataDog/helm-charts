@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.79.0
+
+* Add Logs Collection support for Google GKE on GDC
+
 ## 3.78.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.59.0`.

@@ -64,4 +64,10 @@
 - name: DD_EXCLUDE_PAUSE_CONTAINER
   value: "false"
 {{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_KUBELET_CLIENT_CRT
+  value: /certs/tls.crt
+- name: DD_KUBELET_CLIENT_KEY
+  value: /certs/tls.key
+{{- end }}
 {{- end }}

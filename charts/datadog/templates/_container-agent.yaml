@@ -121,7 +121,7 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -237,6 +237,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
@@ -262,6 +263,7 @@
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
@@ -275,7 +277,7 @@
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if not .Values.datadog.criSocketPath }}
+    {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -337,6 +339,10 @@
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+    {{- if .Values.providers.gke.gdc }}
+    - name: kubelet-cert-volume
+      mountPath: /certs
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
