@@ -546,22 +546,6 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
-
-  ## OTel collector related configuration
-  otelCollector:
-    # datadog.otelCollector.enabled -- Enable the OTel Collector
-    enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
-    ports:
-
-        # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
-        name: otel-grpc
-        # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
-        name: otel-http
-    # datadog.otelCollector.config -- OTel collector configuration
-    config: {}
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -586,6 +570,23 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
+  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
+  ## OTel collector related configuration
+  otelCollector:
+    # datadog.otelCollector.enabled -- Enable the OTel Collector
+    enabled: false
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    ports:
+
+        # Default GRPC port of OTLP receiver
+      - containerPort: "4317"
+        name: otel-grpc
+        # Default HTTP port of OTLP receiver
+      - containerPort: "4318"
+        name: otel-http
+    # datadog.otelCollector.config -- OTel collector configuration
+    config: null
 
   ## Continuous Profiler configuration
   ##
@@ -684,7 +685,7 @@ datadog:
     processDiscovery: true
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
-    ## This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation.
+    ## This requires Agent 7.57.0+ and Linux.
     runInCoreAgent: false
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
@@ -821,7 +822,12 @@ datadog:
       # This should be set to true when using EKS, GKE or if containerd is configured to
       # discard uncompressed layers.
       # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
-      uncompressedLayersSupport: false
+      # Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer.
+      # See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers
+      uncompressedLayersSupport: true
+
+      # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
+      overlayFSDirectScan: false
 
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
@@ -1002,7 +1008,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.57.2
+    tag: 7.59.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1505,7 +1511,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.57.2
+    tag: 7.59.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2011,7 +2017,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.57.2
+    tag: 7.59.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2222,6 +2228,14 @@ clusterChecksRunner:
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
 
+  containers:
+    agent:
+      # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
+      securityContext: {}
+    initContainers:
+      # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
+      securityContext: {}
+
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
 
@@ -2270,6 +2284,9 @@ providers:
 
     # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
     cos: false
+
+    # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
+    gdc: false
 
   eks:
     ec2:

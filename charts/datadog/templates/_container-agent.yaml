@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" .Values.datadog.sbom.containerImage.uncompressedLayersSupport) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan)))) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
   ports:
@@ -121,7 +121,7 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -177,11 +177,17 @@
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
+    - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
+      value: "true"
+    {{- else }}
     - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
       value: "true"
     {{- end }}
-
+    {{- end }}
+    {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
@@ -231,6 +237,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
@@ -256,6 +263,7 @@
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
@@ -269,16 +277,19 @@
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if not .Values.datadog.criSocketPath }}
+    {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
     - name: host-containerd-dir
       mountPath: /host/var/lib/containerd
+      readOnly: true
+    - name: host-docker-dir
+      mountPath: /host/var/lib/docker
       readOnly: true
     {{- end }}
     {{- if .Values.datadog.sbom.host.enabled }}
@@ -328,6 +339,10 @@
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+    {{- if .Values.providers.gke.gdc }}
+    - name: kubelet-cert-volume
+      mountPath: /certs
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}

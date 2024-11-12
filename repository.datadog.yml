@@ -10,11 +10,11 @@ github_teams_restrictions:
   - container-helm-chart-maintainers
   - container-integrations
   - container-t2
-  - Synthetics
-  - Documentation
-  - Observability Pipelines
-  - Telemetry and Analytics
-  - Vector
+  - synthetics
+  - documentation
+  - observability-pipelines
+  - telemetry-and-analytics
+  - vector
 github_users_restrictions:
   - cahillsf
   - clamoriniere

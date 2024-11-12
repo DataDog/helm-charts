@@ -1,8 +1,57 @@
 # Datadog changelog
 
-## 3.75.0
+## 3.80.0
 
 * Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
+
+## 3.79.0
+
+* Add Logs Collection support for Google GKE on GDC
+
+## 3.78.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.59.0`.
+
+## 3.77.3
+
+* Update version required for datadog.processAgent.runInCoreAgent and remove experimental status.
+
+## 3.77.2
+
+* Add the ability to include Security Contexts at the container level for Cluster Checks Runners.
+
+## 3.77.1
+
+* Modify command that removes the default conf.d directory from the Cluster Checks Runners and only removes the default YAML files.
+
+## 3.77.0
+
+* Add experimental support for overlayfs direct scan for SBOMs
+
+## 3.76.3
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
+## 3.76.2
+
+* Fix warning message displayed when installing/upgrading the Agent with OTel collector.
+* Add preview message in values.yaml file.
+
+## 3.76.1
+
+* Gate `datadog.sbom.containerImage.uncompressedLayersSupport` feature behind `datadog.sbom.containerImage.enabled`: if the latter is not enabled (default), do not modify template based on `datadog.sbom.containerImage.uncompressedLayersSupport`.
+
+## 3.76.0
+
+* Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
+
+## 3.75.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
+
+## 3.74.6
+
+* Fix error message for when System Probe is enabled on GKE Autopilot
 
 ## 3.74.5
 

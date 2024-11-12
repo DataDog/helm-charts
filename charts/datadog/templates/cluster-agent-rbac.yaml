@@ -272,16 +272,17 @@ rules:
   - namespaces
   verbs:
   - list
-{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
   - "policy"
   resources:
+  - poddisruptionbudgets
+  {{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
   - podsecuritypolicies
+  {{- end }}
   verbs:
   - get
   - list
   - watch
-{{- end }}
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
