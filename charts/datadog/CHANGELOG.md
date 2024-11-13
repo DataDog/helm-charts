@@ -4,6 +4,10 @@
 
 * Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
 
+## 3.79.1
+
+* Document how to use `datadog.envDict` option with the `--set` helm's flag.
+
 ## 3.79.0
 
 * Add Logs Collection support for Google GKE on GDC
