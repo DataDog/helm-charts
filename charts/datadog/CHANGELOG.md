@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.80.1
+
+* Set `datadog.otelCollector.config` to empty string by default.
+
+
 ## 3.80.0
 
 * Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
