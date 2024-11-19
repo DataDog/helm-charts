@@ -352,7 +352,7 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 #####################################################################
 ####   WARNING: System Probe is not supported on GKE Autopilot   ####
 #####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
+{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill' and 'datadog.serviceMonitoring.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -619,5 +619,5 @@ OTel collector is not supported on GKE Autopilot.
 #################################################################
 ####               WARNING: Private Beta notice              ####
 #################################################################
-OTel collector is in private beta. Please reach out to your Datadog representative for more information.
+OTel collector is in preview. Please reach out to your Datadog representative for more information.
 {{- end }}

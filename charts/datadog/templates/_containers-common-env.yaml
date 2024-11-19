@@ -13,6 +13,7 @@
   value: {{ template "datadog.confPath" . }}/auth/token
 {{- end }}
 {{ include "components-common-env" . }}
+{{ include "language-detection-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
@@ -28,6 +29,15 @@
 {{- if .Values.providers.gke.autopilot }}
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
+{{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_NODE_NAME
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: spec.nodeName
+- name: DD_HOSTNAME
+  value: "$(DD_NODE_NAME)-$(DD_CLUSTER_NAME)"
 {{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
@@ -115,7 +125,7 @@
 {{- end }}
 {{- end }}
 {{- else }} # No support for env AD
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 {{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
   value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}

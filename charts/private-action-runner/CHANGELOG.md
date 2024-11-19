@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 0.15.0
+
+* Update private action image version to `v0.1.5-beta`
+
+## 0.14.3
+
+* Add GitLab private actions and fix image repository link.
+
+## 0.14.2
+
+* Update private action image version to `v0.1.3-beta`
+
+## 0.14.1
+
+* Update private action image version to `v0.1.2-beta`
+
 ## 0.14.0
 
 * Add support for `kubernetesActions`.
