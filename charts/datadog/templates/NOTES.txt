@@ -240,6 +240,20 @@ The option `datadog.apm.socketEnabled` is enabled by default and can be used to 
 
 {{- end }}
 
+{{- if .Values.datadog.apm.useLocalService }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The option `datadog.apm.useLocalService` will disable the trace-agent's hostPort.
+Make sure that `datadog.apm.portEnabled` is set to `false` for this to take effect.
+
+If you are using the Admission Controller APM library injection method to send traces to Datadog, this option will send traces via TCP to the local service.
+Make sure that `datadog.apm.socketEnabled` is set to `false` when enabling this or it defaults to sending traces via UDS.
+
+{{- end }}
+
 {{- if or .Values.datadog.systemProbe.enableKernelHeaderDownload .Values.datadog.systemProbe.enableRuntimeCompiler }}
 
 #################################################################

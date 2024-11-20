@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.81.0
+
+* Add a new option to disable hostPorts for the trace-agent with `datadog.apm.useLocalService`. This option enables K8s clusters with hostPort and hostPath volumes restrictions to use the K8s local service to send traces.
+
 ## 3.80.0
 
 * Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
