@@ -699,7 +699,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (hostPort 8126 by default) |
 | datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |
 | datadog.apm.socketPath | string | `"/var/run/datadog/apm.socket"` | Path to the trace-agent socket |
-| datadog.apm.useLocalService | bool | `false` | Enable APM over TCP communication use the local service only (requires Kubernetes v1.22+) Note: The hostPort 8126 is disabled when this is enabled. |
+| datadog.apm.useLocalService | bool | `false` | Enable APM over TCP communication to use the local service only (requires Kubernetes v1.22+) Note: The hostPort 8126 is disabled when this is enabled. |
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
