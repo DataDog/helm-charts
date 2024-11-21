@@ -3,7 +3,7 @@ datadog:
   appKey: "0000000000000000000000000000000000000000"
   orchestratorExplorer:
     customResources:
-    - datadoghq.com/v1alpha1/datadogpodautoscalers
+      - datadoghq.com/v1alpha1/datadogpodautoscalers
   autoscaling:
     workload:
       enabled: true
@@ -12,3 +12,4 @@ datadog:
 clusterAgent:
   image:
     tag: beta
+    doNotCheckTag: true
