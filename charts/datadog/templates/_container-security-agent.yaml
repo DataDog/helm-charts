@@ -91,7 +91,7 @@
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
-    {{- if not .Values.datadog.disablePasswdMount }}
+    {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true

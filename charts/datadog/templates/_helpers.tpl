@@ -1045,3 +1045,31 @@ Create RBACs for custom resources
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+  Returns true if Host paths for default OS Release Paths need to be added to the volumes.
+*/}}
+{{- define "should-add-host-path-for-os-release-paths" -}}
+  {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if (and .Values.datadog.systemProbe.enableDefaultOsReleasePaths (not .Values.datadog.disableDefaultOsReleasePaths)) -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+
+{{/*
+  Returns true if the host file /etc/passwd should be mounted, else return false.
+*/}}
+{{- define "should-add-host-path-for-etc-passwd" -}}
+  {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if not .Values.datadog.disablePasswdMount -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
