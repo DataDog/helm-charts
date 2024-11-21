@@ -891,7 +891,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -1053,6 +1053,8 @@ Create RBACs for custom resources
 {{- define "should-add-host-path-for-os-release-paths" -}}
   {{- if ne .Values.targetSystem "linux" -}}
     false
+  {{- else if .Values.providers.talos.enabled -}}
+    false
   {{- else if (and .Values.datadog.systemProbe.enableDefaultOsReleasePaths (not .Values.datadog.disableDefaultOsReleasePaths)) -}}
     true
   {{- else -}}
@@ -1066,6 +1068,8 @@ Create RBACs for custom resources
 */}}
 {{- define "should-add-host-path-for-etc-passwd" -}}
   {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if .Values.providers.talos.enabled -}}
     false
   {{- else if not .Values.datadog.disablePasswdMount -}}
     true

@@ -2322,6 +2322,10 @@ providers:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
 
+  talos:
+    # providers.talos.enabled -- Activate all specificities related to Talos.dev configuration. Required as currently we cannot auto-detect Talos.dev.
+    enabled: false
+
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
   # Can be overridden if `datadog.remoteConfiguration.enabled`
