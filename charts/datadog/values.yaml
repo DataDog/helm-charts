@@ -2323,7 +2323,12 @@ providers:
     enabled: false
 
   talos:
-    # providers.talos.enabled -- Activate all specificities related to Talos.dev configuration. Required as currently we cannot auto-detect Talos.dev.
+    # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,
+    # as currently the chart cannot auto-detect Talos.dev cluster.
+    # Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy.
+    # The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation
+    # Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see:
+    # https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/
     enabled: false
 
 remoteConfiguration:
