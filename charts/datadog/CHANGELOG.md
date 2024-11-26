@@ -2,7 +2,7 @@
 
 ## 3.81.1
 
-* Update `fips.image.tag` to `1.1.5` updating PCRE2 version to 10.44 and HAProxy version to 2.4.28
+* Update `fips.image.tag` to `1.1.6` updating PCRE2 version to 10.44 and HAProxy version to 2.4.28
 
 ## 3.81.0
 
