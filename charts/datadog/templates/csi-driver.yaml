@@ -1,0 +1,12 @@
+{{- if .Values.csiDriver.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: datadog.poc.csi.driver
+spec:
+  attachRequired: false
+  podInfoOnMount: true
+  volumeLifecycleModes:
+    - Persistent
+    - Ephemeral
+{{ end }}

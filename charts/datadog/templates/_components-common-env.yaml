@@ -1,6 +1,10 @@
 # The purpose of this template is to define a minimal set of environment
 # variables shared between components: agent, cluster-agent and cluster checks runner
 {{- define "components-common-env" -}}
+{{- if .Values.csiDriver.enabled }}
+- name: DD_CSI_DRIVER_ENABLED
+  value: "true"
+{{- end }}
 {{- if .Values.datadog.secretBackend.command }}
 - name: DD_SECRET_BACKEND_COMMAND
   value: {{ .Values.datadog.secretBackend.command | quote }}
