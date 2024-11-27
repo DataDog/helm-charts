@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.81.2
+
+* Update default system-probe memory and CPU requests and limits. 
+
 ## 3.81.1
 
 * Update default `fips.image.tag` to `1.1.6`, which updates PCRE2 version to 10.44 and HAProxy version to 2.4.28
