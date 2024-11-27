@@ -6,14 +6,13 @@
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| addCWSInstrumentationRBAC | bool | `false` | Defines if the operator should be deployed with the RBAC required for the cluster-agent CWSInstrumentation feature. |
 | affinity | object | `{}` | Allows to specify affinity for Datadog Operator PODs |
 | apiKey | string | `nil` | Your Datadog API key |
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
-| clusterRole | object | `{"allowReadAllResources":false}` | Set specific configuration for the cluster role |
+| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false}` | Set specific configuration for the cluster role |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |

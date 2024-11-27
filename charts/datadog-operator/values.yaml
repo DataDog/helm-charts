@@ -197,6 +197,5 @@ clusterRole:
   # If collecting CRDs in the Kubernetes Explorer this is required
   allowReadAllResources: false
 
-# addCWSInstrumentationRBAC -- Defines if the operator should be deployed with the RBAC required for the cluster-agent
-# CWSInstrumentation feature.
-addCWSInstrumentationRBAC: false
+  # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
+  allowCreatePodsExec: false

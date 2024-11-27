@@ -803,7 +803,7 @@ rules:
   - list
   - watch
 {{- end }}
-{{- if .Values.addCWSInstrumentationRBAC }}
+{{- if .Values.clusterRole.allowCreatePodsExec }}
 - apiGroups: [""]
   resources: ["pods/exec"]
   verbs: ["create"]

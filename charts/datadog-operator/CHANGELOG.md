@@ -2,7 +2,7 @@
 
 ## 2.4.0
 
-* Add configuration to grand to the operator the necessary RBAC for the CWS Instrumentation admission controller feature in the Cluster-Agent to work.
+* Add configuration to grant the necessary RBAC to the operator for the CWS Instrumentation Admission Controller feature in the Cluster-Agent.
 
 ## 2.3.0
 
