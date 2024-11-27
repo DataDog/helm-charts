@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.81.1
+
+* Update default `fips.image.tag` to `1.1.6`, which updates PCRE2 version to 10.44 and HAProxy version to 2.4.28
+
 ## 3.81.0
 
 * Add a new option to disable hostPorts for the trace-agent with `datadog.apm.useLocalService`. This option enables K8s clusters with hostPort and hostPath volumes restrictions to use the K8s local service to send traces.
