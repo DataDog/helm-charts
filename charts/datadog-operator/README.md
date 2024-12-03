@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.3.0](https://img.shields.io/badge/Version-2.3.0-informational?style=flat-square) ![AppVersion: 1.10.0](https://img.shields.io/badge/AppVersion-1.10.0-informational?style=flat-square)
+![Version: 2.4.0](https://img.shields.io/badge/Version-2.4.0-informational?style=flat-square) ![AppVersion: 1.10.0](https://img.shields.io/badge/AppVersion-1.10.0-informational?style=flat-square)
 
 ## Values
 
@@ -12,7 +12,7 @@
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
-| clusterRole | object | `{"allowReadAllResources":false}` | Set specific configuration for the cluster role |
+| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false}` | Set specific configuration for the cluster role |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |

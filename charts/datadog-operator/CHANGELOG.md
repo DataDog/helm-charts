@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.0
+
+* Add configuration to grant the necessary RBAC to the operator for the CWS Instrumentation Admission Controller feature in the Cluster-Agent.
+
 ## 2.3.0
 
 * Update Datadog Operator version to 1.10.0.
