@@ -258,7 +258,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if (eq (include "should-run-process-checks-on-core-agent" .) "true") }}
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
@@ -302,6 +302,7 @@
     - name: host-rpm-dir
       mountPath: /host/var/lib/rpm
       readOnly: true
+    {{- if eq (include "should-add-host-path-for-os-release-paths" .) "true" }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
@@ -321,6 +322,7 @@
     - name: etc-system-release
       mountPath: /host/etc/system-release
       readOnly: true
+    {{- end }}
     {{- end }}
     {{- end }}
     {{- end }}
