@@ -149,7 +149,7 @@ data:
           {}
         annotations_as_tags:
           {}
-  
+
   kubernetes_apiserver.yaml: |-
     init_config:
     instances:
