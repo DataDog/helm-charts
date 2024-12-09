@@ -550,6 +550,7 @@ helm install <RELEASE_NAME> \
 | agents.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
 | agents.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| agents.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
 | agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
@@ -628,6 +629,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.flareAdditionalPermissions | bool | `true` | If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace |
+| clusterAgent.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false |
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
@@ -673,6 +675,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true |
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterChecksRunner.rbac.dedicated | bool | `false` | If true, use a dedicated RBAC resource for the cluster checks agent(s) |
+| clusterChecksRunner.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
