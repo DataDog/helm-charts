@@ -512,7 +512,7 @@ datadog:
 
     # Error Tracking backend standalone
     errorTrackingStandalone:
-      # datadog.apm.errorTrackingStandalone.enabled -- Enable sending only traces for Error Tracking backend standalone. 
+      # datadog.apm.errorTrackingStandalone.enabled -- Enable sending only traces for Error Tracking backend standalone.
       enabled: false
 
     # APM Single Step Instrumentation
