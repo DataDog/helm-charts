@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.83.0](https://img.shields.io/badge/Version-3.83.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.83.1](https://img.shields.io/badge/Version-3.83.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -811,7 +811,7 @@ helm install <RELEASE_NAME> \
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
-| datadog.processAgent.runInCoreAgent | bool | `false` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.57.0+ and Linux. |
+| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.57.0+ and Linux. |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes # Requires datadog.processAgent.processCollection to be set to true to have any effect # ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing |
 | datadog.profiling.enabled | string | `nil` | Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED` environment variable with the same value to all pods in the cluster Valid values are: - false: Profiler is turned off and can not be turned on by other means. - null: Profiler is turned off, but can be turned on by other means. - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling. - true: Profiler is turned on. |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |

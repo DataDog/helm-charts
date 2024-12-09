@@ -692,7 +692,7 @@ datadog:
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.57.0+ and Linux.
-    runInCoreAgent: false
+    runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm

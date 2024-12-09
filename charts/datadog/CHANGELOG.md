@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.83.1
+
+* Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
+
 ## 3.83.0
 
 * Added the configuration value `datadog.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
