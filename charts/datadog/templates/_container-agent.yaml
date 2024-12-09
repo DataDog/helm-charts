@@ -108,6 +108,14 @@
     {{- else }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: {{ .Values.datadog.apm.errorTrackingStandalone.enabled | quote }}
+    {{- end }}
+    {{- if .Values.agents.coreAgent.enabled }}
+    - name: DD_CORE_AGENT_ENABLED
+      value: {{ .Values.agents.coreAgent.enabled | quote }}
+    {{- end }}
     - name: DD_APM_ENABLED
       value: {{ include "should-enable-trace-agent" . | quote }}
     - name: DD_LOGS_ENABLED

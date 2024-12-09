@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.84.0
+
+* Add `agents.coreAgent.enabled` and `datadog.apm.errorTrackingStandalone.enabled` settings to enable Error Tracking backend standalone.
+
 ## 3.83.0
 
 * Added the configuration value `datadog.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
