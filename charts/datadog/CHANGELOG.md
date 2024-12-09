@@ -1,5 +1,23 @@
 # Datadog changelog
 
+## 3.83.0
+
+* Added the configuration value `datadog.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
+* Added the configuration value `datadog.disableDefaultOsReleasePaths` to disable mounting the default "os-release" file paths from the host filesystem (e.g., `/etc/redhat-release`, `/etc/fedora-release`, etc.). Note that this change does not affect the `datadog.osReleasePath` option. To avoid mounting the `/etc/os-release` host path, set the `datadog.osReleasePath` configuration value to an empty string. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
+* Add `providers.talos.enabled` to simplify agent deployment configuration on Talos OS.
+
+## 3.82.0
+
+* Add `pods/exec` RBAC to the `Cluster-Agent` when needed and inject the service account name of the `Cluster-Agent` as environment variable.
+
+## 3.81.2
+
+* Fix ci values.yaml files name to be taken into account by the ci job.
+
+## 3.81.1
+
+* Update default `fips.image.tag` to `1.1.6`, which updates PCRE2 version to 10.44 and HAProxy version to 2.4.28
+
 ## 3.81.0
 
 * Add a new option to disable hostPorts for the trace-agent with `datadog.apm.useLocalService`. This option enables K8s clusters with hostPort and hostPath volumes restrictions to use the K8s local service to send traces.

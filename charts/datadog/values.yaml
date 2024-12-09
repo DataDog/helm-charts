@@ -698,6 +698,12 @@ datadog:
      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
     containerCollection: true
 
+  # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
+  disableDefaultOsReleasePaths: false
+
+  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in all containers
+  disablePasswdMount: false
+
   # datadog.osReleasePath -- Specify the path to your os-release file
   osReleasePath: /etc/os-release
 
@@ -759,6 +765,7 @@ datadog:
     # datadog.systemProbe.conntrackInitTimeout -- the time to wait for conntrack to initialize before failing
     conntrackInitTimeout: 10s
 
+    # DEPRECATED. Use datadog.disableDefaultOsReleasePaths instead.
     # datadog.systemProbe.enableDefaultOsReleasePaths -- enable default os-release files mount
     enableDefaultOsReleasePaths: true
 
@@ -1201,6 +1208,14 @@ clusterAgent:
     # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
     port: 8000
 
+    cwsInstrumentation:
+      # clusterAgent.admissionController.cwsInstrumentation.enabled -- Enable the CWS Instrumentation admission controller endpoint.
+      enabled: false
+
+      # clusterAgent.admissionController.cwsInstrumentation.mode -- Mode defines how the CWS Instrumentation should behave.
+      # Options are "remote_copy" or "init_container"
+      mode: remote_copy
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
@@ -1475,7 +1490,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.5
+    tag: 1.1.6
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2305,6 +2320,15 @@ providers:
       useHostnameFromFile: false
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    enabled: false
+
+  talos:
+    # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,
+    # as currently the chart cannot auto-detect Talos.dev cluster.
+    # Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy.
+    # The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation
+    # Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see:
+    # https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/
     enabled: false
 
 remoteConfiguration:

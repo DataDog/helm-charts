@@ -196,3 +196,6 @@ clusterRole:
   # allowReadAllResources is required to allow the operator to view all custom resources.
   # If collecting CRDs in the Kubernetes Explorer this is required
   allowReadAllResources: false
+
+  # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
+  allowCreatePodsExec: false
