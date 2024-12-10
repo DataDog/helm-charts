@@ -1,0 +1,44 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  logLevel: DEBUG
+  kubelet:
+    tlsVerify: false
+
+  logs:
+    enabled: true
+    containerCollectAll: true
+
+  apm:
+    enabled: true
+    instrumentation:
+      enabled: true
+      enabledNamespaces:
+        - default
+
+csiDriver:
+  enabled: true
+
+agents:
+  containers:
+    agent:
+      env:
+        - name: DD_DOGSTATSD_METRICS_STATS_ENABLE
+          value: "true"
+
+clusterAgent:
+  enabled: true
+  replicas: 1
+  image:
+    repository: adelhajhassan918/dca-csi-poc
+    tag: v44.5
+    imagePullPolicy: IfNotPresent
+    doNotCheckTag: true
+
+  env:
+    - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_TYPE_SOCKET_VOLUMES
+      value: "true"
+
+  admissionController:
+    mutateUnlabelled: true
+    configMode: socket
