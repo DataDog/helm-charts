@@ -144,7 +144,7 @@ spec:
           value: nodeless
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v0.1.5-beta"
+          image: "gcr.io/datadoghq/private-action-runner:v0.1.6-beta"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
