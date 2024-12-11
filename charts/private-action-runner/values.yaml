@@ -6,7 +6,7 @@ common:
   # -- Current Datadog Private Action Runner image
   image:
     repository: gcr.io/datadoghq/private-action-runner
-    tag: v0.1.6-beta
+    tag: v0.1.8-beta
 
 runners:
   # runners[0].name -- Name of the Datadog Private Action Runner
