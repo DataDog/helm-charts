@@ -390,6 +390,7 @@ datadog:
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: true
 
+  # Dummy change to trigger CI
   # Configure Kubernetes events collection
   kubernetesEvents:
     # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
