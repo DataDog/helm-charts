@@ -29,7 +29,7 @@ func Test_processAgentConfigs(t *testing.T) {
 		assertions func(t *testing.T, manifest string)
 	}{
 		{
-			name: "checks in process agent",
+			name: "checks in process agent -- linux",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -44,7 +44,7 @@ func Test_processAgentConfigs(t *testing.T) {
 			assertions: verifyDaemonsetProcessAgentChecks,
 		},
 		{
-			name: "default windows",
+			name: "checks in process agent -- windows",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -59,7 +59,7 @@ func Test_processAgentConfigs(t *testing.T) {
 			assertions: verifyDaemonsetWindowsProcessAgentChecks,
 		},
 		{
-			name: "all checks off",
+			name: "no checks -- linux",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -126,6 +126,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.appKeyExistingSecret":        "datadog-secret",
 					"targetSystem":                        "windows",
 					"datadog.processAgent.runInCoreAgent": "true",
+					"agents.image.tag":                    "7.60.0",
 				},
 			},
 			assertions: verifyDaemonsetWindowsProcessAgentChecks,
@@ -178,10 +179,10 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"datadog.processAgent.runInCoreAgent": "true",
-					"agents.image.tag":                    "7.52.0",
+					"datadog.apiKeyExistingSecret":           "datadog-secret",
+					"datadog.appKeyExistingSecret":           "datadog-secret",
+					"datadog.processAgent.runInCoreAgent":    "true",
+					"agents.image.tag":                       "7.52.0",
 				},
 			},
 			assertions: verifyLinuxRunInCoreAgentOld,
@@ -194,10 +195,10 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"datadog.processAgent.runInCoreAgent": "true",
-					"agents.image.doNotCheckTag":          "true",
+					"datadog.apiKeyExistingSecret":           "datadog-secret",
+					"datadog.appKeyExistingSecret":           "datadog-secret",
+					"datadog.processAgent.runInCoreAgent":    "true",
+					"agents.image.doNotCheckTag":             "true",
 				},
 			},
 			assertions: verifyLinuxRunInCoreAgentOld,
