@@ -1,8 +1,12 @@
 # Datadog changelog
 
-# 3.83.1
+# 3.83.2
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
+
+## 3.83.1
+
+* Add /sys/fs/bpf to system-probe volume mounts
 
 ## 3.83.0
 
