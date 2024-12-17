@@ -81,6 +81,11 @@
 - hostPath:
     path: /sys/kernel/debug
   name: debugfs
+{{- if .Values.datadog.networkMonitoring.enabled }}
+- hostPath:
+    path: /sys/fs/bpf
+  name: bpffs
+{{- end }}
 - name: sysprobe-socket-dir
   emptyDir: {}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
