@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.83.1
+
+* Add `endpointslices.discovery.k8s.io` to the list of resources to collect in the Cluster Agent RBAC when `datadog.kubernetesUseEndpointSlices` is enabled.
+* Add configuration option for `datadog.kubernetesUseEndpointSlices` to map Kubernetes services to endpoint slices instead of endpoints. Disabled by default.
+
 ## 3.83.0
 
 * Added the configuration value `datadog.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
