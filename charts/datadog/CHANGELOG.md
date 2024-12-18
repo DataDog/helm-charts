@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.84.0
+
+* Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
+
 ## 3.83.1
 
 * Add /sys/fs/bpf to system-probe volume mounts
