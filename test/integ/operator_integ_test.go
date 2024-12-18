@@ -115,7 +115,7 @@ func Test(t *testing.T) {
 
 func verifyOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 	verifyNumPodsForSelector(t, kubectlOptions, 1, "app.kubernetes.io/name=datadog-operator")
-	operatorPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{
+	operatorPods, err := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{
 		LabelSelector: "app.kubernetes.io/name=datadog-operator",
 	})
 	require.NoError(t, err)
