@@ -126,6 +126,7 @@ func verifyOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 		output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "logs", pod.Name)
 		// assert.NoError(c, err)
 		// fmt.Sprintf("Operator pod logs: %s", output)
+		t.Log("Operator pod logs: %s", output)
 		require.NoError(t, err)
 	}
 }
