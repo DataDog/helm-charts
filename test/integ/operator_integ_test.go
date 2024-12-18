@@ -115,6 +115,19 @@ func Test(t *testing.T) {
 
 func verifyOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 	verifyNumPodsForSelector(t, kubectlOptions, 1, "app.kubernetes.io/name=datadog-operator")
+	operatorPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{
+		LabelSelector: "app.kubernetes.io/name=datadog-operator",
+	})
+	require.NoError(t, err)
+
+	for _, pod := range operatorPods {
+		k8s.WaitUntilPodAvailable(t, kubectlOptions, pod.Name, 5, 15*time.Second)
+
+		output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "logs", pod.Name)
+		// assert.NoError(c, err)
+		// fmt.Sprintf("Operator pod logs: %s", output)
+		require.NoError(t, err)
+	}
 }
 
 func verifyAgent(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
@@ -128,20 +141,6 @@ func verifyNumPodsForSelector(t *testing.T, kubectlOptions *k8s.KubectlOptions, 
 	k8s.WaitUntilNumPodsCreated(t, kubectlOptions, v1.ListOptions{
 		LabelSelector: selector,
 	}, numPods, 9, 10*time.Second)
-
-	operatorPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{
-		LabelSelector: selector,
-	})
-	require.NoError(t, err)
-
-	for _, pod := range operatorPods {
-		k8s.WaitUntilPodAvailable(t, kubectlOptions, pod.Name, 5, 15*time.Second)
-
-		output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "logs", pod.Name)
-		// assert.NoError(c, err)
-		// fmt.Sprintf("Operator pod logs: %s", output)
-		require.NoError(t, err)
-	}
 }
 
 func currentContext(t *testing.T) string {
