@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.84.1
+## 3.84.0
 
 * Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
 
