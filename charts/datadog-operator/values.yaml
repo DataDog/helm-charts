@@ -45,9 +45,9 @@ appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
-  repository: gcr.io/datadoghq/operator
+  repository: docker.io/sarahwang579/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.11.0
+  tag: 1.11.1
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
