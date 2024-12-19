@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.84.1
+## 3.84.2
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
+
+## 3.84.1
+
+* Remove deployments.apps example of `datadog.kubernetesResourcesLabelsAsTags` and `datadog.kubernetesResourcesAnnotationsAsTags` since it's not implemented yet
 
 ## 3.84.0
 
