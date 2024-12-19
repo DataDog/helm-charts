@@ -24,6 +24,9 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
+{{- if .Values.clusterChecksRunner.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterChecksRunner.rbac.serviceAccountAdditionalLabels) . | nindent 4}}
+{{- end }}
   name: {{ template "datadog.fullname" . }}-cluster-checks
   namespace: {{ .Release.Namespace }}
   {{- if .Values.clusterChecksRunner.rbac.serviceAccountAnnotations }}
