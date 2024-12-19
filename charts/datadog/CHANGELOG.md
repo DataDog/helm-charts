@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.84.1
+
+* Remove deployments.apps example of `datadog.kubernetesResourcesLabelsAsTags` and `datadog.kubernetesResourcesAnnotationsAsTags` since it's not implemented yet
+
 ## 3.84.0
 
 * Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.

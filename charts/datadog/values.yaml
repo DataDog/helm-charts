@@ -257,8 +257,6 @@ datadog:
 
   # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
   kubernetesResourcesLabelsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-label
   #    pods:
   #      x-ref: reference
   #    namespaces:
@@ -268,8 +266,6 @@ datadog:
 
   # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
   kubernetesResourcesAnnotationsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-annotation
   #    pods:
   #      x-ann: annotation-reference
   #    namespaces:
