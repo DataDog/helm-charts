@@ -53,12 +53,3 @@ e2e:
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
   script:
     - make test-e2e
-noop:
-  tags: ["arch:amd64"]
-  before_script: [""]
-  stage: e2e
-  after_script: [""]
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - echo "no op script"
