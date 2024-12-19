@@ -825,6 +825,10 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
+  discovery:
+    # datadog.discovery.enabled -- Enable Service Discovery
+    enabled: false
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:
