@@ -258,6 +258,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_MODE
             value: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.kubernetesAdmissionEvents.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_KUBERNETES_ADMISSION_EVENTS_ENABLED
+            value: "true"
+          {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
