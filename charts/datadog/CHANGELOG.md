@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.85.0
+
+* Add `datadog.discovery.enabled` configuration to control service-discovery
+
 ## 3.84.0
 
 * Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
