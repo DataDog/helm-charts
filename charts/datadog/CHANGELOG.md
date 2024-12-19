@@ -1,8 +1,13 @@
 # Datadog changelog
 
-# 3.83.2
+## 3.84.1
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
+
+## 3.84.0
+
+* Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
+
 
 ## 3.83.1
 
