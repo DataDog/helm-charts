@@ -1,0 +1,4 @@
+image: 
+  repository: sarahwang579.io/operator
+  tag: sw
+  doNotCheckTag: true
