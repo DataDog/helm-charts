@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.83.1'
+    helm.sh/chart: 'datadog-3.79.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,11 +36,11 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 99fe737ab0531059cd354e038d5970db05cb0b360077758a2255d08a0067d676
-        checksum/clusteragent-configmap: c3159633a1c7d00f5b33b3e60181a1c2bc2a2e6d1f7d8bec194eafd20a0f3657
-        checksum/api_key: 8428df3f12d55f65d6f5d927b6b7c6eb3d82d390c11df922a151180411b61776
+        checksum/clusteragent_token: e3466aa95772fd657b731896232e59a2386ac6c1a38b0ab18cbdeb09156544e8
+        checksum/clusteragent-configmap: f7ddc12f1f727af3c450b5b1fc979f56419ae0902320da72a4077d5a3e899f8d
+        checksum/api_key: 16b334660f377f7344c3de471b1b9c142c4ff1a49cf6dbf2acbc92d4b2979115
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: ef2051af41ecf76b5ac9d617fd74f0bb25c5cb009210b3f623e206a6c787578b
+        checksum/install_info: 113a50d660d16d7edc1f9242b70b5dde0f3f6f12ce82ce794a8dc01e2863e6a5
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
@@ -78,10 +78,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.serviceAccountName
           - name: DD_HEALTH_PORT
             value: "5556"
           - name: DD_API_KEY
@@ -98,10 +94,6 @@ spec:
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
           - name: DD_ADMISSION_CONTROLLER_ENABLED
-            value: "true"
-          - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
-            value: "true"
-          - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
             value: "datadog-webhook"
