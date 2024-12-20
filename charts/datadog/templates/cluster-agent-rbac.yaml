@@ -29,7 +29,6 @@ rules:
   - list
   - watch
   - create
-{{- if .Values.datadog.kubernetesUseEndpointSlices }}
 - apiGroups:
   - "discovery.k8s.io"
   resources:
@@ -38,7 +37,6 @@ rules:
   - get
   - list
   - watch
-{{- end }}
 - apiGroups: ["quota.openshift.io"]
   resources:
   - clusterresourcequotas
