@@ -2,7 +2,7 @@
 
 ## 2.5.0
 
-* Update Datadog Operator version to 1.11.0.
+* Update Datadog Operator version to 1.11.1.
 
 ## 2.4.0
 
