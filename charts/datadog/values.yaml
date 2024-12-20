@@ -1215,6 +1215,10 @@ clusterAgent:
       # Options are "remote_copy" or "init_container"
       mode: remote_copy
 
+    kubernetesAdmissionEvents:
+      # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
+      enabled: false
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
