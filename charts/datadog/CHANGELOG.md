@@ -1,9 +1,21 @@
 # Datadog changelog
 
+## 3.84.2
+
+* Add `endpointslices.discovery.k8s.io` to the list of resources to collect in the Cluster Agent RBAC.
+* Add configuration option for `datadog.kubernetesUseEndpointSlices` to map Kubernetes services to endpoint slices instead of endpoints. Disabled by default.
+
+## 3.84.1
+
+* Remove deployments.apps example of `datadog.kubernetesResourcesLabelsAsTags` and `datadog.kubernetesResourcesAnnotationsAsTags` since it's not implemented yet
+
+## 3.84.0
+
+* Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
+
 ## 3.83.1
 
-* Add `endpointslices.discovery.k8s.io` to the list of resources to collect in the Cluster Agent RBAC when `datadog.kubernetesUseEndpointSlices` is enabled.
-* Add configuration option for `datadog.kubernetesUseEndpointSlices` to map Kubernetes services to endpoint slices instead of endpoints. Disabled by default.
+* Add /sys/fs/bpf to system-probe volume mounts
 
 ## 3.83.0
 
