@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.84.2
+## 3.84.3
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
+
+## 3.84.2
+
+* Add `endpointslices.discovery.k8s.io` to the list of resources to collect in the Cluster Agent RBAC.
+* Add configuration option for `datadog.kubernetesUseEndpointSlices` to map Kubernetes services to endpoint slices instead of endpoints. Disabled by default.
 
 ## 3.84.1
 
