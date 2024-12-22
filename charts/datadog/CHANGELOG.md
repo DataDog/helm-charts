@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.85.0
+
+* Add option to specify `extraObjects`.
+
 ## 3.84.3
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
