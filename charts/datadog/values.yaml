@@ -826,7 +826,7 @@ datadog:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
-    enabled: #  false
+    enabled:  # false
 
   # Software Bill of Materials configuration
   sbom:
