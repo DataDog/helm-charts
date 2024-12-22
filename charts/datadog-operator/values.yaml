@@ -199,3 +199,11 @@ clusterRole:
 
   # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
   allowCreatePodsExec: false
+
+# Extra manifests to deploy as an array
+extraObjects: []
+#   - |
+#     apiVersion: v1
+#     kind: ConfigMap
+#     metadata:
+#       name: '{{ template "datadog-operator.name" . }}-extra-configmap'

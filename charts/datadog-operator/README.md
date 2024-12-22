@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.5.0](https://img.shields.io/badge/Version-2.5.0-informational?style=flat-square) ![AppVersion: 1.11.1](https://img.shields.io/badge/AppVersion-1.11.1-informational?style=flat-square)
+![Version: 2.6.0](https://img.shields.io/badge/Version-2.6.0-informational?style=flat-square) ![AppVersion: 1.11.1](https://img.shields.io/badge/AppVersion-1.11.1-informational?style=flat-square)
 
 ## Values
 
@@ -29,6 +29,7 @@
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | deployment.annotations | object | `{}` | Allows setting additional annotations for the deployment resource |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
+| extraObjects | list | `[]` | Enables the specification of extra Kubernetes objects, such as ConfigMaps, Secrets, etc. |
 | fullnameOverride | string | `""` |  |
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
