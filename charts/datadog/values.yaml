@@ -2339,3 +2339,11 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+# Extra manifests to deploy as an array
+extraObjects: []
+#   - |
+#     apiVersion: v1
+#     kind: ConfigMap
+#     metadata:
+#       name: '{{ template "datadog.name" . }}-extra-configmap'
