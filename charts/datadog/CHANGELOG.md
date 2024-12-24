@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.85.0
+
+* Add `datadog.discovery.enabled` configuration to control service-discovery
+
 ## 3.84.4
 
 * Propagate the `datadog.site` option to the default `datadog.otelCollector` configuration.
