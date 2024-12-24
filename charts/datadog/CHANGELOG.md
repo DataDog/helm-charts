@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.84.4
+
+* Propagate the `datadog.site` option to the default `datadog.otelCollector` configuration.
+
 ## 3.84.3
 
 * Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
