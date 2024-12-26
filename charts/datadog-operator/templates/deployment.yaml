@@ -62,6 +62,22 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             {{- end }}
+            {{- if .Values.watchNamespacesAgent }}
+            - name: DD_AGENT_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgent | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesMonitor }}
+            - name: DD_MONITOR_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesMonitor | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesSLO }}
+            - name: DD_SLO_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesSLO | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesAgentProfile }}
+            - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgentProfile | join "," }}
+            {{- end }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
