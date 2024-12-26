@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.86.0
+
+* Add `delete` permission for `datadog-webhook` Admission Registration RBACs.
+
 ## 3.85.0
 
-* Add `datadog.discovery.enabled` configuration to control service-discovery
+* Add `datadog.discovery.enabled` configuration to control service-discovery.
 
 ## 3.84.4
 
