@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.86.1
+
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration.
+
 ## 3.86.0
 
 * Add `delete` permission for `datadog-webhook` Admission Registration RBACs.
