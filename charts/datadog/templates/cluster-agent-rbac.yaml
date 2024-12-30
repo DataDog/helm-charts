@@ -257,7 +257,7 @@ rules:
   - mutatingwebhookconfigurations
   resourceNames:
     - {{ .Values.clusterAgent.admissionController.webhookName | quote }}
-  verbs: ["get", "list", "watch", "update"]
+  verbs: ["get", "list", "watch", "update", "delete"]
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
