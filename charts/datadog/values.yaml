@@ -1305,6 +1305,10 @@ clusterAgent:
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
 
+  ## clusterAgent.apiserverCheck.additionalConfigs
+  apiserverCheck: 
+    additionalConfigs: {}
+
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
   # requests:
