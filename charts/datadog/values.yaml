@@ -38,7 +38,7 @@ datadog:
   # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "apiKey".
-  apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+  apiKeyExistingSecret: datadog-secret
 
   # datadog.appKey -- Datadog APP key required to use metricsProvider
 
@@ -49,7 +49,7 @@ datadog:
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "appKey".
-  appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+  appKeyExistingSecret:  datadog-secret
 
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
@@ -103,7 +103,7 @@ datadog:
   ## * Overall length should not be higher than 80 characters.
   ## Compared to the rules of GKE, dots are allowed whereas they are not allowed on GKE:
   ## https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#Cluster.FIELDS.name
-  clusterName:  # <CLUSTER_NAME>
+  clusterName:  akira-test-cluster
 
   # datadog.site -- The site of the Datadog intake to send Agent data to.
   # (documentation: https://docs.datadoghq.com/getting_started/site/)
@@ -138,7 +138,7 @@ datadog:
     # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
-    enabled: true
+    enabled: false
 
     rbac:
     # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
@@ -298,7 +298,7 @@ datadog:
           fieldPath: status.hostIP
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
-    tlsVerify:  # false
+    tlsVerify:  false
     # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
     # @default -- None (no mount from host)
     hostCAPath:
@@ -345,7 +345,7 @@ datadog:
     # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket with an HostVolume
 
     ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
-    useSocketVolume: true
+    useSocketVolume: false
 
     # datadog.dogstatsd.socketPath -- Path to the DogStatsD socket
     socketPath: /var/run/datadog/dsd.socket
@@ -384,7 +384,7 @@ datadog:
   # datadog.collectEvents -- Enables this to start event collection from the kubernetes API
 
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
-  collectEvents: true
+  collectEvents: false
 
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
@@ -473,7 +473,7 @@ datadog:
     # datadog.apm.socketEnabled -- Enable APM over Socket (Unix Socket or windows named pipe)
 
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
-    socketEnabled: true
+    socketEnabled: false
 
     # datadog.apm.portEnabled -- Enable APM over TCP communication (hostPort 8126 by default)
 
@@ -1012,6 +1012,7 @@ datadog:
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
 ## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
+
   # clusterAgent.enabled -- Set this to false to disable Datadog Cluster Agent
   enabled: true
 
@@ -1304,6 +1305,10 @@ clusterAgent:
   #          port: 3306
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
+
+  ## clusterAgent.apiserverCheck.additionalConfigs
+  apiserverCheck: 
+    additionalConfigs: {}
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
