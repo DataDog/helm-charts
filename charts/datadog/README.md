@@ -695,7 +695,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces (beta). |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
 | datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces (beta). |
-| datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (beta). |
+| datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
 | datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (beta). |
 | datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation (beta). |
 | datadog.apm.instrumentation.skipKPITelemetry | bool | `false` | Disable generating Configmap for APM Instrumentation KPIs |
