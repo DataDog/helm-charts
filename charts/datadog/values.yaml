@@ -1305,9 +1305,9 @@ clusterAgent:
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
 
-  ## clusterAgent.apiserverCheck.additionalConfigs
-  apiserverCheck: 
-    additionalConfigs: {}
+  ## clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Disable useComponentStatus for kubernetes_apiserver check
+  kubernetesApiserverCheck:
+    disableUseComponentStatus: true
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}

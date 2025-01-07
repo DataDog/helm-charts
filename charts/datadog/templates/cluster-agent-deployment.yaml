@@ -482,7 +482,7 @@ spec:
             - key: helm.yaml
               path: helm.yaml
 {{- end }}
-{{- if .Values.datadog.collectEvents }}
+{{- if or (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}

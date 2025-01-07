@@ -2,7 +2,7 @@
 
 ## 3.88.0
 
-* Add `clusterAgent.apiserverCheck.additionalConfigs` to configure kubernetes_apiserver check.
+* Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
 
 ## 3.87.0
 
