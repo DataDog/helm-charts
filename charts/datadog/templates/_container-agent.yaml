@@ -59,6 +59,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
+    {{- if eq (include "should-enable-otel-agent" .) "true" }}
     {{- $found := false }}
     {{- range .Values.agents.containers.agent.env }}
     {{- if eq .name "DD_AGENT_IPC_PORT" }}
@@ -88,6 +89,7 @@
     {{- if not $found }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
+    {{- end }}
     {{- end }}
 
     {{- if .Values.datadog.logLevel }}
