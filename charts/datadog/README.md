@@ -586,7 +586,6 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
-| clusterAgent.apiserverCheck.additionalConfigs | object | `{}` |  |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
 | clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |
@@ -609,6 +608,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
 | clusterAgent.image.tag | string | `"7.59.0"` | Cluster Agent image tag to use |
+| clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `true` |  |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
