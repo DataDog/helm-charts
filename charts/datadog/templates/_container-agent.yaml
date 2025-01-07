@@ -59,6 +59,36 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
+    {{- $found := false }}
+    {{- range .Values.agents.containers.agent.env }}
+    {{- if eq .name "DD_AGENT_IPC_PORT" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- range .Values.datadog.env }}
+    {{- if eq .name "DD_AGENT_IPC_PORT" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- if not $found }}
+    - name: DD_AGENT_IPC_PORT
+      value: "5009"
+    {{- end }}
+    {{- $found := false }}
+    {{- range .Values.agents.containers.agent.env }}
+    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- range .Values.datadog.env }}
+    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- if not $found }}
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "60"
+    {{- end }}
 
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL

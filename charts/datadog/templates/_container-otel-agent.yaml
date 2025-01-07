@@ -3,10 +3,10 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"]
+  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml", "--sync-delay=30s"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"]
+  command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml", "--sync-delay=30s"]
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
@@ -32,6 +32,36 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- $found := false }}
+    {{- range .Values.agents.containers.otelAgent.env }}
+    {{- if eq .name "DD_AGENT_IPC_PORT" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- range .Values.datadog.env }}
+    {{- if eq .name "DD_AGENT_IPC_PORT" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- if not $found }}
+    - name: DD_AGENT_IPC_PORT
+      value: "5009"
+    {{- end }}
+    {{- $found := false }}
+    {{- range .Values.agents.containers.otelAgent.env }}
+    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- range .Values.datadog.env }}
+    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
+    {{- $found = true }}
+    {{- end }}
+    {{- end }}
+    {{- if not $found }}
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "60"
+    {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
