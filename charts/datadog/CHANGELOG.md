@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.87.2
+
+* Fix setting `DD_HOSTNAME` in GKE GDC environments.
+
 ## 3.87.1
 
 * Add the ability to set the image tag to use for the APM Injector.

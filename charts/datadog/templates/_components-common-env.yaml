@@ -18,6 +18,15 @@
 - name: DD_CLUSTER_NAME
   value: {{ tpl .Values.datadog.clusterName . | quote }}
 {{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_NODE_NAME
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: spec.nodeName
+- name: DD_HOSTNAME
+  value: "$(DD_NODE_NAME)-$(DD_CLUSTER_NAME)"
+{{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
   value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
