@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.87.2
+
+* Disable SBOM monitoring features for GKE Autopilot, as they are not supported
+
 ## 3.87.1
 
 * Add the ability to set the image tag to use for the APM Injector.
