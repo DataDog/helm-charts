@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.87.1
+
+* Add the ability to set the image tag to use for the APM Injector.
+
 ## 3.87.0
 
 * Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
