@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.87.2
+
+* Mount /var/lib/containers to generate SBOMs for CRI-O.
+
 ## 3.87.1
 
 * Add the ability to set the image tag to use for the APM Injector.
