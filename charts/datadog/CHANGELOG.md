@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.87.2
+
+* Add cgroups mount in system-probe for USM, NPM and Service Discovery matching the datadog-operator.
+
 ## 3.87.1
 
 * Add the ability to set the image tag to use for the APM Injector.
