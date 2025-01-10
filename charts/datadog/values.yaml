@@ -1307,7 +1307,7 @@ clusterAgent:
 
   # clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Set this to true to disable use_component_status for the kubernetes_apiserver check
   kubernetesApiserverCheck:
-    disableUseComponentStatus: # true
+    disableUseComponentStatus: false
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
