@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.88.0
+
+* Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
+
 ## 3.87.1
 
 * Add the ability to set the image tag to use for the APM Injector.
