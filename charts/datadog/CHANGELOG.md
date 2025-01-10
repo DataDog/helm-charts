@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.87.2
+## 3.87.3
 
 * Disable SBOM monitoring features for GKE Autopilot, as they are not supported
+
+## 3.87.2
+
+* Add cgroups mount in system-probe for USM, NPM and Service Discovery matching the datadog-operator.
 
 ## 3.87.1
 
