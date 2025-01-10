@@ -70,6 +70,12 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled }}
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
