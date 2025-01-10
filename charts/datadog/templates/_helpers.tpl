@@ -954,10 +954,21 @@ Create RBACs for custom resources
   Return true if SBOM collection for container image is enabled
 */}}
 {{- define "should-enable-sbom-container-image-collection" -}}
-  {{- if .Values.datadog.sbom.containerImage.enabled -}}
+  {{- if and (.Values.datadog.sbom.containerImage.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
       {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
     {{- end -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM collection for host filesystems is enabled
+*/}}
+{{- define "should-enable-sbom-host-fs-collection" -}}
+  {{- if and (.Values.datadog.sbom.host.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     true
   {{- else -}}
     false
