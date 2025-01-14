@@ -6,7 +6,7 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.79.0'
+    helm.sh/chart: 'datadog-3.88.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,8 +36,8 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 7252ac95e9b7a2be76a893f29be97ba3ddfa93e988f208d18a1e4e410b6b9b7a
-        checksum/install_info: 113a50d660d16d7edc1f9242b70b5dde0f3f6f12ce82ce794a8dc01e2863e6a5
+        checksum/clusteragent_token: 37a2772ca63263767c6e7068e0045e49adbc15740749bda902e911cd80f1b43a
+        checksum/install_info: c4085619f73a106a92bfd597fcc33dc3860f5a5e984bf75fc16adcda43b15f70
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
@@ -45,7 +45,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -57,7 +57,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -70,7 +70,7 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.61.0"
         command: ["bash", "-c"]
         args:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run

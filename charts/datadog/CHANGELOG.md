@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.88.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.61.0`.
+
 ## 3.87.2
 
 * Add cgroups mount in system-probe for USM, NPM and Service Discovery matching the datadog-operator.
