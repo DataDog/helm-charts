@@ -1,5 +1,5 @@
 {{- define "kubernetes_apiserver-config" -}}
-{{- if eq (include "need-kuberetes-apiserver-check-config" .) "true" }}
+{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
 kubernetes_apiserver.yaml: |-
   init_config:
   instances:
