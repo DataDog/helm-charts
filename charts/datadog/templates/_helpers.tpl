@@ -117,6 +117,77 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/* 
+Return whether "DD_AGENT_IPC_PORT" env var is set in otelAgent.env or datadog.env. 
+*/}} 
+{{- define "agentIpcPort-envvar-otel-agent-present" -}} 
+{{- $found := false -}}
+{{- range .Values.agents.containers.otelAgent.env -}}
+{{- if eq .name "DD_AGENT_IPC_PORT" -}}
+{{- $found = true}}
+{{- end -}}
+{{- end -}}
+{{- range .Values.datadog.env -}}
+{{- if eq .name "DD_AGENT_IPC_PORT" -}}
+{{- $found = true -}}
+{{- end -}}
+{{- end -}}
+{{- if $found -}}true{{- else -}}false{{- end -}}
+{{- end -}} 
+
+{{/* 
+Return whether "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" env var is set in otelAgent.env or datadog.env. 
+*/}} 
+{{- define "agentIpcConfigRefreshInterval-envvar-otel-agent-present" -}} 
+{{- $found := false -}}
+{{- range .Values.agents.containers.otelAgent.env -}}
+{{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" -}}
+{{- $found = true}}
+{{- end -}}
+{{- end -}}
+{{- range .Values.datadog.env -}}
+{{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" -}}
+{{- $found = true -}}
+{{- end -}}
+{{- end -}}
+{{- if $found -}}true{{- else -}}false{{- end -}}
+{{- end -}} 
+
+{{/* 
+Return whether "DD_AGENT_IPC_PORT" env var is set in agent.env or datadog.env. 
+*/}} 
+{{- define "agentIpcPort-envvar-agent-present" -}} 
+{{- $found := false -}}
+{{- range .Values.agents.containers.agent.env -}}
+{{- if eq .name "DD_AGENT_IPC_PORT" -}}
+{{- $found = true}}
+{{- end -}}
+{{- end -}}
+{{- range .Values.datadog.env -}}
+{{- if eq .name "DD_AGENT_IPC_PORT" -}}
+{{- $found = true -}}
+{{- end -}}
+{{- end -}}
+{{- if $found -}}true{{- else -}}false{{- end -}}
+{{- end -}} 
+
+{{/* 
+Return whether "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" env var is set in agent.env or datadog.env. 
+*/}} 
+{{- define "agentIpcConfigRefreshInterval-envvar-agent-present" -}} 
+{{- $found := false -}}
+{{- range .Values.agents.containers.agent.env -}}
+{{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" -}}
+{{- $found = true}}
+{{- end -}}
+{{- end -}}
+{{- range .Values.datadog.env -}}
+{{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" -}}
+{{- $found = true -}}
+{{- end -}}
+{{- end -}}
+{{- if $found -}}true{{- else -}}false{{- end -}}
+{{- end -}} 
 
 
 {{/*

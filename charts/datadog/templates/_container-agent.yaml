@@ -60,33 +60,11 @@
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
     {{- if eq (include "should-enable-otel-agent" .) "true" }}
-    {{- $found := false }}
-    {{- range .Values.agents.containers.agent.env }}
-    {{- if eq .name "DD_AGENT_IPC_PORT" }}
-    {{- $found = true }}
-    {{- end }}
-    {{- end }}
-    {{- range .Values.datadog.env }}
-    {{- if eq .name "DD_AGENT_IPC_PORT" }}
-    {{- $found = true }}
-    {{- end }}
-    {{- end }}
-    {{- if not $found }}
+    {{- if eq (include "agentIpcPort-envvar-agent-present" .) "false" }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
     {{- end }}
-    {{- $found := false }}
-    {{- range .Values.agents.containers.agent.env }}
-    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
-    {{- $found = true }}
-    {{- end }}
-    {{- end }}
-    {{- range .Values.datadog.env }}
-    {{- if eq .name "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL" }}
-    {{- $found = true }}
-    {{- end }}
-    {{- end }}
-    {{- if not $found }}
+    {{- if eq (include "agentIpcConfigRefreshInterval-envvar-agent-present" .) "false" }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- end }}
