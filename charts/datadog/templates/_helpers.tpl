@@ -709,7 +709,7 @@ false
 {{/*
 Return true if kubernetes_apiserver check should be configured
 */}}
-{{- define  "need-kuberetes-apiserver-check-config" -}}
+{{- define  "need-kubernetes-apiserver-check-config" -}}
 {{- if or (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) -}}
 true
 {{- else -}}
