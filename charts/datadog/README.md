@@ -608,7 +608,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
 | clusterAgent.image.tag | string | `"7.59.0"` | Cluster Agent image tag to use |
-| clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | string | `nil` |  |
+| clusterAgent.kubernetesApiserverCheck | object | `{"disableUseComponentStatus":false}` | correspond to options for configuring the kube_apiserver integration. |
+| clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
