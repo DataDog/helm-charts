@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.87.3
+## 3.88.1
 
 * Disable SBOM monitoring features for GKE Autopilot, as they are not supported
+
+## 3.88.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.61.0`.
 
 ## 3.87.2
 
