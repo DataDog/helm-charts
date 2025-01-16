@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.88.0
+## 3.89.0
 
 * Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
 
