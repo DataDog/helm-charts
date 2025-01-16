@@ -3,6 +3,15 @@
 ## 3.88.0
 
 * Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
+
+## 3.88.1
+
+* Disable SBOM monitoring features for GKE Autopilot, as they are not supported
+
+## 3.88.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.61.0`.
+
 ## 3.87.2
 
 * Add cgroups mount in system-probe for USM, NPM and Service Discovery matching the datadog-operator.
