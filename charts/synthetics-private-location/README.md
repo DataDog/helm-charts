@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.17.5](https://img.shields.io/badge/Version-0.17.5-informational?style=flat-square) ![AppVersion: 1.54.0](https://img.shields.io/badge/AppVersion-1.54.0-informational?style=flat-square)
+![Version: 0.17.6](https://img.shields.io/badge/Version-0.17.6-informational?style=flat-square) ![AppVersion: 1.54.0](https://img.shields.io/badge/AppVersion-1.54.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations/?tab=helmchart).
 
@@ -53,6 +53,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | replicaCount | int | `1` | Number of instances of Datadog Synthetics Private Location |
 | resources | object | `{}` | Set resources requests/limits for Datadog Synthetics Private Location PODs |
 | securityContext | object | `{}` | Security context to set to the Datadog Synthetics Private Location container |
+| serviceAccount.annotations | object | `{}` | Annotations for the service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set name is generated using the fullname template |
 | tolerations | list | `[]` | Allows to schedule Datadog Synthetics Private Location on tainted nodes |
