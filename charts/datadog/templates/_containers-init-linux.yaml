@@ -1,7 +1,7 @@
 {{- define "containers-init-linux" -}}
 - name: init-volume
 {{- if not .Values.providers.gke.autopilot }}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
 {{- end }}
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
@@ -16,7 +16,7 @@
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 - name: init-config
 {{- if not .Values.providers.gke.autopilot }}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
 {{- end }}
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
@@ -26,9 +26,6 @@
   args:
     - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
   volumeMounts:
-    - name: logdatadog
-      mountPath: {{ template "datadog.logDirectoryPath" . }}
-      readOnly: false # Need RW to write logs
     - name: config
       mountPath: /etc/datadog-agent
       readOnly: false # Need RW for config path
@@ -42,11 +39,16 @@
       mountPath: /checks.d
       readOnly: true
     {{- end }}
+    {{- if not .Values.providers.gke.gdc }}
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml

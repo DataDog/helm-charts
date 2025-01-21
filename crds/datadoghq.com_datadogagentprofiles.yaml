@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.3
   name: datadogagentprofiles.datadoghq.com
 spec:
   group: datadoghq.com
@@ -91,10 +91,13 @@ spec:
                                                 description: The key to select.
                                                 type: string
                                               name:
+                                                default: ""
                                                 description: |-
                                                   Name of the referent.
+                                                  This field is effectively required, but due to backwards compatibility is
+                                                  allowed to be empty. Instances of this type with an empty value here are
+                                                  almost certainly wrong.
                                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                                 type: string
                                               optional:
                                                 description: Specify whether the ConfigMap or its key must be defined
@@ -147,10 +150,13 @@ spec:
                                                 description: The key of the secret to select from.  Must be a valid secret key.
                                                 type: string
                                               name:
+                                                default: ""
                                                 description: |-
                                                   Name of the referent.
+                                                  This field is effectively required, but due to backwards compatibility is
+                                                  allowed to be empty. Instances of this type with an empty value here are
+                                                  almost certainly wrong.
                                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                                 type: string
                                               optional:
                                                 description: Specify whether the Secret or its key must be defined
@@ -178,10 +184,8 @@ spec:
                                         Claims lists the names of resources, defined in spec.resourceClaims,
                                         that are used by this container.
 
-
                                         This is an alpha field and requires enabling the
                                         DynamicResourceAllocation feature gate.
-
 
                                         This field is immutable. It can only be set for containers.
                                       items:
@@ -192,6 +196,12 @@ spec:
                                               Name must match the name of one entry in pod.spec.resourceClaims of
                                               the Pod where this field is used. It makes that resource available
                                               inside a container.
+                                            type: string
+                                          request:
+                                            description: |-
+                                              Request is the name chosen for a request in the referenced claim.
+                                              If empty, everything from the claim is made available, otherwise
+                                              only the result of this request.
                                             type: string
                                         required:
                                           - name
@@ -244,7 +254,40 @@ spec:
                               If not specified, the pod priority will be default or zero if there is no
                               default.
                             type: string
+                          updateStrategy:
+                            description: |-
+                              The deployment strategy to use to replace existing pods with new ones.
+                              Valid types are `RollingUpdate` or `OnDelete` for DaemonSets
+                            properties:
+                              rollingUpdate:
+                                description: Configure the rolling update strategy of the Deployment or DaemonSet.
+                                properties:
+                                  maxSurge:
+                                    anyOf:
+                                      - type: integer
+                                      - type: string
+                                    description: |-
+                                      MaxSurge behaves differently based on the Kubernetes resource. Refer to the
+                                      Kubernetes API documentation for additional details.
+                                    x-kubernetes-int-or-string: true
+                                  maxUnavailable:
+                                    anyOf:
+                                      - type: integer
+                                      - type: string
+                                    description: |-
+                                      The maximum number of pods that can be unavailable during the update.
+                                      Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+                                      Refer to the Kubernetes API documentation for additional details..
+                                    x-kubernetes-int-or-string: true
+                                type: object
+                              type:
+                                description: |-
+                                  Type can be "RollingUpdate" or "OnDelete" for DaemonSets and "RollingUpdate"
+                                  or "Recreate" for Deployments
+                                type: string
+                            type: object
                         type: object
+                      description: Override the default configurations of the node agent.
                       type: object
                   type: object
                 profileAffinity:
@@ -273,6 +316,7 @@ spec:
                             items:
                               type: string
                             type: array
+                            x-kubernetes-list-type: atomic
                         required:
                           - key
                           - operator
@@ -289,24 +333,7 @@ spec:
                 conditions:
                   description: Conditions represents the latest available observations of a DatadogAgentProfile's current state.
                   items:
-                    description: |-
-                      Condition contains details for one aspect of the current state of this API Resource.
-                      ---
-                      This struct is intended for direct use as an array at the field path .status.conditions.  For example,
-
-
-                      	type FooStatus struct{
-                      	    // Represents the observations of a foo's current state.
-                      	    // Known .status.conditions.type are: "Available", "Progressing", and "Degraded"
-                      	    // +patchMergeKey=type
-                      	    // +patchStrategy=merge
-                      	    // +listType=map
-                      	    // +listMapKey=type
-                      	    Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
-
-
-                      	    // other fields
-                      	}
+                    description: Condition contains details for one aspect of the current state of this API Resource.
                     properties:
                       lastTransitionTime:
                         description: |-
@@ -347,12 +374,7 @@ spec:
                           - Unknown
                         type: string
                       type:
-                        description: |-
-                          type of condition in CamelCase or in foo.example.com/CamelCase.
-                          ---
-                          Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-                          useful (see .node.status.conditions), the ability to deconflict is important.
-                          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
                         maxLength: 316
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                         type: string
@@ -367,6 +389,29 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                createStrategy:
+                  description: CreateStrategy is the state of the create strategy feature.
+                  properties:
+                    lastTransition:
+                      description: LastTransition is the last time the status was updated.
+                      format: date-time
+                      type: string
+                    maxUnavailable:
+                      description: MaxUnavailable shows the number of pods that can be in an unready state.
+                      format: int32
+                      type: integer
+                    nodesLabeled:
+                      description: NodesLabeled shows the number of nodes currently labeled.
+                      format: int32
+                      type: integer
+                    podsReady:
+                      description: PodsReady shows the number of pods in the ready state.
+                      format: int32
+                      type: integer
+                    status:
+                      description: Status shows the current state of the feature.
+                      type: string
+                  type: object
                 currentHash:
                   description: CurrentHash is the stored hash of the DatadogAgentProfile.
                   type: string

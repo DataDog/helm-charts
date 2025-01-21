@@ -113,6 +113,42 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/other_default.yaml",
 			assertions:           verifyUntypedResources,
 		},
+		{
+			name: "GDC DaemonSet default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"providers.gke.gdc":            "true",
+				},
+			},
+			baselineManifestPath: "./baseline/gdc_daemonset_default.yaml",
+			assertions:           verifyDaemonset,
+		},
+		{
+			name: "GDC DaemonSet logs collection enabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":            "datadog-secret",
+					"datadog.appKeyExistingSecret":            "datadog-secret",
+					"datadog.logs.enabled":                    "true",
+					"datadog.logs.containerCollectAll":        "true",
+					"datadog.logs.containerCollectUsingFiles": "true",
+					"datadog.logs.autoMultiLineDetection":     "true",
+					"providers.gke.gdc":                       "true",
+				},
+			},
+			baselineManifestPath: "./baseline/gdc_daemonset_logs_collection.yaml",
+			assertions:           verifyDaemonset,
+		},
 	}
 
 	for _, tt := range tests {

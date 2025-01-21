@@ -437,6 +437,16 @@ agents:
 # (...)
 ```
 
+## Set an environment variable with the `--set` helm flag
+
+You can set environment variables using the `--set` helm's flag  thanks to the `datadog.envDict` field.
+
+For example, to set the `DD_ENV` environment variable:
+
+```console
+$ helm install --set datadog.envDict.DD_ENV=prod <release name> datadog/datadog
+```
+
 ## All configuration options
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,

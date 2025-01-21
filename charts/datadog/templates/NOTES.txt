@@ -240,6 +240,20 @@ The option `datadog.apm.socketEnabled` is enabled by default and can be used to 
 
 {{- end }}
 
+{{- if .Values.datadog.apm.useLocalService }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The option `datadog.apm.useLocalService` will disable the trace-agent's hostPort.
+Make sure that `datadog.apm.portEnabled` is set to `false` for this to take effect.
+
+If you are using the Admission Controller APM library injection method to send traces to Datadog, this option will send traces via TCP to the local service.
+Make sure that `datadog.apm.socketEnabled` is set to `false` when enabling this or it defaults to sending traces via UDS.
+
+{{- end }}
+
 {{- if or .Values.datadog.systemProbe.enableKernelHeaderDownload .Values.datadog.systemProbe.enableRuntimeCompiler }}
 
 #################################################################
@@ -390,6 +404,16 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- if .Values.datadog.networkMonitoring.enabled }}
+
+#######################################################################################
+####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+
+{{- end }}
+
 {{- end }}
 
 {{- if and (.Values.datadog.dogstatsd.useSocketVolume) (eq .Values.targetSystem "windows") }}
@@ -502,6 +526,25 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-sbom-host-fs-collection" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The SBOM host filesystem collection feature requires access to the os-release information from the host.
+`datadog.sbom.host.enabled: true` can't be used with `datadog.disableDefaultOsReleasePaths: true`.
+{{- fail "The SBOM host filesystem collection feature requires access to the os-release information from the host." }}
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-system-probe" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The current set of options used to install the chart requires the system-probe container to be enabled.
+However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `datadog.osReleasePath` is empty which is not compatible when the system-probe container is required.
+{{- fail "OS Release information is required  when system-probe is enabled." }}
+{{- end }}
+
+
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
   {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
@@ -587,5 +630,5 @@ OTel collector is not supported on GKE Autopilot.
 #################################################################
 ####               WARNING: Private Beta notice              ####
 #################################################################
-OTel collector is in private beta. Please reach out to your Datadog representative for more information.
+OTel collector is in preview. Please reach out to your Datadog representative for more information.
 {{- end }}
