@@ -1015,10 +1015,9 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if .Values.providers.gke.gdc -}}
+  {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}}
     false
-  {{- end -}}
-  {{- if ne .Values.targetSystem "linux" -}}
+  {{- else if ne .Values.targetSystem "linux" -}}
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
