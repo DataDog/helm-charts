@@ -1017,8 +1017,7 @@ Create RBACs for custom resources
 {{- define "should-run-process-checks-on-core-agent" -}}
   {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}}
     false
-  {{- end -}}
-  {{- if ne .Values.targetSystem "linux" -}}
+  {{- else if ne .Values.targetSystem "linux" -}}
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
