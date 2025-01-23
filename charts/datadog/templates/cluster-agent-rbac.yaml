@@ -515,7 +515,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
-{{- $mergedResources := merge (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags) (default dict .Values.datadog.kubernetesResourcesLabelsAsTags)}}
+{{- $mergedResources := merge (default dict) (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
 {{- range $resource, $labels := $mergedResources }}
   {{- $parts := split "." $resource }}
   {{- $apiGroup := "" }}
