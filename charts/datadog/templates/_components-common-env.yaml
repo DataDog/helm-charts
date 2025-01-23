@@ -1,5 +1,5 @@
 # The purpose of this template is to define a minimal set of environment
-# variables shared between components: agent, cluster-agent
+# variables shared between components: agent, cluster-agent and cluster checks runner
 {{- define "components-common-env" -}}
 {{- if .Values.datadog.secretBackend.command }}
 - name: DD_SECRET_BACKEND_COMMAND
@@ -16,7 +16,7 @@
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME
-  value: {{ .Values.datadog.clusterName | quote }}
+  value: {{ tpl .Values.datadog.clusterName . | quote }}
 {{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
@@ -38,6 +38,18 @@
 - name: DD_KUBERNETES_NAMESPACE_LABELS_AS_TAGS
   value: '{{ toJson .Values.datadog.namespaceLabelsAsTags }}'
 {{- end }}
+{{- if .Values.datadog.namespaceAnnotationsAsTags }}
+- name: DD_KUBERNETES_NAMESPACE_ANNOTATIONS_AS_TAGS
+  value: '{{ toJson .Values.datadog.namespaceAnnotationsAsTags }}'
+{{- end }}
+{{- if .Values.datadog.kubernetesResourcesLabelsAsTags }}
+- name: DD_KUBERNETES_RESOURCES_LABELS_AS_TAGS
+  value: '{{ toJson .Values.datadog.kubernetesResourcesLabelsAsTags }}'
+{{- end}}
+{{- if .Values.datadog.kubernetesResourcesAnnotationsAsTags }}
+- name: DD_KUBERNETES_RESOURCES_ANNOTATIONS_AS_TAGS
+  value: '{{ toJson .Values.datadog.kubernetesResourcesAnnotationsAsTags }}'
+{{- end}}
 - name: KUBERNETES
   value: "yes"
 {{- if .Values.datadog.site }}
@@ -51,5 +63,11 @@
 {{- if not .Values.datadog.excludePauseContainer }}
 - name: DD_EXCLUDE_PAUSE_CONTAINER
   value: "false"
+{{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_KUBELET_CLIENT_CRT
+  value: /certs/tls.crt
+- name: DD_KUBELET_CLIENT_KEY
+  value: /certs/tls.key
 {{- end }}
 {{- end }}

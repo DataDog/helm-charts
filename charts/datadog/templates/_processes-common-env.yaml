@@ -1,0 +1,17 @@
+# Defines set of environment variables for Processes-related checks.
+{{- define "processes-common-envs" -}}
+{{- if not .Values.providers.gke.gdc }}
+- name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+  value: {{ .Values.datadog.processAgent.processCollection | quote }}
+- name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+  value: {{ .Values.datadog.processAgent.containerCollection | quote }}
+- name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+  value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
+- name: DD_STRIP_PROCESS_ARGS
+  value: {{ .Values.datadog.processAgent.stripProcessArguments | quote }}
+{{- if and (eq .Values.targetSystem "linux") (eq (include "get-process-checks-in-core-agent-envvar" .) "") }}
+- name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+  value: {{ (include "should-run-process-checks-on-core-agent" .) | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}

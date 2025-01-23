@@ -1,10 +1,13 @@
 {{- define "kubernetes_apiserver-config" -}}
-{{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents -}}
+{{- if .Values.datadog.collectEvents -}}
 kubernetes_apiserver.yaml: |-
   init_config:
   instances:
-    - unbundle_events: {{ .Values.datadog.kubernetesEvents.unbundleEvents }}
+    - filtering_enabled: {{ .Values.datadog.kubernetesEvents.filteringEnabled }}
+      unbundle_events: {{ .Values.datadog.kubernetesEvents.unbundleEvents }}
+      {{- if .Values.datadog.kubernetesEvents.unbundleEvents }}
       collected_event_types:
 {{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | nindent 8 }}
+      {{- end -}}
 {{- end -}}
 {{- end -}}

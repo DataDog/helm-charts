@@ -258,7 +258,7 @@ datadog:
   # (...)
   apm:
     instrumentation:
-      enabled: false
+      enabled: true
       enabledNamespaces:
         - namespaceC
 ```
@@ -270,7 +270,7 @@ datadog:
   # (...)
   apm:
     instrumentation:
-      enabled: false
+      enabled: true
       libVersions:
         java: v1.18.0
         python: v1.20.0
@@ -435,6 +435,16 @@ agents:
       enabled: false
 
 # (...)
+```
+
+## Set an environment variable with the `--set` helm flag
+
+You can set environment variables using the `--set` helm's flag  thanks to the `datadog.envDict` field.
+
+For example, to set the `DD_ENV` environment variable:
+
+```console
+$ helm install --set datadog.envDict.DD_ENV=prod <release name> datadog/datadog
 ```
 
 ## All configuration options

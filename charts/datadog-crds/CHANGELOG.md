@@ -1,5 +1,47 @@
 # Changelog
 
+# 2.3.0
+
+* Update CRDs from Datadog Operator v1.11.0 tag.
+
+# 2.2.0
+
+* Update CRDs from Datadog Operator v1.10.0 tag.
+
+## 2.1.0
+
+* Update CRDs from Datadog Operator v1.9.0 tag.
+* Add DatadogDashboards CRD.
+
+## 2.0.0
+
+* Update CRDs from Datadog Operator v1.8.0 tag.
+* Remove support for DatadogAgent `v1alpha1` and conversion webhook.
+* Final update of Datadog CRDs with the `apiextensions.k8s.io/v1beta1` version of CustomResourceDefinition.
+
+## 1.7.2
+
+* Remove XValidation as requires K8S >= 1.25.
+
+## 1.7.1
+
+* Add DPA CRD.
+
+## 1.7.0
+* Update CRDs from Datadog Operator v1.7.0 tag.
+
+## 1.6.0
+* Update CRDs from Datadog Operator v1.6.0 tag.
+
+## 1.5.0
+* Update CRDs from Datadog Operator v1.5.0 tag.
+
+## 1.4.0
+* Update CRDs from Datadog Operator v1.4.0 tag.
+
+## 1.3.1
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
 ## 1.3.0
 * Update CRDs from Datadog Operator v1.3.0 tag.
 

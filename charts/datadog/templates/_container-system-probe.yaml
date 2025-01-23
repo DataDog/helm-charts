@@ -43,6 +43,12 @@
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for kprobe_events
+{{- if .Values.datadog.networkMonitoring.enabled }}
+    - name: bpffs
+      mountPath: /sys/fs/bpf
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
@@ -64,8 +70,14 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled }}
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
-  {{- if .Values.datadog.systemProbe.enableDefaultOsReleasePaths }}
+    {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release

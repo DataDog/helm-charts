@@ -57,8 +57,6 @@ containers:
       - name: DD_OP_DATA_DIR
         value: {{ . | quote }}
       {{- end }}
-      - name: DD_OP_REMOTE_CONFIGURATION_ENABLED
-        value: {{ .Values.datadog.remoteConfigurationEnabled | quote }}
       - name: DD_OP_API_ENABLED
         value: {{ .Values.datadog.workerAPI.enabled | quote }}
       - name: DD_OP_API_PLAYGROUND
@@ -74,8 +72,6 @@ containers:
     ports:
 {{- if .Values.containerPorts }}
 {{ toYaml .Values.containerPorts | indent 6 }}
-{{- else if .Values.pipelineConfig }}
-{{- include "opw.containerPorts" . | indent 6 }}
 {{- end }}
 {{- if .Values.datadog.workerAPI.enabled }}
 {{ include "opw.api.containerPort" . | indent 6 }}
@@ -95,11 +91,6 @@ containers:
     volumeMounts:
       - name: data
         mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
-      {{- if not .Values.datadog.remoteConfigurationEnabled }}
-      - name: config
-        mountPath: "/etc/observability-pipelines-worker/"
-        readOnly: true
-      {{- end }}
 {{- if .Values.extraVolumeMounts }}
 {{ toYaml .Values.extraVolumeMounts | indent 6 }}
 {{- end }}
@@ -129,13 +120,6 @@ volumes:
 {{- else }}
   - name: data
     emptyDir: {}
-{{- end }}
-{{- if not .Values.datadog.remoteConfigurationEnabled }}
-  - name: config
-    projected:
-      sources:
-        - configMap:
-            name: {{ template "opw.fullname" . }}
 {{- end }}
 {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 2 }}

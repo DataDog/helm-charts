@@ -100,5 +100,13 @@ spec:
       targetPort: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
       name: otlphttpport
  {{- end }}
+{{- if eq (include "should-enable-otel-agent" .) "true" }}
+{{- range .Values.datadog.otelCollector.ports }}
+    - protocol: TCP
+      port: {{ .containerPort }}
+      targetPort: {{ .containerPort }}
+      name: {{ .name }}
+{{- end }}
+{{- end }}
   internalTrafficPolicy: Local
 {{ end }}

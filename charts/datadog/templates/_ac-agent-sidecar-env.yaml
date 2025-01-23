@@ -1,0 +1,47 @@
+{{- define "ac-agent-sidecar-env" -}}
+{{- if and .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
+  value: "true"
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
+  value: "true"
+{{- else }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
+  value: "false"
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER
+  value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
+{{- end }}
+
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CONTAINER_REGISTRY
+  value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
+{{- end }}
+
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.imageName }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
+  value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.imageName }}
+{{- else if .Values.agents.image.name}}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
+  value: {{ .Values.agents.image.name }}
+{{- end }}
+
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.imageTag }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
+  value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.imageTag }}
+{{- else if .Values.agents.image.tag}}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
+  value: {{ .Values.agents.image.tag }}
+{{- end }}
+
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_SELECTORS
+  value: '{{ toJson .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}'
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.profiles }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES
+  value: '{{ toJson .Values.clusterAgent.admissionController.agentSidecarInjection.profiles }}'
+{{- end }}
+{{- end }}
+{{- end }}

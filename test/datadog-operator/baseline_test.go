@@ -33,22 +33,6 @@ func Test_baseline_manifests(t *testing.T) {
 			skipTest:             SkipTest,
 		},
 		{
-			name: "Operator Deployment with cert manager enabled",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			baselineManifestPath: "./baseline/Operator_Deployment_with_certManager.yaml",
-			assertions:           verifyOperatorDeployment,
-			skipTest:             SkipTest,
-		},
-		{
 			name: "DatadogAgent CRD default",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -59,23 +43,6 @@ func Test_baseline_manifests(t *testing.T) {
 				Overrides: map[string]string{},
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
-			assertions:           verifyDatadogAgent,
-			skipTest:             SkipTest,
-		},
-		{
-			name: "DatadogAgent CRD with cert manager enabled",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				// datadogCRDs is an alias defined in the chart dependency
-				ShowOnly: []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:   []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			baselineManifestPath: "./baseline/DatadogAgent_CRD_with_certManager.yaml",
 			assertions:           verifyDatadogAgent,
 			skipTest:             SkipTest,
 		},

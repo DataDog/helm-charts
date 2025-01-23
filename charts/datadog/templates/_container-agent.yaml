@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" .Values.datadog.sbom.containerImage.uncompressedLayersSupport) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan)))) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-agent-container-resources" . | indent 4 }}
@@ -62,6 +62,8 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
+
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
@@ -77,6 +79,12 @@
     {{- if .Values.datadog.dogstatsd.originDetection }}
     - name: DD_DOGSTATSD_ORIGIN_DETECTION
       value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    - name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
+      value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+    {{- end }}
+    {{- if .Values.datadog.originDetectionUnified.enabled }}
+    - name: DD_ORIGIN_DETECTION_UNIFIED
+      value: {{ .Values.datadog.originDetectionUnified.enabled | quote }}
     {{- end }}
     {{- if .Values.datadog.dogstatsd.tagCardinality }}
     - name: DD_DOGSTATSD_TAG_CARDINALITY
@@ -105,7 +113,7 @@
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
     - name: DD_APM_ENABLED
-      value: "false"
+      value: {{ include "should-enable-trace-agent" . | quote }}
     - name: DD_LOGS_ENABLED
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
@@ -117,7 +125,7 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -154,10 +162,8 @@
     - name: DD_CHECKS_TAG_CARDINALITY
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
-    {{- if .Values.datadog.containerLifecycle.enabled }}
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
-      value: {{ .Values.datadog.containerLifecycle.enabled | quote }}
-    {{- end }}
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}  
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
@@ -168,23 +174,36 @@
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
-    {{- if or .Values.datadog.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     - name: DD_SBOM_ENABLED
       value: "true"
     {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
+    - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
+      value: "true"
+    {{- else }}
     - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
       value: "true"
     {{- end }}
-    {{- if .Values.datadog.sbom.host.enabled }}
+    {{- end }}
+    {{- end }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
     - name: HOST_ROOT
       value: /host
     {{- end }}
+    {{- end }}
+    - name: DD_KUBELET_CORE_CHECK_ENABLED
+      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
+    {{- if eq (include "should-enable-otel-agent" .) "true" }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
@@ -222,6 +241,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
@@ -242,6 +262,12 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    {{- end }}
+    {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
       mountPath: /opt/datadog-agent/run
@@ -255,19 +281,22 @@
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if not .Values.datadog.criSocketPath }}
+    {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
     - name: host-containerd-dir
       mountPath: /host/var/lib/containerd
       readOnly: true
+    - name: host-docker-dir
+      mountPath: /host/var/lib/docker
+      readOnly: true
     {{- end }}
-    {{- if .Values.datadog.sbom.host.enabled }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: host-apk-dir
       mountPath: /host/var/lib/apk
       readOnly: true
@@ -277,6 +306,7 @@
     - name: host-rpm-dir
       mountPath: /host/var/lib/rpm
       readOnly: true
+    {{- if eq (include "should-add-host-path-for-os-release-paths" .) "true" }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
@@ -299,6 +329,7 @@
     {{- end }}
     {{- end }}
     {{- end }}
+    {{- end }}
     {{- if eq .Values.targetSystem "windows" }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
     - name: pointerdir
@@ -315,6 +346,10 @@
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}
+    {{- if .Values.providers.gke.gdc }}
+    - name: kubelet-cert-volume
+      mountPath: /certs
+    {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
@@ -324,4 +359,9 @@
   readinessProbe:
 {{- $ready := .Values.agents.containers.agent.readinessProbe }}
 {{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
+{{- if (not .Values.providers.gke.autopilot) }}
+  startupProbe:
+{{- $startup := .Values.agents.containers.agent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
+{{- end }}
 {{- end -}}
