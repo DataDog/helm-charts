@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.88.3
+
+* Add default container resource values for GKE Autopilot
+
 ## 3.88.2
 
 * Disable running process check in core Agent by default feature for GKE Autopilot, as it is not supported.

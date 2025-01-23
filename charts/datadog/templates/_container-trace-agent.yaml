@@ -10,7 +10,11 @@
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
+{{- if and (empty .Values.agents.containers.traceAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
+{{- end }}
   ports:
   - containerPort: {{ .Values.datadog.apm.port }}
   {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
