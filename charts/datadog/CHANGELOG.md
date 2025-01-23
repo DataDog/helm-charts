@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.88.3
+
+* Fix destructive merge of `DD_KUBERNETES_RESOURCES_ANNOTATIONS_AS_TAGS` and `DD_KUBERNETES_RESOURCES_LABELS_AS_TAGS`
+
 ## 3.88.2
 
 * Disable running process check in core Agent by default feature for GKE Autopilot, as it is not supported.
