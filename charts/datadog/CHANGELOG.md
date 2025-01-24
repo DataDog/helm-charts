@@ -4,6 +4,10 @@
 
 * Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
 
+## 3.88.2
+
+* Disable running process check in core Agent by default feature for GKE Autopilot, as it is not supported.
+
 ## 3.88.1
 
 * Disable SBOM monitoring features for GKE Autopilot, as they are not supported
