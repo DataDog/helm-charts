@@ -4,6 +4,10 @@
 
 * Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
 
+## 3.88.3
+
+* Mount /var/lib/containers to generate SBOMs for CRI-O.
+
 ## 3.88.2
 
 * Disable running process check in core Agent by default feature for GKE Autopilot, as it is not supported.
