@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.69.3'
+    helm.sh/chart: 'datadog-3.88.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: de542da9e3ea422b2ed413961187c1fe5bd28d1608c78a8bb16a4bc64b508e9b
-        checksum/install_info: 88c52cd7ef5158f4eb2738b4c3b575985b7d139c6b2a25213c46c5a6266e22e7
+        checksum/clusteragent_token: c456fcb1ef3669e17f99562f9daff2c69a0b63a382b597db38525e2169dff3da
+        checksum/install_info: c4085619f73a106a92bfd597fcc33dc3860f5a5e984bf75fc16adcda43b15f70
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -42,7 +42,7 @@ spec:
       hostPID: true
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -62,18 +62,20 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
+          
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
             value: "false"
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
           - name: DD_OTLP_CONFIG_LOGS_ENABLED
             value: "false"
+          
           
           
           - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -85,7 +87,7 @@ spec:
           - name: DD_STRIP_PROCESS_ARGS
             value: "false"
           - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-            value: "false"
+            value: "true"
           - name: DD_LOG_LEVEL
             value: "INFO"
           - name: DD_DOGSTATSD_PORT
@@ -171,6 +173,9 @@ spec:
             mountPath: /host/sys/fs/cgroup
             mountPropagation: None
             readOnly: true
+          - name: passwd
+            mountPath: /etc/passwd
+            readOnly: true
         livenessProbe:
           failureThreshold: 6
           httpGet:
@@ -202,7 +207,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       - name: trace-agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command: ["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]  
         resources:
@@ -221,12 +226,13 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
+          
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
             value: "false"
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
             valueFrom:
               fieldRef:
@@ -307,105 +313,9 @@ spec:
           tcpSocket:
             port: 8126
           timeoutSeconds: 5
-      - name: process-agent
-        image: "gcr.io/datadoghq/agent:7.55.2"
-        imagePullPolicy: IfNotPresent
-        command: ["process-agent", "--cfgpath=/etc/datadog-agent/datadog.yaml"]  
-        resources:
-          {}
-        env:
-          - name: DD_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: "datadog-secret"
-                key: api-key
-          - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "true"
-          - name: DD_AUTH_TOKEN_FILE_PATH
-            value: /etc/datadog-agent/auth/token
-          - name: DD_LANGUAGE_DETECTION_ENABLED
-            value: "false"
-          - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
-            value: "false"
-          - name: KUBERNETES
-            value: "yes"
-          - name: DD_KUBERNETES_KUBELET_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
-          - name: DD_OTLP_CONFIG_LOGS_ENABLED
-            value: "false"
-          
-          - name: DD_CLUSTER_AGENT_ENABLED
-            value: "true"
-          - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-            value: datadog-cluster-agent
-          - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-            valueFrom:
-              secretKeyRef:
-                  name: datadog-cluster-agent
-                  key: token
-          
-          - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
-            value: "false"
-          - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
-            value: "true"
-          - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-            value: "true"
-          - name: DD_STRIP_PROCESS_ARGS
-            value: "false"
-          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-            value: "false"
-          - name: DD_LOG_LEVEL
-            value: "INFO"
-          - name: DD_SYSTEM_PROBE_ENABLED
-            value: "false"
-          - name: DD_DOGSTATSD_SOCKET
-            value: "/var/run/datadog/dsd.socket"
-          - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-            value: "true"        
-        volumeMounts:
-          - name: config
-            mountPath: /etc/datadog-agent
-            readOnly: true
-          - name: logdatadog
-            mountPath: /var/log/datadog
-            readOnly: false # Need RW to write logs
-          - name: auth-token
-            mountPath: /etc/datadog-agent/auth
-            readOnly: true
-          - name: dsdsocket
-            mountPath: /var/run/datadog
-            readOnly: false # Need RW for UDS DSD socket
-          - name: tmpdir
-            mountPath: /tmp
-            readOnly: false # Need RW to write to tmp directory
-          
-          - name: os-release-file
-            mountPath: /host/etc/os-release
-            readOnly: true
-          
-          - name: runtimesocketdir
-            mountPath: /host/var/run
-            mountPropagation: None
-            readOnly: true
-          
-          - name: cgroups
-            mountPath: /host/sys/fs/cgroup
-            mountPropagation: None
-            readOnly: true
-          - name: passwd
-            mountPath: /etc/passwd
-            readOnly: true
-          - name: procdir
-            mountPath: /host/proc
-            mountPropagation: None
-            readOnly: true
       initContainers:
-          
-      - name: init-volume
-        
-        image: "gcr.io/datadoghq/agent:7.55.2"
+      - name: init-volume  
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -416,9 +326,8 @@ spec:
             readOnly: false # Need RW for config path
         resources:
           {}
-      - name: init-config
-        
-        image: "gcr.io/datadoghq/agent:7.55.2"
+      - name: init-config  
+        image: "gcr.io/datadoghq/agent:7.61.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash
@@ -426,12 +335,12 @@ spec:
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
         volumeMounts:
-          - name: logdatadog
-            mountPath: /var/log/datadog
-            readOnly: false # Need RW to write logs
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW for config path
+          - name: logdatadog
+            mountPath: /var/log/datadog
+            readOnly: false # Need RW to write logs
           - name: procdir
             mountPath: /host/proc
             mountPropagation: None
@@ -451,12 +360,13 @@ spec:
             value: "true"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
+          
+          - name: KUBERNETES
+            value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
             value: "false"
           - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
             value: "false"
-          - name: KUBERNETES
-            value: "yes"
           - name: DD_KUBERNETES_KUBELET_HOST
             valueFrom:
               fieldRef:
@@ -479,6 +389,8 @@ spec:
         emptyDir: {}
       - name: tmpdir
         emptyDir: {}
+      - name: s6-run
+        emptyDir: {}
       - hostPath:
           path: /proc
         name: procdir
@@ -496,8 +408,6 @@ spec:
           path: /var/run/datadog/
           type: DirectoryOrCreate
         name: apmsocket
-      - name: s6-run
-        emptyDir: {}
       - hostPath:
           path: /etc/passwd
         name: passwd

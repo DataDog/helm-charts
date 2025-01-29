@@ -1,5 +1,62 @@
 # Datadog changelog
 
+## 0.15.4
+
+* Update private action image version to `v0.1.10-beta`
+
+## 0.15.3
+
+* Update private action image version to `v0.1.9-beta`
+
+## 0.15.2
+
+* Update private action image version to `v0.1.8-beta`
+
+## 0.15.1
+
+* Update private action image version to `v0.1.6-beta`
+
+## 0.15.0
+
+* Update private action image version to `v0.1.5-beta`
+
+## 0.14.3
+
+* Add GitLab private actions and fix image repository link.
+
+## 0.14.2
+
+* Update private action image version to `v0.1.3-beta`
+
+## 0.14.1
+
+* Update private action image version to `v0.1.2-beta`
+
+## 0.14.0
+
+* Add support for `kubernetesActions`.
+
+## 0.13.0
+
+* Update private action image version to `v0.1.1-beta`
+
+## 0.12.0
+
+* Introduced `credentialFiles` key in `values.yaml` for secret management. Deprecated the `connectionCredentials` key
+* Fixed issue where specifying connection secrets under `connectionCredentials` can result in the Helm chart generating malformed JSON
+
+## 0.11.0
+
+* Added top level `port` configuration option, superseding `appBuilder.port`. Update the private action image to the beta image, `v0.1.0-beta`.
+
+### 0.10.0
+
+* Update private action image version to `v0.0.1-alpha31`.
+
+### 0.9.1
+
+* Added ability to configure connection credentials in `config.yaml`.
+
 ### 0.9.0
 
 * Update private action image version to `v0.0.1-alpha29`.

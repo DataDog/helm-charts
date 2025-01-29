@@ -1,8 +1,215 @@
 # Datadog changelog
 
-## 3.71.0
+## 3.90.0
 
 * Enable `system-probe` container on GKE Autopilot
+
+## 3.89.0
+
+* Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
+
+## 3.88.3
+
+* Mount /var/lib/containers to generate SBOMs for CRI-O.
+
+## 3.88.2
+
+* Disable running process check in core Agent by default feature for GKE Autopilot, as it is not supported.
+
+## 3.88.1
+
+* Disable SBOM monitoring features for GKE Autopilot, as they are not supported
+
+## 3.88.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.61.0`.
+
+## 3.87.2
+
+* Add cgroups mount in system-probe for USM, NPM and Service Discovery matching the datadog-operator.
+
+## 3.87.1
+
+* Add the ability to set the image tag to use for the APM Injector.
+
+## 3.87.0
+
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
+
+## 3.86.0
+
+* Add `delete` permission for `datadog-webhook` Admission Registration RBACs.
+
+## 3.85.0
+
+* Add `datadog.discovery.enabled` configuration to control service-discovery.
+
+## 3.84.4
+
+* Propagate the `datadog.site` option to the default `datadog.otelCollector` configuration.
+
+## 3.84.3
+
+* Added the configuration value `clusterAgent.admissionController.kubernetes_admission_events.enabled` to enabled/disable the Kubernetes Admission Events feature.
+
+## 3.84.2
+
+* Add `endpointslices.discovery.k8s.io` to the list of resources to collect in the Cluster Agent RBAC.
+* Add configuration option for `datadog.kubernetesUseEndpointSlices` to map Kubernetes services to endpoint slices instead of endpoints. Disabled by default.
+
+## 3.84.1
+
+* Remove deployments.apps example of `datadog.kubernetesResourcesLabelsAsTags` and `datadog.kubernetesResourcesAnnotationsAsTags` since it's not implemented yet
+
+## 3.84.0
+
+* Set the default value of `datadog.processAgent.runInCoreAgent` to `true`.
+
+## 3.83.1
+
+* Add /sys/fs/bpf to system-probe volume mounts
+
+## 3.83.0
+
+* Added the configuration value `datadog.disablePasswdMount` to disable mounting the `/etc/passwd` path from the host filesystem. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
+* Added the configuration value `datadog.disableDefaultOsReleasePaths` to disable mounting the default "os-release" file paths from the host filesystem (e.g., `/etc/redhat-release`, `/etc/fedora-release`, etc.). Note that this change does not affect the `datadog.osReleasePath` option. To avoid mounting the `/etc/os-release` host path, set the `datadog.osReleasePath` configuration value to an empty string. This option should be used when the underlying OS does not have these files (e.g., Talos OS).
+* Add `providers.talos.enabled` to simplify agent deployment configuration on Talos OS.
+
+## 3.82.0
+
+* Add `pods/exec` RBAC to the `Cluster-Agent` when needed and inject the service account name of the `Cluster-Agent` as environment variable.
+
+## 3.81.2
+
+* Fix ci values.yaml files name to be taken into account by the ci job.
+
+## 3.81.1
+
+* Update default `fips.image.tag` to `1.1.6`, which updates PCRE2 version to 10.44 and HAProxy version to 2.4.28
+
+## 3.81.0
+
+* Add a new option to disable hostPorts for the trace-agent with `datadog.apm.useLocalService`. This option enables K8s clusters with hostPort and hostPath volumes restrictions to use the K8s local service to send traces.
+
+## 3.80.0
+
+* Add `datadog.admissionController.validation` and `datadog.admissionController.mutation` to enable/disable the admission controller validation and mutation webhooks.
+
+## 3.79.1
+
+* Document how to use `datadog.envDict` option with the `--set` helm's flag.
+
+## 3.79.0
+
+* Add Logs Collection support for Google GKE on GDC
+
+## 3.78.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.59.0`.
+
+## 3.77.3
+
+* Update version required for datadog.processAgent.runInCoreAgent and remove experimental status.
+
+## 3.77.2
+
+* Add the ability to include Security Contexts at the container level for Cluster Checks Runners.
+
+## 3.77.1
+
+* Modify command that removes the default conf.d directory from the Cluster Checks Runners and only removes the default YAML files.
+
+## 3.77.0
+
+* Add experimental support for overlayfs direct scan for SBOMs
+
+## 3.76.3
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent.
+
+## 3.76.2
+
+* Fix warning message displayed when installing/upgrading the Agent with OTel collector.
+* Add preview message in values.yaml file.
+
+## 3.76.1
+
+* Gate `datadog.sbom.containerImage.uncompressedLayersSupport` feature behind `datadog.sbom.containerImage.enabled`: if the latter is not enabled (default), do not modify template based on `datadog.sbom.containerImage.uncompressedLayersSupport`.
+
+## 3.76.0
+
+* Set `datadog.sbom.containerImage.uncompressedLayersSupport` to `true` by default.
+
+## 3.75.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.58.0`.
+
+## 3.74.6
+
+* Fix error message for when System Probe is enabled on GKE Autopilot
+
+## 3.74.5
+
+* Add configuration option for `datadog.KubernetesEvents.sourceDetectionEnabled` to map Kubernetes events to integration sources based on controller names. Disabled by default.
+
+## 3.74.4
+
+* Define `admission_controller.container_registry` regardless of `clusterAgent.admissionController.agentSidecarInjection` feature status.
+
+## 3.74.3
+
+* Do not mount `/usr/lib/sysimage/rpm` (reverts https://github.com/DataDog/helm-charts/pull/1541): in some operating systems such as Bottlerocket, `/usr` is `read-only`, preventing the Agent from being deployed when `datadog.sbom.host.enabled` is set to `true` as kubelet cannot create the directory at this location if it does not exist.
+
+## 3.74.2
+
+* Mount `/usr/lib/sysimage/rpm` in the Agent DaemonSet when using host SBOM feature (required on hosts running Amazon Linux distributions).
+
+## 3.74.1
+
+* Pass components env variables to the cluster checks runner deployment pod spec.
+
+## 3.74.0
+
+* Simplify OTel Agent OOTB pipelines:
+  * Remove `traces/otlp` pipeline from the default OTel Agent config
+  * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
+
+## 3.73.3
+
+* Fix a few typos on OTel Agent configs.
+
+## 3.73.2
+
+* Add `admissionregistration.k8s.io/v1/validatingwebhookconfigurations` RBACs to the Cluster Agent.
+
+## 3.73.1
+
+* Add role-based access control rules to Datadog Cluster Agent to read k8s resources annotations and labels to create tags.
+
+## 3.73.0
+
+* Add Azure Container Registry, enabled automatically when targeting `us3.datadoghq.com`.
+
+## 3.72.1
+
+* Add configuration option for `datadog.KubernetesEvents.filteringEnabled` to only include pre-defined allowed events. Disabled by default.
+
+## 3.72.0
+
+* Set default `Agent` and `Cluster-Agent` version to `7.57.2`.
+
+## 3.71.2
+
+* Add `datadog.kubernetesResourcesLabelsAsTags` to assign Kubernetes Resources Labels as tags in the tagger
+* Add `datadog.kubernetesResourcesAnnotationsAsTags` to assign Kuberenetes Resources Annotations as tags in the tagger
+
+## 3.71.1
+
+* Update `fips.image.tag` to `1.1.5` updating openSSL version to 3.0.15
+
+## 3.71.0
+
+* Add `datadog.profiling` section to configure Continuous Profiler. Disabled by default.
 
 ## 3.70.7
 

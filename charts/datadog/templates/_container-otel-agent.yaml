@@ -3,10 +3,10 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"]
+  command: ["otel-agent", "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/datadog.yaml"]
+  command: ["otel-agent", "-foreground", "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml", "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"]
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:

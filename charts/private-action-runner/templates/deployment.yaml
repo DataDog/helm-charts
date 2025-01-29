@@ -20,7 +20,7 @@ spec:
         app: {{ include "chart.deploymentName" $runner.name }}
         service: {{ include "chart.serviceName" $runner.name }}
       annotations:
-        config-hash: {{ $runner.config | toJson | sha256sum }}
+        config-hash: {{ $runner | toJson | sha256sum }}
     spec:
       serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
       tolerations:
@@ -46,11 +46,6 @@ spec:
             - name: secrets
               mountPath: /etc/dd-action-runner
           env:
-            # Node memory limits
-            - name: NODE_OPTIONS
-              # See https://nodejs.org/docs/latest-v16.x/api/cli.html#--max-old-space-sizesize-in-megabytes
-              # 75% of memory limit/request
-              value: "--max-old-space-size=1536"
             - name: MANAGED_BY
               value: "helm"
       volumes:

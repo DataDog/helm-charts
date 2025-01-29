@@ -21,6 +21,7 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       datadog:
         api:
           key: ${env:DD_API_KEY}
+          site: {{ .Values.datadog.site | default "" | quote }}
     processors:
       infraattributes:
         cardinality: 2
@@ -36,12 +37,8 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [batch]
-          exporters: [datadog/connector]
-        traces/otlp:
-          receivers: [otlp]
           processors: [infraattributes, batch]
-          exporters: [datadog]
+          exporters: [datadog, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector, prometheus]
           processors: [infraattributes, batch]
