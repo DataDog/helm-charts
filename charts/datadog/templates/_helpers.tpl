@@ -1014,7 +1014,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}} # TODO: add volume mount exemption for autopilot
+  {{- if .Values.providers.gke.gdc -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
