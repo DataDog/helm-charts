@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.88.0'
+    helm.sh/chart: 'datadog-3.90.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: b876b950a97ece20cb3ec3849c48e7b38822786a117db182b10fcef4fd038fcb
-        checksum/install_info: c4085619f73a106a92bfd597fcc33dc3860f5a5e984bf75fc16adcda43b15f70
+        checksum/clusteragent_token: c0200d78f6e8dba93ae6568c787f31b4700c6637877be9155afc3197a091223b
+        checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -146,6 +146,9 @@ spec:
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
           
+          - name: os-release-file
+            mountPath: /host/etc/os-release
+            readOnly: true
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW to mount to config path
