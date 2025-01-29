@@ -1310,6 +1310,11 @@ clusterAgent:
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
 
+  ## clusterAgent.kubernetesApiserverCheck -- correspond to options for configuring the kube_apiserver integration.
+  kubernetesApiserverCheck:
+    # clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Set this to true to disable use_component_status for the kube_apiserver integration.
+    disableUseComponentStatus: false
+
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
   # requests:

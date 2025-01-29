@@ -291,6 +291,9 @@
     - name: host-docker-dir
       mountPath: /host/var/lib/docker
       readOnly: true
+    - name: host-crio-dir
+      mountPath: /host/var/lib/containers
+      readOnly: true
     {{- end }}
     {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: host-apk-dir

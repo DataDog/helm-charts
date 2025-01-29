@@ -1,8 +1,16 @@
 # Datadog changelog
 
+## 3.90.0
+
+* Enable `system-probe` container on GKE Autopilot
+
 ## 3.89.0
 
--   Enable `system-probe` container on GKE Autopilot
+* Add `clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus` to disable `use_component_status` option for kubernetes_apiserver check.
+
+## 3.88.3
+
+* Mount /var/lib/containers to generate SBOMs for CRI-O.
 
 ## 3.88.2
 
@@ -201,7 +209,7 @@
 
 ## 3.71.0
 
--   Add `datadog.profiling` section to configure Continuous Profiler. Disabled by default.
+* Add `datadog.profiling` section to configure Continuous Profiler. Disabled by default.
 
 ## 3.70.7
 

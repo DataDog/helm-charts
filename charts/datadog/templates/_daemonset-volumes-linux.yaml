@@ -160,6 +160,9 @@
 - hostPath:
     path: /var/lib/docker
   name: host-docker-dir
+- hostPath:
+    path: /var/lib/containers
+  name: host-crio-dir
 {{- end }}
 {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
 - hostPath:
