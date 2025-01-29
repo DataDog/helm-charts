@@ -343,7 +343,6 @@ Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
 {{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
 true
 {{- else -}}
 false
@@ -388,7 +387,8 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not (or .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
+.) "true") -}}
 true
 {{- else -}}
 false

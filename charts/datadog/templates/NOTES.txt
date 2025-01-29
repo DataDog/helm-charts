@@ -416,6 +416,20 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+
+{{- if or .Values.datadog.sbom.containerImage.enabled .Values.datadog.sbom.host.enabled }}
+
+#######################################################################################
+####   WARNING: SBOM Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'datadog.sbom.containerImage.enabled' and 'datadog.sbom.host.enabled' must be set to 'false'.
+
+{{- end }}
+
+{{- end }}
+
 {{- if and (.Values.datadog.dogstatsd.useSocketVolume) (eq .Values.targetSystem "windows") }}
 
 ###################################################################################
