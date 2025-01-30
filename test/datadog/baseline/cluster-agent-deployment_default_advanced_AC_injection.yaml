@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: cluster-agent
-    
+
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -33,10 +33,10 @@ spec:
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-cluster-agent
-        
+
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 0c3539cd7055e84dd64879bb3ff326700a5a2ec3f3b0d722e7071968ee8f0fd8
+        checksum/clusteragent_token: 2e89c377e0aaca3b109a0e88bfd037558ed48fb189b5fa93fce66965c2f5775a
         checksum/clusteragent-configmap: b80db4e65821dd6bcd24691a57341dbf840b5ac2c7e635060f0e8ae83f6597c1
         checksum/api_key: e8756335f64a19cdbc31bf5c1e01c7cc4fa57310bf1a1739384243a8adada70c
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
@@ -46,7 +46,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.61.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.61.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -90,7 +90,7 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
-          
+
           - name: KUBERNETES
             value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -119,8 +119,8 @@ spec:
             value: "8000"
           - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
             value: "gcr.io/datadoghq"
-          
-          
+
+
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
@@ -197,7 +197,7 @@ spec:
               configMapKeyRef:
                 name: datadog-kpi-telemetry-configmap
                 key: install_type
-                              
+
         livenessProbe:
           failureThreshold: 6
           httpGet:

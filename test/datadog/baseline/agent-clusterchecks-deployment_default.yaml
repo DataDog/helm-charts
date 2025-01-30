@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: clusterchecks-agent
-    
+
 spec:
   replicas: 2
   revisionHistoryLimit: 10
@@ -33,10 +33,10 @@ spec:
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-clusterchecks
-        
+
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 7a191b46e37210282a7d889d0f025945b63970d0d4d9de96d286c3b73b5b4cf7
+        checksum/clusteragent_token: a4c4f992728ab92c056e58623747a4937611a96e617e9369bbbd09486a83aaa4
         checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -45,7 +45,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -57,7 +57,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -70,13 +70,13 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         command: ["bash", "-c"]
         args:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
-          
+
           - name: KUBERNETES
             value: "yes"
           - name: DD_API_KEY
@@ -129,8 +129,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-          
-                              
+
+
         resources:
           {}
         volumeMounts:

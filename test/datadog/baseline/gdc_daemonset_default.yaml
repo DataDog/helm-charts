@@ -30,21 +30,21 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: 5c598c4c593e57447477b1697c7a2b0c633a749417879a7f924b43ee99e29a6a
+        checksum/clusteragent_token: 3d5fd35905ec50a6449e5638ce3be034cd42366fea54acf133e59796c3856519
         checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
     spec:
-      
+
       securityContext:
         runAsUser: 0
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
-        
+
         resources:
           {}
         ports:
@@ -61,7 +61,7 @@ spec:
             value: "false"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBELET_CLIENT_CRT
@@ -87,8 +87,8 @@ spec:
             value: "false"
           - name: DD_PROVIDER_KIND
             value: gke-gdc
-          
-          
+
+
           - name: DD_LOG_LEVEL
             value: "INFO"
           - name: DD_DOGSTATSD_PORT
@@ -123,7 +123,7 @@ spec:
           - name: DD_IGNORE_AUTOCONF
             value: "kubernetes_state"
           - name: DD_CONTAINER_LIFECYCLE_ENABLED
-            value: "true"  
+            value: "true"
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: "true"
           - name: DD_EXPVAR_PORT
@@ -133,7 +133,7 @@ spec:
           - name: DD_CONTAINER_IMAGE_ENABLED
             value: "true"
           - name: DD_KUBELET_CORE_CHECK_ENABLED
-            value: "true"        
+            value: "true"
         volumeMounts:
           - name: logdatadog
             mountPath: /var/log/datadog
@@ -145,7 +145,7 @@ spec:
           - name: tmpdir
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
-          
+
           - name: os-release-file
             mountPath: /host/etc/os-release
             readOnly: true
@@ -155,8 +155,8 @@ spec:
           - name: auth-token
             mountPath: /etc/datadog-agent/auth
             readOnly: false # Need RW to write auth token
-          
-          
+
+
           - name: kubelet-cert-volume
             mountPath: /certs
         livenessProbe:
@@ -190,8 +190,8 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       initContainers:
-      - name: init-volume  
-        image: "gcr.io/datadoghq/agent:7.61.0"
+      - name: init-volume
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -202,8 +202,8 @@ spec:
             readOnly: false # Need RW for config path
         resources:
           {}
-      - name: init-config  
-        image: "gcr.io/datadoghq/agent:7.61.0"
+      - name: init-config
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash
@@ -224,7 +224,7 @@ spec:
             value: "false"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-          
+
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBELET_CLIENT_CRT
@@ -260,7 +260,7 @@ spec:
           name: datadog-installinfo
       - name: config
         emptyDir: {}
-        
+
       - name: logdatadog
         emptyDir: {}
       - name: tmpdir
