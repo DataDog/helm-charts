@@ -404,16 +404,6 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if .Values.datadog.networkMonitoring.enabled }}
-
-#######################################################################################
-####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
-#######################################################################################
-
-{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
-
-{{- end }}
-
 {{- end }}
 
 {{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
