@@ -36,7 +36,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 830171bd7adb7f38b3ee771229356d14f34ed931d25bec73c358553f5b56b0db
+        checksum/clusteragent_token: 6d14985cff922818c437710ee7a9f6923810b224afec186b9beb14783e3ed467
         checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -45,7 +45,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -57,7 +57,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -70,7 +70,7 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         command: ["bash", "-c"]
         args:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run

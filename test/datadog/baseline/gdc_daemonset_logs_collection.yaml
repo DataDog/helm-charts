@@ -30,7 +30,7 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: a7b75f778e3fe606f77aefda809d56a57e0f3a6c2335222759f9331d681d320f
+        checksum/clusteragent_token: ba4d5b4381103c110f9067ca18b2c3c75b1587c9bb6e1018aa5f98248aa98caf
         checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -41,7 +41,7 @@ spec:
         runAsUser: 0
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -200,7 +200,7 @@ spec:
           timeoutSeconds: 5
       initContainers:
       - name: init-volume  
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -212,7 +212,7 @@ spec:
         resources:
           {}
       - name: init-config  
-        image: "gcr.io/datadoghq/agent:7.61.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash
