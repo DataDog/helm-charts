@@ -55,18 +55,18 @@ spec:
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
-        {{- if .Values.agents.podSecurity.apparmor.enabled }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (not .Values.providers.gke.autopilot) }}
         container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
         {{- end }}
         {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.providers.gke.autopilot) }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
         {{- if .Values.providers.gke.autopilot }}
-        autopilot.gke.io/no-connect: "false"
+        autopilot.gke.io/no-connect: "true"
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
