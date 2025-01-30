@@ -30,7 +30,7 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: c0200d78f6e8dba93ae6568c787f31b4700c6637877be9155afc3197a091223b
+        checksum/clusteragent_token: a7b75f778e3fe606f77aefda809d56a57e0f3a6c2335222759f9331d681d320f
         checksum/install_info: 3b9b3e85592ca511f47e6f39152d86a2c22f1ecc6fe577f4a9f78fa7e78097a4
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -146,9 +146,6 @@ spec:
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
           
-          - name: os-release-file
-            mountPath: /host/etc/os-release
-            readOnly: true
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW to mount to config path
