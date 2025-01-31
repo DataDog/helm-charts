@@ -833,6 +833,17 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+  gpuMonitoring:
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    enabled: false
+
+    # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
+    configureCgroupPerms: false
+
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    runtimeClassName: "nvidia"
+
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:
