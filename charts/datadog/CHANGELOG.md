@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.1
+
+* Add support for GPU monitoring
+
 ## 3.90.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.62.0`.
@@ -34,7 +38,7 @@
 
 ## 3.87.0
 
-* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.
 
 ## 3.86.0
 
