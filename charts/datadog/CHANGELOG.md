@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Add `datadog.kubernetesEvents.bundleUnspecifiedEvents` to allow bundling of unspecified Kubernetes events.
+
 ## 3.90.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.62.0`.
