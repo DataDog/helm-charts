@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.90.1
+
+* Fix RBAC rendering and map merge when `datadog.kubernetesResourcesAnnotationsAsTags` and/or `datadog.kubernetesResourcesLabelsAsTags` are used.
+
 ## 3.90.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.62.0`.
