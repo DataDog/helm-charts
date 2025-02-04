@@ -23,9 +23,9 @@ download_crd() {
     echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
     curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
 
-    ifCondition="{{- if and .Values.installCRDs (not (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\")) }}"
+    ifCondition="{{- if and .Values.installCRDs (semverCompare \"<1.17.0\" .Capabilities.KubeVersion.GitVersion ) }}"
     if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.installCRDs (.Capabilities.APIVersions.Has \"apiextensions.k8s.io/v1/CustomResourceDefinition\") }}"
+        ifCondition="{{- if and .Values.installCRDs (semverCompare \">=1.17.0\" .Capabilities.KubeVersion.GitVersion ) }}"
         cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
     fi
 

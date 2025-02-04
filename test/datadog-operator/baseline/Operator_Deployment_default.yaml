@@ -48,6 +48,8 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
+            - name: DD_TOOL_VERSION
+              value: helm
           args:
             - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
@@ -72,5 +74,7 @@ spec:
             periodSeconds: 10
           resources:
             {}
+          volumeMounts:
+      volumes:
           volumeMounts:
       volumes:

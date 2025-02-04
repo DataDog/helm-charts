@@ -41,7 +41,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: eks-addon
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
@@ -71,5 +71,20 @@ Return secret name to be used based on provided values.
 Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 */}}
 {{- define "policy.poddisruptionbudget.apiVersion" -}}
+{{- if or (.Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget") (semverCompare ">=1.21" .Capabilities.KubeVersion.Version) -}}
 "policy/v1"
+{{- else -}}
+"policy/v1beta1"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check operator image tag version.
+*/}}
+{{- define "check-image-tag" -}}
+{{- if not .Values.image.doNotCheckTag -}}
+{{- .Values.image.tag -}}
+{{- else -}}
+{{ "1.11.1" }}
+{{- end -}}
 {{- end -}}

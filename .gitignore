@@ -1,7 +1,8 @@
 charts/*/charts
 helm-docs
-kubeval
+kubeconform
 .idea
 vendor/
 .vscode
 go.work*
+.DS_Store

@@ -1,0 +1,41 @@
+targetSystem: "linux"
+agents:
+  image:
+    repository: datadog/agent-dev
+    tag: nightly-ot-beta-main
+    doNotCheckTag: true
+  containers:
+    agent:
+      env:
+        - name: DD_HOSTNAME
+          value: "datadog"
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  otelCollector:
+    enabled: true
+    ports:
+      - containerPort: "5317"
+        hostPort: "5317"
+        name: "otel-grpc"
+    config: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:5317"
+      exporters:
+        datadog:
+          api:
+            key: "00000000000000000000000000000000"
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [datadog]
+          metrics:
+            receivers: [otlp]
+            exporters: [datadog]
+          logs:
+            receivers: [otlp]
+            exporters: [datadog]

@@ -35,6 +35,22 @@ rules:
   - get
   - watch
 - apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  resourceNames:
+  - extendeddaemonset-lock
+  verbs:
+  - update
+  - get
+  - watch
+- apiGroups:
     - ""
   resources:
     - podtemplates

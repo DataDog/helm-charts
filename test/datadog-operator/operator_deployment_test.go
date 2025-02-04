@@ -3,10 +3,11 @@ package datadog_operator
 import (
 	"testing"
 
-	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+
+	"github.com/DataDog/helm-charts/test/common"
 )
 
 // This test will produce two renderings for two versions of DatadogAgent.
@@ -44,46 +45,6 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "Verify Operator 1.0 cert secret name",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			assertions: verifyDeploymentCertSecretName,
-			skipTest:   SkipTest,
-		},
-		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled=false",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "false",
-				},
-			},
-			assertions: verifyConversionWebhookEnabledFalse,
-			skipTest:   SkipTest,
-		},
-		{
-			name: "Verify Operator 1.0 conversionWebhook.enabled default",
-			command: common.HelmCommand{
-				ReleaseName: "random-string-as-release-name",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-			},
-			assertions: verifyConversionWebhookEnabledFalse,
-			skipTest:   SkipTest,
-		},
-		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -93,6 +54,51 @@ func Test_operator_chart(t *testing.T) {
 				Overrides:   map[string]string{},
 			},
 			assertions: verifyAll,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "livenessProbe is correctly configured",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			assertions: verifyLivenessProbe,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "livenessProbe is correctly overriden",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"livenessProbe.timeoutSeconds":   "20",
+					"livenessProbe.periodSeconds":    "20",
+					"livenessProbe.failureThreshold": "3",
+				},
+			},
+			assertions: verifyLivenessProbeOverride,
+			skipTest:   SkipTest,
+		},
+		{
+			name: "Watch namespaces correctly set",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"watchNamespaces":        "{common1,common2}",
+					"watchNamespacesAgent":   "{dda-ns}",
+					"watchNamespacesMonitor": "{monitor-ns}",
+					"watchNamespacesSLO":     "{}",
+				},
+			},
+			assertions: verifyWatchNamespaces,
 			skipTest:   SkipTest,
 		},
 	}
@@ -112,12 +118,11 @@ func Test_operator_chart(t *testing.T) {
 func verifyDeployment(t *testing.T, manifest string) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
-
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
 	assert.Equal(t, "709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator:1.7.0", operatorContainer.Image)
-	assert.Contains(t, operatorContainer.Args, "-webhookEnabled=false")
+	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 }
 
 func verifyDeploymentCertSecretName(t *testing.T, manifest string) {
@@ -145,4 +150,50 @@ func verifyConversionWebhookEnabledFalse(t *testing.T, manifest string) {
 
 func verifyAll(t *testing.T, manifest string) {
 	assert.True(t, manifest != "")
+}
+
+func verifyLivenessProbe(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+}
+
+func verifyLivenessProbeOverride(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.PeriodSeconds)
+	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.TimeoutSeconds)
+	assert.Equal(t, int32(3), operatorContainer.LivenessProbe.FailureThreshold)
+}
+
+func verifyWatchNamespaces(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	watchNsEnv := FindEnvVarByName(operatorContainer.Env, "WATCH_NAMESPACE")
+	agentNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_AGENT_WATCH_NAMESPACE")
+	monitorNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_MONITOR_WATCH_NAMESPACE")
+	sloNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_SLO_WATCH_NAMESPACE")
+	dapNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_AGENT_PROFILE_WATCH_NAMESPACE")
+
+	assert.Equal(t, "common1,common2", watchNsEnv.Value)
+	assert.Equal(t, "dda-ns", agentNsEnv.Value)
+	assert.Equal(t, "monitor-ns", monitorNsEnv.Value)
+	assert.Equal(t, "", sloNsEnv.Value)
+	assert.Nil(t, dapNsEnv)
+}
+
+func FindEnvVarByName(envs []v1.EnvVar, name string) *v1.EnvVar {
+	for i, env := range envs {
+		if env.Name == name {
+			return &envs[i]
+		}
+	}
+	return nil
 }
