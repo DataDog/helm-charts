@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.90.1
+
+* Add rule to clusterrole to allow the node agent to query the EKS control plane metrics API
+
 ## 3.90.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.62.0`.
