@@ -347,6 +347,13 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
