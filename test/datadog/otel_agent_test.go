@@ -67,7 +67,7 @@ func verifyOtelAgentEnvVars(t *testing.T, manifest string, expectedIpcEnv Expect
 	assert.Equal(t, expectedIpcEnv.ipcConfigRefreshInterval, coreEnvs[DDAgentIpcConfigRefreshInterval])
 
 	// core agent
-	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
+	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
 	assert.True(t, ok)
 	coreEnvs = getEnvVarMap(coreAgentContainer.Env)
 	assert.Equal(t, expectedIpcEnv.ipcPort, coreEnvs[DDAgentIpcPort])
