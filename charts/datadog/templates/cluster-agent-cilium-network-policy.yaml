@@ -189,4 +189,20 @@ specs:
               - port: {{ include "clusterAgent.metricsProvider.port" . | quote }}
                 protocol: TCP
 {{- end }}
+{{- if .Values.clusterAgent.admissionController.enabled }}
+  - description: Ingress from API server for admission controller
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}-cluster-agent
+        {{- if .Values.clusterAgent.podLabels }}
+        {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
+        {{- end }}
+    ingress:
+      - fromEntities:
+          - kube-apiserver
+        toPorts:
+          - ports:
+              - port: {{ .Values.clusterAgent.admissionController.port | quote }}
+                protocol: TCP
+{{- end }}
 {{- end }}

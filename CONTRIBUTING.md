@@ -11,6 +11,9 @@ We aim to follow high quality standards, thus your PR must follow some rules:
 - Make sure your changes are compatible (or protected) with older Kubernetes version (CI will validate this down to 1.14)
 - Make sure you updated documentation (after bumping `Chart.yaml`) by running `.github/helm-docs.sh`
 
+Additionally, your commits need to be signed and marked as verified by Github. See [About commit signature verification
+](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
+
 Our team will then happily review and merge contributions!
 
 ## Go Tests

@@ -16,6 +16,10 @@
   resources:
 {{ toYaml .Values.fips.resources | indent 4 }}
     # TODO Add config to monitor journald
+{{- if eq (include "should-mount-fips-configmap" .) "true" }}
+  volumeMounts:
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+{{- end -}}
 {{- end -}}
 
 {{- define "fips-envvar" -}}
@@ -29,4 +33,20 @@
 - name: DD_FIPS_LOCAL_ADDRESS
   value: {{ .Values.fips.local_address | quote }}
 {{- end }}
+{{- end -}}
+
+{{- define "linux-container-fips-proxy-cfg-volumemount" -}}
+- name: fips-proxy-cfg
+  mountPath: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
+  subPath: datadog-fips-proxy.cfg
+  readOnly: true
+{{- end -}}
+
+{{- define "linux-container-fips-proxy-cfg-volume" -}}
+- name: fips-proxy-cfg
+  configMap:
+    name: {{ include "fips-useConfigMap-configmap-name" . }}
+    items:
+      - key: datadog-fips-proxy.cfg
+        path: datadog-fips-proxy.cfg
 {{- end -}}

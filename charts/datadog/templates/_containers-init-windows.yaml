@@ -45,6 +45,9 @@
       readOnly: true
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- if .Values.agents.containers.initContainers.volumeMounts }}
+    {{ toYaml .Values.agents.containers.initContainers.volumeMounts | nindent 4 }}
+    {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
   resources:

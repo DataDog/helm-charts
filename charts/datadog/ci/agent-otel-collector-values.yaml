@@ -1,0 +1,34 @@
+targetSystem: "linux"
+agents:
+  image:
+    repository: datadog/agent-dev
+    tag: nightly-ot-beta-main
+    doNotCheckTag: true
+  containers:
+    agent:
+      env:
+        - name: DD_HOSTNAME
+          value: "datadog"
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  otelCollector:
+    enabled: true
+    config: |
+      receivers:
+        otlp:
+      exporters:
+        datadog:
+          api:
+            key: "00000000000000000000000000000000"
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [datadog]
+          metrics:
+            receivers: [otlp]
+            exporters: [datadog]
+          logs:
+            receivers: [otlp]
+            exporters: [datadog]

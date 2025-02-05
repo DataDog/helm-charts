@@ -1,0 +1,9 @@
+runners:
+  - name: "default"
+    config:
+      # -- Base URL of the Datadog app
+      ddBaseURL: "https://app.datadoghq.com"
+      # -- The runner's URN from the enrollment page
+      urn: "urn:dd:apps:on-prem-runner:us1:2:runner-CI_TEST_ONLY"
+      # -- The runner's privateKey from the enrollment page
+      privateKey: "eyJ1c2UiOiJzaWciLCJrdHkiOiJFQyIsImtpZCI6IkxXbl9LLU9qbXQ4TFJ6TWdjbFY4dTRMYUVsdF9mZGpCN2RXdlJ2TkVhN2ciLCJjcnYiOiJQLTI1NiIsImFsZyI6IkVTMjU2IiwieCI6Imd3MVFKNVBQQXJmZk56XzdmWmZxX0xMYjhTV0MyaXhJUDFBbDh2SjJmVTgiLCJ5IjoiRjQ4VGRWZVhIRnpack05N1BwbnFMZFRUOG9iWDdKa2N5d3RzQ2RhLXRpayIsImQiOiJaczdDQ0MzMkRJQkpuaUZ5S1hFV0VvWThrZ1ZXMTVZbGdTYU9ISm5uX1drIn0"

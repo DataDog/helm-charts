@@ -1,0 +1,58 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "otel-agent"
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["0.0.0.0:8888"]
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+exporters:
+  debug:
+    verbosity: detailed
+  datadog:
+    api:
+      key: ${env:DD_API_KEY}
+processors:
+  infraattributes:
+    cardinality: 2
+  probabilistic_sampler:
+    hash_seed: 22
+    sampling_percentage: 15.3
+  batch:
+    timeout: 10s
+connectors:
+  datadog/connector:
+    traces:
+      compute_top_level_by_span_kind: true
+      peer_tags_aggregation: true
+      compute_stats_by_span_kind: true
+extensions:
+  health_check:
+service:
+  extensions: [health_check]
+  telemetry:
+    logs:
+      level: debug
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [datadog/connector]
+    traces/sampled:
+      receivers: [otlp]
+      processors: [probabilistic_sampler, infraattributes, batch]
+      exporters: [datadog]
+    metrics:
+      receivers: [otlp, datadog/connector, prometheus]
+      processors: [infraattributes, batch]
+      exporters: [datadog]
+    logs:
+      receivers: [otlp]
+      processors: [infraattributes, batch]
+      exporters: [datadog]

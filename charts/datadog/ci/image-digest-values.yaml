@@ -1,0 +1,9 @@
+clusterAgent:
+  image:
+    digest: sha256:28a5e138123e273643527341c3e38721cec2d89a472958df8e956ae681c10d75  # corresponds to 7.59.0
+agents:
+  image:
+    digest: sha256:9b4be18f644bd35dad2387f37d9859674080889642b970c0e924d027c4182f6d  # corresponds to 7.59.0
+clusterChecksRunner:
+  image:
+    digest: sha256:9b4be18f644bd35dad2387f37d9859674080889642b970c0e924d027c4182f6d  # corresponds to 7.59.0

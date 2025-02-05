@@ -1,23 +1,19 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
-# Needs to be removed when Agent N-2 is built with Golang 1.17
-- name: GODEBUG
-  value: x509ignoreCN=0
 - name: DD_API_KEY
   valueFrom:
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if eq (include "datadog-remoteConfiguration-enabled" .) "true" }}
 - name: DD_REMOTE_CONFIGURATION_ENABLED
-  value: "true"
-{{- end }}
+  value: {{ include "datadog-remoteConfiguration-enabled" . | quote }}
 {{- if (not .Values.providers.gke.autopilot) }}
 - name: DD_AUTH_TOKEN_FILE_PATH
   value: {{ template "datadog.confPath" . }}/auth/token
 {{- end }}
 {{ include "components-common-env" . }}
+{{ include "language-detection-common-env" . }}
 {{- if .Values.datadog.kubelet.host }}
 - name: DD_KUBERNETES_KUBELET_HOST
 {{ toYaml .Values.datadog.kubelet.host | indent 2 }}
@@ -34,6 +30,15 @@
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
+{{- if .Values.providers.gke.gdc }}
+- name: DD_NODE_NAME
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: spec.nodeName
+- name: DD_HOSTNAME
+  value: "$(DD_NODE_NAME)-$(DD_CLUSTER_NAME)"
+{{- end }}
 {{- if eq .Values.targetSystem "linux" }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
 - name: DD_HOSTNAME_FILE
@@ -49,6 +54,14 @@
 {{- if .Values.datadog.acExclude }}
 - name: DD_AC_EXCLUDE
   value: {{ .Values.datadog.acExclude | quote }}
+{{- end }}
+{{- if .Values.datadog.containerInclude }}
+- name: DD_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.containerExclude }}
+- name: DD_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.containerExclude | quote }}
 {{- end }}
 {{- if .Values.datadog.containerIncludeMetrics }}
 - name: DD_CONTAINER_INCLUDE_METRICS
@@ -67,6 +80,7 @@
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
 {{- if .Values.datadog.otlp }}
+
 {{- if .Values.datadog.otlp.receiver }}
 {{- if .Values.datadog.otlp.receiver.protocols }}
 {{- with .Values.datadog.otlp.receiver.protocols }}
@@ -84,6 +98,12 @@
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{- with .Values.datadog.otlp.logs }}
+- name: DD_OTLP_CONFIG_LOGS_ENABLED
+  value: {{ .enabled | quote }}
+{{- end }}
+
 {{- end }}
 {{- if eq (include "agent-has-env-ad" .) "true" }}
 {{- if .Values.datadog.dockerSocketPath }}
@@ -105,7 +125,7 @@
 {{- end }}
 {{- end }}
 {{- else }} # No support for env AD
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 {{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
   value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
@@ -147,5 +167,4 @@ Return a list of env-vars if the cluster-agent is enabled
         name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
         key: token
 {{- end }}
-{{ include "provider-env" . }}
 {{- end -}}

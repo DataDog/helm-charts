@@ -9,6 +9,9 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
       - secrets
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMaps }}
+      - configmaps
+{{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
       - verticalpodautoscalers
 {{- end }}
