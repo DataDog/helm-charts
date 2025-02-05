@@ -32,14 +32,10 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
-    {{- if eq (include "agentIpcPort-envvar-otel-agent-present" .) "false" }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
-    {{- end }}
-    {{- if eq (include "agentIpcConfigRefreshInterval-envvar-otel-agent-present" .) "false" }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
-    {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
