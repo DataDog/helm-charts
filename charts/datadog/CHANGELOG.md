@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.90.2
+
+* Increase prometheus scrape interval from 10s to 60s in OTel Agent default config
+
 ## 3.90.1
 
 * Add rule to clusterrole to allow the node agent to query the EKS control plane metrics API
