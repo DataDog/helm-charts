@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.90.2
+
+* Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
+
+## 3.90.1
+
+* Add rule to clusterrole to allow the node agent to query the EKS control plane metrics API
+
 ## 3.90.0
 
 * Enable `system-probe` container on GKE Autopilot
