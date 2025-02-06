@@ -533,6 +533,11 @@ datadog:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
         enabled: true
 
+      # This feature is in preview. It requires Cluster Agent 7.57+.
+      injector:
+        # datadog.apm.instrumentation.injector.imageTag -- The image tag to use for the APM Injector (preview).
+        imageTag: ""
+
   ## Application Security Managment (ASM) configuration
   ##
   ## ASM is disabled by default and can be enabled by setting the various `enabled` fields to `true` under the `datadog.asm` section.
@@ -1024,7 +1029,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1305,6 +1310,11 @@ clusterAgent:
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
 
+  ## clusterAgent.kubernetesApiserverCheck -- correspond to options for configuring the kube_apiserver integration.
+  kubernetesApiserverCheck:
+    # clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Set this to true to disable use_component_status for the kube_apiserver integration.
+    disableUseComponentStatus: false
+
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
   # requests:
@@ -1540,7 +1550,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2046,7 +2056,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

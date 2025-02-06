@@ -176,7 +176,7 @@
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
-    {{- if or .Values.datadog.sbom.host.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     - name: DD_SBOM_ENABLED
       value: "true"
     {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
@@ -194,7 +194,7 @@
     {{- end }}
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.sbom.host.enabled }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: DD_SBOM_HOST_ENABLED
       value: "true"
     - name: HOST_ROOT
@@ -297,8 +297,11 @@
     - name: host-docker-dir
       mountPath: /host/var/lib/docker
       readOnly: true
+    - name: host-crio-dir
+      mountPath: /host/var/lib/containers
+      readOnly: true
     {{- end }}
-    {{- if .Values.datadog.sbom.host.enabled }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: host-apk-dir
       mountPath: /host/var/lib/apk
       readOnly: true

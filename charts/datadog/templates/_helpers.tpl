@@ -697,7 +697,18 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled)) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if kubernetes_apiserver check should be configured
+*/}}
+{{- define  "need-kubernetes-apiserver-check-config" -}}
+{{- if or (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) -}}
 true
 {{- else -}}
 false
@@ -952,10 +963,21 @@ Create RBACs for custom resources
   Return true if SBOM collection for container image is enabled
 */}}
 {{- define "should-enable-sbom-container-image-collection" -}}
-  {{- if .Values.datadog.sbom.containerImage.enabled -}}
+  {{- if and (.Values.datadog.sbom.containerImage.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     {{- if not (eq (include "should-enable-container-image-collection" .) "true") -}}
       {{- fail "Container runtime support has to be enabled for SBOM collection to work. Please enable it using `datadog.containerRuntimeSupport.enabled`." -}}
     {{- end -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM collection for host filesystems is enabled
+*/}}
+{{- define "should-enable-sbom-host-fs-collection" -}}
+  {{- if and (.Values.datadog.sbom.host.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     true
   {{- else -}}
     false
@@ -1002,10 +1024,9 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if .Values.providers.gke.gdc -}}
+  {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}}
     false
-  {{- end -}}
-  {{- if ne .Values.targetSystem "linux" -}}
+  {{- else if ne .Values.targetSystem "linux" -}}
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
