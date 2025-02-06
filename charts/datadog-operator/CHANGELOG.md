@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.0
+
+* Update Datadog Operator version to 1.12.0.
+
 ## 2.5.1
 
 * Expose CRD-specific namespace watch configuration added in Operator 1.8.0 release.
