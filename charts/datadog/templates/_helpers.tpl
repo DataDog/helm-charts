@@ -340,7 +340,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
+{{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -385,7 +385,8 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
+.) "true") -}}
 true
 {{- else -}}
 false
@@ -407,7 +408,7 @@ false
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
+{{- if and (not .Values.providers.gke.gdc) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
 true
 {{- else -}}
 false
@@ -994,7 +995,6 @@ Create RBACs for custom resources
     false
   {{- end -}}
 {{- end -}}
-
 {{/*
   Return true if any process-related check is enabled
 */}}
@@ -1024,7 +1024,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}}
+  {{- if .Values.providers.gke.gdc -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
@@ -1071,6 +1071,8 @@ Create RBACs for custom resources
 */}}
 {{- define "should-add-host-path-for-os-release-paths" -}}
   {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if .Values.providers.gke.autopilot -}}
     false
   {{- else if .Values.providers.talos.enabled -}}
     false
