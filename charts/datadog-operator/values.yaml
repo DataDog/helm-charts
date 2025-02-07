@@ -87,6 +87,9 @@ datadogAgent:
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
   enabled: false
+datadogGenericResource:
+  # datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+  enabled: false
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
   enabled: false
@@ -147,6 +150,8 @@ datadogCRDs:
     datadogSLOs: false
     # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
     datadogDashboards: false
+    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the datadogGenericResource CRD
+    datadogGenericResources: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

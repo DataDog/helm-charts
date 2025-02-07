@@ -60,6 +60,7 @@ spec:
             - "-datadogAgentEnabled=true"
             - "-datadogSLOEnabled=false"
             - "-datadogDashboardEnabled=false"
+            - "-datadogGenericResourceEnabled=false"
             - "-remoteConfigEnabled=false"
           ports:
             - name: metrics
