@@ -352,7 +352,7 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 #####################################################################
 ####   WARNING: System Probe is not supported on GKE Autopilot   ####
 #####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill' and 'datadog.serviceMonitoring.enabled' must be set 'false'" }}
+{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled' and 'datadog.discovery.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -419,6 +419,20 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 #######################################################################################
 
 {{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+
+{{- end }}
+
+{{- end }}
+
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+
+{{- if or .Values.datadog.sbom.containerImage.enabled .Values.datadog.sbom.host.enabled }}
+
+#######################################################################################
+####   WARNING: SBOM Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'datadog.sbom.containerImage.enabled' and 'datadog.sbom.host.enabled' must be set to 'false'.
 
 {{- end }}
 
@@ -534,7 +548,7 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 
-{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") .Values.datadog.sbom.host.enabled }}
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-sbom-host-fs-collection" .) "true") }}
 #################################################################
 ####               ERROR: Configuration notice             ####
 #################################################################

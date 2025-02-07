@@ -257,8 +257,6 @@ datadog:
 
   # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
   kubernetesResourcesLabelsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-label
   #    pods:
   #      x-ref: reference
   #    namespaces:
@@ -268,8 +266,6 @@ datadog:
 
   # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
   kubernetesResourcesAnnotationsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-annotation
   #    pods:
   #      x-ann: annotation-reference
   #    namespaces:
@@ -389,6 +385,9 @@ datadog:
 
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: true
+
+  # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
+  kubernetesUseEndpointSlices: false
 
   # Configure Kubernetes events collection
   kubernetesEvents:
@@ -538,6 +537,11 @@ datadog:
       language_detection:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
         enabled: true
+
+      # This feature is in preview. It requires Cluster Agent 7.57+.
+      injector:
+        # datadog.apm.instrumentation.injector.imageTag -- The image tag to use for the APM Injector (preview).
+        imageTag: ""
 
   ## Application Security Managment (ASM) configuration
   ##
@@ -696,8 +700,8 @@ datadog:
     processDiscovery: true
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
-    ## This requires Agent 7.57.0+ and Linux.
-    runInCoreAgent: false
+    ## This requires Agent 7.60.0+ and Linux.
+    runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
@@ -829,6 +833,10 @@ datadog:
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
+
+  discovery:
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    enabled:  # false
 
   # Software Bill of Materials configuration
   sbom:
@@ -1026,7 +1034,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1221,6 +1229,10 @@ clusterAgent:
       # Options are "remote_copy" or "init_container"
       mode: remote_copy
 
+    kubernetesAdmissionEvents:
+      # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
+      enabled: false
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
@@ -1302,6 +1314,11 @@ clusterAgent:
   #          port: 3306
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
+
+  ## clusterAgent.kubernetesApiserverCheck -- correspond to options for configuring the kube_apiserver integration.
+  kubernetesApiserverCheck:
+    # clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Set this to true to disable use_component_status for the kube_apiserver integration.
+    disableUseComponentStatus: false
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
@@ -1543,7 +1560,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2049,7 +2066,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.59.0
+    tag: 7.62.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
