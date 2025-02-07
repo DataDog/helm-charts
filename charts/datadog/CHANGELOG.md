@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.91.1
+## 3.91.0
 
 * Add support for GPU monitoring
 
