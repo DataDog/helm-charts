@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.90.1'
+    helm.sh/chart: 'datadog-3.91.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,13 +30,13 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: 5251a960464770e4370d189d056f28e10e31380da0f2313f0c2448897e2624ec
-        checksum/install_info: 9723455d5ab3318a8d2a46e64a29d03b3142738df48c8a9ccac656513fd33065
+        checksum/clusteragent_token: c477368060c394d653969d3cbce514a56824150a477be33eb4fecaf6e702c9b1
+        checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
     spec:
-
+      
       securityContext:
         runAsUser: 0
       containers:
@@ -44,7 +44,7 @@ spec:
         image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
-
+        
         resources:
           {}
         ports:
@@ -61,7 +61,7 @@ spec:
             value: "false"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBELET_CLIENT_CRT
@@ -87,8 +87,8 @@ spec:
             value: "false"
           - name: DD_PROVIDER_KIND
             value: gke-gdc
-
-
+          
+          
           - name: DD_LOG_LEVEL
             value: "INFO"
           - name: DD_DOGSTATSD_PORT
@@ -123,7 +123,7 @@ spec:
           - name: DD_IGNORE_AUTOCONF
             value: "kubernetes_state"
           - name: DD_CONTAINER_LIFECYCLE_ENABLED
-            value: "true"
+            value: "true"  
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: "true"
           - name: DD_EXPVAR_PORT
@@ -133,7 +133,7 @@ spec:
           - name: DD_CONTAINER_IMAGE_ENABLED
             value: "true"
           - name: DD_KUBELET_CORE_CHECK_ENABLED
-            value: "true"
+            value: "true"        
         volumeMounts:
           - name: logdatadog
             mountPath: /var/log/datadog
@@ -145,18 +145,15 @@ spec:
           - name: tmpdir
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
-
-          - name: os-release-file
-            mountPath: /host/etc/os-release
-            readOnly: true
+          
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW to mount to config path
           - name: auth-token
             mountPath: /etc/datadog-agent/auth
             readOnly: false # Need RW to write auth token
-
-
+          
+          
           - name: pointerdir
             mountPath: /opt/datadog-agent/run
             mountPropagation: None
@@ -202,7 +199,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       initContainers:
-      - name: init-volume
+      - name: init-volume  
         image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
@@ -214,7 +211,7 @@ spec:
             readOnly: false # Need RW for config path
         resources:
           {}
-      - name: init-config
+      - name: init-config  
         image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
@@ -236,7 +233,7 @@ spec:
             value: "false"
           - name: DD_AUTH_TOKEN_FILE_PATH
             value: /etc/datadog-agent/auth/token
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_KUBELET_CLIENT_CRT
@@ -272,7 +269,7 @@ spec:
           name: datadog-installinfo
       - name: config
         emptyDir: {}
-
+        
       - name: logdatadog
         emptyDir: {}
       - name: tmpdir

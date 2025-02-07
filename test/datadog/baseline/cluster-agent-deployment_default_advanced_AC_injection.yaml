@@ -6,13 +6,13 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.90.1'
+    helm.sh/chart: 'datadog-3.91.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: cluster-agent
-
+    
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -33,14 +33,14 @@ spec:
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-cluster-agent
-
+        
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: da73eb12114a230565e36abba3c29649d8fd0c8dd4fa0940ef4ef23512120e52
-        checksum/clusteragent-configmap: abfb71847d6ccb5c229cccfd8379d84bcc99108fbea76f413e0b3d80396e8e6b
-        checksum/api_key: 729a3b093f470188d114eb0722e0b462aaf964f2d2658fcde4c0ef405ca03123
+        checksum/clusteragent_token: 8d8f3cd91285a7d6e1507a1f1435fc5fd21778965cf685a462238553841a2daf
+        checksum/clusteragent-configmap: 04f78cc8c755f4c6debb07948b1bf8318109acb1f32d624857bf409e9e7570c0
+        checksum/api_key: 657e19756058df21cac9dd8bdb1289cdf8ab0a632155ce5b9cd382881874a62f
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 9723455d5ab3318a8d2a46e64a29d03b3142738df48c8a9ccac656513fd33065
+        checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
@@ -90,7 +90,7 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -119,8 +119,8 @@ spec:
             value: "8000"
           - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
             value: "gcr.io/datadoghq"
-
-
+          
+          
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
             value: "true"
           - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
@@ -197,7 +197,7 @@ spec:
               configMapKeyRef:
                 name: datadog-kpi-telemetry-configmap
                 key: install_type
-
+                              
         livenessProbe:
           failureThreshold: 6
           httpGet:

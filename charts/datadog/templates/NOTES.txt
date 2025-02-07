@@ -420,6 +420,20 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 
 {{- end }}
 
+{{- if .Values.providers.gke.gdc }}
+
+{{- if .Values.datadog.networkMonitoring.enabled }}
+
+#######################################################################################
+####   WARNING: Network Performance Monitoring is not supported on GKE GDC   ####
+#######################################################################################
+
+{{- fail "On GKE GDC environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+
+{{- end }}
+
+{{- end }}
+
 {{- if and (.Values.datadog.dogstatsd.useSocketVolume) (eq .Values.targetSystem "windows") }}
 
 ###################################################################################

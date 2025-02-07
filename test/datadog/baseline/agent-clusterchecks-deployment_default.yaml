@@ -6,13 +6,13 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.90.1'
+    helm.sh/chart: 'datadog-3.91.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: clusterchecks-agent
-
+    
 spec:
   replicas: 2
   revisionHistoryLimit: 10
@@ -33,11 +33,11 @@ spec:
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-clusterchecks
-
+        
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 82707f47b0bfc55fc39a2740339e31da8b81064a3a1af2eb7ad07b8cefca2060
-        checksum/install_info: 9723455d5ab3318a8d2a46e64a29d03b3142738df48c8a9ccac656513fd33065
+        checksum/clusteragent_token: 247c426a527d3914cf4c9ed1f016b3ba0b4797064af564486f45cd0b2f13174d
+        checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
@@ -76,7 +76,7 @@ spec:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_API_KEY
@@ -129,8 +129,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-
-
+          
+                              
         resources:
           {}
         volumeMounts:
