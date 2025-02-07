@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "U2M2N0U5bXBQTjhGNXByVEhwRVp1cXdqRTJJcWNXeUI="
+  token: "U0JzMkhyYkIxRFBvck8wTG1QNzRDV1JZNGl3ZU5uNWk="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -193,8 +193,8 @@ metadata:
     app.kubernetes.io/version: "7"
 data:
   install_type: k8s_manual
-  install_id: "db1e6bf9-984b-423e-b2aa-a0f59614cf00"
-  install_time: "1738951577"
+  install_id: "5c5bd57c-0417-48c1-b534-8cb328f6b262"
+  install_time: "1738953116"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -841,7 +841,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 583c2cfd1510f0d8902e47a49835835519b240106170d7a1fc2aa3a4c8298442
+        checksum/clusteragent_token: 57839c61024e0fb56fbc9cf5bf891294305790e426e1d37d8a07c66e429dd6ff
         checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -1275,7 +1275,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: 9ec08f2dcd41c7b14f3944ac45b2dc61af5112e4b0c3be970f54eda3b66268eb
+        checksum/clusteragent_token: 02cf46203805767658d4eb2e04fe2bc4f920b2ef88de243386c6edb94b2b9245
         checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1467,7 +1467,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 5464b02ea95697445dd8ecf65d6c33d59d331d52765dd24aa525b47cafe960ac
+        checksum/clusteragent_token: b1896a49dde5621ec92bf9c838646851815d6b4a4c065ee35b756ed3ec9bfdd7
         checksum/clusteragent-configmap: 18570665d455b75e30f7ad1a42673e45d231713be79b4bb27ef3b30162cbb996
         checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
     spec:

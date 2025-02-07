@@ -30,7 +30,7 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: 9b85f61503c730b178587fa0dca2c04508f655d19e9f16d4d469ec40eaa58868
+        checksum/clusteragent_token: bedf4b98bef468ea34a4e0b4d6d8794d096157170b4f2941744ad406708bc97e
         checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
