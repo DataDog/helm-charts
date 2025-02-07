@@ -150,7 +150,7 @@ datadogCRDs:
     datadogSLOs: false
     # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
     datadogDashboards: false
-    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the datadogGenericResource CRD
+    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
     datadogGenericResources: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
