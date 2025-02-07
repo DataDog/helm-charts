@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "RFlvZHdzcENkR2VwNHY4U3N0UXBINXZ2QkFjcmRWOWI="
+  token: "Rjh4VG1qODNFVWdNR0F5RG5RMWs4cWJ3VGU0OWR1S0k="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -193,8 +193,8 @@ metadata:
     app.kubernetes.io/version: "7"
 data:
   install_type: k8s_manual
-  install_id: "4af1741c-cd0d-4e9f-8fd3-d248e4a0791a"
-  install_time: "1738261766"
+  install_id: "a8722398-d4d1-4608-ae54-a267838ef60d"
+  install_time: "1738887322"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -564,6 +564,13 @@ rules:
   - leases
   verbs:
   - get
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 ---
 # Source: datadog/templates/agent-clusterchecks-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -834,7 +841,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: 2a7eca5aca30d383d947ec4f9fe35850f0e55bfbacc3a14bfa6495b415f98438
+        checksum/clusteragent_token: df5542e15c4a6b2ca3cafa45d4f4dd9885dacbdd3b5e859a78b7eb09a873d3bc
         checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -1268,7 +1275,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: b3f8a3f41d1108ea08a30af4f45cb1b1c9b04cdc46f7cd343cbf8a6a974d66c5
+        checksum/clusteragent_token: 5a3ebcf850d185370c74eb30bfc4943a792c0aaff1358543224a8c0a7e1882bb
         checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1460,7 +1467,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: f0b764322f58502282ea7299e7e8957fe0045bdda4095b12dd00cdcbfc60c97a
+        checksum/clusteragent_token: 2125e0b8c18f02677614776f5826a96ecdf6be8393e9acdc9a096b538337b316
         checksum/clusteragent-configmap: 86190a6d13b82b58a4a3158761c458fd0009ae0cfd622e7c98e02207e8361074
         checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
     spec:
