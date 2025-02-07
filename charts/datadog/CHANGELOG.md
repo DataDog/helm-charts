@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.96.0
+
+* Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
+* Add `datadog.otelCollector.rbac.rules` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+
 ## 3.95.0
 
 * Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
