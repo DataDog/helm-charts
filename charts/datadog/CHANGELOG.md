@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Add `agents.coreAgent.enabled` and `datadog.apm.errorTrackingStandalone.enabled` settings to enable Error Tracking backend standalone.
+
 ## 3.90.2
 
 * Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
