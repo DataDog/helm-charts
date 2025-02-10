@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.90.3
+
+* Allow subAgent containers to write on `auth_token` mounted volume.
+
 ## 3.90.2
 
 * Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
