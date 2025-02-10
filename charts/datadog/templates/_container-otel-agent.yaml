@@ -51,7 +51,7 @@
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: true
+      readOnly: false # Need RW to write auth token
     {{- end }}
     - name: otelconfig
       mountPath: {{ template "datadog.otelconfPath" . }}
