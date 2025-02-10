@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1376000 or later).
+
 ## 3.90.2
 
 * Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
