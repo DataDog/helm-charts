@@ -219,4 +219,7 @@
     secretName: datadog-kubelet-cert
   name: kubelet-cert-volume
 {{- end }}
+- name: pod-resources-socket
+  hostPath:
+    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
 {{- end -}}
