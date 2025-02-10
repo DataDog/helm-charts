@@ -114,6 +114,9 @@ spec:
       {{- if or .Values.agents.priorityClassCreate .Values.agents.priorityClassName }}
       priorityClassName: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
       {{- end }}
+      {{- if .Values.datadog.gpuMonitoring.enabled }}
+      runtimeClassName: {{ .Values.datadog.gpuMonitoring.runtimeClassName }}
+      {{- end }}
       containers:
         {{- include "container-agent" . | nindent 6 }}
         {{- if eq (include "should-enable-trace-agent" .) "true" }}
