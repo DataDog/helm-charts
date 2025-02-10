@@ -226,6 +226,8 @@ rules:
   resources:
   - datadogagents
   - datadogagents/finalizers
+  - datadoggenericresources
+  - datadoggenericresources/finalizers
   - datadogmonitors
   - datadogmonitors/finalizers
   - datadogslos
@@ -243,6 +245,7 @@ rules:
   - datadoghq.com
   resources:
   - datadogagents/status
+  - datadoggenericresources/status
   - datadogmonitors/status
   - datadogslos/status
   verbs:
