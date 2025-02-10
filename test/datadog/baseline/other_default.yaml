@@ -1098,7 +1098,7 @@ spec:
             readOnly: false # Need RW to write logs
           - name: auth-token
             mountPath: /etc/datadog-agent/auth
-            readOnly: true
+            readOnly: false # Need RW to write auth token
           - name: procdir
             mountPath: /host/proc
             mountPropagation: None
