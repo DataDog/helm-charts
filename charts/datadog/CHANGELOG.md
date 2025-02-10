@@ -46,7 +46,7 @@
 
 ## 3.87.0
 
-* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
 
 ## 3.86.0
 
@@ -183,8 +183,8 @@
 ## 3.74.0
 
 * Simplify OTel Agent OOTB pipelines:
-    * Remove `traces/otlp` pipeline from the default OTel Agent config
-    * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
+  * Remove `traces/otlp` pipeline from the default OTel Agent config
+  * Add `infaattributes` processor and `datadog` exporter to the `traces` pipeline.
 
 ## 3.73.3
 
@@ -951,14 +951,14 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 ## 3.17.0
 
 * Add the following configurations which allow environment variables to be defined in a dictionary:
-    * `agents.containers.agent.envDict`
-    * `agents.containers.processAgent.envDict`
-    * `agents.containers.securityAgent.envDict`
-    * `agents.containers.systemProbe.envDict`
-    * `agents.containers.traceAgent.envDict`
-    * `clusterAgent.envDict`
-    * `clusterChecksRunner.envDict`
-    * `datadog.envDict`
+  * `agents.containers.agent.envDict`
+  * `agents.containers.processAgent.envDict`
+  * `agents.containers.securityAgent.envDict`
+  * `agents.containers.systemProbe.envDict`
+  * `agents.containers.traceAgent.envDict`
+  * `clusterAgent.envDict`
+  * `clusterChecksRunner.envDict`
+  * `datadog.envDict`
 
 ## 3.16.2
 
@@ -2019,7 +2019,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.11.6
 
 * Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
-  Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
+Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
 
 ## 2.11.5
 
@@ -2202,9 +2202,9 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 
 * Changes default values to activate a maximum of built-in features to ease configuration.
   Notable changes:
-    * Cluster Agent, cluster checks and event collection are activated by default
-    * DatadogMetrics CRD usage is activated by default if ExternalMetrics are used
-    * Dogstatsd non-local traffic is activated by default (hostPort usage is not)
+  * Cluster Agent, cluster checks and event collection are activated by default
+  * DatadogMetrics CRD usage is activated by default if ExternalMetrics are used
+  * Dogstatsd non-local traffic is activated by default (hostPort usage is not)
 * Bump Agent version to `7.25.0` and Cluster Agent version to `1.10.0`
 * Introduce `.registry` parameter to quickly change registry for all Datadog images. Image name is retrieved from `.image.name`, however setting `.image.repository` still allows to override per image, ensuring backward compatibility
 
@@ -2376,7 +2376,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.4.23
 
 * Add `datadog.envFrom` parameter to support passing references to secrets and/or configmaps for environment
-  variables, instead of passing one by one.
+variables, instead of passing one by one.
 
 ## 2.4.22
 
@@ -2394,14 +2394,14 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 
 * Add NetworkPolicy
   Add the following parameters to control the creation of NetworkPolicy:
-    * `agents.networkPolicy.create`
-    * `clusterAgent.networkPolicy.create`
-    * `clusterChecksRunner.networkPolicy.create`
-      The NetworkPolicy managed by the Helm chart are designed to work out-of-the-box on most setups.
-      In particular, the agents need to connect to the datadog intakes. NetworkPolicy can be restricted
-      by IP but the datadog intake IP cannot be guaranteed to be stable.
-      The agents are also susceptible to connect to any pod, on any port, depending on the "auto-discovery" annotations
-      that can be dynamically added to them.
+  * `agents.networkPolicy.create`
+  * `clusterAgent.networkPolicy.create`
+  * `clusterChecksRunner.networkPolicy.create`
+  The NetworkPolicy managed by the Helm chart are designed to work out-of-the-box on most setups.
+  In particular, the agents need to connect to the datadog intakes. NetworkPolicy can be restricted
+  by IP but the datadog intake IP cannot be guaranteed to be stable.
+  The agents are also susceptible to connect to any pod, on any port, depending on the "auto-discovery" annotations
+  that can be dynamically added to them.
 
 ## 2.4.18
 
@@ -2731,7 +2731,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.1.2
 
 * Fixed a bug where `DD_LEADER_ELECTION` was not set in the config init container, leading to a failure to adapt
-  config to this environment variable.
+config to this environment variable.
 
 ## 2.1.1
 
