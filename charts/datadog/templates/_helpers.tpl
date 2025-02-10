@@ -117,8 +117,6 @@ false
 {{- end -}}
 {{- end -}}
 
-
-
 {{/*
 Return secret name to be used based on provided values.
 */}}
