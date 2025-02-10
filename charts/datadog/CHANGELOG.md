@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
+* Add `datadog.otelCollector.rbac.rules` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+
 ## 3.90.2
 
 * Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
