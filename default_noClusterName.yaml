@@ -4,6 +4,9 @@ metadata:
   name: datadog-agent
 spec:
   global:
+    clusterName: eks-addon-on-kind
+    kubelet:
+      tlsVerify: false
     credentials:
       apiSecret:
         secretName: datadog-secret

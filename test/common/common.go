@@ -37,7 +37,7 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 		ValuesFiles:    cmd.Values,
 	}
 
-	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly)
+	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly, "--debug")
 
 	return output, err
 }
@@ -78,6 +78,12 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 		t.Log("Deleting secret")
 		k8s.RunKubectl(t, kubectlOptions, "delete", "secret", "datadog-secret")
 	}
+}
+
+func ReadFile(t *testing.T, filepath string) string {
+	fileContent, err := os.ReadFile(filepath)
+	require.NoError(t, err, "can't load manifest from file", "path", filepath)
+	return string(fileContent)
 }
 
 func LoadFromFile[T any](t *testing.T, filepath string, destObj *T) string {

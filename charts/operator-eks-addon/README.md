@@ -4,17 +4,23 @@ This is a wrapper chart for installing EKS add-on. Charts required for the add-o
 
 ## Version Mapping
 | `operator-addon-chart` | `datadog-operator` | `datadog-crds` | Operator | Agent | Cluster Agent |
-| - | - | - | - | - | - |
+| :-: | :-: | :-: | :-: | :-: | :-: |
 | < 0.1.6 | 1.0.5 | 1.0.1 | 1.0.3 | 7.43.1 | 7.43.1 | 
 | 0.1.6 | 1.4.1 | 1.3.0 | 1.3.0 | 7.47.1 | 7.47.1 |
 | 0.1.7 | 1.5.1 | 1.4.0 | 1.4.0 | 7.50.3 | 7.50.3 |
 | 0.1.9 | 1.8.1 | 1.7.0 | 1.7.0 | 7.54.0 | 7.54.0 |
+| 0.1.10 | 2.5.1 | 2.3.0 | 1.11.1 | 7.60.0 | 7.60.0 |
 
 0.1.8 failed validation and didn't go through.
 
 ## Pushing Add-on Chart
 Below steps have been validated using `Helm v3.12.0`.
 
+* Merge `main` branch into `operator-eks-addon` branch: this will require to resolve conflicts manually.
+* Update:
+    * `charts/operator-eks-addon/CHANGELOG.md`: provide an entry for the new version.
+    * `charts/operator-eks-addon/Chart.yaml`: update the version and the `datadog-operator` version dependency
+    * `charts/operator-eks-addon/README.md`: add a row to the version mapping
 * Build dependencies - this step is necessary to update the dependent charts under `charts/operator-eks-addon/charts` and `charts/datadog-operator/charts`. Latter is necessary to include correct version of `datadog-crds` chart in the `datadog-operator`.
 ```sh
 helm dependency update ./charts/datadog-operator

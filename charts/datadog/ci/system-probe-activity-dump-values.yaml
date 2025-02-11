@@ -7,3 +7,5 @@ datadog:
       enabled: true
       activityDump:
         enabled: true
+      securityProfile:
+        enabled: true
