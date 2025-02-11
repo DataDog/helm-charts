@@ -1,4 +1,4 @@
-{{- if and .Values.crds.datadogSLOs (semverCompare ">1.21-0" .Capabilities.KubeVersion.GitVersion ) }}
+{{- if .Values.crds.datadogSLOs }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition

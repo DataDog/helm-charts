@@ -5309,16 +5309,9 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
-  - datadogpodautoscalers
-  - datadogpodautoscalers/status
+  - datadogmetrics/status
   verbs:
-  - '*'
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - extendeddaemonsetreplicasets
-  verbs:
-  - get
+  - update
 - apiGroups:
   - datadoghq.com
   resources:
@@ -5329,7 +5322,7 @@ rules:
   - list
   - watch
 - apiGroups:
-    - datadoghq.com
+  - datadoghq.com
   resources:
   - datadogpodautoscalers
   - datadogpodautoscalers/status
@@ -5342,9 +5335,9 @@ rules:
   verbs:
   - get
 - apiGroups:
-    - datadoghq.com
+  - datadoghq.com
   resources:
-    - datadogslos/status
+  - watermarkpodautoscalers
   verbs:
   - get
   - list
