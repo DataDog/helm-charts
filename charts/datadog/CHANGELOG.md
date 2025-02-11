@@ -2,7 +2,7 @@
 
 ## 3.90.3
 
-* If empty, defaults `registry` to `gcr.io/datadoghq` when setting `datadog.site: us3.datadoghq.com` and deploying on GKE Autopilot (`providers.gke.autopilot: true`).
+* Defaults `registry` to `gcr.io/datadoghq` when setting `datadog.site: us3.datadoghq.com` and deploying on GKE Autopilot (`providers.gke.autopilot: true`).
 
 ## 3.90.2
 
