@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.84.0'
+    helm.sh/chart: 'datadog-3.90.2'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         env.datadoghq.com/kind: gke-gdc
       name: datadog
       annotations:
-        checksum/clusteragent_token: 80902270b70b9947e84e957b7d4a4c293b9a877fff12dc4d6ea51a8217e12ea6
-        checksum/install_info: 69241467f1d210fdb3bd2559574ba797ac27cd0f6d7c8b9d9a1d8a4bf1125fcd
+        checksum/clusteragent_token: bedf4b98bef468ea34a4e0b4d6d8794d096157170b4f2941744ad406708bc97e
+        checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -41,7 +41,7 @@ spec:
         runAsUser: 0
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["agent", "run"]
         
@@ -200,7 +200,7 @@ spec:
           timeoutSeconds: 5
       initContainers:
       - name: init-volume  
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -212,7 +212,7 @@ spec:
         resources:
           {}
       - name: init-config  
-        image: "gcr.io/datadoghq/agent:7.59.0"
+        image: "gcr.io/datadoghq/agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
           - bash

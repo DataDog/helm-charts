@@ -22,7 +22,7 @@
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
 {{- end }}
-{{- if and (eq (include "should-add-host-path-for-os-release-paths" .) "true") (or (eq (include "should-enable-system-probe" .) "true") .Values.datadog.sbom.host.enabled) }}
+{{- if and (eq (include "should-add-host-path-for-os-release-paths" .) "true") (or (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-sbom-host-fs-collection" .) "true")) }}
 - hostPath:
     path: /etc/redhat-release
   name: etc-redhat-release
@@ -81,6 +81,11 @@
 - hostPath:
     path: /sys/kernel/debug
   name: debugfs
+{{- if .Values.datadog.networkMonitoring.enabled }}
+- hostPath:
+    path: /sys/fs/bpf
+  name: bpffs
+{{- end }}
 - name: sysprobe-socket-dir
   emptyDir: {}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
@@ -155,8 +160,11 @@
 - hostPath:
     path: /var/lib/docker
   name: host-docker-dir
+- hostPath:
+    path: /var/lib/containers
+  name: host-crio-dir
 {{- end }}
-{{- if .Values.datadog.sbom.host.enabled }}
+{{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
 - hostPath:
     path: /var/lib/apk
   name: host-apk-dir

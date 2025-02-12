@@ -15,7 +15,7 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
   pullPolicy: IfNotPresent
   # image.tag -- Define the Datadog Synthetics Private Location version to use
-  tag: 1.53.0
+  tag: 1.54.0
 
 # dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
 dnsPolicy: ClusterFirst
@@ -34,6 +34,8 @@ serviceAccount:
   create: true
   # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
   name: ""
+  # serviceAccount.annotations -- Annotations for the service account
+  annotations: {}
 
 # Create a ConfigMap containing the PEM files of your custom CA Root certificate
 # Then add it as an extra volume mounted on /etc/datadog/certs/

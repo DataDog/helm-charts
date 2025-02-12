@@ -62,6 +62,22 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             {{- end }}
+            {{- if .Values.watchNamespacesAgent }}
+            - name: DD_AGENT_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgent | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesMonitor }}
+            - name: DD_MONITOR_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesMonitor | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesSLO }}
+            - name: DD_SLO_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesSLO | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesAgentProfile }}
+            - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgentProfile | join "," }}
+            {{- end }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -131,6 +147,9 @@ spec:
           {{- end }}
           {{- if (semverCompare ">=1.9.0-0" $version) }}
             - "-datadogDashboardEnabled={{ .Values.datadogDashboard.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.12.0" $version) }}
+            - "-datadogGenericResourceEnabled={{ .Values.datadogGenericResource.enabled }}"
           {{- end }}
           {{- if (semverCompare ">=1.7.0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"

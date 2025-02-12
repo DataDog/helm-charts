@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.10.0
+  tag: 1.12.1
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -86,6 +86,9 @@ datadogAgent:
   enabled: true
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+  enabled: false
+datadogGenericResource:
+  # datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
   enabled: false
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
@@ -147,6 +150,8 @@ datadogCRDs:
     datadogSLOs: false
     # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
     datadogDashboards: false
+    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+    datadogGenericResources: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
@@ -157,6 +162,7 @@ podLabels: {}
 collectOperatorMetrics: true
 
 # watchNamespaces -- Restricts the Operator to watch its managed resources on specific namespaces
+# unless CRD-specific watchNamespaces properties are set
 watchNamespaces: []
 # example: watch only two namespaces:
 # watchNamespaces:
@@ -165,6 +171,54 @@ watchNamespaces: []
 #
 # to watch all namespaces
 # watchNamespaces:
+# - ""
+
+# watchNamespacesAgent -- Restricts the Operator to watch DatadogAgent resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgent: []
+# example: watch only two namespaces:
+# watchNamespacesAgent:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgent:
+# - ""
+
+# watchNamespacesMonitor -- Restricts the Operator to watch DatadogMonitor resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesMonitor: []
+# example: watch only two namespaces:
+# watchNamespacesMonitor:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesMonitor:
+# - ""
+
+# watchNamespacesSLO -- Restricts the Operator to watch DatadogSLO resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesSLO: []
+# example: watch only two namespaces:
+# watchNamespacesSLO:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesSLO:
+# - ""
+
+# watchNamespacesAgentProfile -- Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgentProfile: []
+# example: watch only two namespaces:
+# watchNamespacesAgentProfile:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgentProfile:
 # - ""
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.

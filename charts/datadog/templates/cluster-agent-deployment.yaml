@@ -258,6 +258,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_MODE
             value: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.kubernetesAdmissionEvents.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_KUBERNETES_ADMISSION_EVENTS_ENABLED
+            value: "true"
+          {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
@@ -276,6 +280,10 @@ spec:
           {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
+          - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
+            value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
           {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
@@ -324,6 +332,8 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+            value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -476,7 +486,7 @@ spec:
             - key: helm.yaml
               path: helm.yaml
 {{- end }}
-{{- if .Values.datadog.collectEvents }}
+{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}

@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 0.17.6
+
+* Add optional annotations for service account.
+
+## 0.17.5
+
+* Update private location image version to `1.54.0`.
+
 ## 0.17.4
 
 * Update private location image version to `1.53.0`.

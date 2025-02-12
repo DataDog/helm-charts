@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.84.0'
+    helm.sh/chart: 'datadog-3.90.2'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,17 +36,17 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: ea780ad18ab29ede78658eb4d75366d128564fe6b7c57ba564f55cbc10ae114b
-        checksum/clusteragent-configmap: 1a5a820f43238f37c1bb7eb441d295249caca4c9a3bc96b580886380e47ebc19
-        checksum/api_key: 1ff6bb869aa0342922ef3090e4fa3f0801d4ae88fb9300402060a1a7b174ddb6
+        checksum/clusteragent_token: d6c63a0df284f4d85997d84e0da07ac7a76e8cf4402aa6355b55cfd96b210f23
+        checksum/clusteragent-configmap: 63ca8b61b95408ae798632fed914c711a7a3492cadf4caf2d7d3981ca9f091c2
+        checksum/api_key: 0b1dc9b6f97901330e2dfcb5dd8e06eeab960aa872f18b04e9aec5dd64030c9b
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 69241467f1d210fdb3bd2559574ba797ac27cd0f6d7c8b9d9a1d8a4bf1125fcd
+        checksum/install_info: 8259f0118cc24f897cb93f1c9bc5e8758de1ba559ec3ed571df7ad67c9d31a24
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.59.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}
@@ -155,6 +155,8 @@ spec:
             value: datadogtoken
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: "true"
+          - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+            value: "false"
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: "false"
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME

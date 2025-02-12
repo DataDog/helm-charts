@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.7.0
+
+* Update Datadog Operator version to 1.12.1.
+
+## 2.6.0
+
+* Update Datadog Operator version to 1.12.0.
+* Add DatadogGenericResource configuration.
+
+## 2.5.1
+
+* Expose CRD-specific namespace watch configuration added in Operator 1.8.0 release.
+
+## 2.5.0
+
+* Update Datadog Operator version to 1.11.1.
+
 ## 2.4.0
 
 * Add configuration to grant the necessary RBAC to the operator for the CWS Instrumentation Admission Controller feature in the Cluster-Agent.
