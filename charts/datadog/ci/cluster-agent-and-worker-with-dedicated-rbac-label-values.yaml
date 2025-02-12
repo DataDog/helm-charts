@@ -19,4 +19,3 @@ clusterChecksRunner:
     dedicated: true
     serviceAccountAdditionalLabels:
       "app.kubernetes.io/custom-label": custom-value
-
