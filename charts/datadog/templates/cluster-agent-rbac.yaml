@@ -364,6 +364,9 @@ metadata:
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAdditionalLabels) . | nindent 4 -}}
+{{ end }}
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
