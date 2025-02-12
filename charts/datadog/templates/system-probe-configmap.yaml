@@ -47,6 +47,9 @@ data:
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}
     {{- end }}
+    gpu_monitoring:
+      enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}
+      configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
