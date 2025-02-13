@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 0.15.6
+
+* Update private action image version to `v0.1.11-beta`
+
+## 0.15.5
+
+* Add gitlab credentials file example
+
 ## 0.15.4
 
 * Update private action image version to `v0.1.10-beta`

@@ -129,6 +129,13 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
