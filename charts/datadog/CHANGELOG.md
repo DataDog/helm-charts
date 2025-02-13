@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Add `datadog.kubernetesEvents.bundleUnspecifiedEvents` to allow bundling of unspecified Kubernetes events.
+
 ## 3.90.4
 
 * Fix RBAC rendering and map merge when `datadog.kubernetesResourcesAnnotationsAsTags` and/or `datadog.kubernetesResourcesLabelsAsTags` are used.
