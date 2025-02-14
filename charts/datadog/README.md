@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.90.4](https://img.shields.io/badge/Version-3.90.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.91.0](https://img.shields.io/badge/Version-3.91.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -692,6 +692,7 @@ helm install <RELEASE_NAME> \
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
+| datadog.apm.errorTracking.mode | string | `"disabled"` | Defines mode of operation of Error Tracking for backend services. It can be "disabled", "standalone", or "full". |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces (beta). |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
