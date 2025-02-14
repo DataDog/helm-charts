@@ -4,6 +4,14 @@
 
 * Add `datadog.apm.errorTracking.mode` setting to set the Error Tracking mode.
 
+## 3.90.4
+
+* Fix RBAC rendering and map merge when `datadog.kubernetesResourcesAnnotationsAsTags` and/or `datadog.kubernetesResourcesLabelsAsTags` are used.
+
+## 3.90.3
+
+* Defaults `registry` to `gcr.io/datadoghq` when setting `datadog.site: us3.datadoghq.com` and deploying on GKE Autopilot (`providers.gke.autopilot: true`).
+
 ## 3.90.2
 
 * Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
@@ -46,7 +54,7 @@
 
 ## 3.87.0
 
-* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.
 
 ## 3.86.0
 

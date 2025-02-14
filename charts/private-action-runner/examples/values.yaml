@@ -172,3 +172,19 @@ credentialFiles:
           }
         ]
       }
+  - fileName: "gitlab_creds.json"
+    data: |
+      {
+        "auth_type": "Token Auth",
+        "credentials": [
+          {
+            "tokenName": "baseURL",
+            "tokenValue": "GITLAB_BASE_URL"
+          },
+          {
+            "tokenName": "gitlabApiToken",
+            "tokenValue": "GITLAB_API_TOKEN"
+          }
+        ]
+      }
+
