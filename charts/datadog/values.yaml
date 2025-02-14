@@ -509,10 +509,10 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
-    # Error Tracking backend standalone
-    errorTrackingStandalone:
-      # datadog.apm.errorTrackingStandalone.enabled -- Enable sending only traces for Error Tracking backend standalone.
-      enabled: false
+    # Error Tracking backend
+    errorTracking:
+      # datadog.apm.errorTracking.mode -- Defines mode of operation of Error Tracking for backend services. It can be "disabled", "standalone", or "full".
+      mode: "disabled"
 
     # APM Single Step Instrumentation
     # This feature is in beta. It requires Cluster Agent 7.49+.
@@ -1540,11 +1540,6 @@ agents:
   ## Note: StatsD and DogStatsD work over UDP, so you may not
   ## get guaranteed delivery of the metrics in Datadog-per-namespace setup!
   enabled: true
-
-  ## Settings for the core agent
-  coreAgent:
-    # agents.coreAgent.enabled -- Enabled metric data submission (including Custom Metrics) and payloads forwarding to other agents.
-    enabled: true
 
   # agents.shareProcessNamespace -- Set the process namespace sharing on the Datadog Daemonset
   shareProcessNamespace: false

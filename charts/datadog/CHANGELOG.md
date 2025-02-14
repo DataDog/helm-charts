@@ -2,7 +2,7 @@
 
 ## 3.91.0
 
-* Add `agents.coreAgent.enabled` and `datadog.apm.errorTrackingStandalone.enabled` settings to enable Error Tracking backend standalone.
+* Add `datadog.apm.errorTracking.mode` setting to set the Error Tracking mode.
 
 ## 3.90.2
 
