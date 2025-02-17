@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["process-agent", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
+  command: ["/bin/sleep", "9000"]
   {{- end }}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
