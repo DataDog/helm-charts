@@ -10,6 +10,9 @@ kubernetes_apiserver.yaml: |-
       {{- if .Values.datadog.kubernetesEvents.unbundleEvents }}
       collected_event_types:
 {{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | nindent 8 }}
+      {{- if .Values.datadog.kubernetesEvents.bundleUnspecifiedEvents }}
+      bundle_unspecified_events: true
+      {{- end -}}
       {{- end -}}
 {{- end }}
 {{- if .Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus }}
