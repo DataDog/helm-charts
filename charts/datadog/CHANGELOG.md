@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.91.0
+
+* Add support for GPU monitoring
+
 ## 3.90.5
 
 * Update `fips.image.tag` to `1.1.7` updating openSSL version to 3.0.16
