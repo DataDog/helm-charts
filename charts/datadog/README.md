@@ -860,6 +860,7 @@ helm install <RELEASE_NAME> \
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.serviceMonitoring.tls.go.enabled | bool | `nil` | Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the agent's default. |
 | datadog.serviceMonitoring.tls.istio.enabled | bool | `nil` | Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the agent's default. |
+| datadog.serviceMonitoring.tls.native.enabled | bool | `nil` | Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the agent's default. |
 | datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the agent's default. |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |

@@ -841,6 +841,9 @@ datadog:
       nodejs:
         # datadog.serviceMonitoring.tls.nodejs.enabled -- (bool) Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the agent's default.
         enabled:
+      native:
+        # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the agent's default.
+        enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
