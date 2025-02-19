@@ -2334,6 +2334,10 @@ providers:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
     autopilot: false
 
+    # providers.gke.autopilotAllowlists -- Installs Datadog WorkloadAllowlists on GKE Autopilot. If left empty, then all
+    # Datadog WorkloadAllowlists will be installed.
+    autopilotAllowlists: []
+
     # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
     cos: false
 

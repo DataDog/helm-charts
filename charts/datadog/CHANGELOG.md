@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.94.0
+
+* Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
+  1-gke.1729000 or later. 
+
 ## 3.93.0
 
 * Revert "Add a mount for the Kubernetes PodResources socket."

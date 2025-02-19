@@ -1,0 +1,13 @@
+{{- if .Values.providers.gke.autopilot }}
+apiVersion: auto.gke.io/v1
+kind: AllowlistSynchronizer
+metadata:
+  name: datadog-synchronizer
+spec:
+  allowlistPaths:
+{{- if not .Values.providers.gke.autopilotAllowlists }}
+  - Datadog/datadog
+{{- else }}
+{{ toYaml .Values.providers.gke.autopilotAllowlists | indent 2 }}
+{{- end }}
+{{- end }}
