@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.92.1
+
+* Do not mount Kubernetes PodResources socket for GKE GDC.
+
 ## 3.92.0
 
 * Add a mount for the Kubernetes PodResources socket.
