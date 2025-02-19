@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.93.0
+
+* Add a mount for the Kubernetes PodResources socket.
+
 ## 3.92.0
 
 * Support adding labels to the Agent service account via `agents.additionalLabels`.
