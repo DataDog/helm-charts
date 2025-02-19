@@ -43,6 +43,9 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
+      enable_http_monitoring: {{ $.Values.datadog.serviceMonitoring.httpMonitoringEnabled }}
+      {{- end }}
       tls:
         {{- if not (eq .Values.datadog.serviceMonitoring.tls.go.enabled nil) }}
         go:
