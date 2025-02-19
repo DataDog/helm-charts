@@ -27,6 +27,8 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+## If you are on GKE Autopilot, you must use a gcr.io variant registry.
+
 registry:  # gcr.io/datadoghq
 
 datadog:
@@ -837,6 +839,17 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+  gpuMonitoring:
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    enabled: false
+
+    # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
+    configureCgroupPerms: false
+
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    runtimeClassName: "nvidia"
+
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:
@@ -1511,7 +1524,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.6
+    tag: 1.1.7
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent

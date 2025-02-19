@@ -148,7 +148,7 @@
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.serviceMonitoring.enabled) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -222,4 +222,9 @@
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+- name: gpu-devices
+  hostPath:
+    path: /dev/null
+{{- end }}
 {{- end -}}

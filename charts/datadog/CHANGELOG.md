@@ -1,8 +1,24 @@
 # Datadog changelog
 
-## 3.91.0
+## 3.92.0
 
 * Add a mount for the Kubernetes PodResources socket.
+
+## 3.91.0
+
+* Add support for GPU monitoring
+
+## 3.90.5
+
+* Update `fips.image.tag` to `1.1.7` updating openSSL version to 3.0.16
+
+## 3.90.4
+
+* Fix RBAC rendering and map merge when `datadog.kubernetesResourcesAnnotationsAsTags` and/or `datadog.kubernetesResourcesLabelsAsTags` are used.
+
+## 3.90.3
+
+* Defaults `registry` to `gcr.io/datadoghq` when setting `datadog.site: us3.datadoghq.com` and deploying on GKE Autopilot (`providers.gke.autopilot: true`).
 
 ## 3.90.2
 
