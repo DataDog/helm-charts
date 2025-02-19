@@ -219,9 +219,6 @@
     secretName: datadog-kubelet-cert
   name: kubelet-cert-volume
 {{- end }}
-- name: pod-resources-socket
-  hostPath:
-    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
 {{- if .Values.datadog.gpuMonitoring.enabled }}
 - name: gpu-devices
   hostPath:

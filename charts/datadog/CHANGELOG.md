@@ -1,14 +1,18 @@
 # Datadog changelog
 
-## 3.93.0
-
-* Add a mount for the Kubernetes PodResources socket.
-
-## 3.92.0
+## 3.94.0
 
 * Support adding labels to the Agent service account via `agents.additionalLabels`.
 * Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
 * Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
+
+## 3.93.0
+
+* Revert "Add a mount for the Kubernetes PodResources socket."
+
+## 3.92.0
+
+* Add a mount for the Kubernetes PodResources socket.
 
 ## 3.91.0
 
