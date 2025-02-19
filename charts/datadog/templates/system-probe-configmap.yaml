@@ -48,6 +48,10 @@ data:
         go:
           enabled: {{ $.Values.datadog.serviceMonitoring.tls.go.enabled }}
         {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.istio.enabled nil) }}
+        istio:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.istio.enabled }}
+        {{- end }}
     {{- if not (eq .Values.datadog.discovery.enabled nil) }}
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}

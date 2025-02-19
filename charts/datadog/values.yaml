@@ -835,7 +835,9 @@ datadog:
       go:
         # datadog.serviceMonitoring.tls.go.enabled -- (bool) Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the agent's default.
         enabled:
-
+      istio:
+        # datadog.serviceMonitoring.tls.istio.enabled -- (bool) Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the agent's default.
+        enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
