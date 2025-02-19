@@ -858,6 +858,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer |
 | datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
+| datadog.serviceMonitoring.http2MonitoringEnabled | string | `nil` | Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the agent's default. |
 | datadog.serviceMonitoring.httpMonitoringEnabled | string | `nil` | Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the agent's default. |
 | datadog.serviceMonitoring.tls.go.enabled | bool | `nil` | Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the agent's default. |
 | datadog.serviceMonitoring.tls.istio.enabled | bool | `nil` | Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the agent's default. |

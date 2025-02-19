@@ -46,6 +46,9 @@ data:
       {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
       enable_http_monitoring: {{ $.Values.datadog.serviceMonitoring.httpMonitoringEnabled }}
       {{- end }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.http2MonitoringEnabled nil) }}
+      enable_http2_monitoring: {{ $.Values.datadog.serviceMonitoring.http2MonitoringEnabled }}
+      {{- end }}
       tls:
         {{- if not (eq .Values.datadog.serviceMonitoring.tls.go.enabled nil) }}
         go:

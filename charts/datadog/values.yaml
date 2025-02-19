@@ -834,6 +834,9 @@ datadog:
     # datadog.serviceMonitoring.httpMonitoringEnabled -- Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the agent's default.
     httpMonitoringEnabled:
 
+    # datadog.serviceMonitoring.http2MonitoringEnabled -- Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the agent's default.
+    http2MonitoringEnabled:
+
     tls:
       go:
         # datadog.serviceMonitoring.tls.go.enabled -- (bool) Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the agent's default.

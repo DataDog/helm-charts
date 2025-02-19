@@ -8,6 +8,7 @@
   * `datadog.serviceMonitoring.tls.nodejs.enabled` to control Node.js TLS monitoring.
   * `datadog.serviceMonitoring.tls.native.enabled` to control native (openssl, libssl, gnutls) TLS monitoring.
   * `datadog.serviceMonitoring.httpMonitoringEnabled` to control HTTP monitoring.
+  * `datadog.serviceMonitoring.http2MonitoringEnabled` to control HTTP/2 & gRPC monitoring.
 
 ## 3.91.0
 
