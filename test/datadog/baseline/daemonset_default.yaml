@@ -6,7 +6,7 @@ metadata:
   name: datadog
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.92.0'
+    helm.sh/chart: 'datadog-3.93.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -30,8 +30,8 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: f27a8a8e4de57dd7981e432511dc4a109f3d997f353187b6c40930438ea5a73a
-        checksum/install_info: cddca7ce66894bbabed3f6c1901bb6921effc6ad8834663debc75f90749af71b
+        checksum/clusteragent_token: faf0bcb7c5b3cace08fdd5f888006e5e307fd2f745b22a6d1f1c4bc73ae1a730
+        checksum/install_info: 9584de3c65614641eedb62188d6dea1298e6cbb2bb464abfe650c89040d76144
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
         checksum/checksd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -124,7 +124,7 @@ spec:
           - name: DD_IGNORE_AUTOCONF
             value: "kubernetes_state"
           - name: DD_CONTAINER_LIFECYCLE_ENABLED
-            value: "true"  
+            value: "true"
           - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
             value: "true"
           - name: DD_EXPVAR_PORT
@@ -134,7 +134,9 @@ spec:
           - name: DD_CONTAINER_IMAGE_ENABLED
             value: "true"
           - name: DD_KUBELET_CORE_CHECK_ENABLED
-            value: "true"        
+            value: "true"
+          - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+            value: "%!s(<nil>)/kubelet.sock"        
         volumeMounts:
           - name: logdatadog
             mountPath: /var/log/datadog
@@ -176,6 +178,9 @@ spec:
           - name: passwd
             mountPath: /etc/passwd
             readOnly: true
+          - name: pod-resources-socket
+            mountPath: /var/lib/kubelet/pod-resources
+            readOnly: false
         livenessProbe:
           failureThreshold: 6
           httpGet:
@@ -414,6 +419,9 @@ spec:
       - hostPath:
           path: /var/run
         name: runtimesocketdir
+      - name: pod-resources-socket
+        hostPath:
+          path: /var/lib/kubelet/pod-resources
       tolerations:
       affinity:
         {}

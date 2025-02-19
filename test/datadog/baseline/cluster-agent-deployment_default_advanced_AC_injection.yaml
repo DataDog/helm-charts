@@ -6,7 +6,7 @@ metadata:
   name: datadog-cluster-agent
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.92.0'
+    helm.sh/chart: 'datadog-3.93.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
@@ -36,11 +36,11 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: 39b4e5d3ecbd8dba845965f123fd6d2eeb5c0e129ce704adcc4716d69d6525b7
-        checksum/clusteragent-configmap: 613da76484558bbccd4281e9ea4d2332b65a339753e7b2a9696258c5eac6cd81
-        checksum/api_key: 64a2a53aa8e215c31a67a9669933f78b49df81abd64f62b9a849cb80739e9a0e
+        checksum/clusteragent_token: 7274bbf67ab11d7ae55ca9bfbb50ab1d8dd5d44a5d64abd146926f4c0bc03c6e
+        checksum/clusteragent-configmap: 4c2749b6cd03d5002402731597e5d918afb23116cd10cabec62a589d9400808e
+        checksum/api_key: cf8b847d30293f6346b68e881dfed73cb4e1f24fa4ab3f0270b9b4f509083b32
         checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: cddca7ce66894bbabed3f6c1901bb6921effc6ad8834663debc75f90749af71b
+        checksum/install_info: 9584de3c65614641eedb62188d6dea1298e6cbb2bb464abfe650c89040d76144
     spec:
       serviceAccountName: datadog-cluster-agent
       automountServiceAccountToken: true
