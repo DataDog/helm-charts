@@ -831,6 +831,12 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
+    tls:
+      go:
+        # datadog.serviceMonitoring.tls.go.enabled -- (bool) Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the agent's default.
+        enabled:
+
+
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false

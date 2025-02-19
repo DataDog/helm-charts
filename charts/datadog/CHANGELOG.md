@@ -3,6 +3,7 @@
 ## 3.92.0
 
 * Add multiple Universal Service Monitoring configurations support.
+  * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
 
 ## 3.91.0
 
