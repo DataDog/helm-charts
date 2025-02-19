@@ -1,10 +1,14 @@
 # Datadog changelog
 
-## 3.91.0
+## 3.92.0
 
 * Support adding labels to the Agent service account via `agents.additionalLabels`.
 * Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
 * Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
+
+## 3.91.0
+
+* Add support for GPU monitoring
 
 ## 3.90.5
 
