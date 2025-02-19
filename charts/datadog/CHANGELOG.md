@@ -2,7 +2,7 @@
 
 ## 3.94.0
 
-* Support adding labels to the Agent service account via `agents.additionalLabels`.
+* Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
 * Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
 * Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
 
