@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.93.0
+
+* Revert "Add a mount for the Kubernetes PodResources socket."
+
 ## 3.92.0
 
 * Add a mount for the Kubernetes PodResources socket.
