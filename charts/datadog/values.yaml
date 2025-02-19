@@ -838,6 +838,9 @@ datadog:
       istio:
         # datadog.serviceMonitoring.tls.istio.enabled -- (bool) Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the agent's default.
         enabled:
+      nodejs:
+        # datadog.serviceMonitoring.tls.nodejs.enabled -- (bool) Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the agent's default.
+        enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery

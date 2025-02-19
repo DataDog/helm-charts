@@ -5,6 +5,7 @@
 * Add multiple Universal Service Monitoring configurations support.
   * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
   * `datadog.serviceMonitoring.tls.istio.enabled` to control Istio TLS monitoring.
+  * `datadog.serviceMonitoring.tls.nodejs.enabled` to control Node.js TLS monitoring.
 
 ## 3.91.0
 
