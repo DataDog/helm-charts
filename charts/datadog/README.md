@@ -905,7 +905,7 @@ helm install <RELEASE_NAME> \
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
-| providers.gke.autopilotAllowlists | list | `[]` | Installs Datadog WorkloadAllowlists on GKE Autopilot. If left empty, then all Datadog WorkloadAllowlists will be installed. |
+| providers.gke.autopilotAllowlists | list | `[]` | Specify the Datadog WorkloadAllowlists to be synchronized on GKE Autopilot. If left empty, then the default latest WorkloadAllowlist will be used. To synchronize all available allowlists, set to "[Datadog/datadog/*]". |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
 | providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |

@@ -6,7 +6,7 @@ metadata:
 spec:
   allowlistPaths:
 {{- if not .Values.providers.gke.autopilotAllowlists }}
-  - Datadog/datadog
+  - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.1.yaml
 {{- else }}
 {{ toYaml .Values.providers.gke.autopilotAllowlists | indent 2 }}
 {{- end }}
