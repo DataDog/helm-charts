@@ -512,9 +512,9 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
     # Error Tracking backend
-    errorTracking:
-      # datadog.apm.errorTracking.mode -- Defines mode of operation of Error Tracking for backend services. It can be "disabled", "standalone", or "full".
-      mode: "disabled"
+    errorTrackingStandalone:
+      # datadog.apm.errorTrackingStandalone.enabled -- Enables Error Tracking for backend services.
+      enabled: false
 
     # APM Single Step Instrumentation
     # This feature is in beta. It requires Cluster Agent 7.49+.

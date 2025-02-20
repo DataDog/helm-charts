@@ -114,10 +114,6 @@
     {{- else }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
-    {{- if eq .Values.datadog.apm.errorTracking.mode "standalone" }}
-    - name: DD_CORE_AGENT_ENABLED
-      value: false
-    {{- end }}
     - name: DD_APM_ENABLED
       value: {{ include "should-enable-trace-agent" . | quote }}
     - name: DD_LOGS_ENABLED

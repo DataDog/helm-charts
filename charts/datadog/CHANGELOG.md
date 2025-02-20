@@ -2,7 +2,7 @@
 
 ## 3.91.0
 
-* Add `datadog.apm.errorTracking.mode` setting to set the Error Tracking mode.
+* Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
 
 ## 3.90.4
 
