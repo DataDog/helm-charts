@@ -1,9 +1,19 @@
 # Datadog changelog
 
-## 3.94.0
+## 3.96.0
 
 * Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
   1-gke.1729000 or later. 
+
+## 3.95.0
+
+* Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
+
+## 3.94.0
+
+* Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
 
 ## 3.93.0
 
