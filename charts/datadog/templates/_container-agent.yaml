@@ -2,6 +2,10 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   command: ["agent", "run"]
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan)))) | indent 2 }}
   resources:

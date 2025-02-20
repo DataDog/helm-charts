@@ -523,6 +523,9 @@ spec:
 {{- if .Values.clusterAgent.volumes }}
 {{ toYaml .Values.clusterAgent.volumes | indent 8 }}
 {{- end }}
+      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
+      {{- end }}
       {{- if .Values.clusterAgent.tolerations }}
       tolerations:
 {{ toYaml .Values.clusterAgent.tolerations | indent 8 }}
