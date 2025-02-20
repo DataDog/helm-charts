@@ -1,8 +1,30 @@
 # Datadog changelog
 
-## 3.91.0
+## 3.95.0
 
 * Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
+
+## 3.94.0
+
+* Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
+
+## 3.93.0
+
+* Revert "Add a mount for the Kubernetes PodResources socket."
+
+## 3.92.0
+
+* Add a mount for the Kubernetes PodResources socket.
+
+## 3.91.0
+
+* Add support for GPU monitoring
+
+## 3.90.5
+
+* Update `fips.image.tag` to `1.1.7` updating openSSL version to 3.0.16
 
 ## 3.90.4
 
