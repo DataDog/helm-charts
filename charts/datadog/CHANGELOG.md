@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.95.0
+
+* Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
+
 ## 3.94.0
 
 * Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
