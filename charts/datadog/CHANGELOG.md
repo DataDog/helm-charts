@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.92.0
+## 3.95.0
 
 * Add multiple Universal Service Monitoring configurations support.
   * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
@@ -9,6 +9,20 @@
   * `datadog.serviceMonitoring.tls.native.enabled` to control native (openssl, libssl, gnutls) TLS monitoring.
   * `datadog.serviceMonitoring.httpMonitoringEnabled` to control HTTP monitoring.
   * `datadog.serviceMonitoring.http2MonitoringEnabled` to control HTTP/2 & gRPC monitoring.
+
+## 3.94.0
+
+* Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
+
+## 3.93.0
+
+* Revert "Add a mount for the Kubernetes PodResources socket."
+
+## 3.92.0
+
+* Add a mount for the Kubernetes PodResources socket.
 
 ## 3.91.0
 
