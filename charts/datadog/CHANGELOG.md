@@ -1,5 +1,15 @@
 # Datadog changelog
 
+## 3.95.0
+
+* Add multiple Universal Service Monitoring configurations support.
+  * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
+  * `datadog.serviceMonitoring.tls.istio.enabled` to control Istio TLS monitoring.
+  * `datadog.serviceMonitoring.tls.nodejs.enabled` to control Node.js TLS monitoring.
+  * `datadog.serviceMonitoring.tls.native.enabled` to control native (openssl, libssl, gnutls) TLS monitoring.
+  * `datadog.serviceMonitoring.httpMonitoringEnabled` to control HTTP monitoring.
+  * `datadog.serviceMonitoring.http2MonitoringEnabled` to control HTTP/2 & gRPC monitoring.
+
 ## 3.94.0
 
 * Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
