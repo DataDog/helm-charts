@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.95.0
+
+* Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
+
 ## 3.94.0
 
 * Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
