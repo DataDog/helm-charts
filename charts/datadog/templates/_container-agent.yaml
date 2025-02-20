@@ -175,6 +175,9 @@
     {{- if eq (include "should-enable-container-image-collection" .) "true" }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: "true"
+    {{- else }}
+    - name: DD_CONTAINER_IMAGE_ENABLED
+      value: "false"    
     {{- end }}
     {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     - name: DD_SBOM_ENABLED
