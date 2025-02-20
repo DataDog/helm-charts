@@ -2062,13 +2062,13 @@ agents:
     forceLocalServiceEnabled: false
   
   # agents.lifecycle -- Configure the lifecycle of the Agent
-  # lifecycle:
-  #   preStop:
-  #     exec:
-  #       command: ["/bin/sh", "-c", "sleep 70"]
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
 
-  # agents.terminationGracePeriodSeconds -- Configure the termination grace period for the Agent
-  # terminationGracePeriodSeconds: 70
+  # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
+  terminationGracePeriodSeconds: # 70
 
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
