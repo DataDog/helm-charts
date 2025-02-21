@@ -1,4 +1,4 @@
-{{- if and .Values.providers.gke.autopilot (not .Values.datadog.envDict.DD_CI)}}
+{{- if and .Values.providers.gke.autopilot (not (eq .Values.datadog.envDict.DD_CI true))}}
 apiVersion: auto.gke.io/v1
 kind: AllowlistSynchronizer
 metadata:

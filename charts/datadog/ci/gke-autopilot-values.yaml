@@ -5,7 +5,7 @@ providers:
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
-  env:
+  envDict:
     DD_CI: true
 
   logs:
