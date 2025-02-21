@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.96.0
+
+* Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
+  1-gke.1729000 or later. 
+
 ## 3.95.0
 
 * Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
