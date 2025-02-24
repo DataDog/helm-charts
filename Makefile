@@ -49,7 +49,7 @@ unit-test:
 	go test -C test ./... -count=1
 
 .PHONY: unit-test-datadog
-unit-test-operator:
+unit-test-datadog:
 	go test -C test ./datadog -count=1
 
 .PHONY: unit-test-operator
