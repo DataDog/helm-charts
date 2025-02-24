@@ -79,6 +79,14 @@ func verifyDaemonsetAutopilotMinimal(t *testing.T, manifest string) {
 		}
 	}
 
+	volumeNames := common.GetVolumeNames(ds)
+	for _, container := range ds.Spec.Template.Spec.Containers {
+		for _, volumeMount := range container.VolumeMounts {
+			assert.True(t, common.Contains(volumeMount.Name, volumeNames),
+				fmt.Sprintf("Found unexpected volumeMount `%s` in container `%s`", volumeMount.Name, container.Name))
+		}
+	}
+
 	validPorts := true
 	for _, container := range ds.Spec.Template.Spec.Containers {
 		if container.Ports != nil {
