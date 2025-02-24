@@ -2344,12 +2344,6 @@ providers:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
     autopilot: false
 
-    # providers.gke.autopilotAllowlists -- Specify the Datadog WorkloadAllowlists to be synchronized on GKE Autopilot.
-    # If left empty, then the default latest WorkloadAllowlist will be used. To synchronize all available allowlists,
-    # set to "[Datadog/datadog/*]".
-    autopilotAllowlists: []
-    #  - Datadog/datadog/*
-
     # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
     cos: false
 
