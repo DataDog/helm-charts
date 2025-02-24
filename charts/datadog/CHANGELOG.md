@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.96.0
+
+* Upgrade default Agent version to `7.63.0`.
+
 ## 3.95.0
 
 * Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
