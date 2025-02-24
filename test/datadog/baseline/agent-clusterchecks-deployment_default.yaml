@@ -6,13 +6,13 @@ metadata:
   name: datadog-clusterchecks
   namespace: datadog-agent
   labels:
-    helm.sh/chart: 'datadog-3.91.0'
+    helm.sh/chart: 'datadog-3.94.0'
     app.kubernetes.io/name: "datadog"
     app.kubernetes.io/instance: "datadog"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: clusterchecks-agent
-    
+
 spec:
   replicas: 2
   revisionHistoryLimit: 10
@@ -33,11 +33,11 @@ spec:
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-clusterchecks
-        
+
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: ace9da5834c970ccbe64e4c1d26e90d04508cad05f1b0198e37b6aef958b9712
-        checksum/install_info: d99057d2f27261db48a091cf5b114431385f7e656a0b4575b81b9ade7b02583d
+        checksum/clusteragent_token: d9b3af416ecff4819b57dfe0c64429d869712b3b36f947eb85b9311a05d79192
+        checksum/install_info: f22e5b8c2c7eff515e831f89ce1cba51ae3b2b4280f08c7dbacca373c3ac097f
     spec:
       serviceAccountName: datadog-cluster-checks
       automountServiceAccountToken: true
@@ -45,7 +45,7 @@ spec:
         []
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/agent:7.62.0"
+        image: "gcr.io/datadoghq/agent:7.63.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -57,7 +57,7 @@ spec:
         resources:
           {}
       - name: init-config
-        image: "gcr.io/datadoghq/agent:7.62.0"
+        image: "gcr.io/datadoghq/agent:7.63.0"
         imagePullPolicy: IfNotPresent
         command: ["bash", "-c"]
         args:
@@ -70,13 +70,13 @@ spec:
           {}
       containers:
       - name: agent
-        image: "gcr.io/datadoghq/agent:7.62.0"
+        image: "gcr.io/datadoghq/agent:7.63.0"
         command: ["bash", "-c"]
         args:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
-          
+
           - name: KUBERNETES
             value: "yes"
           - name: DD_API_KEY
@@ -129,8 +129,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-          
-                              
+
+
         resources:
           {}
         volumeMounts:

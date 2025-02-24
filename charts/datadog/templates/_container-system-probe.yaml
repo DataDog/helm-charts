@@ -21,7 +21,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if .Values.datadog.serviceMonitoring.enabled }}
+    {{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
@@ -72,14 +72,14 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled }}
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
-    {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
+  {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
@@ -96,11 +96,15 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if .Values.datadog.serviceMonitoring.enabled }}
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- end }}
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
 {{- end }}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules

@@ -27,6 +27,8 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+## If you are on GKE Autopilot, you must use a gcr.io variant registry.
+
 registry:  # gcr.io/datadoghq
 
 datadog:
@@ -833,6 +835,17 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+  gpuMonitoring:
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    enabled: false
+
+    # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
+    configureCgroupPerms: false
+
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    runtimeClassName: "nvidia"
+
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:
@@ -1029,7 +1042,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.62.0
+    tag: 7.63.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1096,6 +1109,9 @@ clusterAgent:
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # clusterAgent.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterAgent.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # clusterAgent.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true
     automountServiceAccountToken: true
@@ -1507,7 +1523,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.6
+    tag: 1.1.7
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1550,7 +1566,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.62.0
+    tag: 7.63.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1593,6 +1609,9 @@ agents:
 
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # agents.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if agents.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # agents.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true
     automountServiceAccountToken: true
@@ -2056,7 +2075,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.62.0
+    tag: 7.63.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2093,6 +2112,10 @@ clusterChecksRunner:
 
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
+
+    # clusterChecksRunner.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
+    serviceAccountAdditionalLabels: {}
+
 
     # clusterChecksRunner.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true
     automountServiceAccountToken: true
