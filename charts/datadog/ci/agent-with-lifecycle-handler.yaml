@@ -1,0 +1,7 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+agents:
+  enabled: true
+  lifecycle:
+    sleep:
+      seconds: 70

@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.97.0
+
+* Support a lifecycle handler for the agent via `agents.lifecycle`.
+* Support a termination grace period for the agent via `agents.terminationGracePeriodSeconds`.
+
 ## 3.96.0
 
 * Upgrade default Agent version to `7.63.0`.
