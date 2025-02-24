@@ -247,6 +247,9 @@
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
@@ -355,9 +358,6 @@
     - name: kubelet-cert-volume
       mountPath: /certs
     {{- end }}
-    - name: pod-resources-socket
-      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
-      readOnly: false
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}

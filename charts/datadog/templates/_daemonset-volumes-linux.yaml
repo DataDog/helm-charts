@@ -17,6 +17,9 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
+- name: pod-resources-socket
+  hostPath:
+    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
 {{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
@@ -219,9 +222,6 @@
     secretName: datadog-kubelet-cert
   name: kubelet-cert-volume
 {{- end }}
-- name: pod-resources-socket
-  hostPath:
-    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
 {{- if .Values.datadog.gpuMonitoring.enabled }}
 - name: gpu-devices
   hostPath:
