@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: clusterchecks-agent
-
+    
 spec:
   replicas: 2
   revisionHistoryLimit: 10
@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-clusterchecks
-
+        
       name: datadog-clusterchecks
       annotations:
         checksum/clusteragent_token: d9b3af416ecff4819b57dfe0c64429d869712b3b36f947eb85b9311a05d79192
@@ -76,7 +76,7 @@ spec:
           - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: IfNotPresent
         env:
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_API_KEY
@@ -129,8 +129,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-
-
+          
+                              
         resources:
           {}
         volumeMounts:

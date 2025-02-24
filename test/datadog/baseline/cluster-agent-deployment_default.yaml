@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/version: "7"
     app.kubernetes.io/component: cluster-agent
-
+    
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-cluster-agent
-
+        
       name: datadog-cluster-agent
       annotations:
         checksum/clusteragent_token: 771d105929d3021acd21a2f768baaf4bbe522635b4a4184bc0e995f59685b55d
@@ -90,7 +90,7 @@ spec:
                 name: "datadog"
                 key: api-key
                 optional: true
-
+          
           - name: KUBERNETES
             value: "yes"
           - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -119,8 +119,8 @@ spec:
             value: "8000"
           - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
             value: "gcr.io/datadoghq"
-
-
+          
+          
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -183,7 +183,7 @@ spec:
               configMapKeyRef:
                 name: datadog-kpi-telemetry-configmap
                 key: install_type
-
+                              
         livenessProbe:
           failureThreshold: 6
           httpGet:
