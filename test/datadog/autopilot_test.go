@@ -56,20 +56,20 @@ func verifyDaemonsetAutopilotMinimal(t *testing.T, manifest string) {
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
 	agentContainer := &corev1.Container{}
-	traceAgentContainer := &corev1.Container{}
+	processAgentContainer := &corev1.Container{}
 
 	assert.Equal(t, 2, len(ds.Spec.Template.Spec.Containers))
 
 	for _, container := range ds.Spec.Template.Spec.Containers {
 		if container.Name == "agent" {
 			agentContainer = &container
-		} else if container.Name == "trace-agent" {
-			traceAgentContainer = &container
+		} else if container.Name == "process-agent" {
+			processAgentContainer = &container
 		}
 	}
 
 	assert.NotNil(t, agentContainer)
-	assert.NotNil(t, traceAgentContainer)
+	assert.NotNil(t, processAgentContainer)
 
 	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
