@@ -49,6 +49,30 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
+Check if target cluster is running GKE Autopilot.
+*/}}
+{{- define "is-autopilot" -}}
+{{- $node := index (lookup "v1" "Node" "" "").items 0 }}
+{{- if hasPrefix "gk3" $node.metadata.name -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if target cluster supports GKE Autopilot WorkloadAllowlists.
+*/}}
+{{- define "gke-autopilot-workloadallowlists-enabled" -}}
+{{- $node := index (lookup "v1" "Node" "" "").items 0 }}
+{{- if and (eq (include "is-autopilot" .) "true") (semverCompare ">=v1.32.1-gke.1729000" $node.status.nodeInfo.kubeletVersion) -}}
+true
+{{- else -}}
+false
+{{- end }}
+{{- end }}
+
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
