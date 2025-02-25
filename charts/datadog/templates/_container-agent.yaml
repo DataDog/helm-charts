@@ -243,12 +243,14 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
+    {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false
-    - name: pod-resources-socket
-      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
