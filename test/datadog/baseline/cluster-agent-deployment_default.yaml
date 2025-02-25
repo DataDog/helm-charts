@@ -46,7 +46,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
       - name: init-volume
-        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.63.0"
         imagePullPolicy: IfNotPresent
         command:
           - cp
@@ -59,7 +59,7 @@ spec:
             mountPath: /opt/datadog-agent
       containers:
       - name: cluster-agent
-        image: "gcr.io/datadoghq/cluster-agent:7.62.0"
+        image: "gcr.io/datadoghq/cluster-agent:7.63.0"
         imagePullPolicy: IfNotPresent
         resources:
           {}

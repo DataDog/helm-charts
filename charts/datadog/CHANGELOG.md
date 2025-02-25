@@ -1,9 +1,13 @@
 # Datadog changelog
 
-## 3.96.0
+## 3.97.0
 
 * Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
   1-gke.1729000 or later. 
+
+## 3.96.0
+
+* Upgrade default Agent version to `7.63.0`.
 
 ## 3.95.0
 
