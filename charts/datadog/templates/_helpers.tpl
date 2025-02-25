@@ -53,9 +53,14 @@ false
 Check if target cluster is running GKE Autopilot.
 */}}
 {{- define "is-autopilot" -}}
-{{- $node := index (lookup "v1" "Node" "" "").items 0 }}
+{{- $nodes := (lookup "v1" "Node" "" "").items }}
+{{- if and $nodes (gt (len $nodes) 0) -}}
+{{- $node := index $nodes 0 -}}
 {{- if hasPrefix "gk3" $node.metadata.name -}}
 true
+{{- else -}}
+false
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
@@ -65,9 +70,14 @@ false
 Check if target cluster supports GKE Autopilot WorkloadAllowlists.
 */}}
 {{- define "gke-autopilot-workloadallowlists-enabled" -}}
-{{- $node := index (lookup "v1" "Node" "" "").items 0 }}
+{{- $nodes := (lookup "v1" "Node" "" "").items }}
+{{- if and $nodes (gt (len $nodes) 0) -}}
+{{- $node := index $nodes 0 -}}
 {{- if and (eq (include "is-autopilot" .) "true") (semverCompare ">=v1.32.1-gke.1729000" $node.status.nodeInfo.kubeletVersion) -}}
 true
+{{- else -}}
+false
+{{- end }}
 {{- else -}}
 false
 {{- end }}
