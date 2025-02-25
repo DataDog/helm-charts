@@ -165,7 +165,7 @@
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
-      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}  
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
@@ -205,6 +205,8 @@
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
     {{- end }}
+    - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+      value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocket | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
@@ -241,6 +243,11 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
+    {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}

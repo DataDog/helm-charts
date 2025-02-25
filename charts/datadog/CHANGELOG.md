@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.97.0
+
+* Add a mount for the Kubernetes PodResources socket.
+
 ## 3.96.0
 
 * Upgrade default Agent version to `7.63.0`.
