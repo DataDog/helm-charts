@@ -2,7 +2,7 @@
 
 ## 3.97.0
 
-* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1376000 or later).
+* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1729000 or later).
 
 ## 3.96.0
 
