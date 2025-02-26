@@ -1,9 +1,13 @@
 # Datadog changelog
 
-## 3.97.0
+## 3.98.0
 
 * Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
   1-gke.1729000 or later. 
+
+## 3.97.0
+
+* Update apm.instrumentation documentation from beta to preview. 
 
 ## 3.96.0
 
