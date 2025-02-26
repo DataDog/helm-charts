@@ -1,78 +1,55 @@
----
-# Source: datadog/templates/cluster-agent-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app.kubernetes.io/component: cluster-agent
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+    helm.sh/chart: datadog-3.98.1
   name: datadog-cluster-agent
   namespace: datadog-agent
-  labels:
-    helm.sh/chart: "datadog-3.98.1"
-    app.kubernetes.io/name: "datadog"
-    app.kubernetes.io/instance: "datadog"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/version: "7"
-    app.kubernetes.io/component: cluster-agent
-
 spec:
   replicas: 1
   revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: datadog-cluster-agent
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
     type: RollingUpdate
-  selector:
-    matchLabels:
-      app: datadog-cluster-agent
   template:
     metadata:
+      annotations:
+        checksum/api_key: b9ca61ea0157739747185859ecd177e8bd37d7614c90db55d68a3eeb7a23061e
+        checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/clusteragent-configmap: 78ab32266531527cc470ed026dbb918f2d545a1744a8e0c78b63cedd3fab3d46
+        checksum/clusteragent_token: 96e9e09ad2f5522df113058aa00bcce374e9676aab9eb164fb3cf1d9b4d65a14
+        checksum/install_info: 294ab445dd224b5cc1663ee0737da0a03d9e2d995bc77fd2d21fb358fe1b2eed
       labels:
-        app.kubernetes.io/name: "datadog"
-        app.kubernetes.io/instance: "datadog"
-        app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-cluster-agent
-
+        app.kubernetes.io/component: cluster-agent
+        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: datadog
       name: datadog-cluster-agent
-      annotations:
-        checksum/clusteragent_token: 576e732a32a1d08d77384a65ed64027db154c2a6254a456a75948b7de4278242
-        checksum/clusteragent-configmap: 23aba2cccbdf1563326d25166e91751298fdd7d6d2d545db2c9402170d19a8a8
-        checksum/api_key: 0ad0c720629ae13ef081208d24bd515121f08686f472fd690fdce6e482fd6be9
-        checksum/application_key: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/install_info: 5dc2ee139450be3da942ecdcd059c0481d4422714c642d6592cba7c2779ee0f4
     spec:
-      serviceAccountName: datadog-cluster-agent
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: datadog-cluster-agent
+                topologyKey: kubernetes.io/hostname
+              weight: 50
       automountServiceAccountToken: true
-      initContainers:
-        - name: init-volume
-          image: "gcr.io/datadoghq/cluster-agent:7.63.0"
-          imagePullPolicy: IfNotPresent
-          command:
-            - cp
-            - -r
-          args:
-            - /etc/datadog-agent
-            - /opt
-          volumeMounts:
-            - name: config
-              mountPath: /opt/datadog-agent
       containers:
-        - name: cluster-agent
-          image: "gcr.io/datadoghq/cluster-agent:7.63.0"
-          imagePullPolicy: IfNotPresent
-          resources: {}
-          ports:
-            - containerPort: 5005
-              name: agentport
-              protocol: TCP
-            - containerPort: 5000
-              name: agentmetrics
-              protocol: TCP
-            - containerPort: 8000
-              name: datadog-webhook
-              protocol: TCP
-          env:
+        - env:
             - name: DD_POD_NAME
               valueFrom:
                 fieldRef:
@@ -86,10 +63,9 @@ spec:
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: "datadog"
                   key: api-key
+                  name: datadog
                   optional: true
-
             - name: KUBERNETES
               value: "yes"
             - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -103,7 +79,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
-              value: "datadog-webhook"
+              value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
               value: "false"
             - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
@@ -113,12 +89,11 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
               value: datadog
             - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
-              value: "Ignore"
+              value: Ignore
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: "gcr.io/datadoghq"
-
+              value: gcr.io/datadoghq
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
@@ -134,15 +109,15 @@ spec:
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
-              value: "kube_endpoints kube_services"
+              value: kube_endpoints kube_services
             - name: DD_EXTRA_LISTENERS
-              value: "kube_endpoints kube_services"
+              value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: "INFO"
+              value: INFO
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
-              value: "configmap"
+              value: configmap
             - name: DD_LEADER_LEASE_NAME
               value: datadog-leader-election
             - name: DD_CLUSTER_AGENT_TOKEN_NAME
@@ -158,14 +133,14 @@ spec:
             - name: DD_CLUSTER_AGENT_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: datadog-cluster-agent
                   key: token
+                  name: datadog-cluster-agent
             - name: DD_CLUSTER_AGENT_COLLECT_KUBERNETES_TAGS
               value: "false"
             - name: DD_KUBE_RESOURCES_NAMESPACE
               value: datadog-agent
             - name: CHART_RELEASE_NAME
-              value: "datadog"
+              value: datadog
             - name: AGENT_DAEMONSET
               value: datadog
             - name: CLUSTER_AGENT_DEPLOYMENT
@@ -179,19 +154,20 @@ spec:
             - name: DD_INSTRUMENTATION_INSTALL_TIME
               valueFrom:
                 configMapKeyRef:
-                  name: datadog-kpi-telemetry-configmap
                   key: install_time
+                  name: datadog-kpi-telemetry-configmap
             - name: DD_INSTRUMENTATION_INSTALL_ID
               valueFrom:
                 configMapKeyRef:
-                  name: datadog-kpi-telemetry-configmap
                   key: install_id
+                  name: datadog-kpi-telemetry-configmap
             - name: DD_INSTRUMENTATION_INSTALL_TYPE
               valueFrom:
                 configMapKeyRef:
-                  name: datadog-kpi-telemetry-configmap
                   key: install_type
-
+                  name: datadog-kpi-telemetry-configmap
+          image: gcr.io/datadoghq/cluster-agent:7.63.0
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
             httpGet:
@@ -202,6 +178,17 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
+          name: cluster-agent
+          ports:
+            - containerPort: 5005
+              name: agentport
+              protocol: TCP
+            - containerPort: 5000
+              name: agentmetrics
+              protocol: TCP
+            - containerPort: 8000
+              name: datadog-webhook
+              protocol: TCP
           readinessProbe:
             failureThreshold: 6
             httpGet:
@@ -212,6 +199,10 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -222,58 +213,59 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           volumeMounts:
-            - name: datadogrun
-              mountPath: /opt/datadog-agent/run
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
               readOnly: false
-            - name: varlog
-              mountPath: /var/log/datadog
+            - mountPath: /var/log/datadog
+              name: varlog
               readOnly: false
-            - name: tmpdir
-              mountPath: /tmp
+            - mountPath: /tmp
+              name: tmpdir
               readOnly: false
-            - name: installinfo
+            - mountPath: /etc/datadog-agent/install_info
+              name: installinfo
+              readOnly: true
               subPath: install_info
-              mountPath: /etc/datadog-agent/install_info
+            - mountPath: /conf.d
+              name: confd
               readOnly: true
-            - name: confd
-              mountPath: /conf.d
-              readOnly: true
-            - name: config
-              mountPath: /etc/datadog-agent
+            - mountPath: /etc/datadog-agent
+              name: config
+      initContainers:
+        - args:
+            - /etc/datadog-agent
+            - /opt
+          command:
+            - cp
+            - -r
+          image: gcr.io/datadoghq/cluster-agent:7.63.0
+          imagePullPolicy: IfNotPresent
+          name: init-volume
+          volumeMounts:
+            - mountPath: /opt/datadog-agent
+              name: config
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: datadog-cluster-agent
       volumes:
-        - name: datadogrun
-          emptyDir: {}
-        - name: varlog
-          emptyDir: {}
-        - name: tmpdir
-          emptyDir: {}
-        - name: installinfo
-          configMap:
+        - emptyDir: {}
+          name: datadogrun
+        - emptyDir: {}
+          name: varlog
+        - emptyDir: {}
+          name: tmpdir
+        - configMap:
             name: datadog-installinfo
-        - name: confd
-          configMap:
-            name: datadog-cluster-agent-confd
+          name: installinfo
+        - configMap:
             items:
               - key: kubernetes_state_core.yaml.default
                 path: kubernetes_state_core.yaml.default
               - key: kubernetes_apiserver.yaml
                 path: kubernetes_apiserver.yaml
-        - name: config
-          emptyDir: {}
-      affinity:
-        # Prefer scheduling the cluster agents on different nodes
-        # to guarantee that the standby instance can immediately take the lead from a leader running of a faulty node.
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 50
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: datadog-cluster-agent
-                topologyKey: kubernetes.io/hostname
-      nodeSelector:
-        kubernetes.io/os: linux
+            name: datadog-cluster-agent-confd
+          name: confd
+        - emptyDir: {}
+          name: config
+---

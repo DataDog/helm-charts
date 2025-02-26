@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"strings"
 	"testing"
@@ -11,9 +12,10 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/yaml"
+	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
 
 func Test_baseline_manifests(t *testing.T) {
@@ -149,12 +151,30 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/gdc_daemonset_logs_collection.yaml",
 			assertions:           verifyDaemonset,
 		},
+		{
+			// All resources needs to be handled separately due to multiple yaml manifests
+			name: "datadog default all resources",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+				},
+			},
+			baselineManifestPath: "./baseline/default_all.yaml",
+			assertions:           verifyDaemonset,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
+
+			manifest = processManifest(t, manifest)
+
 			t.Log("update baselines", common.UpdateBaselines)
 			if common.UpdateBaselines {
 				common.WriteToFile(t, tt.baselineManifestPath, manifest)
@@ -162,6 +182,37 @@ func Test_baseline_manifests(t *testing.T) {
 			tt.assertions(t, tt.baselineManifestPath, manifest)
 		})
 	}
+}
+func processManifest(t *testing.T, manifest string) string {
+	reader := strings.NewReader(manifest)
+	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
+	builder := strings.Builder{}
+	for {
+		var obj map[string]interface{}
+		// We read the next YAML document from the input stream until we reach EOF.
+		// This is needed if Helm rendering contains multiple resource manifests.
+		err := decoder.Decode(&obj)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Error(err, "couldn't decode manifest for filtering dynamic keys")
+		}
+
+		var buf bytes.Buffer
+		enc := yaml.NewEncoder(&buf)
+		enc.SetIndent(2) // Adjust indentation (default is 4)
+		enc.Encode(obj)
+		enc.Close()
+		output := buf.String()
+
+		if err != nil {
+			t.Error(err, "couldn't marshal manifest")
+		}
+		builder.WriteString(output)
+		builder.WriteString("---\n")
+	}
+	return builder.String()
 }
 
 func verifyDaemonset(t *testing.T, baselineManifestPath, manifest string) {
@@ -194,9 +245,9 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 	baselineManifest := common.ReadFile(t, baselineManifestPath)
 
 	rB := bufio.NewReader(strings.NewReader(baselineManifest))
-	baselineReader := yaml.NewYAMLReader(rB)
+	baselineReader := yaml2.NewYAMLReader(rB)
 	rA := bufio.NewReader(strings.NewReader(actual))
-	expectedReader := yaml.NewYAMLReader(rA)
+	expectedReader := yaml2.NewYAMLReader(rA)
 
 	for {
 		baselineResource, errB := baselineReader.Read()
