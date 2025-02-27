@@ -11,10 +11,34 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/yaml"
+	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
+
+var FilterKeys = map[string]interface{}{
+	"helm.sh/chart":                   nil,
+	"checksum/clusteragent_token":     nil,
+	"checksum/clusteragent-configmap": nil,
+	"checksum/install_info":           nil,
+	"checksum":                        nil,
+	"checksum/autoconf-config":        nil,
+	"checksum/checksd-config":         nil,
+	"checksum/confd-config":           nil,
+	"checksum/api_key":                nil,
+	"checksum/application_key":        nil,
+	// ServiceAccount
+	"chart": nil,
+	// ConfigMap
+	"install_id":   nil,
+	"install_time": nil,
+	// Secret
+	"token": nil,
+	// install info CM, it contains chart version
+	// TODO: we are dropping everything; instead could we have a mapper/function for these keys or separate for coverage.
+	"install_info": nil,
+}
 
 func Test_baseline_manifests(t *testing.T) {
 	tests := []struct {
@@ -149,12 +173,33 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/gdc_daemonset_logs_collection.yaml",
 			assertions:           verifyDaemonset,
 		},
+		{
+			// All resources needs to be handled separately due to multiple yaml manifests
+			name: "datadog default all resources",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+				},
+			},
+			baselineManifestPath: "./baseline/default_all.yaml",
+			assertions:           verifyUntypedResources,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
+
+			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
+			if err != nil {
+				t.Fatalf("couldn't filter yaml keys: %v", err)
+			}
+
 			t.Log("update baselines", common.UpdateBaselines)
 			if common.UpdateBaselines {
 				common.WriteToFile(t, tt.baselineManifestPath, manifest)
@@ -194,9 +239,9 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 	baselineManifest := common.ReadFile(t, baselineManifestPath)
 
 	rB := bufio.NewReader(strings.NewReader(baselineManifest))
-	baselineReader := yaml.NewYAMLReader(rB)
+	baselineReader := yaml2.NewYAMLReader(rB)
 	rA := bufio.NewReader(strings.NewReader(actual))
-	expectedReader := yaml.NewYAMLReader(rA)
+	expectedReader := yaml2.NewYAMLReader(rA)
 
 	for {
 		baselineResource, errB := baselineReader.Read()
