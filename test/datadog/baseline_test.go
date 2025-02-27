@@ -2,7 +2,6 @@ package datadog
 
 import (
 	"bufio"
-	"bytes"
 	"io"
 	"strings"
 	"testing"
@@ -17,6 +16,29 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
+
+var FilterKeys = map[string]interface{}{
+	"helm.sh/chart":                   nil,
+	"checksum/clusteragent_token":     nil,
+	"checksum/clusteragent-configmap": nil,
+	"checksum/install_info":           nil,
+	"checksum":                        nil,
+	"checksum/autoconf-config":        nil,
+	"checksum/checksd-config":         nil,
+	"checksum/confd-config":           nil,
+	"checksum/api_key":                nil,
+	"checksum/application_key":        nil,
+	// ServiceAccount
+	"chart": nil,
+	// ConfigMap
+	"install_id":   nil,
+	"install_time": nil,
+	// Secret
+	"token": nil,
+	// install info CM, it contains chart version
+	// TODO: we are dropping everything; instead could we have a mapper/function for these keys or separate for coverage.
+	"install_info": nil,
+}
 
 func Test_baseline_manifests(t *testing.T) {
 	tests := []struct {
@@ -164,7 +186,7 @@ func Test_baseline_manifests(t *testing.T) {
 				},
 			},
 			baselineManifestPath: "./baseline/default_all.yaml",
-			assertions:           verifyDaemonset,
+			assertions:           verifyUntypedResources,
 		},
 	}
 
@@ -173,7 +195,10 @@ func Test_baseline_manifests(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
 
-			manifest = processManifest(t, manifest)
+			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
+			if err != nil {
+				t.Fatalf("couldn't filter yaml keys: %v", err)
+			}
 
 			t.Log("update baselines", common.UpdateBaselines)
 			if common.UpdateBaselines {
@@ -182,37 +207,6 @@ func Test_baseline_manifests(t *testing.T) {
 			tt.assertions(t, tt.baselineManifestPath, manifest)
 		})
 	}
-}
-func processManifest(t *testing.T, manifest string) string {
-	reader := strings.NewReader(manifest)
-	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
-	builder := strings.Builder{}
-	for {
-		var obj map[string]interface{}
-		// We read the next YAML document from the input stream until we reach EOF.
-		// This is needed if Helm rendering contains multiple resource manifests.
-		err := decoder.Decode(&obj)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			t.Error(err, "couldn't decode manifest for filtering dynamic keys")
-		}
-
-		var buf bytes.Buffer
-		enc := yaml.NewEncoder(&buf)
-		enc.SetIndent(2) // Adjust indentation (default is 4)
-		enc.Encode(obj)
-		enc.Close()
-		output := buf.String()
-
-		if err != nil {
-			t.Error(err, "couldn't marshal manifest")
-		}
-		builder.WriteString(output)
-		builder.WriteString("---\n")
-	}
-	return builder.String()
 }
 
 func verifyDaemonset(t *testing.T, baselineManifestPath, manifest string) {
