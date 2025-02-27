@@ -1,92 +1,67 @@
----
-# Source: datadog/templates/agent-clusterchecks-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app.kubernetes.io/component: clusterchecks-agent
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog-clusterchecks
   namespace: datadog-agent
-  labels:
-    helm.sh/chart: "datadog-3.98.1"
-    app.kubernetes.io/name: "datadog"
-    app.kubernetes.io/instance: "datadog"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/version: "7"
-    app.kubernetes.io/component: clusterchecks-agent
-
 spec:
   replicas: 2
   revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: datadog-clusterchecks
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
     type: RollingUpdate
-  selector:
-    matchLabels:
-      app: datadog-clusterchecks
   template:
     metadata:
+      annotations: {}
       labels:
-        app.kubernetes.io/name: "datadog"
-        app.kubernetes.io/instance: "datadog"
-        app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: datadog-clusterchecks
-
+        app.kubernetes.io/component: clusterchecks-agent
+        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: datadog
       name: datadog-clusterchecks
-      annotations:
-        checksum/clusteragent_token: ce75393cbdc42f29bc23068e7ebd685d85a9d00f6eab86c9030153d065d7c2bc
-        checksum/install_info: 5dc2ee139450be3da942ecdcd059c0481d4422714c642d6592cba7c2779ee0f4
     spec:
-      serviceAccountName: datadog-cluster-checks
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: datadog-clusterchecks
+                topologyKey: kubernetes.io/hostname
+              weight: 50
       automountServiceAccountToken: true
-      imagePullSecrets: []
-      initContainers:
-        - name: init-volume
-          image: "gcr.io/datadoghq/agent:7.63.0"
-          imagePullPolicy: IfNotPresent
-          command: ["bash", "-c"]
-          args:
-            - cp -r /etc/datadog-agent /opt
-          volumeMounts:
-            - name: config
-              mountPath: /opt/datadog-agent
-              readOnly: false # Need RW for writing agent config files
-          resources: {}
-        - name: init-config
-          image: "gcr.io/datadoghq/agent:7.63.0"
-          imagePullPolicy: IfNotPresent
-          command: ["bash", "-c"]
-          args:
-            - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
-          volumeMounts:
-            - name: config
-              mountPath: /etc/datadog-agent
-              readOnly: false # Need RW for writing datadog.yaml config file
-          resources: {}
       containers:
-        - name: agent
-          image: "gcr.io/datadoghq/agent:7.63.0"
-          command: ["bash", "-c"]
-          args:
+        - args:
             - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
-          imagePullPolicy: IfNotPresent
+          command:
+            - bash
+            - -c
           env:
             - name: KUBERNETES
               value: "yes"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: "datadog-secret"
                   key: api-key
+                  name: datadog-secret
             - name: DD_LOG_LEVEL
-              value: "INFO"
+              value: INFO
             - name: DD_EXTRA_CONFIG_PROVIDERS
-              value: "clusterchecks"
+              value: clusterchecks
             - name: DD_HEALTH_PORT
               value: "5557"
-            # Cluster checks (cluster-agent communication)
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -94,12 +69,10 @@ spec:
             - name: DD_CLUSTER_AGENT_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: datadog-cluster-agent
                   key: token
-            # Safely run alongside the daemonset
+                  name: datadog-cluster-agent
             - name: DD_ENABLE_METADATA_COLLECTION
               value: "false"
-            # Expose CLC stats
             - name: DD_CLC_RUNNER_ENABLED
               value: "true"
             - name: DD_CLC_RUNNER_HOST
@@ -110,7 +83,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            # Remove unused features
             - name: DD_USE_DOGSTATSD
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
@@ -125,16 +97,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-
-          resources: {}
-          volumeMounts:
-            - name: installinfo
-              subPath: install_info
-              mountPath: /etc/datadog-agent/install_info
-              readOnly: true
-            - name: config
-              mountPath: /etc/datadog-agent
-              readOnly: false # Need RW for config path
+          image: gcr.io/datadoghq/agent:7.63.0
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
             httpGet:
@@ -145,6 +109,7 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
+          name: agent
           readinessProbe:
             failureThreshold: 6
             httpGet:
@@ -155,6 +120,7 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
+          resources: {}
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -165,22 +131,49 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
-      volumes:
-        - name: installinfo
-          configMap:
-            name: datadog-installinfo
-        - name: config
-          emptyDir: {}
-      affinity:
-        # Prefer scheduling the runners on different nodes if possible
-        # for better checks stability in case of node failure.
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 50
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: datadog-clusterchecks
-                topologyKey: kubernetes.io/hostname
+          volumeMounts:
+            - mountPath: /etc/datadog-agent/install_info
+              name: installinfo
+              readOnly: true
+              subPath: install_info
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: false
+      imagePullSecrets: []
+      initContainers:
+        - args:
+            - cp -r /etc/datadog-agent /opt
+          command:
+            - bash
+            - -c
+          image: gcr.io/datadoghq/agent:7.63.0
+          imagePullPolicy: IfNotPresent
+          name: init-volume
+          resources: {}
+          volumeMounts:
+            - mountPath: /opt/datadog-agent
+              name: config
+              readOnly: false
+        - args:
+            - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+          command:
+            - bash
+            - -c
+          image: gcr.io/datadoghq/agent:7.63.0
+          imagePullPolicy: IfNotPresent
+          name: init-config
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: false
       nodeSelector:
         kubernetes.io/os: linux
+      serviceAccountName: datadog-cluster-checks
+      volumes:
+        - configMap:
+            name: datadog-installinfo
+          name: installinfo
+        - emptyDir: {}
+          name: config
+---
