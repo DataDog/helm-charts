@@ -372,15 +372,23 @@ false
 
 {{/*
 Return true if the system-probe container should be created.
+The system-probe container should NOT be created if:
+* running GKE GDC
+* running GKE Autopilot without WorkloadAllowlists support (GKE version < 1.32.1-gke.1729000)
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) (and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
+{{- $systemProbeFeature := eq (include "system-probe-feature" .) "true" -}}
+{{- $isLinux := eq .Values.targetSystem "linux" -}}
+{{- $isGdc := .Values.providers.gke.gdc -}}
+{{- $isAutopilot := .Values.providers.gke.autopilot -}}
+{{- $workloadAllowlistsEnabled := eq (include "gke-autopilot-workloadallowlists-enabled" .) "true" -}}
+
+{{- if and (or ($systemProbeFeature) ($isLinux) (not $isGdc) (and $isAutopilot ($workloadAllowlistsEnabled))) (not (and ($isAutopilot) (not $workloadAllowlistsEnabled))) -}}
 true
 {{- else -}}
 false
 {{- end -}}
 {{- end -}}
-
 
 {{/*
 Return true if a security-agent feature is enabled.
@@ -1058,9 +1066,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if .Values.providers.gke.gdc -}}
-    false
-  {{- else if and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
+  {{- if or (.Values.providers.gke.gdc) (and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true"))) -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
