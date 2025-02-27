@@ -3,7 +3,7 @@ datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
   envDict:
-      DD_CI: "true"
+    DD_CI: "true"
 
   logs:
     enabled: true
