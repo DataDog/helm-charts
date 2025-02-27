@@ -1,6 +1,7 @@
 package common
 
 import (
+	appsv1 "k8s.io/api/apps/v1"
 	"os"
 	"path/filepath"
 	"strings"
@@ -98,4 +99,21 @@ func LoadFromFile[T any](t *testing.T, filepath string, destObj *T) string {
 func WriteToFile(t *testing.T, filepath, content string) {
 	err := os.WriteFile(filepath, []byte(content), 0644)
 	require.NoError(t, err, "can't update manifest", "path", filepath)
+}
+
+func GetVolumeNames(ds appsv1.DaemonSet) []string {
+	volumeNames := []string{}
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		volumeNames = append(volumeNames, volume.Name)
+	}
+	return volumeNames
+}
+
+func Contains(str string, list []string) bool {
+	for _, s := range list {
+		if s == str {
+			return true
+		}
+	}
+	return false
 }
