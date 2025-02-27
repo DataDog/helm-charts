@@ -53,11 +53,15 @@ false
 Check if target cluster is running GKE Autopilot.
 */}}
 {{- define "is-autopilot" -}}
+{{- if .Values.providers.gke.autopilot -}}
 {{- $nodes := (lookup "v1" "Node" "" "").items }}
 {{- if and $nodes (gt (len $nodes) 0) -}}
 {{- $node := index $nodes 0 -}}
 {{- if hasPrefix "gk3" $node.metadata.name -}}
 true
+{{- else -}}
+false
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
@@ -374,7 +378,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if or (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) (and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
+{{- if or (and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc)) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
 {{- else -}}
 false
@@ -1058,9 +1062,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if .Values.providers.gke.gdc -}}
-    false
-  {{- else if and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
+  {{- if or (.Values.providers.gke.gdc) (and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true"))) -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
@@ -1101,6 +1103,27 @@ Create RBACs for custom resources
 {{- end -}}
 {{- end -}}
 
+{{/*
+  Returns true if Host path for os-release-file needs to be added to the volumes.
+*/}}
+{{- define "should-add-host-path-for-os-release-file" -}}
+{{- if .Values.providers.gke.gdc -}}
+false
+{{- end }}
+{{- if or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled -}}
+{{- if .Values.providers.gke.autopilot -}}
+{{- if eq (include "gke-autopilot-workloadallowlists-enabled" .) "true" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{/*
   Returns true if Host paths for default OS Release Paths need to be added to the volumes.
