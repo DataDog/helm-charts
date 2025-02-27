@@ -30,7 +30,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: d87f8416a67aadb6f7221683e3309f2d3356caaf9652cd606fa9c047918b1714
+        checksum/clusteragent_token: a2f052af4eea725063df71e64645f5ed73bf66ee21938c7d91d4919e386e7ae8
         checksum/install_info: 68ca3f14d1945b818d420689b5dfee926614455b074afda9b9f75525447a7b61
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -147,9 +147,6 @@ spec:
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
           
-          - name: os-release-file
-            mountPath: /host/etc/os-release
-            readOnly: true
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW to mount to config path
@@ -397,9 +394,6 @@ spec:
       - hostPath:
           path: /sys/fs/cgroup
         name: cgroups
-      - hostPath:
-          path: /etc/os-release
-        name: os-release-file
       - hostPath:
           path: /var/run/datadog/
           type: DirectoryOrCreate

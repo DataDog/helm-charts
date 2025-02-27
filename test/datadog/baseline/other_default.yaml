@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "7"
 type: Opaque
 data:
-  token: "Y0NXWjFSMlZla2RFZklkUTA0UGk4VzBsTjhVVUw5UEM="
+  token: "WFpuT0lHRmxuSENmSW5hT3VNWjZ4c1pJMjRseGFicGs="
 ---
 # Source: datadog/templates/cluster-agent-confd-configmap.yaml
 apiVersion: v1
@@ -193,8 +193,8 @@ metadata:
     app.kubernetes.io/version: "7"
 data:
   install_type: k8s_manual
-  install_id: "5a4c2229-d4e1-40f0-851d-383bb2a59b66"
-  install_time: "1740670836"
+  install_id: "e238284a-b149-4175-b2e4-8e9a9373fbf6"
+  install_time: "1740672297"
 ---
 # Source: datadog/templates/cluster-agent-rbac.yaml
 apiVersion: "rbac.authorization.k8s.io/v1"
@@ -841,7 +841,7 @@ spec:
         
       name: datadog
       annotations:
-        checksum/clusteragent_token: c15424b16400e7e7ee4eaee63ffdbfa55f3a42aa84e3414ad70c2d944e245d63
+        checksum/clusteragent_token: 867c6094ef56b70e6246c380c092b3fb284d60b469890356c79ccfbd3e838469
         checksum/install_info: 68ca3f14d1945b818d420689b5dfee926614455b074afda9b9f75525447a7b61
         checksum/autoconf-config: 74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b
         checksum/confd-config: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
@@ -959,9 +959,6 @@ spec:
             mountPath: /tmp
             readOnly: false # Need RW to write to /tmp directory
           
-          - name: os-release-file
-            mountPath: /host/etc/os-release
-            readOnly: true
           - name: config
             mountPath: /etc/datadog-agent
             readOnly: false # Need RW to mount to config path
@@ -1210,9 +1207,6 @@ spec:
           path: /sys/fs/cgroup
         name: cgroups
       - hostPath:
-          path: /etc/os-release
-        name: os-release-file
-      - hostPath:
           path: /var/run/datadog/
           type: DirectoryOrCreate
         name: dsdsocket
@@ -1275,7 +1269,7 @@ spec:
         
       name: datadog-clusterchecks
       annotations:
-        checksum/clusteragent_token: ff03a752ff662c8d6efca772a3a24850812581ef525d4c5536547b5cc6f62357
+        checksum/clusteragent_token: 79b90ff3997d58cd2f3e2ec1580881a5355138a64830a963f0f976a6cd6de043
         checksum/install_info: 68ca3f14d1945b818d420689b5dfee926614455b074afda9b9f75525447a7b61
     spec:
       serviceAccountName: datadog-cluster-checks
@@ -1467,7 +1461,7 @@ spec:
         
       name: datadog-cluster-agent
       annotations:
-        checksum/clusteragent_token: ce4b829a51fad94438ee0536417dfa1f0a59be13dbf598fe1f96938543d09649
+        checksum/clusteragent_token: 5ec3a0d7b2a0dde25674a39bd62ef89a96ebe43ee1c807166ec947d420c7ac7c
         checksum/clusteragent-configmap: 927fc7661f228ae683936c0a8ef8ed66e1a6f5d05dfe1340bf0fc7b4346c2116
         checksum/install_info: 68ca3f14d1945b818d420689b5dfee926614455b074afda9b9f75525447a7b61
     spec:

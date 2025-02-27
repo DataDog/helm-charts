@@ -374,7 +374,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) -}}
+{{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) (and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1059,6 +1059,8 @@ Create RBACs for custom resources
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
   {{- if .Values.providers.gke.gdc -}}
+    false
+  {{- else if and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
