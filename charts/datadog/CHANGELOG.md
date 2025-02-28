@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.99.0
+
+* Upgrade default Agent version to `7.63.2`.
+
 ## 3.98.1
 
 * Fixes bug that causes `DD_KUBERNETES_ANNOTATIONS_AS_TAGS` env var to be incorrectly set to the merged value of `.Values.datadog.kubernetesResourcesLabelsAsTags` and `.Values.datadog.kubernetesResourcesAnnotationsAsTags`.
