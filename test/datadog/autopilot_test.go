@@ -34,6 +34,7 @@ func Test_autopilotConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
+					"DD_CI":                        "true",
 					"datadog.apiKeyExistingSecret": "datadog-secret",
 					"datadog.appKeyExistingSecret": "datadog-secret",
 					"providers.gke.autopilot":      "true",
