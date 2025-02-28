@@ -516,18 +516,18 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
     # APM Single Step Instrumentation
-    # This feature is in beta. It requires Cluster Agent 7.49+.
+    # This feature is in preview. It requires Cluster Agent 7.49+.
     instrumentation:
-      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (preview).
       enabled: false
 
-      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       enabledNamespaces: []
 
-      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       disabledNamespaces: []
 
-      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
@@ -536,7 +536,7 @@ datadog:
       # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
       # It requires Agent 7.52+ and Cluster Agent 7.52+
       language_detection:
-        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
+        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (preview).
         enabled: true
 
       # This feature is in preview. It requires Cluster Agent 7.57+.
