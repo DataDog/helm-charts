@@ -12,4 +12,4 @@
 - [ ] Documentation has been updated with helm-docs (run: `.github/helm-docs.sh`)
 - [ ] `CHANGELOG.md` has been updated
 - [ ] Variables are documented in the `README.md`
-- [ ] For `datadog` or `datadog-operator` chart or value changes update the test baselines (run: `make update-test-baselines`)
+- [ ] For `datadog` or `datadog-operator` chart or value changes, update the test baselines (run: `make update-test-baselines`)
