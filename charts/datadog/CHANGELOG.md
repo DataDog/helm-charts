@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.100.0
+
+* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1729000 or later).
+
 ## 3.99.0
 
 * Upgrade default Agent version to `7.63.2`.
