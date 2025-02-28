@@ -638,6 +638,13 @@ datadog:
       #     resources: ["pods", "nodes"]
       #     verbs: ["get", "list", "watch"]
 
+    ## Provide OTel Collector logs configuration
+    logs:
+      # datadog.otelCollector.logs.enabled -- Enable logs support in the OTel Collector.
+      # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+      # and pods logs.
+      enabled: false
+
   ## Continuous Profiler configuration
   ##
   ## Continuous Profiler is disabled by default and can be enabled by setting the `enabled` field to
@@ -1883,6 +1890,13 @@ agents:
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+      # agents.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+      volumeMounts: []
+      #   - name: <VOLUME_NAME>
+      #     mountPath: <CONTAINER_PATH>
+      #     readOnly: true
+
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env: []

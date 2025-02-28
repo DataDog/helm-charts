@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.109.0
+
+* Mount  `datadog.otelCollector.logs.enabled` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+* Add support for additional volume mounts in `otel-agent` via `agents.containers.otelAgent.volumeMounts`.
+
 ## 3.108.0
 
 * Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.

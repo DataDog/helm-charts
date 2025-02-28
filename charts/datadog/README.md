@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.108.0](https://img.shields.io/badge/Version-3.108.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.109.0](https://img.shields.io/badge/Version-3.109.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -487,6 +487,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
+| agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -814,6 +815,7 @@ helm install <RELEASE_NAME> \
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
 | datadog.otelCollector.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
+| datadog.otelCollector.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
 | datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc"},{"containerPort":"4318","name":"otel-http"}]` | Ports that OTel Collector is listening |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
