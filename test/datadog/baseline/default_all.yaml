@@ -816,6 +816,8 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
+            - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+              value: /var/lib/kubelet/pod-resources/kubelet.sock
           image: gcr.io/datadoghq/agent:7.63.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -878,6 +880,9 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
+            - mountPath: /var/lib/kubelet/pod-resources
+              name: pod-resources-socket
+              readOnly: false
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
@@ -1076,6 +1081,9 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - hostPath:
+            path: /var/lib/kubelet/pod-resources
+          name: pod-resources-socket
         - hostPath:
             path: /proc
           name: procdir
