@@ -250,6 +250,32 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:           verifyDaemonset,
 		},
 		{
+			name: "USM features Default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.processAgent.enabled":             "true",
+					"datadog.processAgent.processCollection":   "true",
+					"datadog.securityAgent.runtime.fimEnabled": "true",
+					"datadog.networkMonitoring.enabled":        "true",
+					"datadog.systemProbe.enableTCPQueueLength": "true",
+					"datadog.systemProbe.enableOOMKill":        "true",
+					"datadog.systemProbe.debugPort":            "7654",
+					"datadog.serviceMonitoring.enabled":        "false",
+					"datadog.securityAgent.runtime.enabled":    "false",
+					"datadog.discovery.enabled":                "true",
+					"daemonset.useDedicatedContainers":         "true",
+				},
+			},
+			baselineManifestPath: "./baseline/usm_daemonset_default.yaml",
+			assertions:           verifyDaemonset,
+		},
+		{
 			// All resources needs to be handled separately due to multiple yaml manifests
 			name: "datadog default all resources",
 			command: common.HelmCommand{
