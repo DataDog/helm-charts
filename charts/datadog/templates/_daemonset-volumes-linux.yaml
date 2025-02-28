@@ -203,7 +203,7 @@
   name: runtimesocketdir
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
