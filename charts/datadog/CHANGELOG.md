@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.103.0
+
+* Mount  `datadog.otelCollector.logs.enabled` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+* Add support for additional volume mounts in `otel-agent` via `agents.containers.otelAgent.volumeMounts`.
+
 ## 3.102.0
 
 * Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
