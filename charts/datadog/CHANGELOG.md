@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.98.2
+
+* Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled, as it might be needed if the NVIDIA device plugin does not have `accept-nvidia-visible-devices-as-volume-mount` enabled.
+
 ## 3.98.1
 
 * Fixes bug that causes `DD_KUBERNETES_ANNOTATIONS_AS_TAGS` env var to be incorrectly set to the merged value of `.Values.datadog.kubernetesResourcesLabelsAsTags` and `.Values.datadog.kubernetesResourcesAnnotationsAsTags`.

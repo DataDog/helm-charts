@@ -25,6 +25,11 @@
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
+    {{- if .Values.datadog.gpuMonitoring.enabled }}
+     # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
