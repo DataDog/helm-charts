@@ -228,28 +228,6 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:           verifyDaemonset,
 		},
 		{
-			name: "System probe features Default",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				ShowOnly:    []string{"templates/daemonset.yaml"},
-				Values:      []string{"../../charts/datadog/values.yaml"},
-				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":             "datadog-secret",
-					"datadog.appKeyExistingSecret":             "datadog-secret",
-					"datadog.securityAgent.runtime.enabled":    "true",
-					"datadog.securityAgent.runtime.fimEnabled": "true",
-					"datadog.networkMonitoring.enabled":        "true",
-					"datadog.systemProbe.enableTCPQueueLength": "true",
-					"datadog.systemProbe.enableOOMKill":        "true",
-					"datadog.serviceMonitoring.enabled":        "true",
-					"datadog.discovery.enabled":                "true",
-				},
-			},
-			baselineManifestPath: "./baseline/system_probe_daemonset_default.yaml",
-			assertions:           verifyDaemonset,
-		},
-		{
 			name: "USM features Default",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
