@@ -205,8 +205,10 @@
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
     {{- end }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
     - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
-      value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocket | quote }}
+      value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocketDir | quote }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
