@@ -831,7 +831,7 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
-    # datadog.serviceMonitoring.httpMonitoringEnabled -- Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the agent's default.
+    # datadog.serviceMonitoring.httpMonitoringEnabled -- Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the default setting in the datadog agent.
     httpMonitoringEnabled:
 
     # datadog.serviceMonitoring.http2MonitoringEnabled -- Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the agent's default.
