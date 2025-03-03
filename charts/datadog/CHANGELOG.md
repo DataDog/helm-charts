@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.98.2
+## 3.100.1
 
 * Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled: if the NVIDIA k8s device plugin does not support volume mounts for requesting devices (controlled by the `accept-nvidia-visible-devices-as-volume-mount` setting) we need to request devices via the environment variable.
+
+## 3.100.0
+
+* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1729000 or later).
+
+## 3.99.0
+
+* Upgrade default Agent version to `7.63.2`.
 
 ## 3.98.1
 
