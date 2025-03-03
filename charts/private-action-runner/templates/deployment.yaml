@@ -48,6 +48,10 @@ spec:
           env:
             - name: MANAGED_BY
               value: "helm"
+            {{- range $key, $value := $runner.envVars }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
       volumes:
         - name: secrets
           secret:
