@@ -2,7 +2,7 @@
 
 ## 3.98.2
 
-* Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled, as it might be needed if the NVIDIA device plugin does not have `accept-nvidia-visible-devices-as-volume-mount` enabled.
+* Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled: if the NVIDIA k8s device plugin does not support volume mounts for requesting devices (controlled by the `accept-nvidia-visible-devices-as-volume-mount` setting) we need to request devices via the environment variable.
 
 ## 3.98.1
 
