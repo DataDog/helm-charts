@@ -9,13 +9,18 @@ import (
 	"testing"
 )
 
-var allowedHostPaths = map[string]interface{}{
-	"/var/datadog/logs":   nil,
-	"/var/log/pods":       nil,
-	"/var/log/containers": nil,
+var allowedAutopilotHostPaths = map[string]interface{}{
+	"/var/log/pods":                     nil,
+	"/var/log/containers":               nil,
+	"/var/autopilot/addon/datadog/logs": nil,
+	"/var/lib/docker/containers":        nil,
+	"/proc":                             nil,
+	"/sys/fs/cgroup":                    nil,
+	"/etc/passwd":                       nil,
+	"/var/run/containerd":               nil,
 }
 
-func Test_gdcConfigs(t *testing.T) {
+func Test_autopilotConfigs(t *testing.T) {
 	tests := []struct {
 		name       string
 		command    common.HelmCommand
@@ -29,17 +34,13 @@ func Test_gdcConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":            "datadog-secret",
-					"datadog.appKeyExistingSecret":            "datadog-secret",
-					"datadog.logs.enabled":                    "true",
-					"agents.image.doNotCheckTag":              "true",
-					"datadog.logs.containerCollectAll":        "true",
-					"datadog.logs.containerCollectUsingFiles": "true",
-					"datadog.logs.autoMultiLineDetection":     "true",
-					"providers.gke.gdc":                       "true",
+					"DD_CI":                        "true",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"providers.gke.autopilot":      "true",
 				},
 			},
-			assertions: verifyDaemonsetGDCMinimal,
+			assertions: verifyDaemonsetAutopilotMinimal,
 		},
 	}
 
@@ -52,25 +53,29 @@ func Test_gdcConfigs(t *testing.T) {
 	}
 }
 
-func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
+func verifyDaemonsetAutopilotMinimal(t *testing.T, manifest string) {
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
 	agentContainer := &corev1.Container{}
+	processAgentContainer := &corev1.Container{}
 
-	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
+	assert.Equal(t, 2, len(ds.Spec.Template.Spec.Containers))
 
 	for _, container := range ds.Spec.Template.Spec.Containers {
 		if container.Name == "agent" {
 			agentContainer = &container
+		} else if container.Name == "process-agent" {
+			processAgentContainer = &container
 		}
 	}
 
 	assert.NotNil(t, agentContainer)
+	assert.NotNil(t, processAgentContainer)
 
 	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {
-			_, validHostPath = allowedHostPaths[volume.HostPath.Path]
+			_, validHostPath = allowedAutopilotHostPaths[volume.HostPath.Path]
 			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
 		}
 	}
