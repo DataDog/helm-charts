@@ -43,6 +43,29 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
+      enable_http_monitoring: {{ $.Values.datadog.serviceMonitoring.httpMonitoringEnabled }}
+      {{- end }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.http2MonitoringEnabled nil) }}
+      enable_http2_monitoring: {{ $.Values.datadog.serviceMonitoring.http2MonitoringEnabled }}
+      {{- end }}
+      tls:
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.go.enabled nil) }}
+        go:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.go.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.istio.enabled nil) }}
+        istio:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.istio.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.nodejs.enabled nil) }}
+        nodejs:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.nodejs.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.native.enabled nil) }}
+        native:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
+        {{- end }}
     {{- if not (eq .Values.datadog.discovery.enabled nil) }}
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}
