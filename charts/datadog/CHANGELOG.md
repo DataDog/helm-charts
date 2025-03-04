@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.103.0
+
+* Validation has been added for values under `datadog.apm.instrumentation`.
+* Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
+
 ## 3.102.0
 
 * Add a mount for the Kubernetes PodResources socket.
