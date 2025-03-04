@@ -1,8 +1,18 @@
 # Datadog changelog
 
-## 3.100.1
+## 3.101.1
 
 * Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled: if the NVIDIA k8s device plugin does not support volume mounts for requesting devices (controlled by the `accept-nvidia-visible-devices-as-volume-mount` setting) we need to request devices via the environment variable.
+
+## 3.101.0
+
+* Add multiple Universal Service Monitoring configurations support.
+  * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
+  * `datadog.serviceMonitoring.tls.istio.enabled` to control Istio TLS monitoring.
+  * `datadog.serviceMonitoring.tls.nodejs.enabled` to control Node.js TLS monitoring.
+  * `datadog.serviceMonitoring.tls.native.enabled` to control native (openssl, libssl, gnutls) TLS monitoring.
+  * `datadog.serviceMonitoring.httpMonitoringEnabled` to control HTTP monitoring.
+  * `datadog.serviceMonitoring.http2MonitoringEnabled` to control HTTP/2 & gRPC monitoring.
 
 ## 3.100.0
 
