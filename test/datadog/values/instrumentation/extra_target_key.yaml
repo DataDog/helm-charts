@@ -1,0 +1,16 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      disabledNamespaces:
+        - "infra"
+        - "system"
+      targets:
+        - name: "billing-service"
+          foo: "i am extraneous"
+          podSelector:
+            matchLabels:
+              app: "billing-service"
+          ddTraceVersions:
+            python: "v2"

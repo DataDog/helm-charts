@@ -1,0 +1,5 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
