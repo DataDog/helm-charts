@@ -1,0 +1,8 @@
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    clusterAgentCommunicationEnabled: false
+    agentSidecarInjection:
+      enabled: true
+      provider: fargate
