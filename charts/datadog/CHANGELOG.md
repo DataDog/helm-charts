@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.101.1
+
+* Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled: if the NVIDIA k8s device plugin does not support volume mounts for requesting devices (controlled by the `accept-nvidia-visible-devices-as-volume-mount` setting) we need to request devices via the environment variable.
+
 ## 3.101.0
 
 * Add multiple Universal Service Monitoring configurations support.
