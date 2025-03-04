@@ -25,6 +25,9 @@ datadog:
               tracing: "yes"
           ddTraceVersions:
             java: "v1"
+          ddTraceConfigs:
+            - name: "DD_PROFILING_ENABLED"
+              value: "true"
         - name: "enabled-prod-namespaces"
           namespaceSelector:
             matchLabels:

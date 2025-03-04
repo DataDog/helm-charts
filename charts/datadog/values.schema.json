@@ -191,7 +191,7 @@
                           "type": "string"
                         }
                       },
-                      "ddTraceConfig": {
+                      "ddTraceConfigs": {
                         "type": "array",
                         "items": {
                           "type": "object",
