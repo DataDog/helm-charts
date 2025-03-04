@@ -209,6 +209,11 @@
     - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
       value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocketDir | quote }}
     {{- end }}
+    {{- if .Values.datadog.gpuMonitoring.enabled }}
+    # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
   volumeMounts:
