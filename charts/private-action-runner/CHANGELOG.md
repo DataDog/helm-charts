@@ -2,7 +2,7 @@
 
 ## 0.15.7
 
-* Add your changelog here!
+* Update private action image version to `v0.1.12-beta`
 
 ## 0.15.6
 
