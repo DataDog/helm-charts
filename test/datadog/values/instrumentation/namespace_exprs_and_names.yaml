@@ -1,0 +1,19 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      targets:
+        - name: "billing-service"
+          namespaceSelector:
+            matchNames:
+              - "foo"
+              - "bar"
+            matchExpressions:
+              - key: "foo"
+                operator: "In"
+                values:
+                  - "bar"
+                  - "baz"
+          ddTraceVersions:
+            python: "v2"
