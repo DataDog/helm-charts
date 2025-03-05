@@ -34,7 +34,7 @@ roleRef:
   name: {{ template "datadog.fullname" . }}-otel-agent
 subjects:
   - kind: ServiceAccount
-    name: {{ include "agents.serviceAccountName" . }}-otel-agent
+    name: {{ include "agents.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end -}}
 {{- end -}}
