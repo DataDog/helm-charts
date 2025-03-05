@@ -861,7 +861,7 @@ datadog:
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
-      enabled:  # true
+      enabled: true
 
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
