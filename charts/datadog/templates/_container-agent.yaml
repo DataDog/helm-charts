@@ -165,7 +165,7 @@
       value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
-      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}  
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
@@ -204,6 +204,11 @@
     {{- if eq (include "should-enable-otel-agent" .) "true" }}
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
+    {{- end }}
+    {{- if .Values.datadog.gpuMonitoring.enabled }}
+    # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
