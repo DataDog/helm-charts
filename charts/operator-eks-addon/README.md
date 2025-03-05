@@ -10,6 +10,8 @@ This is a wrapper chart for installing EKS add-on. Charts required for the add-o
 | 0.1.7 | 1.5.1 | 1.4.0 | 1.4.0 | 7.50.3 | 7.50.3 |
 | 0.1.9 | 1.8.1 | 1.7.0 | 1.7.0 | 7.54.0 | 7.54.0 |
 | 0.1.10 | 2.5.1 | 2.3.0 | 1.11.1 | 7.60.0 | 7.60.0 |
+| 0.1.11 | 2.7.0 | 2.4.1 | 1.12.1 | 7.62.2 | 7.62.2 |
+
 
 0.1.8 failed validation and didn't go through.
 
@@ -43,7 +45,7 @@ cd /tmp/operator-eks-addon
 # Review chart version and dependency version are correct
 
 # Render chart in a file
-helm template datadog-operator . > operator-addon.yaml
+helm template datadog-operator . -n datadog-agent > operator-addon.yaml
 
 # Render chart with a sample override
 helm template datadog-operator . --set datadog-operator.image.tag=1.2.0 > operator-addon.yaml
