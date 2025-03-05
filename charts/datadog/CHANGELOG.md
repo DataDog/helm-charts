@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.103.1
+
+* Add `auth-token` mount to `process-agent` on Windows.
+
 ## 3.103.0
 
 * Upgrade default Agent version to `7.63.3`.
