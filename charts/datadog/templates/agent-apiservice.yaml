@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.rbac.create (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.metricsProvider.enabled -}}
+{{- if and .Values.clusterAgent.rbac.create (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.registerAPIService -}}
 apiVersion: apiregistration.k8s.io/v1
 kind: APIService
 metadata:

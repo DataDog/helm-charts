@@ -12,6 +12,9 @@ rules:
 {{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
   - secrets
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMaps }}
+  - configmaps
+{{- end }}
   - nodes
   - pods
   - services

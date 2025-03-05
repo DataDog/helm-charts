@@ -1,4 +1,4 @@
-{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.createReaderRbac -}}
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.registerAPIService .Values.clusterAgent.metricsProvider.createReaderRbac -}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:

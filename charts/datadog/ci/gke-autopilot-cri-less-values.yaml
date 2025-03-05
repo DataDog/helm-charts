@@ -13,7 +13,7 @@ datadog:
     enabled: true
 
   containerRuntimeSupport:
-    enabled: false
+    enabled: true
 
 providers:
   gke:

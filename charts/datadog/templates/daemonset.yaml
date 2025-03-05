@@ -29,6 +29,7 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: agent
+        admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
@@ -47,6 +48,9 @@ spec:
         checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
         checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- if eq (include "should-enable-otel-agent" .) "true" }}
+        checksum/otel-config: {{ include "otel-agent-config-configmap-content" . | sha256sum }}
+        {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
@@ -57,6 +61,9 @@ spec:
         {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
+        {{- end }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
@@ -115,7 +122,7 @@ spec:
         {{- if eq  (include "should-enable-fips" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
-        {{- if .Values.datadog.processAgent.enabled }}
+        {{- if eq  (include "should-enable-process-agent" .) "true" }}
           {{- include "container-process-agent" . | nindent 6 }}
         {{- end }}
         {{- if eq (include "should-enable-system-probe" .) "true" }}
@@ -124,12 +131,15 @@ spec:
         {{- if eq  (include "should-enable-security-agent" .) "true" }}
           {{- include "container-security-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-otel-agent" .) "true" }}
+          {{- include "container-otel-agent" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
-          {{ include "containers-init-linux" . | nindent 6 }}
+          {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
@@ -159,6 +169,14 @@ spec:
       {{- end }}
       {{- if eq .Values.targetSystem "linux" }}
         {{ include "daemonset-volumes-linux" . | nindent 6 }}
+      {{- end }}
+      {{- if eq (include "should-enable-otel-agent" .) "true" }}
+      - name: otelconfig
+        configMap:
+          name: {{ include "agents-install-otel-configmap-name" . }}
+          items:
+          - key: otel-config.yaml
+            path: otel-config.yaml
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}

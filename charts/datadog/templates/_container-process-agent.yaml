@@ -28,16 +28,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    {{- if .Values.datadog.processAgent.processCollection }}
-    - name: DD_PROCESS_AGENT_ENABLED
-      value: "true"
-    {{- end }}
-    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
-    {{- if .Values.datadog.processAgent.stripProcessArguments }}
-    - name: DD_STRIP_PROCESS_ARGS
-      value: "true"
-    {{- end }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -58,6 +49,9 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
     {{- if eq .Values.targetSystem "linux" }}
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
@@ -67,9 +61,6 @@
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket
     {{- end }}
-    - name: logdatadog
-      mountPath: /var/log/datadog
-      readOnly: false # Need RW to write logs
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to tmp directory
@@ -88,9 +79,11 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection) }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+    {{- end }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
