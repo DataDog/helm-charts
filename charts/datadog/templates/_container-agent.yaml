@@ -205,6 +205,10 @@
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
     {{- end }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+      value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocketDir | quote }}
+    {{- end }}
     {{- if .Values.datadog.gpuMonitoring.enabled }}
     # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
     - name: NVIDIA_VISIBLE_DEVICES
@@ -246,6 +250,11 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
+    {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
