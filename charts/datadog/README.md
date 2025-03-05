@@ -736,6 +736,7 @@ helm install <RELEASE_NAME> \
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery |
+| datadog.discovery.networkStats.enabled | bool | `nil` | Enable Service Discovery Network Stats |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |

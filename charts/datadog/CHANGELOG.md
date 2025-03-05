@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.104.0
+
+* Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
+
 ## 3.103.0
 
 * Upgrade default Agent version to `7.63.3`.
