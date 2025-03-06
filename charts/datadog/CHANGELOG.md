@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.102.1
+
+* The `gpuMonitoring.runtimeClassName` option now allows specifying an empty runtime class to avoid changing the runtime class of the agent pod.
+
 ## 3.102.0
 
 * Add a mount for the Kubernetes PodResources socket.

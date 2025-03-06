@@ -866,7 +866,7 @@ datadog:
     # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
     configureCgroupPerms: false
 
-    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
 
 
