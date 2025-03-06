@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.11
+## 0.1.12
 
 Release for Operator 1.12.1
 
