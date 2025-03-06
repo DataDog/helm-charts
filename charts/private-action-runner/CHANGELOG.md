@@ -2,7 +2,7 @@
 
 ## 0.15.8
 
-* Update private action image version to `v0.1.13-beta`
+* Update private action image version to `v0.1.14-beta`
 
 ## 0.15.7
 
