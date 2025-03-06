@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.103.2
+
+* Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.
+
 ## 3.103.1
 
 * Update `fips.image.tag` to `1.1.8` fixing CVEs
