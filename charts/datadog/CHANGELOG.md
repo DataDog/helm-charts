@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.106.2
+
+* Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.
+
 ## 3.106.1
 
 * Add default container resource values for GKE Autopilot
