@@ -14,7 +14,7 @@ This is a wrapper chart for installing EKS add-on. Charts required for the add-o
 
 
 * 0.1.8 failed validation and didn't go through.
-* 0.1.11 failed validation and didn't go through due to `Release.Service` being present (in `update-crds.sh`).
+* 0.1.11 failed validation and didn't go through.
 
 ## Pushing Add-on Chart
 Below steps have been validated using `Helm v3.12.0`.
@@ -44,7 +44,7 @@ tar -xzf operator-eks-addon-0.1.3.tgz -C /tmp/
 cd /tmp/operator-eks-addon
 
 # Review chart version and dependency version are correct
-Ensure in all the manifests/templates the absence of `Release.Service` / `Capabilities` as they are unsupported Helm objects.
+Ensure in all the manifests/templates the absence of unsupported Helm objects.
 
 # Render chart in a file
 helm template datadog-operator . -n datadog-agent > operator-addon.yaml
