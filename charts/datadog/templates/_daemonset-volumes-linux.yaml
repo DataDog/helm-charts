@@ -10,6 +10,11 @@
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+- name: pod-resources-socket
+  hostPath:
+    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
@@ -17,7 +22,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
+{{- if eq (include "should-add-host-path-for-os-release-file" .) "true"}}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
@@ -148,7 +153,7 @@
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.serviceMonitoring.enabled) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -218,5 +223,10 @@
 - secret:
     secretName: datadog-kubelet-cert
   name: kubelet-cert-volume
+{{- end }}
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+- name: gpu-devices
+  hostPath:
+    path: /dev/null
 {{- end }}
 {{- end -}}

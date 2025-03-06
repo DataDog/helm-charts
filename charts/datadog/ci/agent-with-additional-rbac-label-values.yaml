@@ -1,0 +1,6 @@
+agents:
+  enabled: true
+  rbac:
+    enabled: true
+    serviceAccountAdditionalLabels:
+      "app.kubernetes.io/custom-label": custom-value

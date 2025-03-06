@@ -27,6 +27,8 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+## If you are on GKE Autopilot, you must use a gcr.io variant registry.
+
 registry:  # gcr.io/datadoghq
 
 datadog:
@@ -311,6 +313,10 @@ datadog:
     # datadog.kubelet.coreCheckEnabled -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
     # @default -- true
     coreCheckEnabled: true
+    # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
+    # @default -- /var/lib/kubelet/pod-resources
+    podResourcesSocketDir: /var/lib/kubelet/pod-resources
+
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
@@ -510,18 +516,18 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
     # APM Single Step Instrumentation
-    # This feature is in beta. It requires Cluster Agent 7.49+.
+    # This feature is in preview. It requires Cluster Agent 7.49+.
     instrumentation:
-      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (preview).
       enabled: false
 
-      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       enabledNamespaces: []
 
-      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       disabledNamespaces: []
 
-      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
@@ -530,7 +536,7 @@ datadog:
       # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
       # It requires Agent 7.52+ and Cluster Agent 7.52+
       language_detection:
-        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
+        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (preview).
         enabled: true
 
       # This feature is in preview. It requires Cluster Agent 7.57+.
@@ -829,9 +835,40 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
+    # datadog.serviceMonitoring.httpMonitoringEnabled -- Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the default setting in the datadog agent.
+    httpMonitoringEnabled:
+
+    # datadog.serviceMonitoring.http2MonitoringEnabled -- Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent.
+    http2MonitoringEnabled:
+
+    tls:
+      go:
+        # datadog.serviceMonitoring.tls.go.enabled -- (bool) Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      istio:
+        # datadog.serviceMonitoring.tls.istio.enabled -- (bool) Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      nodejs:
+        # datadog.serviceMonitoring.tls.nodejs.enabled -- (bool) Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      native:
+        # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
+
+  gpuMonitoring:
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    enabled: false
+
+    # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
+    configureCgroupPerms: false
+
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    runtimeClassName: "nvidia"
+
 
   # Software Bill of Materials configuration
   sbom:
@@ -1029,7 +1066,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.62.0
+    tag: 7.63.2
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1096,6 +1133,9 @@ clusterAgent:
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # clusterAgent.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterAgent.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # clusterAgent.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true
     automountServiceAccountToken: true
@@ -1507,7 +1547,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.6
+    tag: 1.1.7
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1550,7 +1590,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.62.0
+    tag: 7.63.2
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1593,6 +1633,9 @@ agents:
 
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # agents.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if agents.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # agents.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true
     automountServiceAccountToken: true
@@ -2056,7 +2099,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.62.0
+    tag: 7.63.2
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2093,6 +2136,10 @@ clusterChecksRunner:
 
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
+
+    # clusterChecksRunner.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
+    serviceAccountAdditionalLabels: {}
+
 
     # clusterChecksRunner.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true
     automountServiceAccountToken: true

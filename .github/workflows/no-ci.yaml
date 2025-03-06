@@ -1,9 +1,8 @@
-name: No lint and test needed
+name: No chart lint and test needed
 on:
   pull_request:
     paths-ignore:
       - 'charts/**'
-      - 'test/**'
 jobs:
   pr-validated:
     name: pr-validated

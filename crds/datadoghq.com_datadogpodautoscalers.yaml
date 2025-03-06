@@ -225,6 +225,14 @@ spec:
                             type: object
                           type: array
                           x-kubernetes-list-type: atomic
+                        stabilizationWindowSeconds:
+                          description: |-
+                            StabilizationWindowSeconds is the number of seconds the controller should lookback at previous recommendations
+                            before deciding to apply a new one. Defaults to 0.
+                          format: int32
+                          maximum: 1800
+                          minimum: 0
+                          type: integer
                         strategy:
                           description: |-
                             Strategy is used to specify which policy should be used.
@@ -291,6 +299,14 @@ spec:
                             type: object
                           type: array
                           x-kubernetes-list-type: atomic
+                        stabilizationWindowSeconds:
+                          description: |-
+                            StabilizationWindowSeconds is the number of seconds the controller should lookback at previous recommendations
+                            before deciding to apply a new one. Defaults to 0.
+                          format: int32
+                          maximum: 1800
+                          minimum: 0
+                          type: integer
                         strategy:
                           description: |-
                             Strategy is used to specify which policy should be used.

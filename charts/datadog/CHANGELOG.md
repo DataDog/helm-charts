@@ -1,5 +1,90 @@
 # Datadog changelog
 
+## 3.102.0
+
+* Add a mount for the Kubernetes PodResources socket.
+
+## 3.101.1
+
+* Add the `NVIDIA_VISIBLE_DEVICES` environment variable to the containers when GPU monitoring is enabled: if the NVIDIA k8s device plugin does not support volume mounts for requesting devices (controlled by the `accept-nvidia-visible-devices-as-volume-mount` setting) we need to request devices via the environment variable.
+
+## 3.101.0
+
+* Add multiple Universal Service Monitoring configurations support.
+  * `datadog.serviceMonitoring.tls.go.enabled` to control Go TLS monitoring.
+  * `datadog.serviceMonitoring.tls.istio.enabled` to control Istio TLS monitoring.
+  * `datadog.serviceMonitoring.tls.nodejs.enabled` to control Node.js TLS monitoring.
+  * `datadog.serviceMonitoring.tls.native.enabled` to control native (openssl, libssl, gnutls) TLS monitoring.
+  * `datadog.serviceMonitoring.httpMonitoringEnabled` to control HTTP monitoring.
+  * `datadog.serviceMonitoring.http2MonitoringEnabled` to control HTTP/2 & gRPC monitoring.
+
+## 3.100.0
+
+* Enable `system-probe` container on GKE Autopilot (requires GKE 1.32.1-gke.1729000 or later).
+
+## 3.99.0
+
+* Upgrade default Agent version to `7.63.2`.
+
+## 3.98.1
+
+* Fixes bug that causes `DD_KUBERNETES_ANNOTATIONS_AS_TAGS` env var to be incorrectly set to the merged value of `.Values.datadog.kubernetesResourcesLabelsAsTags` and `.Values.datadog.kubernetesResourcesAnnotationsAsTags`.
+
+## 3.98.0
+
+* Add AllowlistSynchronizer custom resource for new GKE Autopilot WorkloadAllowlists. Requires GKE version 1.32.
+  1-gke.1729000 or later.
+
+## 3.97.0
+
+* Update apm.instrumentation documentation from beta to preview.
+
+## 3.96.0
+
+* Upgrade default Agent version to `7.63.0`.
+
+## 3.95.0
+
+* Fix a bug where setting `datadog.containerImageCollection.enabled` to `false` does not disable image collection.
+
+## 3.94.0
+
+* Support adding labels to the Agent service account via `agents.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Agent service account via `clusterAgent.rbac.serviceAccountAdditionalLabels`.
+* Support adding labels to the Cluster Checks Runner service account via `clusterChecksRunner.rbac.serviceAccountAdditionalLabels`.
+
+## 3.93.0
+
+* Revert "Add a mount for the Kubernetes PodResources socket."
+
+## 3.92.0
+
+* Add a mount for the Kubernetes PodResources socket.
+
+## 3.91.0
+
+* Add support for GPU monitoring
+
+## 3.90.5
+
+* Update `fips.image.tag` to `1.1.7` updating openSSL version to 3.0.16
+
+## 3.90.4
+
+* Fix RBAC rendering and map merge when `datadog.kubernetesResourcesAnnotationsAsTags` and/or `datadog.kubernetesResourcesLabelsAsTags` are used.
+
+## 3.90.3
+
+* Defaults `registry` to `gcr.io/datadoghq` when setting `datadog.site: us3.datadoghq.com` and deploying on GKE Autopilot (`providers.gke.autopilot: true`).
+
+## 3.90.2
+
+* Adds env vars `DD_AGENT_IPC_PORT` and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` when Otel Agent is enabled and adds flag `--sync-delay=30s` to otel agent.
+
+## 3.90.1
+
+* Add rule to clusterrole to allow the node agent to query the EKS control plane metrics API
+
 ## 3.90.0
 
 * Set default `Agent` and `Cluster-Agent` version to `7.62.0`.
@@ -34,7 +119,7 @@
 
 ## 3.87.0
 
-* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.   
+* Launch `otel-agent` with the `--core-config` switch pointing to the main agent configuration. Note that this affects the OTel Agent beta images, early beta image releases with version tag `<7.59.0-v.1.2.0` will experience issues and should remain on older helm chart versions for their deployments. For regular users not deploying the `otel-agent` beta images, this should be a NOOP.
 
 ## 3.86.0
 
@@ -1509,7 +1594,7 @@ Get rid of the old GODEBUG=x509ignoreCN=0 hack that is not effective anymore in 
 ## 2.30.3
 
 * Add `datadog.logs.autoMultiLineDetection` parameter to setup automatic multi-line log detection
-  See <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation>
+  See [https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation](https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation)
   This new option requires an agent 7.32+.
 
 ## 2.30.2
@@ -2007,7 +2092,7 @@ Change OpenShift SCC priorities from 10 to 8 to avoid conflicts with OpenShift A
 ## 2.11.6
 
 * Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
-Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
+  Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
 
 ## 2.11.5
 
@@ -2364,7 +2449,7 @@ Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocket
 ## 2.4.23
 
 * Add `datadog.envFrom` parameter to support passing references to secrets and/or configmaps for environment
-variables, instead of passing one by one.
+  variables, instead of passing one by one.
 
 ## 2.4.22
 
@@ -2385,11 +2470,11 @@ variables, instead of passing one by one.
   * `agents.networkPolicy.create`
   * `clusterAgent.networkPolicy.create`
   * `clusterChecksRunner.networkPolicy.create`
-  The NetworkPolicy managed by the Helm chart are designed to work out-of-the-box on most setups.
-  In particular, the agents need to connect to the datadog intakes. NetworkPolicy can be restricted
-  by IP but the datadog intake IP cannot be guaranteed to be stable.
-  The agents are also susceptible to connect to any pod, on any port, depending on the "auto-discovery" annotations
-  that can be dynamically added to them.
+    The NetworkPolicy managed by the Helm chart are designed to work out-of-the-box on most setups.
+    In particular, the agents need to connect to the datadog intakes. NetworkPolicy can be restricted
+    by IP but the datadog intake IP cannot be guaranteed to be stable.
+    The agents are also susceptible to connect to any pod, on any port, depending on the "auto-discovery" annotations
+    that can be dynamically added to them.
 
 ## 2.4.18
 
@@ -2659,7 +2744,7 @@ variables, instead of passing one by one.
 ## 2.2.11
 
 * Add documentations around secret management in the datadog helm chart. It is to upstream
-  requested changes in the IBM charts repository: <https://github.com/IBM/charts/pull/690#discussion_r411702458>
+  requested changes in the IBM charts repository: [https://github.com/IBM/charts/pull/690#discussion_r411702458](https://github.com/IBM/charts/pull/690#discussion_r411702458)
 * update `kube-state-metrics` dependency
 * uncomment every values.yaml parameters for IBM chart compliancy
 
@@ -2719,7 +2804,7 @@ variables, instead of passing one by one.
 ## 2.1.2
 
 * Fixed a bug where `DD_LEADER_ELECTION` was not set in the config init container, leading to a failure to adapt
-config to this environment variable.
+  config to this environment variable.
 
 ## 2.1.1
 
@@ -2738,13 +2823,13 @@ config to this environment variable.
 * Fix `system-probe` startup on latest versions of containerd.
   Here is the error that this change fixes:
 
-  ```    State:          Waiting
+  ```State:
       Reason:       CrashLoopBackOff
     Last State:     Terminated
       Reason:       StartError
       Message:      failed to create containerd task: OCI runtime create failed: container_linux.go:349: starting container process caused "close exec fds: ensure /proc/self/fd is on procfs: operation not permitted": unknown
       Exit Code:    128
-   ```
+  ```
 
 ## 2.0.11
 

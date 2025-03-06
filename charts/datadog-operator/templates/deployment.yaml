@@ -148,6 +148,9 @@ spec:
           {{- if (semverCompare ">=1.9.0-0" $version) }}
             - "-datadogDashboardEnabled={{ .Values.datadogDashboard.enabled }}"
           {{- end }}
+          {{- if (semverCompare ">=1.12.0" $version) }}
+            - "-datadogGenericResourceEnabled={{ .Values.datadogGenericResource.enabled }}"
+          {{- end }}
           {{- if (semverCompare ">=1.7.0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
@@ -165,9 +168,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          {{- if .Values.volumeMounts }}
-          {{- toYaml .Values.volumeMounts | nindent 10 }}
-          {{- end }}
           {{- if .Values.volumeMounts }}
           {{- toYaml .Values.volumeMounts | nindent 10 }}
           {{- end }}

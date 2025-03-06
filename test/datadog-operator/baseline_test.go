@@ -44,7 +44,7 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
 			assertions:           verifyDatadogAgent,
-			skipTest:             true,
+			skipTest:             SkipTest,
 		},
 	}
 

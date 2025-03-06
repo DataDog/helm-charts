@@ -254,6 +254,12 @@ spec:
                               If not specified, the pod priority will be default or zero if there is no
                               default.
                             type: string
+                          runtimeClassName:
+                            description: |-
+                              If specified, indicates the pod's RuntimeClass kubelet should use to run the pod.
+                              If the named RuntimeClass does not exist, or the CRI cannot run the corresponding handler, the pod enters the Failed terminal phase.
+                              If no runtimeClassName is specified, the default RuntimeHandler is used, which is equivalent to the behavior when the RuntimeClass feature is disabled.
+                            type: string
                           updateStrategy:
                             description: |-
                               The deployment strategy to use to replace existing pods with new ones.

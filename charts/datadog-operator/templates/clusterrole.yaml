@@ -226,6 +226,8 @@ rules:
   resources:
   - datadogagents
   - datadogagents/finalizers
+  - datadoggenericresources
+  - datadoggenericresources/finalizers
   - datadogmonitors
   - datadogmonitors/finalizers
   - datadogslos
@@ -243,6 +245,7 @@ rules:
   - datadoghq.com
   resources:
   - datadogagents/status
+  - datadoggenericresources/status
   - datadogmonitors/status
   - datadogslos/status
   verbs:
@@ -347,6 +350,13 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""

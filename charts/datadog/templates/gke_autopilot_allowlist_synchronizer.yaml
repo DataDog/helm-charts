@@ -1,0 +1,11 @@
+{{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")}}
+apiVersion: auto.gke.io/v1
+kind: AllowlistSynchronizer
+metadata:
+  name: datadog-synchronizer
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+spec:
+  allowlistPaths:
+  - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.1.yaml
+{{- end }}

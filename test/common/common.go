@@ -1,6 +1,9 @@
 package common
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,6 +13,9 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
+	yaml "gopkg.in/yaml.v3"
+	appsv1 "k8s.io/api/apps/v1"
+	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
 
 type HelmCommand struct {
@@ -98,4 +104,74 @@ func LoadFromFile[T any](t *testing.T, filepath string, destObj *T) string {
 func WriteToFile(t *testing.T, filepath, content string) {
 	err := os.WriteFile(filepath, []byte(content), 0644)
 	require.NoError(t, err, "can't update manifest", "path", filepath)
+}
+
+func GetVolumeNames(ds appsv1.DaemonSet) []string {
+	volumeNames := []string{}
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		volumeNames = append(volumeNames, volume.Name)
+	}
+	return volumeNames
+}
+
+func Contains(str string, list []string) bool {
+	for _, s := range list {
+		if s == str {
+			return true
+		}
+	}
+	return false
+}
+
+// Takes multi-document YAML and filter out keys from each document.
+func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interface{}) (string, error) {
+	reader := strings.NewReader(manifest)
+	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
+	builder := strings.Builder{}
+	for {
+		var obj map[string]interface{}
+		// We read the next YAML document from the input stream until we reach EOF.
+		// This is needed if Helm rendering contains multiple resource manifests.
+		err := decoder.Decode(&obj)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return "", fmt.Errorf("couldn't decode manifest for filtering dynamic keys: %s", err)
+		}
+
+		filterKeysRecursive(&obj, filterKeys)
+
+		var buf bytes.Buffer
+		enc := yaml.NewEncoder(&buf)
+		enc.SetIndent(2) // Adjust indentation (default is 4)
+		err = enc.Encode(obj)
+		if err != nil {
+			return "", fmt.Errorf("couldn't encode manifest after filtering: %s", err)
+		}
+
+		err = enc.Close()
+		if err != nil {
+			return "", fmt.Errorf("couldn't close encoder: %s", err)
+		}
+
+		output := buf.String()
+		_, err = builder.WriteString(output)
+		if err != nil {
+			return "", fmt.Errorf("couldn't write manifest string in builder: %s", err)
+		}
+		builder.WriteString("---\n")
+	}
+	return builder.String(), nil
+}
+
+func filterKeysRecursive(yamlMap *map[string]interface{}, keys map[string]interface{}) {
+	for yamlKey := range *yamlMap {
+		if _, found := keys[yamlKey]; found {
+			// fmt.Println("deleting key", yamlKey)
+			delete(*yamlMap, yamlKey)
+		} else if nested, ok := (*yamlMap)[yamlKey].(map[string]interface{}); ok {
+			filterKeysRecursive(&nested, keys)
+		}
+	}
 }

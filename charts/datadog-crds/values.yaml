@@ -17,6 +17,8 @@ crds:
   datadogPodAutoscalers: false
   # crds.datadogDashboards -- Set to true to deploy the DatadogDashboards CRD
   datadogDashboards: false
+  # crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResources CRD
+  datadogGenericResources: false
 
 # nameOverride -- Override name of app
 nameOverride: ""
