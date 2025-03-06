@@ -165,8 +165,7 @@ data:
           exporters: [datadog]
 kind: ConfigMap
 metadata:
-  annotations:
-    checksum/otel-config: 0c5563c5e9a82132926709c072b925fd278450344419379d6d0738853d82e315
+  annotations: {}
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
@@ -790,8 +789,7 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations:
-        checksum/otel-config: 946aa0996cb960514d901a597d35250d82c029a7453a05a6bc14e79e46cc6c1c
+      annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
