@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.104.0
+
+* Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
+* Add `datadog.otelCollector.rbac.rules` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+
 ## 3.103.1
 
 * Update `fips.image.tag` to `1.1.8` fixing CVEs
