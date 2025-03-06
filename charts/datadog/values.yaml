@@ -896,6 +896,10 @@ datadog:
         # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
         enabled:
 
+  traceroute:
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
+    enabled: false
+
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
