@@ -530,6 +530,22 @@ datadog:
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
 
+      # datadog.apm.instrumentation.targets -- Enable target based workload selection (preview).
+      # Requires Cluster Agent 7.64.0+
+      targets: []
+      #  - name: "example"
+      #    podSelector:
+      #      matchLabels:
+      #        language: "python"
+      #    namespaceSelector:
+      #      matchNames:
+      #      - "applications"
+      #    ddTraceVersions:
+      #      python: "v2"
+      #    ddTraceConfigs:
+      #      - name: "DD_PROFILING_ENABLED"
+      #        value: "true"
+
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
 
