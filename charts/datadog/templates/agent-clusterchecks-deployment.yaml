@@ -195,6 +195,7 @@ spec:
 {{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
 {{- include "default-cluster-check-runner-resources" . | indent 10 }}
 {{- else }}
+{{- end }}
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
 {{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
         securityContext:
