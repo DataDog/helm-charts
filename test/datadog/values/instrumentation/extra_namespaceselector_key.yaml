@@ -1,0 +1,16 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      disabledNamespaces:
+        - "infra"
+        - "system"
+      targets:
+        - name: "billing-service"
+          namespaceSelector:
+            matchLabels:
+              app: "billing-service"
+            foo: "i am extraneous"
+          ddTraceVersions:
+            python: "v2"

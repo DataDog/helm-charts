@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.107.0
+
+* * Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
+
 ## 3.106.0
 
 * Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)

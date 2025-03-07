@@ -1,0 +1,48 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      disabledNamespaces:
+        - "infra"
+        - "system"
+      targets:
+        - name: "billing-service"
+          podSelector:
+            matchLabels:
+              app: "billing-service"
+          namespaceSelector:
+            matchNames:
+            - "billing-service"
+          ddTraceVersions:
+            python: "v2"
+        - name: "microservices"
+          podSelector:
+            matchLabels:
+              language: "java"
+          namespaceSelector:
+            matchLabels:
+              tracing: "yes"
+          ddTraceVersions:
+            java: "v1"
+          ddTraceConfigs:
+            - name: "DD_PROFILING_ENABLED"
+              value: "true"
+        - name: "enabled-prod-namespaces"
+          namespaceSelector:
+            matchLabels:
+              tracing: "yes"
+            matchExpressions:
+              - key: "env"
+                operator: "In"
+                values:
+                  - "prod"
+          ddTraceVersions:
+            dotnet: "v1"
+        - name: "unknown-language"
+          podSelector:
+            matchLabels:
+              language: "unknown"
+        - name: "Default"
+          ddTraceVersions:
+            js: "v5"
