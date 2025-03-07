@@ -11,7 +11,7 @@ runners:
       port: 9016
       actionsAllowlist:
         - com.datadoghq.http.request
-    envVars:
+    env:
       - name: "ENV_VAR_NAME"
         value: "ENV_VAR_VALUE"
     # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account

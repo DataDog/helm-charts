@@ -45,13 +45,9 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-          env:
-            - name: MANAGED_BY
-              value: "helm"
-            {{- range $key, $value := $runner.envVars }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+          {{- if $runner.env }}
+          env: {{ $runner.env | toYaml | nindent 12 }}
+          {{- end }}
       volumes:
         - name: secrets
           secret:
