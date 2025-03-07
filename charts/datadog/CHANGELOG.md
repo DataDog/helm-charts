@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.106.1
+
+* Add `pods` to the list of resources to collect in the Agent RBAC when `datadog.kubelet.useApiServer` is set to `true`.
+* Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default.
+
 ## 3.106.0
 
 * Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
