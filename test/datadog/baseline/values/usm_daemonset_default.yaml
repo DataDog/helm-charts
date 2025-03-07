@@ -1,0 +1,22 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  processAgent:
+    enabled: true
+    processCollection: true
+  securityAgent:
+    runtime:
+      enabled: false
+      fimEnabled: true
+  networkMonitoring:
+    enabled: true
+  systemProbe:
+    enableTCPQueueLength: true
+    enableOOMKill: true
+    debugPort: 7654
+  serviceMonitoring:
+    enabled: false
+  discovery:
+    enabled: true
+daemonset:
+  useDedicatedContainers: true
