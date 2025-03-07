@@ -847,7 +847,13 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
-          resources: {}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
@@ -934,7 +940,13 @@ spec:
           image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: process-agent
-          resources: {}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -969,7 +981,13 @@ spec:
           image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-volume
-          resources: {}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
@@ -1006,7 +1024,13 @@ spec:
           image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-config
-          resources: {}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1246,7 +1270,13 @@ spec:
             periodSeconds: 15
             successThreshold: 1
             timeoutSeconds: 5
-          resources: {}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -1289,6 +1319,13 @@ spec:
           image: gcr.io/datadoghq/cluster-agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-volume
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
