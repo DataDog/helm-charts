@@ -604,6 +604,17 @@ datadog:
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
 
+    ## Provide OTel Collector RBAC configuration
+    rbac:
+      # datadog.otelCollector.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+      # and create required ClusterRole to access Kubernetes API
+      create: true
+      # datadog.otelCollector.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+      rules: []
+      #   - apiGroups: [""]
+      #     resources: ["pods", "nodes"]
+      #     verbs: ["get", "list", "watch"]
+
   ## Continuous Profiler configuration
   ##
   ## Continuous Profiler is disabled by default and can be enabled by setting the `enabled` field to
@@ -1551,7 +1562,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.7
+    tag: 1.1.8
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
