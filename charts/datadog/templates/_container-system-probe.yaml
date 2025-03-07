@@ -3,7 +3,7 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
-  command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+  command: ["system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
@@ -21,18 +21,25 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if .Values.datadog.serviceMonitoring.enabled }}
+    {{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: HOST_ROOT
       value: "/host/root"
+    {{- end }}
+    {{- if .Values.datadog.gpuMonitoring.enabled }}
+     # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
   volumeMounts:
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
@@ -70,14 +77,14 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled }}
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
-    {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
+  {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
@@ -94,11 +101,15 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if .Values.datadog.serviceMonitoring.enabled }}
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- end }}
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
 {{- end }}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules

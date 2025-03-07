@@ -364,6 +364,9 @@ metadata:
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAdditionalLabels) . | nindent 4 -}}
+{{ end }}
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
@@ -515,14 +518,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
-{{- $mergedResources := merge (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags) (default dict .Values.datadog.kubernetesResourcesLabelsAsTags)}}
+{{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
 {{- range $resource, $labels := $mergedResources }}
-  {{- $parts := split "." $resource }}
+  {{- $parts := splitList "." $resource }}
   {{- $apiGroup := "" }}
-  {{- $resourceName := $resource }}
-  {{- if eq (len $parts) 2 }}
-    {{- $apiGroup = index $parts "_1" }}
-    {{- $resourceName = index $parts "_0" }}
+  {{- $resourceName := mustFirst $parts }}
+  {{- if gt (len $parts) 1 }}
+    {{- $apiGroup = join "." (mustRest $parts) }}
   {{- end }}
   {{- $existing := index $groupedResources $apiGroup | default (list) }}
   {{- $groupedResources = set $groupedResources $apiGroup (append $existing $resourceName) }}

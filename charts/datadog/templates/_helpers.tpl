@@ -49,6 +49,44 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
+Check if target cluster is running GKE Autopilot.
+*/}}
+{{- define "is-autopilot" -}}
+{{- if .Values.providers.gke.autopilot -}}
+{{- $nodes := (lookup "v1" "Node" "" "").items }}
+{{- if and $nodes (gt (len $nodes) 0) -}}
+{{- $node := index $nodes 0 -}}
+{{- if hasPrefix "gk3" $node.metadata.name -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if target cluster supports GKE Autopilot WorkloadAllowlists.
+*/}}
+{{- define "gke-autopilot-workloadallowlists-enabled" -}}
+{{- $nodes := (lookup "v1" "Node" "" "").items }}
+{{- if and $nodes (gt (len $nodes) 0) -}}
+{{- $node := index $nodes 0 -}}
+{{- if and (eq (include "is-autopilot" .) "true") (semverCompare ">=v1.32.1-gke.1729000" $node.status.nodeInfo.kubeletVersion) -}}
+true
+{{- else -}}
+false
+{{- end }}
+{{- else -}}
+false
+{{- end }}
+{{- end }}
+
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
@@ -117,7 +155,21 @@ false
 {{- end -}}
 {{- end -}}
 
-
+{{/*
+Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole
+*/}}
+{{- define "should-add-otel-agent-k8sattributes-rules" -}}
+{{- $return := false }}
+{{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
+{{- range $key, $val := $config.processors }}
+  {{- if hasPrefix "k8sattributes" $key }}
+    {{- if or (empty $val) (empty $val.passthrough) }}
+      {{- $return = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
 
 {{/*
 Return secret name to be used based on provided values.
@@ -297,7 +349,7 @@ eu.gcr.io/datadoghq
 public.ecr.aws/datadog
 {{- else if eq .datadog.site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
-{{- else if eq .datadog.site "us3.datadoghq.com" -}}
+{{- else if and (eq .datadog.site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
@@ -331,7 +383,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.discovery.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -342,7 +394,7 @@ false
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
+{{- if or (and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc)) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
 {{- else -}}
 false
@@ -387,7 +439,8 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
+.) "true") -}}
 true
 {{- else -}}
 false
@@ -409,7 +462,7 @@ false
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
+{{- if and (not .Values.providers.gke.gdc) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
 true
 {{- else -}}
 false
@@ -699,7 +752,18 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled)) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if kubernetes_apiserver check should be configured
+*/}}
+{{- define  "need-kubernetes-apiserver-check-config" -}}
+{{- if or (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) -}}
 true
 {{- else -}}
 false
@@ -732,7 +796,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
@@ -985,7 +1049,6 @@ Create RBACs for custom resources
     false
   {{- end -}}
 {{- end -}}
-
 {{/*
   Return true if any process-related check is enabled
 */}}
@@ -1015,7 +1078,7 @@ Create RBACs for custom resources
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
-  {{- if or .Values.providers.gke.gdc .Values.providers.gke.autopilot -}}
+  {{- if or (.Values.providers.gke.gdc) (and (.Values.providers.gke.autopilot) (not (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true"))) -}}
     false
   {{- else if ne .Values.targetSystem "linux" -}}
     false
@@ -1056,12 +1119,35 @@ Create RBACs for custom resources
 {{- end -}}
 {{- end -}}
 
+{{/*
+  Returns true if Host path for os-release-file needs to be added to the volumes.
+*/}}
+{{- define "should-add-host-path-for-os-release-file" -}}
+{{- if .Values.providers.gke.gdc -}}
+false
+{{- end }}
+{{- if or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled -}}
+{{- if .Values.providers.gke.autopilot -}}
+{{- if eq (include "gke-autopilot-workloadallowlists-enabled" .) "true" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{/*
   Returns true if Host paths for default OS Release Paths need to be added to the volumes.
 */}}
 {{- define "should-add-host-path-for-os-release-paths" -}}
   {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if .Values.providers.gke.autopilot -}}
     false
   {{- else if .Values.providers.talos.enabled -}}
     false

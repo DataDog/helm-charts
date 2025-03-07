@@ -288,6 +288,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.targets }}
+          - name: DD_APM_INSTRUMENTATION_TARGETS
+            value: {{ .Values.datadog.apm.instrumentation.targets | toJson | quote }}
+          {{- end }}
           {{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
           - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
             value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
@@ -493,7 +497,7 @@ spec:
             - key: helm.yaml
               path: helm.yaml
 {{- end }}
-{{- if .Values.datadog.collectEvents }}
+{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}
