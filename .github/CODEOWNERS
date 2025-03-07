@@ -19,3 +19,9 @@ charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
 charts/private-action-runner                           @DataDog/action-platform
 test/private-action-runner                             @DataDog/action-platform
+test/datadog/baseline/manifests/npm_daemonset_default.yaml       @DataDog/Networks @DataDog/container-helm-chart-maintainers
+test/datadog/baseline/values/system_probe_daemonset_default.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+test/datadog/baseline/values/usm_daemonset_default.yaml          @DataDog/universal-service-monitoring @DataDog/container-helm-chart-maintainers
+test/datadog/baseline/values/npm_daemonset_default.yaml          @DataDog/Networks @DataDog/container-helm-chart-maintainers
+test/datadog/baseline/values/system_probe_daemonset_default.yaml @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+test/datadog/baseline/values/usm_daemonset_default.yaml          @DataDog/universal-service-monitoring @DataDog/container-helm-chart-maintainers
