@@ -23410,6 +23410,27 @@ entries:
   private-action-runner:
   - apiVersion: v2
     appVersion: 1.22.0
+    created: "2025-03-07T12:29:06.35136471Z"
+    description: A Helm chart to deploy the private action runner
+    digest: c8be35cddd98f656590b36627becd20bdfac20b55a2addb7dfd35a69100de74d
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - app builder
+    - workflow automation
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: private-action-runner
+    sources:
+    - https://docs.datadoghq.com/service_management/workflows/private_actions
+    - https://app.datadoghq.com/app-builder/private-action-runners
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/private-action-runner-0.15.8/private-action-runner-0.15.8.tgz
+    version: 0.15.8
+  - apiVersion: v2
+    appVersion: 1.22.0
     created: "2025-03-04T13:05:46.192279711Z"
     description: A Helm chart to deploy the private action runner
     digest: be74e6dbdff456c276b3a2e8fc904ee8996aaf5a6bf849b71668e7b061abe34b
@@ -25376,4 +25397,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-07T10:21:15.698863356Z"
+generated: "2025-03-07T12:29:06.352558896Z"
