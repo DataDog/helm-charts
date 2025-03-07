@@ -134,7 +134,7 @@ spec:
         app:  "private-action-runner-default" 
         service:  "private-action-runner-default-service" 
       annotations:
-        config-hash: bda02d4e95c0ab1a984e62d87be14d65768d938dc3ff2e59342961b37acf25fb
+        config-hash: 7091b9a074330e2ed57f3086a7de30e96f38467ae819e6656d164b0bc59a2da6
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
       tolerations:
@@ -159,9 +159,6 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-          env:
-            - name: MANAGED_BY
-              value: "helm"
       volumes:
         - name: secrets
           secret:

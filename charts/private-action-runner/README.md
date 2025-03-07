@@ -51,6 +51,7 @@ helm repo update
 | runners[0].config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runners[0].config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
 | runners[0].config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runners[0].env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runners[0].kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runners[0].kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runners[0].kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
