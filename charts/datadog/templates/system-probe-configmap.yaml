@@ -69,6 +69,8 @@ data:
     {{- if not (eq .Values.datadog.discovery.enabled nil) }}
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}
+      network_stats:
+        enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}
     gpu_monitoring:
       enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}

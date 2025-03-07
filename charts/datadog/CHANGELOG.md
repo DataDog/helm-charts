@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.105.0
+
+* Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
+
 ## 3.104.0
 
 * Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
