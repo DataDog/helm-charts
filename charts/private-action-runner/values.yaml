@@ -29,6 +29,8 @@ runners:
       port: 9016
       # -- List of actions that the Datadog Private Action Runner is allowed to execute
       actionsAllowlist: []
+    # -- Environment variables to be passed to the Datadog Private Action Runner
+    env: []
     # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
     kubernetesActions:
       # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
