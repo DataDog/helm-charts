@@ -1,0 +1,203 @@
+{{- if .Values.csiDriver.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dd-csi-node-server
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: dd-csi-node-server
+  template:
+    metadata:
+      labels:
+        app: dd-csi-node-server
+        admission.datadoghq.com/enabled: "false"
+    spec:
+      hostNetwork: true # Depending on your CSI driver's requirements
+      {{- if .Values.datadog.apm.enabled }}
+      initContainers:
+        - args:
+            - sh copy-lib.sh /datadog-lib && echo $(date +%s) >> /opt/datadog-packages/datadog-apm-inject/c-init-time.datadog-lib-java-init
+          command:
+            - /bin/sh
+            - -c
+            - --
+          image: gcr.io/datadoghq/dd-lib-java-init:v1
+          imagePullPolicy: IfNotPresent
+          name: datadog-lib-java-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /datadog-lib
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog/apm/library/java
+            - mountPath: /opt/datadog-packages/datadog-apm-inject
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog-packages/datadog-apm-inject
+        - args:
+            - sh copy-lib.sh /datadog-lib && echo $(date +%s) >> /opt/datadog-packages/datadog-apm-inject/c-init-time.datadog-lib-js-init
+          command:
+            - /bin/sh
+            - -c
+            - --
+          image: gcr.io/datadoghq/dd-lib-js-init:v5
+          imagePullPolicy: IfNotPresent
+          name: datadog-lib-js-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /datadog-lib
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog/apm/library/js
+            - mountPath: /opt/datadog-packages/datadog-apm-inject
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog-packages/datadog-apm-inject
+        - args:
+            - sh copy-lib.sh /datadog-lib && echo $(date +%s) >> /opt/datadog-packages/datadog-apm-inject/c-init-time.datadog-lib-python-init
+          command:
+            - /bin/sh
+            - -c
+            - --
+          image: gcr.io/datadoghq/dd-lib-python-init:v2
+          imagePullPolicy: IfNotPresent
+          name: datadog-lib-python-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /datadog-lib
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog/apm/library/python
+            - mountPath: /opt/datadog-packages/datadog-apm-inject
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog-packages/datadog-apm-inject
+        - args:
+            - sh copy-lib.sh /datadog-lib && echo $(date +%s) >> /opt/datadog-packages/datadog-apm-inject/c-init-time.datadog-lib-dotnet-init
+          command:
+            - /bin/sh
+            - -c
+            - --
+          image: gcr.io/datadoghq/dd-lib-dotnet-init:v2
+          imagePullPolicy: IfNotPresent
+          name: datadog-lib-dotnet-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /datadog-lib
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog/apm/library/dotnet
+            - mountPath: /opt/datadog-packages/datadog-apm-inject
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog-packages/datadog-apm-inject
+        - args:
+            - sh copy-lib.sh /datadog-lib && echo $(date +%s) >> /opt/datadog-packages/datadog-apm-inject/c-init-time.datadog-lib-ruby-init
+          command:
+            - /bin/sh
+            - -c
+            - --
+          image: gcr.io/datadoghq/dd-lib-ruby-init:v2
+          imagePullPolicy: IfNotPresent
+          name: datadog-lib-ruby-init
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /datadog-lib
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog/apm/library/ruby
+            - mountPath: /opt/datadog-packages/datadog-apm-inject
+              name: datadog-auto-instrumentation
+              subPath: opt/datadog-packages/datadog-apm-inject
+      {{- end }}
+      containers:
+        - name: csi-node-driver
+          image: "{{ include "image-path" (dict "root" .Values "image" .Values.csiDriver.image) }}"
+          imagePullPolicy: {{ .Values.csiDriver.image.pullPolicy }}
+          securityContext:
+            privileged: true
+          args:
+            - /dd-csi-driver
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /var/lib/kubelet/plugins/example.csi/driver
+            - name: datadog-auto-instrumentation
+              mountPath: /tmp/datadog
+            - name: overlay-dir
+              mountPath: /var/lib/csi/overlay
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+            - mountPath: /var/run/datadog
+              name: dsdandapmsocket
+            - mountPath: {{ template "datadog.hostMountRoot" . }}/logs
+              name: pointerdir
+            - mountPath: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
+              name: logpodpath
+              readOnly: true
+            - mountPath: /var/log/containers
+              name: logscontainerspath
+              readOnly: true
+            - mountPath: /var/lib/docker/containers
+              name: logdockercontainerpath
+              readOnly: true
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+        - name: csi-node-driver-registrar
+          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/example.csi/driver/csi.sock # Update this with your desired registration path
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: registration-dir
+              mountPath: /registration
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/example.csi/driver
+            type: DirectoryOrCreate
+        - name: datadog-auto-instrumentation
+          hostPath:
+            path: /tmp/datadog-apm
+            type: DirectoryOrCreate
+        - name: overlay-dir
+          hostPath:
+            path: /var/lib/csi/overlay
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: /var
+            type: Directory
+          name: varroot
+        - hostPath:
+            path: /var/run/datadog
+            type: DirectoryOrCreate
+          name: dsdandapmsocket
+        - hostPath:
+            path: {{ template "datadog.hostMountRoot" . }}/logs
+          name: pointerdir
+        - hostPath:
+            path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
+          name: logpodpath
+        - hostPath:
+            path: /var/log/containers
+          name: logscontainerspath
+        - hostPath:
+            path: /var/lib/docker/containers
+          name: logdockercontainerpath
+{{ end }}

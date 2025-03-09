@@ -1080,6 +1080,49 @@ datadog:
     # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
     enabled: true
 
+## csiDriver configures the use of custom datadog CSI driver. 
+## Enabling this option speeds up APM pod startup time by eliminating the injection of tracing library init containers
+## Enabling this option also enhances security by using CSI volumes instead of hostpath volumes for Logs, Dogstatsd and APM UDS socket.
+## If enabled, this will deploy the datadog csi driver as a daemonset on every node and will have privileged host access in order to manage
+## volume lifecycle on each node.
+csiDriver:
+  # csiDriver.enabled enables using Datadog CSI driver to manage volumes and eliminate usage of hostpath volumes
+  enabled: false
+
+  ## Define the Datadog CSI Driver image to work with
+  image:
+    # csiDriver.image.name -- CSI Driver image name to use (relative to `registry`)
+    name:
+
+    # csiDriver.image.tag -- CSI Driver image tag to use
+    tag: v17
+
+
+    # csiDriver.image.digest -- CSI Driver image digest to use, takes precedence over tag if specified
+    digest: ""
+
+    # csiDriver.image.repository -- Override default registry + image.name for CSI Driver
+    repository: adelhajhassan918/dd-csi-plugin
+
+    # csiDriver.image.pullPolicy -- CSI Driver image pullPolicy
+    pullPolicy: IfNotPresent
+
+    # csiDriver.image.pullSecrets -- CSI Driver repository pullSecret (ex: specify docker registry credentials)
+
+    ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+    pullSecrets: []
+    #  - name: "<REG_SECRET>"
+
+    # csiDriver.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version passed in csiDriver.image.tag is checked
+    ## for compatibility with the version of the chart.
+    ## This boolean permits completely skipping this check.
+    ## This is useful, for example, for custom tags that are not
+    ## respecting semantic versioning.
+    doNotCheckTag: # false
+
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics

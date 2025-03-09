@@ -45,10 +45,19 @@
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
+{{- if .Values.csiDriver.enabled }}
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
+      type: local
+  name: dsdsocket
+{{- else }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
     type: DirectoryOrCreate
   name: dsdsocket
+{{- end }}
 {{- else }}
 - emptyDir: {}
   name: dsdsocket
@@ -66,11 +75,20 @@
   name: kubelet-ca
 {{- end }}
 {{- if eq (include "trace-agent-use-uds" .) "true" }}
+{{- if .Values.csiDriver.enabled }}
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      path: {{ .Values.datadog.apm.hostSocketPath }}
+      type: local
+  name: apmsocket
+{{- else }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
   name: apmsocket
 {{- end }}
+{{- end}}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
   configMap:
@@ -204,6 +222,35 @@
 {{- end }}
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if .Values.csiDriver.enabled }}
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      type: local
+      path: {{ template "datadog.hostMountRoot" . }}/logs
+  name: pointerdir
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      type: local
+      path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
+  name: logpodpath
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      type: local
+      path: /var/log/containers
+  name: logscontainerspath
+{{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
+- csi:
+    driver: datadog.poc.csi.driver
+    volumeAttributes:
+      type: local
+      path: /var/lib/docker/containers
+  name: logdockercontainerpath
+{{- end }}
+
+{{- else }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
@@ -218,6 +265,9 @@
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
+
+{{- end }}
+
 {{- end }}
 {{- if .Values.providers.gke.gdc }}
 - secret:
