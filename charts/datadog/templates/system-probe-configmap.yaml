@@ -66,6 +66,8 @@ data:
         native:
           enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
         {{- end }}
+    traceroute:
+      enabled: {{ $.Values.datadog.traceroute.enabled }}
     {{- if not (eq .Values.datadog.discovery.enabled nil) }}
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}
