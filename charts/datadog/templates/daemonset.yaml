@@ -55,14 +55,14 @@ spec:
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
-        {{- if .Values.agents.podSecurity.apparmor.enabled }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) }}
         container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
         {{- end }}
         {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
       {{- if .Values.agents.podAnnotations }}
@@ -73,7 +73,7 @@ spec:
       shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
       {{- end }}
       {{- if .Values.datadog.securityContext -}}
-      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version ) | nindent 6 }}
+      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 6 }}
       {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
       {{- if .Values.agents.podSecurity.securityContext }}
       {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}
@@ -114,6 +114,9 @@ spec:
       {{- if or .Values.agents.priorityClassCreate .Values.agents.priorityClassName }}
       priorityClassName: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
       {{- end }}
+      {{- if .Values.datadog.gpuMonitoring.enabled }}
+      runtimeClassName: {{ .Values.datadog.gpuMonitoring.runtimeClassName }}
+      {{- end }}
       containers:
         {{- include "container-agent" . | nindent 6 }}
         {{- if eq (include "should-enable-trace-agent" .) "true" }}
@@ -139,7 +142,7 @@ spec:
           {{ include "containers-init-windows" . | nindent 6 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
-          {{ include "containers-init-linux" . | nindent 6 }}
+          {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}

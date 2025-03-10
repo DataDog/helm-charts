@@ -1,5 +1,21 @@
 # Changelog
 
+# 2.4.1
+
+* Add DatadogGenericResources CRD.
+
+# 2.4.0
+
+* Update CRDs from Datadog Operator v1.12.0 tag. 
+
+# 2.3.0
+
+* Update CRDs from Datadog Operator v1.11.0 tag.
+
+# 2.2.0
+
+* Update CRDs from Datadog Operator v1.10.0 tag.
+
 ## 2.1.0
 
 * Update CRDs from Datadog Operator v1.9.0 tag.

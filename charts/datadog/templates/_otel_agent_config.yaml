@@ -21,6 +21,7 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       datadog:
         api:
           key: ${env:DD_API_KEY}
+          site: {{ .Values.datadog.site | default "" | quote }}
     processors:
       infraattributes:
         cardinality: 2

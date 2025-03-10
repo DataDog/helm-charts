@@ -91,9 +91,11 @@
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
+    {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+    {{- end }}
     - name: group
       mountPath: /etc/group
       readOnly: true

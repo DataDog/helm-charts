@@ -27,6 +27,8 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+## If you are on GKE Autopilot, you must use a gcr.io variant registry.
+
 registry:  # gcr.io/datadoghq
 
 datadog:
@@ -257,8 +259,6 @@ datadog:
 
   # datadog.kubernetesResourcesLabelsAsTags -- Provide a mapping of Kubernetes Resources Labels to Datadog Tags
   kubernetesResourcesLabelsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-label
   #    pods:
   #      x-ref: reference
   #    namespaces:
@@ -268,8 +268,6 @@ datadog:
 
   # datadog.kubernetesResourcesAnnotationsAsTags -- Provide a mapping of Kubernetes Resources Annotations to Datadog Tags
   kubernetesResourcesAnnotationsAsTags: {}
-  #    deployments.apps:
-  #      x-team: team-from-annotation
   #    pods:
   #      x-ann: annotation-reference
   #    namespaces:
@@ -315,6 +313,10 @@ datadog:
     # datadog.kubelet.coreCheckEnabled -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
     # @default -- true
     coreCheckEnabled: true
+    # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
+    # @default -- /var/lib/kubelet/pod-resources
+    podResourcesSocketDir: /var/lib/kubelet/pod-resources
+
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
@@ -389,6 +391,9 @@ datadog:
 
   ## ref: https://docs.datadoghq.com/agent/kubernetes/#event-collection
   collectEvents: true
+
+  # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
+  kubernetesUseEndpointSlices: false
 
   # Configure Kubernetes events collection
   kubernetesEvents:
@@ -481,6 +486,12 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/kubernetes/apm/
     portEnabled: false
 
+    # datadog.apm.useLocalService -- Enable APM over TCP communication to use the local service only (requires Kubernetes v1.22+)
+    # Note: The hostPort 8126 is disabled when this is enabled.
+
+    ## ref: https://docs.datadoghq.com/tracing/guide/setting_up_apm_with_kubernetes_service/?tab=helm
+    useLocalService: false
+
     # datadog.apm.enabled -- Enable this to enable APM and tracing, on port 8126
     # DEPRECATED. Use datadog.apm.portEnabled instead
 
@@ -505,19 +516,35 @@ datadog:
     hostSocketPath: /var/run/datadog/
 
     # APM Single Step Instrumentation
-    # This feature is in beta. It requires Cluster Agent 7.49+.
+    # This feature is in preview. It requires Cluster Agent 7.49+.
     instrumentation:
-      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (beta).
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (preview).
       enabled: false
 
-      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       enabledNamespaces: []
 
-      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (beta).
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (preview).
       disabledNamespaces: []
 
-      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (beta).
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
+
+      # datadog.apm.instrumentation.targets -- Enable target based workload selection (preview).
+      # Requires Cluster Agent 7.64.0+
+      targets: []
+      #  - name: "example"
+      #    podSelector:
+      #      matchLabels:
+      #        language: "python"
+      #    namespaceSelector:
+      #      matchNames:
+      #      - "applications"
+      #    ddTraceVersions:
+      #      python: "v2"
+      #    ddTraceConfigs:
+      #      - name: "DD_PROFILING_ENABLED"
+      #        value: "true"
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -525,8 +552,13 @@ datadog:
       # Language detection currently only detects languages and adds them as annotations on deployments, but doesn't use these languages for injecting libraries to applicative pods.
       # It requires Agent 7.52+ and Cluster Agent 7.52+
       language_detection:
-        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (beta).
+        # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (preview).
         enabled: true
+
+      # This feature is in preview. It requires Cluster Agent 7.57+.
+      injector:
+        # datadog.apm.instrumentation.injector.imageTag -- The image tag to use for the APM Injector (preview).
+        imageTag: ""
 
   ## Application Security Managment (ASM) configuration
   ##
@@ -546,22 +578,6 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
-
-  ## OTel collector related configuration
-  otelCollector:
-    # datadog.otelCollector.enabled -- Enable the OTel Collector
-    enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
-    ports:
-
-        # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
-        name: otel-grpc
-        # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
-        name: otel-http
-    # datadog.otelCollector.config -- OTel collector configuration
-    config: {}
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -586,6 +602,34 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
+  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
+  ## OTel collector related configuration
+  otelCollector:
+    # datadog.otelCollector.enabled -- Enable the OTel Collector
+    enabled: false
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    ports:
+
+        # Default GRPC port of OTLP receiver
+      - containerPort: "4317"
+        name: otel-grpc
+        # Default HTTP port of OTLP receiver
+      - containerPort: "4318"
+        name: otel-http
+    # datadog.otelCollector.config -- OTel collector configuration
+    config: null
+
+    ## Provide OTel Collector RBAC configuration
+    rbac:
+      # datadog.otelCollector.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+      # and create required ClusterRole to access Kubernetes API
+      create: true
+      # datadog.otelCollector.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+      rules: []
+      #   - apiGroups: [""]
+      #     resources: ["pods", "nodes"]
+      #     verbs: ["get", "list", "watch"]
 
   ## Continuous Profiler configuration
   ##
@@ -684,12 +728,18 @@ datadog:
     processDiscovery: true
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
-    ## This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation.
-    runInCoreAgent: false
+    ## This requires Agent 7.60.0+ and Linux.
+    runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
     containerCollection: true
+
+  # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
+  disableDefaultOsReleasePaths: false
+
+  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in all containers
+  disablePasswdMount: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file
   osReleasePath: /etc/os-release
@@ -752,6 +802,7 @@ datadog:
     # datadog.systemProbe.conntrackInitTimeout -- the time to wait for conntrack to initialize before failing
     conntrackInitTimeout: 10s
 
+    # DEPRECATED. Use datadog.disableDefaultOsReleasePaths instead.
     # datadog.systemProbe.enableDefaultOsReleasePaths -- enable default os-release files mount
     enableDefaultOsReleasePaths: true
 
@@ -811,6 +862,45 @@ datadog:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
 
+    # datadog.serviceMonitoring.httpMonitoringEnabled -- Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the default setting in the datadog agent.
+    httpMonitoringEnabled:
+
+    # datadog.serviceMonitoring.http2MonitoringEnabled -- Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent.
+    http2MonitoringEnabled:
+
+    tls:
+      go:
+        # datadog.serviceMonitoring.tls.go.enabled -- (bool) Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      istio:
+        # datadog.serviceMonitoring.tls.istio.enabled -- (bool) Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      nodejs:
+        # datadog.serviceMonitoring.tls.nodejs.enabled -- (bool) Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+      native:
+        # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
+        enabled:
+
+  discovery:
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    enabled:  # false
+
+    # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
+    networkStats:
+      enabled: true
+
+  gpuMonitoring:
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    enabled: false
+
+    # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
+    configureCgroupPerms: false
+
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources
+    runtimeClassName: "nvidia"
+
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:
@@ -821,7 +911,12 @@ datadog:
       # This should be set to true when using EKS, GKE or if containerd is configured to
       # discard uncompressed layers.
       # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
-      uncompressedLayersSupport: false
+      # Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer.
+      # See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers
+      uncompressedLayersSupport: true
+
+      # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
+      overlayFSDirectScan: false
 
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
@@ -1002,7 +1097,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.58.0
+    tag: 7.63.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1038,8 +1133,16 @@ clusterAgent:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
     initContainers:
-      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      # clusterAgent.containers.initContainers.securityContext -- Specify securityContext on the initContainers.
       securityContext: {}
+      # clusterAgent.containers.initContainers.resources -- Resource requests and limits for the Cluster Agent init containers
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -1069,6 +1172,9 @@ clusterAgent:
 
     # clusterAgent.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # clusterAgent.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterAgent.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # clusterAgent.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true
     automountServiceAccountToken: true
@@ -1141,6 +1247,16 @@ clusterAgent:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
 
+    # clusterAgent.admissionController.validation -- Validation Webhook configuration options
+    validation:
+      # clusterAgent.admissionController.validation.enabled -- Enabled enables the Admission Controller validation webhook. Default: true. (Requires Agent 7.59.0+).
+      enabled: true
+
+    # clusterAgent.admissionController.mutation -- Mutation Webhook configuration options
+    mutation:
+      # clusterAgent.admissionController.mutation.enabled -- Enabled enables the Admission Controller mutation webhook. Default: true. (Requires Agent 7.59.0+).
+      enabled: true
+
     # clusterAgent.admissionController.webhookName -- Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent
     webhookName: datadog-webhook
 
@@ -1152,6 +1268,7 @@ clusterAgent:
     ## If clusterAgent.admissionController.configMode is not set:
     ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
     ##   * and datadog.apm.portEnabled is true, the Admission Controller uses hostip.
+    ##   * and datadog.apm.useLocalService is true and the aformentioned two are false, the Admission Controller uses service.
     ##   * Otherwise, the Admission Controller defaults to hostip.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
@@ -1177,6 +1294,18 @@ clusterAgent:
 
     # clusterAgent.admissionController.port -- Set port of cluster-agent admission controller service
     port: 8000
+
+    cwsInstrumentation:
+      # clusterAgent.admissionController.cwsInstrumentation.enabled -- Enable the CWS Instrumentation admission controller endpoint.
+      enabled: false
+
+      # clusterAgent.admissionController.cwsInstrumentation.mode -- Mode defines how the CWS Instrumentation should behave.
+      # Options are "remote_copy" or "init_container"
+      mode: remote_copy
+
+    kubernetesAdmissionEvents:
+      # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
+      enabled: false
 
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
@@ -1259,6 +1388,11 @@ clusterAgent:
   #          port: 3306
   #          username: datadog
   #          password: <YOUR_CHOSEN_PASSWORD>
+
+  ## clusterAgent.kubernetesApiserverCheck -- correspond to options for configuring the kube_apiserver integration.
+  kubernetesApiserverCheck:
+    # clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus -- Set this to true to disable use_component_status for the kube_apiserver integration.
+    disableUseComponentStatus: false
 
   # clusterAgent.resources -- Datadog cluster-agent resource requests and limits.
   resources: {}
@@ -1452,7 +1586,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.5
+    tag: 1.1.8
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1495,7 +1629,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.58.0
+    tag: 7.63.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1538,6 +1672,9 @@ agents:
 
     # agents.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if agents.rbac.create is true
     serviceAccountAnnotations: {}
+
+    # agents.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if agents.rbac.create is true
+    serviceAccountAdditionalLabels: {}
 
     # agents.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true
     automountServiceAccountToken: true
@@ -2001,7 +2138,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.58.0
+    tag: 7.63.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2038,6 +2175,10 @@ clusterChecksRunner:
 
     # clusterChecksRunner.rbac.serviceAccountAnnotations -- Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAnnotations: {}
+
+    # clusterChecksRunner.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
+    serviceAccountAdditionalLabels: {}
+
 
     # clusterChecksRunner.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true
     automountServiceAccountToken: true
@@ -2212,6 +2353,14 @@ clusterChecksRunner:
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
 
+  containers:
+    agent:
+      # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
+      securityContext: {}
+    initContainers:
+      # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
+      securityContext: {}
+
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
 
@@ -2261,6 +2410,9 @@ providers:
     # providers.gke.cos -- Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS)
     cos: false
 
+    # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
+    gdc: false
+
   eks:
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
@@ -2271,6 +2423,15 @@ providers:
       useHostnameFromFile: false
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
+    enabled: false
+
+  talos:
+    # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,
+    # as currently the chart cannot auto-detect Talos.dev cluster.
+    # Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy.
+    # The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation
+    # Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see:
+    # https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/
     enabled: false
 
 remoteConfiguration:

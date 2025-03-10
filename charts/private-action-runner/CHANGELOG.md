@@ -1,5 +1,49 @@
 # Datadog changelog
 
+## 0.15.8
+
+* Update private action image version to `v0.1.14-beta`
+
+## 0.15.7
+
+* Update private action image version to `v0.1.12-beta`
+
+## 0.15.6
+
+* Update private action image version to `v0.1.11-beta`
+
+## 0.15.5
+
+* Add gitlab credentials file example
+
+## 0.15.4
+
+* Update private action image version to `v0.1.10-beta`
+
+## 0.15.3
+
+* Update private action image version to `v0.1.9-beta`
+
+## 0.15.2
+
+* Update private action image version to `v0.1.8-beta`
+
+## 0.15.1
+
+* Update private action image version to `v0.1.6-beta`
+
+## 0.15.0
+
+* Update private action image version to `v0.1.5-beta`
+
+## 0.14.3
+
+* Add GitLab private actions and fix image repository link.
+
+## 0.14.2
+
+* Update private action image version to `v0.1.3-beta`
+
 ## 0.14.1
 
 * Update private action image version to `v0.1.2-beta`

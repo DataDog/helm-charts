@@ -48,6 +48,10 @@ vet:
 unit-test:
 	go test -C test ./... -count=1
 
+.PHONY: unit-test-datadog
+unit-test-datadog:
+	go test -C test ./datadog -count=1
+
 .PHONY: unit-test-operator
 unit-test-operator:
 	go test -C test ./datadog-operator -count=1

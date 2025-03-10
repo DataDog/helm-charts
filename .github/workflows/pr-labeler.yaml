@@ -4,13 +4,20 @@ on:
     branches:
       - main
 
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+  # packages: read
+
 jobs:
   label:
     name: Add label for PRs
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     timeout-minutes: 5
     steps:
-      - uses: actions/labeler@v5
+      - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5.0.0
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/workflows/labeler/labels.yaml
