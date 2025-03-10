@@ -1,17 +1,13 @@
 # This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-agents.additionalLabels: spec.override.nodeAgent.labels
-agents.affinity: spec.override.nodeAgent.affinity
-agents.containers.agent.env: spec.override.nodeAgent.containers.agent.env
-agents.containers.agent.envDict: ""
+agents.containers.agent.env: ""
 agents.containers.agent.envFrom: ""
-agents.containers.agent.healthPort: spec.override.nodeAgent.containers.agent.healthPort
-agents.containers.agent.livenessProbe: spec.override.nodeAgent.containers.agent.livenessProbe
-agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold
-agents.containers.agent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.livenessProbe.initialDelaySeconds
-agents.containers.agent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.periodSeconds
-agents.containers.agent.livenessProbe.successThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.successThreshold
-agents.containers.agent.livenessProbe.timeoutSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.timeoutSeconds
-agents.containers.agent.logLevel: spec.override.nodeAgent.containers.agent.logLevel
+agents.containers.agent.healthPort: ""
+agents.containers.agent.livenessProbe.failureThreshold: ""
+agents.containers.agent.livenessProbe.initialDelaySeconds: ""
+agents.containers.agent.livenessProbe.periodSeconds: ""
+agents.containers.agent.livenessProbe.successThreshold: ""
+agents.containers.agent.livenessProbe.timeoutSeconds: ""
+agents.containers.agent.logLevel: ""
 agents.containers.agent.ports: ""
 agents.containers.agent.readinessProbe: spec.override.nodeAgent.containers.agent.readinessProbe
 agents.containers.agent.readinessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.readinessProbe.failureThreshold
