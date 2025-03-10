@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.106.1
+
+* Add default container resource values for GKE Autopilot
+
+## 3.106.0
+
+* Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
+
 ## 3.105.0
 
 * Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
