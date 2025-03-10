@@ -2,11 +2,11 @@
 
 ## Purpose
 
-The purpose of this tool is to map a YAML file of a certain structure to another YAML file of a different structure. For instance, migrating a Helm chart values.yaml file to another values.yaml file after a significant chart update.
+The purpose of this tool is to map a YAML file of a certain structure to another YAML file of a different structure. For instance, migrating a Helm chart `values.yaml` file to another `values.yaml` file after a significant chart update.
 
 ## Motivation
 
-The motivation for creating this tool was to provide a way to support Datadog users who desire to switch from deploying the Datadog Agent using the `datadog` Helm chart to using the Datadog Operator controller. It is a potentially significant change that requires creating a new `DatadogAgent` custom resource specification. As a result, we are providing a way to map from a Helm chart values.yaml file to a `DatadogAgent` CRD spec, using a provided mapping.yaml file.
+The motivation for creating this tool was to provide a way to support Datadog users who desire to switch from deploying the Datadog Agent using the `datadog` Helm chart to using the Datadog Operator controller. It is a potentially significant change that requires creating a new `DatadogAgent` custom resource specification. As a result, we are providing a way to map from a Helm chart `values.yaml` file to a `DatadogAgent` CRD spec, using a provided mapping.yaml file.
 
 ## How to install
 
@@ -44,7 +44,7 @@ By default the output is also printed to STDOUT; to disable this use the flag `-
 ## Example usage (using provided files)
 
 ```bash
-$ ./helm-operator-mapper -sourceFile=example_source.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=example_prefix.yaml
+$ ./helm-operator-mapper -sourceFile=<EXAMPLE_SOURCE>.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=<EXAMPLE_PREFIX>.yaml
 ```
 
 ### Updating Mapping File from a Source YAML
