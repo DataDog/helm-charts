@@ -21,7 +21,7 @@
     path: C:/ProgramData
   name: logdockercontainerpath
 {{- end }}
-{{- if .Values.datadog.containerRuntimeSupport.enabled }}
+{{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 - hostPath:
     path: {{ template "datadog.dockerOrCriSocketPath" . }}
   name: runtimesocket

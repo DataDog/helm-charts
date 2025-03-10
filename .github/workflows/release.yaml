@@ -7,12 +7,17 @@ on:
     paths:
       - 'charts/**'
 
+permissions: {}
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      # https://github.com/helm/chart-releaser-action
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           fetch-depth: 0
       - name: Configure Git
@@ -24,7 +29,7 @@ jobs:
           helm repo add datadog https://helm.datadoghq.com
           helm repo add kube-state-metrics https://prometheus-community.github.io/helm-charts
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.5.0
+        uses: helm/chart-releaser-action@be16258da8010256c6e82849661221415f031968 # v1.5.0
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           CR_SKIP_EXISTING: true # Ignore chart changes when version was not updated (documentation)

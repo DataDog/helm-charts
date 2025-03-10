@@ -78,18 +78,30 @@ spec:
         command: ["bash", "-c"]
         args:
           - cp -r /etc/datadog-agent /opt
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
             readOnly: false # Need RW for writing agent config files
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
         command: ["bash", "-c"]
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -100,7 +112,11 @@ spec:
             readOnly: true
           {{- end }}
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       containers:
         {{- if eq  (include "should-enable-fips" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
@@ -109,7 +125,7 @@ spec:
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
         args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
@@ -176,7 +192,15 @@ spec:
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
+{{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
+{{- include "default-cluster-check-runner-resources" . | indent 10 }}
+{{- else }}
+{{- end }}
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: installinfo
             subPath: install_info
