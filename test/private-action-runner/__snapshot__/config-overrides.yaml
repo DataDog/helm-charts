@@ -90,7 +90,7 @@ spec:
         app:  "private-action-runner-default" 
         service:  "private-action-runner-default-service" 
       annotations:
-        config-hash: 901f2ec9a9fb5d777a371e54f350edd083c9c9e2b1c3bcb2b1d7f7cb68bcd201
+        config-hash: 2fa834a4c916b0d4254f354857cd894879f1a7787214ef3fe8e8159911c3d74b
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
       tolerations:
@@ -115,6 +115,11 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
+          env: 
+            - name: FOO
+              value: foo
+            - name: BAR
+              value: bar
       volumes:
         - name: secrets
           secret:
