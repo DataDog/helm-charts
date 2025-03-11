@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.107.0
+
+* Add `datadog.otelCollector.featureGates` configuration to pass feature gates to the embedded collector.
+
 ## 3.106.1
 
 * Add default container resource values for GKE Autopilot
