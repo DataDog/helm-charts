@@ -1,0 +1,12 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  kubeStateMetricsCore:
+    useClusterCheckRunners": true
+  clusterChecks:
+    enabled": true
+  clusterChecksRunner:
+    enabled: true,
+    createPodDisruptionBudget": true
+  clusterAgent: 
+    createPodDisruptionBudget": true

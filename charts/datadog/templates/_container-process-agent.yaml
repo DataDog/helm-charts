@@ -14,7 +14,11 @@
 {{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}
 {{- end }}
   resources:
+{{- if and (empty .Values.agents.containers.processAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.processAgent.resources | indent 4 }}
+{{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}

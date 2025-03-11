@@ -816,7 +816,9 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.63.2
+            - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+              value: /var/lib/kubelet/pod-resources/kubelet.sock
+          image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -878,6 +880,9 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
+            - mountPath: /var/lib/kubelet/pod-resources
+              name: pod-resources-socket
+              readOnly: false
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
@@ -953,7 +958,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.63.2
+          image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1002,7 +1007,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.63.2
+          image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1037,7 +1042,7 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.63.2
+          image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1076,6 +1081,9 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - hostPath:
+            path: /var/lib/kubelet/pod-resources
+          name: pod-resources-socket
         - hostPath:
             path: /proc
           name: procdir
@@ -1256,7 +1264,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.63.2
+          image: gcr.io/datadoghq/cluster-agent:7.63.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1329,7 +1337,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.63.2
+          image: gcr.io/datadoghq/cluster-agent:7.63.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

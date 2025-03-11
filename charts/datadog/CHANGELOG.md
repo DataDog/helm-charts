@@ -1,8 +1,37 @@
 # Datadog changelog
 
-## 3.101.2
+## 3.107.0
 
 * Add `datadog.otelCollector.featureGates` configuration to pass feature gates to the embedded collector.
+
+## 3.106.1
+
+* Add default container resource values for GKE Autopilot
+
+## 3.106.0
+
+* Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
+
+## 3.105.0
+
+* Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
+
+## 3.104.0
+
+* Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
+* Add `datadog.otelCollector.rbac.rules` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+
+## 3.103.1
+
+* Update `fips.image.tag` to `1.1.8` fixing CVEs
+
+## 3.103.0
+
+* Upgrade default Agent version to `7.63.3`.
+
+## 3.102.0
+
+* Add a mount for the Kubernetes PodResources socket.
 
 ## 3.101.1
 

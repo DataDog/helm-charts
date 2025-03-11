@@ -313,6 +313,10 @@ datadog:
     # datadog.kubelet.coreCheckEnabled -- Toggle if kubelet core check should be used instead of Python check. (Requires Agent/Cluster Agent 7.53.0+)
     # @default -- true
     coreCheckEnabled: true
+    # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
+    # @default -- /var/lib/kubelet/pod-resources
+    podResourcesSocketDir: /var/lib/kubelet/pod-resources
+
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
@@ -526,6 +530,22 @@ datadog:
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
 
+      # datadog.apm.instrumentation.targets -- Enable target based workload selection (preview).
+      # Requires Cluster Agent 7.64.0+
+      targets: []
+      #  - name: "example"
+      #    podSelector:
+      #      matchLabels:
+      #        language: "python"
+      #    namespaceSelector:
+      #      matchNames:
+      #      - "applications"
+      #    ddTraceVersions:
+      #      python: "v2"
+      #    ddTraceConfigs:
+      #      - name: "DD_PROFILING_ENABLED"
+      #        value: "true"
+
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
 
@@ -601,6 +621,17 @@ datadog:
     config: null
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: ""
+
+    ## Provide OTel Collector RBAC configuration
+    rbac:
+      # datadog.otelCollector.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+      # and create required ClusterRole to access Kubernetes API
+      create: true
+      # datadog.otelCollector.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+      rules: []
+      #   - apiGroups: [""]
+      #     resources: ["pods", "nodes"]
+      #     verbs: ["get", "list", "watch"]
 
   ## Continuous Profiler configuration
   ##
@@ -857,6 +888,10 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+    # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
+    networkStats:
+      enabled: true
+
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
     enabled: false
@@ -1064,7 +1099,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.63.2
+    tag: 7.63.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1100,8 +1135,16 @@ clusterAgent:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
     initContainers:
-      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      # clusterAgent.containers.initContainers.securityContext -- Specify securityContext on the initContainers.
       securityContext: {}
+      # clusterAgent.containers.initContainers.resources -- Resource requests and limits for the Cluster Agent init containers
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -1545,7 +1588,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.7
+    tag: 1.1.8
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1588,7 +1631,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.63.2
+    tag: 7.63.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2097,7 +2140,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.63.2
+    tag: 7.63.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
