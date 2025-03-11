@@ -139,11 +139,16 @@ clusterAgent.admissionController.agentSidecarInjection.provider: spec.features.a
 clusterAgent.admissionController.agentSidecarInjection.selectors: spec.features.admissionController.agentSidecarInjection.selectors
 clusterAgent.admissionController.configMode: spec.features.admissionController.agentCommunicationMode
 clusterAgent.admissionController.containerRegistry: spec.features.admissionController.registry
+clusterAgent.admissionController.cwsInstrumentation.enabled: spec.features.admissionController.cwsInstrumentation.enabled
+clusterAgent.admissionController.cwsInstrumentation.mode: spec.features.admissionController.cwsInstrumentation.mode
 clusterAgent.admissionController.enabled: spec.features.admissionController.enabled
 clusterAgent.admissionController.failurePolicy: spec.features.admissionController.failurePolicy
+clusterAgent.admissionController.kubernetesAdmissionEvents.enabled: spec.features.admissionController.kubernetesAdmissionEvents.enabled
 clusterAgent.admissionController.mutateUnlabelled: spec.features.admissionController.mutateUnlabelled
+clusterAgent.admissionController.mutation.enabled: spec.features.admissionController.mutation.enabled
 clusterAgent.admissionController.port: ""
 clusterAgent.admissionController.remoteInstrumentation.enabled: spec.features.admissionController.cwsInstrumentation.enabled
+clusterAgent.admissionController.validation.enabled: spec.features.admissionController.validation.enabled
 clusterAgent.admissionController.webhookName: spec.features.admissionController.webhookName
 clusterAgent.advancedConfd: ""
 clusterAgent.affinity: spec.override.clusterAgent.affinity
@@ -171,6 +176,7 @@ clusterAgent.image.pullPolicy: spec.override.clusterAgent.image.pullPolicy
 clusterAgent.image.pullSecrets: spec.override.clusterAgent.image.pullSecrets
 clusterAgent.image.repository: ""
 clusterAgent.image.tag: spec.override.clusterAgent.image.tag
+clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus: ""
 clusterAgent.livenessProbe: spec.override.clusterAgent.containers.cluster-agent.livenessProbe
 clusterAgent.livenessProbe.failureThreshold: spec.override.clusterAgent.containers.cluster-agent.livenessProbe.failureThreshold
 clusterAgent.livenessProbe.initialDelaySeconds: spec.override.clusterAgent.containers.cluster-agent.livenessProbe.initialDelaySeconds
@@ -290,13 +296,16 @@ datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
 datadog.apm.instrumentation.disabledNamespaces: ""
 datadog.apm.instrumentation.enabled: ""
 datadog.apm.instrumentation.enabledNamespaces: ""
+datadog.apm.instrumentation.injector.imageTag: spec.features.apm.instrumentation.injector.imageTag
 datadog.apm.instrumentation.language_detection.enabled: ""
 datadog.apm.instrumentation.libVersions: ""
 datadog.apm.instrumentation.skipKPITelemetry: ""
+datadog.apm.instrumentation.targets: spec.features.apm.instrumentation.targets
 datadog.apm.port: spec.features.apm.hostPortConfig.hostPort
 datadog.apm.portEnabled: spec.features.apm.hostPortConfig.enabled
 datadog.apm.socketEnabled: spec.features.apm.enabled
 datadog.apm.socketPath: ""
+datadog.apm.useLocalService: ""
 datadog.apm.useSocketVolume: ""
 datadog.appKey: spec.global.credentials.appKey
 datadog.appKeyExistingSecret: spec.global.credentials.appSecret.secretName
@@ -322,6 +331,10 @@ datadog.containerLifecycle.enabled: ""
 datadog.containerRuntimeSupport.enabled: ""
 datadog.criSocketPath: spec.global.criSocketPath
 datadog.dd_url: spec.endpoint.url
+datadog.disableDefaultOsReleasePaths: ""
+datadog.disablePasswdMount: ""
+datadog.discovery.enabled: ""
+datadog.discovery.networkStats.enabled: ""
 datadog.dockerSocketPath: spec.global.dockerSocketPath
 datadog.dogstatsd.hostSocketPath: ""
 datadog.dogstatsd.nonLocalTraffic: ""
@@ -338,6 +351,9 @@ datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
 datadog.expvarPort: ""
+datadog.gpuMonitoring.configureCgroupPerms: ""
+datadog.gpuMonitoring.enabled: spec.features.gpu.enabled
+datadog.gpuMonitoring.runtimeClassName: spec.features.gpu.requiredRuntimeClassName
 datadog.helmCheck.collectEvents: spec.features.helmCheck.collectEvents
 datadog.helmCheck.enabled: spec.features.helmCheck.enabled
 datadog.helmCheck.valuesAsTags: spec.features.helmCheck.valuesAsTags
@@ -362,6 +378,7 @@ datadog.kubelet.host: spec.global.kubelet.host
 datadog.kubelet.host.valueFrom.fieldRef.fieldPath: ""
 datadog.kubelet.hostCAPath: spec.global.kubelet.hostCAPath
 datadog.kubelet.podLogsPath: ""
+datadog.kubelet.podResourcesSocketDir: spec.global.kubelet.podResourcesSocketPath
 datadog.kubelet.tlsVerify: spec.global.kubelet.tlsVerify
 datadog.kubernetesEvents.collectedEventTypes: spec.features.eventCollection.collectEventTypes
 datadog.kubernetesEvents.filteringEnabled: ""
@@ -369,6 +386,7 @@ datadog.kubernetesEvents.sourceDetectionEnabled: ""
 datadog.kubernetesEvents.unbundleEvents: spec.features.eventCollection.unbundleEvents
 datadog.kubernetesResourcesAnnotationsAsTags: spec.global.kubernetesResourcesAnnotationsAsTags
 datadog.kubernetesResourcesLabelsAsTags: spec.global.kubernetesResourcesLabelsAsTags
+datadog.kubernetesUseEndpointSlices: ""
 datadog.leaderElection: ""
 datadog.leaderElectionResource: ""
 datadog.leaderLeaseDuration: ""
@@ -390,9 +408,15 @@ datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
-datadog.otelCollector.config: ""
-datadog.otelCollector.enabled: ""
-datadog.otelCollector.ports: ""
+datadog.otelCollector.config:
+- spec.features.otelCollector.conf.configMap.items
+- spec.features.otelCollector.conf.configMap.name
+- spec.features.otelCollector.conf.configData
+datadog.otelCollector.enabled: spec.features.otelCollector.enabled
+datadog.otelCollector.featureGates: ""
+datadog.otelCollector.ports: spec.features.otelCollector.ports
+datadog.otelCollector.rbac.create: ""
+datadog.otelCollector.rbac.rules: ""
 datadog.otlp.logs.enabled: ""
 datadog.otlp.receiver.protocols.grpc.enabled: spec.features.otlp.receiver.protocols.grpc.enabled
 datadog.otlp.receiver.protocols.grpc.endpoint: spec.features.otlp.receiver.protocols.grpc.endpoint
@@ -415,6 +439,7 @@ datadog.prometheusScrape.serviceEndpoints: spec.features.prometheusScrape.enable
 datadog.prometheusScrape.version: spec.features.prometheusScrape.version
 datadog.remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 datadog.sbom.containerImage.enabled: spec.features.sbom.containerImage.enabled
+datadog.sbom.containerImage.overlayFSDirectScan: spec.features.sbom.containerImage.overlayFSDirectScan
 datadog.sbom.containerImage.uncompressedLayersSupport: ""
 datadog.sbom.host.enabled: spec.features.sbom.host.enabled
 datadog.secretAnnotations: ""
@@ -447,6 +472,12 @@ datadog.securityAgent.runtime.useSecruntimeTrack: ""
 datadog.securityContext: ""
 datadog.securityContext.runAsUser: ""
 datadog.serviceMonitoring.enabled: spec.features.usm.enabled
+datadog.serviceMonitoring.http2MonitoringEnabled: ""
+datadog.serviceMonitoring.httpMonitoringEnabled: ""
+datadog.serviceMonitoring.tls.go.enabled: ""
+datadog.serviceMonitoring.tls.istio.enabled: ""
+datadog.serviceMonitoring.tls.native.enabled: ""
+datadog.serviceMonitoring.tls.nodejs.enabled: ""
 datadog.site: spec.global.site
 datadog.systemProbe.apparmor: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
 datadog.systemProbe.bpfDebug: ""
@@ -495,6 +526,8 @@ providers.aks.enabled: ""
 providers.eks.ec2.useHostnameFromFile: ""
 providers.gke.autopilot: ""
 providers.gke.cos: ""
+providers.gke.gdc: ""
+providers.talos.enabled: ""
 registry: spec.global.registry
 remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 targetSystem: ""
