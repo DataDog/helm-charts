@@ -11,9 +11,7 @@ The motivation for creating this tool was to provide a way to support Datadog us
 ## How to install
 
 ```bash
-
-$ go build -o helm-operator-mapper .
-
+go build -o yaml-mapper .
 ```
 
 ## How to use
@@ -31,7 +29,7 @@ Both the key and value are period-delimited instead of nested or indented, as in
 Pass the source file and mapping file to the command:
 
 ```bash
-$ ./helm-operator-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
+./yaml-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
 
 ```
 
@@ -44,7 +42,7 @@ By default the output is also printed to STDOUT; to disable this use the flag `-
 ## Example usage (using provided files)
 
 ```bash
-$ ./helm-operator-mapper -sourceFile=<EXAMPLE_SOURCE>.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=<EXAMPLE_PREFIX>.yaml
+./yaml-mapper -sourceFile=<EXAMPLE_SOURCE>.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=<EXAMPLE_PREFIX>.yaml
 ```
 
 ### Updating Mapping File from a Source YAML
@@ -52,7 +50,7 @@ $ ./helm-operator-mapper -sourceFile=<EXAMPLE_SOURCE>.yaml -mappingFile=mapping_
 #### Update default Datadog Helm to DatadogAgent CRD mapping file with latest published Datadog Helm chart values.yaml
 
 ```bash
-./helm-operator-mapper -updateMap
+./yaml-mapper -updateMap
 ```
 
 #### Update default Datadog Helm to DatadogAgent CRD mapping file with local Datadog values.yaml
