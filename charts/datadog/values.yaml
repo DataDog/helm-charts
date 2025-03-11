@@ -599,6 +599,8 @@ datadog:
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+    featureGates: ""
 
   ## Continuous Profiler configuration
   ##
