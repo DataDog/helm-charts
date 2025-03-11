@@ -32,17 +32,30 @@ func Test_baseline_manifests(t *testing.T) {
 				ReleaseName: "private-action-runner",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
-				Overrides: map[string]string{
-					"runners[0].kubernetesActions.controllerRevisions": "{get,list,create,update,patch,delete,deleteMultiple}",
-					"runners[0].kubernetesActions.customObjects":       "{deleteMultiple}",
-					"runners[0].kubernetesActions.deployments":         "{restart}",
-					"runners[0].kubernetesActions.endpoints":           "{patch}",
-					"runners[0].kubernetesPermissions[0].apiGroups":    "{example.com}",
-					"runners[0].kubernetesPermissions[0].resources":    "{tests}",
-					"runners[0].kubernetesPermissions[0].verbs":        "{list,get,create,patch,update,delete}",
+				OverridesJson: map[string]string{
+					"runners[0].kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
+					"runners[0].kubernetesActions.customObjects":       `["deleteMultiple"]`,
+					"runners[0].kubernetesActions.deployments":         `["restart"]`,
+					"runners[0].kubernetesActions.endpoints":           `["patch"]`,
+					"runners[0].kubernetesPermissions[0].apiGroups":    `["example.com"]`,
+					"runners[0].kubernetesPermissions[0].resources":    `["tests"]`,
+					"runners[0].kubernetesPermissions[0].verbs":        `["list","get","create","patch","update","delete"]`,
 				},
 			},
 			snapshotName: "enable-kubernetes-actions",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify certain config overrides",
+			command: common.HelmCommand{
+				ReleaseName: "private-action-runner",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runners[0].env": `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+				},
+			},
+			snapshotName: "config-overrides",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}
