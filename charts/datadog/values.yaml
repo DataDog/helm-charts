@@ -620,7 +620,7 @@ datadog:
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
-    featureGates: ""
+    featureGates: null
 
     ## Provide OTel Collector RBAC configuration
     rbac:
