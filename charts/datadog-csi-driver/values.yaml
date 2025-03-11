@@ -1,0 +1,25 @@
+# Default values for datadog-csi-driver.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+## Define the Datadog CSI Driver image to work with
+image:
+  # image.tag -- CSI driver image tag to use
+  # TODO: change to a static stable version
+  tag: latest
+
+  # image.repository -- Override default registry + image.name for CSI driver
+  # TODO: change to official repository when available
+  repository:
+
+  # image.pullPolicy -- CSI driver image pullPolicy
+  pullPolicy: IfNotPresent
+
+  # image.pullSecrets -- CSI driver repository pullSecret (ex: specify docker registry credentials)
+
+  ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  pullSecrets: []
+  #   - name: "<REG_SECRET>"
