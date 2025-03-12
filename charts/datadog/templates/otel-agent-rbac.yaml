@@ -1,0 +1,40 @@
+{{- if and .Values.agents.rbac.create (eq (include "should-enable-otel-agent" .) "true") .Values.datadog.otelCollector.rbac.create -}}
+{{- if or (eq (include "should-add-otel-agent-k8sattributes-rules" .) "true") .Values.datadog.otelCollector.rbac.rules -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+rules:
+{{- if eq (include "should-add-otel-agent-k8sattributes-rules" .) "true" }}
+  - apiGroups: [""]
+    resources: ["pods", "namespaces"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+{{- end -}}
+{{- if .Values.datadog.otelCollector.rbac.rules -}}
+{{ toYaml .Values.datadog.otelCollector.rbac.rules | nindent 2 -}}
+{{- end }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-otel-agent
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "agents.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end -}}
+{{- end -}}

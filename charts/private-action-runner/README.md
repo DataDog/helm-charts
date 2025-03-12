@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.15.6](https://img.shields.io/badge/Version-0.15.6-informational?style=flat-square) ![AppVersion: v0.1.11-beta](https://img.shields.io/badge/AppVersion-v0.1.11--beta-informational?style=flat-square)
+![Version: 0.15.8](https://img.shields.io/badge/Version-0.15.8-informational?style=flat-square) ![AppVersion: v0.1.14-beta](https://img.shields.io/badge/AppVersion-v0.1.14--beta-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -42,7 +42,7 @@ helm repo update
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v0.1.11-beta"}` | Current Datadog Private Action Runner image |
+| common.image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v0.1.14-beta"}` | Current Datadog Private Action Runner image |
 | credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runners[0].config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
@@ -51,6 +51,7 @@ helm repo update
 | runners[0].config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runners[0].config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
 | runners[0].config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runners[0].env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runners[0].kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runners[0].kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runners[0].kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |

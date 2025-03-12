@@ -90,7 +90,7 @@ spec:
         app:  "private-action-runner-default" 
         service:  "private-action-runner-default-service" 
       annotations:
-        config-hash: 38d507cd658bf8dcb55de19e2b1f8adac892783287bbbc1c74c33303d420f41a
+        config-hash: 901f2ec9a9fb5d777a371e54f350edd083c9c9e2b1c3bcb2b1d7f7cb68bcd201
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
       tolerations:
@@ -100,7 +100,7 @@ spec:
           value: nodeless
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v0.1.11-beta"
+          image: "gcr.io/datadoghq/private-action-runner:v0.1.14-beta"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -115,9 +115,6 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-          env:
-            - name: MANAGED_BY
-              value: "helm"
       volumes:
         - name: secrets
           secret:

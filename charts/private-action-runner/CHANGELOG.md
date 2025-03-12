@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 0.16.0
+
+* Add support for passing environment variables to the Datadog Private Action Runner container.
+
+## 0.15.8
+
+* Update private action image version to `v0.1.14-beta`
+
+## 0.15.7
+
+* Update private action image version to `v0.1.12-beta`
+
 ## 0.15.6
 
 * Update private action image version to `v0.1.11-beta`
