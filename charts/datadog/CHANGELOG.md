@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.108.0
+
+* Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
+
 ## 3.107.0
 
 * Add `datadog.otelCollector.featureGates` configuration to pass feature gates to the embedded collector.
