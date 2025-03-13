@@ -15,6 +15,10 @@ datadog:
   otelCollector:
     enabled: true
     config: |
+      processors:
+        k8sattributes:
+        k8sattributes/passthrough:
+          passthrough: true
       receivers:
         otlp:
       exporters:
@@ -25,11 +29,13 @@ datadog:
         pipelines:
           traces:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
           metrics:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
           logs:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
-    featureGates: "-datadog.EnableOperationAndResourceNameV2"

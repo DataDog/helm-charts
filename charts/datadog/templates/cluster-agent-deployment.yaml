@@ -104,6 +104,9 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.resources }}
         resources:
 {{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
+{{- else if and (empty .Values.clusterAgent.containers.initContainers.resources) .Values.providers.gke.autopilot }}
+        resources:
+{{- include "default-container-resources" . | indent 10 }}
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
@@ -128,7 +131,11 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         resources:
+{{- if and (empty .Values.clusterAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-agent-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterAgent.resources | indent 10 }}
+{{- end }}
         ports:
         - containerPort: 5005
           name: agentport
@@ -280,6 +287,10 @@ spec:
           {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.targets }}
+          - name: DD_APM_INSTRUMENTATION_TARGETS
+            value: {{ .Values.datadog.apm.instrumentation.targets | toJson | quote }}
           {{- end }}
           {{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
           - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG

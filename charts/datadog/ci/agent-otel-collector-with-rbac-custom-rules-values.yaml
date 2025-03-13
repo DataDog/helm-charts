@@ -14,7 +14,17 @@ datadog:
   appKey: "0000000000000000000000000000000000000000"
   otelCollector:
     enabled: true
+    rbac:
+      create: true
+      rules:
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["get", "watch", "list"]
     config: |
+      processors:
+        k8sattributes/passthrough:
+          passthrough: true
+        k8sattributes:
       receivers:
         otlp:
       exporters:
@@ -25,11 +35,13 @@ datadog:
         pipelines:
           traces:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
           metrics:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
           logs:
             receivers: [otlp]
+            processors: [k8sattributes]
             exporters: [datadog]
-    featureGates: "-datadog.EnableOperationAndResourceNameV2"
