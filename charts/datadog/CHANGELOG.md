@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.109.2
+
+* Add `auth-token` mount to `process-agent` on Windows.
+
 ## 3.109.1
 
 * Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.

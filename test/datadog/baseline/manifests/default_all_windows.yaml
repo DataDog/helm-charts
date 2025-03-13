@@ -926,6 +926,9 @@ spec:
             - mountPath: C:/ProgramData/Datadog/logs
               name: logdatadog
               readOnly: false
+            - mountPath: C:/ProgramData/Datadog/auth
+              name: auth-token
+              readOnly: true
             - mountPath: \\.\pipe\docker_engine
               name: runtimesocket
             - mountPath: \\.\pipe\containerd-containerd
