@@ -2,7 +2,7 @@
 
 ## 3.107.0
 
-* * Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
+* Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
 
 ## 3.106.0
 
