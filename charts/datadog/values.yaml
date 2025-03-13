@@ -518,6 +518,11 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+    # Error Tracking backend
+    errorTrackingStandalone:
+      # datadog.apm.errorTrackingStandalone.enabled -- Enables Error Tracking for backend services.
+      enabled: false
+
     # APM Single Step Instrumentation
     # This feature is in preview. It requires Cluster Agent 7.49+.
     instrumentation:
@@ -622,6 +627,8 @@ datadog:
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+    featureGates: null
 
     ## Provide OTel Collector RBAC configuration
     rbac:
@@ -633,6 +640,13 @@ datadog:
       #   - apiGroups: [""]
       #     resources: ["pods", "nodes"]
       #     verbs: ["get", "list", "watch"]
+
+    ## Provide OTel Collector logs configuration
+    logs:
+      # datadog.otelCollector.logs.enabled -- Enable logs support in the OTel Collector.
+      # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+      # and pods logs.
+      enabled: false
 
   ## Continuous Profiler configuration
   ##
@@ -884,6 +898,10 @@ datadog:
       native:
         # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
         enabled:
+
+  traceroute:
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
+    enabled: false
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
@@ -1879,6 +1897,13 @@ agents:
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+      # agents.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+      volumeMounts: []
+      #   - name: <VOLUME_NAME>
+      #     mountPath: <CONTAINER_PATH>
+      #     readOnly: true
+
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env: []

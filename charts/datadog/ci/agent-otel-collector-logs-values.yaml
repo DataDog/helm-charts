@@ -14,9 +14,13 @@ datadog:
   appKey: "0000000000000000000000000000000000000000"
   otelCollector:
     enabled: true
+    logs:
+      enabled: true
     config: |
       receivers:
         otlp:
+        filelog:
+        filelog/datadog:
       exporters:
         datadog:
           api:
@@ -30,6 +34,5 @@ datadog:
             receivers: [otlp]
             exporters: [datadog]
           logs:
-            receivers: [otlp]
+            receivers: [filelog]
             exporters: [datadog]
-    featureGates: "-datadog.EnableOperationAndResourceNameV2"

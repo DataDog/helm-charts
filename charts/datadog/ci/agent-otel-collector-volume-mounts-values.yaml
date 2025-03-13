@@ -9,6 +9,15 @@ agents:
       env:
         - name: DD_HOSTNAME
           value: "datadog"
+    otelAgent:
+      volumeMounts:
+        - name: logscustompath
+          mountPath: /var/log/custom
+          readOnly: true
+  volumes:
+    - hostPath:
+        path: /var/log/custom
+      name: logscustompath
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
@@ -32,4 +41,3 @@ datadog:
           logs:
             receivers: [otlp]
             exporters: [datadog]
-    featureGates: "-datadog.EnableOperationAndResourceNameV2"

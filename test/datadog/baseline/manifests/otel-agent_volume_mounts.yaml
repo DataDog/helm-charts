@@ -114,6 +114,66 @@ metadata:
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
 ---
+apiVersion: v1
+data:
+  otel-config.yaml: |
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "otelcol"
+              scrape_interval: 10s
+              static_configs:
+                - targets: ["0.0.0.0:8888"]
+      otlp:
+        protocols:
+          grpc:
+             endpoint: 0.0.0.0:4317
+          http:
+             endpoint: 0.0.0.0:4318
+    exporters:
+      debug:
+        verbosity: detailed
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+          site: ""
+    processors:
+      infraattributes:
+        cardinality: 2
+      batch:
+        timeout: 10s
+    connectors:
+      datadog/connector:
+        traces:
+          compute_top_level_by_span_kind: true
+          peer_tags_aggregation: true
+          compute_stats_by_span_kind: true
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [infraattributes, batch]
+          exporters: [datadog, datadog/connector]
+        metrics:
+          receivers: [otlp, datadog/connector, prometheus]
+          processors: [infraattributes, batch]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          processors: [infraattributes, batch]
+          exporters: [datadog]
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-otel-config
+  namespace: datadog-agent
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -700,6 +760,14 @@ spec:
       port: 8126
       protocol: TCP
       targetPort: 8126
+    - name: otel-grpc
+      port: 4317
+      protocol: TCP
+      targetPort: 4317
+    - name: otel-http
+      port: 4318
+      protocol: TCP
+      targetPort: 4318
   selector:
     app: datadog
 ---
@@ -746,7 +814,7 @@ spec:
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
-              value: C:/ProgramData/Datadog/auth/token
+              value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
             - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -767,6 +835,12 @@ spec:
               value: "true"
             - name: DD_STRIP_PROCESS_ARGS
               value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -785,7 +859,7 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_APM_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_LOGS_ENABLED
               value: "false"
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
@@ -796,6 +870,8 @@ spec:
               value: "false"
             - name: DD_HEALTH_PORT
               value: "5555"
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_EXTRA_CONFIG_PROVIDERS
               value: clusterchecks endpointschecks
             - name: DD_IGNORE_AUTOCONF
@@ -811,6 +887,8 @@ spec:
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
+              value: "true"
+            - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
@@ -853,23 +931,49 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - mountPath: C:/ProgramData/Datadog/logs
+            - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
-            - mountPath: C:/ProgramData/Datadog
+            - mountPath: /etc/datadog-agent/install_info
+              name: installinfo
+              readOnly: true
+              subPath: install_info
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /host/etc/os-release
+              name: os-release-file
+              readOnly: true
+            - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
-            - mountPath: C:/ProgramData/Datadog/auth
+            - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: false
-            - mountPath: \\.\pipe\docker_engine
-              name: runtimesocket
-            - mountPath: \\.\pipe\containerd-containerd
-              name: containerdsocket
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
+            - mountPath: /var/lib/kubelet/pod-resources
+              name: pod-resources-socket
+              readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: false
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
         - command:
-            - process-agent
-            - -foreground
-            - --cfgpath=C:/ProgramData/Datadog/datadog.yaml
+            - trace-agent
+            - -config=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -879,7 +983,7 @@ spec:
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
-              value: C:/ProgramData/Datadog/auth/token
+              value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
             - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -901,62 +1005,80 @@ spec:
                 secretKeyRef:
                   key: token
                   name: datadog-cluster-agent
-            - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
-              value: "false"
-            - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
-              value: "true"
-            - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-              value: "true"
-            - name: DD_STRIP_PROCESS_ARGS
-              value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_SYSTEM_PROBE_ENABLED
-              value: "false"
-            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+            - name: DD_APM_ENABLED
               value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_APM_RECEIVER_PORT
+              value: "8126"
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_INSTRUMENTATION_INSTALL_TIME
+              valueFrom:
+                configMapKeyRef:
+                  key: install_time
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: install_id
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  key: install_type
+                  name: datadog-kpi-telemetry-configmap
           image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
-          name: process-agent
+          livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            tcpSocket:
+              port: 8126
+            timeoutSeconds: 5
+          name: trace-agent
+          ports:
+            - containerPort: 8126
+              name: traceport
+              protocol: TCP
           resources: {}
           volumeMounts:
-            - mountPath: C:/ProgramData/Datadog
+            - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
-            - mountPath: C:/ProgramData/Datadog/logs
+            - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
-            - mountPath: C:/ProgramData/Datadog/auth
+            - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: true
-            - mountPath: \\.\pipe\docker_engine
-              name: runtimesocket
-            - mountPath: \\.\pipe\containerd-containerd
-              name: containerdsocket
-      initContainers:
-        - args:
-            - |
-              Copy-Item -Recurse -Force C:/ProgramData/Datadog C:/Temp
-              Copy-Item -Force C:/Temp/install_info/install_info C:/Temp/Datadog/install_info
-          command:
-            - pwsh
-            - -Command
-          image: gcr.io/datadoghq/agent:7.63.3
-          imagePullPolicy: IfNotPresent
-          name: init-volume
-          resources: {}
-          volumeMounts:
-            - mountPath: C:/Temp/Datadog
-              name: config
-              readOnly: false
-            - mountPath: C:/Temp/install_info
-              name: installinfo
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
               readOnly: true
-        - args:
-            - Get-ChildItem 'entrypoint-ps1' | ForEach-Object { & $_.FullName if (-Not $?) { exit 1 } }
-          command:
-            - pwsh
-            - -Command
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: false
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
+        - command:
+            - otel-agent
+            - --config=/etc/otel-agent/otel-config.yaml
+            - --core-config=/etc/datadog-agent/datadog.yaml
+            - --sync-delay=30s
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -966,7 +1088,109 @@ spec:
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
-              value: C:/ProgramData/Datadog/auth/token
+              value: /etc/datadog-agent/auth/token
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_CLUSTER_AGENT_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
+            - name: DD_LOG_LEVEL
+              value: INFO
+          image: gcr.io/datadoghq/agent:7.63.3
+          imagePullPolicy: IfNotPresent
+          name: otel-agent
+          ports:
+            - containerPort: 4317
+              name: otel-grpc
+              protocol: TCP
+            - containerPort: 4318
+              name: otel-http
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: true
+            - mountPath: /var/log/datadog
+              name: logdatadog
+              readOnly: false
+            - mountPath: /etc/datadog-agent/auth
+              name: auth-token
+              readOnly: true
+            - mountPath: /etc/otel-agent
+              name: otelconfig
+              readOnly: true
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
+            - mountPath: /var/log/custom
+              name: logscustompath
+              readOnly: true
+      hostPID: true
+      initContainers:
+        - args:
+            - cp -r /etc/datadog-agent /opt
+          command:
+            - bash
+            - -c
+          image: gcr.io/datadoghq/agent:7.63.3
+          imagePullPolicy: IfNotPresent
+          name: init-volume
+          resources: {}
+          volumeMounts:
+            - mountPath: /opt/datadog-agent
+              name: config
+              readOnly: false
+        - args:
+            - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+          command:
+            - bash
+            - -c
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-secret
+            - name: DD_REMOTE_CONFIGURATION_ENABLED
+              value: "true"
+            - name: DD_AUTH_TOKEN_FILE_PATH
+              value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
             - name: DD_LANGUAGE_DETECTION_ENABLED
@@ -984,21 +1208,26 @@ spec:
           name: init-config
           resources: {}
           volumeMounts:
-            - mountPath: C:/ProgramData/Datadog
+            - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
-            - mountPath: \\.\pipe\docker_engine
-              name: runtimesocket
-            - mountPath: \\.\pipe\containerd-containerd
-              name: containerdsocket
+            - mountPath: /var/log/datadog
+              name: logdatadog
+              readOnly: false
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
       nodeSelector:
-        kubernetes.io/os: windows
+        kubernetes.io/os: linux
+      securityContext:
+        runAsUser: 0
       serviceAccountName: datadog
-      tolerations:
-        - effect: NoSchedule
-          key: node.kubernetes.io/os
-          operator: Equal
-          value: windows
+      tolerations: null
       volumes:
         - emptyDir: {}
           name: auth-token
@@ -1007,14 +1236,47 @@ spec:
           name: installinfo
         - emptyDir: {}
           name: config
-        - hostPath:
-            path: \\.\pipe\docker_engine
-          name: runtimesocket
-        - hostPath:
-            path: \\.\pipe\containerd-containerd
-          name: containerdsocket
         - emptyDir: {}
           name: logdatadog
+        - emptyDir: {}
+          name: tmpdir
+        - emptyDir: {}
+          name: s6-run
+        - hostPath:
+            path: /var/lib/kubelet/pod-resources
+          name: pod-resources-socket
+        - hostPath:
+            path: /proc
+          name: procdir
+        - hostPath:
+            path: /sys/fs/cgroup
+          name: cgroups
+        - hostPath:
+            path: /etc/os-release
+          name: os-release-file
+        - hostPath:
+            path: /var/run/datadog/
+            type: DirectoryOrCreate
+          name: dsdsocket
+        - hostPath:
+            path: /var/run/datadog/
+            type: DirectoryOrCreate
+          name: apmsocket
+        - hostPath:
+            path: /etc/passwd
+          name: passwd
+        - hostPath:
+            path: /var/run
+          name: runtimesocketdir
+        - configMap:
+            items:
+              - key: otel-config.yaml
+                path: otel-config.yaml
+            name: datadog-otel-config
+          name: otelconfig
+        - hostPath:
+            path: /var/log/custom
+          name: logscustompath
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
@@ -1229,7 +1491,7 @@ spec:
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
-            - mountPath: C:/ProgramData/Datadog/install_info
+            - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
               subPath: install_info
@@ -1252,7 +1514,7 @@ spec:
             - mountPath: /opt/datadog-agent
               name: config
       nodeSelector:
-        kubernetes.io/os: windows
+        kubernetes.io/os: linux
       serviceAccountName: datadog-cluster-agent
       volumes:
         - emptyDir: {}

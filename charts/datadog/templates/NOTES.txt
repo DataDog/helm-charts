@@ -352,7 +352,7 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 ##############################################################################################
 ####   WARNING: System Probe on GKE Autopilot requires GKE v1.32.1-gke.1729000 or later   ####
 ##############################################################################################
-{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled' and 'datadog.discovery.enabled' must be set 'false'" }}
+{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled', 'datadog.traceroute.enabled', and 'datadog.discovery.enabled' must be set 'false'" }}
 
 {{- end }}
 
