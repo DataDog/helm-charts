@@ -172,6 +172,20 @@ Return true if k8sattributes RBAC rules should be added to the OTel Agent Cluste
 {{- end -}}
 
 {{/*
+Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container
+*/}}
+{{- define "should-mount-logs-for-otel-agent" -}}
+{{- $return := false }}
+{{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
+{{- range $key, $val := $config.receivers }}
+  {{- if hasPrefix "filelog" $key }}
+    {{- $return = true }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
+{{/*
 Return secret name to be used based on provided values.
 */}}
 {{- define "datadog.apiSecretName" -}}
