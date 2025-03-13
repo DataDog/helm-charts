@@ -35,23 +35,38 @@ jobs:
           import yaml
           import sys
 
+          def flatten_dict(d, parent_key="", sep="."):
+              """Recursively flattens a nested dictionary."""
+              items = []
+              for k, v in d.items():
+                  new_key = f"{parent_key}{sep}{k}" if parent_key else k
+                  if isinstance(v, dict):
+                      items.extend(flatten_dict(v, new_key, sep=sep).items())
+                  else:
+                      items.append((new_key, v))
+              return dict(items)
+
           values_file = "charts/datadog/values.yaml"
           mapping_file = "tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd.yaml"
 
           with open(values_file, "r") as vf, open(mapping_file, "r") as mf:
-              values_data = yaml.safe_load(vf)
-              mapping_data = yaml.safe_load(mf)
+              values_data = yaml.safe_load(vf) or {}
+              mapping_data = yaml.safe_load(mf) or {}
 
-          missing_keys = []
-          for key in values_data:
-              if key not in mapping_data:
-                  missing_keys.append(key)
+          # Flatten values.yaml structure
+          flattened_values = flatten_dict(values_data)
+
+          # Extract keys from the mapping file
+          mapping_keys = set(mapping_data.keys())
+
+          # Compare missing keys
+          missing_keys = [key for key in flattened_values.keys() if key not in mapping_keys]
 
           if missing_keys:
-              print("❌ The following keys are missing in the mapping file:")
+              print("The following keys are missing in the mapping file:")
               for key in missing_keys:
                   print(f"- {key}")
               sys.exit(1)
           else:
-              print("✅ Mapper file is correctly updated!")
+              print("Mapper file is correctly updated!")
           EOF
