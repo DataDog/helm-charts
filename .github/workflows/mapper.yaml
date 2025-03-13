@@ -1,19 +1,16 @@
-name: Helm to Operator Mapper
+name: Yaml-Mapper Tool
 
 on:
   pull_request:
     paths:
       - "charts/datadog/values.yaml" 
-      # run only when values.yaml is updated
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
   contents: read
 
 jobs:
-# check that mapper was updated
   check-mapper-update:
-    name: Check if Mapping File is Updated
     runs-on: ubuntu-latest
 
     steps:
