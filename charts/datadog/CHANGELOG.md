@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.109.1
+
+* Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.
+
 ## 3.109.0
 
 * Mount  `datadog.otelCollector.logs.enabled` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
