@@ -2,7 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# nameOverride -- Allows overriding the name of the chart.
+# If set, this value replaces the default chart name.
 nameOverride: ""
+
+# fullnameOverride -- Allows overriding the full name of resources created by the chart.
+# If set, this value completely replaces the generated name, ignoring the standard naming convention.
 fullnameOverride: ""
 
 ## Define the Datadog CSI Driver image to work with
