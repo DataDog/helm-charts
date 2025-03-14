@@ -57,12 +57,9 @@ datadog:
   secretAnnotations: {}
   #   key: "value"
 
-  sarahTestOne:
-
   ## Configure the secret backend feature https://docs.datadoghq.com/agent/guide/secrets-management
   ## Examples: https://docs.datadoghq.com/agent/guide/secrets-management/#setup-examples-1
   secretBackend:
-    sarahTestTwo: 
     # datadog.secretBackend.command -- Configure the secret backend command, path to the secret backend binary.
 
     ## Note: If the command value is "/readsecret_multiple_providers.sh", and datadog.secretBackend.enableGlobalPermissions is enabled below, the agents will have permissions to get secret objects across the cluster.
