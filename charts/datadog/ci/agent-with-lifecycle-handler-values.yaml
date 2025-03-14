@@ -3,5 +3,6 @@ datadog:
 agents:
   enabled: true
   lifecycle:
-    sleep:
-      seconds: 70
+    preStop:
+      sleep:
+        seconds: 70
