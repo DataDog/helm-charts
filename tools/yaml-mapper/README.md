@@ -30,7 +30,6 @@ Pass the source file and mapping file to the command:
 
 ```bash
 ./yaml-mapper -sourceFile=source.yaml -mappingFile=mapping.yaml
-
 ```
 
 The resulting file is written to `destination.yaml`. To specify a destination file, use flag `-destFile=[<FILENAME>.yaml]`.
@@ -45,22 +44,39 @@ By default the output is also printed to STDOUT; to disable this use the flag `-
 ./yaml-mapper -sourceFile=<EXAMPLE_SOURCE>.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=<EXAMPLE_PREFIX>.yaml
 ```
 
+The following command provides the example `destination.yaml` file in this directory. 
+```bash
+./yaml-mapper -sourceFile=example_source.yaml -mappingFile=mapping_datadog_helm_to_datadogagent_crd.yaml -prefixFile=example_prefix.yaml
+```
+
 ### Updating Mapping File from a Source YAML
 
-#### Update default Datadog Helm to DatadogAgent CRD mapping file with latest published Datadog Helm chart values.yaml
+*When updating the mapper file, please be sure to add the [corresponding key!](#updating-mapping-keys)*
+
+Below are different ways to update the mapping file based on your source:
+
+1. **Local values.yaml from your branch**
+If you have run into a CI error when adding a new field to values.yaml, run this command:
 
 ```bash
+./yaml-mapper -updateMap -sourceFile=../../charts/datadog/values.yaml
+```
+2. **Latest published Datadog Helm chart values**
+This pulls the latest values.yaml from the [latest published Helm chart](https://github.com/DataDog/helm-charts/releases/latest) and updates the default mapping file.
+
+``` bash
 ./yaml-mapper -updateMap
 ```
-
-#### Update default Datadog Helm to DatadogAgent CRD mapping file with local Datadog values.yaml
-
-```bash
-./helm-operator-mapper -updateMap -sourceFile=../../charts/datadog/values.yaml
-```
-
-#### Update custom mapping file with custom source YAML file
+3. **Update a custom mapping file with a custom source YAML**
 
 ```bash
-./helm-operator-mapper -updateMap -sourceFile=<YOUR_SOURCE_FILE> -mappingFile=<YOUR_MAPPING_FILE>
+./yaml-mapper -updateMap -sourceFile=<YOUR_SOURCE_FILE> -mappingFile=<YOUR_MAPPING_FILE>
 ```
+
+### Updating Mapping Keys
+
+Currently, this process is manual. To update a mapping key, search for it in the [operator configuration](https://github.com/DataDog/datadog-operator/blob/main/docs/configuration.v2alpha1.md).  When adding the corresponding operator value, be sure to prepend it with `spec.`.
+ 
+If the key does not have a corresponding value in the Datadog Operator configuration, please leave the mapping as is with an empty string. 
+
+Thank you for helping us keep the mapping accurate and up to date!
