@@ -63,6 +63,8 @@ jobs:
               print("The following keys are missing in the mapping file:")
               for key in missing_keys:
                   print(f"- {key}")
+              print("To update the mapping file, run the following command in the yaml-mapper directory:")
+              print("./yaml-mapper -updateMap -sourceFile=../../charts/datadog/values.yaml")
               sys.exit(1)
           else:
               print("Mapper file is correctly updated!")
