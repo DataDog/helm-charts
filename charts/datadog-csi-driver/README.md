@@ -4,6 +4,12 @@
 
 Datadog CSI Driver helm chart
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Datadog | <support@datadoghq.com> |  |
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -11,8 +17,8 @@ Datadog CSI Driver helm chart
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
 | image.pullSecrets | list | `[]` | CSI driver repository pullSecret (ex: specify docker registry credentials) |
-| image.repository | string | `nil` | Override default registry + image.name for CSI driver |
-| image.tag | string | `"latest"` | CSI driver image tag to use |
+| image.repository | string | `nil` | Override default registry + image.name for CSI driver TODO: change to official repository when available |
+| image.tag | string | `"latest"` | CSI driver image tag to use TODO: change to a static stable version |
 | nameOverride | string | `""` |  |
 
 ----------------------------------------------
