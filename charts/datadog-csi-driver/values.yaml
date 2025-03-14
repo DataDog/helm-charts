@@ -23,7 +23,7 @@ image:
   # image.pullPolicy -- CSI driver image pullPolicy
   pullPolicy: IfNotPresent
 
-  # image.pullSecrets -- CSI driver repository pullSecret (ex: specify docker registry credentials)
+  # image.pullSecrets -- CSI driver repository pullSecret (for example: specify Docker registry credentials)
 
   ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   pullSecrets: []

@@ -16,7 +16,7 @@ Datadog CSI Driver helm chart
 |-----|------|---------|-------------|
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
-| image.pullSecrets | list | `[]` | CSI driver repository pullSecret (ex: specify docker registry credentials) |
+| image.pullSecrets | list | `[]` | CSI driver repository pullSecret (for example: specify Docker registry credentials) |
 | image.repository | string | `nil` | Override default registry + image.name for CSI driver TODO: change to official repository when available |
 | image.tag | string | `"latest"` | CSI driver image tag to use TODO: change to a static stable version |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
