@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.0
+
+* Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
+
 ## 3.109.2
 
 * Add `auth-token` mount to `process-agent` on Windows.
