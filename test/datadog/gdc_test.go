@@ -2,11 +2,12 @@ package datadog
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"testing"
 )
 
 var allowedHostPaths = map[string]interface{}{
@@ -72,6 +73,14 @@ func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
 		if volume.HostPath != nil {
 			_, validHostPath = allowedHostPaths[volume.HostPath.Path]
 			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
+		}
+	}
+
+	volumeNames := common.GetVolumeNames(ds)
+	for _, container := range ds.Spec.Template.Spec.Containers {
+		for _, volumeMount := range container.VolumeMounts {
+			assert.True(t, common.Contains(volumeMount.Name, volumeNames),
+				fmt.Sprintf("Found unexpected volumeMount `%s` in container `%s`", volumeMount.Name, container.Name))
 		}
 	}
 
