@@ -1,0 +1,11 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      enabledNamespaces:
+        - "foo"
+        - "bar"
+      disabledNamespaces:
+        - "application"
+        - "test"
