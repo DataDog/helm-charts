@@ -254,7 +254,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
     - name: pod-resources-socket
       mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
