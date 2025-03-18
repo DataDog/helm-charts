@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.1
+
+* Mount the pod-resources socket only when `datadog.gpuMonitoring.enabled` is set to `true`.
+
 ## 3.110.0
 
 * Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.

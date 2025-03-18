@@ -10,7 +10,7 @@
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
-{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
