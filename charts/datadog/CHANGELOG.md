@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.110.1
+* Fixed closing brace for include function for `_helpers.tpl`.
+
 ## 3.110.0
 
 * Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
