@@ -4,6 +4,10 @@
 
 * Respect a few config to env var mappings in OTel Agent Gateway: datadog.site -> DD_SITE, datadog.dd_url -> DD_DD_URL, datadog.clusterName -> DD_CLUSTER_NAME, datadog.tags -> DD_TAGS.
 
+## 3.110.2
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
 ## 3.139.1
 
 * Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
