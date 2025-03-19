@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.2
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
 ## 3.110.1
 
 * Mount the pod-resources socket only when `datadog.gpuMonitoring.enabled` is set to `true`.
