@@ -209,6 +209,10 @@
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: "true"
+    {{- end }}
     {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
     - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
       value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocketDir | quote }}
