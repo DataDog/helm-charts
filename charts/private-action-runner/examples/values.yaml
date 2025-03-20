@@ -117,15 +117,15 @@ credentialFiles:
           },
           {
             "tokenName": "sslmode",
-            "tokenValue": "verify-full"
+            "tokenValue": "require"
           },
           {
             "tokenName": "applicationName",
-            "tokenValue": "OPTIONAL: application name"
+            "tokenValue": "application name"
           },
           {
             "tokenName": "searchPath",
-            "tokenValue": "OPTIONAL: search path"
+            "tokenValue": "search path"
           }
         ]
       }
