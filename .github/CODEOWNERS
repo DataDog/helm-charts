@@ -3,7 +3,7 @@
 *  @DataDog/container-helm-chart-maintainers
 
 # Documentation
-*.md             @DataDog/documentation @DataDog/container-helm-chart-maintainers
+*.md             @DataDog/container-helm-chart-maintainers
 
 # Charts
 charts/datadog-crds                                    @DataDog/container-ecosystems
