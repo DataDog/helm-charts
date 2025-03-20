@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.2
+
+* Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.
+
 ## 3.110.1
 
 * Mount the pod-resources socket only when `datadog.gpuMonitoring.enabled` is set to `true`.
