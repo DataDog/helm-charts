@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.110.3
+* Add `datadog.logs.autoMultiLineExtraPatterns` parameter to setup automatic multi-line log detection
+
 ## 3.110.2
 
 * Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.

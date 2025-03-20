@@ -472,6 +472,9 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
     autoMultiLineDetection: false
 
+    # datadog.logs.autoMultiLineExtraPatterns -- Allows the Agent to detect additional multi-line patterns automatically.
+    autoMultiLineExtraPatterns: []
+
   ## Enable apm agent and provide custom configs
   ##
   ## APM is enabled by default. If local service Internal Traffic Policy is allowed (Kubernetes v1.22+), the agent service is created with the APM local traceport.
