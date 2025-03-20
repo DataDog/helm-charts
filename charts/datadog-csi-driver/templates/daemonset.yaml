@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "datadog-csi-driver.daemonsetName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "datadog-csi-driver.daemonsetName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "datadog-csi-driver.daemonsetName" . }}
+        admission.datadoghq.com/enabled: "false"
+    spec:
+      hostNetwork: true
+      containers:
+        - name: csi-node-driver
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.image.pullSecrets }}
+          imagePullSecrets:
+    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+          {{- end }}
+          securityContext:
+            privileged: true 
+          ports:
+            - containerPort: 5000
+              protocol: TCP 
+          args:
+            - /dd-csi-driver
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - mountPath: /var/run/datadog
+              name: dsdandapmsocket
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+        - name: csi-node-driver-registrar
+          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/datadog.csi/driver/csi.sock
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi # Match this to ADDRESS
+            - name: registration-dir
+              mountPath: /registration # This is where the registrar writes the registration information
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/datadog.csi/driver
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: /var/run/datadog
+            type: DirectoryOrCreate
+          name: dsdandapmsocket
