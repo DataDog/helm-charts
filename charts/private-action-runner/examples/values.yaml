@@ -121,11 +121,11 @@ credentialFiles:
           },
           {
             "tokenName": "applicationName",
-            "tokenValue": "application name"
+            "tokenValue": "APPLICATION_NAME"
           },
           {
             "tokenName": "searchPath",
-            "tokenValue": "search path"
+            "tokenValue": "SEARCH_PATH"
           }
         ]
       }
