@@ -9,6 +9,14 @@
         "apm": {
           "type": "object",
           "properties": {
+            "errorTrackingStandalone": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            },
             "instrumentation": {
               "type": "object",
               "properties": {
