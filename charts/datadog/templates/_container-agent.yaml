@@ -240,11 +240,13 @@
       value: all
     {{- end }}
     # TODO: check if we can remove this (it's set in the process agent)
+    {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
+    {{- end }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
