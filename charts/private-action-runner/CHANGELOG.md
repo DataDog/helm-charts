@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.1
+
+* Update postgresql credentials file example
+  
 ## 0.17.0
 
 * Update private action image version to `v1.0.0`
