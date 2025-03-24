@@ -800,6 +800,8 @@ spec:
               value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
               value: "false"
+            - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS
+              value: "[]"
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_DOGSTATSD_SOCKET
