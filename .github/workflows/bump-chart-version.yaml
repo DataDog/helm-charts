@@ -224,7 +224,7 @@ jobs:
             }
 
             // Update docs
-            await helmDocs();
+            helmDocs();
 
             core.info("Done checking all labeled charts.");
 
