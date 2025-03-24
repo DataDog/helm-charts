@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.3
+
+* Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
+
 ## 3.110.2
 
 * Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.
