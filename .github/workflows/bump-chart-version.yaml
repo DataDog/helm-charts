@@ -53,20 +53,6 @@ jobs:
               return `${major}.${minor}.${patch}`;
             }
 
-            // Helper to update docs
-            function helmDocs() {
-              const exec = require('@actions/exec');
-    
-                try {
-                  // Execute helm-docs command
-                  await exec.exec('.github/helm-docs.sh');
-                  core.info(`Successfully generated docs for ${chartPath}`);
-                } catch (error) {
-                  core.error(`Failed to generate docs for ${chartPath}: ${error}`);
-                  throw error;
-                }
-            }
-
             // Get the list of charts that need a version bump (or changelog update)
             const chartsToBump = [];
             for (const label of labelNames) {
@@ -224,7 +210,8 @@ jobs:
             }
 
             // Update docs
-            helmDocs();
+            const exec = require('@actions/exec');
+            await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
 
             core.info("Done checking all labeled charts.");
 
