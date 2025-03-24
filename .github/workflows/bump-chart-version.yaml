@@ -210,7 +210,6 @@ jobs:
             }
 
             // Update docs
-            const exec = require('@actions/exec');
             await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
 
             core.info("Done checking all labeled charts.");
