@@ -2,7 +2,7 @@
 
 ## 3.110.3
 
-* Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
+* Update `datadog-crds` dependency to `2.5.1` and auto-activate datadogpodautoscalers collection in orchestrator.
 
 ## 3.110.2
 
