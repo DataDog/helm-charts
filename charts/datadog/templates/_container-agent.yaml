@@ -118,9 +118,9 @@
     {{- else }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- end }}
-    {{- if eq (include "should-enable-trace-agent" .) "true" }}
     - name: DD_APM_ENABLED
-      value: "true"
+      value: {{ include "should-enable-trace-agent" . | quote }}
+    {{- if eq (include "should-enable-trace-agent" .) "true" }}
     - name: DD_APM_NON_LOCAL_TRAFFIC
       value: "true"
     - name: DD_APM_RECEIVER_PORT
