@@ -247,7 +247,6 @@
     - name: NVIDIA_VISIBLE_DEVICES
       value: all
     {{- end }}
-    # TODO: check if we can remove this (it's set in the process agent)
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
