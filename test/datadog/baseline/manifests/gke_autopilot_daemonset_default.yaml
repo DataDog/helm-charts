@@ -820,6 +820,8 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "false"
           image: gcr.io/datadoghq/agent:7.63.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
