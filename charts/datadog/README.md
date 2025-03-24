@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.106.1](https://img.shields.io/badge/Version-3.106.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.110.2](https://img.shields.io/badge/Version-3.110.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -487,6 +487,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
+| agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -696,6 +697,7 @@ helm install <RELEASE_NAME> \
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
+| datadog.apm.errorTrackingStandalone.enabled | bool | `false` | Enables Error Tracking for backend services. |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces (preview). |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (preview). |
@@ -812,6 +814,8 @@ helm install <RELEASE_NAME> \
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
+| datadog.otelCollector.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
+| datadog.otelCollector.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
 | datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc"},{"containerPort":"4318","name":"otel-http"}]` | Ports that OTel Collector is listening |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
@@ -892,6 +896,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
+| datadog.traceroute.enabled | bool | `false` | Enable traceroutes in system-probe for Network Path |
 | datadog.useHostPID | bool | `true` | Run the agent in the host's PID namespace, required for origin detection / unified service tagging |
 | existingClusterAgent.clusterchecksEnabled | bool | `true` | set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent |
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |

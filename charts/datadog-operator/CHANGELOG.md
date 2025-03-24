@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.0
+
+* Update Datadog Operator version to 1.13.0.
+
 ## 2.7.0
 
 * Update Datadog Operator version to 1.12.1.

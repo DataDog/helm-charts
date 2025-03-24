@@ -71,6 +71,10 @@
           key: install_type
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: "true"
+    {{- end }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
