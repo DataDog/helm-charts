@@ -32,3 +32,4 @@ datadog:
           logs:
             receivers: [otlp]
             exporters: [datadog]
+    featureGates: "-datadog.EnableOperationAndResourceNameV2"

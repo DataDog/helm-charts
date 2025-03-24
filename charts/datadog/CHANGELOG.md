@@ -1,5 +1,50 @@
 # Datadog changelog
 
+## 3.110.2
+
+* Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.
+
+## 3.110.1
+
+* Mount the pod-resources socket only when `datadog.gpuMonitoring.enabled` is set to `true`.
+
+## 3.110.0
+
+* Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
+
+## 3.109.2
+
+* Add `auth-token` mount to `process-agent` on Windows.
+
+## 3.109.1
+
+* Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.
+
+## 3.109.0
+
+* Mount  `datadog.otelCollector.logs.enabled` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+* Add support for additional volume mounts in `otel-agent` via `agents.containers.otelAgent.volumeMounts`.
+
+## 3.108.0
+
+* Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
+
+## 3.107.0
+
+* Add `datadog.otelCollector.featureGates` configuration to pass feature gates to the embedded collector.
+
+## 3.106.1
+
+* Add default container resource values for GKE Autopilot
+
+## 3.106.0
+
+* Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
+
+## 3.105.0
+
+* Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
+
 ## 3.104.0
 
 * Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
