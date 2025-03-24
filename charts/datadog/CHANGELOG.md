@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.3
+
+* Update `datadog-crds` dependency to `2.5.1` and auto-activate datadogpodautoscalers collection in orchestrator.
+
 ## 3.110.2
 
 * Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.
