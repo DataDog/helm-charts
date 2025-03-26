@@ -27,7 +27,7 @@ stringData:
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   namespace: datadog-agent
   name:  "private-action-runner-default-role" 
@@ -42,13 +42,13 @@ rules:
 ---
 # Source: private-action-runner/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name:  "private-action-runner-default-rolebinding" 
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name:  "private-action-runner-default-role" 
 subjects:
   - kind: ServiceAccount
@@ -90,7 +90,7 @@ spec:
         app:  "private-action-runner-default" 
         service:  "private-action-runner-default-service" 
       annotations:
-        config-hash: 8328d30c1b1f9da3685601122ee752cf6a14a5cc7fa1a0c1426ba91d6a314566
+        config-hash: abcf3b71b184f776de80c25782022af554aeff4e918a55084e8add5cda537b79
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
       tolerations:

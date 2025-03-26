@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.19.0
+
+* Use a role instead of a cluster role for the runner's service account by default.
+
 ## 0.18.0
 
 * Add the ability to specify a kubernetes secret to store the runner's identity.

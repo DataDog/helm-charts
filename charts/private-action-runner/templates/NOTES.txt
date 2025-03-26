@@ -1,0 +1,8 @@
+{{- if .Values.runners }}
+{{- range .Values.runners }}
+{{- if not .roleType }}
+ℹ️ No roleType specified. The default value is "Role" which provides namespace-scoped permissions.
+{{- end }}
+{{- end }}
+{{- end }}
+

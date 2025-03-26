@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.18.0](https://img.shields.io/badge/Version-0.18.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
+![Version: 0.19.0](https://img.shields.io/badge/Version-0.19.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -101,4 +101,5 @@ runners:
 | runners[0].kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
 | runners[0].name | string | `"default"` | Name of the Datadog Private Action Runner |
 | runners[0].replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
+| runners[0].roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
 | runners[0].runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
