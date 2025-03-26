@@ -64,6 +64,19 @@ jobs:
                 });
               }
             }
+            
+            // Sync with base branch
+            // Check if there is drift; if there is drift, sync base branch before updating version
+            // If it's a fork PR, the branch will need to be synced manually since it requires a PAT
+          
+            const main = await github.rest.repos.getBranch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: "main",
+            });
+            
+            const mainSHA = main.data.commit.sha;
+            core.info(`LATEST MAIN COMMIT SHA? ${mainSHA}`)
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -75,7 +88,8 @@ jobs:
 
             // Use the merge_base_commit SHA
             const mergeBaseSHA = comparison.data.merge_base_commit.sha;
-
+            core.info(`MERGE BASE SHA: ${mergeBaseSHA}`)
+            
             for (const info of chartsToBump) {
               const { chartName, bumpType } = info;
               core.info(`Examining '${chartName}' for a ${bumpType} update…`);
