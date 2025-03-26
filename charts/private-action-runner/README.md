@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.17.1](https://img.shields.io/badge/Version-0.17.1-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
+![Version: 0.18.0](https://img.shields.io/badge/Version-0.18.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -37,6 +37,28 @@ helm repo update
 * Learn more about [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac).
 * Deploy several runners with different permissions or create different connections according to your needs.
 * Learn more about [Private actions](https://docs.datadoghq.com/service_management/app_builder/private_actions).
+
+### Use a kubernetes secret to store the runner's identity
+
+If you want to store the runner's identity outside of the Helm chart, you can create a kubernetes secret and use it in the `values.yaml` file.
+```bash
+# Create a secret with runner's private key and urn
+kubectl create secret generic <secret-name> --from-literal RUNNER_URN=<CHANGE_ME_URN_FROM_CONFIG> --from-literal RUNNER_PRIVATE_KEY=<CHANGE_ME_PRIVATE_KEY_FROM_CONFIG>
+# Alternatively you can only store the private key in the secret and keep the URN in the values.yaml
+kubectl create secret generic <secret-name>  --from-literal RUNNER_PRIVATE_KEY=<CHANGE_ME_PRIVATE_KEY_FROM_CONFIG>
+```
+Update the `values.yaml` file with the secret name
+```yaml
+runners:
+  -
+  # ... other fields
+    runnerIdentitySecret: <secret-name>
+  # ... other fields
+    config:
+      # you can get rid of the values in `config`, the secret will take precedence
+      # urn: "STORED_IN_A_SECRET"
+      # privateKey: "STORED_IN_A_SECRET"
+```
 
 ## Values
 
@@ -79,3 +101,4 @@ helm repo update
 | runners[0].kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
 | runners[0].name | string | `"default"` | Name of the Datadog Private Action Runner |
 | runners[0].replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
+| runners[0].runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
