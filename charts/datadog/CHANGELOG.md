@@ -3,6 +3,9 @@
 ## 3.111.0 
 
 - [add gh actions script to autobump chart versions](https://github.com/DataDog/helm-charts/pull/1769)
+=======
+
+* Update `datadog-crds` dependency to `2.5.1` and auto-activate datadogpodautoscalers collection in orchestrator.
 
 ## 3.110.2
 
