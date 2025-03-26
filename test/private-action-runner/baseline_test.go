@@ -58,6 +58,21 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "config-overrides",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "Specify secrets externally",
+			command: common.HelmCommand{
+				ReleaseName: "private-action-runner",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runners[0].runnerIdentitySecret": `"the-name-of-the-secret"`,
+					"runners[0].config.urn":           ``,
+					"runners[0].config.privateKey":    ``,
+				},
+			},
+			snapshotName: "external-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {

@@ -48,6 +48,11 @@ spec:
           {{- if $runner.env }}
           env: {{ $runner.env | toYaml | nindent 12 }}
           {{- end }}
+          {{- if $runner.runnerIdentitySecret }}
+          envFrom:
+            - secretRef:
+                name: {{ $runner.runnerIdentitySecret }}
+          {{- end }}
       volumes:
         - name: secrets
           secret:

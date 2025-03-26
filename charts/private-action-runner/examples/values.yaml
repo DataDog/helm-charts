@@ -14,6 +14,7 @@ runners:
     env:
       - name: "ENV_VAR_NAME"
         value: "ENV_VAR_VALUE"
+    runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN"
     # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
     kubernetesActions:
       controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]

@@ -90,7 +90,7 @@ spec:
         app:  "private-action-runner-default" 
         service:  "private-action-runner-default-service" 
       annotations:
-        config-hash: 2fa834a4c916b0d4254f354857cd894879f1a7787214ef3fe8e8159911c3d74b
+        config-hash: 8328d30c1b1f9da3685601122ee752cf6a14a5cc7fa1a0c1426ba91d6a314566
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
       tolerations:

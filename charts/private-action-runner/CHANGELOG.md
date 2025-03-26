@@ -1,9 +1,13 @@
 # Datadog changelog
 
+## 0.18.0
+
+* Add the ability to specify a kubernetes secret to store the runner's identity.
+
 ## 0.17.2
 
 * Update postgresql credentials file example
-  
+
 ## 0.17.1
 
 * Update private action image version to `v1.1.1`
