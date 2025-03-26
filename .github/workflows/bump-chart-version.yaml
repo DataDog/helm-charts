@@ -224,7 +224,7 @@ jobs:
             }
             
             // Update README.md
-            await exec.exec('/bin/bash', ['.github/helm-docs.sh', '>', '/dev/null', '2>&1']);
+            const readme = await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             fileChanges.push({
               path: `charts/${chartName}/README.md`,
             });
