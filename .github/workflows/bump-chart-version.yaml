@@ -224,7 +224,14 @@ jobs:
             }
             
             // Update README.md
-            const readme = await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            const {
+              exitCode,
+              stdout,
+              stderr
+            } = await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            core.info(`EXIT CODE: ${exitCode}`);
+            core.info(`STDOUT: ${stdout}`);
+            core.info(`STDERR: ${stderr}`);
             fileChanges.push({
               path: `charts/${chartName}/README.md`,
             });
