@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.1
+
+* Update DatadogPodAutoscaler CRD to have `storage` set to `v1alpha2`.
+
 # 2.5.0
 
 * Update CRDs from Datadog Operator v1.13.0 tag.
