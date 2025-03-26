@@ -221,10 +221,15 @@ jobs:
               });
               commitMessages.push(`update changelog for ${chartName} with version ${desiredVersion}`);
               core.info(`CHANGELOG.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
+            
+              // Update README.md
+              await exec.exec('/bin/bash', ['.github/helm-docs.sh', '/dev/null', '2>&1']);
+              fileChanges.push({
+                path: `charts/${chartName}/README.md`,
+              });
+              commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
+              core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
             }
-
-            // Update docs
-            await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
 
             core.info("Done checking all labeled charts.");
 
