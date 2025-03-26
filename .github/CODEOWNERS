@@ -7,6 +7,7 @@
 
 # Charts
 charts/datadog-crds                                    @DataDog/container-ecosystems
+charts/datadog-csi-driver                              @DataDog/container-helm-chart-maintainers
 charts/datadog-operator                                @DataDog/container-ecosystems
 charts/extended-daemon-set                             @DataDog/container-ecosystems
 charts/datadog                                         @DataDog/container-helm-chart-maintainers
