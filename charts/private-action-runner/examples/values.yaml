@@ -11,6 +11,8 @@ runners:
       port: 9016
       actionsAllowlist:
         - com.datadoghq.http.request
+    # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
+    roleType: "Role"
     env:
       - name: "ENV_VAR_NAME"
         value: "ENV_VAR_VALUE"

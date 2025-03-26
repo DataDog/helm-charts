@@ -11,6 +11,8 @@ common:
 runners:
   # runners[0].name -- Name of the Datadog Private Action Runner
   - name: "default"
+    # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
+    roleType: "Role"
     # -- Number of pod instances for the Datadog Private Action Runner
     replicas: 1
     # -- Configuration for the Datadog Private Action Runner

@@ -33,6 +33,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
+					"runners[0].roleType":                              `"ClusterRole"`,
 					"runners[0].kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
 					"runners[0].kubernetesActions.customObjects":       `["deleteMultiple"]`,
 					"runners[0].kubernetesActions.deployments":         `["restart"]`,
@@ -52,7 +53,8 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"runners[0].env": `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runners[0].env":      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runners[0].roleType": `""`,
 				},
 			},
 			snapshotName: "config-overrides",
