@@ -52,10 +52,6 @@ jobs:
             function makeVersion({ major, minor, patch }) {
               return `${major}.${minor}.${patch}`;
             }
-            
-            function updateReadme(chartName, desiredVersion) {
-              await 
-            }
 
             // Get the list of charts that need a version bump (or changelog update)
             const chartsToBump = [];
@@ -228,35 +224,36 @@ jobs:
               // Get base README.md file
               let baseReadme;
               try {
-                baseReadme = await github.rest.repos.getContent({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  path: `charts/${chartName}/README.md`,
-                  ref: mergeBaseSHA
-                });
-              } catch (error) {
-                core.setFailed(`Could not get base baseReadme.md for ${chartName}: ${error.message}`);
-                return;
-              }
+              baseReadme = await github.rest.repos.getContent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: `charts/${chartName}/README.md`,
+              ref: mergeBaseSHA
+            });
+            } catch (error) {
+              core.setFailed(`Could not get base baseReadme.md for ${chartName}: ${error.message}`);
+              return;
+            }
               try {
-                await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
-              } catch (error) {
-                core.setFailed(`Could not update CHANGELOG.md for ${chartName}: ${error.message}`);
-                return;
-              }
+              await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            } catch (error) {
+              core.setFailed(`Could not update README.md for ${chartName}: ${error.message}`);
+              return;
+            }
+              const fs = require('fs');
               const fileContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
               const base64Content = Buffer.from(fileContent).toString('base64');
-            
-              if baseReadme.data.content != base64Content {            
-                fileChanges.push({
-                  path: `charts/${chartName}/README.md`,
-                  content: base64Content
-                });
-                commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
-                core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
-              } else {
-                core.info(`README.md already up-to-date for '${chartName}. Skipping README update.'
-              }
+      
+              if (baseReadme.data.content != base64Content.data.content) {
+              fileChanges.push({
+              path: `charts/${chartName}/README.md`,
+              content: base64Content
+            });
+              commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
+              core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
+            } else {
+              core.info(`README.md already up-to-date for '${chartName}. Skipping README update.'`)
+            }
             }
             
             core.info("Done checking all labeled charts.");
