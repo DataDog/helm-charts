@@ -157,6 +157,7 @@ jobs:
                   /^version:\s+\S+/m,
                   `version: ${desiredVersion}`
                 );
+                core.info(`NEW CHART CONTENT: ${newChartContent}`);
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
