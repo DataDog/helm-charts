@@ -11,9 +11,12 @@ runners:
       port: 9016
       actionsAllowlist:
         - com.datadoghq.http.request
+    # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
+    roleType: "Role"
     env:
       - name: "ENV_VAR_NAME"
         value: "ENV_VAR_VALUE"
+    runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN"
     # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
     kubernetesActions:
       controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
@@ -117,15 +120,15 @@ credentialFiles:
           },
           {
             "tokenName": "sslmode",
-            "tokenValue": "verify-full"
+            "tokenValue": "require"
           },
           {
             "tokenName": "applicationName",
-            "tokenValue": "OPTIONAL: application name"
+            "tokenValue": "APPLICATION_NAME"
           },
           {
             "tokenName": "searchPath",
-            "tokenValue": "OPTIONAL: search path"
+            "tokenValue": "SEARCH_PATH"
           }
         ]
       }
