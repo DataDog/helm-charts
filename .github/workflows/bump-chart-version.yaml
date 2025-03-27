@@ -243,12 +243,15 @@ jobs:
               const fs = require('fs');
               const fileContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
               const base64Content = Buffer.from(fileContent).toString('base64');
+            
+              core.info(`BASE README CONTENT: ${baseReadme.data.content}`)
+              core.info(`MODIFIED CONTENT: ${base64Content}`)
       
-              if (baseReadme.data.content != base64Content.data.content) {
-              fileChanges.push({
-              path: `charts/${chartName}/README.md`,
-              content: base64Content
-            });
+              if (baseReadme.data.content != base64Content) {
+                fileChanges.push({
+                path: `charts/${chartName}/README.md`,
+                content: base64Content
+              });
               commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
               core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
             } else {
