@@ -11,6 +11,8 @@ common:
 runners:
   # runners[0].name -- Name of the Datadog Private Action Runner
   - name: "default"
+    # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
+    roleType: "Role"
     # -- Number of pod instances for the Datadog Private Action Runner
     replicas: 1
     # -- Configuration for the Datadog Private Action Runner
@@ -31,6 +33,8 @@ runners:
       actionsAllowlist: []
     # -- Environment variables to be passed to the Datadog Private Action Runner
     env: []
+    # -- Reference to a kubernetes secrets that contains the runner identity
+    runnerIdentitySecret: ""
     # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
     kubernetesActions:
       # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")

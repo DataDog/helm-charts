@@ -3,7 +3,12 @@
 ## 3.111.0 
 
 - [add gh actions script to autobump chart versions](https://github.com/DataDog/helm-charts/pull/1769)
-=======
+
+## 3.110.4
+
+* Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
+
+## 3.110.3
 
 * Update `datadog-crds` dependency to `2.5.1` and auto-activate datadogpodautoscalers collection in orchestrator.
 
