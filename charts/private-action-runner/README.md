@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.19.0](https://img.shields.io/badge/Version-0.19.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
+![Version: 0.20.0](https://img.shields.io/badge/Version-0.20.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -60,12 +60,39 @@ runners:
       # privateKey: "STORED_IN_A_SECRET"
 ```
 
+### Use kubernetes secrets to store credentials
+
+If you want to store the credentials outside of the Helm chart, you can create a kubernetes secret and use it in the `values.yaml` file.
+```bash
+# Create a secret with the credentials files
+kubectl create secret generic <secret-name> --from-literal jenkins_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}' --from-literal gitlab_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
+
+# Alternatively create one secret per credentials file
+kubectl create secret generic <secret-name-jenkins> --from-literal jenkins_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}'
+kubectl create secret generic <secret-name-gitlab> --from-literal gitlab_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
+```
+
+Update the `values.yaml` file with the secrets names and the directory names
+```yaml
+credentialSecrets:
+  # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_sample.json and /etc/dd-action-runner/credentials/gitlab_sample.json
+  - secretName: <secret-name>
+    directoryName: ""
+  # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_sample.json
+  - secretName: <secret-name-jenkins>
+    directoryName: "jenkins"
+  # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab.json
+  - secretName: <secret-name-gitlab>
+    directoryName: "gitlab"
+```
+
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | common.image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
 | credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
+| credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
 | runners[0].config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runners[0].config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
