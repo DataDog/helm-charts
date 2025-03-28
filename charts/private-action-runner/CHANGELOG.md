@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 0.20.1
+
+* Various cleanup for the chart.
+
+## 0.20.0
+
+* Add the ability to specify kubernetes secrets to store credential files.
+
 ## 0.19.0
 
 * Use a role instead of a cluster role for the runner's service account by default.

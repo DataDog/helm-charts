@@ -1,3 +1,9 @@
+Chart version : {{ .Chart.Version }}
+Private action runner image : {{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}
+
+Helm chart readme : https://github.com/DataDog/helm-charts/tree/main/charts/private-action-runner
+Helm chart changelog : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/CHANGELOG.md
+
 {{- if .Values.runners }}
 {{- range .Values.runners }}
 {{- if not .roleType }}

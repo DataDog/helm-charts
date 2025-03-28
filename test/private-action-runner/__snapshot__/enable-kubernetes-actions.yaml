@@ -137,11 +137,6 @@ spec:
         config-hash: 701ae52311b4bbd4b7b78c8b2467034920f02f59e6b16ec5ad6171e99a12bca4
     spec:
       serviceAccountName:  "private-action-runner-default-serviceaccount" 
-      tolerations:
-        - effect: NoSchedule
-          key: node
-          operator: Equal
-          value: nodeless
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.1.1"
@@ -152,10 +147,10 @@ spec:
           resources:
             limits:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
             requests:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
