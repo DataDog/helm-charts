@@ -25,6 +25,16 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			snapshotName: "default",
 			assertions:   verifyPrivateActionRunner,
+		}, {
+			name: "Private Action Runner example file",
+			command: common.HelmCommand{
+				ReleaseName: "example-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/examples/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			snapshotName: "example",
+			assertions:   verifyPrivateActionRunner,
 		},
 		{
 			name: "Enable kubernetes actions",
@@ -55,7 +65,6 @@ func Test_baseline_manifests(t *testing.T) {
 				OverridesJson: map[string]string{
 					"fullnameOverride": `"custom-full-name"`,
 					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
-					"runner.roleType":  `""`,
 				},
 			},
 			snapshotName: "config-overrides",
