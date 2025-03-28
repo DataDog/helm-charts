@@ -194,3 +194,10 @@ credentialFiles:
         ]
       }
 
+credentialSecrets:
+  # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/credentials/<filename-from-secret>
+  - secretName: all-secrets-at-once
+    directoryName: ""
+  # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/credentials/jenkins/<filename-from-secret>
+  - secretName: jenkins-secret
+    directoryName: jenkins

@@ -45,6 +45,10 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
+            {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+            - name: {{ $credentialSecret.secretName }}
+              mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
+            {{- end }}
           {{- if $runner.env }}
           env: {{ $runner.env | toYaml | nindent 12 }}
           {{- end }}
@@ -57,4 +61,9 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "chart.secretName" $runner.name }}
+        {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+        - name: {{ $credentialSecret.secretName }}
+          secret:
+            secretName: {{ $credentialSecret.secretName }}
+        {{- end }}
 {{- end }}
