@@ -245,7 +245,7 @@ jobs:
               const fileContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
               const githubContent = Buffer.from(baseReadme.data.content, 'base64').toString('utf-8');
 
-              if (githubContent !== fileContent) {
+              if (githubContent == fileContent) {
                 core.info("githubContent == fileContent")
               } else {
                   core.info(`BASE DATA CONTENT: ${githubContent}`);
