@@ -1014,6 +1014,11 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        networkStats:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                       type: object
                     tcpQueueLength:
                       properties:
@@ -4717,6 +4722,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            networkStats:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                         tcpQueueLength:
                           properties:
