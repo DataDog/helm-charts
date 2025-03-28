@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.110.5
-
-* My custom changelog entry.
-
 ## 3.110.4
 
 * Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
