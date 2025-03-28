@@ -1,13 +1,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: {{ $.Values.runner.roleType | default "Role" }}Binding
 metadata:
-  name: {{ include "chart.roleBindingName" $.Values.runner.name }}
+  name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: {{ $.Values.runner.roleType | default "Role"}}
-  name: {{ include "chart.roleName" $.Values.runner.name }}
+  name: {{ include "chart.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "chart.serviceAccountName" $.Values.runner.name }}
+    name: {{ include "chart.fullname" . }}
     namespace: {{ $.Release.Namespace }}

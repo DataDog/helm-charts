@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name:  "private-action-runner-default-serviceaccount" 
+  name: private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name:  "private-action-runner-default-secrets" 
+  name: private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -30,7 +30,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name:  "private-action-runner-default-role" 
+  name: private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -44,26 +44,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name:  "private-action-runner-default-rolebinding" 
+  name: private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name:  "private-action-runner-default-role" 
+  name: private-action-runner
 subjects:
   - kind: ServiceAccount
-    name:  "private-action-runner-default-serviceaccount" 
+    name: private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name:  "private-action-runner-default-service" 
+  name: private-action-runner
   namespace: datadog-agent
 spec:
   selector:
-    service:  "private-action-runner-default-service" 
+    service: private-action-runner
   ports:
     - name: http
       port: 9016
@@ -73,26 +73,33 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  "private-action-runner-default" 
+  name: private-action-runner
   namespace: datadog-agent
   labels:
-    service:  "private-action-runner-default-service" 
-    app:  "private-action-runner-default" 
+    helm.sh/chart: private-action-runner-1.0.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: private-action-runner
+    app.kubernetes.io/version: "v1.1.1"
+    app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
-      app:  "private-action-runner-default" 
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: private-action-runner
   template:
     metadata:
       labels:
-        app:  "private-action-runner-default" 
-        service:  "private-action-runner-default-service" 
+        helm.sh/chart: private-action-runner-1.0.0
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: private-action-runner
+        app.kubernetes.io/version: "v1.1.1"
+        app.kubernetes.io/managed-by: Helm
       annotations:
-        config-hash: abcf3b71b184f776de80c25782022af554aeff4e918a55084e8add5cda537b79
+        checksum/values: 09b5fa09e7e907588b45a807d7a3168fda2b6031e33e4f2e589974666389ce8c
     spec:
-      serviceAccountName:  "private-action-runner-default-serviceaccount" 
+      serviceAccountName: private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.1.1"
@@ -118,4 +125,4 @@ spec:
       volumes:
         - name: secrets
           secret:
-            secretName:  "private-action-runner-default-secrets"
+            secretName: private-action-runner

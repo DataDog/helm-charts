@@ -7,9 +7,12 @@ image:
   repository: gcr.io/datadoghq/private-action-runner
   tag: v1.1.1
 
+# nameOverride -- Override name of app
+nameOverride: ""
+# fullnameOverride -- Override the full qualified app name
+fullnameOverride: ""
+
 runner:
-  # -- Name of the Datadog Private Action Runner
-  name: "default"
   # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
   roleType: "Role"
   # -- Number of pod instances for the Datadog Private Action Runner

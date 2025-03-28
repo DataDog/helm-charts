@@ -92,7 +92,9 @@ credentialSecrets:
 |-----|------|---------|-------------|
 | credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
+| fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
+| nameOverride | string | `""` | Override name of app |
 | runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
@@ -126,7 +128,6 @@ credentialSecrets:
 | runner.kubernetesActions.services | list | `[]` | Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.statefulSets | list | `[]` | Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
-| runner.name | string | `"default"` | Name of the Datadog Private Action Runner |
 | runner.replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
 | runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
 | runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
