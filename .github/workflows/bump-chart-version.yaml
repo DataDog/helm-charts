@@ -198,7 +198,7 @@ jobs:
                 const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
                 const newDate = new Date().toISOString().split('T')[0];
                 const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
-                const newEntry = `## ${desiredVersion} \n\n- ${pr.title} [#${pr.number}](${prLink})\n\n`;
+                const newEntry = `## ${desiredVersion} \n\n* ${pr.title} [(#${pr.number})](${prLink})\n\n`;
   
                 let newChangelogContent;
                 const lines = changelogContent.split('\n');
