@@ -228,7 +228,7 @@ jobs:
 
               // Update local README.md
               try {
-                await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+                await exec.exec('/bin/bash', ['.github/helm-docs.sh', '> /dev/null 2>&1']);
               } catch (error) {
                 core.setFailed(`Could not update README.md for ${chartName}: ${error.message}`);
                 return;
