@@ -222,19 +222,22 @@ jobs:
               } else {
                 core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Skipping changelog update.`);
               }
-              // Get base README.md file
-              let baseReadme;
+
+              // Get head README.md file
+              let prReadme;
               try {
-                baseReadme = await github.rest.repos.getContent({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: `charts/${chartName}/README.md`,
-                ref: mergeBaseSHA
-              });
-            } catch (error) {
-                core.setFailed(`Could not get base baseReadme.md for ${chartName}: ${error.message}`);
+                prReadme = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: `charts/${chartName}/README.md`,
+                  ref: pr.head.ref
+                });
+              } catch (error) {
+                core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
                 return;
-            }
+              }
+              
+              // Update local README.md
               try {
                 await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
               } catch (error) {
@@ -242,20 +245,14 @@ jobs:
                 return;
               }
               const fs = require('fs');
-              const fileContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
-              const githubContent = Buffer.from(baseReadme.data.content, 'base64').toString('utf-8');
+              const localReadmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
+              const prReadmeContent = Buffer.from(prReadme.data.content, 'base64').toString('utf-8');
 
-              if (githubContent == fileContent) {
-                core.info("githubContent == fileContent")
-              } else {
-                  core.info(`BASE DATA CONTENT: ${githubContent}`);
-                  core.info(`LOCAL FILE CONTENT: ${fileContent}`);
-              }
-
-              if (githubContent !== fileContent) {
+              // Check for diff between head and local README.md 
+              if (prReadmeContent !== localReadmeContent) {
                 fileChanges.push({
                   path: `charts/${chartName}/README.md`,
-                  content: fileContent
+                  content: localReadmeContent
                 });
                 commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
                 core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
