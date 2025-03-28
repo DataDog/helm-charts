@@ -1,4 +1,4 @@
-name: Bump Chart Version
+name: Update Chart Docs
 
 on:
   pull_request:
@@ -23,44 +23,9 @@ jobs:
         with:
           script: |
             // Update README.md using the .github/helm-docs.sh script
-            // Get head README.md file
-            let prReadme;
-            try {
-              prReadme = await github.rest.repos.getContent({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: `charts/${chartName}/README.md`,
-                ref: pr.head.ref
-              });
-            } catch (error) {
-              core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
-              return;
-            }
 
-            // Update local README.md
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
-            } catch (error) {
-              core.setFailed(`Could not update README.md for ${chartName}: ${error.message}`);
-              return;
+            } catch (exitCode) {
+              core.info(`EXIT CODE: ${exitCode.message}`);
             }
-            const fs = require('fs');
-            const localReadmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
-            const prReadmeContent = Buffer.from(prReadme.data.content, 'base64').toString('utf-8');
-
-            core.info(`LOCAL README: ${localReadmeContent}`)
-            core.info(`PR README: ${prReadmeContent}`)
-
-            // Check for diff between head and local README.md 
-            // If Chart.yaml changed need to update readme
-            if (prReadmeContent == localReadmeContent) {
-              core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`);
-              return;
-            }
-            
-            fileChanges.push({
-              path: `charts/${chartName}/README.md`,
-              content: localReadmeContent
-            });
-            commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
-            core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);

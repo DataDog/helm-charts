@@ -73,7 +73,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run helm-docs
-        run: .github/helm-docs.sh
+        run: |
+          .github/helm-docs.sh
+          git diff --exit-code
 
   kubeconform-chart:
     runs-on: ubuntu-latest
