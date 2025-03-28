@@ -1,0 +1,66 @@
+name: Bump Chart Version
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, opened, edited, synchronize]
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  pull-requests: write
+  contents: write
+  # packages: read
+
+jobs:
+  update-chart-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
+        id: update_charts
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            // Update README.md using the .github/helm-docs.sh script
+            // Get head README.md file
+            let prReadme;
+            try {
+              prReadme = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: `charts/${chartName}/README.md`,
+                ref: pr.head.ref
+              });
+            } catch (error) {
+              core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
+              return;
+            }
+
+            // Update local README.md
+            try {
+              await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            } catch (error) {
+              core.setFailed(`Could not update README.md for ${chartName}: ${error.message}`);
+              return;
+            }
+            const fs = require('fs');
+            const localReadmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
+            const prReadmeContent = Buffer.from(prReadme.data.content, 'base64').toString('utf-8');
+
+            core.info(`LOCAL README: ${localReadmeContent}`)
+            core.info(`PR README: ${prReadmeContent}`)
+
+            // Check for diff between head and local README.md 
+            // If Chart.yaml changed need to update readme
+            if (prReadmeContent == localReadmeContent) {
+              core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`);
+              return;
+            }
+            
+            fileChanges.push({
+              path: `charts/${chartName}/README.md`,
+              content: localReadmeContent
+            });
+            commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
+            core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
