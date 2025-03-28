@@ -65,23 +65,23 @@ runners:
 If you want to store the credentials outside of the Helm chart, you can create a kubernetes secret and use it in the `values.yaml` file.
 ```bash
 # Create a secret with the credentials files
-kubectl create secret generic <secret-name> --from-literal jenkins_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}' --from-literal gitlab_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
+kubectl create secret generic <secret-name> --from-literal jenkins_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}' --from-literal gitlab_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
 
 # Alternatively create one secret per credentials file
-kubectl create secret generic <secret-name-jenkins> --from-literal jenkins_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}'
-kubectl create secret generic <secret-name-gitlab> --from-literal gitlab_sample.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
+kubectl create secret generic <secret-name-jenkins> --from-literal jenkins_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}'
+kubectl create secret generic <secret-name-gitlab> --from-literal gitlab_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
 ```
 
 Update the `values.yaml` file with the secrets names and the directory names
 ```yaml
 credentialSecrets:
-  # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_sample.json and /etc/dd-action-runner/credentials/gitlab_sample.json
+  # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_token.json and /etc/dd-action-runner/credentials/gitlab_token.json
   - secretName: <secret-name>
     directoryName: ""
-  # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_sample.json
+  # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_token.json
   - secretName: <secret-name-jenkins>
     directoryName: "jenkins"
-  # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab.json
+  # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab_token.json
   - secretName: <secret-name-gitlab>
     directoryName: "gitlab"
 ```
