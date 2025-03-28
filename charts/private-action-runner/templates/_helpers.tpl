@@ -52,8 +52,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 
 {{- define "chart.credentialFiles" -}}
-{{- if hasKey $.Values "credentialFiles" }}
-{{- range $c := $.Values.credentialFiles }}
+{{- if hasKey $.Values "runner.credentialFiles" }}
+{{- range $c := $.Values.runner.credentialFiles }}
 {{ $c.fileName }}: |
 {{ $c.data | indent 2 }}
 {{- end -}}

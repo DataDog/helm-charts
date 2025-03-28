@@ -88,11 +88,11 @@ runner:
   # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
   kubernetesPermissions: []
 
-# -- List of credential files to be used by the Datadog Private Action Runner
-credentialFiles: []
-# see examples/values.yaml for examples on how to specify secrets
-# credential files provided here will be mounted in /etc/dd-action-runner/
-# -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
-credentialSecrets: []
-# credential files provided here will be mounted in /etc/dd-action-runner/credentials/
-# see examples/values.yaml for examples on how to specify secrets
+  # -- List of credential files to be used by the Datadog Private Action Runner
+  credentialFiles: []
+  # see examples/values.yaml for examples on how to specify secrets
+  # credential files provided here will be mounted in /etc/dd-action-runner/
+  # -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
+  credentialSecrets: []
+  # credential files provided here will be mounted in /etc/dd-action-runner/credentials/
+  # see examples/values.yaml for examples on how to specify secrets
