@@ -1,28 +1,26 @@
-{{- range $_, $runner := $.Values.runners }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.deploymentName" $runner.name }}
+  name: {{ include "chart.deploymentName" $.Values.runner.name }}
   namespace: {{ $.Release.Namespace }}
   labels:
-    service: {{ include "chart.serviceName" $runner.name }}
-    app: {{ include "chart.deploymentName" $runner.name }}
+    service: {{ include "chart.serviceName" $.Values.runner.name }}
+    app: {{ include "chart.deploymentName" $.Values.runner.name }}
 spec:
   minReadySeconds: 10
-  replicas: {{ $runner.replicas }}
+  replicas: {{ $.Values.runner.replicas }}
   selector:
     matchLabels:
-      app: {{ include "chart.deploymentName" $runner.name }}
+      app: {{ include "chart.deploymentName" $.Values.runner.name }}
   template:
     metadata:
       labels:
-        app: {{ include "chart.deploymentName" $runner.name }}
-        service: {{ include "chart.serviceName" $runner.name }}
+        app: {{ include "chart.deploymentName" $.Values.runner.name }}
+        service: {{ include "chart.serviceName" $.Values.runner.name }}
       annotations:
-        config-hash: {{ $runner | toJson | sha256sum }}
+        config-hash: {{ $.Values.runner | toJson | sha256sum }}
     spec:
-      serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
+      serviceAccountName: {{ include "chart.serviceAccountName" $.Values.runner.name }}
       containers:
         - name: runner
           image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
@@ -44,21 +42,20 @@ spec:
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
-          {{- if $runner.env }}
-          env: {{ $runner.env | toYaml | nindent 12 }}
+          {{- if $.Values.runner.env }}
+          env: {{ $.Values.runner.env | toYaml | nindent 12 }}
           {{- end }}
-          {{- if $runner.runnerIdentitySecret }}
+          {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
             - secretRef:
-                name: {{ $runner.runnerIdentitySecret }}
+                name: {{ $.Values.runner.runnerIdentitySecret }}
           {{- end }}
       volumes:
         - name: secrets
           secret:
-            secretName: {{ include "chart.secretName" $runner.name }}
+            secretName: {{ include "chart.secretName" $.Values.runner.name }}
         {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}
         {{- end }}
-{{- end }}
