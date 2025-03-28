@@ -2,7 +2,7 @@
 
 ## 3.110.5 
 
-* add gh actions script to autobump chart versions ([#1769](https://github.com/DataDog/helm-charts/pull/1769)).
+* My custom changelog entry.
 
 ## 3.110.4
 
