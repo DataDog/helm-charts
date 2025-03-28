@@ -1,31 +1,27 @@
-{{- range $_, $runner := $.Values.runners }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.deploymentName" $runner.name }}
+  name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels:
-    service: {{ include "chart.serviceName" $runner.name }}
-    app: {{ include "chart.deploymentName" $runner.name }}
+    {{- include "chart.labels" . | nindent 4 }}
 spec:
   minReadySeconds: 10
-  replicas: {{ $runner.replicas }}
+  replicas: {{ $.Values.runner.replicas }}
   selector:
     matchLabels:
-      app: {{ include "chart.deploymentName" $runner.name }}
+      {{- include "chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "chart.deploymentName" $runner.name }}
-        service: {{ include "chart.serviceName" $runner.name }}
+        {{- include "chart.labels" . | nindent 8 }}
       annotations:
-        config-hash: {{ $runner | toJson | sha256sum }}
+        checksum/values: {{ $.Values | toJson | sha256sum }}
     spec:
-      serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
+      serviceAccountName: {{ include "chart.fullname" . }}
       containers:
         - name: runner
-          image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -40,25 +36,24 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-            {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+            {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
-          {{- if $runner.env }}
-          env: {{ $runner.env | toYaml | nindent 12 }}
+          {{- if $.Values.runner.env }}
+          env: {{ $.Values.runner.env | toYaml | nindent 12 }}
           {{- end }}
-          {{- if $runner.runnerIdentitySecret }}
+          {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
             - secretRef:
-                name: {{ $runner.runnerIdentitySecret }}
+                name: {{ $.Values.runner.runnerIdentitySecret }}
           {{- end }}
       volumes:
         - name: secrets
           secret:
-            secretName: {{ include "chart.secretName" $runner.name }}
-        {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+            secretName: {{ include "chart.fullname" . }}
+        {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}
         {{- end }}
-{{- end }}
