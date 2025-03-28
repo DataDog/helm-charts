@@ -1,0 +1,13 @@
+{{- if .Values.searcher.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "quickwit.fullname" . }}-searcher
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "quickwit.searcher.selectorLabels" . | nindent 6 }}
+  {{- toYaml .Values.searcher.podDisruptionBudget | nindent 2 }}
+{{- end -}}
