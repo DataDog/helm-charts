@@ -1,26 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.deploymentName" $.Values.runner.name }}
+  name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
   labels:
-    service: {{ include "chart.serviceName" $.Values.runner.name }}
-    app: {{ include "chart.deploymentName" $.Values.runner.name }}
+    {{- include "chart.labels" . | nindent 4 }}
 spec:
   minReadySeconds: 10
   replicas: {{ $.Values.runner.replicas }}
   selector:
     matchLabels:
-      app: {{ include "chart.deploymentName" $.Values.runner.name }}
+      {{- include "chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "chart.deploymentName" $.Values.runner.name }}
-        service: {{ include "chart.serviceName" $.Values.runner.name }}
+        {{- include "chart.labels" . | nindent 8 }}
       annotations:
-        config-hash: {{ $.Values.runner | toJson | sha256sum }}
+        checksum/values: {{ $.Values | toJson | sha256sum }}
     spec:
-      serviceAccountName: {{ include "chart.serviceAccountName" $.Values.runner.name }}
+      serviceAccountName: {{ include "chart.fullname" . }}
       containers:
         - name: runner
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
@@ -53,7 +51,7 @@ spec:
       volumes:
         - name: secrets
           secret:
-            secretName: {{ include "chart.secretName" $.Values.runner.name }}
+            secretName: {{ include "chart.fullname" . }}
         {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:

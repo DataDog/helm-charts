@@ -1,5 +1,4 @@
 runner:
-  name: "custom-runner"
   # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
   config:
     ddBaseURL: "https://app.datadoghq.com"
