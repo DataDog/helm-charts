@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.5
+
+* Update `fips.image.tag` to `1.1.9` fixing CVEs
+
 ## 3.110.4
 
 * Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
