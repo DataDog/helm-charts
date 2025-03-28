@@ -76,7 +76,6 @@ jobs:
             });
             
             const mainSHA = main.data.commit.sha;
-            core.info(`LATEST MAIN COMMIT SHA? ${mainSHA}`)
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -88,7 +87,6 @@ jobs:
 
             // Use the merge_base_commit SHA
             const mergeBaseSHA = comparison.data.merge_base_commit.sha;
-            core.info(`MERGE BASE SHA: ${mergeBaseSHA}`)
             
             for (const info of chartsToBump) {
               const { chartName, bumpType } = info;
@@ -157,7 +155,6 @@ jobs:
                   /^version:\s+\S+/m,
                   `version: ${desiredVersion}`
                 );
-                core.info(`NEW CHART CONTENT: ${newChartContent}`);
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
@@ -201,7 +198,7 @@ jobs:
                 const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
                 const newDate = new Date().toISOString().split('T')[0];
                 const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
-                const newEntry = `## ${desiredVersion} \n\n- [${pr.title}](${prLink})\n\n`;
+                const newEntry = `## ${desiredVersion} \n\n- ${pr.title} [#${pr.number}](${prLink})\n\n`;
   
                 let newChangelogContent;
                 const lines = changelogContent.split('\n');
@@ -257,7 +254,7 @@ jobs:
                 commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
                 core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
               } else {
-                core.info(`README.md already up-to-date for '${chartName}. Skipping README update.'`)
+                core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`)
               }
             }
             
