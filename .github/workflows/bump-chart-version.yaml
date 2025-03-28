@@ -236,9 +236,6 @@ jobs:
               const fs = require('fs');
               const localReadmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
               const prReadmeContent = Buffer.from(prReadme.data.content, 'base64').toString('utf-8');
-              
-              core.info(`LOCAL README: ${localReadmeContent}`)
-              core.info(`PR README: ${prReadmeContent}`)
 
               // Check for diff between head and local README.md 
               if (prReadmeContent !== localReadmeContent) {
