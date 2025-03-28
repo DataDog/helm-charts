@@ -23,7 +23,7 @@ spec:
       serviceAccountName: {{ include "chart.serviceAccountName" $.Values.runner.name }}
       containers:
         - name: runner
-          image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
