@@ -38,16 +38,17 @@ jobs:
             // Gather all file changes and individual commit messages.
             const fileChanges = [];
             const commitMessages = [];
-        
+
             // Helper to parse a semver string (e.g., "1.2.3") into an object {major, minor, patch}
             function parseVersion(versionStr) {
-            const parts = versionStr.split('.');
+              const parts = versionStr.split('.');
               return {
                 major: parseInt(parts[0], 10),
                 minor: parseInt(parts[1], 10),
                 patch: parseInt(parts[2], 10)
               };
             }
+
             // Helper to produce a semver string
             function makeVersion({ major, minor, patch }) {
               return `${major}.${minor}.${patch}`;
@@ -64,18 +65,6 @@ jobs:
                 });
               }
             }
-            
-            // Sync with base branch
-            // Check if there is drift; if there is drift, sync base branch before updating version
-            // If it's a fork PR, the branch will need to be synced manually since it requires a PAT
-          
-            const main = await github.rest.repos.getBranch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: "main",
-            });
-            
-            const mainSHA = main.data.commit.sha;
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -87,7 +76,7 @@ jobs:
 
             // Use the merge_base_commit SHA
             const mergeBaseSHA = comparison.data.merge_base_commit.sha;
-            
+
             for (const info of chartsToBump) {
               const { chartName, bumpType } = info;
               core.info(`Examining '${chartName}' for a ${bumpType} update…`);
@@ -138,7 +127,7 @@ jobs:
 
               // Calculate the desired version based on bump type.
               const baseParsed = parseVersion(baseVersion);
-              let desiredParsed = {...baseParsed};
+              let desiredParsed = { ...baseParsed };
               if (bumpType === 'patch-version') {
                 desiredParsed.patch += 1;
               } else if (bumpType === 'minor-version') {
@@ -199,7 +188,7 @@ jobs:
                 const newDate = new Date().toISOString().split('T')[0];
                 const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
                 const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
-  
+
                 let newChangelogContent;
                 const lines = changelogContent.split('\n');
                 const versionHeaderIdx = lines.findIndex(line => line.trim().startsWith('##'));
@@ -220,6 +209,7 @@ jobs:
                 core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Skipping changelog update.`);
               }
 
+              // Update README.md using the .github/helm-docs.sh script
               // Get head README.md file
               let prReadme;
               try {
@@ -233,7 +223,7 @@ jobs:
                 core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
                 return;
               }
-              
+
               // Update local README.md
               try {
                 await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
@@ -254,10 +244,10 @@ jobs:
                 commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
                 core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
               } else {
-                core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`)
+                core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`);
               }
             }
-            
+
             core.info("Done checking all labeled charts.");
 
             // If no file changes were collected, nothing to commit.
