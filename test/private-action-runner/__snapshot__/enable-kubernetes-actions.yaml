@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -40,7 +40,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   namespace: datadog-agent
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
 rules:
 - apiGroups:
   - example.com
@@ -88,26 +88,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: private-action-runner
+    name: kubernetes-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
-    service: private-action-runner
+    service: kubernetes-test-private-action-runner
   ports:
     - name: http
       port: 9016
@@ -117,12 +117,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: private-action-runner
+  name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.0.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: private-action-runner
+    app.kubernetes.io/instance: kubernetes-test
     app.kubernetes.io/version: "v1.1.1"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -131,19 +131,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: private-action-runner
+      app.kubernetes.io/instance: kubernetes-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.0.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: private-action-runner
+        app.kubernetes.io/instance: kubernetes-test
         app.kubernetes.io/version: "v1.1.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/values: c0250fb69326ee5664f5c186a0c260f72183842add71d7eb387366de42d2629e
     spec:
-      serviceAccountName: private-action-runner
+      serviceAccountName: kubernetes-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.1.1"
@@ -164,4 +164,4 @@ spec:
       volumes:
         - name: secrets
           secret:
-            secretName: private-action-runner
+            secretName: kubernetes-test-private-action-runner
