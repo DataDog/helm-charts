@@ -289,5 +289,5 @@ jobs:
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             } catch (exitCode) {
-              core.info(`EXIT CODE: ${exitCode.message}`);
+              core.info(`EXIT CODE : ${exitCode.message}`);
             }
