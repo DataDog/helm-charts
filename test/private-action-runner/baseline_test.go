@@ -18,7 +18,7 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Private Action Runner default",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "default-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				Overrides:   map[string]string{},
@@ -29,7 +29,7 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Enable kubernetes actions",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "kubernetes-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
@@ -49,12 +49,13 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Specify certain config overrides",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "override-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"runner.env":      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
-					"runner.roleType": `""`,
+					"fullnameOverride": `"custom-full-name"`,
+					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runner.roleType":  `""`,
 				},
 			},
 			snapshotName: "config-overrides",
@@ -63,7 +64,7 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Specify secrets externally",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "secrets-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
