@@ -280,7 +280,9 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Checkout HEAD
-        run: git checkout HEAD^
+        run: |
+          git fetch --prune --unshallow
+          git reset --hard origin/${{ github.head.ref }}
 
       - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
         id: update_charts
