@@ -282,7 +282,7 @@ jobs:
       - name: Checkout HEAD
         run: |
           git fetch --prune --unshallow --no-tags
-          git reset --hard ${{ github.head.ref }}
+          git reset --hard origin/${{ github.event.pull_request.head.ref }}
 
       - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
         id: update_charts
