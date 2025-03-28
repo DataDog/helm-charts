@@ -1206,3 +1206,10 @@ false
     false
   {{- end -}}
 {{- end -}}
+
+{{/*
+  Test helper
+*/}}
+{{- define "this-is-a-test-test" -}}
+  true
+{{- end -}}
