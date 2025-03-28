@@ -1,15 +1,12 @@
-{{- range $_, $runner := $.Values.runners }}
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "chart.serviceName" $runner.name }}
+  name: {{ include "chart.serviceName" $.Values.runner.name }}
   namespace: {{ $.Release.Namespace }}
 spec:
   selector:
-    service: {{ include "chart.serviceName" $runner.name }}
+    service: {{ include "chart.serviceName" $.Values.runner.name }}
   ports:
     - name: http
       port: 9016
       targetPort: 9016
-{{- end }}
