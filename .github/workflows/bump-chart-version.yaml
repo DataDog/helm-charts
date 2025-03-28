@@ -246,9 +246,10 @@ jobs:
               const base64Content = Buffer.from(fileContent).toString('base64');
             
               core.info(`BASE README CONTENT: ${baseReadme.data.content}`)
-              core.info(`MODIFIED CONTENT: ${base64Content}`)
+              core.info(`MODIFIED CONTENT: ${fileContent}`)
+              core.info(`MODIFIED 64 CONTENT: ${base64Content}`)
       
-              if (baseReadme.data.content != base64Content) {
+              if (baseReadme.data.content != fileContent) {
                 fileChanges.push({
                 path: `charts/${chartName}/README.md`,
                 content: base64Content
