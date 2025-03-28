@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.110.5 
+## 3.110.6
 
 * My custom changelog entry.
 
