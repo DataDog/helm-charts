@@ -1,5 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: {{ $.Values.runner.roleType | default "Role" }}Binding
+kind: {{ $.Values.runner.roleType }}Binding
 metadata:
   name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
