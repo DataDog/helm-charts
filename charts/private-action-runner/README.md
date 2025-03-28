@@ -90,8 +90,6 @@ credentialSecrets:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
-| credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
@@ -102,6 +100,8 @@ credentialSecrets:
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
+| runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
 | runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |

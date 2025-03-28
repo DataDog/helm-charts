@@ -36,7 +36,7 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-            {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+            {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
@@ -52,7 +52,7 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "chart.fullname" . }}
-        {{- range $_, $credentialSecret := $.Values.credentialSecrets }}
+        {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}

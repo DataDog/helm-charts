@@ -70,7 +70,7 @@ func Test_baseline_manifests(t *testing.T) {
 					"runner.runnerIdentitySecret": `"the-name-of-the-secret"`,
 					"runner.config.urn":           ``,
 					"runner.config.privateKey":    ``,
-					"credentialSecrets":           `[{"secretName": "first-secret"}, {"secretName": "second-secret", "directoryName": "second-secret-directory"}]`,
+					"runner.credentialSecrets":    `[{"secretName": "first-secret"}, {"secretName": "second-secret", "directoryName": "second-secret-directory"}]`,
 				},
 			},
 			snapshotName: "external-secrets",
