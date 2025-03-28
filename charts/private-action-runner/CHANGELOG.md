@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.20.1
+
+* Various cleanup for the chart.
+
 ## 0.20.0
 
 * Add the ability to specify kubernetes secrets to store credential files.

@@ -23,11 +23,6 @@ spec:
         config-hash: {{ $runner | toJson | sha256sum }}
     spec:
       serviceAccountName: {{ include "chart.serviceAccountName" $runner.name }}
-      tolerations:
-        - effect: NoSchedule
-          key: node
-          operator: Equal
-          value: nodeless
       containers:
         - name: runner
           image: "{{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}"
@@ -38,10 +33,10 @@ spec:
           resources:
             limits:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
             requests:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
