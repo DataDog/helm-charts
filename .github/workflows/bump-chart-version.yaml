@@ -272,3 +272,22 @@ jobs:
               sha: newCommitSha
             });
             core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+  update-chart-docs:
+    needs: ['bump-chart-version']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
+        id: update_charts
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            // Update README.md using the .github/helm-docs.sh script
+
+            try {
+              await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            } catch (exitCode) {
+              core.info(`EXIT CODE: ${exitCode.message}`);
+            }
