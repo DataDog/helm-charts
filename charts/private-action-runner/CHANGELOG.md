@@ -2,7 +2,7 @@
 
 ## 1.0.0
 
-* BREAKING CHANGES. Updates the chart for better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
+* BREAKING CHANGES: Updates the chart for simplification and better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
 
 ## 0.20.1
 

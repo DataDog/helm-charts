@@ -3,3 +3,4 @@ Private action runner image : {{ $.Values.image.repository }}:{{ $.Values.image.
 
 Helm chart readme : https://github.com/DataDog/helm-charts/tree/main/charts/private-action-runner
 Helm chart changelog : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/CHANGELOG.md
+Upgrade guide : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/UPGRADING.md
