@@ -76,6 +76,8 @@ jobs:
             // Export chartsToBump to GITHUB_OUTPUT
             try {
               await exec.exec('echo', [`charts_to_bump=${chartsToBump}`, '>>', '$GITHUB_OUTPUT'])
+            } catch (error) {
+              core.setFailed(`Error echoing charts_to_bump to GITHUB_OUTPUT: ${error.message}`)
             }
 
             // Compare the base and head branches to find their merge base
