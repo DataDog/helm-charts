@@ -71,12 +71,11 @@ jobs:
             }
             
             // Export chartsToBump to GITHUB_OUTPUT
-            const chartsToBumpStr = chartsToBump.join(',');
-            try {
-              await exec.exec(`echo charts_to_bump=${chartsToBumpStr} >> $GITHUB_OUTPUT`)
-            } catch (error) {
-              core.setFailed(`Error echoing charts_to_bump to GITHUB_OUTPUT: ${error.message}`)
-            }
+            const chartsToBumpStr = chartsToBump.map(chart => `${chart.chartName}`).join(',');
+            core.info("CHARTS TO BUMP: " + chartsToBumpStr);
+            const fs = require('fs');
+            const outputPath = process.env.GITHUB_OUTPUT;
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `charts_to_bump=${chartsToBumpStr}\n`);
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
