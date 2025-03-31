@@ -64,7 +64,6 @@ kubectl get pods -l app.kubernetes.io/instance=<RELEASE-NAME>
 
 ## Upgrading
 
-
 ### Upgrading from 0.x to 1.0.0
 
 > **Important:** Version 1.0.0 introduces breaking changes to the values.yaml structure. If you're upgrading from version 0.x, please follow the dedicated upgrade [UPGRADING.md](UPGRADING.md) guide.
@@ -188,12 +187,12 @@ The Private Action Runner Helm chart deploys the following components:
 
 1. Check if the pod is running:
    ```bash
-   kubectl get pods -n datadog -l app.kubernetes.io/instance=<RELEASE-NAME>
+   kubectl get pods -l app.kubernetes.io/instance=<RELEASE-NAME>
    ```
 
 2. Check the pod logs for connection issues:
    ```bash
-   kubectl logs -n datadog -l app.kubernetes.io/instance=<RELEASE-NAME>
+   kubectl logs -l app.kubernetes.io/instance=<RELEASE-NAME>
    ```
 
 3. Verify that the URN and private key are correct in your values.yaml or secret
@@ -211,7 +210,6 @@ If actions requiring credentials fail:
    ```
 
 3. Check the pod logs for credential-related errors
-
 
 ## Values
 
