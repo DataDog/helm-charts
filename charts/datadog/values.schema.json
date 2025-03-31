@@ -23,8 +23,12 @@
                 "enabled": {
                   "type": "boolean"
                 },
-                "enabledNamespaces": { "$ref": "#/$defs/stringArray" },
-                "disabledNamespaces": { "$ref": "#/$defs/stringArray" },
+                "enabledNamespaces": {
+                  "$ref": "#/$defs/stringArray"
+                },
+                "disabledNamespaces": {
+                  "$ref": "#/$defs/stringArray"
+                },
                 "libVersions": {
                   "type": "object",
                   "additionalProperties": {
@@ -42,17 +46,27 @@
                       "podSelector": {
                         "type": "object",
                         "properties": {
-                          "matchLabels": { "$ref": "#/$defs/matchLabels" },
-                          "matchExpressions": { "$ref": "#/$defs/matchExpressions" }
+                          "matchLabels": {
+                            "$ref": "#/$defs/matchLabels"
+                          },
+                          "matchExpressions": {
+                            "$ref": "#/$defs/matchExpressions"
+                          }
                         },
                         "additionalProperties": false
                       },
                       "namespaceSelector": {
                         "type": "object",
                         "properties": {
-                          "matchNames": { "$ref": "#/$defs/stringArray" },
-                          "matchLabels": { "$ref": "#/$defs/matchLabels" },
-                          "matchExpressions": { "$ref": "#/$defs/matchExpressions" }
+                          "matchNames": {
+                            "$ref": "#/$defs/stringArray"
+                          },
+                          "matchLabels": {
+                            "$ref": "#/$defs/matchLabels"
+                          },
+                          "matchExpressions": {
+                            "$ref": "#/$defs/matchExpressions"
+                          }
                         },
                         "anyOf": [
                           {
@@ -134,12 +148,17 @@
                               "type": "string"
                             }
                           },
-                          "required": ["name", "value"],
+                          "required": [
+                            "name",
+                            "value"
+                          ],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": ["name"],
+                    "required": [
+                      "name"
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -229,44 +248,49 @@
     }
   },
   "$defs": {
-      "stringArray": {
-          "type": "array",
-          "items": {
-              "type": "string"
-          }
-      },
-      "matchLabels": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "string"
-        }
-      },
-      "matchExpressions": {
-          "type": "array",
-          "items": {
-              "type": "object",
-              "properties": {
-                  "key": {
-                      "type": "string"
-                  },
-                  "operator": {
-                      "type": "string",
-                      "enum": [
-                          "In",
-                          "NotIn",
-                          "Exists",
-                          "DoesNotExist"
-                      ]
-                  },
-                  "values": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "minItems": 1
-                  }
-              },
-              "required": ["key", "operator"],
-              "additionalProperties": false
-          }
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
+    },
+    "matchLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "matchExpressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "In",
+              "NotIn",
+              "Exists",
+              "DoesNotExist"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "key",
+          "operator"
+        ],
+        "additionalProperties": false
+      }
+    }
   }
 }
