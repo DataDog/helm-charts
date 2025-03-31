@@ -49,15 +49,14 @@ kubectl create secret generic <secret-name>  --from-literal RUNNER_PRIVATE_KEY=<
 ```
 Update the `values.yaml` file with the secret name
 ```yaml
-runners:
-  -
+runner:
   # ... other fields
-    runnerIdentitySecret: <secret-name>
+  runnerIdentitySecret: <secret-name>
   # ... other fields
-    config:
-      # you can get rid of the values in `config`, the secret will take precedence
-      # urn: "STORED_IN_A_SECRET"
-      # privateKey: "STORED_IN_A_SECRET"
+  config:
+    # you can get rid of the values in `config`, the secret will take precedence
+    # urn: "STORED_IN_A_SECRET"
+    # privateKey: "STORED_IN_A_SECRET"
 ```
 
 ### Use kubernetes secrets to store credentials
@@ -74,16 +73,17 @@ kubectl create secret generic <secret-name-gitlab> --from-literal gitlab_token.j
 
 Update the `values.yaml` file with the secrets names and the directory names
 ```yaml
-credentialSecrets:
-  # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_token.json and /etc/dd-action-runner/credentials/gitlab_token.json
-  - secretName: <secret-name>
-    directoryName: ""
-  # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_token.json
-  - secretName: <secret-name-jenkins>
-    directoryName: "jenkins"
-  # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab_token.json
-  - secretName: <secret-name-gitlab>
-    directoryName: "gitlab"
+runner:
+  credentialSecrets:
+    # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_token.json and /etc/dd-action-runner/credentials/gitlab_token.json
+    - secretName: <secret-name>
+      directoryName: ""
+    # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_token.json
+    - secretName: <secret-name-jenkins>
+      directoryName: "jenkins"
+    # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab_token.json
+    - secretName: <secret-name-gitlab>
+      directoryName: "gitlab"
 ```
 
 
