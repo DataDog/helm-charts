@@ -336,6 +336,14 @@ rules:
   verbs: ["get"]
 {{- end }}
 {{- if .Values.datadog.orchestratorExplorer.enabled }}
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
