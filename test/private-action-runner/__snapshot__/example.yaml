@@ -25,7 +25,7 @@ stringData:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod  
-  http_basic_creds.json: |
+  http_basic.json: |
     {
       "auth_type": "Basic Auth",
       "credentials": [
@@ -36,7 +36,7 @@ stringData:
       ]
     }
     
-  http_token_creds.json: |
+  http_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -47,7 +47,7 @@ stringData:
       ]
     }
     
-  jenkins_creds.json: |
+  jenkins_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -59,7 +59,7 @@ stringData:
       ]
     }
     
-  creds.pgpass: |
+  postgresql_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -98,7 +98,7 @@ stringData:
       ]
     }
     
-  temporal_mtls_creds.json: |
+  temporal_mTLS_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -125,7 +125,7 @@ stringData:
       ]
     }
     
-  temporal_tls_creds.json: |
+  temporal_TLS_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -144,7 +144,7 @@ stringData:
       ]
     }
     
-  gitlab_creds.json: |
+  gitlab_token.json: |
     {
       "auth_type": "Token Auth",
       "credentials": [
@@ -232,7 +232,7 @@ spec:
         app.kubernetes.io/version: "v1.1.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 4c397e64163effc06346e6eaedfc6440a260f847e6bed665e5bfb4183d70b58c
+        checksum/values: 99941980ca69b4a7b0fa8b6d66eb23126511b3b80599083115bfc74bd51e2261
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:

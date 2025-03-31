@@ -58,7 +58,7 @@ runner:
   # credential files provided here will be mounted in /etc/dd-action-runner/
   # it is safe to remove unneeded files from this section
   credentialFiles:
-    - fileName: "http_basic_creds.json"
+    - fileName: "http_basic.json"
       data: |
         {
           "auth_type": "Basic Auth",
@@ -69,7 +69,7 @@ runner:
             }
           ]
         }
-    - fileName: "http_token_creds.json"
+    - fileName: "http_token.json"
       data: |
         {
           "auth_type": "Token Auth",
@@ -80,7 +80,7 @@ runner:
             }
           ]
         }
-    - fileName: "jenkins_creds.json"
+    - fileName: "jenkins_token.json"
       data: |
         {
           "auth_type": "Token Auth",
@@ -92,7 +92,7 @@ runner:
             }
           ]
         }
-    - fileName: "creds.pgpass"
+    - fileName: "postgresql_token.json"
       data: |
         {
           "auth_type": "Token Auth",
@@ -131,7 +131,7 @@ runner:
             }
           ]
         }
-    - fileName: "temporal_mtls_creds.json"
+    - fileName: "temporal_mTLS_token.json"
       data: |
         {
           "auth_type": "Token Auth",
@@ -158,7 +158,7 @@ runner:
             }
           ]
         }
-    - fileName: "temporal_tls_creds.json"
+    - fileName: "temporal_TLS_token.json"
       data: |
         {
           "auth_type": "Token Auth",
@@ -177,7 +177,7 @@ runner:
             }
           ]
         }
-    - fileName: "gitlab_creds.json"
+    - fileName: "gitlab_token.json"
       data: |
         {
           "auth_type": "Token Auth",
