@@ -154,6 +154,7 @@ jobs:
                   /^version:\s+\S+/m,
                   `version: ${desiredVersion}`
                 );
+                core.info(`NEW CHART CONTENT: ${newChartContent}`)
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
@@ -212,6 +213,7 @@ jobs:
               } else {
                 newChangelogContent = newEntry + changelogContent;
               }
+              core.info(`NEW CHANGELOG CONTENT: ${newChangelogContent}`)
               fileChanges.push({
                 path: `charts/${chartName}/CHANGELOG.md`,
                 content: newChangelogContent
