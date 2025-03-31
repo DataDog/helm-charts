@@ -73,7 +73,7 @@ jobs:
             // Export chartsToBump to GITHUB_OUTPUT
             const chartsToBumpStr = chartsToBump.join(',');
             try {
-              await exec.exec('echo', [`charts_to_bump=${chartsToBumpStr}`, '>>', '$GITHUB_OUTPUT'])
+              await exec.exec(`echo charts_to_bump=${chartsToBumpStr} >> $GITHUB_OUTPUT`)
             } catch (error) {
               core.setFailed(`Error echoing charts_to_bump to GITHUB_OUTPUT: ${error.message}`)
             }
@@ -285,10 +285,12 @@ jobs:
   update-chart-docs:
     needs: ['bump-chart-version']
     runs-on: ubuntu-latest
-    env:
-      CHARTS_TO_BUMP: ${{needs.bump-chart-version.outputs.charts_to_bump}}
+    outputs:
+      charts_to_bump: ${{needs.bump-chart-version.outputs.charts_to_bump}}
     steps:
       - name: Echo chart names that need update
+        env:
+          CHARTS_TO_BUMP: ${{needs.bump-chart-version.outputs.charts_to_bump}}
         run:
           echo "$CHARTS_TO_BUMP"
       - name: Check out repository
@@ -309,7 +311,8 @@ jobs:
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             } catch (exitCode) {
-              continue;
+              // Do nothing
+              // Exit code 1 from the helm-docs.sh script when there is a diff is OK
             }
             
             // Loop through all chart READMEs and add diffs to fileChanges []
