@@ -16,9 +16,6 @@ jobs:
     outputs:
       charts_to_bump: ${{ steps.update_charts.outputs.charts_to_bump }}
     steps:
-      - run:
-          echo '${{ toJSON(needs.extract-chart-labels.outputs) }}'
-
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -74,8 +71,9 @@ jobs:
             }
             
             // Export chartsToBump to GITHUB_OUTPUT
+            const chartsToBumpStr = chartsToBump.join(',');
             try {
-              await exec.exec('echo', [`charts_to_bump=${chartsToBump}`, '>>', '$GITHUB_OUTPUT'])
+              await exec.exec('echo', [`charts_to_bump=${chartsToBumpStr}`, '>>', '$GITHUB_OUTPUT'])
             } catch (error) {
               core.setFailed(`Error echoing charts_to_bump to GITHUB_OUTPUT: ${error.message}`)
             }
@@ -311,9 +309,7 @@ jobs:
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             } catch (exitCode) {
-              if (exitCode.message !== "The process '/bin/bash' failed with exit code 1" || exitCode.message !== "") {
-                  core.setFailed(`Error updating chart README.md: ${exitCode.message}`);
-                }
+              continue;
             }
             
             // Loop through all chart READMEs and add diffs to fileChanges []
