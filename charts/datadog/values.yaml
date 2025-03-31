@@ -564,6 +564,8 @@ datadog:
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
       # Requires Cluster Agent 7.64.0+
+      #
+      # ddTraceConfigs[..]valueFrom requires agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
@@ -577,6 +579,10 @@ datadog:
       #    ddTraceConfigs:
       #      - name: "DD_PROFILING_ENABLED"
       #        value: "true"
+      #      - name: "DD_SERVICE"
+      #        valueFrom:
+      #          fieldRef:
+      #            fieldPath: metadata.labels[my-label]
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
