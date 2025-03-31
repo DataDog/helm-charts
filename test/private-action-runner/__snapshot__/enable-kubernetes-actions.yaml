@@ -107,7 +107,8 @@ metadata:
   namespace: datadog-agent
 spec:
   selector:
-    service: kubernetes-test-private-action-runner
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: kubernetes-test
   ports:
     - name: http
       port: 9016
