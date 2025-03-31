@@ -145,12 +145,17 @@
                               "type": "string"
                             },
                             "value": {
-                              "type": "string"
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "valueFrom": {
+                              "$ref": "#/$defs/k8s.api.envVarSource"
                             }
                           },
                           "required": [
-                            "name",
-                            "value"
+                            "name"
                           ],
                           "additionalProperties": false
                         }
@@ -290,6 +295,108 @@
           "operator"
         ],
         "additionalProperties": false
+      }
+    },
+    "k8s.api.envVarSource": {
+      "description": "EnvVarSource represents a source for the value of an EnvVar.",
+      "properties": {
+        "secretKeyRef": {
+          "required": [
+            "key"
+          ],
+          "description": "SecretKeySelector selects a key of a Secret.",
+          "properties": {
+            "optional": {
+              "type": "boolean",
+              "description": "Specify whether the Secret or it's key must be defined"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
+            },
+            "key": {
+              "type": "string",
+              "description": "The key of the secret to select from.  Must be a valid secret key."
+            }
+          }
+        },
+        "fieldRef": {
+          "required": [
+            "fieldPath"
+          ],
+          "description": "ObjectFieldSelector selects an APIVersioned field of an object.",
+          "properties": {
+            "fieldPath": {
+              "type": "string",
+              "description": "Path of the field to select in the specified API version."
+            },
+            "apiVersion": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Version of the schema the FieldPath is written in terms of, defaults to \"v1\"."
+            }
+          }
+        },
+        "configMapKeyRef": {
+          "required": [
+            "key"
+          ],
+          "description": "Selects a key from a ConfigMap.",
+          "properties": {
+            "optional": {
+              "type": "boolean",
+              "description": "Specify whether the ConfigMap or it's key must be defined"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
+            },
+            "key": {
+              "type": "string",
+              "description": "The key to select."
+            }
+          }
+        },
+        "resourceFieldRef": {
+          "required": [
+            "resource"
+          ],
+          "description": "ResourceFieldSelector represents container resources (cpu, memory) and their output format",
+          "properties": {
+            "containerName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Container name: required for volumes, optional for env vars"
+            },
+            "resource": {
+              "type": "string",
+              "description": "Required: resource to select"
+            },
+            "divisor": {
+              "oneOf": [
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          }
+        }
       }
     }
   }
