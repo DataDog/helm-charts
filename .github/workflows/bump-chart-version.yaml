@@ -390,4 +390,4 @@ jobs:
               ref: `heads/${pr.head.ref}`,
               sha: newCommitSha
             });
-            core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+            core.info(`Branch has been updated with a combined commit.`);
