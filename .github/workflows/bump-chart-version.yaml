@@ -328,7 +328,7 @@ jobs:
                 path: `charts/${chartName}/README.md`,
                 content: readmeContent
               });
-              commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
+              commitMessages.push(`update readme for ${chartName}`);
             }
             
             core.info("Done updating README.md files.");
