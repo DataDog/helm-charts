@@ -338,6 +338,8 @@ jobs:
               core.info("No file changes to commit.");
               return;
             }
+            
+            const pr = context.payload.pull_request;
 
             // Get the current commit of the PR head branch.
             const { data: branchData } = await github.rest.repos.getBranch({
@@ -390,4 +392,4 @@ jobs:
               ref: `heads/${pr.head.ref}`,
               sha: newCommitSha
             });
-            core.info(`Branch has been updated with a combined commit.`);
+            core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
