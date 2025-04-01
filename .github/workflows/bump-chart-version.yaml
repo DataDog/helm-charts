@@ -250,31 +250,30 @@ jobs:
             }
             if (prReadme.data.sha !== baseChangelog.data.sha) {
               core.info(`README.md for '${chartName}' has already been modified in this branch. Skipping readme update.`);
-              continue;
-            }
-            
-            // Update README.md using the .github/helm-docs.sh script
-            try {
-              await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
-            } catch (exitCode) {
-              // Do nothing
-              // Exit code 1 from the helm-docs.sh script when there is a diff is OK
-            }
-            
-            for (const chart of chartsToBump) {
-              const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-              core.info(`README CONTENT: `, ${readmeContent})
-              core.info(`PR README CONTENT: `, ${prReadme.data.content})
-              if (readmeContent !== prReadme.data.content) {              
-                fileChanges.push({
-                  path: `charts/${chart.chartName}/README.md`,
-                  content: readmeContent
-                });
-                commitMessages.push(`update readme for ${chart.chartName}`);
+            } else {
+              // Update README.md using the .github/helm-docs.sh script
+              try {
+                await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+              } catch (exitCode) {
+                // Do nothing
+                // Exit code 1 from the helm-docs.sh script when there is a diff is OK
               }
+              
+              for (const chart of chartsToBump) {
+                const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
+                core.info(`README CONTENT: `, ${readmeContent})
+                core.info(`PR README CONTENT: `, ${prReadme.data.content})
+                if (readmeContent !== prReadme.data.content) {              
+                  fileChanges.push({
+                    path: `charts/${chart.chartName}/README.md`,
+                    content: readmeContent
+                  });
+                  commitMessages.push(`update readme for ${chart.chartName}`);
+                }
+              }
+              
+              core.info("Done updating README.md files.");
             }
-            
-            core.info("Done updating README.md files.");
             
             // If no file changes were collected, nothing to commit.
             if (fileChanges.length === 0) {
