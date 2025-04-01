@@ -278,6 +278,10 @@ jobs:
               core.setFailed(`Could not get branch data: ${error.message}`);
                 return;
             }
+            if (!branchData || !branchData.commit || !branchData.commit.sha) {
+              core.setFailed("Branch data is missing 'sha' property.");
+              return;
+            }
             const baseCommitSha = branchData.commit.sha;
             const baseTreeSha = branchData.commit.commit.tree.sha;
             core.info(`Base commit for branch '${pr.head.ref}' is ${baseCommitSha}`);
