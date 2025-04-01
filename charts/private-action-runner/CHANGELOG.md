@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.0.1
+
+* Improve Readme
+
 ## 1.0.0
 
 * BREAKING CHANGES: Updates the chart for simplification and better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
