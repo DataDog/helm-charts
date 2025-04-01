@@ -197,6 +197,7 @@ jobs:
                 return;
               }
             
+              // Get the changelog content and check if it has already been modified in this branch.
               let newChangelogContent;
               const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
               const lines = changelogContent.split('\n');
@@ -204,6 +205,7 @@ jobs:
               
               if (prChangelog.data.sha !== baseChangelog.data.sha) {
                 core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Updating the latest changelog entry version.`);
+                // Update the version header to the desired version.
                 if (versionHeaderIdx !== -1) {
                   lines[versionHeaderIdx] = `## ${desiredVersion}`;
                   newChangelogContent = lines.join('\n');
@@ -217,6 +219,7 @@ jobs:
                 continue;
               }
               
+              // If the changelog has not been modified, add a new entry.
               const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
               const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
               
