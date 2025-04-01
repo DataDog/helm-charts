@@ -301,13 +301,15 @@ jobs:
 
             // Create a new tree with these modifications.
             core.info("Creating new tree with modified files…");
+            let newTreeResponse;
             try {
-              const newTreeResponse = await github.rest.git.createTree({
+              const response = await github.rest.git.createTree({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 tree: treeItems,
                 base_tree: baseTreeSha
               });
+              newTreeResponse = response;
             } catch (error) {
               core.setFailed(`Could not create new tree: ${error.message}`);
               return;
@@ -321,14 +323,16 @@ jobs:
 
             // Create a new commit object.
             core.info("Creating new commit object…");
+            let newCommitResponse;
             try {            
-              const newCommitResponse = await github.rest.git.createCommit({
+              const response = await github.rest.git.createCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 message: commitMessage,
                 tree: newTreeSha,
                 parents: [baseCommitSha]
               });
+              newCommitResponse = response;
             } catch (error) {
               core.setFailed(`Could not create new commit: ${error.message}`);
               return;
