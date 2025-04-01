@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.111.0 
+## 3.110.7 
 
 * Fanny/test bump chart workflow 2 ([#1787](https://github.com/DataDog/helm-charts/pull/1787)).
 
