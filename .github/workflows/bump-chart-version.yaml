@@ -234,6 +234,7 @@ jobs:
             
             for (const chart of chartsToBump) {
               const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
+              core.info(`README CONTENT: `, readmeContent)
               if (readmeContent !== "") {              
                 fileChanges.push({
                   path: `charts/${chart.chartName}/README.md`,

@@ -1210,6 +1210,6 @@ false
 {{/*
   Test helper
 */}}
-{{- define "this-is-a-test-test" -}}
+{{- define "this-is-a-test" -}}
   true
 {{- end -}}
