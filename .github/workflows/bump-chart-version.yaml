@@ -224,6 +224,35 @@ jobs:
 
             core.info("Done checking all labeled charts.");
             
+            // Get base and head README.md files.
+            let baseReadme, prReadme;
+            try {
+              baseChangelog = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: `charts/${chartName}/README.md`,
+                ref: mergeBaseSHA
+              });
+            } catch (error) {
+              core.setFailed(`Could not get base README.md for ${chartName}: ${error.message}`);
+              return;
+            }
+            try {
+              prReadme = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: `charts/${chartName}/README.md`,
+                ref: pr.head.ref
+              });
+            } catch (error) {
+              core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
+              return;
+            }
+            if (prReadme.data.sha !== baseChangelog.data.sha) {
+              core.info(`README.md for '${chartName}' has already been modified in this branch. Skipping readme update.`);
+              continue;
+            }
+            
             // Update README.md using the .github/helm-docs.sh script
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
@@ -234,8 +263,9 @@ jobs:
             
             for (const chart of chartsToBump) {
               const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-              core.info(`README CONTENT: `, readmeContent)
-              if (readmeContent !== "") {              
+              core.info(`README CONTENT: `, ${readmeContent})
+              core.info(`PR README CONTENT: `, ${prReadme.data.content})
+              if (readmeContent !== prReadme.data.content) {              
                 fileChanges.push({
                   path: `charts/${chart.chartName}/README.md`,
                   content: readmeContent
