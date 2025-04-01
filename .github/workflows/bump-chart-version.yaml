@@ -24,6 +24,8 @@ jobs:
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
             
+            const fs = require('fs');
+            
             const pr = context.payload.pull_request;
             if (!pr) {
               core.setFailed("No pull request found in context payload.");
@@ -146,6 +148,10 @@ jobs:
                   /^version:\s+\S+/m,
                   `version: ${desiredVersion}`
                 );
+                
+                // Also replace file content locally so that helm-docs.sh script can properly update READMEs
+                fs.writeFileSync(`charts/${chartName}/Chart.yaml`, newChartContent, 'utf8');
+                
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
@@ -185,73 +191,58 @@ jobs:
                 core.setFailed(`Could not get head CHANGELOG.md for ${chartName}: ${error.message}`);
                 return;
               }
-              if (prChangelog.data.sha == baseChangelog.data.sha) {
-                const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
-                const newDate = new Date().toISOString().split('T')[0];
-                const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
-                const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
-
-                let newChangelogContent;
-                const lines = changelogContent.split('\n');
-                const versionHeaderIdx = lines.findIndex(line => line.trim().startsWith('##'));
-                if (versionHeaderIdx !== -1) {
-                  const headerSection = lines.slice(0, versionHeaderIdx).join('\n').trimEnd();
-                  const remaining = lines.slice(versionHeaderIdx).join('\n');
-                  newChangelogContent = `${headerSection}\n\n${newEntry}${remaining}`;
-                } else {
-                  newChangelogContent = newEntry + changelogContent;
-                }
-                fileChanges.push({
-                  path: `charts/${chartName}/CHANGELOG.md`,
-                  content: newChangelogContent
-                });
-                commitMessages.push(`update changelog for ${chartName} with version ${desiredVersion}`);
-                core.info(`CHANGELOG.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
-              } else {
+              if (prChangelog.data.sha !== baseChangelog.data.sha) {
                 core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Skipping changelog update.`);
+                continue;
               }
+              const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
+              const newDate = new Date().toISOString().split('T')[0];
+              const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
+              const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
 
-              // Update README.md using the .github/helm-docs.sh script
-              // Get head README.md file
-              let prReadme;
-              try {
-                prReadme = await github.rest.repos.getContent({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  path: `charts/${chartName}/README.md`,
-                  ref: pr.head.ref
-                });
-              } catch (error) {
-                core.setFailed(`Could not get head README.md for ${chartName}: ${error.message}`);
-                return;
-              }
-
-              // Update local README.md
-              try {
-                await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
-              } catch (error) {
-                core.setFailed(`Could not update README.md for ${chartName}: ${error.message}`);
-                return;
-              }
-              const fs = require('fs');
-              const localReadmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
-              const prReadmeContent = Buffer.from(prReadme.data.content, 'base64').toString('utf-8');
-
-              // Check for diff between head and local README.md 
-              if (prReadmeContent !== localReadmeContent) {
-                fileChanges.push({
-                  path: `charts/${chartName}/README.md`,
-                  content: localReadmeContent
-                });
-                commitMessages.push(`update readme for ${chartName} with version ${desiredVersion}`);
-                core.info(`README.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
+              let newChangelogContent;
+              const lines = changelogContent.split('\n');
+              const versionHeaderIdx = lines.findIndex(line => line.trim().startsWith('##'));
+              if (versionHeaderIdx !== -1) {
+                const headerSection = lines.slice(0, versionHeaderIdx).join('\n').trimEnd();
+                const remaining = lines.slice(versionHeaderIdx).join('\n');
+                newChangelogContent = `${headerSection}\n\n${newEntry}${remaining}`;
               } else {
-                core.info(`README.md already up-to-date for '${chartName}' chart. Skipping README update.`);
+                newChangelogContent = newEntry + changelogContent;
               }
+              
+              // Also replace file content locally so that helm-docs.sh script can properly update READMEs
+              fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
+              
+              fileChanges.push({
+                path: `charts/${chartName}/CHANGELOG.md`,
+                content: newChangelogContent
+              });
+              commitMessages.push(`update changelog for ${chartName} with version ${desiredVersion}`);
+              core.info(`CHANGELOG.md for '${chartName}' updated with a new entry for version ${desiredVersion}.`);
             }
 
             core.info("Done checking all labeled charts.");
-
+            
+            // Update README.md using the .github/helm-docs.sh script
+            try {
+              await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
+            } catch (exitCode) {
+              // Do nothing
+              // Exit code 1 from the helm-docs.sh script when there is a diff is OK
+            }
+            
+            for (const chart of chartsToBump) {
+              const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
+              fileChanges.push({
+                path: `charts/${chart.chartName}/README.md`,
+                content: readmeContent
+              });
+              commitMessages.push(`update readme for ${chart.chartName}`);
+            }
+            
+            core.info("Done updating README.md files.");
+            
             // If no file changes were collected, nothing to commit.
             if (fileChanges.length === 0) {
               core.info("No file changes to commit.");
@@ -288,7 +279,7 @@ jobs:
             core.info(`Created new tree ${newTreeSha}`);
 
             // Create a combined commit message.
-            const commitMessage = `chore: update charts and changelogs\n\n` +
+            const commitMessage = `chore: update charts, changelogs, and docs\n\n` +
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
