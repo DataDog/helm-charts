@@ -1206,3 +1206,14 @@ false
     false
   {{- end -}}
 {{- end -}}
+
+{{/*
+  Test bump chart version GH workflow
+*/}}
+{{- define "this-is-a-test" -}}
+  {{- if .Values.testConfig.enabled -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
