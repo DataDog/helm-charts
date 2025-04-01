@@ -69,6 +69,11 @@ jobs:
                 });
               }
             }
+            
+            if (chartsToBump.length === 0) {
+              core.info("No charts to bump found in labels.");
+              return;
+            }
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -269,12 +274,14 @@ jobs:
 
             // Get the current commit of the PR head branch.
             core.info("Getting current commit of the PR head branch…");
+            let branchData;
             try {
-              const { data: branchData } = await github.rest.repos.getBranch({
+              const response = await github.rest.repos.getBranch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 branch: pr.head.ref
               });
+              branchData = response.data;
             } catch (error) {
               core.setFailed(`Could not get branch data: ${error.message}`);
                 return;
