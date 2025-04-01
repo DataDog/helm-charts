@@ -26,6 +26,8 @@ jobs:
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
             
+            const fs = require('fs');
+            
             const pr = context.payload.pull_request;
             if (!pr) {
               core.setFailed("No pull request found in context payload.");
@@ -140,8 +142,6 @@ jobs:
               }
               const desiredVersion = makeVersion(desiredParsed);
               core.info(`Desired version for '${chartName}' is '${desiredVersion}'.`);
-            
-              const fs = require('fs');
 
               // If the Chart.yaml version is not what we expect, update it.
               if (prVersion !== desiredVersion) {
