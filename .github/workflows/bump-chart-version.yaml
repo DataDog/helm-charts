@@ -154,7 +154,7 @@ jobs:
                   `version: ${desiredVersion}`
                 );
 
-                // Also replace file content locally so that helm-docs.sh script can properly update READMEs
+                // Replace file content locally so that helm-docs.sh script can properly update READMEs
                 fs.writeFileSync(`charts/${chartName}/Chart.yaml`, newChartContent, 'utf8');
 
                 fileChanges.push({
@@ -196,18 +196,33 @@ jobs:
                 core.setFailed(`Could not get head CHANGELOG.md for ${chartName}: ${error.message}`);
                 return;
               }
-              if (prChangelog.data.sha !== baseChangelog.data.sha) {
-                core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Skipping changelog update.`);
-                continue;
-              }
-              const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
-              const newDate = new Date().toISOString().split('T')[0];
-              const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
-              const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
-
+            
+              // Get the changelog content and check if it has already been modified in this branch.
               let newChangelogContent;
+              const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
               const lines = changelogContent.split('\n');
               const versionHeaderIdx = lines.findIndex(line => line.trim().startsWith('##'));
+              
+              if (prChangelog.data.sha !== baseChangelog.data.sha) {
+                core.info(`CHANGELOG.md for '${chartName}' has already been modified in this branch. Updating the latest changelog entry version.`);
+                // Update the version header to the desired version.
+                if (versionHeaderIdx !== -1) {
+                  lines[versionHeaderIdx] = `## ${desiredVersion}`;
+                  newChangelogContent = lines.join('\n');
+                  fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
+                  fileChanges.push({
+                    path: `charts/${chartName}/CHANGELOG.md`,
+                    content: newChangelogContent
+                  });
+                  commitMessages.push(`update changelog version for ${chartName} to ${desiredVersion}`);
+                }
+                continue;
+              }
+              
+              // If the changelog has not been modified, add a new entry.
+              const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
+              const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
+              
               if (versionHeaderIdx !== -1) {
                 const headerSection = lines.slice(0, versionHeaderIdx).join('\n').trimEnd();
                 const remaining = lines.slice(versionHeaderIdx).join('\n');
