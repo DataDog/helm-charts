@@ -224,7 +224,7 @@ jobs:
 
             core.info("Done checking all labeled charts.");
 
-            // Update README.md using the .github/helm-docs.sh script
+            // Update README.mds using the .github/helm-docs.sh script
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             } catch (exitCode) {
@@ -233,19 +233,8 @@ jobs:
             }
 
             for (const chart of chartsToBump) {
-              // Get base and head README.md files.
-              let baseReadme, prReadme;
-              try {
-                baseReadme = await github.rest.repos.getContent({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  path: `charts/${chart.chartName}/README.md`,
-                  ref: mergeBaseSHA
-                });
-              } catch (error) {
-                core.setFailed(`Could not get base README.md for ${chart.chartName}: ${error.message}`);
-                return;
-              }
+              // Get head README.md file
+              let prReadme;
               try {
                 prReadme = await github.rest.repos.getContent({
                   owner: context.repo.owner,
@@ -257,16 +246,13 @@ jobs:
                 core.setFailed(`Could not get head README.md for ${chart.chartName}: ${error.message}`);
                 return;
               }
-              if (prReadme.data.sha !== baseReadme.data.sha) {
-                core.info(`README.md for '${chart.chartName}' has already been modified in this branch. Skipping readme update.`);
-                continue;
-              }
-
-              const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-              if (readmeContent !== Buffer.from(prReadme.data.content, prReadme.data.encoding).toString()) {
+              
+              // Check if the README.md file has been modified by helm-docs.sh
+              const localReadmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
+              if (localReadmeContent !== Buffer.from(prReadme.data.content, prReadme.data.encoding).toString()) {
                 fileChanges.push({
                   path: `charts/${chart.chartName}/README.md`,
-                  content: readmeContent
+                  content: localReadmeContent
                 });
                 commitMessages.push(`update readme for ${chart.chartName}`);
               }
