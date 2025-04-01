@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.110.7
-
-* test bump chart workflow ([#1786](https://github.com/DataDog/helm-charts/pull/1786)).
-
 ## 3.110.6
 
 * Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.
