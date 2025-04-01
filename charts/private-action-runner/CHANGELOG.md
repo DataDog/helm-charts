@@ -1,5 +1,49 @@
 # Datadog changelog
 
+## 1.0.1
+
+* Improve Readme
+
+## 1.0.0
+
+* BREAKING CHANGES: Updates the chart for simplification and better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
+
+## 0.20.1
+
+* Various cleanup for the chart.
+
+## 0.20.0
+
+* Add the ability to specify kubernetes secrets to store credential files.
+
+## 0.19.0
+
+* Use a role instead of a cluster role for the runner's service account by default.
+
+## 0.18.0
+
+* Add the ability to specify a kubernetes secret to store the runner's identity.
+
+## 0.17.2
+
+* Update postgresql credentials file example
+
+## 0.17.1
+
+* Update private action image version to `v1.1.1`
+
+## 0.17.0
+
+* Update private action image version to `v1.0.0`
+
+## 0.16.0
+
+* Add support for passing environment variables to the Datadog Private Action Runner container.
+
+## 0.15.8
+
+* Update private action image version to `v0.1.14-beta`
+
 ## 0.15.7
 
 * Update private action image version to `v0.1.12-beta`

@@ -19,11 +19,12 @@ import (
 )
 
 type HelmCommand struct {
-	ReleaseName string
-	ChartPath   string
-	ShowOnly    []string          // helm template `-s, --show-only` flag
-	Values      []string          // helm template `-f, --values` flag
-	Overrides   map[string]string // helm template `--set` flag
+	ReleaseName   string
+	ChartPath     string
+	ShowOnly      []string          // helm template `-s, --show-only` flag
+	Values        []string          // helm template `-f, --values` flag
+	Overrides     map[string]string // helm template `--set` flag
+	OverridesJson map[string]string // helm template `--set-json` flag
 }
 
 func Unmarshal[T any](t *testing.T, manifest string, destObj *T) {
@@ -40,6 +41,7 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 	options := &helm.Options{
 		KubectlOptions: kubectlOptions,
 		SetValues:      cmd.Overrides,
+		SetJsonValues:  cmd.OverridesJson,
 		ValuesFiles:    cmd.Values,
 	}
 

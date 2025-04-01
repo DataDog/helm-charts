@@ -18,31 +18,72 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Private Action Runner default",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "default-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			snapshotName: "default",
 			assertions:   verifyPrivateActionRunner,
+		}, {
+			name: "Private Action Runner example file",
+			command: common.HelmCommand{
+				ReleaseName: "example-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/examples/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			snapshotName: "example",
+			assertions:   verifyPrivateActionRunner,
 		},
 		{
 			name: "Enable kubernetes actions",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "kubernetes-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
-				Overrides: map[string]string{
-					"runners[0].kubernetesActions.controllerRevisions": "{get,list,create,update,patch,delete,deleteMultiple}",
-					"runners[0].kubernetesActions.customObjects":       "{deleteMultiple}",
-					"runners[0].kubernetesActions.deployments":         "{restart}",
-					"runners[0].kubernetesActions.endpoints":           "{patch}",
-					"runners[0].kubernetesPermissions[0].apiGroups":    "{example.com}",
-					"runners[0].kubernetesPermissions[0].resources":    "{tests}",
-					"runners[0].kubernetesPermissions[0].verbs":        "{list,get,create,patch,update,delete}",
+				OverridesJson: map[string]string{
+					"runner.roleType": `"ClusterRole"`,
+					"runner.kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
+					"runner.kubernetesActions.customObjects":       `["deleteMultiple"]`,
+					"runner.kubernetesActions.deployments":         `["restart"]`,
+					"runner.kubernetesActions.endpoints":           `["patch"]`,
+					"runner.kubernetesPermissions[0].apiGroups":    `["example.com"]`,
+					"runner.kubernetesPermissions[0].resources":    `["tests"]`,
+					"runner.kubernetesPermissions[0].verbs":        `["list","get","create","patch","update","delete"]`,
 				},
 			},
 			snapshotName: "enable-kubernetes-actions",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify certain config overrides",
+			command: common.HelmCommand{
+				ReleaseName: "override-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"fullnameOverride": `"custom-full-name"`,
+					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+				},
+			},
+			snapshotName: "config-overrides",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify secrets externally",
+			command: common.HelmCommand{
+				ReleaseName: "secrets-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.runnerIdentitySecret": `"the-name-of-the-secret"`,
+					"runner.config.urn":           ``,
+					"runner.config.privateKey":    ``,
+					"runner.credentialSecrets":    `[{"secretName": "first-secret"}, {"secretName": "second-secret", "directoryName": "second-secret-directory"}]`,
+				},
+			},
+			snapshotName: "external-secrets",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

@@ -104,10 +104,10 @@ true
 {{- $clusterName := tpl .Values.datadog.clusterName . -}}
 {{- $length := len $clusterName -}}
 {{- if (gt $length 80)}}
-{{- fail "Your `clusterName` isn’t valid it has to be below 81 chars." -}}
+{{- fail "Your `clusterName` isn't valid it has to be below 81 chars." -}}
 {{- end}}
 {{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" $clusterName) -}}
-{{- fail "Your `clusterName` isn’t valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
+{{- fail "Your `clusterName` isn't valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
 {{- end -}}
 {{- end -}}
 
@@ -153,6 +153,36 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole
+*/}}
+{{- define "should-add-otel-agent-k8sattributes-rules" -}}
+{{- $return := false }}
+{{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
+{{- range $key, $val := $config.processors }}
+  {{- if hasPrefix "k8sattributes" $key }}
+    {{- if or (empty $val) (empty $val.passthrough) }}
+      {{- $return = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
+{{/*
+Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container
+*/}}
+{{- define "should-mount-logs-for-otel-agent" -}}
+{{- $return := false }}
+{{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
+{{- range $key, $val := $config.receivers }}
+  {{- if hasPrefix "filelog" $key }}
+    {{- $return = true }}
+  {{- end }}
+{{- end }}
+{{- $return }}
 {{- end -}}
 
 {{/*
@@ -367,7 +397,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -780,7 +810,7 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
+{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
@@ -800,6 +830,7 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
 Returns env vars correctly quoted and valueFrom respected
 */}}
 {{- define "additional-env-entries" -}}
@@ -958,10 +989,28 @@ false
 {{- end -}}
 
 {{/*
+Return orchestratorExplorer customResources list with conditional addition of datadogpodautoscalers.
+*/}}
+{{- define "orchestratorExplorer-custom-resources" -}}
+{{- $customResources := .Values.datadog.orchestratorExplorer.customResources | default list -}}
+{{- if (((.Values.datadog.autoscaling).workload).enabled) -}}
+{{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalers" -}}
+{{- end -}}
+{{- $filteredResources := list -}}
+{{- range $cr := $customResources -}}
+{{- if ne $cr "datadoghq.com/v1alpha1/datadogpodautoscalers" -}}
+{{- $filteredResources = append $filteredResources $cr -}}
+{{- end -}}
+{{- end -}}
+{{- $filteredResources | uniq | toYaml -}}
+{{- end -}}
+
+{{/*
 Create RBACs for custom resources
 */}}
 {{- define "orchestratorExplorer-config-crs" -}}
-{{- range $cr := .Values.datadog.orchestratorExplorer.customResources }}
+{{- $resources := (include "orchestratorExplorer-custom-resources" . | fromYamlArray) -}}
+{{- range $cr := $resources }}
 - apiGroups:
   - {{ (splitList "/" $cr) | first | quote }}
   resources:

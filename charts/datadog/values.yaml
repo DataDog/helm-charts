@@ -515,6 +515,11 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+    # Error Tracking backend
+    errorTrackingStandalone:
+      # datadog.apm.errorTrackingStandalone.enabled -- Enables Error Tracking for backend services.
+      enabled: false
+
     # APM Single Step Instrumentation
     # This feature is in preview. It requires Cluster Agent 7.49+.
     instrumentation:
@@ -529,6 +534,22 @@ datadog:
 
       # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
       libVersions: {}
+
+      # datadog.apm.instrumentation.targets -- Enable target based workload selection (preview).
+      # Requires Cluster Agent 7.64.0+
+      targets: []
+      #  - name: "example"
+      #    podSelector:
+      #      matchLabels:
+      #        language: "python"
+      #    namespaceSelector:
+      #      matchNames:
+      #      - "applications"
+      #    ddTraceVersions:
+      #      python: "v2"
+      #    ddTraceConfigs:
+      #      - name: "DD_PROFILING_ENABLED"
+      #        value: "true"
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -603,6 +624,26 @@ datadog:
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+    featureGates: null
+
+    ## Provide OTel Collector RBAC configuration
+    rbac:
+      # datadog.otelCollector.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+      # and create required ClusterRole to access Kubernetes API
+      create: true
+      # datadog.otelCollector.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+      rules: []
+      #   - apiGroups: [""]
+      #     resources: ["pods", "nodes"]
+      #     verbs: ["get", "list", "watch"]
+
+    ## Provide OTel Collector logs configuration
+    logs:
+      # datadog.otelCollector.logs.enabled -- Enable logs support in the OTel Collector.
+      # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+      # and pods logs.
+      enabled: false
 
   ## Continuous Profiler configuration
   ##
@@ -855,9 +896,17 @@ datadog:
         # datadog.serviceMonitoring.tls.native.enabled -- (bool) Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent.
         enabled:
 
+  traceroute:
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
+    enabled: false
+
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
+
+    # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
+    networkStats:
+      enabled: true
 
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
@@ -1066,7 +1115,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.63.2
+    tag: 7.64.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1102,8 +1151,16 @@ clusterAgent:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
     initContainers:
-      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      # clusterAgent.containers.initContainers.securityContext -- Specify securityContext on the initContainers.
       securityContext: {}
+      # clusterAgent.containers.initContainers.resources -- Resource requests and limits for the Cluster Agent init containers
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
 
   # clusterAgent.command -- Command to run in the Cluster Agent container as entrypoint
   command: []
@@ -1547,7 +1604,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.7
+    tag: 1.1.9
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1590,7 +1647,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.63.2
+    tag: 7.64.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1837,6 +1894,13 @@ agents:
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+      # agents.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+      volumeMounts: []
+      #   - name: <VOLUME_NAME>
+      #     mountPath: <CONTAINER_PATH>
+      #     readOnly: true
+
     traceAgent:
       # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env: []
@@ -2099,7 +2163,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.63.2
+    tag: 7.64.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

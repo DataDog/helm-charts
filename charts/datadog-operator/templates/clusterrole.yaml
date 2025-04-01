@@ -16,7 +16,12 @@ rules:
   resources:
   - componentstatuses
   - deployments
+  - limitranges
   - namespaces
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  - resourcequotas
   verbs:
   - get
   - list
@@ -38,17 +43,6 @@ rules:
   - list
   - patch
   - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - limitranges
-  - persistentvolumeclaims
-  - persistentvolumes
-  - replicationcontrollers
-  - resourcequotas
-  verbs:
-  - list
   - watch
 - apiGroups:
   - ""
@@ -143,6 +137,8 @@ rules:
   verbs:
   - create
   - get
+  - list
+  - watch
 - apiGroups:
   - authorization.k8s.io
   resources:
@@ -195,6 +191,7 @@ rules:
   resources:
   - certificatesigningrequests
   verbs:
+  - get
   - list
   - watch
 - apiGroups:
@@ -265,6 +262,7 @@ rules:
   verbs:
   - create
   - delete
+  - get
   - list
   - watch
 - apiGroups:
@@ -278,11 +276,6 @@ rules:
   - datadoghq.com
   resources:
   - extendeddaemonsetreplicasets
-  verbs:
-  - get
-- apiGroups:
-  - datadoghq.com
-  resources:
   - watermarkpodautoscalers
   verbs:
   - get
@@ -296,6 +289,13 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - metrics.eks.amazonaws.com
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -348,6 +348,7 @@ rules:
   - storageclasses
   - volumeattachments
   verbs:
+  - get
   - list
   - watch
 - apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
