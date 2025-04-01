@@ -216,7 +216,7 @@ If actions requiring credentials fail:
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
+| image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.2.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
