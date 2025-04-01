@@ -2,7 +2,7 @@
 
 ## 3.110.7
 
-* test bump-chart-version workflow ([#1788](https://github.com/DataDog/helm-charts/pull/1788)).
+* Custom changelog entry to test bump-chart-version workflow.
 
 ## 3.110.6
 
