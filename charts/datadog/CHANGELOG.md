@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.111.0 
+
+* Fanny/test bump chart workflow 2 ([#1787](https://github.com/DataDog/helm-charts/pull/1787)).
+
 ## 3.110.6
 
 * Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.
