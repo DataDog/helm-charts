@@ -69,12 +69,6 @@ jobs:
                 });
               }
             }
-            
-            // Export chartsToBump to GITHUB_OUTPUT
-            const chartsToBumpStr = chartsToBump.map(chart => `${chart.chartName}`).join(',');
-            const outputPath = process.env.GITHUB_OUTPUT;
-            const fs = require('fs');
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `charts_to_bump=${chartsToBumpStr}\n`);
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -146,6 +140,8 @@ jobs:
               }
               const desiredVersion = makeVersion(desiredParsed);
               core.info(`Desired version for '${chartName}' is '${desiredVersion}'.`);
+            
+              const fs = require('fs');
 
               // If the Chart.yaml version is not what we expect, update it.
               if (prVersion !== desiredVersion) {
@@ -155,6 +151,10 @@ jobs:
                   `version: ${desiredVersion}`
                 );
                 core.info(`NEW CHART CONTENT: ${newChartContent}`)
+                
+                // Also replace file content locally so that helm-docs.sh script can properly update READMEs
+                fs.writeFileSync(charts/${chartName}/Chart.yaml, newChartContent, 'utf8');
+                
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
@@ -214,6 +214,10 @@ jobs:
                 newChangelogContent = newEntry + changelogContent;
               }
               core.info(`NEW CHANGELOG CONTENT: ${newChangelogContent}`)
+              
+              // Also replace file content locally so that helm-docs.sh script can properly update READMEs
+              fs.writeFileSync(charts/${chartName}/CHANGELOG.md, newChangelogContent, 'utf8');
+              
               fileChanges.push({
                 path: `charts/${chartName}/CHANGELOG.md`,
                 content: newChangelogContent
@@ -223,92 +227,6 @@ jobs:
             }
 
             core.info("Done checking all labeled charts.");
-
-            // If no file changes were collected, nothing to commit.
-            if (fileChanges.length === 0) {
-              core.info("No file changes to commit.");
-              return;
-            }
-
-            // Get the current commit of the PR head branch.
-            const { data: branchData } = await github.rest.repos.getBranch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: pr.head.ref
-            });
-            const baseCommitSha = branchData.commit.sha;
-            const baseTreeSha = branchData.commit.commit.tree.sha;
-            core.info(`Base commit for branch '${pr.head.ref}' is ${baseCommitSha}`);
-
-            // Prepare tree entries from each file change.
-            // (Mode "100644" means a normal non‐executable file.)
-            const treeItems = fileChanges.map(change => ({
-              path: change.path,
-              mode: "100644",
-              type: "blob",
-              content: change.content
-            }));
-
-            // Create a new tree with these modifications.
-            const newTreeResponse = await github.rest.git.createTree({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tree: treeItems,
-              base_tree: baseTreeSha
-            });
-            const newTreeSha = newTreeResponse.data.sha;
-            core.info(`Created new tree ${newTreeSha}`);
-
-            // Create a combined commit message.
-            const commitMessage = `chore: update charts and changelogs\n\n` +
-                                  commitMessages.map(msg => `- ${msg}`).join('\n');
-
-            // Create a new commit object.
-            const newCommitResponse = await github.rest.git.createCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              message: commitMessage,
-              tree: newTreeSha,
-              parents: [baseCommitSha]
-            });
-            const newCommitSha = newCommitResponse.data.sha;
-            core.info(`Created new commit ${newCommitSha}`);
-
-            // Update the head branch reference to point to the new commit.
-            await github.rest.git.updateRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `heads/${pr.head.ref}`,
-              sha: newCommitSha
-            });
-            core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
-  update-chart-docs:
-    needs: ['bump-chart-version']
-    runs-on: ubuntu-latest
-    steps:
-      - name: Echo chart names that need update
-        env:
-          CHARTS_TO_BUMP: ${{needs.bump-chart-version.outputs.charts_to_bump}}
-        run:
-          echo "$CHARTS_TO_BUMP"
-      - name: Check out repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Checkout HEAD
-        run: |
-          git fetch --prune --unshallow --no-tags
-          git reset --hard origin/${{ github.event.pull_request.head.ref }}
-
-      - name: Update README.md
-        id: update_readmes
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        env:
-          CHARTS_TO_BUMP: ${{needs.bump-chart-version.outputs.charts_to_bump}}
-        with:
-          script: |
-            core.info(`ENV CHART NAMES??? ${process.env.CHARTS_TO_BUMP}`)
-            const chartNamesStr = process.env.CHARTS_TO_BUMP
-            const chartNamesArr = chartNamesStr.split(',').map(str => str.trim());
             
             // Update README.md using the .github/helm-docs.sh script
             try {
@@ -318,13 +236,7 @@ jobs:
               // Exit code 1 from the helm-docs.sh script when there is a diff is OK
             }
             
-            // Loop through all chart READMEs and add diffs to fileChanges []
-            const fileChanges = [];
-            const commitMessages = [];
-            
-            const fs = require('fs');
-            
-            for (const chartName of chartNamesArr) {
+            for (const chartName of chartsToBump) {
               const readmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
               fileChanges.push({
                 path: `charts/${chartName}/README.md`,
@@ -334,14 +246,12 @@ jobs:
             }
             
             core.info("Done updating README.md files.");
-
+            
             // If no file changes were collected, nothing to commit.
             if (fileChanges.length === 0) {
               core.info("No file changes to commit.");
               return;
             }
-            
-            const pr = context.payload.pull_request;
 
             // Get the current commit of the PR head branch.
             const { data: branchData } = await github.rest.repos.getBranch({
@@ -373,7 +283,7 @@ jobs:
             core.info(`Created new tree ${newTreeSha}`);
 
             // Create a combined commit message.
-            const commitMessage = `chore: update charts and changelogs\n\n` +
+            const commitMessage = `chore: update charts\n\n` +
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
