@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 0.20.1](https://img.shields.io/badge/Version-0.20.1-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![AppVersion: v1.1.1](https://img.shields.io/badge/AppVersion-v1.1.1-informational?style=flat-square)
 
 This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
 
@@ -49,15 +49,14 @@ kubectl create secret generic <secret-name>  --from-literal RUNNER_PRIVATE_KEY=<
 ```
 Update the `values.yaml` file with the secret name
 ```yaml
-runners:
-  -
+runner:
   # ... other fields
-    runnerIdentitySecret: <secret-name>
+  runnerIdentitySecret: <secret-name>
   # ... other fields
-    config:
-      # you can get rid of the values in `config`, the secret will take precedence
-      # urn: "STORED_IN_A_SECRET"
-      # privateKey: "STORED_IN_A_SECRET"
+  config:
+    # you can get rid of the values in `config`, the secret will take precedence
+    # urn: "STORED_IN_A_SECRET"
+    # privateKey: "STORED_IN_A_SECRET"
 ```
 
 ### Use kubernetes secrets to store credentials
@@ -74,59 +73,61 @@ kubectl create secret generic <secret-name-gitlab> --from-literal gitlab_token.j
 
 Update the `values.yaml` file with the secrets names and the directory names
 ```yaml
-credentialSecrets:
-  # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_token.json and /etc/dd-action-runner/credentials/gitlab_token.json
-  - secretName: <secret-name>
-    directoryName: ""
-  # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_token.json
-  - secretName: <secret-name-jenkins>
-    directoryName: "jenkins"
-  # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab_token.json
-  - secretName: <secret-name-gitlab>
-    directoryName: "gitlab"
+runner:
+  credentialSecrets:
+    # your credentials files will be located at /etc/dd-action-runner/credentials/jenkins_token.json and /etc/dd-action-runner/credentials/gitlab_token.json
+    - secretName: <secret-name>
+      directoryName: ""
+    # your credentials file will be located at /etc/dd-action-runner/credentials/jenkins/jenkins_token.json
+    - secretName: <secret-name-jenkins>
+      directoryName: "jenkins"
+    # your credentials file will be located at /etc/dd-action-runner/credentials/gitlab/gitlab_token.json
+    - secretName: <secret-name-gitlab>
+      directoryName: "gitlab"
 ```
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| common.image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
-| credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
-| credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
-| runners[0].config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
-| runners[0].config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
-| runners[0].config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
-| runners[0].config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
-| runners[0].config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
-| runners[0].config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
-| runners[0].config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
-| runners[0].env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
-| runners[0].kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
-| runners[0].kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.cronJobs | list | `[]` | Actions related to cronJobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.customObjects | list | `[]` | Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`. |
-| runners[0].kubernetesActions.customResourceDefinitions | list | `[]` | Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.daemonSets | list | `[]` | Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.deployments | list | `[]` | Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart") |
-| runners[0].kubernetesActions.endpoints | list | `[]` | Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.events | list | `[]` | Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.jobs | list | `[]` | Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.limitRanges | list | `[]` | Actions related to limitRanges (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.namespaces | list | `[]` | Actions related to namespaces (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.nodes | list | `[]` | Actions related to nodes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.persistentVolumeClaims | list | `[]` | Actions related to persistentVolumeClaims (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.persistentVolumes | list | `[]` | Actions related to persistentVolumes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.podTemplates | list | `[]` | Actions related to podTemplates (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.pods | list | `["get","list"]` | Actions related to pods (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.replicaSets | list | `[]` | Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.replicationControllers | list | `[]` | Actions related to replicationControllers (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.resourceQuotas | list | `[]` | Actions related to resourceQuotas (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.serviceAccounts | list | `[]` | Actions related to serviceAccounts (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.services | list | `[]` | Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesActions.statefulSets | list | `[]` | Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runners[0].kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
-| runners[0].name | string | `"default"` | Name of the Datadog Private Action Runner |
-| runners[0].replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
-| runners[0].roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
-| runners[0].runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
+| fullnameOverride | string | `""` | Override the full qualified app name |
+| image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.1.1"}` | Current Datadog Private Action Runner image |
+| nameOverride | string | `""` | Override name of app |
+| runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
+| runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
+| runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
+| runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
+| runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
+| runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
+| runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
+| runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
+| runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
+| runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
+| runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.cronJobs | list | `[]` | Actions related to cronJobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.customObjects | list | `[]` | Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`. |
+| runner.kubernetesActions.customResourceDefinitions | list | `[]` | Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.daemonSets | list | `[]` | Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.deployments | list | `[]` | Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart") |
+| runner.kubernetesActions.endpoints | list | `[]` | Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.events | list | `[]` | Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.jobs | list | `[]` | Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.limitRanges | list | `[]` | Actions related to limitRanges (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.namespaces | list | `[]` | Actions related to namespaces (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.nodes | list | `[]` | Actions related to nodes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.persistentVolumeClaims | list | `[]` | Actions related to persistentVolumeClaims (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.persistentVolumes | list | `[]` | Actions related to persistentVolumes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.podTemplates | list | `[]` | Actions related to podTemplates (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.pods | list | `["get","list"]` | Actions related to pods (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.replicaSets | list | `[]` | Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.replicationControllers | list | `[]` | Actions related to replicationControllers (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.resourceQuotas | list | `[]` | Actions related to resourceQuotas (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.serviceAccounts | list | `[]` | Actions related to serviceAccounts (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.services | list | `[]` | Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesActions.statefulSets | list | `[]` | Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
+| runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
+| runner.replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
+| runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
+| runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |

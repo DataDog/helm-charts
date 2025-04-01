@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Values",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "required": ["repository", "tag"]
+    },
+    "nameOverride": {
+      "type": "string"
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "runner": {
+      "type": "object",
+      "properties": {
+        "roleType": {
+          "type": "string",
+          "enum": ["Role", "ClusterRole"]
+        },
+        "replicas": {
+          "type": "integer"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "ddBaseURL": {
+              "type": "string"
+            },
+            "urn": {
+              "type": "string"
+            },
+            "privateKey": {
+              "type": "string"
+            },
+            "modes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "port": {
+              "type": "integer"
+            },
+            "actionsAllowlist": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["ddBaseURL", "modes"],
+          "additionalProperties": false
+        },
+        "env": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "runnerIdentitySecret": {
+          "type": "string"
+        },
+        "kubernetesActions": {
+          "type": "object",
+          "properties": {
+            "controllerRevisions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "daemonSets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "deployments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replicaSets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "statefulSets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cronJobs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "configMaps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "limitRanges": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "namespaces": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "persistentVolumes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "persistentVolumeClaims": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pods": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "podTemplates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replicationControllers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "resourceQuotas": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "services": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "serviceAccounts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "customResourceDefinitions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "jobs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "customObjects": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "kubernetesPermissions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "credentialFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string"
+              },
+              "data": {
+                "type": "string"
+              }
+            },
+            "required": ["fileName", "data"],
+            "additionalProperties": false
+          }
+        },
+        "credentialSecrets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "secretName": {
+                "type": "string"
+              },
+              "directoryName": {
+                "type": "string"
+              }
+            },
+            "required": ["secretName"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["config"]
+    }
+  },
+  "required": ["runner"],
+  "additionalProperties": false
+}

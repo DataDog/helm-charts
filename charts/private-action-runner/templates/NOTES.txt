@@ -1,14 +1,6 @@
 Chart version : {{ .Chart.Version }}
-Private action runner image : {{ $.Values.common.image.repository }}:{{ $.Values.common.image.tag }}
+Private action runner image : {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
 
 Helm chart readme : https://github.com/DataDog/helm-charts/tree/main/charts/private-action-runner
 Helm chart changelog : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/CHANGELOG.md
-
-{{- if .Values.runners }}
-{{- range .Values.runners }}
-{{- if not .roleType }}
-ℹ️ No roleType specified. The default value is "Role" which provides namespace-scoped permissions.
-{{- end }}
-{{- end }}
-{{- end }}
-
+Upgrade guide : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/UPGRADING.md

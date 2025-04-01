@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.110.5 
+## 3.110.6
 
-* add gh actions script to autobump chart versions ([#1769](https://github.com/DataDog/helm-charts/pull/1769)).
+* Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.
+
+## 3.110.5
+
+* Update `fips.image.tag` to `1.1.9` fixing CVEs
 
 ## 3.110.4
 
