@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.110.8
+## 3.110.7
 
 * Test bump-chart-version workflow
 
