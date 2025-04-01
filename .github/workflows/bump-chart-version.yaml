@@ -236,13 +236,13 @@ jobs:
               // Exit code 1 from the helm-docs.sh script when there is a diff is OK
             }
             
-            for (const chartName of chartsToBump) {
-              const readmeContent = fs.readFileSync(`charts/${chartName}/README.md`, { encoding: 'utf-8' });
+            for (const chart of chartsToBump) {
+              const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
               fileChanges.push({
-                path: `charts/${chartName}/README.md`,
+                path: `charts/${chart.chartName}/README.md`,
                 content: readmeContent
               });
-              commitMessages.push(`update readme for ${chartName}`);
+              commitMessages.push(`update readme for ${chart.chartName}`);
             }
             
             core.info("Done updating README.md files.");
