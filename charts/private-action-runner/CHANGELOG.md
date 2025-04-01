@@ -1,6 +1,6 @@
 # Datadog changelog
 
-# 1.0.2
+## 1.0.2
 
 * Bugfix: `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` are now honored for all http requests from the runner
 * Feat: more flexible credentials loading.
