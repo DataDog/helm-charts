@@ -278,6 +278,10 @@ jobs:
               core.setFailed(`Could not get branch data: ${error.message}`);
                 return;
             }
+            if (!branchData || !branchData.commit || !branchData.commit.sha) {
+              core.setFailed("Branch data is missing 'sha' property.");
+              return;
+            }
             const baseCommitSha = branchData.commit.sha;
             const baseTreeSha = branchData.commit.commit.tree.sha;
             core.info(`Base commit for branch '${pr.head.ref}' is ${baseCommitSha}`);
@@ -304,6 +308,10 @@ jobs:
               core.setFailed(`Could not create new tree: ${error.message}`);
               return;
             }
+            if (!newTreeResponse || !newTreeResponse.data || !newTreeResponse.data.sha) {
+              core.setFailed("New tree response is missing 'sha' property.");
+              return;
+            }            
             const newTreeSha = newTreeResponse.data.sha;
             core.info(`Created new tree ${newTreeSha}`);
 
@@ -322,6 +330,10 @@ jobs:
               });
             } catch (error) {
               core.setFailed(`Could not create new commit: ${error.message}`);
+              return;
+            }
+            if (!newCommitResponse || !newCommitResponse.data || !newCommitResponse.data.sha) {
+              core.setFailed("New commit response is missing 'sha' property.");
               return;
             }
             const newCommitSha = newCommitResponse.data.sha;
