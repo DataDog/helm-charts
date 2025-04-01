@@ -268,11 +268,17 @@ jobs:
             }
 
             // Get the current commit of the PR head branch.
-            const { data: branchData } = await github.rest.repos.getBranch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: pr.head.ref
-            });
+            core.info("Getting current commit of the PR head branch…");
+            try {
+              const { data: branchData } = await github.rest.repos.getBranch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                branch: pr.head.ref
+              });
+            } catch (error) {
+              core.setFailed(`Could not get branch data: ${error.message}`);
+                return;
+            }
             const baseCommitSha = branchData.commit.sha;
             const baseTreeSha = branchData.commit.commit.tree.sha;
             core.info(`Base commit for branch '${pr.head.ref}' is ${baseCommitSha}`);
@@ -287,12 +293,18 @@ jobs:
             }));
 
             // Create a new tree with these modifications.
-            const newTreeResponse = await github.rest.git.createTree({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tree: treeItems,
-              base_tree: baseTreeSha
-            });
+            core.info("Creating new tree with modified files…");
+            try {
+              const newTreeResponse = await github.rest.git.createTree({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tree: treeItems,
+                base_tree: baseTreeSha
+              });
+            } catch (error) {
+              core.setFailed(`Could not create new tree: ${error.message}`);
+              return;
+            }
             const newTreeSha = newTreeResponse.data.sha;
             core.info(`Created new tree ${newTreeSha}`);
 
@@ -301,21 +313,33 @@ jobs:
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
-            const newCommitResponse = await github.rest.git.createCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              message: commitMessage,
-              tree: newTreeSha,
-              parents: [baseCommitSha]
-            });
+            core.info("Creating new commit object…");
+            try {            
+              const newCommitResponse = await github.rest.git.createCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                message: commitMessage,
+                tree: newTreeSha,
+                parents: [baseCommitSha]
+              });
+            } catch (error) {
+              core.setFailed(`Could not create new commit: ${error.message}`);
+              return;
+            }
             const newCommitSha = newCommitResponse.data.sha;
             core.info(`Created new commit ${newCommitSha}`);
 
             // Update the head branch reference to point to the new commit.
-            await github.rest.git.updateRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `heads/${pr.head.ref}`,
-              sha: newCommitSha
-            });
-            core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+            core.info(`Updating branch reference to point to new commit ${newCommitSha}…`);
+            try {
+              await github.rest.git.updateRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${pr.head.ref}`,
+                sha: newCommitSha
+              });
+              core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+            } catch (error) {
+              core.setFailed(`Could not update branch reference: ${error.message}`);
+              return;
+            }
