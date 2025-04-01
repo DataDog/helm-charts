@@ -69,6 +69,11 @@ jobs:
                 });
               }
             }
+            
+            if (chartsToBump.length === 0) {
+              core.info("No charts to bump found in labels.");
+              return;
+            }
 
             // Compare the base and head branches to find their merge base
             const comparison = await github.rest.repos.compareCommits({
@@ -246,7 +251,7 @@ jobs:
                 core.setFailed(`Could not get head README.md for ${chart.chartName}: ${error.message}`);
                 return;
               }
-              
+            
               // Compare local README.md file with HEAD to check if it has been modified by helm-docs.sh
               const localReadmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
               if (localReadmeContent !== Buffer.from(prReadme.data.content, prReadme.data.encoding).toString()) {
@@ -267,13 +272,15 @@ jobs:
             }
 
             // Get the current commit of the PR head branch.
+            core.info("Getting current commit of the PR head branch…");
             let branchData;
             try {
-              branchData = await github.rest.repos.getBranch({
+              const response = await github.rest.repos.getBranch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 branch: pr.head.ref
               });
+              branchData = response.data;
             } catch (error) {
               core.setFailed(`Could not get branch data: ${error.message}`);
                 return;
@@ -292,14 +299,16 @@ jobs:
             }));
 
             // Create a new tree with these modifications.
+            core.info("Creating new tree with modified files…");
             let newTreeResponse;
             try {
-              newTreeResponse = await github.rest.git.createTree({
+              const response = await github.rest.git.createTree({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 tree: treeItems,
                 base_tree: baseTreeSha
               });
+              newTreeResponse = response;
             } catch (error) {
               core.setFailed(`Could not create new tree: ${error.message}`);
               return;
@@ -312,14 +321,17 @@ jobs:
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
+            core.info("Creating new commit object…");
+            let newCommitResponse;
             try {            
-              const newCommitResponse = await github.rest.git.createCommit({
+              const response = await github.rest.git.createCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 message: commitMessage,
                 tree: newTreeSha,
                 parents: [baseCommitSha]
               });
+              newCommitResponse = response;
             } catch (error) {
               core.setFailed(`Could not create new commit: ${error.message}`);
               return;
@@ -328,6 +340,7 @@ jobs:
             core.info(`Created new commit ${newCommitSha}`);
 
             // Update the head branch reference to point to the new commit.
+            core.info(`Updating branch reference to point to new commit ${newCommitSha}…`);
             try {
               await github.rest.git.updateRef({
                 owner: context.repo.owner,
