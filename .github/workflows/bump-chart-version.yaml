@@ -234,11 +234,13 @@ jobs:
             
             for (const chart of chartsToBump) {
               const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-              fileChanges.push({
-                path: `charts/${chart.chartName}/README.md`,
-                content: readmeContent
-              });
-              commitMessages.push(`update readme for ${chart.chartName}`);
+              if (readmeContent !== "") {              
+                fileChanges.push({
+                  path: `charts/${chart.chartName}/README.md`,
+                  content: readmeContent
+                });
+                commitMessages.push(`update readme for ${chart.chartName}`);
+              }
             }
             
             core.info("Done updating README.md files.");
