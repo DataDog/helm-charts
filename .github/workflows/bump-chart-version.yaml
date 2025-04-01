@@ -17,15 +17,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Extract all chart label information and update Chart.yaml, CHANGELOG.md, and README.md
+      - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
         id: update_charts
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
-            
+
             const fs = require('fs');
-            
+
             const pr = context.payload.pull_request;
             if (!pr) {
               core.setFailed("No pull request found in context payload.");
@@ -148,10 +148,10 @@ jobs:
                   /^version:\s+\S+/m,
                   `version: ${desiredVersion}`
                 );
-                
+
                 // Also replace file content locally so that helm-docs.sh script can properly update READMEs
                 fs.writeFileSync(`charts/${chartName}/Chart.yaml`, newChartContent, 'utf8');
-                
+
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
                   content: newChartContent
@@ -210,10 +210,10 @@ jobs:
               } else {
                 newChangelogContent = newEntry + changelogContent;
               }
-              
+
               // Also replace file content locally so that helm-docs.sh script can properly update READMEs
               fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
-              
+
               fileChanges.push({
                 path: `charts/${chartName}/CHANGELOG.md`,
                 content: newChangelogContent
@@ -223,26 +223,43 @@ jobs:
             }
 
             core.info("Done checking all labeled charts.");
-            
-            // Update README.md using the .github/helm-docs.sh script
+
+            // Update README.mds using the .github/helm-docs.sh script
             try {
               await exec.exec('/bin/bash', ['.github/helm-docs.sh']);
             } catch (exitCode) {
               // Do nothing
               // Exit code 1 from the helm-docs.sh script when there is a diff is OK
             }
-            
+
+            // Get head README.md file
             for (const chart of chartsToBump) {
-              const readmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-              fileChanges.push({
-                path: `charts/${chart.chartName}/README.md`,
-                content: readmeContent
-              });
-              commitMessages.push(`update readme for ${chart.chartName}`);
+              let prReadme;
+              try {
+                prReadme = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: `charts/${chart.chartName}/README.md`,
+                  ref: pr.head.ref
+                });
+              } catch (error) {
+                core.setFailed(`Could not get head README.md for ${chart.chartName}: ${error.message}`);
+                return;
+              }
+              
+              // Compare local README.md file with HEAD to check if it has been modified by helm-docs.sh
+              const localReadmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
+              if (localReadmeContent !== Buffer.from(prReadme.data.content, prReadme.data.encoding).toString()) {
+                fileChanges.push({
+                  path: `charts/${chart.chartName}/README.md`,
+                  content: localReadmeContent
+                });
+                commitMessages.push(`update readme for ${chart.chartName}`);
+              }
             }
-            
+
             core.info("Done updating README.md files.");
-            
+
             // If no file changes were collected, nothing to commit.
             if (fileChanges.length === 0) {
               core.info("No file changes to commit.");
@@ -279,7 +296,7 @@ jobs:
             core.info(`Created new tree ${newTreeSha}`);
 
             // Create a combined commit message.
-            const commitMessage = `chore: update charts, changelogs, and docs\n\n` +
+            const commitMessage = `chore: update charts\n\n` +
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
