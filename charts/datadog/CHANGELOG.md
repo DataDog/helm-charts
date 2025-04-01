@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.110.7 
-
-* add gh actions script to autobump chart versions ([#1769](https://github.com/DataDog/helm-charts/pull/1769)).
-
 ## 3.110.6
 
 * Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.
