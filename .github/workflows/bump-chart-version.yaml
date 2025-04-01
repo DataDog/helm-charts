@@ -301,13 +301,18 @@ jobs:
                                   commitMessages.map(msg => `- ${msg}`).join('\n');
 
             // Create a new commit object.
-            const newCommitResponse = await github.rest.git.createCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              message: commitMessage,
-              tree: newTreeSha,
-              parents: [baseCommitSha]
-            });
+            try {            
+              const newCommitResponse = await github.rest.git.createCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                message: commitMessage,
+                tree: newTreeSha,
+                parents: [baseCommitSha]
+              });
+            } catch (error) {
+              core.setFailed(`Could not create new commit: ${error.message}`);
+              return;
+            }
             const newCommitSha = newCommitResponse.data.sha;
             core.info(`Created new commit ${newCommitSha}`);
 
