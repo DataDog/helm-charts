@@ -209,12 +209,19 @@ jobs:
                 if (versionHeaderIdx !== -1) {
                   lines[versionHeaderIdx] = `## ${desiredVersion}`;
                   newChangelogContent = lines.join('\n');
-                  fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
-                  fileChanges.push({
-                    path: `charts/${chartName}/CHANGELOG.md`,
-                    content: newChangelogContent
-                  });
-                  commitMessages.push(`update changelog version for ${chartName} to ${desiredVersion}`);
+                  
+                  // Check for diff between newChangelogContent and HEAD prChangelog content
+                  if (newChangelogContent !== Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString()) {                  
+                    fileChanges.push({
+                      path: `charts/${chartName}/CHANGELOG.md`,
+                      content: newChangelogContent
+                    });
+                    commitMessages.push(`update changelog version for ${chartName} to ${desiredVersion}`);
+                    // Replace file content locally so that helm-docs.sh script can properly update READMEs
+                    fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
+                  } else {
+                    core.info(`CHANGELOG.md for '${chartName}' is already updated with latest entry version.`)
+                  }
                 }
                 continue;
               }
