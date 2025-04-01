@@ -153,7 +153,7 @@ jobs:
                 core.info(`NEW CHART CONTENT: ${newChartContent}`)
                 
                 // Also replace file content locally so that helm-docs.sh script can properly update READMEs
-                fs.writeFileSync(charts/${chartName}/Chart.yaml, newChartContent, 'utf8');
+                fs.writeFileSync(`charts/${chartName}/Chart.yaml`, newChartContent, 'utf8');
                 
                 fileChanges.push({
                   path: `charts/${chartName}/Chart.yaml`,
@@ -216,7 +216,7 @@ jobs:
               core.info(`NEW CHANGELOG CONTENT: ${newChangelogContent}`)
               
               // Also replace file content locally so that helm-docs.sh script can properly update READMEs
-              fs.writeFileSync(charts/${chartName}/CHANGELOG.md, newChangelogContent, 'utf8');
+              fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, newChangelogContent, 'utf8');
               
               fileChanges.push({
                 path: `charts/${chartName}/CHANGELOG.md`,
