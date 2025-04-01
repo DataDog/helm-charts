@@ -261,6 +261,7 @@ jobs:
             core.info("Done updating README.md files.");
 
             // If no file changes were collected, nothing to commit.
+            core.info(`FILE CHANGES: ${JSON.stringify(fileChanges)}`);
             if (fileChanges.length === 0) {
               core.info("No file changes to commit.");
               return;
