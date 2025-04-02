@@ -80,7 +80,7 @@ metadata:
     helm.sh/chart: private-action-runner-1.0.2
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
-    app.kubernetes.io/version: "v1.1.1"
+    app.kubernetes.io/version: "v1.2.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -95,7 +95,7 @@ spec:
         helm.sh/chart: private-action-runner-1.0.2
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
-        app.kubernetes.io/version: "v1.1.1"
+        app.kubernetes.io/version: "v1.2.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/values: 924f6f688abee0339e98dd817c3e320ca18d9398028360ebda57685a3535d3ee

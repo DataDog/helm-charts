@@ -4,7 +4,7 @@ description: A Helm chart to deploy the private action runner
 
 type: application
 version: 1.0.2
-appVersion: "v1.1.1"
+appVersion: "v1.2.0"
 keywords:
 - app builder
 - workflow automation
