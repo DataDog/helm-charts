@@ -115,7 +115,7 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     needs:
       - lint-chart

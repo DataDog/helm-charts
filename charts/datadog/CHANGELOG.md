@@ -4,6 +4,10 @@
 
 * Custom changelog entry to test bump-chart-version workflow.
 
+## 3.110.7
+
+* The `gpuMonitoring.runtimeClassName` option now allows specifying an empty runtime class to avoid changing the runtime class of the agent pod.
+
 ## 3.110.6
 
 * Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.

@@ -759,7 +759,7 @@ helm install <RELEASE_NAME> \
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
 | datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring |
-| datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources |
+| datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. |
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
