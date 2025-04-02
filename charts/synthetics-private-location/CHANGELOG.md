@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.8
+
+* Add `automountServiceAccountToken` to control whether to automatically mount the service account token in the pod. 
+
 ## 0.17.7
 
 * Update private location image version to `1.55.0`.
