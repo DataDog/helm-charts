@@ -42,7 +42,7 @@ jobs:
   integ-tests:
     if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         versions:
