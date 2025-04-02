@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.8
+
+* Add `DD_ENABLE_NVML_DETECTION` env var to the agent container to enable NVML detection when GPU monitoring is enabled.
+
 ## 3.110.7
 
 * The `gpuMonitoring.runtimeClassName` option now allows specifying an empty runtime class to avoid changing the runtime class of the agent pod.
