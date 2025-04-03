@@ -521,21 +521,21 @@ datadog:
       enabled: false
 
     # APM Single Step Instrumentation
-    # This feature is in preview. It requires Cluster Agent 7.49+.
+    # Requires Cluster Agent 7.49+.
     instrumentation:
-      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster (preview).
+      # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster.
       enabled: false
 
-      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces (preview).
+      # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces.
       enabledNamespaces: []
 
-      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces (preview).
+      # datadog.apm.instrumentation.disabledNamespaces -- Disable injecting the Datadog APM libraries into pods in specific namespaces.
       disabledNamespaces: []
 
-      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation (preview).
+      # datadog.apm.instrumentation.libVersions -- Inject specific version of tracing libraries with Single Step Instrumentation.
       libVersions: {}
 
-      # datadog.apm.instrumentation.targets -- Enable target based workload selection (preview).
+      # datadog.apm.instrumentation.targets -- Enable target based workload selection.
       # Requires Cluster Agent 7.64.0+
       targets: []
       #  - name: "example"

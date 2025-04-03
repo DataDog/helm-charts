@@ -123,8 +123,6 @@ jobs:
     strategy:
       matrix:
         versions:
-          - k8s: v1.18.20
-            kind: v0.17.0
           - k8s: v1.22.17
             kind: v0.22.0
           - k8s: v1.24.17

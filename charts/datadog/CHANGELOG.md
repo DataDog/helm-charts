@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.110.8
+
+## 3.110.9
 
 * Custom changelog entry to test bump-chart-version workflow.
+
+## 3.110.8
+
+* Update docs for Single Step to remove the preview tag.
 
 ## 3.110.7
 
