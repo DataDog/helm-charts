@@ -570,6 +570,23 @@ However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `da
 {{- fail "OS Release information is required  when system-probe is enabled." }}
 {{- end }}
 
+{{- if (and (eq  (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath) ) (ne .Values.datadog.dogstatsd.hostSocketPath .Values.datadog.apm.hostSocketPath)) }}
+#################################################################
+####            ERROR: Conflicting socket host path          ####
+#################################################################
+
+Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
+However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
+
+It is not possible to mount two different host paths at the same mount path. 
+
+To resolve this:
+- use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
+- or use different parent directories for datadog.dogstatsd.socketPath and datadog.apm.socketPath
+
+{{- end }}
+
+
 
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}

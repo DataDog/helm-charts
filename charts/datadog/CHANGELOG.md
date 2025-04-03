@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.3
+
+* Show ERROR log if the chart is installed with different values for `datadog.dogstatsd.hostSocketPath` and `datadog.apm.hostSocketPath` while having same parent directories for `datadog.dogstatsd.socketPath` and `datadog.apm.socketPath`.
+
 ## 3.114.2
 
 * Upgrade default Agent version to `7.65.1`.
