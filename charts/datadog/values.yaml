@@ -2464,3 +2464,7 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+testConfig:
+  # testConfig.enabled -- test gh workflow
+  enabled: false
