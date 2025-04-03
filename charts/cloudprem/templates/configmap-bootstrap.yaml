@@ -1,0 +1,17 @@
+{{- if and (or .Values.seed.sources .Values.seed.indexes) .Values.bootstrap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quickwit.fullname" . }}-bootstrap
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+data:
+  {{- range .Values.seed.indexes }}
+  {{ .index_id }}.yaml: |-
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- range .Values.seed.sources }}
+  {{ .source.source_id }}.yaml: |-
+    {{- toYaml .source | nindent 4 }}
+  {{- end }}
+{{- end }}

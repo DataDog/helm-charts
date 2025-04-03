@@ -1,0 +1,761 @@
+# Default values for CloudPrem.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+aws:
+  accountId: ""
+
+image:
+  # The CloudPrem image is also available on DockerHub:
+  # https://hub.docker.com/r/datadog/cloudprem
+  repository: public.ecr.aws/datadog/cloudprem
+  tag: v0.1.0
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Set the Kuberentes cluster domain if not default. It's used to build URLs for the services.
+clusterDomain: cluster.local
+
+# -- Additional labels to add to all resources
+additionalLabels: {}
+  # app: cloudprem
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  name: cloudprem
+  # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
+  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/sts-regional-endpoints: "true"
+  eksRoleName: cloudprem
+  extraAnnotations: {}
+
+annotations: {}
+
+podAnnotations:
+  ad.datadoghq.com/cloudprem.checks: |
+      {
+        "openmetrics": {
+          "instances": [
+            {
+              "openmetrics_endpoint": "http://%%host%%:7280/metrics",
+              "namespace": "cloudprem",
+              "metrics": [".*"]
+            }
+          ]
+        }
+      }
+
+podSecurityContext:
+  fsGroup: 1005
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1005
+
+# Additional global env
+environment:
+  QW_DISABLE_TELEMETRY: true
+  QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: true
+  NO_COLOR: true
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://$(HOST_IP):4317
+  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  OTEL_EXPORTER_OTLP_TIMEOUT: 10
+
+environmentFrom: []
+  # - secretRef:
+  #     name: quickwit
+  # - configMapRef:
+  #     name: quickwit
+
+configMaps: []
+  # - name: configmap1
+  #   mountPath: /quickwit/configmaps/
+
+# Global tolerations applied to all deployments
+tolerations: []
+
+# Global affinity settings applied to all deployments
+affinity: {}
+
+searcher:
+  enabled: true
+  replicaCount: 3
+
+  # Extra env for searcher
+  extraEnv: {}
+    # KEY: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-searcher
+    # - configMapRef:
+    #     name: quickwit-searcher
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
+  extraVolumeMounts: []
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  ## Pod distruption budget
+  podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # minAvailable: 2
+
+  persistentVolume:
+    enabled: false
+    # storage: "1Gi"
+    # storageClass: ""
+
+  updateStrategy: {}
+    # type: RollingUpdate
+
+  startupProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+
+  readinessProbe:
+    httpGet:
+      path: /health/readyz
+      port: rest
+
+  # StatefulSet allows you to relax its ordering guarantees
+  #   - OrderedReady
+  #   - Parallel
+  podManagementPolicy: OrderedReady
+
+  lifecycleHooks: {}
+    # preStop:
+    #   exec:
+    #     command:
+    #       - /bin/sh
+    #       - -c
+    #       - sleep 30
+
+  # Override args for starting container
+  args: []
+
+  # initContainers -- Init containers to be added to the pods
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  runtimeClassName: ""
+
+indexer:
+  enabled: true
+
+  replicaCount: 1
+
+  # Extra env for indexer
+  extraEnv: {}
+    # KEY: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-indexer
+    # - configMapRef:
+    #     name: quickwit-indexer
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
+  extraVolumeMounts: []
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  ## Pod distruption budget
+  podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # minAvailable: 2
+
+  updateStrategy: {}
+    # type: RollingUpdate
+
+  startupProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+
+  readinessProbe:
+    httpGet:
+      path: /health/readyz
+      port: rest
+
+  # StatefulSet allows you to relax its ordering guarantees
+  #   - OrderedReady
+  #   - Parallel
+  podManagementPolicy: OrderedReady
+
+  # Override args for starting container
+  args: []
+
+  # initContainers -- Init containers to be added to the pods
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  lifecycleHooks: {}
+    # preStop:
+    #   exec:
+    #     command:
+    #       - /bin/sh
+    #       - -c
+    #       - sleep 30
+
+  # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published
+  # See https://quickwit.io/docs/configuration/index-config#indexing-settings
+  terminationGracePeriodSeconds: 120
+
+  runtimeClassName: ""
+
+  persistentVolume:
+    enabled: false
+    # storage: "1Gi"
+    # storageClass: ""
+
+metastore:
+  replicaCount: 1
+
+  # Extra env for metastore
+  extraEnv: {}
+    # KEY: VALUE
+  # This is the recommended way to inject `QW_METASTORE_URI` when using the postgres metastore (see https://quickwit.io/docs/configuration/metastore-config)
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-metastore
+    # - configMapRef:
+    #     name: quickwit-metastore
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
+  extraVolumeMounts: []
+
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+    requests:
+      cpu: "2"
+      memory: "4Gi"
+
+  updateStrategy: {}
+    # type: RollingUpdate
+
+  startupProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+
+  readinessProbe:
+    httpGet:
+      path: /health/readyz
+      port: rest
+
+  # Override args for starting container
+  args: []
+
+  # initContainers -- Init containers to be added to the pods
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  runtimeClassName: ""
+
+control_plane:
+  enabled: true
+
+  # Extra env for control plane
+  extraEnv: {}
+    # KEY: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-control-plane
+    # - configMapRef:
+    #     name: quickwit-control-plane
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
+  extraVolumeMounts: []
+
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+    requests:
+      cpu: "2"
+      memory: "4Gi"
+
+  startupProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+
+  readinessProbe:
+    httpGet:
+      path: /health/readyz
+      port: rest
+
+  # Override args for starting container
+  args: []
+
+  # initContainers -- Init containers to be added to the pods
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  runtimeClassName: ""
+
+janitor:
+  # Enable Janitor service
+  enabled: true
+
+  # Extra env for janitor
+  extraEnv: {}
+    # KEY: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-janitor
+    # - configMapRef:
+    #     name: quickwit-janitor
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
+  extraVolumeMounts: []
+
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+    requests:
+      cpu: "2"
+      memory: "4Gi"
+
+  startupProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health/livez
+      port: rest
+
+  readinessProbe:
+    httpGet:
+      path: /health/readyz
+      port: rest
+
+  # Override args for starting container
+  args: []
+
+  # initContainers -- Init containers to be added to the pods
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  runtimeClassName: ""
+
+# Deploy jobs to bootstrap creation of indexes and sources for quickwit clusters
+bootstrap:
+  # Enable bootstrap jobs
+  enabled: true
+
+  # Extra env for bootstrap jobs
+  extraEnv: {}
+    # KEY: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-bootstrap
+    # - configMapRef:
+    #     name: quickwit-bootstrap
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  runtimeClassName: ""
+
+  sources:
+    # Override command for starting container
+    command: []
+
+    # initContainers -- Init containers to be executed before the source creation.
+    initContainers: []
+
+    # extraVolumes -- Additional volumes to use with bootstrap Pods.
+    extraVolumes: []
+
+    # extraVolumeMounts -- Additional volumes to mount into bootstrap containers (not the init containers).
+    extraVolumeMounts: []
+
+  indexes:
+    # initContainers -- Init containers to be executed before the index creation.
+    initContainers: []
+
+    # extraVolumes -- Additional volumes to use with bootstrap Pods.
+    extraVolumes: []
+
+    # extraVolumeMounts -- Additional volumes to mount into bootstrap containers (not the init containers).
+    extraVolumeMounts: []
+
+# Quickwit configuration
+# Warning: This config is writed directly into a configMap
+# to avoid passing sensitive value you can pass environment variables.
+# https://quickwit.io/docs/configuration/node-config#using-environment-variables-in-the-configuration
+configLocation: /quickwit/node.yaml
+
+config:
+  version: 0.8
+  listen_address: 0.0.0.0
+  gossip_listen_port: 7282
+  data_dir: /quickwit/qwdata
+
+  # postgres:
+  #   max_num_connections: 50
+
+  # storage:
+    # s3:
+      # endpoint: "http://custom-s3-endpoint"
+      # region: eu-east-1
+      # We recommend using IAM roles and permissions to access Amazon S3 resources,
+      # but you can specify a pair of access and secret keys if necessary.
+      # access_key_id: <my access key>
+      # secret_access_key: ${AWS_ACCESS_KEY_ID}
+    # azure:
+      # account: "<my account name>"
+      # access_key: ${QW_AZURE_STORAGE_ACCESS_KEY}
+
+  # Indexer settings
+  # indexer:
+  #   split_store_max_num_bytes: 200G
+  #   split_store_max_num_splits: 10000
+  # Ingest API settings
+  # ingest_api:
+  #   max_queue_memory_usage: 2GiB
+  #   max_queue_disk_usage: 4GiB
+  # Searcher settings
+  # searcher:
+  #   fast_field_cache_capacity: 10G
+  #   split_footer_cache_capacity: 1G
+  #   max_num_concurrent_split_streams: 100
+
+# Seed configuration
+seed:
+  indexes:
+    - version: 0.9
+      index_id: datadog
+
+      indexing_settings:
+        commit_timeout_secs: 30
+      search_settings:
+        default_search_fields: []
+
+      doc_mapping:
+        mode: dynamic
+        tag_fields: []
+        timestamp_field: timestamp
+        index_field_presence: true
+
+        field_mappings:
+          - name: timestamp
+            type: datetime
+            fast: true
+            input_formats:
+              - rfc3339
+              - iso8601
+              - unix_timestamp
+
+          - name: message
+            type: text
+            record: position
+            fast: true
+
+          - name: id
+            type: text
+            tokenizer: raw
+
+          - name: custom
+            type: json
+            record: position
+            fast: true
+
+          - name: tag
+            type: json
+            tokenizer: raw
+            fast: true
+
+          - name: tags
+            type: 'array<text>'
+            stored: true
+            indexed: false
+            fast: false
+
+          - name: error
+            type: json
+            record: position
+            fast: true
+
+          - name: service
+            type: text
+            tokenizer: raw
+            fast: true
+
+          - name: service_type
+            type: text
+            tokenizer: raw
+            fast: true
+
+          - name: status
+            type: text
+            tokenizer: raw
+            fast: true
+
+          - name: host
+            type: text
+            tokenizer: raw
+            fast: true
+
+          - name: trace_id
+            type: text
+            tokenizer: raw
+            fast: true
+
+          - name: span_id
+            type: text
+            tokenizer: raw
+
+          - name: default
+            type: concatenate
+            concatenate_fields:
+              - error
+              - message
+            record: position
+
+          - name: all
+            type: concatenate
+            concatenate_fields:
+              - custom
+              - error
+              - host
+              - message
+              - service
+              - service_type
+              - span_id
+              - status
+              - trace_id
+            record: position
+
+  sources: []
+    # - index: my-index
+    #   source:
+    #     version: 0.8
+    #     source_id: my-source
+    #     source_type: kafka
+    #     num_pipelines: 1
+    #     params:
+    #       topic: quickwit-topic
+    #       client_params:
+    #         bootstrap.servers: kafka-server-endpoint1:9092,kafka-server-endpoint2:9092
+
+# Prometheus metrics
+serviceMonitor:
+  enabled: false
+  # -- Additional labels to add to monitoring resources
+  additionalLabels: {}
+  interval: 60s
+  scrapeTimeout: 10s
+  metricRelabelings: []
+  #  - action: replace
+  #    regex: quickwit-(.*)
+  #    replacement: $1
+  #    sourceLabels: [cluster]
+  #    targetLabel: qw_cluster
+  #  - action: labeldrop
+  #    regex: (endpoint|cluster)
+  relabelings: []
+  #  - sourceLabels: [__meta_kubernetes_pod_node_name]
+  #    targetLabel: instance
+
+# Prometheus Operator alertmanager alerts
+prometheusRule:
+  enabled: false
+  # -- Additional labels to add to PrometheusRule resources
+  additionalLabels: {}
+  rules: []
+  #  - alert: Example
+  #    expr: metric == 1
+  #    for: 1m
+  #    labels:
+  #      severity: warning
+
+service:
+  # Service type configuration default for all Quickwit services
+  type: ClusterIP
+
+  # -- Set the ip family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services)
+  ipFamilyPolicy: ""
+  # -- Sets the families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6.
+  ipFamilies: []
+
+  annotations: {}
+
+ingress:
+  # Route inbound traffic from Datadog via the public internet to searchers using gRPC + mTLS.
+  # This ingress configuration will provision an internet-facing ALB in the cluster's public subnets.
+  public:
+    enabled: true
+    ingressClassName: alb
+    extraAnnotations: {}
+    host: ""
+    tls: []
+      # - hosts:
+      #     - "cloudprem.acme.corp"
+      #   secretName: cloudprem-acme-corp-tls
+
+  # Route inbound internal traffic to the right services over HTTP.
+  # This ingress configuration will provision an internal ALB in the cluster's private subnets.
+  internal:
+    enabled: true
+    extraAnnotations: {}
+    host: ""
+    tls: []
+      # - hosts:
+      #     - "cloudprem.acme.internal"
+      #   secretName: cloudprem-acme-internal-tls
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
