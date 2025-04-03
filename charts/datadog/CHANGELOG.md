@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.8
+
+* Update docs for Single Step to remove the preview tag.
+
 ## 3.110.7
 
 * The `gpuMonitoring.runtimeClassName` option now allows specifying an empty runtime class to avoid changing the runtime class of the agent pod.
