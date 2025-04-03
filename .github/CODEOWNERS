@@ -6,6 +6,7 @@
 *.md             @DataDog/documentation @DataDog/container-helm-chart-maintainers
 
 # Charts
+charts/cloudprem                                       @DataDog/logs-cloudprem
 charts/datadog-crds                                    @DataDog/container-ecosystems
 charts/datadog-csi-driver                              @DataDog/container-helm-chart-maintainers
 charts/datadog-operator                                @DataDog/container-ecosystems
