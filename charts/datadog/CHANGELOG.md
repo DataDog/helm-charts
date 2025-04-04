@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.9
+
+* Add `DD_ENABLE_NVML_DETECTION` env var to the agent container to enable NVML detection when GPU monitoring is enabled.
+
 ## 3.110.8
 
 * Update docs for Single Step to remove the preview tag.

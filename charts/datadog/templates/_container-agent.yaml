@@ -246,6 +246,8 @@
     # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
     - name: NVIDIA_VISIBLE_DEVICES
       value: all
+    - name: DD_ENABLE_NVML_DETECTION
+      value: "true"
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
