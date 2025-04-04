@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.9
+
+* Show ERROR log if the chart is installed with different values for `datadog.dogstatsd.hostSocketPath` and `datadog.apm.hostSocketPath` while having same parent directories for `datadog.dogstatsd.socketPath` and `datadog.apm.socketPath`.
+
 ## 3.110.8
 
 * Update docs for Single Step to remove the preview tag.
