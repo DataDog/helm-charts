@@ -363,14 +363,16 @@ jobs:
 
             // Update the head branch reference to point to the new commit.
             core.info(`Updating branch reference to point to new commit ${newCommitSha}…`);
+            let updateRef;
             try {
-              await github.rest.git.updateRef({
+              updateRef = await github.rest.git.updateRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: `heads/${pr.head.ref}`,
                 sha: newCommitSha
               });
               core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+              core.info(`Update ref response: ${JSON.stringify(updateRef.data)}`);
             } catch (error) {
               core.setFailed(`Could not update branch reference: ${error.message}`);
               return;
