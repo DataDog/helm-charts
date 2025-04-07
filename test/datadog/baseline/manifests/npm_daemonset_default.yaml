@@ -584,6 +584,7 @@ rules:
       - apps
     resources:
       - statefulsets
+      - replicationcontrollers
       - replicasets
       - deployments
       - daemonsets
