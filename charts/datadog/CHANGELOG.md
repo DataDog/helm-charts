@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.10
+
+* Fix missing permission error for `replicationcontrollers` when using the admission controller with pods owned `ReplicationControllers` instead of `ReplicaSets`.
+
 ## 3.110.9
 
 * Add `DD_ENABLE_NVML_DETECTION` env var to the agent container to enable NVML detection when GPU monitoring is enabled.
