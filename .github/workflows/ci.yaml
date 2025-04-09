@@ -5,9 +5,6 @@ on:
     paths:
       - "charts/**"
     types: [labeled, unlabeled, opened, edited, synchronize]
-  push:
-    paths:
-      - "charts/**"
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
