@@ -21,6 +21,7 @@ jobs:
         id: update_charts
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
+          github-token: ${{ secrets.GH_ROBOT_TOKEN }}
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
 
@@ -363,14 +364,16 @@ jobs:
 
             // Update the head branch reference to point to the new commit.
             core.info(`Updating branch reference to point to new commit ${newCommitSha}…`);
+            let updateRef;
             try {
-              await github.rest.git.updateRef({
+              updateRef = await github.rest.git.updateRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: `heads/${pr.head.ref}`,
                 sha: newCommitSha
               });
               core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
+              core.info(`Update ref response: ${JSON.stringify(updateRef.data)}`);
             } catch (error) {
               core.setFailed(`Could not update branch reference: ${error.message}`);
               return;
