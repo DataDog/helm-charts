@@ -1,10 +1,13 @@
 {{- if .Values.bootstrap.enabled -}}
 {{- range .Values.seed.indexes }}
+
+{{- $config := $.Files.Get . | fromYaml }}
+{{- $index_id := $config.index_id }}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-index-%s" (include "quickwit.fullname" $ | trunc 47) .index_id | trunc 63 |  trimSuffix "-" }}
+  name: {{ printf "%s-index-%s" (include "quickwit.fullname" $ | trunc 47) $index_id | trunc 63 |  trimSuffix "-" }}
   labels:
     {{- include "quickwit.labels" $ | nindent 4 }}
   annotations:
@@ -41,7 +44,7 @@ spec:
         {{- if $.Values.bootstrap.indexes.command }}
         command: {{- toYaml $.Values.bootstrap.sources.command | nindent 8 }}
         {{- else }}
-        command: ["/bin/bash","-c","quickwit index describe --index {{ .index_id }} --endpoint ${QW_CLUSTER_ENDPOINT} || quickwit index create --index-config {{ .index_id }}.yaml --endpoint ${QW_CLUSTER_ENDPOINT}"]
+        command: ["/bin/bash","-c","quickwit index describe --index {{ $index_id }} --endpoint ${QW_CLUSTER_ENDPOINT} || quickwit index create --index-config {{ . }} --endpoint ${QW_CLUSTER_ENDPOINT}"]
         {{- end }}
         env:
           {{- include "quickwit.environment" $ | nindent 10 }}
@@ -63,8 +66,8 @@ spec:
             mountPath: /quickwit/node.yaml
             subPath: node.yaml
           - name: index
-            mountPath: /quickwit/{{ .index_id }}.yaml
-            subPath: {{ .index_id }}.yaml
+            mountPath: /quickwit/{{ . }}
+            subPath: {{ . }}
           {{- with $.Values.bootstrap.indexes.extraVolumeMounts }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
@@ -81,8 +84,8 @@ spec:
           configMap:
             name: {{ template "quickwit.fullname" $ }}-bootstrap
             items:
-              - key: {{ .index_id }}.yaml
-                path: {{ .index_id }}.yaml
+              - key: {{ . }}
+                path: {{ . }}
          {{- with $.Values.bootstrap.indexes.extraVolumes }}
            {{- toYaml . | nindent 8 }}
          {{- end }}
