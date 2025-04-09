@@ -26,8 +26,8 @@ jobs:
       - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
         id: update_charts
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        github-token: ${{ steps.app-token.outputs.token }}
         with:
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
 
