@@ -1,6 +1,8 @@
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
+  envDict:
+    DD_CI: true
 providers:
   gke:
     autopilot: true
