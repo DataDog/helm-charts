@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.11
+
+* Update GKE Autopilot setup to ensure that the system-probe container is disabled by default.
+
 ## 3.110.10
 
 * Fix missing permission error for `replicationcontrollers` when using the admission controller with pods owned `ReplicationControllers` instead of `ReplicaSets`.
