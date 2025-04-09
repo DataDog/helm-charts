@@ -8,6 +8,10 @@ on:
     paths:
       - 'test/datadog/**'
       - 'charts/datadog/**'
+  workflow_run:
+    workflows: ["Bump Chart Version"]
+    types:
+      - completed
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:

@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.111.0
-
-* debug ([#1798](https://github.com/DataDog/helm-charts/pull/1798)).
-
 ## 3.110.9
 
 * Add `DD_ENABLE_NVML_DETECTION` env var to the agent container to enable NVML detection when GPU monitoring is enabled.

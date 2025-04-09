@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - "charts/**"
+  workflow_run:
+    workflows: ["Bump Chart Version"]
+    types:
+      - completed
   push:
     paths:
       - "charts/**"
