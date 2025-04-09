@@ -268,7 +268,7 @@ rules:
   resources: ["jobs", "cronjobs"]
   verbs: ["get"]
 - apiGroups: ["apps"]
-  resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
+  resources: ["statefulsets", "replicationcontrollers", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
 {{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
 - apiGroups: [""]
