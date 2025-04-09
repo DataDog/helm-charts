@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - "charts/**"
-    types: [labeled, unlabeled, opened, edited, synchronize]
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
