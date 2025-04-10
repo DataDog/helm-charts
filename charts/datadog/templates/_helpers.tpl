@@ -50,36 +50,15 @@ false
 {{- end -}}
 
 {{/*
-Check if target cluster is running GKE Autopilot.
-*/}}
-{{- define "is-autopilot" -}}
-{{- if .Values.providers.gke.autopilot -}}
-{{- $nodes := (lookup "v1" "Node" "" "").items }}
-{{- if and $nodes (gt (len $nodes) 0) -}}
-{{- $node := index $nodes 0 -}}
-{{- if hasPrefix "gk3" $node.metadata.name -}}
-true
-{{- else -}}
-false
-{{- end -}}
-{{- else -}}
-false
-{{- end -}}
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
-{{/*
 Check if target cluster supports GKE Autopilot WorkloadAllowlists.
 */}}
 {{- define "gke-autopilot-workloadallowlists-enabled" -}}
-{{- if or (and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist")) (and .Values.providers.gke.autopilot .Values.datadog.envDict.DD_CI) -}}
+{{- if and .Values.providers.gke.autopilot (or (and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist")) .Values.datadog.envDict.DD_CI) -}}
 true
 {{- else -}}
 false
 {{- end -}}
-{{- end }}
+{{- end -}}
 
 {{- define "agent-has-env-ad" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
@@ -403,13 +382,13 @@ Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
 {{- if and (eq (include "system-probe-feature" .) "true") (eq .Values.targetSystem "linux") -}}
-  {{- if or (not .Values.providers.gke.gdc) (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
-    true
-  {{- else -}}
-    false
-  {{- end -}}
+  {{- if or (not .Values.providers.gke.gdc) (and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true")) -}}
+true
 {{- else -}}
-  false
+false
+{{- end -}}
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 

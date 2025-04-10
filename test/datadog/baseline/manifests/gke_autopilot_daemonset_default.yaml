@@ -1286,13 +1286,3 @@ spec:
         - emptyDir: {}
           name: config
 ---
-apiVersion: auto.gke.io/v1
-kind: AllowlistSynchronizer
-metadata:
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-  name: datadog-synchronizer
-spec:
-  allowlistPaths:
-    - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.1.yaml
----
