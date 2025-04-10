@@ -1,4 +1,4 @@
-{{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") (not .Values.datadog.envDict.DD_CI) }}
+{{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") (not .Values.datadog.envDict.HELM_FORCE_RENDER) }}
 apiVersion: auto.gke.io/v1
 kind: AllowlistSynchronizer
 metadata:

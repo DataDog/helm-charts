@@ -768,7 +768,7 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
-            - name: DD_CI
+            - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
@@ -945,7 +945,7 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
-            - name: DD_CI
+            - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
