@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.11
+
+* Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default.
+
 ## 3.110.10
 
 * Fix missing permission error for `replicationcontrollers` when using the admission controller with pods owned `ReplicationControllers` instead of `ReplicaSets`.

@@ -92,6 +92,15 @@ rules:
   - nodes/stats
   verbs:
   - get
+{{- if .Values.datadog.kubelet.useApiServer }}
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+{{- end }}
 - apiGroups:  # leader election check
   - ""
   resources:
