@@ -316,7 +316,7 @@ datadog:
     # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
     # @default -- /var/lib/kubelet/pod-resources
     podResourcesSocketDir: /var/lib/kubelet/pod-resources
-    # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet
+    # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+)
     # @default -- false
     useApiServer: false
 

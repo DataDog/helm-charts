@@ -785,7 +785,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.podLogsPath | string | /var/log/pods on Linux, C:\var\log\pods on Windows | Path (on host) where the PODs logs are located |
 | datadog.kubelet.podResourcesSocketDir | string | /var/lib/kubelet/pod-resources | Path (on host) where the kubelet.sock socket for the PodResources API is located |
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
-| datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet |
+| datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.sourceDetectionEnabled | bool | `false` | Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+). |
