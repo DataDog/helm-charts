@@ -257,5 +257,5 @@
     }
   },
   "required": ["runner"],
-  "additionalProperties": false
+  "additionalProperties": true
 }
