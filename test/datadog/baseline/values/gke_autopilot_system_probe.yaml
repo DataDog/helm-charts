@@ -3,6 +3,14 @@ datadog:
   appKeyExistingSecret: datadog-secret
   envDict:
     HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot-enabled resources
+  processAgent:
+    enabled: true
+    processCollection: true
+  networkMonitoring:
+    enabled: true
+  systemProbe:
+    enableTCPQueueLength: true
+    enableOOMKill: true
 providers:
   gke:
     autopilot: true
