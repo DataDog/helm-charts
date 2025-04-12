@@ -254,6 +254,10 @@
         }
       },
       "required": ["config"]
+    },
+    "global": {
+      "type": "object",
+      "additionalProperties": true
     }
   },
   "required": ["runner"],
