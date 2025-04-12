@@ -67,7 +67,7 @@ spec:
         {{- end }}
         {{ if and (.Values.providers.gke.autopilot) (semverCompare ">=1.32.2-gke.1182000 <1.32.2-gke.1652000" .Capabilities.KubeVersion.Version) }}  # Workaround for GKE Autopilot bug in versions >= 1.32.2-gke.1182000 and < 1.32.2-gke.1652000.
         autopilot.gke.io/no-connect: "true"
-{{- end }}
+        {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
