@@ -3,6 +3,7 @@
 ## 3.110.11
 
 * Update GKE Autopilot setup to ensure that the system-probe container is disabled by default.
+* Add autopilot.gke.io/no-connect pod annotation as a workaround for bug in GKE Autopilot versions > 1.32.1-gke.1729000 and < 1.32.2-gke.1652000.
 
 ## 3.110.10
 

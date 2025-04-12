@@ -1,8 +1,0 @@
-datadog:
-  apiKeyExistingSecret: datadog-secret
-  appKeyExistingSecret: datadog-secret
-  envDict:
-    HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot-enabled resources
-providers:
-  gke:
-    autopilot: true
