@@ -1142,7 +1142,7 @@ false
 {{- end }}
 {{- if or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled -}}
 {{- if .Values.providers.gke.autopilot -}}
-{{- if eq (include "gke-autopilot-workloadallowlists-enabled" .) "true" -}}
+{{- if and (eq (include "should-enable-system-probe" . ) "true" ) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
 {{- else -}}
 false
