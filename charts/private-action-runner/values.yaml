@@ -1,4 +1,5 @@
-# $schema: ./values.schema.json
+# $schema -- Schema for the values file, enables support in IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json.
+$schema: ./values.schema.json
 # Default values for private-action-runner.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.

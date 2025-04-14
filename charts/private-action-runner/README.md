@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.0.3](https://img.shields.io/badge/Version-1.0.3-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square)
 
 ## Overview
 
@@ -215,6 +215,7 @@ If actions requiring credentials fail:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in IDEs |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.2.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |

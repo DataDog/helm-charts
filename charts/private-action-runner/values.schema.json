@@ -3,57 +3,77 @@
   "title": "Values",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema definition for the values file"
+    },
     "image": {
       "type": "object",
+      "description": "Configuration for the Datadog Private Action Runner image",
       "properties": {
         "repository": {
-          "type": "string"
+          "type": "string",
+          "description": "Repository for the Datadog Private Action Runner image"
         },
         "tag": {
-          "type": "string"
+          "type": "string",
+          "description": "Tag for the Datadog Private Action Runner image"
         }
       },
       "required": ["repository", "tag"]
     },
     "nameOverride": {
-      "type": "string"
+      "type": "string",
+      "description": "Override the name of the chart"
     },
     "fullnameOverride": {
-      "type": "string"
+      "type": "string",
+      "description": "Override the full name of the chart"
     },
     "runner": {
       "type": "object",
+      "description": "Configuration for the Datadog Private Action Runner",
       "properties": {
         "roleType": {
           "type": "string",
-          "enum": ["Role", "ClusterRole"]
+          "enum": ["Role", "ClusterRole"],
+          "description": "Type of role to create. Role for namespace-scoped permissions, ClusterRole for cluster-wide permissions"
         },
         "replicas": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Number of pod instances for the Datadog Private Action Runner"
         },
         "config": {
           "type": "object",
+          "description": "Configuration for the Datadog Private Action Runner",
           "properties": {
             "ddBaseURL": {
-              "type": "string"
+              "type": "string",
+              "description": "Base URL of the Datadog app"
             },
             "urn": {
-              "type": "string"
+              "type": "string",
+              "description": "The runner's URN from the enrollment page"
             },
             "privateKey": {
-              "type": "string"
+              "type": "string",
+              "description": "The runner's privateKey from the enrollment page"
             },
             "modes": {
               "type": "array",
+              "description": "Modes that the runner can run in",
               "items": {
-                "type": "string"
+                "type": "string",
+                "enum": ["appBuilder", "workflowAutomation"]
               }
             },
             "port": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Port for HTTP server liveness checks and App Builder mode"
             },
             "actionsAllowlist": {
               "type": "array",
+              "description": "List of actions that the Datadog Private Action Runner is allowed to execute",
               "items": {
                 "type": "string"
               }
@@ -64,150 +84,176 @@
         },
         "env": {
           "type": "array",
+          "description": "Environment variables to be passed to the Datadog Private Action Runner",
           "items": {
             "type": "object"
           }
         },
         "runnerIdentitySecret": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the secret containing the runner's identity"
         },
         "kubernetesActions": {
           "type": "object",
+          "description": "Kubernetes actions configuration for the runner",
           "properties": {
             "controllerRevisions": {
               "type": "array",
+              "description": "Actions related to controllerRevisions (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "daemonSets": {
               "type": "array",
+              "description": "Actions related to daemonSets (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "deployments": {
               "type": "array",
+              "description": "Actions related to deployments (options: get, list, create, update, patch, delete, deleteMultiple, restart)",
               "items": {
                 "type": "string"
               }
             },
             "replicaSets": {
               "type": "array",
+              "description": "Actions related to replicaSets (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "statefulSets": {
               "type": "array",
+              "description": "Actions related to statefulSets (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "cronJobs": {
               "type": "array",
+              "description": "Actions related to cronJobs (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "configMaps": {
               "type": "array",
+              "description": "Actions related to configMaps (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "endpoints": {
               "type": "array",
+              "description": "Actions related to endpoints (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "events": {
               "type": "array",
+              "description": "Actions related to events (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "limitRanges": {
               "type": "array",
+              "description": "Actions related to limitRanges (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "namespaces": {
               "type": "array",
+              "description": "Actions related to namespaces (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "nodes": {
               "type": "array",
+              "description": "Actions related to nodes (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "persistentVolumes": {
               "type": "array",
+              "description": "Actions related to persistentVolumes (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "persistentVolumeClaims": {
               "type": "array",
+              "description": "Actions related to persistentVolumeClaims (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "pods": {
               "type": "array",
+              "description": "Actions related to pods (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "podTemplates": {
               "type": "array",
+              "description": "Actions related to podTemplates (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "replicationControllers": {
               "type": "array",
+              "description": "Actions related to replicationControllers (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "resourceQuotas": {
               "type": "array",
+              "description": "Actions related to resourceQuotas (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "services": {
               "type": "array",
+              "description": "Actions related to services (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "serviceAccounts": {
               "type": "array",
+              "description": "Actions related to serviceAccounts (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "customResourceDefinitions": {
               "type": "array",
+              "description": "Actions related to customResourceDefinitions (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "jobs": {
               "type": "array",
+              "description": "Actions related to jobs (options: get, list, create, update, patch, delete, deleteMultiple)",
               "items": {
                 "type": "string"
               }
             },
             "customObjects": {
               "type": "array",
+              "description": "Actions related to customObjects (options: get, list, create, update, patch, delete, deleteMultiple). You also need to add appropriate kubernetesPermissions.",
               "items": {
                 "type": "string"
               }
@@ -216,20 +262,24 @@
         },
         "kubernetesPermissions": {
           "type": "array",
+          "description": "Kubernetes permissions to provide in addition to the ones that will be inferred from kubernetesActions (useful for customObjects)",
           "items": {
             "type": "object"
           }
         },
         "credentialFiles": {
           "type": "array",
+          "description": "List of credential files to be used by the Datadog Private Action Runner",
           "items": {
             "type": "object",
             "properties": {
               "fileName": {
-                "type": "string"
+                "type": "string",
+                "description": "Name of the credential file"
               },
               "data": {
-                "type": "string"
+                "type": "string",
+                "description": "Content of the credential file"
               }
             },
             "required": ["fileName", "data"],
@@ -238,22 +288,26 @@
         },
         "credentialSecrets": {
           "type": "array",
+          "description": "List of secrets containing credentials to be used by the Datadog Private Action Runner",
           "items": {
             "type": "object",
             "properties": {
               "secretName": {
-                "type": "string"
+                "type": "string",
+                "description": "Name of the secret containing the credentials"
               },
               "directoryName": {
-                "type": "string"
+                "type": "string",
+                "description": "Name of the directory where the credentials will be mounted"
               }
             },
-            "required": ["secretName"],
+            "required": ["secretName", "directoryName"],
             "additionalProperties": false
           }
         }
       },
-      "required": ["config"]
+      "required": ["config"],
+      "additionalProperties": false
     },
     "global": {
       "type": "object",
