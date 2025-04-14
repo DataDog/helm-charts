@@ -215,7 +215,7 @@ If actions requiring credentials fail:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in IDEs |
+| $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.2.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
