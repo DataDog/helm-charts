@@ -731,7 +731,8 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        autopilot.gke.io/no-connect: "true"
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog

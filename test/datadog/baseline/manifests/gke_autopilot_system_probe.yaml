@@ -977,6 +977,7 @@ spec:
   template:
     metadata:
       annotations:
+        autopilot.gke.io/no-connect: "true"
         container.apparmor.security.beta.kubernetes.io/system-probe: unconfined
       labels:
         admission.datadoghq.com/enabled: "false"
