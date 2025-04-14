@@ -301,7 +301,7 @@
                 "description": "Name of the directory where the credentials will be mounted"
               }
             },
-            "required": ["secretName", "directoryName"],
+            "required": ["secretName"],
             "additionalProperties": false
           }
         }
