@@ -22,11 +22,15 @@
 - name: DD_KUBELET_TLS_VERIFY
   value: {{ .Values.datadog.kubelet.tlsVerify | quote }}
 {{- end }}
+{{- if .Values.datadog.kubelet.useApiServer | quote }}
+- name: DD_KUBELET_USE_API_SERVER
+  value: {{ .Values.datadog.kubelet.useApiServer | quote }}
+{{- end }}
 {{- if ne (include "datadog.kubelet.mountPath" .) "" }}
 - name: DD_KUBELET_CLIENT_CA
   value: {{ include "datadog.kubelet.mountPath" . }}
 {{- end }}
-{{- if .Values.providers.gke.autopilot }}
+{{- if (and .Values.providers.gke.autopilot (not .Values.datadog.kubelet.useApiServer)) }}
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
