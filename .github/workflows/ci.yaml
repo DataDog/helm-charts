@@ -5,6 +5,10 @@ on:
     paths:
       - "charts/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
   contents: read

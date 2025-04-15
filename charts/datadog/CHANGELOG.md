@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.110.11 
-
-* debug ([#1798](https://github.com/DataDog/helm-charts/pull/1798)).
-
 ## 3.110.10
 
 * Fix missing permission error for `replicationcontrollers` when using the admission controller with pods owned `ReplicationControllers` instead of `ReplicaSets`.
