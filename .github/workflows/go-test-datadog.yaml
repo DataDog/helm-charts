@@ -10,7 +10,7 @@ on:
       - 'charts/datadog/**'
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 # Permission forced by repo-level setting; only elevate on job-level
