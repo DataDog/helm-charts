@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.110.12 
+## 3.110.12
 
 * Debug ([#1813](https://github.com/DataDog/helm-charts/pull/1813)).
 
