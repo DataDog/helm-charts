@@ -21,6 +21,7 @@ jobs:
         id: update_charts
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
+          github-token: ${{ secrets.TEST_GH_TOKEN }}
           script: |
             // Based on script from: https://github.com/DataDog/k8s-datadog-agent-ops/blob/main/.github/workflows/automatically-bump.yaml
 

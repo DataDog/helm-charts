@@ -9,6 +9,10 @@ on:
       - 'test/datadog/**'
       - 'charts/datadog/**'
 
+concurrency:
+  group: ${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
   contents: read
