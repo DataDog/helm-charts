@@ -235,7 +235,7 @@ jobs:
               
               // If the changelog has not been modified, add a new entry.
               const prLink = `https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.number}`;
-              const newEntry = `## ${desiredVersion} \n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
+              const newEntry = `## ${desiredVersion}\n\n* ${pr.title} ([#${pr.number}](${prLink})).\n\n`;
               
               if (versionHeaderIdx !== -1) {
                 const headerSection = lines.slice(0, versionHeaderIdx).join('\n').trimEnd();
