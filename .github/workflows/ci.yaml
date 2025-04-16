@@ -7,6 +7,10 @@ on:
   push:
     paths:
       - "charts/**"
+  workflow_run:
+    workflows: ["Bump Chart Version"]
+    types:
+      - completed
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
