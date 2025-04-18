@@ -56,6 +56,9 @@ spec:
                   type: string
                 layoutType:
                   description: LayoutType is the layout type of the dashboard.
+                  enum:
+                    - ordered
+                    - free
                   type: string
                 notifyList:
                   description: NotifyList is the list of handles of users to notify when changes are made to this dashboard.
@@ -142,10 +145,14 @@ spec:
                   x-kubernetes-list-type: map
                 title:
                   description: Title is the title of the dashboard.
+                  minLength: 1
                   type: string
                 widgets:
                   description: Widgets is a JSON string representation of a list of Datadog API Widgets
                   type: string
+              required:
+                - layoutType
+                - title
               type: object
             status:
               description: DatadogDashboardStatus defines the observed state of DatadogDashboard

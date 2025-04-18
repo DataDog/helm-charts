@@ -893,6 +893,7 @@ spec:
                     required:
                       - type
                     type: object
+                  minItems: 1
                   type: array
                   x-kubernetes-list-type: atomic
                 owner:
