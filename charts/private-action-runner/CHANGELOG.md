@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 1.1.0
+
+* Add the `$schema` key to the `values.yaml` file to enable schema validation in IDEs.
+
+## 1.0.3
+
+* Allow a `global` object in values so this chart can be used in a subchart.
+
 ## 1.0.2
 
 * Update private action runner version to `v1.2.0`

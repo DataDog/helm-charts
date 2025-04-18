@@ -29,11 +29,13 @@ spec:
               protocol: TCP 
           args:
             - /dd-csi-driver
+            - -dsd-socket-file="{{ .Values.sockets.dsdSocketFile }}"
+            - -apm-socket-file="{{ .Values.sockets.apmSocketFile }}"
           volumeMounts:
             - name: plugin-dir
               mountPath: /csi
             - mountPath: /var/run/datadog
-              name: dsdandapmsocket
+              name: socket-hostpath
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
@@ -71,6 +73,6 @@ spec:
             type: DirectoryOrCreate
           name: mountpoint-dir
         - hostPath:
-            path: /var/run/datadog
+            path: {{ .Values.sockets.hostPath }}
             type: DirectoryOrCreate
-          name: dsdandapmsocket
+          name: socket-hostpath
