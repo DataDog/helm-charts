@@ -589,6 +589,7 @@ seed:
               - rfc3339
               - iso8601
               - unix_timestamp
+            fast_precision: milliseconds
 
           - name: message
             type: text
