@@ -40,31 +40,55 @@ var FilterKeys = map[string]interface{}{
 }
 
 func Test_baseline_inputs(t *testing.T) {
-	files, err := os.ReadDir("./baseline/values")
-	assert.Nil(t, err, "couldn't read baseline values directory")
-	for _, file := range files {
-		t.Run(file.Name(), func(t *testing.T) {
-			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				Values:      []string{"./baseline/values/" + file.Name()},
-			})
-			assert.Nil(t, err, "couldn't render template")
-
-			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
-
-			if err != nil {
-				t.Fatalf("couldn't filter yaml keys: %v", err)
-			}
-
-			t.Log("update baselines", common.UpdateBaselines)
-			if common.UpdateBaselines {
-				common.WriteToFile(t, "./baseline/manifests/"+file.Name(), manifest)
-			}
-
-			verifyUntypedResources(t, "./baseline/manifests/"+file.Name(), manifest)
-		})
+	tests := []struct {
+		name             string
+		showOnly         []string
+		valuesSubPath    string
+		manifestsSubPath string
+	}{
+		{
+			name:             "Agent DaemonSets",
+			showOnly:         []string{"templates/daemonset.yaml"},
+			valuesSubPath:    "./baseline/values/agent_daemonset/",
+			manifestsSubPath: "./baseline/manifests/agent_daemonset/",
+		},
+		{
+			name:             "Cluster Agent Deployments",
+			showOnly:         []string{"templates/cluster-agent-deployment.yaml"},
+			valuesSubPath:    "./baseline/values/cluster-agent_deployment/",
+			manifestsSubPath: "./baseline/manifests/cluster-agent_deployment/",
+		},
 	}
+
+	for _, tt := range tests {
+		files, err := os.ReadDir(tt.valuesSubPath)
+		assert.Nil(t, err, "couldn't read baseline values directory")
+		for _, file := range files {
+			t.Run(file.Name(), func(t *testing.T) {
+				manifest, err := common.RenderChart(t, common.HelmCommand{
+					ReleaseName: "datadog",
+					ChartPath:   "../../charts/datadog",
+					ShowOnly:    tt.showOnly,
+					Values:      []string{tt.valuesSubPath + file.Name()},
+				})
+				assert.Nil(t, err, "couldn't render template")
+
+				manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
+
+				if err != nil {
+					t.Fatalf("couldn't filter yaml keys: %v", err)
+				}
+
+				t.Log("update baselines", common.UpdateBaselines)
+				if common.UpdateBaselines {
+					common.WriteToFile(t, tt.manifestsSubPath+file.Name(), manifest)
+				}
+
+				verifyUntypedResources(t, tt.manifestsSubPath+file.Name(), manifest)
+			})
+		}
+	}
+
 }
 
 func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
