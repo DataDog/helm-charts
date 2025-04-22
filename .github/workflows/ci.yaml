@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "charts/**"
+      - "experimental**"
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
