@@ -1107,6 +1107,11 @@ datadog:
     # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
     enabled: true
 
+  csi:
+    # datadog.csi.enabled -- Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver)
+    # This feature is still in beta
+    enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1290,7 +1295,7 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", "socket" or "csi".
 
     ## If clusterAgent.admissionController.configMode is not set:
     ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
@@ -1298,8 +1303,9 @@ clusterAgent:
     ##   * and datadog.apm.useLocalService is true and the aformentioned two are false, the Admission Controller uses service.
     ##   * Otherwise, the Admission Controller defaults to hostip.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## Note: "csi" mode requires enabling csi with `datadog.csi.enabled`. If not set, the admission controller will fallback to "socket" mode.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
-    configMode:  # "hostip", "socket" or "service"
+    configMode: csi # "hostip", "socket", "csi" or "service"
 
     # clusterAgent.admissionController.failurePolicy -- Set the failure policy for dynamic admission control.'
 

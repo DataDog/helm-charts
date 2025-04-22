@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.5
+
+* add support for enabling csi driver globally and as admission controller config mode.
+
 ## 3.114.4
 
 * use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
@@ -49,6 +53,7 @@
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
 
 ## 3.110.13
+
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
 ## 3.110.12
