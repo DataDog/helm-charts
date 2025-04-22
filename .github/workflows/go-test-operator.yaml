@@ -80,6 +80,7 @@ jobs:
           node_image: kindest/node:${{ matrix.versions.k8s }}
           cluster_name: operator-ci-${{ matrix.versions.k8s }}
           config: .github/kind_config.yaml
+          wait: 120s
       - name: Add Cert Manager Helm repo
         run: helm repo add jetstack https://charts.jetstack.io && helm repo update
       - name: Add Datadog Helm repo
