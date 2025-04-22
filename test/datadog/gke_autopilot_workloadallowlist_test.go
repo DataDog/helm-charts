@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-var allowedAutopilotHostPaths = map[string]interface{}{
+var workloadAllowlistExemptedHostPaths = map[string]interface{}{
 	"/var/log/pods":                     nil,
 	"/var/log/containers":               nil,
 	"/var/autopilot/addon/datadog/logs": nil,
@@ -20,7 +20,8 @@ var allowedAutopilotHostPaths = map[string]interface{}{
 	"/var/run/containerd":               nil,
 }
 
-func Test_autopilotConfigs(t *testing.T) {
+// Test_autopilotWorkloadAllowlistConfigs tests the GKE Autopilot with WorkloadAllowlist minimal configuration.
+func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 	tests := []struct {
 		name       string
 		command    common.HelmCommand
@@ -34,13 +35,13 @@ func Test_autopilotConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"DD_CI":                        "true",
-					"datadog.apiKeyExistingSecret": "datadog-secret",
-					"datadog.appKeyExistingSecret": "datadog-secret",
-					"providers.gke.autopilot":      "true",
+					"datadog.envDict.HELM_FORCE_RENDER": "true",
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"datadog.appKeyExistingSecret":      "datadog-secret",
+					"providers.gke.autopilot":           "true",
 				},
 			},
-			assertions: verifyDaemonsetAutopilotMinimal,
+			assertions: verifyDaemonsetAutopilotWorkloadAllowlistMinimal,
 		},
 	}
 
@@ -53,29 +54,25 @@ func Test_autopilotConfigs(t *testing.T) {
 	}
 }
 
-func verifyDaemonsetAutopilotMinimal(t *testing.T, manifest string) {
+func verifyDaemonsetAutopilotWorkloadAllowlistMinimal(t *testing.T, manifest string) {
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
 	agentContainer := &corev1.Container{}
-	processAgentContainer := &corev1.Container{}
 
-	assert.Equal(t, 2, len(ds.Spec.Template.Spec.Containers))
+	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
 
 	for _, container := range ds.Spec.Template.Spec.Containers {
 		if container.Name == "agent" {
 			agentContainer = &container
-		} else if container.Name == "process-agent" {
-			processAgentContainer = &container
 		}
 	}
 
 	assert.NotNil(t, agentContainer)
-	assert.NotNil(t, processAgentContainer)
 
 	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {
-			_, validHostPath = allowedAutopilotHostPaths[volume.HostPath.Path]
+			_, validHostPath = workloadAllowlistExemptedHostPaths[volume.HostPath.Path]
 			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
 		}
 	}
@@ -99,5 +96,5 @@ func verifyDaemonsetAutopilotMinimal(t *testing.T, manifest string) {
 			}
 		}
 	}
-	assert.True(t, validPorts, "Daemonset has restricted hostPort mounted.")
+	assert.True(t, validPorts, "DaemonSet has restricted hostPort mounted.")
 }
