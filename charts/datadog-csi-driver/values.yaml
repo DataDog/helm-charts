@@ -30,12 +30,10 @@ image:
   #   - name: "<REG_SECRET>"
 
 sockets:
-  # sockets.hostPath -- Path to datadog sockets (apm and dogstatsd) on the host
-  # Must correspond to the agent configuration for dogstatsd and apm hostSocketPath
-  hostPath: /var/run/datadog
+  # apmHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.apm.hostSocketPath`
+  apmHostSocketPath: /var/run/datadog/apm.socket
 
-  # apmSocketFile -- Name of the apm socket file
-  apmSocketFile: apm.socket
-
-  # dsdSocketFile -- Name of the dogstatsd socket file
-  dsdSocketFile: dsd.socket
+  # dsdHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.dsd.hostSocketPath`
+  dsdHostSocketPath: /var/run/datadog/dsd.socket
