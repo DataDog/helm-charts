@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'charts/**'
+      - '!charts/datadog-csi-driver/**'
+
 
 permissions: {}
 
