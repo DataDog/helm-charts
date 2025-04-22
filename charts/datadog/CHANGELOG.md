@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.12
+
+* add syscalls to system-probe seccomp to fix k3s ([#1811](https://github.com/DataDog/helm-charts/pull/1811)).
+
 ## 3.110.11
 
 * Update GKE Autopilot setup to ensure that the system-probe container is disabled by default.

@@ -7,11 +7,13 @@ metadata:
     {{- include "quickwit.labels" . | nindent 4 }}
 data:
   {{- range .Values.seed.indexes }}
-  {{ .index_id }}.yaml: |-
-    {{- toYaml . | nindent 4 }}
+  {{- $config := $.Files.Get . | fromYaml }}
+  {{ . }}: |-
+    {{- toYaml $config | nindent 4 }}
   {{- end }}
   {{- range .Values.seed.sources }}
-  {{ .source.source_id }}.yaml: |-
-    {{- toYaml .source | nindent 4 }}
+  {{- $config := $.Files.Get . | fromYaml }}
+  {{ . }}: |-
+    {{- toYaml $config | nindent 4 }}
   {{- end }}
 {{- end }}
