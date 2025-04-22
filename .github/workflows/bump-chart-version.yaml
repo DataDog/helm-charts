@@ -107,7 +107,7 @@ jobs:
                   ref: mergeBaseSHA
                 });
               } catch (error) {
-                core.warning(`Could not get base Chart.yaml for ${chartName}: ${error.message}`. Skipping...);
+                core.warning(`Could not get base Chart.yaml for ${chartName}: ${error.message}. Skipping...`);
                 return;
               }
               const baseContent = Buffer.from(baseChartFile.data.content, baseChartFile.data.encoding).toString();
