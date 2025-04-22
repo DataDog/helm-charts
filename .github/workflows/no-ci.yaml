@@ -3,6 +3,7 @@ on:
   pull_request:
     paths-ignore:
       - 'charts/**'
+      - 'experimental/**'
 jobs:
   pr-validated:
     name: pr-validated
