@@ -1009,6 +1009,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1171,6 +1173,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1308,6 +1312,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1521,6 +1527,8 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED

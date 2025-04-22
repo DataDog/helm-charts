@@ -70,8 +70,8 @@
 - name: DD_KUBELET_CLIENT_KEY
   value: /certs/tls.key
 {{- end }}
-{{ - if .Values.providers.gke.autopilot }}
+{{- if .Values.providers.gke.autopilot }}
 - name: DD_CLOUD_PROVIDER_METADATA
   value: '["gcp"]'
-{{- end}}
+{{- end }}
 {{- end }}
