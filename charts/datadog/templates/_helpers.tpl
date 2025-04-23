@@ -363,7 +363,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
 {{- end -}}
 {{- if "use-fips-images" -}}
-{{- $tagSuffix = printf "-%s" "-fips" -}}
+{{- $tagSuffix = printf "-%s" "fips" -}}
 {{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
