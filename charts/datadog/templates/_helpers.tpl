@@ -362,7 +362,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
 {{- end -}}
-{{- if "use-fips-images" -}}
+{{- if (eq (include "use-fips-images" .) "true") -}}
 {{- $tagSuffix = printf "-%s" "fips" -}}
 {{- end -}}
 {{- if .image.repository -}}
@@ -426,7 +426,7 @@ false
 Return true if the fips side car container should be created.
 */}}
 {{- define "should-enable-fips" -}}
-{{- if and (not (or "use-fips-images" (or .Values.providers.gke.autopilot .Values.providers.gke.gdc ))) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+{{- if and (not (or (eq (include "use-fips-images" .) "true") (or .Values.providers.gke.autopilot .Values.providers.gke.gdc ))) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
 true
 {{- else -}}
 false
