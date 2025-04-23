@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.110.14
+* Add a `fips_mode` value that will use add a `-fips` suffix to agent and DCA image tags.
+
 ## 3.110.13
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
