@@ -2,6 +2,10 @@
 
 ## 2.9.0-dev
 
+* Update Datadog Operator version to 1.14.0.
+
+## 2.9.0-dev
+
 * Update Datadog Operator version to 1.14.0-rc.3.
 
 ## 2.8.0
