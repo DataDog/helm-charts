@@ -1569,7 +1569,12 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
+# Setting fips_mode: true makes the helm chart install FIPS compliant image tags for use in GOVCLOUD environments
+# NOTE: this is not compatible with the fips-proxy sidecar which will be deprecated in the future
+fips_mode: false
+
 # fips is used to enable the fips sidecar container for GOVCLOUD environments.
+# NOTE: this will be deprecate in the future
 fips:
   # fips.enabled -- Enable fips sidecar
   enabled: false
