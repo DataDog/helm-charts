@@ -72,6 +72,10 @@ update-test-baselines:
 update-test-baselines-operator:
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
+.PHONY: update-test-baselines-eks-addon
+update-test-baselines-eks-addon:
+	go test -C test ./operator-eks-addon -count=1 -args -updateBaselines=true
+
 .PHONY: integration-test
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
