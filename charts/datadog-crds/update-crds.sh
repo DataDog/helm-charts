@@ -30,15 +30,8 @@ download_crd() {
         yq -i eval 'del(.. | select(has("description")).description)' "$path"
     fi
 
-    if [ "$version" = "v1beta1" ]; then
-        yq -i eval 'del(.spec.preserveUnknownFields)' "$path"
-    fi
-
-    ifCondition="{{- if and .Values.crds.$installOption (semverCompare \"<=1.21-0\" .Capabilities.KubeVersion.GitVersion ) }}"
-    if [ "$version" = "v1" ]; then
-        ifCondition="{{- if and .Values.crds.$installOption (semverCompare \">1.21-0\" .Capabilities.KubeVersion.GitVersion ) }}"
-        cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
-    fi
+    ifCondition="{{- if .Values.crds.$installOption }}"
+    cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
     yq eval '.metadata.labels."helm.sh/chart" = env(VALUE)'                              -i "$path"
