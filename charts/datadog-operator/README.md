@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.7.0](https://img.shields.io/badge/Version-2.7.0-informational?style=flat-square) ![AppVersion: 1.12.1](https://img.shields.io/badge/AppVersion-1.12.1-informational?style=flat-square)
+![Version: 2.9.1](https://img.shields.io/badge/Version-2.9.1-informational?style=flat-square) ![AppVersion: 1.14.0](https://img.shields.io/badge/AppVersion-1.14.0-informational?style=flat-square)
 
 ## Values
 
@@ -34,8 +34,8 @@
 | fullnameOverride | string | `""` |  |
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
-| image.repository | string | `"709825985650.dkr.ecr.us-east-1.amazonaws.com/datadog/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.12.1"` | Define the Datadog Operator version to use |
+| image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
+| image.tag | string | `"1.14.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -45,7 +45,7 @@
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
-| operatorMetricsEnabled | string | `"false"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
+| operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |

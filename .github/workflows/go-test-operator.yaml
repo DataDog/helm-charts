@@ -42,14 +42,10 @@ jobs:
   integ-tests:
     if: ${{github.event.pull_request.head.repo.full_name == github.repository }}
     name: integ-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         versions:
-          - k8s: v1.16.15
-            kind: v0.15.0
-          - k8s: v1.18.20
-            kind: v0.17.0
           - k8s: v1.22.17
             kind: v0.22.0
           - k8s: v1.24.17

@@ -66,9 +66,13 @@ data:
         native:
           enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
         {{- end }}
+    traceroute:
+      enabled: {{ $.Values.datadog.traceroute.enabled }}
     {{- if not (eq .Values.datadog.discovery.enabled nil) }}
     discovery:
       enabled: {{ $.Values.datadog.discovery.enabled }}
+      network_stats:
+        enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}
     gpu_monitoring:
       enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}
@@ -136,6 +140,7 @@ data:
             "clone",
             "clone3",
             "close",
+            "close_range",
             "connect",
             "copy_file_range",
             "creat",
@@ -223,6 +228,8 @@ data:
             "openat2",
             "pause",
             "perf_event_open",
+            "pidfd_open",
+            "pidfd_send_signal",
             "pipe",
             "pipe2",
             "poll",
@@ -286,6 +293,7 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
+            "tkill",
             "umask",
             "uname",
             "unlink",

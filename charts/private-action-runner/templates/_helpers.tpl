@@ -1,116 +1,61 @@
-{{- define "chart.deploymentName" }} "private-action-runner-{{.}}" {{ end }}
-{{- define "chart.serviceAccountName" }} "private-action-runner-{{.}}-serviceaccount" {{ end }}
-{{- define "chart.roleName" }} "private-action-runner-{{.}}-role" {{ end }}
-{{- define "chart.roleBindingName" }} "private-action-runner-{{.}}-rolebinding" {{ end }}
-{{- define "chart.serviceName" }} "private-action-runner-{{.}}-service" {{ end }}
-{{- define "chart.secretName" }} "private-action-runner-{{.}}-secrets" {{ end }}
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "chart.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "chart.fullname" -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "chart.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "chart.labels" -}}
+helm.sh/chart: {{ include "chart.chart" . }}
+{{ include "chart.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
 
 {{- define "chart.credentialFiles" -}}
-{{- if hasKey $.Values "credentialFiles" }}
-{{- range $c := $.Values.credentialFiles }}
+{{- if hasKey $.Values.runner "credentialFiles" }}
+{{- range $c := $.Values.runner.credentialFiles }}
 {{ $c.fileName }}: |
 {{ $c.data | indent 2 }}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "chart.basicAuth" -}}
-{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.basicAuth $.Values.connectionCredentials.basicAuth.credentials }}
-{{- range $c := $.Values.connectionCredentials.basicAuth.credentials }}
-{{ $c.fileName }}: |
-  {
-    "auth_type": "Basic Auth",
-    "credentials": [
-      {
-        "username": {{ $c.username | quote }},
-        "password": {{ $c.password | quote }}
-      }
-    ]
-  }
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "chart.tokenAuth" -}}
-{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.tokenAuth $.Values.connectionCredentials.tokenAuth.credentials }}
-{{- range $c := $.Values.connectionCredentials.tokenAuth.credentials }}
-{{ $c.fileName }}: |
-  {
-    "auth_type": "Token Auth",
-    "credentials": [
-      {
-        "tokenName": {{ $c.tokenName | quote }},
-        "tokenValue": {{ $c.tokenValue | quote }}
-      }
-    ]
-  }
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "chart.jenkinsAuth" -}}
-{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.jenkinsAuth $.Values.connectionCredentials.jenkinsAuth.credentials }}
-{{- range $c := $.Values.connectionCredentials.jenkinsAuth.credentials }}
-{{ $c.fileName }}: |
-  {
-    "auth_type": "Token Auth",
-    "credentials": [
-      {
-        "username": {{ $c.username | quote }},
-        "token": {{ $c.token | quote }},
-        "domain": {{ $c.domain | quote }}
-      }
-    ]
-  }
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "chart.postgresAuth" -}}
-{{- if and $.Values.connectionCredentials $.Values.connectionCredentials.postgresAuth $.Values.connectionCredentials.postgresAuth.credentials }}
-{{- range $c := $.Values.connectionCredentials.postgresAuth.credentials }}
-{{ $c.fileName }}: |
-  {
-    "auth_type": "Token Auth",
-    "credentials": [
-      {
-        "tokenName": "host",
-        "tokenValue": {{ $c.host | quote }}
-      },
-      {
-        "tokenName": "port",
-        "tokenValue": {{ $c.port | quote }}
-      },
-      {
-        "tokenName": "user",
-        "tokenValue": {{ $c.user | quote }}
-      },
-      {
-        "tokenName": "password",
-        "tokenValue": {{ $c.password | quote }}
-      },
-      {
-        "tokenName": "database",
-        "tokenValue": {{ $c.database | quote }}
-      },
-      {
-        "tokenName": "sslmode",
-        "tokenValue": {{ $c.sslMode | quote }}
-      },
-    {{- if $c.applicationName }}
-      {
-        "tokenName": "applicationName",
-        "tokenValue": {{ $c.applicationName | quote }}
-      },
-    {{ end }}
-    {{- if $c.searchPath }}
-      {
-        "tokenName": "searchPath",
-        "tokenValue": {{ $c.searchPath | quote }}
-      }
-    {{ end }}
-    ]
-  }
 {{- end -}}
 {{- end -}}
 {{- end -}}

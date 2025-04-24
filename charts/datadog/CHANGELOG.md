@@ -1,5 +1,107 @@
 # Datadog changelog
 
+## 3.110.13
+* Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
+
+## 3.110.12
+
+* add syscalls to system-probe seccomp to fix k3s ([#1811](https://github.com/DataDog/helm-charts/pull/1811)).
+
+## 3.110.11
+
+* Update GKE Autopilot setup to ensure that the system-probe container is disabled by default.
+* Add autopilot.gke.io/no-connect pod annotation as a workaround for bug in GKE Autopilot versions > 1.32.1-gke.1729000 and < 1.32.2-gke.1652000.
+
+## 3.110.10
+
+* Fix missing permission error for `replicationcontrollers` when using the admission controller with pods owned `ReplicationControllers` instead of `ReplicaSets`.
+
+## 3.110.9
+
+* Add `DD_ENABLE_NVML_DETECTION` env var to the agent container to enable NVML detection when GPU monitoring is enabled.
+
+## 3.110.8
+
+* Update docs for Single Step to remove the preview tag.
+
+## 3.110.7
+
+* The `gpuMonitoring.runtimeClassName` option now allows specifying an empty runtime class to avoid changing the runtime class of the agent pod.
+
+## 3.110.6
+
+* Add `podisruptionbudgets` RBAC to the Cluster Agent for orchestrator explorer.
+
+## 3.110.5
+
+* Update `fips.image.tag` to `1.1.9` fixing CVEs
+
+## 3.110.4
+
+* Propagate trace/process-Agents specific configuration parameters to the core Agent to accurately reflect the metadata payload.
+
+## 3.110.3
+
+* Update `datadog-crds` dependency to `2.5.1` and auto-activate datadogpodautoscalers collection in orchestrator.
+
+## 3.110.2
+
+* Fix bug preventing using the `datadog.apm.errorTrackingStandalone.enabled` configuration.
+
+## 3.110.1
+
+* Mount the pod-resources socket only when `datadog.gpuMonitoring.enabled` is set to `true`.
+
+## 3.110.0
+
+* Validation has been added for values under `datadog.apm.instrumentation`. Additional or incorrect values will fail a helm install or upgrade operation.
+
+## 3.109.2
+
+* Add `auth-token` mount to `process-agent` on Windows.
+
+## 3.109.1
+
+* Add `datadog.traceroute.enabled`, which turns on the `traceroute` system-probe module for Network Path.
+
+## 3.109.0
+
+* Mount  `datadog.otelCollector.logs.enabled` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+* Add support for additional volume mounts in `otel-agent` via `agents.containers.otelAgent.volumeMounts`.
+
+## 3.108.0
+
+* Add `datadog.apm.errorTrackingStandalone.enabled` setting to enable the Error Tracking for backend services.
+
+## 3.107.0
+
+* Add `datadog.otelCollector.featureGates` configuration to pass feature gates to the embedded collector.
+
+## 3.106.1
+
+* Add default container resource values for GKE Autopilot
+
+## 3.106.0
+
+* Target based workload selection for Single Step Instrumentation has been added in preview (requires Cluster Agent 7.64.0+)
+
+## 3.105.0
+
+* Add `datadog.discovery.networkStats.enabled` configuration to control Service Discovery network stats collection.
+
+## 3.104.0
+
+* Add `datadog.otelCollector.rbac.create` to control creation additional ClusterRole for `otel-agent` required by Kubernetes Attributes processor.
+* Add `datadog.otelCollector.rbac.rules` to support additional RBAC permissions required by OTel components that are not included by default with `otel-agent`.
+
+## 3.103.1
+
+* Update `fips.image.tag` to `1.1.8` fixing CVEs
+
+## 3.103.0
+
+* Upgrade default Agent version to `7.63.3`.
+
 ## 3.102.0
 
 * Add a mount for the Kubernetes PodResources socket.

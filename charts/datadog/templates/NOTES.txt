@@ -337,7 +337,7 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.DD_CI)}}
+{{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
 
 ###########################################################################################
 ####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
@@ -352,7 +352,7 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 ##############################################################################################
 ####   WARNING: System Probe on GKE Autopilot requires GKE v1.32.1-gke.1729000 or later   ####
 ##############################################################################################
-{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled' and 'datadog.discovery.enabled' must be set 'false'" }}
+{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled', 'datadog.traceroute.enabled', and 'datadog.discovery.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -437,20 +437,6 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 #######################################################################################
 
 {{- fail "On GKE GDC environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
-
-{{- end }}
-
-{{- end }}
-
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
-
-{{- if or .Values.datadog.sbom.containerImage.enabled .Values.datadog.sbom.host.enabled }}
-
-#######################################################################################
-####   WARNING: SBOM Monitoring is not supported on GKE Autopilot   ####
-#######################################################################################
-
-On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'datadog.sbom.containerImage.enabled' and 'datadog.sbom.host.enabled' must be set to 'false'.
 
 {{- end }}
 
