@@ -60,6 +60,10 @@ unit-test-operator:
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
 
+.PHONY: update-test-baselines-private-action-runner
+update-test-baselines-private-action-runner:
+	go test -C test ./private-action-runner -count=1 -args -updateBaselines=true
+
 .PHONY: update-test-baselines
 update-test-baselines:
 	go test -C test ./... -count=1 -args -updateBaselines=true
@@ -67,6 +71,10 @@ update-test-baselines:
 .PHONY: update-test-baselines-operator
 update-test-baselines-operator:
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-eks-addon
+update-test-baselines-eks-addon:
+	go test -C test ./operator-eks-addon -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:

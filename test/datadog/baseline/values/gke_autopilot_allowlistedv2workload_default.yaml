@@ -1,0 +1,9 @@
+# Baseline test for GKE Autopilot partner workloads using the AllowlistedV2Workload allowlist where the WorkloadAllowlist CRD is not supported (GKE versions < 1.32.1-gke.1729000).
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  envDict:
+    HELM_FORCE_RENDER: false  # disable helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
+providers:
+  gke:
+    autopilot: true

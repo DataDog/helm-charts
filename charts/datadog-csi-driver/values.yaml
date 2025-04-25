@@ -1,0 +1,39 @@
+# Default values for datadog-csi-driver.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# nameOverride -- Allows overriding the name of the chart.
+# If set, this value replaces the default chart name.
+nameOverride: ""
+
+# fullnameOverride -- Allows overriding the full name of resources created by the chart.
+# If set, this value completely replaces the generated name, ignoring the standard naming convention.
+fullnameOverride: ""
+
+## Define the Datadog CSI Driver image to work with
+image:
+  # image.tag -- CSI driver image tag to use
+  # TODO: change to a static stable version
+  tag: latest
+
+  # image.repository -- Override default registry + image.name for CSI driver
+  # TODO: change to official repository when available
+  repository:
+
+  # image.pullPolicy -- CSI driver image pullPolicy
+  pullPolicy: IfNotPresent
+
+  # image.pullSecrets -- CSI driver repository pullSecret (for example: specify Docker registry credentials)
+
+  ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  pullSecrets: []
+  #   - name: "<REG_SECRET>"
+
+sockets:
+  # apmHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.apm.hostSocketPath`
+  apmHostSocketPath: /var/run/datadog/apm.socket
+
+  # dsdHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.dsd.hostSocketPath`
+  dsdHostSocketPath: /var/run/datadog/dsd.socket

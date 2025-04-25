@@ -1,6 +1,6 @@
 dependencies:
 - name: datadog-crds
   repository: file://../datadog-crds/
-  version: 2.4.1
-digest: sha256:8bad355dfb7247f2b9238c5f72460fb8fe4122330e3ade0908bcd4e6a6f3c2d0
-generated: "2025-03-05T16:20:14.461836+01:00"
+  version: 2.7.0
+digest: sha256:320bf52189653f8f06deb8a0997dea6e19727f94a1f5cbe697c3c2e175c23f95
+generated: "2025-04-24T12:26:25.882326-04:00"

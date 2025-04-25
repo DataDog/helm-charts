@@ -6,6 +6,11 @@ on:
       - main
     paths:
       - 'charts/**'
+      - '!charts/datadog-csi-driver/**'
+      - '!charts/datadog-operator/**'
+      - '!charts/datadog-crds/**'
+
+permissions: {}
 
 permissions: {}
 

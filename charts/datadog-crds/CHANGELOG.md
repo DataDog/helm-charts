@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.7.0
+
+* Clean up `apiextensions.k8s.io/v1beta1` CRD versions. Kubernetes cluster v1.21 and earlier will be updated to `apiextensions.k8s.io/v1` CRD version.
+
+## 2.6.0
+
+* Update CRDs from Datadog Operator v1.14.0 tag.
+
+## 2.6.0-dev
+
+* Update CRDs from Datadog Operator v1.14.0 release candidate tag.
+
+## 2.5.1
+
+* Update DatadogPodAutoscaler CRD to have `storage` set to `v1alpha2`.
+
+# 2.5.0
+
+* Update CRDs from Datadog Operator v1.13.0 tag.
+
 # 2.4.1
 
 * Add DatadogGenericResources CRD.
