@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.111.0
+
+* Add support for using an existing/external ConfigMap to configure the DDOT Collector.
+
 ## 3.110.14
 
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
