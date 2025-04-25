@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.110.14
+
+* Remove `chart` label to unify into `helm.sh/chart` label.
+
 ## 3.110.13
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 

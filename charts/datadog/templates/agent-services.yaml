@@ -25,7 +25,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}
@@ -48,7 +47,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}
@@ -72,7 +70,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}

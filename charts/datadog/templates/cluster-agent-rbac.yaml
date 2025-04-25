@@ -368,7 +368,6 @@ automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccou
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
@@ -419,7 +418,6 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: "{{ template "datadog.fullname" . }}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}
