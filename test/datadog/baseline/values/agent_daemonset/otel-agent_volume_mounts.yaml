@@ -1,0 +1,20 @@
+containers:
+  - otel-agent
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+
+agents:
+  containers:
+    otelAgent:
+      volumeMounts:
+        - name: logscustompath
+          mountPath: /var/log/custom
+          readOnly: true
+  volumes:
+    - hostPath:
+        path: /var/log/custom
+      name: logscustompath

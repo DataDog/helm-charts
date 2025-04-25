@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -40,30 +41,61 @@ var FilterKeys = map[string]interface{}{
 }
 
 func Test_baseline_inputs(t *testing.T) {
-	files, err := os.ReadDir("./baseline/values")
-	assert.Nil(t, err, "couldn't read baseline values directory")
-	for _, file := range files {
-		t.Run(file.Name(), func(t *testing.T) {
-			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				Values:      []string{"./baseline/values/" + file.Name()},
+	tests := []struct {
+		name             string
+		showOnly         []string
+		valuesSubPath    string
+		manifestsSubPath string
+	}{
+		{
+			name:             "Agent DaemonSets",
+			showOnly:         []string{"templates/daemonset.yaml"},
+			valuesSubPath:    "./baseline/values/agent_daemonset/",
+			manifestsSubPath: "./baseline/manifests/agent_daemonset/",
+		},
+		{
+			name:             "Cluster Agent Deployments",
+			showOnly:         []string{"templates/cluster-agent-deployment.yaml"},
+			valuesSubPath:    "./baseline/values/cluster-agent_deployment/",
+			manifestsSubPath: "./baseline/manifests/cluster-agent_deployment/",
+		},
+	}
+
+	for _, tt := range tests {
+		files, err := os.ReadDir(tt.valuesSubPath)
+		assert.Nil(t, err, "couldn't read baseline values directory")
+		for _, file := range files {
+			t.Run(file.Name(), func(t *testing.T) {
+				manifest, err := common.RenderChart(t, common.HelmCommand{
+					ReleaseName: "datadog",
+					ChartPath:   "../../charts/datadog",
+					ShowOnly:    tt.showOnly,
+					Values:      []string{tt.valuesSubPath + file.Name()},
+				})
+				assert.Nil(t, err, "couldn't render template")
+
+				manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
+
+				if err != nil {
+					t.Fatalf("couldn't filter yaml keys: %v", err)
+				}
+
+				containerManifests, err := common.ExtractContainersManifests(t, manifest, tt.valuesSubPath+file.Name())
+				if err != nil {
+					t.Fatalf("couldn't get container manifests: %v", err)
+				}
+
+				t.Log("update baselines", common.UpdateBaselines)
+				for containerName, containerManifest := range containerManifests {
+					if common.UpdateBaselines {
+						common.WriteToFile(t, fmt.Sprintf("%scontainers/%s/%s_%s", tt.manifestsSubPath, containerName, containerName, file.Name()), containerManifest)
+					}
+					verifyUntypedResources(t, fmt.Sprintf("%scontainers/%s/%s_%s", tt.manifestsSubPath, containerName, containerName, file.Name()), containerManifest)
+
+					// TODO: implement container VolumeMounts:Volumes DS/Deployment validation
+				}
 			})
-			assert.Nil(t, err, "couldn't render template")
-
-			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
-
-			if err != nil {
-				t.Fatalf("couldn't filter yaml keys: %v", err)
-			}
-
-			t.Log("update baselines", common.UpdateBaselines)
-			if common.UpdateBaselines {
-				common.WriteToFile(t, "./baseline/manifests/"+file.Name(), manifest)
-			}
-
-			verifyUntypedResources(t, "./baseline/manifests/"+file.Name(), manifest)
-		})
+		}
 	}
 }
 
