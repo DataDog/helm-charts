@@ -356,10 +356,15 @@ rules:
       - apps
     resources:
       - statefulsets
-      - replicationcontrollers
       - replicasets
       - deployments
       - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
     verbs:
       - get
   - apiGroups:
