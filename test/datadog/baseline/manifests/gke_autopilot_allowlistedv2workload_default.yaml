@@ -799,6 +799,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -954,6 +956,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1071,6 +1075,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1422,6 +1428,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
