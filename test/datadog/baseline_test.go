@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -50,14 +51,14 @@ func Test_baseline_inputs(t *testing.T) {
 		{
 			name:             "Agent DaemonSets",
 			showOnly:         []string{"templates/daemonset.yaml"},
-			valuesSubPath:    "./baseline/values/agent_daemonset/",
-			manifestsSubPath: "./baseline/manifests/agent_daemonset/",
+			valuesSubPath:    "./baseline/values/agent_daemonset",
+			manifestsSubPath: "./baseline/manifests/agent_daemonset",
 		},
 		{
 			name:             "Cluster Agent Deployments",
 			showOnly:         []string{"templates/cluster-agent-deployment.yaml"},
-			valuesSubPath:    "./baseline/values/cluster-agent_deployment/",
-			manifestsSubPath: "./baseline/manifests/cluster-agent_deployment/",
+			valuesSubPath:    "./baseline/values/cluster-agent_deployment",
+			manifestsSubPath: "./baseline/manifests/cluster-agent_deployment",
 		},
 	}
 
@@ -66,11 +67,12 @@ func Test_baseline_inputs(t *testing.T) {
 		assert.Nil(t, err, "couldn't read baseline values directory")
 		for _, file := range files {
 			t.Run(file.Name(), func(t *testing.T) {
+				valuesPath := filepath.Join(tt.valuesSubPath, file.Name())
 				manifest, err := common.RenderChart(t, common.HelmCommand{
 					ReleaseName: "datadog",
 					ChartPath:   "../../charts/datadog",
 					ShowOnly:    tt.showOnly,
-					Values:      []string{tt.valuesSubPath + file.Name()},
+					Values:      []string{valuesPath},
 				})
 				assert.Nil(t, err, "couldn't render template")
 
@@ -80,17 +82,18 @@ func Test_baseline_inputs(t *testing.T) {
 					t.Fatalf("couldn't filter yaml keys: %v", err)
 				}
 
-				containerManifests, err := common.ExtractContainersManifests(t, manifest, tt.valuesSubPath+file.Name())
+				containerManifests, err := common.ExtractContainersManifests(t, manifest, valuesPath)
 				if err != nil {
 					t.Fatalf("couldn't get container manifests: %v", err)
 				}
 
 				t.Log("update baselines", common.UpdateBaselines)
 				for containerName, containerManifest := range containerManifests {
+					manifestPath := filepath.Join(tt.manifestsSubPath, containerName, fmt.Sprintf("%s_%s", containerName, file.Name()))
 					if common.UpdateBaselines {
-						common.WriteToFile(t, fmt.Sprintf("%scontainers/%s/%s_%s", tt.manifestsSubPath, containerName, containerName, file.Name()), containerManifest)
+						common.WriteToFile(t, manifestPath, containerManifest)
 					}
-					verifyUntypedResources(t, fmt.Sprintf("%scontainers/%s/%s_%s", tt.manifestsSubPath, containerName, containerName, file.Name()), containerManifest)
+					verifyUntypedResources(t, manifestPath, containerManifest)
 
 					// TODO: implement container VolumeMounts:Volumes DS/Deployment validation
 				}
