@@ -65,7 +65,10 @@ spec:
               mountPath: /csi # Match this to ADDRESS
             - name: registration-dir
               mountPath: /registration # This is where the registrar writes the registration information
-      volumes:
+      
+        tolerations:
+          - operator: Exists
+        volumes:
         - name: plugin-dir
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/driver
