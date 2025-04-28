@@ -248,3 +248,16 @@ func ExtractContainersManifests(t *testing.T, manifest, values string) (map[stri
 	}
 	return containerManifests, nil
 }
+
+func VolumeExists(volumes []interface{}, volumeName string) bool {
+	for _, volume := range volumes {
+		volumeMap, ok := volume.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if name, ok := volumeMap["name"].(string); ok && name == volumeName {
+			return true
+		}
+	}
+	return false
+}

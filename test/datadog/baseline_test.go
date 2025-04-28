@@ -89,13 +89,12 @@ func Test_baseline_inputs(t *testing.T) {
 
 				t.Log("update baselines", common.UpdateBaselines)
 				for containerName, containerManifest := range containerManifests {
-					manifestPath := filepath.Join(tt.manifestsSubPath, containerName, fmt.Sprintf("%s_%s", containerName, file.Name()))
+					containerManifestPath := filepath.Join(tt.manifestsSubPath, containerName, fmt.Sprintf("%s_%s", containerName, file.Name()))
 					if common.UpdateBaselines {
-						common.WriteToFile(t, manifestPath, containerManifest)
+						common.WriteToFile(t, containerManifestPath, containerManifest)
 					}
-					verifyUntypedResources(t, manifestPath, containerManifest)
-
-					// TODO: implement container VolumeMounts:Volumes DS/Deployment validation
+					verifyUntypedResources(t, containerManifestPath, containerManifest)
+					verifyVolumeMounts(t, containerManifest, manifest)
 				}
 			})
 		}
@@ -125,5 +124,40 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 		yaml.Unmarshal(actualResource, &actual)
 
 		assert.True(t, cmp.Equal(expected, actual), cmp.Diff(expected, actual))
+	}
+}
+
+// verifyVolumeMounts checks that all volume mounts in the container manifest have a corresponding volume in the DaemonSet or deployment manifest
+func verifyVolumeMounts(t *testing.T, containerManifest, fullManifest string) {
+	// Decode container and full (ds or deployment) manifests
+	containerManifestDecoder := yaml.NewDecoder(strings.NewReader(containerManifest))
+	fullManifestDecoder := yaml.NewDecoder(strings.NewReader(fullManifest))
+
+	var containerResource map[string]interface{}
+	if err := containerManifestDecoder.Decode(&containerResource); err != nil {
+		t.Fatalf("couldn't decode container manifest: %s", err)
+	}
+
+	var manifestResource map[string]interface{}
+	if err := fullManifestDecoder.Decode(&manifestResource); err != nil {
+		t.Fatalf("couldn't decode full manifest: %s", err)
+	}
+
+	// Get volumes from the full ds/deployment manifest
+	assert.NotNil(t, manifestResource)
+	spec, _ := manifestResource["spec"].(map[string]interface{})
+	template, _ := spec["template"].(map[string]interface{})
+	templateSpec := template["spec"].(map[string]interface{})
+	manifestVolumes := templateSpec["volumes"].([]interface{})
+	assert.Greater(t, len(manifestVolumes), 0)
+
+	// Get volumeMounts from the container manifest
+	containerVolumeMounts := containerResource["volumeMounts"].([]interface{})
+	assert.Greater(t, len(containerVolumeMounts), 0)
+
+	// Verify that each volumeMount in the container has a corresponding volume in the full manifest
+	for _, volume := range containerVolumeMounts {
+		volumeName := volume.(map[string]interface{})["name"].(string)
+		assert.Truef(t, common.VolumeExists(manifestVolumes, volumeName), "volumeMount %s not found in manifest volumes", volumeName)
 	}
 }
