@@ -1,12 +1,13 @@
 stages:
   - e2e
+  - test
 
 variables:
   RUN_E2E_TEST:
     description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
 
 noop:
-  stage: e2e
+  stage: test
   script: 
     - echo "No op job to get merge queue working"
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
