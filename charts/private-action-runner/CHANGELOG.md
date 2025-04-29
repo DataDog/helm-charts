@@ -2,7 +2,7 @@
 
 ## 1.1.1
 
-* Add experimental dev rollbackDeployment action
+* Bump runner version to `v1.3.0`
 
 ## 1.1.0
 
