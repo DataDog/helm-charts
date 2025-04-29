@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.1.1
+
+* Add your changelog here!
+
 ## 1.1.0
 
 * Add the `$schema` key to the `values.yaml` file to enable schema validation in IDEs.
