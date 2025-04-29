@@ -1,0 +1,99 @@
+command:
+    - process-agent
+    - --cfgpath=/etc/datadog-agent/datadog.yaml
+env:
+    - name: DD_API_KEY
+      valueFrom:
+        secretKeyRef:
+            key: api-key
+            name: datadog-secret
+    - name: DD_REMOTE_CONFIGURATION_ENABLED
+      value: "true"
+    - name: DD_AUTH_TOKEN_FILE_PATH
+      value: /etc/datadog-agent/auth/token
+    - name: KUBERNETES
+      value: "yes"
+    - name: DD_LANGUAGE_DETECTION_ENABLED
+      value: "false"
+    - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+      value: "false"
+    - name: DD_KUBERNETES_KUBELET_HOST
+      valueFrom:
+        fieldRef:
+            fieldPath: status.hostIP
+    - name: DD_OTLP_CONFIG_LOGS_ENABLED
+      value: "false"
+    - name: DD_CLUSTER_AGENT_ENABLED
+      value: "true"
+    - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+      value: datadog-cluster-agent
+    - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+      valueFrom:
+        secretKeyRef:
+            key: token
+            name: datadog-cluster-agent
+    - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+      value: "false"
+    - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+      value: "true"
+    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+      value: "true"
+    - name: DD_STRIP_PROCESS_ARGS
+      value: "false"
+    - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+      value: "true"
+    - name: DD_LOG_LEVEL
+      value: INFO
+    - name: DD_SYSTEM_PROBE_ENABLED
+      value: "true"
+    - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
+      value: "true"
+    - name: DD_DOGSTATSD_SOCKET
+      value: /var/run/datadog/dsd.socket
+    - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+      value: "true"
+image: gcr.io/datadoghq/agent:7.64.1
+imagePullPolicy: IfNotPresent
+name: process-agent
+resources: {}
+volumeMounts:
+    - mountPath: /etc/datadog-agent
+      name: config
+      readOnly: true
+    - mountPath: /var/log/datadog
+      name: logdatadog
+      readOnly: false
+    - mountPath: /etc/datadog-agent/auth
+      name: auth-token
+      readOnly: true
+    - mountPath: /var/run/datadog
+      name: dsdsocket
+      readOnly: false
+    - mountPath: /tmp
+      name: tmpdir
+      readOnly: false
+    - mountPath: /host/etc/os-release
+      name: os-release-file
+      readOnly: true
+    - mountPath: /host/var/run
+      mountPropagation: None
+      name: runtimesocketdir
+      readOnly: true
+    - mountPath: /host/sys/fs/cgroup
+      mountPropagation: None
+      name: cgroups
+      readOnly: true
+    - mountPath: /etc/passwd
+      name: passwd
+      readOnly: true
+    - mountPath: /host/proc
+      mountPropagation: None
+      name: procdir
+      readOnly: true
+    - mountPath: /var/run/sysprobe
+      name: sysprobe-socket-dir
+      readOnly: true
+    - mountPath: /etc/datadog-agent/system-probe.yaml
+      name: sysprobe-config
+      readOnly: true
+      subPath: system-probe.yaml
