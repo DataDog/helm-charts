@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.112.0
+
+* Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
+
 ## 3.111.1
 
 * Update `fips.image.tag` to `1.1.10` fixing CVEs and updating packages.

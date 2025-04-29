@@ -32,7 +32,7 @@
         {{- if .hostPort }}
         hostPort: {{ .hostPort }}
         {{- end }}
-        protocol: TCP
+        protocol: {{ .protocol | default "TCP" }}
         name: {{ .name }}
     {{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.otelAgent.envFrom }}
