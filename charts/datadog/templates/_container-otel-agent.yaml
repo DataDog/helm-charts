@@ -35,6 +35,9 @@
         protocol: {{ .protocol | default "TCP" }}
         name: {{ .name }}
     {{- end }}
+{{- if .Values.agents.containers.otelAgent.ports }}
+{{ toYaml .Values.agents.containers.otelAgent.ports | indent 6 }}
+{{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.otelAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}
