@@ -2,7 +2,7 @@
 
 ## 1.1.1
 
-* Add your changelog here!
+* Add experimental dev rollbackDeployment action
 
 ## 1.1.0
 
