@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.116.0
+
+* Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
+
 ## 3.115.0
 
 * Add support for `secretBackend.refreshInterval` in chart/datadog.
