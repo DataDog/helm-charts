@@ -1,6 +1,6 @@
 # Changelog
 
-## NaN.1.2
+## 0.1.2
 
 * Add pipelinesConfig property to values.yaml https://github.com/DataDog/pomsky-helm-charts/pull/4
 * Fix sort order for same-second documents
