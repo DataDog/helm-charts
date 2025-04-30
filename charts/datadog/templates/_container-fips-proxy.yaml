@@ -23,7 +23,7 @@
 {{- end -}}
 
 {{- define "fips-envvar" -}}
-{{- if eq  (include "should-enable-fips" .) "true" }}
+{{- if eq  (include "should-enable-fips-proxy" .) "true" }}
 - name: DD_FIPS_ENABLED
   value: {{ .Values.fips.enabled | quote }}
 - name: DD_FIPS_PORT_RANGE_START

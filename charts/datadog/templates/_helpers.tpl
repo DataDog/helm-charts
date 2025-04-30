@@ -362,7 +362,7 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
 {{- end -}}
-{{- if (eq (include "use-fips-images" .) "true") -}}
+{{- if (eq (include "use-fips-images" .root) "true") -}}
 {{- $tagSuffix = printf "-%s" "fips" -}}
 {{- end -}}
 {{- if .image.repository -}}
@@ -415,7 +415,7 @@ false
 Return true if we should use the -fips image tags.
 */}}
 {{- define "use-fips-images" -}}
-{{- if .Values.fips_mode -}}
+{{- if .useFipsImages -}}
 true
 {{- else -}}
 false
@@ -425,8 +425,8 @@ false
 {{/*
 Return true if the fips side car container should be created.
 */}}
-{{- define "should-enable-fips" -}}
-{{- if and (not (or (eq (include "use-fips-images" .) "true") (or .Values.providers.gke.autopilot .Values.providers.gke.gdc ))) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+{{- define "should-enable-fips-proxy" -}}
+{{- if and (not (or (eq (include "use-fips-images" $) "true") (or .Values.providers.gke.autopilot .Values.providers.gke.gdc ))) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
 true
 {{- else -}}
 false
@@ -437,7 +437,7 @@ false
 Return true if the fips side car configMap should be mounted.
 */}}
 {{- define "should-mount-fips-configmap" -}}
-{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
+{{- if and (eq (include "should-enable-fips-proxy" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
 true
 {{- else -}}
 false

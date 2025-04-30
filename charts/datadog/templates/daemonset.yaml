@@ -125,7 +125,7 @@ spec:
         {{- if eq (include "should-enable-trace-agent" .) "true" }}
           {{- include "container-trace-agent" . | nindent 6 }}
         {{- end }}
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
         {{- if eq  (include "should-enable-process-agent" .) "true" }}
