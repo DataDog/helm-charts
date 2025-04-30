@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.9.2
+
+* Grant the Datadog Operator ClusterRole read access to EndpointSlices.
+
 ## 2.9.0
 
 * Update Datadog Operator version to 1.14.0.
