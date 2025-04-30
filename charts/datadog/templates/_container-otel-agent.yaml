@@ -51,6 +51,8 @@
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: {{ .Values.datadog.otelCollector.enabled }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
