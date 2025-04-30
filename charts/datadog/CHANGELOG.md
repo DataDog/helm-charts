@@ -2,7 +2,7 @@
 
 ## 3.110.16
 
-* Fix otel-agent container template to respect configs `otelCollector.enabled` and `otelCollector.converter.enabled` in values.yaml
+* Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
 
 ## 3.110.15
 
