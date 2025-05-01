@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.110.16
+## 3.111.0
 
 * Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
 
