@@ -1109,6 +1109,8 @@ spec:
               value: "5009"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
               value: "60"
+            - name: DD_OTELCOLLECTOR_ENABLED
+              value: true
             - name: DD_LOG_LEVEL
               value: INFO
           image: gcr.io/datadoghq/agent:7.64.3
