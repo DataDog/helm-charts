@@ -339,10 +339,15 @@ rules:
       - apps
     resources:
       - statefulsets
-      - replicationcontrollers
       - replicasets
       - deployments
       - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
     verbs:
       - get
   - apiGroups:
@@ -828,7 +833,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.64.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -891,7 +896,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.64.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -939,7 +944,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.64.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1133,7 +1138,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.64.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1206,7 +1211,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.64.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
