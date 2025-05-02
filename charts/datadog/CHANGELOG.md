@@ -4,6 +4,14 @@
 
 * Add support for using an existing/external ConfigMap to configure the DDOT Collector.
 
+## 3.110.16
+
+* Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
+
+## 3.110.15
+
+* Upgrade default Agent anf Cluster-Agent versions to `7.64.3`.
+
 ## 3.110.14
 
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
