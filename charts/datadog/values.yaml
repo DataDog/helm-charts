@@ -1577,7 +1577,7 @@ fips:
   enabled: false
 
   ## fips.useFipsImages -- Setting fips.useFipsImages: true makes the helm chart install FIPS compliant image tags for use in GOVCLOUD environments
-  ## NOTE: 
+  ## NOTE:
   ##    - setting this to true disables the fips-proxy sidecar
   ##    - this is the recommended method for enabling FIPS compliance
   useFipsImages: false
