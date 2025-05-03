@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.111.0
+
+* Add support for using an existing/external ConfigMap to configure the DDOT Collector.
+
 ## 3.110.16
 
 * Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
