@@ -624,6 +624,12 @@ datadog:
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.configMap -- Use an existing ConfigMap for DDOT Collector configuration
+    configMap:
+      # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
+      name: null
+      # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
+      key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
 

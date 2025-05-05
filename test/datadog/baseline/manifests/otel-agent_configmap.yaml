@@ -114,29 +114,6 @@ metadata:
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
 ---
-apiVersion: v1
-data:
-  otel-config.yaml: |
-    receivers:
-      filelog:
-    exporters:
-      debug:
-    service:
-      pipelines:
-        logs:
-          receivers: [filelog]
-          exporters: [debug]
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-config
-  namespace: datadog-agent
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -1151,18 +1128,6 @@ spec:
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: true
-            - mountPath: /var/log/pods
-              mountPropagation: None
-              name: logpodpath
-              readOnly: true
-            - mountPath: /var/log/containers
-              mountPropagation: None
-              name: logscontainerspath
-              readOnly: true
-            - mountPath: /var/lib/docker/containers
-              mountPropagation: None
-              name: logdockercontainerpath
-              readOnly: true
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
@@ -1271,23 +1236,11 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
-        - hostPath:
-            path: /var/lib/datadog-agent/logs
-          name: pointerdir
-        - hostPath:
-            path: /var/log/pods
-          name: logpodpath
-        - hostPath:
-            path: /var/log/containers
-          name: logscontainerspath
-        - hostPath:
-            path: /var/lib/docker/containers
-          name: logdockercontainerpath
         - configMap:
             items:
               - key: otel-config.yaml
                 path: otel-config.yaml
-            name: datadog-otel-config
+            name: custom-otel-config
           name: otelconfig
   updateStrategy:
     rollingUpdate:
