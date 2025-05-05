@@ -1569,18 +1569,18 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
+## useFIPSAgent -- Setting useFIPSAgent: true makes the helm chart install FIPS compliant image tags for use in GOVCLOUD environments
+## NOTE:
+##    - setting this to true disables the fips-proxy sidecar
+##    - this is the recommended method for enabling FIPS compliance
+useFIPSAgent: false
+
 ## fips is used to enable and configure the FIPS compliant mode for the Datadog Agent.
 ## The current method uses the fips-proxy sidecar to enable FIPS compliance.
-## The fips-proxy will be progressively deprecated in the future in favor of the use of FIPS compliant images.
+## The fips-proxy will be progressively deprecated in the future in favor of the use of FIPS compliant images (please refer to useFIPSAgent setting)
 fips:
-  ## fips.enabled -- Enable fips compliant mode
+  ## fips.enabled -- Enable fips proxy sidecar
   enabled: false
-
-  ## fips.useFipsImages -- Setting fips.useFipsImages: true makes the helm chart install FIPS compliant image tags for use in GOVCLOUD environments
-  ## NOTE:
-  ##    - setting this to true disables the fips-proxy sidecar
-  ##    - this is the recommended method for enabling FIPS compliance
-  useFipsImages: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false

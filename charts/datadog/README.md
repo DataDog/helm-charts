@@ -4,7 +4,7 @@
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
-Datadog [offers three build variants](https://hub.docker.com/r/datadog/agent/tags/), switch to a `-jmx` tag if you need to run JMX/java integrations or set the `fips.useFipsImages: true` value to use the `-fips` tags if you require FIPS compliant cryptography modules. The chart also supports running [the standalone dogstatsd image](https://hub.docker.com/r/datadog/dogstatsd/tags/).
+Datadog [offers three build variants](https://hub.docker.com/r/datadog/agent/tags/), switch to a `-jmx` tag if you need to run JMX/java integrations or set the `useFIPSAgent: true` value to use the `-fips` tags if you require FIPS compliant cryptography modules. The chart also supports running [the standalone dogstatsd image](https://hub.docker.com/r/datadog/dogstatsd/tags/).
 
 See the [Datadog JMX integration](https://docs.datadoghq.com/integrations/java/) to learn more.
 
@@ -913,7 +913,6 @@ helm install <RELEASE_NAME> \
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577 This setting is only used for the fips-proxy sidecar. |
 | fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. This setting is only used for the fips-proxy sidecar. |
-| fips.useFipsImages | bool | `false` |  |
 | fips.use_https | bool | `false` | Option to enable https This setting is only used for the fips-proxy sidecar. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
 | kube-state-metrics.image.repository | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics"` | Default kube-state-metrics image repository. |
@@ -932,6 +931,7 @@ helm install <RELEASE_NAME> \
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
+| useFIPSAgent | bool | `false` |  |
 
 ## Configuration options for Windows deployments
 <a name="windows-config"></a>

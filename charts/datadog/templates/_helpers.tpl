@@ -359,11 +359,11 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- end -}}
 {{- else -}}
 {{- $tagSuffix := "" -}}
-{{- if .image.tagSuffix -}}
-{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
-{{- end -}}
 {{- if (eq (include "use-fips-images" .root) "true") -}}
 {{- $tagSuffix = printf "-%s" "fips" -}}
+{{- end -}}
+{{- if .image.tagSuffix -}}
+{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
 {{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
@@ -415,7 +415,7 @@ false
 Return true if we should use the -fips image tags.
 */}}
 {{- define "use-fips-images" -}}
-{{- if .useFipsImages -}}
+{{- if .useFIPSAgent -}}
 true
 {{- else -}}
 false

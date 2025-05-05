@@ -53,13 +53,16 @@ func TestFIPSModeConditions(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			values := map[string]string{
-				// "fips.useFipsImages": strconv.FormatBool(tt.setUseFipsImageSetting),
-				// "fips.enabled":       strconv.FormatBool(tt.setFipsEnabledSetting),
+				"fips.useFipsImages": strconv.FormatBool(tt.setUseFipsImageSetting),
+				"fips.enabled":       strconv.FormatBool(tt.setFipsEnabledSetting),
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+	            "datadog.appKeyExistingSecret": "datadog-secret",
 			}
 
 			manifest, err := common.RenderChart(t, common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides:   values,
 			})
