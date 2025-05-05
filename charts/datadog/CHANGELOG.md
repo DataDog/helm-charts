@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.110.17
+## 3.111.1
 
 * Add a `fips_mode` value that will use add a `-fips` suffix to agent and DCA image tags.
+
+## 3.111.0
+
+* Add support for using an existing/external ConfigMap to configure the DDOT Collector.
 
 ## 3.110.16
 

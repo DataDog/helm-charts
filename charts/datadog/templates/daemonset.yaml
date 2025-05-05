@@ -179,10 +179,17 @@ spec:
       {{- if eq (include "should-enable-otel-agent" .) "true" }}
       - name: otelconfig
         configMap:
+          {{- if .Values.datadog.otelCollector.configMap.name }}
+          name: {{ .Values.datadog.otelCollector.configMap.name }}
+          items:
+          - key: {{ .Values.datadog.otelCollector.configMap.key }}
+            path: otel-config.yaml
+          {{- else }}
           name: {{ include "agents-install-otel-configmap-name" . }}
           items:
           - key: otel-config.yaml
             path: otel-config.yaml
+          {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
