@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.111.1
+
+* Update `fips.image.tag` to `1.1.10` fixing CVEs and updating packages.
+
 ## 3.111.0
 
 * Add support for using an existing/external ConfigMap to configure the DDOT Collector.
