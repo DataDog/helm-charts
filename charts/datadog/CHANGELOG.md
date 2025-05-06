@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.111.2
+
+* Add a `useFIPSAgent` value to use FIPS-compliant images (by adding a `-fips` suffix to the image tags).
+
 ## 3.111.1
 
-* Add a `fips_mode` value that will use add a `-fips` suffix to agent and DCA image tags.
+* Update `fips.image.tag` to `1.1.10` fixing CVEs and updating packages.
 
 ## 3.111.0
 
