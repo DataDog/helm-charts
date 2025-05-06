@@ -2,7 +2,7 @@
 
 ## 3.112.0
 
-* Add a `useFIPSAgent` value to use FIPS-compliant images (by adding a `-fips` suffix to the image tags).
+* Add a new parameter `useFIPSAgent` to use FIPS-compliant images for the Agent and DCA.
 
 ## 3.111.1
 
