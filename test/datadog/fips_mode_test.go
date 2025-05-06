@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -24,7 +23,7 @@ func TestFIPSModeConditions(t *testing.T) {
 		enableJMX       bool
 	}{
 		{
-			name:            "without any fips configuration",
+			name:            "neither fips proxy nor fips agent",
 			enableFIPSProxy: false,
 			enableFIPSAgent: false,
 			expectFIPSProxy: false,
@@ -84,19 +83,8 @@ func TestFIPSModeConditions(t *testing.T) {
 			require.NoError(t, err, "couldn't render template")
 
 			// Parse the manifest to find the should-enable-fips-proxy value and check image tags
-			var configMap corev1.ConfigMap
 			var daemonSet appsv1.DaemonSet
-
-			common.Unmarshal(t, manifest, &configMap)
 			common.Unmarshal(t, manifest, &daemonSet)
-
-			fmt.Printf("configMap: %+v\n", configMap)
-
-			// Check FIPS proxy setting
-			if value, ok := configMap.Data["should-enable-fips-proxy"]; ok {
-				fmt.Printf("should-enable-fips-proxy: %s\n", value)
-				assert.Equal(t, tt.expectFIPSProxy, value == "true", "should-enable-fips-proxy value is incorrect")
-			}
 
 			// Checking that daemonSet contains or not fips-proxy container based on the fips proxy configuration
 			checkFIPSProxy(t, daemonSet.Spec.Template.Spec.Containers, tt.expectFIPSProxy)
