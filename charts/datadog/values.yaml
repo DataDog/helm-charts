@@ -1575,9 +1575,8 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
-# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments
-# Setting this to true disables the fips-proxy sidecar.
-# This is the recommended method for enabling FIPS compliance.
+# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments.
+# Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance.
 useFIPSAgent: false
 
 ## fips is used to enable and configure the fips-proxy sidecar.
