@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.111.2
+## 3.112.0
 
 * Add a `useFIPSAgent` value to use FIPS-compliant images (by adding a `-fips` suffix to the image tags).
 
