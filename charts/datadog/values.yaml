@@ -1575,17 +1575,15 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
-## useFIPSAgent -- Setting useFIPSAgent: true makes the helm chart install FIPS compliant image tags for use in GOVCLOUD environments
-## NOTE:
-##    - setting this to true disables the fips-proxy sidecar
-##    - this is the recommended method for enabling FIPS compliance
+# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments
+# Setting this to true disables the fips-proxy sidecar.
+# This is the recommended method for enabling FIPS compliance.
 useFIPSAgent: false
 
-## fips is used to enable and configure the FIPS compliant mode for the Datadog Agent.
-## The current method uses the fips-proxy sidecar to enable FIPS compliance.
-## The fips-proxy will be progressively deprecated in the future in favor of the use of FIPS compliant images (please refer to useFIPSAgent setting)
+## fips is used to enable and configure the fips-proxy sidecar.
 fips:
-  ## fips.enabled -- Enable fips proxy sidecar
+  # fips.enabled -- Enable fips proxy sidecar.
+  # The fips-proxy method is being progressively phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
@@ -1595,11 +1593,11 @@ fips:
   # This setting is only used for the fips-proxy sidecar.
   port: 9803
 
-  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577.
   # This setting is only used for the fips-proxy sidecar.
   portRange: 15
 
-  # fips.use_https -- Option to enable https
+  # fips.use_https -- Option to enable https.
   # This setting is only used for the fips-proxy sidecar.
   use_https: false
 
@@ -1613,12 +1611,11 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
-  # fips.local_address -- Set local IP address
+  # fips.local_address -- Set local IP address.
   # This setting is only used for the fips-proxy sidecar.
   local_address: "127.0.0.1"
 
   ## Define the Datadog image to work with
-  # This setting is only used for the fips-proxy sidecar.
   image:
     ## fips.image.name -- Define the FIPS sidecar container image name.
     name: fips-proxy
@@ -1639,7 +1636,6 @@ fips:
 
   ## Note: Use `|` to declare multi-line configuration.
   ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
-  # This setting is only used for the fips-proxy sidecar.
   customFipsConfig: {}  # |
   #  foobar
   #     foo bar baz

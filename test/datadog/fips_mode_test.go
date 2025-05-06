@@ -5,59 +5,73 @@ import (
 	"strings"
 	"testing"
 
+	"strconv"
+
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"strconv"
 )
 
 func TestFIPSModeConditions(t *testing.T) {
 	tests := []struct {
-		name                   string
-		setFipsEnabledSetting  bool
-		setUseFipsImageSetting bool
-		expectFipsProxy        bool
-		expectFipsImageSuffix  bool
+		name            string
+		enableFIPSProxy bool
+		enableFIPSAgent bool
+		expectFIPSProxy bool
+		expectFIPSAgent bool
+		enableJMX       bool
 	}{
 		{
-			name:                   "fips.useFipsImages true should not use fips-proxy and use fips image",
-			setFipsEnabledSetting:  true,
-			setUseFipsImageSetting: true,
-			expectFipsProxy:        false,
-			expectFipsImageSuffix:  true,
+			name:            "without any fips configuration",
+			enableFIPSProxy: false,
+			enableFIPSAgent: false,
+			expectFIPSProxy: false,
+			expectFIPSAgent: false,
 		},
 		{
-			name:                   "fips.useFipsImages false and fips.enabled true should use fips-proxy and not use fips image",
-			setFipsEnabledSetting:  true,
-			setUseFipsImageSetting: false,
-			expectFipsProxy:        true,
-			expectFipsImageSuffix:  false,
+			name:            "fips proxy only",
+			enableFIPSProxy: true,
+			enableFIPSAgent: false,
+			expectFIPSProxy: true,
+			expectFIPSAgent: false,
 		},
 		{
-			name:                   "fips.useFipsImages false and fips.enabled false should not use fips-proxy or fips image",
-			setFipsEnabledSetting:  false,
-			setUseFipsImageSetting: true,
-			expectFipsProxy:        false,
-			expectFipsImageSuffix:  false,
+			name:            "fips image only",
+			enableFIPSProxy: false,
+			enableFIPSAgent: true,
+			expectFIPSProxy: false,
+			expectFIPSAgent: true,
 		},
 		{
-			name:                   "fips.useFipsImages false and fips.enabled false should not use fips-proxy or fips image",
-			setFipsEnabledSetting:  false,
-			setUseFipsImageSetting: true,
-			expectFipsProxy:        false,
-			expectFipsImageSuffix:  false,
+			name:            "fips proxy and fips image",
+			enableFIPSProxy: true,
+			enableFIPSAgent: true,
+			expectFIPSProxy: false, // fips proxy should be disabled when fips agent is enabled
+			expectFIPSAgent: true,
+		},
+		{
+			name:            "fips image with JMX enabled",
+			enableFIPSProxy: false,
+			enableFIPSAgent: true,
+			expectFIPSProxy: false,
+			expectFIPSAgent: true,
+			enableJMX:       true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			values := map[string]string{
-				"fips.useFipsImages": strconv.FormatBool(tt.setUseFipsImageSetting),
-				"fips.enabled":       strconv.FormatBool(tt.setFipsEnabledSetting),
+				"useFIPSAgent":                 strconv.FormatBool(tt.enableFIPSAgent),
+				"fips.enabled":                 strconv.FormatBool(tt.enableFIPSProxy),
 				"datadog.apiKeyExistingSecret": "datadog-secret",
-	            "datadog.appKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+			}
+
+			if tt.enableJMX {
+				values["agents.image.tagSuffix"] = "jmx"
 			}
 
 			manifest, err := common.RenderChart(t, common.HelmCommand{
@@ -81,15 +95,41 @@ func TestFIPSModeConditions(t *testing.T) {
 			// Check FIPS proxy setting
 			if value, ok := configMap.Data["should-enable-fips-proxy"]; ok {
 				fmt.Printf("should-enable-fips-proxy: %s\n", value)
-				assert.Equal(t, tt.expectFipsProxy, value == "true", "should-enable-fips-proxy value is incorrect")
+				assert.Equal(t, tt.expectFIPSProxy, value == "true", "should-enable-fips-proxy value is incorrect")
 			}
 
-			// Check FIPS image suffix
-			for _, container := range daemonSet.Spec.Template.Spec.Containers {
-				fmt.Printf("container.Image: %s\n", container.Image)
-				assert.Equal(t, tt.expectFipsImageSuffix, strings.Contains(container.Image, "-fips"), "fips image suffix is incorrect")
-			}
+			// Checking that daemonSet contains or not fips-proxy container based on the fips proxy configuration
+			checkFIPSProxy(t, daemonSet.Spec.Template.Spec.Containers, tt.expectFIPSProxy)
 
+			// Checking that all containers have the fips image suffix if fips agent is enabled
+			checkFIPSImage(t, daemonSet.Spec.Template.Spec.Containers, tt.expectFIPSAgent)
 		})
+	}
+}
+
+func checkFIPSProxy(t *testing.T, containers []corev1.Container, expectFIPSProxy bool) {
+	hasFIPSProxy := false
+	for _, container := range containers {
+		if strings.Contains(container.Image, "fips-proxy") {
+			hasFIPSProxy = true
+			break
+		}
+	}
+	if expectFIPSProxy {
+		require.True(t, hasFIPSProxy, "fips proxy container should be present")
+	} else {
+		require.False(t, hasFIPSProxy, "fips proxy container should not be present")
+	}
+}
+
+func checkFIPSImage(t *testing.T, containers []corev1.Container, expectFIPSImage bool) {
+	if expectFIPSImage {
+		for _, container := range containers {
+			require.Contains(t, container.Image, "-fips", fmt.Sprintf("fips container %s should have the fips image suffix: %s", container.Name, container.Image))
+		}
+	} else {
+		for _, container := range containers {
+			require.NotContains(t, container.Image, "-fips", fmt.Sprintf("fips container %s should not have the fips image suffix: %s", container.Name, container.Image))
+		}
 	}
 }
