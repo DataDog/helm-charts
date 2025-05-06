@@ -45,32 +45,38 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test:
-	go test -C test ./... -count=1
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
+	helm dependency update ./charts/datadog
 	go test -C test ./datadog -count=1
 
 .PHONY: unit-test-operator
 unit-test-operator:
+	helm dependency update ./charts/datadog-operator
 	go test -C test ./datadog-operator -count=1
 
 .PHONY: unit-test-private-action-runner
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
 
+.PHONY: update-test-baselines
+update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner
+
 .PHONY: update-test-baselines-private-action-runner
 update-test-baselines-private-action-runner:
 	go test -C test ./private-action-runner -count=1 -args -updateBaselines=true
 
-.PHONY: update-test-baselines
-update-test-baselines:
-	go test -C test ./... -count=1 -args -updateBaselines=true
-
 .PHONY: update-test-baselines-operator
-update-test-baselines-operator:
+update-test-baselines-operator: 
+	helm dependency update ./charts/datadog-operator
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-datadog-agent
+update-test-baselines-datadog-agent: 
+	helm dependency update ./charts/datadog
+	go test -C test ./datadog -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:

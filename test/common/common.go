@@ -11,6 +11,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
@@ -25,6 +26,7 @@ type HelmCommand struct {
 	Values        []string          // helm template `-f, --values` flag
 	Overrides     map[string]string // helm template `--set` flag
 	OverridesJson map[string]string // helm template `--set-json` flag
+	Logger        *logger.Logger    // logger to use for helm output. Set to logger.Discard by default.
 }
 
 func Unmarshal[T any](t *testing.T, manifest string, destObj *T) {
@@ -45,7 +47,11 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 		ValuesFiles:    cmd.Values,
 	}
 
-	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly, "--debug")
+	if cmd.Logger == nil {
+		options.Logger = logger.Discard
+	}
+
+	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly /*, "--debug"*/)
 
 	return output, err
 }
