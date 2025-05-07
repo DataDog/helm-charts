@@ -1578,24 +1578,33 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
-# fips is used to enable the fips sidecar container for GOVCLOUD environments.
+# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments.
+# Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance.
+useFIPSAgent: false
+
+## fips is used to enable and configure the fips-proxy sidecar.
 fips:
-  # fips.enabled -- Enable fips sidecar
+  # fips.enabled -- Enable fips proxy sidecar.
+  # The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
   # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # This setting is only used for the fips-proxy sidecar.
   port: 9803
 
-  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577.
+  # This setting is only used for the fips-proxy sidecar.
   portRange: 15
 
-  # fips.use_https -- Option to enable https
+  # fips.use_https -- Option to enable https.
+  # This setting is only used for the fips-proxy sidecar.
   use_https: false
 
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
+  # This setting is only used for the fips-proxy sidecar.
   resources: {}
     # limits:
     #   cpu: 100m
@@ -1604,7 +1613,8 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
-  # fips.local_address -- Set local IP address
+  # fips.local_address -- Set local IP address.
+  # This setting is only used for the fips-proxy sidecar.
   local_address: "127.0.0.1"
 
   ## Define the Datadog image to work with

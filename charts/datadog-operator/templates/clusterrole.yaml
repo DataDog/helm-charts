@@ -77,7 +77,6 @@ rules:
   - '*'
 - apiGroups:
   - apiextensions.k8s.io
-  - extensions
   resources:
   - customresourcedefinitions
   verbs:
@@ -89,6 +88,7 @@ rules:
   - apiservices
   verbs:
   - '*'
+  - deletecollection
   - list
   - watch
 - apiGroups:
@@ -114,23 +114,6 @@ rules:
   - list
   - watch
 - apiGroups:
-  - apps
-  resources:
-  - replicationcontrollers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs:
-  - list
-  - watch
-- apiGroups:
   - authentication.k8s.io
   resources:
   - tokenreviews
@@ -146,23 +129,6 @@ rules:
   verbs:
   - create
   - get
-- apiGroups:
-  - authorization.k8s.io
-  - rbac.authorization.k8s.io
-  - roles.rbac.authorization.k8s.io
-  resources:
-  - clusterrolebindings
-  - clusterroles
-  - rolebindings
-  - roles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - autoscaling
   resources:
@@ -282,6 +248,13 @@ rules:
   - list
   - watch
 - apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - external.metrics.k8s.io
   resources:
   - '*'
@@ -334,6 +307,33 @@ rules:
   verbs:
   - get
   - list
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - security.openshift.io
   resourceNames:
