@@ -118,7 +118,7 @@ spec:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
 {{- end }}
       containers:
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
       - name: agent

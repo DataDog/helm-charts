@@ -41,7 +41,7 @@
     path: /etc/system-release
   name: etc-system-release
 {{- end -}}
-{{- if eq (include "should-enable-fips" . ) "true" }}
+{{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
