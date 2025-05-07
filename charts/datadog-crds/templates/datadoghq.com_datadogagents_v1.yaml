@@ -1541,6 +1541,8 @@ spec:
                         type: string
                       type: array
                       x-kubernetes-list-type: set
+                    useFIPSAgent:
+                      type: boolean
                   type: object
                 override:
                   additionalProperties:
