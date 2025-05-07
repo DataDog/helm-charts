@@ -665,8 +665,9 @@ OTel collector is in preview. Please reach out to your Datadog representative fo
 ####               WARNING: Deprecation notice               ####
 #################################################################
 The FIPS Proxy is being progressively phased out in favor of FIPS-compliant images.
-To transition to the FIPS Agent set `useFIPSAgent` value to true in your datadog-agent.yaml file.
+For new deployments, we recommend using the FIPS Agent.
+You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml file.
 
-To learn more about the FIPS Agent please refer to the following documentation:
+To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
