@@ -627,6 +627,12 @@ datadog:
         name: otel-http
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.configMap -- Use an existing ConfigMap for DDOT Collector configuration
+    configMap:
+      # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
+      name: null
+      # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
+      key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
 
@@ -1118,7 +1124,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.64.1
+    tag: 7.65.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1607,7 +1613,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.9
+    tag: 1.1.10
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1650,7 +1656,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.65.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2166,7 +2172,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.65.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

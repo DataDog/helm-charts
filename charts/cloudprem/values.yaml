@@ -8,7 +8,7 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.0
+  tag: v0.1.4
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -56,14 +56,13 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1005
 
+# If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
+tracingEnabled: true
+
 # Additional global env
 environment:
   QW_DISABLE_TELEMETRY: true
-  QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: true
   NO_COLOR: true
-  OTEL_EXPORTER_OTLP_ENDPOINT: http://$(HOST_IP):4317
-  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-  OTEL_EXPORTER_OTLP_TIMEOUT: 10
 
 environmentFrom: []
   # - secretRef:
@@ -567,108 +566,7 @@ config:
 # Seed configuration
 seed:
   indexes:
-    - version: 0.9
-      index_id: datadog
-
-      indexing_settings:
-        commit_timeout_secs: 30
-      search_settings:
-        default_search_fields: []
-
-      doc_mapping:
-        mode: dynamic
-        tag_fields: []
-        timestamp_field: timestamp
-        index_field_presence: true
-
-        field_mappings:
-          - name: timestamp
-            type: datetime
-            fast: true
-            input_formats:
-              - rfc3339
-              - iso8601
-              - unix_timestamp
-
-          - name: message
-            type: text
-            record: position
-            fast: true
-
-          - name: id
-            type: text
-            tokenizer: raw
-
-          - name: custom
-            type: json
-            record: position
-            fast: true
-
-          - name: tag
-            type: json
-            tokenizer: raw
-            fast: true
-
-          - name: tags
-            type: 'array<text>'
-            stored: true
-            indexed: false
-            fast: false
-
-          - name: error
-            type: json
-            record: position
-            fast: true
-
-          - name: service
-            type: text
-            tokenizer: raw
-            fast: true
-
-          - name: service_type
-            type: text
-            tokenizer: raw
-            fast: true
-
-          - name: status
-            type: text
-            tokenizer: raw
-            fast: true
-
-          - name: host
-            type: text
-            tokenizer: raw
-            fast: true
-
-          - name: trace_id
-            type: text
-            tokenizer: raw
-            fast: true
-
-          - name: span_id
-            type: text
-            tokenizer: raw
-
-          - name: default
-            type: concatenate
-            concatenate_fields:
-              - error
-              - message
-            record: position
-
-          - name: all
-            type: concatenate
-            concatenate_fields:
-              - custom
-              - error
-              - host
-              - message
-              - service
-              - service_type
-              - span_id
-              - status
-              - trace_id
-            record: position
+    - datadog.yaml
 
   sources: []
     # - index: my-index
@@ -759,3 +657,7 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+# List of pipeline of processors in JSON format.
+# If unset, no pipeline will be created.
+pipelinesConfig: null

@@ -339,10 +339,15 @@ rules:
       - apps
     resources:
       - statefulsets
-      - replicationcontrollers
       - replicasets
       - deployments
       - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
     verbs:
       - get
   - apiGroups:
@@ -827,7 +832,7 @@ spec:
               value: /var/lib/kubelet/pod-resources/kubelet.sock
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -930,7 +935,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -956,7 +961,7 @@ spec:
           command:
             - pwsh
             - -Command
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -996,7 +1001,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1189,7 +1194,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.65.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1262,7 +1267,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

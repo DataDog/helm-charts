@@ -339,10 +339,15 @@ rules:
       - apps
     resources:
       - statefulsets
-      - replicationcontrollers
       - replicasets
       - deployments
       - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
     verbs:
       - get
   - apiGroups:
@@ -731,7 +736,8 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        autopilot.gke.io/no-connect: "true"
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -758,6 +764,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -770,6 +778,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: HELM_FORCE_RENDER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROVIDER_KIND
@@ -833,7 +843,7 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -909,6 +919,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -921,6 +933,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: HELM_FORCE_RENDER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROVIDER_KIND
@@ -952,7 +966,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources:
@@ -993,7 +1007,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1022,6 +1036,8 @@ spec:
               value: "true"
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1034,11 +1050,13 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: HELM_FORCE_RENDER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1166,6 +1184,8 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1254,7 +1274,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.65.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1333,7 +1353,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.65.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

@@ -28,3 +28,12 @@ image:
   ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   pullSecrets: []
   #   - name: "<REG_SECRET>"
+
+sockets:
+  # apmHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.apm.hostSocketPath`
+  apmHostSocketPath: /var/run/datadog/apm.socket
+
+  # dsdHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.dsd.hostSocketPath`
+  dsdHostSocketPath: /var/run/datadog/dsd.socket
