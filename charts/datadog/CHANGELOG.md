@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.0
+
+* Add a new parameter `useFIPSAgent` to use FIPS-compliant images for the Agent and DCA.
+
 ## 3.113.0
 
 * Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default. This option requires Agent **7.65.0+**.

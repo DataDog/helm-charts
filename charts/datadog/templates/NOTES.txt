@@ -658,3 +658,16 @@ OTel collector is not supported on GKE Autopilot.
 #################################################################
 OTel collector is in preview. Please reach out to your Datadog representative for more information.
 {{- end }}
+
+
+{{- if (eq (include "should-enable-fips-proxy" .) "true")  }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+The FIPS Proxy is getting phased out in favor of FIPS-compliant images.
+For new deployments, we recommend using the FIPS Agent.
+You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml file.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/agent/guide/fips-agent/
+{{- end }}
