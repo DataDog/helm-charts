@@ -14,14 +14,14 @@ spec:
         admission.datadoghq.com/enabled: "false"
     spec:
       hostNetwork: true
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
       containers:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.image.pullSecrets }}
-          imagePullSecrets:
-    {{ toYaml .Values.image.pullSecrets | indent 8 }}
-          {{- end }}
           securityContext:
             privileged: true 
           ports:
