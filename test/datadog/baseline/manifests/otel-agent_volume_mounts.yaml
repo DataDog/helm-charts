@@ -839,6 +839,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -1026,6 +1028,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1131,6 +1135,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1235,6 +1241,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
           image: gcr.io/datadoghq/agent:7.65.0

@@ -1024,6 +1024,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
             - name: HELM_FORCE_RENDER
@@ -1192,6 +1194,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
             - name: HELM_FORCE_RENDER
@@ -1297,6 +1301,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
             - name: HELM_FORCE_RENDER
@@ -1408,6 +1414,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
             - name: HELM_FORCE_RENDER

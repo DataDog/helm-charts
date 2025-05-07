@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.113.0
+
+* Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default. This option requires Agent **7.65.0+**.
+
 ## 3.112.0
 
 * Upgrade default Agent version to `7.65.0`.
