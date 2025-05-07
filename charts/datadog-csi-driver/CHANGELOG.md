@@ -2,7 +2,7 @@
 
 ## 0.3.1
 
-* Fix image pull secrets of thee csi driver daemonset: it should be set on the pod level instead of the container level. 
+* Fix image pull secrets of the CSI driver daemonset.
 
 ## 0.3.0
 
