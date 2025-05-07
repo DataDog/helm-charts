@@ -1582,7 +1582,7 @@ useFIPSAgent: false
 ## fips is used to enable and configure the fips-proxy sidecar.
 fips:
   # fips.enabled -- Enable fips proxy sidecar.
-  # The fips-proxy method is being progressively phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
+  # The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg

@@ -906,7 +906,7 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
 | fips.customFipsConfig | object | `{}` | Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used. |
-| fips.enabled | bool | `false` | Enable fips proxy sidecar. The fips-proxy method is being progressively phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting). |
+| fips.enabled | bool | `false` | Enable fips proxy sidecar. The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting). |
 | fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
