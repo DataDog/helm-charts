@@ -2,7 +2,7 @@
 
 ## 3.114.1
 
-* Fix default container resources for GKE Autopilot cluster checks runner.
+* Fix default cluster checks runner container resources for GKE Autopilot.
 
 ## 3.114.0
 
