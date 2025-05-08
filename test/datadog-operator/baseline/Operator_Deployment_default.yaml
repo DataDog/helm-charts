@@ -7,7 +7,7 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.10.0-dev
+    helm.sh/chart: datadog-operator-2.10.0-dev.1
     app.kubernetes.io/instance: datadog-operator
     app.kubernetes.io/version: "1.15.0-rc.1"
     app.kubernetes.io/managed-by: Helm
@@ -54,9 +54,14 @@ spec:
             - "-metrics-addr=:8383"
             - "-loglevel=info"
             - "-operatorMetricsEnabled=true"
+            - "-introspectionEnabled=false"
+            - "-datadogAgentProfileEnabled=false"
             - "-datadogMonitorEnabled=false"
             - "-datadogAgentEnabled=true"
+            - "-datadogSLOEnabled=false"
             - "-datadogDashboardEnabled=false"
+            - "-datadogGenericResourceEnabled=false"
+            - "-remoteConfigEnabled=false"
           ports:
             - name: metrics
               containerPort: 8383
