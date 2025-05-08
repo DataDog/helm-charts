@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.10.1-dev
+## 2.10.1
 
 * Fix semverCompare to work with pre-release versions.
 

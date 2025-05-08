@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.10.1-dev](https://img.shields.io/badge/Version-2.10.1--dev-informational?style=flat-square) ![AppVersion: 1.15.0-rc.1](https://img.shields.io/badge/AppVersion-1.15.0--rc.1-informational?style=flat-square)
+![Version: 2.10.1](https://img.shields.io/badge/Version-2.10.1-informational?style=flat-square) ![AppVersion: 1.15.0-rc.1](https://img.shields.io/badge/AppVersion-1.15.0--rc.1-informational?style=flat-square)
 
 ## Values
 
