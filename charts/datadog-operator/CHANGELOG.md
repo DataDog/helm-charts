@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.0-dev
+
+* Update Datadog Operator chart for 1.15.0-rc.1.
+
 ## 2.9.2
 
 * no-op chart bump to sync changlog with chart version.

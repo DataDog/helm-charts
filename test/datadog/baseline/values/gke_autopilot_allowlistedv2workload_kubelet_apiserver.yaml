@@ -2,15 +2,10 @@
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
+  kubelet:
+    useApiServer: true  # use apiserver instead of kubelet to collect /pods to rely on HTTPS instead of HTTP for kubelet
   envDict:
     HELM_FORCE_RENDER: false  # disable helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
-
-clusterAgent:
-  enabled: true
-
-clusterChecksRunner:
-  enabled: true
-
 providers:
   gke:
     autopilot: true
