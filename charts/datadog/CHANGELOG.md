@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.1
+
+* Fix default cluster checks runner container resources for GKE Autopilot.
+
 ## 3.114.0
 
 * Add a new parameter `useFIPSAgent` to use FIPS-compliant images for the Agent and DCA.
