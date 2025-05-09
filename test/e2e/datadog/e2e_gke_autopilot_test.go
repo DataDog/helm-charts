@@ -1,0 +1,74 @@
+//go:build e2e
+
+package datadog
+
+import (
+	"context"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
+	"github.com/pulumi/pulumi/sdk/v3/go/auto"
+	"strings"
+	"testing"
+
+	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
+
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
+)
+
+type gkeAutopilotSuite struct {
+	e2e.BaseSuite[environments.Kubernetes]
+}
+
+func TestGKEAutopilotSuite(t *testing.T) {
+	config := runner.ConfigMap{
+		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.30"},
+	}
+	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))))
+
+}
+
+func (v *gkeAutopilotSuite) TestGKEAutopilot() {
+	v.T().Log("Running GKE test")
+	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), v1.ListOptions{})
+
+	var agent corev1.Pod
+	containsAgent := false
+	for _, pod := range res.Items {
+		if strings.Contains(pod.Name, "agent") {
+			containsAgent = true
+			agent = pod
+			break
+		}
+	}
+	assert.True(v.T(), containsAgent, "Agent not found")
+
+	stdout, stderr, err := v.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", agent.Name, "agent", []string{"ls"})
+	require.NoError(v.T(), err)
+	assert.Empty(v.T(), stderr)
+	assert.NotEmpty(v.T(), stdout)
+
+	var clusterAgent corev1.Pod
+	containsClusterAgent := false
+	for _, pod := range res.Items {
+		if strings.Contains(pod.Name, "cluster-agent") {
+			containsClusterAgent = true
+			clusterAgent = pod
+			break
+		}
+	}
+	assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
+
+	stdout, stderr, err = v.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"ls"})
+	require.NoError(v.T(), err)
+	assert.Empty(v.T(), stderr)
+	assert.NotEmpty(v.T(), stdout)
+}
