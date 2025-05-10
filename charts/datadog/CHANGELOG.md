@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.2
+
+* use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
+
 ## 3.114.1
 
 * Fix default cluster checks runner container resources for GKE Autopilot.

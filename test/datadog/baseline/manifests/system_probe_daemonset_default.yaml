@@ -984,8 +984,7 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/system-probe: unconfined
+      annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -1434,6 +1433,8 @@ spec:
           name: system-probe
           resources: {}
           securityContext:
+            appArmorProfile:
+              type: Unconfined
             capabilities:
               add:
                 - SYS_ADMIN
