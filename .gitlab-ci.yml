@@ -41,7 +41,7 @@ e2e:
     - echo "Starting setup for E2E testing..."
     - mkdir -p ~/.aws
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
-      - export AWS_PROFILE=agent-qa-ci
+    - export AWS_PROFILE=agent-qa-ci
 
     # Configure AWS profile
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_PUBLIC_KEY_PATH
