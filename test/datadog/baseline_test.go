@@ -9,6 +9,7 @@ import (
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/google/go-cmp/cmp"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
@@ -50,6 +51,10 @@ func Test_baseline_inputs(t *testing.T) {
 				Values:      []string{"./baseline/values/" + file.Name()},
 			})
 			assert.Nil(t, err, "couldn't render template")
+
+			// Print Kubernetes version for debugging
+			kubectlOptions := k8s.NewKubectlOptions("", "", "datadog-agent")
+			k8s.RunKubectl(t, kubectlOptions, "version")
 
 			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
 
