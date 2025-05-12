@@ -1118,6 +1118,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
