@@ -61,7 +61,7 @@ func Test_E2E_AgentOnEKS(t *testing.T) {
 }
 
 func verifyPods(t *testing.T) {
-	nodes, err := common.ListNodes(namespace, k8sClient)
+	nodes, err := common.ListNodes(k8sClient)
 	require.NoError(t, err)
 
 	ddaPodList, err := common.ListPods(namespace, "app=dda-datadog", k8sClient)

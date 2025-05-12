@@ -61,7 +61,7 @@ func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
 	if !preserveStacks {
 		log.Println("Tearing down E2E stack. ")
 		if e2eEnv != nil {
-			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name)
+			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name, log.Writer())
 			if err != nil {
 				return fmt.Errorf("error tearing down E2E stack: %s", err)
 			}
@@ -141,7 +141,7 @@ func ListPods(namespace string, podLabelSelector string, client *kubernetes.Clie
 	return pods, nil
 }
 
-func ListNodes(namespace string, client kubernetes.Interface) (*corev1.NodeList, error) {
+func ListNodes(client kubernetes.Interface) (*corev1.NodeList, error) {
 	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
@@ -213,12 +213,4 @@ func (k8s *K8sExec) K8sExec(namespace string, podName string, containerName stri
 		return []byte{}, []byte{}, err
 	}
 	return stdout.Bytes(), stderr.Bytes(), nil
-}
-
-func NewK8sExec(clientSet *kubernetes.Clientset, restConfig *rest.Config) K8sExec {
-	k8sExec := K8sExec{
-		ClientSet:  clientSet,
-		RestConfig: restConfig,
-	}
-	return k8sExec
 }
