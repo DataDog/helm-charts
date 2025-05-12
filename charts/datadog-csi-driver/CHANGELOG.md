@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+* Fix bug that caused to pass the socket's parent directory to the start command arguments instead of the full socket path.
+
 ## 0.3.2
 
 * Add option to configure CSI registrar image

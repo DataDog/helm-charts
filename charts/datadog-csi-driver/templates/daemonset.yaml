@@ -28,9 +28,8 @@ spec:
             - containerPort: 5000
               protocol: TCP 
           args:
-            - /dd-csi-driver
-            - -apm-host-socket-path="{{ dir .Values.sockets.apmHostSocketPath }}"
-            - -dsd-host-socket-path="{{ dir .Values.sockets.dsdHostSocketPath }}"
+            - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
+            - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
           volumeMounts:
             - name: plugin-dir
               mountPath: /csi
