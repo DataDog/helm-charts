@@ -39,6 +39,7 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 	require.NoError(t, err)
 
 	kubectlOptions := k8s.NewKubectlOptions("", "", "datadog-agent")
+	k8s.RunKubectl(t, kubectlOptions, "version")
 
 	options := &helm.Options{
 		KubectlOptions: kubectlOptions,
