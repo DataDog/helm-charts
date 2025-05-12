@@ -4,6 +4,7 @@ GOTESTSUM_FORMAT?=standard-verbose
 
 # E2E environment variables
 E2E_CONFIG_PARAMS?=
+E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
 
@@ -25,6 +26,7 @@ override E2E_PROFILE=ci
 endif
 
 ifeq ($(E2E_PROFILE), ci)
+export E2E_KEY_PAIR_NAME
 export CI_ENV_NAMES
 export DD_TEAM
 export DD_TAGS
