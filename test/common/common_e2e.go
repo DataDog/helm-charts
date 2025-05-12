@@ -24,12 +24,12 @@ import (
 )
 
 var defaultPulumiConfigs = runner.ConfigMap{
-	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("AWS_KEYPAIR_NAME")},
+	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("E2E_KEY_PAIR_NAME")},
 }
 var defaultCIPulumiConfigs = runner.ConfigMap{
 	"aws:skipCredentialsValidation":     auto.ConfigValue{Value: "true"},
 	"aws:skipMetadataApiCheck":          auto.ConfigValue{Value: "false"},
-	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("AWS_PRIVATE_KEY_FILE")},
+	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("E2E_AWS_PRIVATE_KEY_PATH")},
 }
 
 type E2EEnv struct {
@@ -109,9 +109,9 @@ func SetupConfig() (runner.ConfigMap, error) {
 		// fast-fail if missing required env vars
 		_, e2eApiKeyBool := os.LookupEnv("E2E_API_KEY")
 		_, e2eAppKeyBool := os.LookupEnv("E2E_APP_KEY")
-		_, e2eAwsKeypairNameBool := os.LookupEnv("AWS_KEYPAIR_NAME")
+		_, e2eAwsKeypairNameBool := os.LookupEnv("E2E_KEY_PAIR_NAME")
 		if !e2eApiKeyBool || !e2eAppKeyBool || !e2eAwsKeypairNameBool {
-			return nil, fmt.Errorf("missing required environment variables. Must set `E2E_API_KEY`, `E2E_APP_KEY`, and `AWS_KEYPAIR_NAME` for the local E2E profile")
+			return nil, fmt.Errorf("missing required environment variables. Must set `E2E_API_KEY`, `E2E_APP_KEY`, and `E2E_KEY_PAIR_NAME` for the local E2E profile")
 		} else {
 			res.Merge(defaultPulumiConfigs)
 		}

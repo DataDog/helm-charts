@@ -9,7 +9,7 @@ DD_TAGS?=
 
 ## Local profile
 E2E_PROFILE?=local
-export AWS_KEYPAIR_NAME?=${USER}
+export E2E_KEY_PAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
