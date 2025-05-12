@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+* Add option to configure CSI registrar image
+
 ## 0.3.1
 
 * Fix image pull secrets of the CSI driver daemonset.

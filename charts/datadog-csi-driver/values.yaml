@@ -29,6 +29,20 @@ image:
   pullSecrets: []
   #   - name: "<REG_SECRET>"
 
+## Configure the CSI registrar to use as a sidecar container
+registrar:
+
+  # Define the CSI registrar image to work with
+  image:
+    # registrar.image.tag -- CSI registrar image tag to use
+    tag: v2.0.1
+
+    # registrar.image.repository -- Override default registry + image.name for the registrar
+    repository: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+
+    # registrar.image.pullPolicy -- CSI registrar image pullPolicy
+    pullPolicy: IfNotPresent
+
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.apm.hostSocketPath`
