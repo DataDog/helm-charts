@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.2
+
+* Upgrade default Agent version to `7.65.1`.
+
 ## 3.114.1
 
 * Fix default cluster checks runner container resources for GKE Autopilot.
