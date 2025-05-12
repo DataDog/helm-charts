@@ -40,7 +40,7 @@ e2e:
     # Setup AWS Credentials
     - echo "Starting setup for E2E testing..."
     - mkdir -p ~/.aws
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - export AWS_PROFILE=agent-qa-ci
 
     # Configure AWS profile
