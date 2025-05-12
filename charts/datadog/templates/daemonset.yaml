@@ -40,6 +40,7 @@ spec:
 {{ (include "provider-labels" .) | indent 8 }}
       name: {{ template "datadog.fullname" . }}
       annotations:
+        kubernetes.io/version: {{ .Capabilities.KubeVersion.Version }}
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
         {{- if not .Values.datadog.apiKeyExistingSecret }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
