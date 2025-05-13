@@ -899,6 +899,19 @@ securityContext:
     localhostProfile: {{ trimPrefix "localhost/" .seccomp }}
     {{- end }}
 {{- end -}}
+{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion) }}
+  appArmorProfile:
+    {{- if hasPrefix "localhost/" .apparmor }}
+    type: Localhost
+    {{- else if eq "runtime/default" .apparmor }}
+    type: RuntimeDefault
+    {{- else }}
+    type: Unconfined
+    {{- end -}}
+    {{- if hasPrefix "localhost/" .apparmor }}
+    localhostProfile: {{ trimPrefix "localhost/" .apparmor }}
+    {{- end }}
+{{- end -}}
 {{- end -}}
 {{- else if .sysAdmin }}
 securityContext:

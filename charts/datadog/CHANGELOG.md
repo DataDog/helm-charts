@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.4
+
+* use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
+
 ## 3.114.3
 
 * Show ERROR log if the chart is installed with different values for `datadog.dogstatsd.hostSocketPath` and `datadog.apm.hostSocketPath` while having same parent directories for `datadog.dogstatsd.socketPath` and `datadog.apm.socketPath`.
