@@ -736,7 +736,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerLifecycle.enabled | bool | `true` | Enable container lifecycle events collection |
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
-| datadog.csi.enabled | bool | `false` | Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver) This feature is still in beta |
+| datadog.csi.enabled | bool | `false` | Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver) This feature is still in beta Requires version 7.65 or later of the cluster agent |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
