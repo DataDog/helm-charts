@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.5
+
+* Update default system-probe memory and CPU requests and limits.
+
 ## 3.114.4
 
 * use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
