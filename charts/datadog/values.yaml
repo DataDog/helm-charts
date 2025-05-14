@@ -1305,7 +1305,7 @@ clusterAgent:
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
     ## Note: "csi" mode requires enabling csi with `datadog.csi.enabled`. If not set, the admission controller will fallback to "socket" mode.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
-    configMode: # "hostip", "socket", "csi" or "service"
+    configMode:  # "hostip", "socket", "csi" or "service"
 
     # clusterAgent.admissionController.failurePolicy -- Set the failure policy for dynamic admission control.'
 
