@@ -29,6 +29,14 @@ rules:
   - list
   - watch
   - create
+- apiGroups:
+  - "discovery.k8s.io"
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: ["quota.openshift.io"]
   resources:
   - clusterresourcequotas
@@ -249,7 +257,7 @@ rules:
   - mutatingwebhookconfigurations
   resourceNames:
     - {{ .Values.clusterAgent.admissionController.webhookName | quote }}
-  verbs: ["get", "list", "watch", "update"]
+  verbs: ["get", "list", "watch", "update", "delete"]
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
@@ -262,6 +270,14 @@ rules:
 - apiGroups: ["apps"]
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
+- apiGroups: [""]
+  resources: ["replicationcontrollers"]
+  verbs: ["get"]
+{{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+{{- end }}
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
 {{- if .Values.datadog.securityAgent.compliance.enabled }}
@@ -323,6 +339,14 @@ rules:
   verbs: ["get"]
 {{- end }}
 {{- if .Values.datadog.orchestratorExplorer.enabled }}
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
@@ -351,6 +375,9 @@ metadata:
     heritage: {{ .Release.Service | quote }}
     release: {{ .Release.Name | quote }}
 {{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAdditionalLabels) . | nindent 4 -}}
+{{ end }}
 {{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
   annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
 {{- end }}
@@ -502,14 +529,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
-{{- $mergedResources := merge (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags) (default dict .Values.datadog.kubernetesResourcesLabelsAsTags)}}
+{{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
 {{- range $resource, $labels := $mergedResources }}
-  {{- $parts := split "." $resource }}
+  {{- $parts := splitList "." $resource }}
   {{- $apiGroup := "" }}
-  {{- $resourceName := $resource }}
-  {{- if eq (len $parts) 2 }}
-    {{- $apiGroup = index $parts "_1" }}
-    {{- $resourceName = index $parts "_0" }}
+  {{- $resourceName := mustFirst $parts }}
+  {{- if gt (len $parts) 1 }}
+    {{- $apiGroup = join "." (mustRest $parts) }}
   {{- end }}
   {{- $existing := index $groupedResources $apiGroup | default (list) }}
   {{- $groupedResources = set $groupedResources $apiGroup (append $existing $resourceName) }}

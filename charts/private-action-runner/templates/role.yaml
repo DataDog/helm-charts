@@ -1,19 +1,16 @@
-{{- range $_, $runner := $.Values.runners }}
----
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: {{ $.Values.runner.roleType }}
 metadata:
   namespace: {{ $.Release.Namespace }}
-  name: {{ include "chart.roleName" $runner.name }}
+  name: {{ include "chart.fullname" . }}
 rules:
-{{- if $runner.kubernetesPermissions }}
-{{ $runner.kubernetesPermissions | toYaml }}
+{{- if $.Values.runner.kubernetesPermissions }}
+{{ $.Values.runner.kubernetesPermissions | toYaml }}
 {{- end }}
-{{- if $runner.kubernetesActions }}
+{{- if $.Values.runner.kubernetesActions }}
   {{- range $resourceType, $bundle := fromYaml (include "chart.k8sResourceMap" .) }}
-    {{- if index $runner.kubernetesActions $resourceType }}
-        {{- include "rbacRule" (dict "apiGroup" (include "chart.k8sApiGroup" $bundle) "resource" (lower $resourceType) "verbs"  (fromJsonArray (include "chart.k8sVerbs" (index $runner.kubernetesActions $resourceType))))}}
+    {{- if index $.Values.runner.kubernetesActions $resourceType }}
+        {{- include "rbacRule" (dict "apiGroup" (include "chart.k8sApiGroup" $bundle) "resource" (lower $resourceType) "verbs"  (fromJsonArray (include "chart.k8sVerbs" (index $.Values.runner.kubernetesActions $resourceType))))}}
     {{- end }}
   {{- end }}
-{{- end }}
 {{- end }}

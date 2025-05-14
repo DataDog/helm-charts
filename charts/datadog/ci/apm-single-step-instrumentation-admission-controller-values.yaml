@@ -8,3 +8,16 @@ clusterAgent:
   enabled: true
   admissionController:
     enabled: true
+    targets:
+      - name: "example"
+        podSelector:
+          matchLabels:
+            language: "python"
+        namespaceSelector:
+          matchNames:
+            - "applications"
+        ddTraceVersions:
+          python: "v2"
+        ddTraceConfigs:
+          - name: "DD_PROFILING_ENABLED"
+            value: "true"

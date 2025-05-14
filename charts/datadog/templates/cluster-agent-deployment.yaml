@@ -104,6 +104,9 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.resources }}
         resources:
 {{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
+{{- else if and (empty .Values.clusterAgent.containers.initContainers.resources) .Values.providers.gke.autopilot }}
+        resources:
+{{- include "default-container-resources" . | indent 10 }}
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
@@ -116,7 +119,7 @@ spec:
           - name: config
             mountPath: /opt/datadog-agent
       containers:
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
       - name: cluster-agent
@@ -128,7 +131,11 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         resources:
+{{- if and (empty .Values.clusterAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-agent-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterAgent.resources | indent 10 }}
+{{- end }}
         ports:
         - containerPort: 5005
           name: agentport
@@ -160,6 +167,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
@@ -248,6 +259,16 @@ spec:
           {{- else }}
             value: {{ include "registry" .Values | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.cwsInstrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_MODE
+            value: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.admissionController.kubernetesAdmissionEvents.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_KUBERNETES_ADMISSION_EVENTS_ENABLED
+            value: "true"
+          {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: {{ include "clusterAgent-remoteConfiguration-enabled" . | quote }}
@@ -266,6 +287,14 @@ spec:
           {{- if .Values.datadog.apm.instrumentation.libVersions }}
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.targets }}
+          - name: DD_APM_INSTRUMENTATION_TARGETS
+            value: {{ .Values.datadog.apm.instrumentation.targets | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
+          - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
+            value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
           {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
@@ -314,6 +343,8 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+            value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -466,7 +497,7 @@ spec:
             - key: helm.yaml
               path: helm.yaml
 {{- end }}
-{{- if .Values.datadog.collectEvents }}
+{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.yaml
 {{- end }}

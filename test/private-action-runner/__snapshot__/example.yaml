@@ -1,0 +1,274 @@
+---
+# Source: private-action-runner/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+stringData:
+  config.yaml: |
+    ddBaseURL: https://app.datadoghq.com
+    urn: CHANGE_ME_URN_FROM_CONFIG
+    privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
+    modes:
+      - appBuilder
+      - workflowAutomation
+    port: 9016
+    actionsAllowlist:
+      - com.datadoghq.http.request
+      - com.datadoghq.kubernetes.core.getPod
+      - com.datadoghq.kubernetes.core.listPod  
+  http_basic.json: |
+    {
+      "auth_type": "Basic Auth",
+      "credentials": [
+        {
+          "username": "USERNAME",
+          "password": "PASSWORD"
+        }
+      ]
+    }
+    
+  http_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "TOKEN1",
+          "tokenValue": "VALUE1"
+        }
+      ]
+    }
+    
+  jenkins_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "username": "localhost:7233",
+          "token": "TOKEN",
+          "domain": "DOMAIN"
+        }
+      ]
+    }
+    
+  postgresql_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "host",
+          "tokenValue": "HOST"
+        },
+        {
+          "tokenName": "port",
+          "tokenValue": "5432"
+        },
+        {
+          "tokenName": "user",
+          "tokenValue": "USER"
+        },
+        {
+          "tokenName": "password",
+          "tokenValue": "PASSWORD"
+        },
+        {
+          "tokenName": "database",
+          "tokenValue": "DATABASE"
+        },
+        {
+          "tokenName": "sslmode",
+          "tokenValue": "require"
+        },
+        {
+          "tokenName": "applicationName",
+          "tokenValue": "APPLICATION_NAME"
+        },
+        {
+          "tokenName": "searchPath",
+          "tokenValue": "SEARCH_PATH"
+        }
+      ]
+    }
+    
+  temporal_mTLS_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "serverAddress",
+          "tokenValue": "SERVERADDRESS"
+        },
+        {
+          "tokenName": "serverNameOverride",
+          "tokenValue": "SERVERNAMEOERRIDE"
+        },
+        {
+          "tokenName": "serverRootCACertificate",
+          "tokenValue": "SERVERROOTCACERTIFICATE"
+        },
+        {
+          "tokenName": "clientCertPairCrt",
+          "tokenValue": "CLIENTCERTPAIRCRT"
+        },
+        {
+          "tokenName": "clientCertPairKey",
+          "tokenValue": "CLIENTCERTPAIRKEY"
+        }
+      ]
+    }
+    
+  temporal_TLS_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "serverAddress",
+          "tokenValue": "SERVERADDRESS"
+        },
+        {
+          "tokenName": "serverNameOverride",
+          "tokenValue": "SERVERNAMEOERRIDE"
+        },
+        {
+          "tokenName": "serverRootCACertificate",
+          "tokenValue": "CLIENTCERTPAIRKEY"
+        }
+      ]
+    }
+    
+  gitlab_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "baseURL",
+          "tokenValue": "GITLAB_BASE_URL"
+        },
+        {
+          "tokenName": "gitlabApiToken",
+          "tokenValue": "GITLAB_API_TOKEN"
+        }
+      ]
+    }
+---
+# Source: private-action-runner/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: datadog-agent
+  name: example-test-private-action-runner
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+# Source: private-action-runner/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: example-test-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: example-test-private-action-runner
+    namespace: datadog-agent
+---
+# Source: private-action-runner/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+spec:
+  selector:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: example-test
+  ports:
+    - name: http
+      port: 9016
+      targetPort: 9016
+---
+# Source: private-action-runner/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.1.1
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.3.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: example-test
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: private-action-runner-1.1.1
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: example-test
+        app.kubernetes.io/version: "v1.3.0"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/values: edb14a6af08eb644f379510028ca0694bb17cf2d4d85a29fe3647fb305fc8fd4
+    spec:
+      serviceAccountName: example-test-private-action-runner
+      containers:
+        - name: runner
+          image: "gcr.io/datadoghq/private-action-runner:v1.3.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9016
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner
+            - name: all-secrets-at-once
+              mountPath: /etc/dd-action-runner/credentials/
+            - name: jenkins-secret
+              mountPath: /etc/dd-action-runner/credentials/jenkins
+          env: 
+            - name: ENV_VAR_NAME
+              value: ENV_VAR_VALUE
+          envFrom:
+            - secretRef:
+                name: A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN
+      volumes:
+        - name: secrets
+          secret:
+            secretName: example-test-private-action-runner
+        - name: all-secrets-at-once
+          secret:
+            secretName: all-secrets-at-once
+        - name: jenkins-secret
+          secret:
+            secretName: jenkins-secret

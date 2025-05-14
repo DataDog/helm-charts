@@ -1,0 +1,115 @@
+version: 0.9
+index_id: datadog
+indexing_settings:
+  commit_timeout_secs: 30
+search_settings:
+  default_search_fields: []
+doc_mapping:
+  mode: dynamic
+  field_mappings:
+    - name: timestamp
+      type: datetime
+      fast: true
+      input_formats:
+        - rfc3339
+        - iso8601
+        - unix_timestamp
+      fast_precision: milliseconds
+    - name: discovery_timestamp
+      type: datetime
+      fast: false
+      indexed: false
+      input_formats:
+        - unix_timestamp
+        - rfc3339
+        - iso8601
+    - name: ingest_size_in_bytes
+      type: u64
+      fast: true
+      indexed: false
+      stored: false
+    - name: tiebreaker
+      type: i64
+      fast: true
+      indexed: false
+      stored: true
+    - name: message
+      type: text
+      tokenizer: default
+      record: position
+      fast: true
+    - name: id
+      type: text
+      tokenizer: raw
+    - name: custom
+      type: json
+      tokenizer: default
+      record: position
+      fast: true
+    - name: tag
+      type: json
+      tokenizer: default
+      fast: true
+    - name: tags
+      type: 'array<text>'
+      stored: true
+      indexed: false
+      fast: false
+    - name: error
+      type: json
+      tokenizer: default
+      record: position
+      fast: false
+      stored: false
+    - name: service
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: source
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: service_type
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: status
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: host
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: trace_id
+      type: text
+      tokenizer: raw
+      fast: true
+    - name: span_id
+      type: text
+      tokenizer: raw
+    - name: default
+      type: concatenate
+      concatenate_fields:
+        - message
+        - error
+      tokenizer: default
+      record: position
+    - name: all
+      type: concatenate
+      concatenate_fields:
+        - message
+        - error
+        - source
+        - service
+        - service_type
+        - status
+        - host
+        - trace_id
+        - span_id
+        - custom
+      tokenizer: default
+      record: position
+  tag_fields: []
+  timestamp_field: timestamp
+  index_field_presence: true

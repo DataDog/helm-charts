@@ -10,6 +10,11 @@
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
+- name: pod-resources-socket
+  hostPath:
+    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
@@ -17,12 +22,12 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
+{{- if eq (include "should-add-host-path-for-os-release-file" .) "true"}}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.systemProbe.enableDefaultOsReleasePaths) .Values.datadog.sbom.host.enabled }}
+{{- if and (eq (include "should-add-host-path-for-os-release-paths" .) "true") (or (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-sbom-host-fs-collection" .) "true")) }}
 - hostPath:
     path: /etc/redhat-release
   name: etc-redhat-release
@@ -36,7 +41,7 @@
     path: /etc/system-release
   name: etc-system-release
 {{- end -}}
-{{- if eq (include "should-enable-fips" . ) "true" }}
+{{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
@@ -81,6 +86,11 @@
 - hostPath:
     path: /sys/kernel/debug
   name: debugfs
+{{- if .Values.datadog.networkMonitoring.enabled }}
+- hostPath:
+    path: /sys/fs/bpf
+  name: bpffs
+{{- end }}
 - name: sysprobe-socket-dir
   emptyDir: {}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
@@ -138,12 +148,12 @@
   name: btf-path
 {{- end }}
 {{- end }}
-{{- if or (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true") }}
+{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") .Values.datadog.serviceMonitoring.enabled) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -155,8 +165,11 @@
 - hostPath:
     path: /var/lib/docker
   name: host-docker-dir
+- hostPath:
+    path: /var/lib/containers
+  name: host-crio-dir
 {{- end }}
-{{- if .Values.datadog.sbom.host.enabled }}
+{{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
 - hostPath:
     path: /var/lib/apk
   name: host-apk-dir
@@ -190,7 +203,7 @@
   name: runtimesocketdir
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
@@ -210,5 +223,10 @@
 - secret:
     secretName: datadog-kubelet-cert
   name: kubelet-cert-volume
+{{- end }}
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+- name: gpu-devices
+  hostPath:
+    path: /dev/null
 {{- end }}
 {{- end -}}

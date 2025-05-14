@@ -1,3 +1,7 @@
+chart/cloudprem:
+    - changed-files:
+        - any-glob-to-any-file: "charts/cloudprem/**"
+
 chart/datadog:
     - changed-files:
         - any-glob-to-any-file: "charts/datadog/**"

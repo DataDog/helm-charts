@@ -29,21 +29,22 @@ func Test_processAgentConfigs(t *testing.T) {
 		assertions func(t *testing.T, manifest string)
 	}{
 		{
-			name: "default",
+			name: "checks in process agent -- linux",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret": "datadog-secret",
-					"datadog.appKeyExistingSecret": "datadog-secret",
+					"datadog.apiKeyExistingSecret":        "datadog-secret",
+					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"datadog.processAgent.runInCoreAgent": "false",
 				},
 			},
-			assertions: verifyDaemonsetMinimal,
+			assertions: verifyDaemonsetProcessAgentChecks,
 		},
 		{
-			name: "default windows",
+			name: "checks in process agent -- windows",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -55,10 +56,10 @@ func Test_processAgentConfigs(t *testing.T) {
 					"targetSystem":                 "windows",
 				},
 			},
-			assertions: verifyDaemonsetMinimalWindows,
+			assertions: verifyDaemonsetWindowsProcessAgentChecks,
 		},
 		{
-			name: "all checks off",
+			name: "no checks -- linux",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -71,6 +72,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.processAgent.containerCollection":               "false",
 					"datadog.processAgent.processDiscovery":                  "false",
 					"datadog.apm.instrumentation.language_detection.enabled": "false",
+					"datadog.processAgent.runInCoreAgent":                    "false",
 				},
 			},
 			assertions: verifyChecksOff,
@@ -90,12 +92,13 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.processAgent.processDiscovery":                  "false",
 					"datadog.apm.instrumentation.language_detection.enabled": "false",
 					"datadog.networkMonitoring.enabled":                      "true",
+					"datadog.processAgent.runInCoreAgent":                    "false",
 				},
 			},
 			assertions: verifyOnlyNetworkMonitoringEnabled,
 		},
 		{
-			name: "enable process checks in core agent -- linux with default version",
+			name: "enable process checks in core agent -- linux",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -106,40 +109,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.appKeyExistingSecret":           "datadog-secret",
 					"datadog.processAgent.runInCoreAgent":    "true",
 					"datadog.processAgent.processCollection": "true",
-				},
-			},
-			assertions: verifyLinuxRunInCoreAgent,
-		},
-		{
-			name: "enable process checks in core agent -- linux with latest version",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				ShowOnly:    []string{"templates/daemonset.yaml"},
-				Values:      []string{"../../charts/datadog/values.yaml"},
-				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":           "datadog-secret",
-					"datadog.appKeyExistingSecret":           "datadog-secret",
-					"datadog.processAgent.runInCoreAgent":    "true",
-					"datadog.processAgent.processCollection": "true",
-					"agents.image.tag":                       "latest",
-				},
-			},
-			assertions: verifyLinuxRunInCoreAgent,
-		},
-		{
-			name: "enable process checks in core agent -- linux with version 7",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				ShowOnly:    []string{"templates/daemonset.yaml"},
-				Values:      []string{"../../charts/datadog/values.yaml"},
-				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":           "datadog-secret",
-					"datadog.appKeyExistingSecret":           "datadog-secret",
-					"datadog.processAgent.runInCoreAgent":    "true",
-					"datadog.processAgent.processCollection": "true",
-					"agents.image.tag":                       "7",
+					"agents.image.tag":                       "7.60.0",
 				},
 			},
 			assertions: verifyLinuxRunInCoreAgent,
@@ -156,9 +126,10 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.appKeyExistingSecret":        "datadog-secret",
 					"targetSystem":                        "windows",
 					"datadog.processAgent.runInCoreAgent": "true",
+					"agents.image.tag":                    "7.60.0",
 				},
 			},
-			assertions: verifyDaemonsetMinimalWindows,
+			assertions: verifyDaemonsetWindowsProcessAgentChecks,
 		},
 		{
 			name: "orchestrator enabled - latest version",
@@ -175,6 +146,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.processAgent.processDiscovery":                  "false",
 					"datadog.apm.instrumentation.language_detection.enabled": "false",
 					"datadog.orchestratorExplorer.enabled":                   "true",
+					"datadog.processAgent.runInCoreAgent":                    "false",
 				},
 			},
 			assertions: verifyOrchestratorEnabledLatest,
@@ -279,7 +251,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"datadog.appKeyExistingSecret":                           "datadog-secret",
 					"datadog.processAgent.runInCoreAgent":                    "true",
 					"datadog.processAgent.processCollection":                 "true",
-					"agents.image.tag":                                       "7.57",
+					"agents.image.tag":                                       "7.60.0",
 					"datadog.apm.instrumentation.language_detection.enabled": "true",
 					"datadog.apm.instrumentation.enabled":                    "true",
 				},
@@ -297,7 +269,7 @@ func Test_processAgentConfigs(t *testing.T) {
 	}
 }
 
-func verifyDaemonsetMinimal(t *testing.T, manifest string) {
+func verifyDaemonsetProcessAgentChecks(t *testing.T, manifest string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
 	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
@@ -315,7 +287,7 @@ func verifyDaemonsetMinimal(t *testing.T, manifest string) {
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
 }
 
-func verifyDaemonsetMinimalWindows(t *testing.T, manifest string) {
+func verifyDaemonsetWindowsProcessAgentChecks(t *testing.T, manifest string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
 	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")

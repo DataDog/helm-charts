@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.3
   name: datadogdashboards.datadoghq.com
 spec:
   group: datadoghq.com
@@ -56,6 +56,9 @@ spec:
                   type: string
                 layoutType:
                   description: LayoutType is the layout type of the dashboard.
+                  enum:
+                    - ordered
+                    - free
                   type: string
                 notifyList:
                   description: NotifyList is the list of handles of users to notify when changes are made to this dashboard.
@@ -142,10 +145,14 @@ spec:
                   x-kubernetes-list-type: map
                 title:
                   description: Title is the title of the dashboard.
+                  minLength: 1
                   type: string
                 widgets:
                   description: Widgets is a JSON string representation of a list of Datadog API Widgets
                   type: string
+              required:
+                - layoutType
+                - title
               type: object
             status:
               description: DatadogDashboardStatus defines the observed state of DatadogDashboard
@@ -153,24 +160,7 @@ spec:
                 conditions:
                   description: Conditions represents the latest available observations of the state of a DatadogDashboard.
                   items:
-                    description: |-
-                      Condition contains details for one aspect of the current state of this API Resource.
-                      ---
-                      This struct is intended for direct use as an array at the field path .status.conditions.  For example,
-
-
-                      	type FooStatus struct{
-                      	    // Represents the observations of a foo's current state.
-                      	    // Known .status.conditions.type are: "Available", "Progressing", and "Degraded"
-                      	    // +patchMergeKey=type
-                      	    // +patchStrategy=merge
-                      	    // +listType=map
-                      	    // +listMapKey=type
-                      	    Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
-
-
-                      	    // other fields
-                      	}
+                    description: Condition contains details for one aspect of the current state of this API Resource.
                     properties:
                       lastTransitionTime:
                         description: |-
@@ -211,12 +201,7 @@ spec:
                           - Unknown
                         type: string
                       type:
-                        description: |-
-                          type of condition in CamelCase or in foo.example.com/CamelCase.
-                          ---
-                          Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-                          useful (see .node.status.conditions), the ability to deconflict is important.
-                          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
                         maxLength: 316
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                         type: string

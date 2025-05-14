@@ -337,7 +337,7 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if .Values.providers.gke.autopilot}}
+{{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
 
 ###########################################################################################
 ####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
@@ -347,12 +347,12 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 * The serviceAccountName must be "datadog-agent".
 * All ConfigMap names mounted must be hardcode.
 
-{{- if eq (include "system-probe-feature" .) "true" }}
+{{- if and (eq (include "system-probe-feature" .) "true") (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") }}
 
-#####################################################################
-####   WARNING: System Probe is not supported on GKE Autopilot   ####
-#####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill' and 'datadog.serviceMonitoring.enabled' must be set 'false'" }}
+##############################################################################################
+####   WARNING: System Probe on GKE Autopilot requires GKE v1.32.1-gke.1729000 or later   ####
+##############################################################################################
+{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled', 'datadog.traceroute.enabled', and 'datadog.discovery.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -412,13 +412,31 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- end }}
+
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+
+{{- if or .Values.datadog.sbom.containerImage.enabled .Values.datadog.sbom.host.enabled }}
+
+#######################################################################################
+####   WARNING: SBOM Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'datadog.sbom.containerImage.enabled' and 'datadog.sbom.host.enabled' must be set to 'false'.
+
+{{- end }}
+
+{{- end }}
+
+{{- if .Values.providers.gke.gdc }}
+
 {{- if .Values.datadog.networkMonitoring.enabled }}
 
 #######################################################################################
-####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
+####   WARNING: Network Performance Monitoring is not supported on GKE GDC   ####
 #######################################################################################
 
-{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+{{- fail "On GKE GDC environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
 
 {{- end }}
 
@@ -534,6 +552,42 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-sbom-host-fs-collection" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The SBOM host filesystem collection feature requires access to the os-release information from the host.
+`datadog.sbom.host.enabled: true` can't be used with `datadog.disableDefaultOsReleasePaths: true`.
+{{- fail "The SBOM host filesystem collection feature requires access to the os-release information from the host." }}
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-system-probe" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The current set of options used to install the chart requires the system-probe container to be enabled.
+However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `datadog.osReleasePath` is empty which is not compatible when the system-probe container is required.
+{{- fail "OS Release information is required  when system-probe is enabled." }}
+{{- end }}
+
+{{- if (and (eq  (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath) ) (ne .Values.datadog.dogstatsd.hostSocketPath .Values.datadog.apm.hostSocketPath)) }}
+#################################################################
+####            ERROR: Conflicting socket host path          ####
+#################################################################
+
+Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
+However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
+
+It is not possible to mount two different host paths at the same mount path. 
+
+To resolve this:
+- use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
+- or use different parent directories for datadog.dogstatsd.socketPath and datadog.apm.socketPath
+
+{{- end }}
+
+
+
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
   {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
@@ -620,4 +674,17 @@ OTel collector is not supported on GKE Autopilot.
 ####               WARNING: Private Beta notice              ####
 #################################################################
 OTel collector is in preview. Please reach out to your Datadog representative for more information.
+{{- end }}
+
+
+{{- if (eq (include "should-enable-fips-proxy" .) "true")  }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+The FIPS Proxy is getting phased out in favor of FIPS-compliant images.
+For new deployments, we recommend using the FIPS Agent.
+You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml file.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}

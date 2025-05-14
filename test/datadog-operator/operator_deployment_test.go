@@ -84,6 +84,23 @@ func Test_operator_chart(t *testing.T) {
 			assertions: verifyLivenessProbeOverride,
 			skipTest:   SkipTest,
 		},
+		{
+			name: "Watch namespaces correctly set",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"watchNamespaces":        "{common1,common2}",
+					"watchNamespacesAgent":   "{dda-ns}",
+					"watchNamespacesMonitor": "{monitor-ns}",
+					"watchNamespacesSLO":     "{}",
+				},
+			},
+			assertions: verifyWatchNamespaces,
+			skipTest:   SkipTest,
+		},
 	}
 
 	for _, tt := range tests {
@@ -104,7 +121,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "gcr.io/datadoghq/operator:1.10.0", operatorContainer.Image)
+	assert.Equal(t, "gcr.io/datadoghq/operator:1.15.0-rc.1", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
@@ -130,4 +147,31 @@ func verifyLivenessProbeOverride(t *testing.T, manifest string) {
 	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.PeriodSeconds)
 	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.TimeoutSeconds)
 	assert.Equal(t, int32(3), operatorContainer.LivenessProbe.FailureThreshold)
+}
+
+func verifyWatchNamespaces(t *testing.T, manifest string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+	watchNsEnv := FindEnvVarByName(operatorContainer.Env, "WATCH_NAMESPACE")
+	agentNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_AGENT_WATCH_NAMESPACE")
+	monitorNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_MONITOR_WATCH_NAMESPACE")
+	sloNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_SLO_WATCH_NAMESPACE")
+	dapNsEnv := FindEnvVarByName(operatorContainer.Env, "DD_AGENT_PROFILE_WATCH_NAMESPACE")
+
+	assert.Equal(t, "common1,common2", watchNsEnv.Value)
+	assert.Equal(t, "dda-ns", agentNsEnv.Value)
+	assert.Equal(t, "monitor-ns", monitorNsEnv.Value)
+	assert.Equal(t, "", sloNsEnv.Value)
+	assert.Nil(t, dapNsEnv)
+}
+
+func FindEnvVarByName(envs []v1.EnvVar, name string) *v1.EnvVar {
+	for i, env := range envs {
+		if env.Name == name {
+			return &envs[i]
+		}
+	}
+	return nil
 }
