@@ -321,7 +321,6 @@
 ## 3.81.2
 
 * Fix ci values.yaml files name to be taken into account by the ci job.
->>>>>>> main
 
 ## 3.81.1
 
