@@ -29,6 +29,7 @@ type gkeAutopilotSuite struct {
 
 func TestGKEAutopilotSuite(t *testing.T) {
 	gcpPrivateKeyPassword := os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
+	t.Logf("GCP Private Key Password length: %s", len(gcpPrivateKeyPassword))
 	config := runner.ConfigMap{
 		"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.30"},
 		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
