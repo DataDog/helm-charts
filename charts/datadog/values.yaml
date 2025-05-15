@@ -1982,11 +1982,11 @@ agents:
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
       resources: {}
       #  requests:
-      #    cpu: 100m
+      #    cpu: 150m
       #    memory: 200Mi
       #  limits:
-      #    cpu: 100m
-      #    memory: 200Mi
+      #    cpu: 300m
+      #    memory: 400Mi
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
