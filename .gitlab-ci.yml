@@ -52,6 +52,7 @@ e2e:
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
 
     # Use S3 backend to store stack status
+    - PULUMI_CONFIG_PASSPHRASE=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.pulumi_password --with-decryption --query "Parameter.Value" --out text) || exit $?; export PULUMI_CONFIG_PASSPHRASE
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
 
     # Set GITHUB_TOKEN to avoid getting rate-limited when pulumi sdk downloads the kubernetes provider
@@ -61,6 +62,8 @@ e2e:
     - set -x
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
     - touch $E2E_GCP_PRIVATE_KEY_PATH && chmod 600 $E2E_GCP_PRIVATE_KEY_PATH && aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PRIVATE_KEY_PATH || exit $?
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text) || exit $?; export E2E_GCP_PRIVATE_KEY_PASSWORD
+
     # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
     # The service account is called `agent-e2e-tests`
     - set -x
