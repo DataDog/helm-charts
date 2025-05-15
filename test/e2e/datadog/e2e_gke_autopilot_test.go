@@ -29,6 +29,7 @@ type gkeAutopilotSuite struct {
 func TestGKEAutopilotSuite(t *testing.T) {
 	config := runner.ConfigMap{
 		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.30"},
+		"ddinfra:env":               auto.ConfigValue{Value: "gcp/agent-qa"},
 	}
 	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))))
 
