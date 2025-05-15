@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.114.6
+
+* Upgrade default Agent version to `7.65.2`.
+
 ## 3.114.5
 
 * Update default system-probe memory and CPU requests and limits.
