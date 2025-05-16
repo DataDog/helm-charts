@@ -258,6 +258,21 @@ func Test_processAgentConfigs(t *testing.T) {
 			},
 			assertions: verifyLanguageDetectionInCoreAgent,
 		},
+		{
+			name: "unprivileged agent handling",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":        "datadog-secret",
+					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"datadog.securityContext.runAsUser":   "100",
+				},
+			},
+			assertions: verifyUnprivilegedAgentHandling,
+		},
 	}
 
 	for _, tt := range tests {
@@ -444,6 +459,14 @@ func verifyLinuxRunInCoreAgentOld(t *testing.T, manifest string) {
 	assertDefaultCommonProcessEnvs(t, processEnvs)
 	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
+}
+
+func verifyUnprivilegedAgentHandling(t *testing.T, manifest string) {
+	var deployment appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &deployment)
+	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+	assert.True(t, ok)
+	assert.False(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
 }
 
 func getContainer(t *testing.T, containers []corev1.Container, name string) (corev1.Container, bool) {
