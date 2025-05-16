@@ -48,13 +48,9 @@ e2e:
 
     # Configure AWS profile
     - set -x
+    - echo "AWS version $(aws --version)"
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --debug --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
-    - echo "AWS version $(aws --version)"
-
-    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.private_key_pass --debug --with-decryption --query "Parameter.Value" --out text)
-    - echo "Length of E2E_GCP_PRIVATE_KEY_PASSWORD ${#E2E_GCP_PRIVATE_KEY_PASSWORD}"
-    - export E2E_GCP_PRIVATE_KEY_PASSWORD
 
     # Use S3 backend to store stack status
     - export PULUMI_CONFIG_PASSPHRASE=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.pulumi_password --with-decryption --query "Parameter.Value" --out text)
@@ -71,8 +67,11 @@ e2e:
     # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
     # The service account is called `agent-e2e-tests`
     - set -x
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --debug --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.private_key_pass --debug --with-decryption --query "Parameter.Value" --out text)
+    - echo "Length of E2E_GCP_PRIVATE_KEY_PASSWORD ${#E2E_GCP_PRIVATE_KEY_PASSWORD}"
+    - export E2E_GCP_PRIVATE_KEY_PASSWORD
 
   script:
     - E2E_PROFILE=ci make test-e2e
