@@ -116,7 +116,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append .Values.tolerations .Values.metastore.tolerations | compact | uniq }}
+      {{- $tolerations := concat .Values.tolerations .Values.metastore.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if .Values.metastore.runtimeClassName }}
