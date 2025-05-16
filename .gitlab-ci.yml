@@ -51,6 +51,7 @@ e2e:
     - echo "AWS version $(aws --version)"
 
     - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'private_key_pass')].Name")
+    - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'ssh_public_key')].Name")
 
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --debug --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
