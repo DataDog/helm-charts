@@ -47,11 +47,12 @@ func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 	for _, pod := range res.Items {
 		if strings.Contains(pod.Name, "agent") {
 			containsAgent = true
+			agent = pod
 			break
 		}
 	}
-	assert.Equal(v.T(), "Running", agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 	assert.True(v.T(), containsAgent, "Agent not found")
+	assert.Equal(v.T(), corev1.PodStatus{Phase: "Running"}, agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
 	var clusterAgent corev1.Pod
 	containsClusterAgent := false
@@ -63,5 +64,5 @@ func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 		}
 	}
 	assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
-	assert.Equal(v.T(), "Running", clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
+	assert.Equal(v.T(), corev1.PodStatus{Phase: "Running"}, clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
 }
