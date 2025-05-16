@@ -619,15 +619,17 @@ datadog:
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
     enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening on
     ports:
 
         # Default GRPC port of OTLP receiver
       - containerPort: "4317"
         name: otel-grpc
+        protocol: TCP
         # Default HTTP port of OTLP receiver
       - containerPort: "4318"
         name: otel-http
+        protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
     # datadog.otelCollector.configMap -- Use an existing ConfigMap for DDOT Collector configuration
