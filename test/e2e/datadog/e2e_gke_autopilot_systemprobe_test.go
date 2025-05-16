@@ -23,11 +23,11 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 )
 
-type gkeAutopilotSuite struct {
+type gkeAutopilotSystemProbeSuite struct {
 	e2e.BaseSuite[environments.Kubernetes]
 }
 
-func TestGKEAutopilotSuite(t *testing.T) {
+func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
 	gcpPrivateKeyPassword := os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
 
 	config := runner.ConfigMap{
@@ -35,10 +35,17 @@ func TestGKEAutopilotSuite(t *testing.T) {
 		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
 		"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
 	}
-	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))), e2e.WithDevMode())
+
+	helmValues := `
+datadog:
+  systemProbe:
+    enableTCPQueueLength: true
+    enableOOMKill: true
+`
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(config))), e2e.WithDevMode())
 }
 
-func (v *gkeAutopilotSuite) TestGKEAutopilot() {
+func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	v.T().Log("Running GKE test")
 	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), v1.ListOptions{})
 
@@ -53,6 +60,18 @@ func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 	}
 	assert.True(v.T(), containsAgent, "Agent not found")
 	assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+
+	var systemProbe corev1.Pod
+	containsSystemProbe := false
+	for _, pod := range res.Items {
+		if strings.Contains(pod.Name, "system-probe") {
+			containsSystemProbe = true
+			systemProbe = pod
+			break
+		}
+	}
+	assert.True(v.T(), containsSystemProbe, "System probe container not found")
+	assert.Equal(v.T(), corev1.PodPhase("Running"), systemProbe.Status.Phase, fmt.Sprintf("System probe container is not running: %s", systemProbe.Status.Phase))
 
 	var clusterAgent corev1.Pod
 	containsClusterAgent := false
