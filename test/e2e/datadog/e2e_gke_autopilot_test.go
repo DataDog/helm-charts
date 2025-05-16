@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
+	"os"
 	"strings"
 	"testing"
 
@@ -27,12 +28,14 @@ type gkeAutopilotSuite struct {
 }
 
 func TestGKEAutopilotSuite(t *testing.T) {
-	config := runner.ConfigMap{
-		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
-		"ddinfra:env":               auto.ConfigValue{Value: "gcp/agent-qa"},
-	}
-	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))), e2e.WithDevMode(), e2e.WithSkipDeleteOnFailure())
+	gcpPrivateKeyPassword := os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
 
+	config := runner.ConfigMap{
+		"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.32"},
+		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
+		"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
+	}
+	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))), e2e.WithSkipDeleteOnFailure(), e2e.WithDevMode())
 }
 
 func (v *gkeAutopilotSuite) TestGKEAutopilot() {
