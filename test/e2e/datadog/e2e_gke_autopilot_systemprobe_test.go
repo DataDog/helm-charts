@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"os"
 	"strings"
@@ -16,7 +17,7 @@ import (
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 
@@ -29,13 +30,19 @@ type gkeAutopilotSystemProbeSuite struct {
 }
 
 func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
+	config, err := common.SetupConfig()
+	if err != nil {
+		t.Skipf("Skipping test, problem setting up stack config: %s", err)
+	}
+
 	gcpPrivateKeyPassword := os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
 
-	config := runner.ConfigMap{
+	runnerConfig := runner.ConfigMap{
 		"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.32"},
 		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
 		"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
 	}
+	runnerConfig.Merge(config)
 
 	helmValues := `
 datadog:
@@ -43,12 +50,12 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(config))), e2e.WithDevMode())
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode())
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
-	v.T().Log("Running GKE test")
-	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), v1.ListOptions{})
+	v.T().Log("Running GKE Autopilot with system-probe test")
+	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 	var agent corev1.Pod
 	containsAgent := false

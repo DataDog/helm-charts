@@ -1,26 +1,13 @@
 package common
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/utils/infra"
-	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
-
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/tools/remotecommand"
 )
 
 var defaultPulumiConfigs = runner.ConfigMap{
@@ -30,61 +17,6 @@ var defaultCIPulumiConfigs = runner.ConfigMap{
 	"aws:skipCredentialsValidation":     auto.ConfigValue{Value: "true"},
 	"aws:skipMetadataApiCheck":          auto.ConfigValue{Value: "false"},
 	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("E2E_AWS_PRIVATE_KEY_PATH")},
-}
-
-type E2EEnv struct {
-	context     context.Context
-	name        string
-	StackOutput auto.UpResult
-}
-
-// Create new EKS pulumi stack
-// The latest datadog/datadog helm chart is installed by default via the stack config `ddagent:deploy`
-func NewEKStack(stackConfig runner.ConfigMap, destroyStacks bool) (*E2EEnv, error) {
-	eksE2eEnv := &E2EEnv{
-		context: context.Background(),
-		name:    "eks-e2e",
-	}
-
-	stackManager := infra.GetStackManager()
-
-	// Get or create stack if it doesn't exist
-	_, stackOutput, err := stackManager.GetStack(eksE2eEnv.context, eksE2eEnv.name, stackConfig, eks.Run, destroyStacks)
-	if err != nil {
-		return nil, err
-	}
-	eksE2eEnv.StackOutput = stackOutput
-	return eksE2eEnv, nil
-}
-
-func TeardownE2EStack(e2eEnv *E2EEnv, preserveStacks bool) error {
-	if !preserveStacks {
-		log.Println("Tearing down E2E stack. ")
-		if e2eEnv != nil {
-			err := infra.GetStackManager().DeleteStack(e2eEnv.context, e2eEnv.name, log.Writer())
-			if err != nil {
-				return fmt.Errorf("error tearing down E2E stack: %s", err)
-			}
-		} else {
-			return cleanupStacks()
-		}
-	} else {
-		log.Println("Preserving E2E stack. ")
-		return nil
-	}
-	return nil
-}
-
-func cleanupStacks() error {
-	log.Println("Cleaning up E2E stacks. ")
-	errs := infra.GetStackManager().Cleanup(context.Background())
-	for _, err := range errs {
-		log.Println(err.Error())
-	}
-	if errs != nil {
-		return fmt.Errorf("error cleaning up E2E stacks")
-	}
-	return nil
 }
 
 func parseE2EConfigParams() []string {
@@ -130,87 +62,4 @@ func SetupConfig() (runner.ConfigMap, error) {
 	}
 	log.Printf("Setting up Pulumi E2E stack with configs: %v", res)
 	return res, nil
-}
-
-func ListPods(namespace string, podLabelSelector string, client *kubernetes.Clientset) (*corev1.PodList, error) {
-	pods, err := client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{LabelSelector: podLabelSelector})
-	if err != nil {
-		log.Panicf("error getting pods: %v", err)
-		return nil, err
-	}
-	return pods, nil
-}
-
-func ListNodes(client kubernetes.Interface) (*corev1.NodeList, error) {
-	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
-
-	if err != nil {
-		log.Panicf("error getting nodes: %v", err)
-	}
-	return nodes, nil
-}
-
-func NewClientFromKubeconfig(kc map[string]interface{}) (clientcmd.ClientConfig, *rest.Config, *kubernetes.Clientset, error) {
-	kubeconfig, err := json.Marshal(kc)
-	if err != nil {
-		log.Printf("Error encoding kubeconfig json. %v", err)
-		return nil, nil, nil, err
-	}
-	clientConfig, err := clientcmd.NewClientConfigFromBytes(kubeconfig)
-	if err != nil {
-		log.Printf("Error creating client config from kubeconfig. %v", err)
-		return nil, nil, nil, err
-	}
-	restConfig, err := clientConfig.ClientConfig()
-	if err != nil {
-		log.Printf("Error creating rest config. %v", err)
-		return nil, nil, nil, err
-	}
-
-	clientSet, err := kubernetes.NewForConfig(restConfig)
-	if err != nil {
-		log.Printf("Error creating clientset from rest config. %v", err)
-		return nil, nil, nil, err
-	}
-
-	return clientConfig, restConfig, clientSet, err
-}
-
-type K8sExec struct {
-	ClientSet  kubernetes.Interface
-	RestConfig *rest.Config
-}
-
-func (k8s *K8sExec) K8sExec(namespace string, podName string, containerName string, command []string) ([]byte, []byte, error) {
-	req := k8s.ClientSet.CoreV1().RESTClient().Post().
-		Resource("pods").
-		Name(podName).
-		Namespace(namespace).
-		SubResource("exec")
-
-	req.VersionedParams(&corev1.PodExecOptions{
-		Container: containerName,
-		Command:   command,
-		Stdin:     false,
-		Stdout:    true,
-		Stderr:    true,
-		TTY:       true,
-	}, scheme.ParameterCodec)
-
-	exec, err := remotecommand.NewSPDYExecutor(k8s.RestConfig, "POST", req.URL())
-	if err != nil {
-		log.Printf("Failed to exec:%v", err)
-		return []byte{}, []byte{}, err
-	}
-	var stdout, stderr bytes.Buffer
-	err = exec.Stream(remotecommand.StreamOptions{
-		Stdin:  nil,
-		Stdout: &stdout,
-		Stderr: &stderr,
-	})
-	if err != nil {
-		log.Printf("Failed to get result:%v", err)
-		return []byte{}, []byte{}, err
-	}
-	return stdout.Bytes(), stderr.Bytes(), nil
 }
