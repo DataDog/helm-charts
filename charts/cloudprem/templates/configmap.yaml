@@ -9,8 +9,5 @@ data:
     {{- toYaml .Values.config | nindent 4 }}
   {{- if .Values.pipelinesConfig }}
   pipelines_config.json: |-
-    # We parse the deserialize / reserialize the json to :
-    # 1. make sure the json is valid
-    # 2. make it more compact and help a little bit with the limit of etcd.
     {{ .Values.pipelinesConfig | fromJsonArray | mustToJson }}
   {{- end }}
