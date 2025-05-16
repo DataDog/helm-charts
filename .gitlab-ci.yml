@@ -55,7 +55,7 @@ e2e:
     - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'keyphrase')].Name")
     - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'passphrase')].Name")
 
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --debug --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
 
     # Use S3 backend to store stack status
@@ -67,7 +67,7 @@ e2e:
 
     # SSH Key retrieval for GCP
     - set -x
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --debug --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
     - touch $E2E_GCP_PRIVATE_KEY_PATH && chmod 600 $E2E_GCP_PRIVATE_KEY_PATH && aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PRIVATE_KEY_PATH || exit $?
 
     # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
@@ -75,7 +75,7 @@ e2e:
     - set -x
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
-    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.keyphrase --debug --with-decryption --query "Parameter.Value" --out text)
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.keyphrase --with-decryption --query "Parameter.Value" --out text)
     - echo "Length of E2E_GCP_PRIVATE_KEY_PASSWORD ${#E2E_GCP_PRIVATE_KEY_PASSWORD}"
     - export E2E_GCP_PRIVATE_KEY_PASSWORD
 
