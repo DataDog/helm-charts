@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
@@ -52,6 +53,7 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	var agent corev1.Pod
 	containsAgent := false
 	for _, pod := range res.Items {
+		v.T().Log("Checking pod: ", pod.Name)
 		if strings.Contains(pod.Name, "agent") {
 			containsAgent = true
 			agent = pod
@@ -61,17 +63,20 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	assert.True(v.T(), containsAgent, "Agent not found")
 	assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
-	var systemProbe corev1.Pod
-	containsSystemProbe := false
-	for _, pod := range res.Items {
-		if strings.Contains(pod.Name, "system-probe") {
-			containsSystemProbe = true
-			systemProbe = pod
-			break
+	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
+		var systemProbe corev1.Pod
+		containsSystemProbe := false
+		for _, pod := range res.Items {
+			v.T().Log("Checking pod: ", pod.Name)
+			if strings.Contains(pod.Name, "system-probe") {
+				containsSystemProbe = true
+				systemProbe = pod
+				break
+			}
 		}
-	}
-	assert.True(v.T(), containsSystemProbe, "System probe container not found")
-	assert.Equal(v.T(), corev1.PodPhase("Running"), systemProbe.Status.Phase, fmt.Sprintf("System probe container is not running: %s", systemProbe.Status.Phase))
+		assert.True(v.T(), containsSystemProbe, "System probe container not found")
+		assert.Equal(v.T(), corev1.PodPhase("Running"), systemProbe.Status.Phase, fmt.Sprintf("System probe container is not running: %s", systemProbe.Status.Phase))
+	}, 5*time.Minute, 30*time.Second, "system-probe readiness timed out")
 
 	var clusterAgent corev1.Pod
 	containsClusterAgent := false
