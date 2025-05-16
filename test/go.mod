@@ -6,7 +6,7 @@ toolchain go1.23.6
 
 require (
 	github.com/DataDog/datadog-agent/test/new-e2e v0.64.3
-	github.com/DataDog/test-infra-definitions v0.0.0-20250428144934-d7d0c8db9c87
+	github.com/DataDog/test-infra-definitions v0.0.2-0.20250513083729-2e9af8ebdfcb
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.46.16
 	github.com/pulumi/pulumi/sdk/v3 v3.145.0
