@@ -41,25 +41,14 @@ e2e:
   before_script:
     # Setup AWS Credentials
     - echo "Starting setup for E2E testing..."
-    - set -x
-    - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'private_key_pass')].Name")
-    - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'ssh_public_key')].Name")
-    - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'keyphrase')].Name")
-    - echo $(aws ssm describe-parameters --region us-east-1 --query "Parameters[?contains(Name, 'passphrase')].Name")
-    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.keyphrase --with-decryption --query "Parameter.Value" --out text)
-    - echo "Length of E2E_GCP_PRIVATE_KEY_PASSWORD ${#E2E_GCP_PRIVATE_KEY_PASSWORD}"
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text)
     - export E2E_GCP_PRIVATE_KEY_PASSWORD
 
     - mkdir -p ~/.aws
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --debug --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - export AWS_PROFILE=agent-qa-ci
 
     # Configure AWS profile
-    - set -x
-    - echo "AWS version $(aws --version)"
-
-
-
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
 
@@ -71,8 +60,7 @@ e2e:
     - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
 
     # SSH Key retrieval for GCP
-    - set -x
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
     - touch $E2E_GCP_PRIVATE_KEY_PATH && chmod 600 $E2E_GCP_PRIVATE_KEY_PATH && aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PRIVATE_KEY_PATH || exit $?
 
     # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
