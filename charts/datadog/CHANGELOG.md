@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.115.0
+
+* Add support for `secretBackend.refreshInterval` in chart/datadog.
+
 ## 3.114.6
 
 * Upgrade default Agent version to `7.65.2`.
