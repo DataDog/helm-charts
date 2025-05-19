@@ -21,3 +21,5 @@
 *.tmproj
 # OWNERS file for Kubernetes
 OWNERS
+# CI values files
+ci/
