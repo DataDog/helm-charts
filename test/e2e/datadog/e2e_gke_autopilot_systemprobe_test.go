@@ -73,18 +73,18 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 		assert.True(v.T(), containsAgent, "Agent not found")
 		assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
-		var systemProbe corev1.Pod
+		var systemProbeStatus corev1.ContainerState
 		containsSystemProbe := false
-		for _, pod := range res.Items {
-			v.T().Log("Checking pod: ", pod.Name)
-			if strings.Contains(pod.Name, "system-probe") {
+		for _, status := range agent.Status.ContainerStatuses {
+			v.T().Log("Checking pod: ", status.Name)
+			if strings.Contains(status.Name, "system-probe") {
 				containsSystemProbe = true
-				systemProbe = pod
+				systemProbeStatus = status.State
 				break
 			}
 		}
 		assert.True(v.T(), containsSystemProbe, "System probe container not found")
-		assert.Equal(v.T(), corev1.PodPhase("Running"), systemProbe.Status.Phase, fmt.Sprintf("System probe container is not running: %s", systemProbe.Status.Phase))
+		assert.Equal(v.T(), "Running", systemProbeStatus.String(), fmt.Sprintf("System probe container is not running: %s", systemProbeStatus.String()))
 
 		var clusterAgent corev1.Pod
 		containsClusterAgent := false
