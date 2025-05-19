@@ -6,6 +6,5 @@ chart-repos:
   - datadog=https://helm.datadoghq.com
   - kube-state-metrics=https://prometheus-community.github.io/helm-charts
 helm-extra-args: --timeout 300s
-use-helm-ignore: true
 check-version-increment: true
 debug: true
