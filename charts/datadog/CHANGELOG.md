@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.116.1
-
-* (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
-
 ## 3.116.0
 
 * Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
