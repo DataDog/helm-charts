@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.116.1
+
+* add support for enabling csi driver globally and as admission controller config mode.
+
 ## 3.116.0
 
 * Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
@@ -66,6 +70,7 @@
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
 
 ## 3.110.13
+
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
 ## 3.110.12
