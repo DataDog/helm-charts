@@ -118,7 +118,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append .Values.tolerations .Values.control_plane.tolerations | compact | uniq }}
+      {{- $tolerations := concat .Values.tolerations .Values.control_plane.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if .Values.control_plane.runtimeClassName }}

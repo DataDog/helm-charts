@@ -96,7 +96,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append $.Values.tolerations $.Values.bootstrap.tolerations | compact | uniq }}
+      {{- $tolerations := concat $.Values.tolerations $.Values.bootstrap.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if $.Values.bootstrap.runtimeClassName }}

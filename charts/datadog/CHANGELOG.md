@@ -1,8 +1,25 @@
 # Datadog changelog
 
-## 3.114.5
+## 3.116.1
 
 * add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.116.0
+
+* Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
+* The `agents.containers.otelAgent.ports` allows to expose additional ports (e.g., for zPages, debugging, or custom extensions) on the `otel-agent` container.
+
+## 3.115.0
+
+* Add support for `secretBackend.refreshInterval` in chart/datadog.
+
+## 3.114.6
+
+* Upgrade default Agent version to `7.65.2`.
+
+## 3.114.5
+
+* Update default system-probe memory and CPU requests and limits.
 
 ## 3.114.4
 
