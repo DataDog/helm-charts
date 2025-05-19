@@ -14,6 +14,9 @@ datadog:
     config: |
       receivers:
         otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:5317"
         filelog:
         filelog/datadog:
       exporters:
