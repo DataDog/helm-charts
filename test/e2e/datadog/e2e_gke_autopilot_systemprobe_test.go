@@ -52,7 +52,7 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode())
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode(), e2e.WithSkipDeleteOnFailure())
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
