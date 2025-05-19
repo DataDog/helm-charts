@@ -1,14 +1,8 @@
 targetSystem: "linux"
 agents:
   image:
-    repository: datadog/agent-dev
-    tag: nightly-ot-beta-main
-    doNotCheckTag: true
+    tagSuffix: full
   containers:
-    agent:
-      env:
-        - name: DD_HOSTNAME
-          value: "datadog"
     otelAgent:
       volumeMounts:
         - name: logscustompath
@@ -21,6 +15,8 @@ agents:
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
   otelCollector:
     enabled: true
     config: |
