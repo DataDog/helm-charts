@@ -46,6 +46,8 @@ func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
 
 	helmValues := `
 datadog:
+  kubelet:
+    tlsVerify: false
   systemProbe:
     enableTCPQueueLength: true
     enableOOMKill: true
