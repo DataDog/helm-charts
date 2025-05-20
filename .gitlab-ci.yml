@@ -79,4 +79,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_GO_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
+    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e

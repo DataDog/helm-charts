@@ -45,7 +45,7 @@ func (s *eksSuite) TestEKS() {
 	var agent corev1.Pod
 	containsAgent := false
 	for _, pod := range res.Items {
-		if strings.Contains(pod.Name, "agent") {
+		if strings.Contains(pod.Name, "agent") && !strings.Contains(pod.Name, "cluster-agent") {
 			containsAgent = true
 			agent = pod
 			break
