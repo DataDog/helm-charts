@@ -1,101 +1,78 @@
-//go:build e2e
-// +build e2e
+//go:build e2e_eks
 
 package datadog
 
 import (
-	"fmt"
+	"context"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
+	awskubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/aws/kubernetes"
+	"github.com/DataDog/test-infra-definitions/scenarios/aws/eks"
+	"strings"
 	"testing"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
-	"github.com/pulumi/pulumi/sdk/v3/go/auto"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-
-	"github.com/DataDog/helm-charts/test/common"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const namespace = "datadog"
+type eksSuite struct {
+	e2e.BaseSuite[environments.Kubernetes]
+}
 
-var k8sClient *kubernetes.Clientset
-var restConfig *rest.Config
-
-func Test_E2E_AgentOnEKS(t *testing.T) {
+func TestEKSSuite(t *testing.T) {
 	// Create pulumi EKS stack with latest version of the datadog/datadog helm chart
 	config, err := common.SetupConfig()
 	if err != nil {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	stackConfig := runner.ConfigMap{
-		"ddtestworkload:deploy":                      auto.ConfigValue{Value: "false"},
-		"ddinfra:aws/eks/linuxBottlerocketNodeGroup": auto.ConfigValue{Value: "false"},
-		"ddinfra:aws/eks/windowsNodeGroup":           auto.ConfigValue{Value: "false"},
-	}
-	stackConfig.Merge(config)
-
-	eksEnv, err := common.NewEKStack(stackConfig, common.DestroyStacks)
-	defer common.TeardownE2EStack(eksEnv, common.PreserveStacks)
-
-	if eksEnv != nil {
-		if common.DestroyStacks {
-			common.PreserveStacks = false
-			t.Skipf("Skipping test, tearing down stack")
-		}
-		kubeconfig := eksEnv.StackOutput.Outputs["kubeconfig"]
-		if kubeconfig.Value != nil {
-			kc := kubeconfig.Value.(map[string]interface{})
-			_, restConfig, k8sClient, err = common.NewClientFromKubeconfig(kc)
-			if err == nil {
-				t.Run("Agent pods should be created", verifyPods)
-			}
-		} else {
-			err = fmt.Errorf("could not create Kubernetes client, cluster kubeconfig is nil")
-		}
-	}
-	if err != nil {
-		t.Errorf("Skipping tests. Encountered problem creating or updating E2E stack: %s", err)
-	}
+	e2e.Run(t, &eksSuite{}, e2e.WithProvisioner(awskubernetes.EKSProvisioner(
+		awskubernetes.WithEKSOptions(
+			eks.WithLinuxNodeGroup(),
+		),
+		awskubernetes.WithExtraConfigParams(config),
+	)))
 }
 
-func verifyPods(t *testing.T) {
-	nodes, err := common.ListNodes(namespace, k8sClient)
-	require.NoError(t, err)
+func (s *eksSuite) TestEKS() {
+	s.T().Log("Running EKS test")
 
-	ddaPodList, err := common.ListPods(namespace, "app=dda-datadog", k8sClient)
-	require.NoError(t, err)
-	dcaPodList, err := common.ListPods(namespace, "app=dda-datadog-cluster-agent", k8sClient)
-	require.NoError(t, err)
-	ccPodList, err := common.ListPods(namespace, "app=dda-datadog-clusterchecks", k8sClient)
-	require.NoError(t, err)
+	res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
-	assert.EqualValues(t, len(nodes.Items), len(ddaPodList.Items), "There should be 1 datadog-agent pod per node.")
-	assert.EqualValues(t, 1, len(dcaPodList.Items), "There should be 1 datadog-cluster-agent pod by default.")
-	assert.EqualValues(t, 2, len(ccPodList.Items), "There should be 2 datadog-cluster-check pods by default.")
-
-	podExec := common.K8sExec{
-		ClientSet:  k8sClient,
-		RestConfig: restConfig,
+	var agent corev1.Pod
+	containsAgent := false
+	for _, pod := range res.Items {
+		if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
+			containsAgent = true
+			agent = pod
+			break
+		}
 	}
+	assert.True(s.T(), containsAgent, "Agent not found")
 
-	t.Run("exec `agent status` for `agent` pod should not error", func(t *testing.T) {
-		assertPodStatus(t, podExec, ddaPodList, "agent")
-	})
-	t.Run("`exec `agent status` for `cluster-agent` pod should not error", func(t *testing.T) {
-		assertPodStatus(t, podExec, dcaPodList, "cluster-agent")
-	})
-	t.Run("exec `agent status` for `cluster-check-runner` pod should not error", func(t *testing.T) {
-		assertPodStatus(t, podExec, ccPodList, "agent")
-	})
-}
+	stdout, stderr, err := s.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", agent.Name, "agent", []string{"agent", "status"})
+	require.NoError(s.T(), err)
+	assert.Empty(s.T(), stderr)
+	assert.NotEmpty(s.T(), stdout)
 
-func assertPodStatus(t *testing.T, podExec common.K8sExec, podList *v1.PodList, containerName string) {
-	for _, pod := range podList.Items {
-		assert.True(t, pod.Status.Phase == "Running")
-		_, _, err := podExec.K8sExec(namespace, pod.Name, containerName, []string{"agent", "status"})
-		require.NoError(t, err)
+	var clusterAgent corev1.Pod
+	containsClusterAgent := false
+	for _, pod := range res.Items {
+		if strings.Contains(pod.Name, "cluster-agent") {
+			containsClusterAgent = true
+			clusterAgent = pod
+			break
+		}
 	}
+	assert.True(s.T(), containsClusterAgent, "Cluster Agent not found")
+
+	stdout, stderr, err = s.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent", "status"})
+	require.NoError(s.T(), err)
+	assert.Empty(s.T(), stderr)
+	assert.NotEmpty(s.T(), stdout)
 }
