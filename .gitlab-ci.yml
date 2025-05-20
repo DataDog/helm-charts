@@ -52,6 +52,7 @@ e2e:
       - E2E_BUILD_TAGS:
           - e2e_eks
           - e2e_autopilot
+          - e2e_autopilot_systemprobe
   before_script:
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
