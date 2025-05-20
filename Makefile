@@ -7,7 +7,7 @@ E2E_CONFIG_PARAMS?=
 E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
-E2E_BUILD_TAGS?="e2e_eks"
+E2E_BUILD_TAGS?="e2e_eks e2e_autopilot"
 
 ## Local profile
 E2E_PROFILE?=local

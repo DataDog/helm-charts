@@ -42,6 +42,8 @@ e2e:
     TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
     E2E_AWS_PUBLIC_KEY_PATH: /tmp/agent-qa-ssh-key.pub
     E2E_AWS_PRIVATE_KEY_PATH: /tmp/agent-qa-ssh-key
+    E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
+    E2E_GCP_PRIVATE_KEY_PATH: /tmp/agent-qa-gcp-ssh-key
     E2E_KEY_PAIR_NAME: ci.helm-charts
     KUBERNETES_MEMORY_REQUEST: 12Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
@@ -49,9 +51,14 @@ e2e:
     matrix:
       - E2E_BUILD_TAGS:
           - e2e_eks
+          - e2e_autopilot
   before_script:
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
+
+    # TODO: Retrieve with datadog-agent-qa AWS profile when secret is moved to SSM in that account
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text)
+    - export E2E_GCP_PRIVATE_KEY_PASSWORD
 
     # Set GITHUB_TOKEN to avoid getting rate-limited when pulumi sdk downloads the kubernetes provider
     - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
@@ -69,6 +76,16 @@ e2e:
     # SSH Key retrieval for AWS
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
+
+    # SSH Key retrieval for GCP
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
+    - touch $E2E_GCP_PRIVATE_KEY_PATH && chmod 600 $E2E_GCP_PRIVATE_KEY_PATH && aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PRIVATE_KEY_PATH || exit $?
+
+    # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
+    # The service account is called `agent-e2e-tests`
+    - set -x
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
+    - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
     - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
