@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.116.2
+
+* Stop `/etc/passwd` mount on `agent` container if running unprivileged to prevent incorrect user running the agent.
+
 ## 3.116.1
 
 * (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
