@@ -56,6 +56,7 @@ e2e:
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
 
+    # TODO: Retrieve with datadog-agent-qa AWS profile when secret is moved to SSM in that account
     - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text)
     - export E2E_GCP_PRIVATE_KEY_PASSWORD
 

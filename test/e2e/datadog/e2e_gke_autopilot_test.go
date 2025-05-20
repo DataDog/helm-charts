@@ -43,7 +43,7 @@ func TestGKEAutopilotSuite(t *testing.T) {
 	}
 	runnerConfig.Merge(config)
 
-	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode())
+	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(runnerConfig))))
 }
 
 func (v *gkeAutopilotSuite) TestGKEAutopilot() {
