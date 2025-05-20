@@ -60,12 +60,14 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 	var agent corev1.Pod
+	var agentPodName string
 	containsAgent := false
 	for _, pod := range res.Items {
 		v.T().Log("Checking pod: ", pod.Name)
 		if strings.Contains(pod.Name, "agent") {
 			containsAgent = true
 			agent = pod
+			agentPodName = pod.Name
 			break
 		}
 	}
@@ -73,24 +75,23 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
-		agent, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").Get(context.TODO(), agent.Name, metav1.GetOptions{})
+		agent, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").Get(context.TODO(), agentPodName, metav1.GetOptions{})
 		assert.NoError(v.T(), err)
 
-		var systemProbeState corev1.ContainerStatus
+		var systemProbeState *corev1.ContainerStatus
 		containsSystemProbe := false
-		for _, status := range agent.Status.ContainerStatuses {
-			v.T().Log("Checking pod: ", status.Name)
-			v.T().Log("Pod status: ", status.State.String())
-			v.T().Log("Pod status running? ", status.State.Running.String())
+		for i, status := range agent.Status.ContainerStatuses {
+			v.T().Log("Checking container name: ", status.Name)
+			v.T().Log("Container status: ", status.State.String())
 			if strings.Contains(status.Name, "system-probe") {
 				containsSystemProbe = true
-				systemProbeState = status
+				systemProbeState = &agent.Status.ContainerStatuses[i]
 				break
 			}
 		}
 		assert.True(v.T(), containsSystemProbe, "System probe container not found")
-		assert.Equal(v.T(), "Running", systemProbeState.State.Running.String(), fmt.Sprintf("System probe container is not running: %s", systemProbeState.State.Running.String()))
-
+		assert.NotNil(v.T(), systemProbeState, "System probe container status is nil")
+		assert.Equal(v.T(), "Running", fmt.Sprintf("System probe container is not running: %v", systemProbeState.State.Running.String()))
 	}, 5*time.Minute, 30*time.Second, "system-probe readiness timed out")
 
 	var clusterAgent corev1.Pod
