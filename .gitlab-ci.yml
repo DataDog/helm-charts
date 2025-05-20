@@ -38,6 +38,12 @@ e2e:
     E2E_KEY_PAIR_NAME: ci.helm-charts
     KUBERNETES_MEMORY_REQUEST: 12Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
+  parallel:
+    matrix:
+      - E2E_GO_TAGS:
+          - e2e
+          - e2e_autopilot
+          - e2e_autopilot_systemprobe
   before_script:
     # Initial credentials setup
     - echo "Starting setup for E2E testing..."
@@ -73,4 +79,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_PROFILE=ci make test-e2e
+    - E2E_GO_TAGS=$E2E_GO_TAGS E2E_PROFILE=ci make test-e2e

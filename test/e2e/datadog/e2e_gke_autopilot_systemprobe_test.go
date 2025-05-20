@@ -1,4 +1,4 @@
-//go:build e2e_autopilot
+//go:build e2e_autopilot_systemprobe
 
 package datadog
 
