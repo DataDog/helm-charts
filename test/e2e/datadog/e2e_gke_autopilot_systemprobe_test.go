@@ -60,14 +60,14 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 	var agent corev1.Pod
-	var agentPodName string
+	//var agentPodName string
 	containsAgent := false
 	for _, pod := range res.Items {
 		v.T().Log("Checking pod: ", pod.Name)
 		if strings.Contains(pod.Name, "dda-linux-datadog-") && !strings.Contains(pod.Name, "cluster-agent") {
 			containsAgent = true
 			agent = pod
-			agentPodName = pod.Name
+			//agentPodName = pod.Name
 			break
 		}
 	}
