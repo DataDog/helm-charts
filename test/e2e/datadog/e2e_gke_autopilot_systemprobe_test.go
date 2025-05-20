@@ -52,7 +52,7 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode())
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithDevMode(), e2e.WithSkipDeleteOnFailure())
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
@@ -64,7 +64,7 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	containsAgent := false
 	for _, pod := range res.Items {
 		v.T().Log("Checking pod: ", pod.Name)
-		if strings.Contains(pod.Name, "agent") {
+		if strings.Contains(pod.Name, "dda-linux-datadog-") && !strings.Contains(pod.Name, "cluster-agent") {
 			containsAgent = true
 			agent = pod
 			agentPodName = pod.Name
