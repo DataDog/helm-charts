@@ -1508,6 +1508,9 @@ spec:
                           type: string
                         enableGlobalPermissions:
                           type: boolean
+                        refreshInterval:
+                          format: int32
+                          type: integer
                         roles:
                           items:
                             properties:
