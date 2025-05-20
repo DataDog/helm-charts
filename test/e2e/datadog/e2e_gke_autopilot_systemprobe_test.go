@@ -63,7 +63,7 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 		var agent corev1.Pod
 		containsAgent := false
 		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "dda-linux-datadog-") && !strings.Contains(pod.Name, "cluster-agent") {
+			if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
 				containsAgent = true
 				agent = pod
 				break

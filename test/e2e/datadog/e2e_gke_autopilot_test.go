@@ -16,7 +16,7 @@ import (
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 
@@ -48,12 +48,12 @@ func TestGKEAutopilotSuite(t *testing.T) {
 
 func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 	v.T().Log("Running GKE test")
-	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), v1.ListOptions{})
+	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 	var agent corev1.Pod
 	containsAgent := false
 	for _, pod := range res.Items {
-		if strings.Contains(pod.Name, "agent") && !strings.Contains(pod.Name, "cluster-agent") {
+		if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
 			containsAgent = true
 			agent = pod
 			break
