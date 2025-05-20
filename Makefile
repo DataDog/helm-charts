@@ -4,12 +4,13 @@ GOTESTSUM_FORMAT?=standard-verbose
 
 # E2E environment variables
 E2E_CONFIG_PARAMS?=
+E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
 
 ## Local profile
 E2E_PROFILE?=local
-export AWS_KEYPAIR_NAME?=${USER}
+export E2E_KEY_PAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
@@ -25,6 +26,7 @@ override E2E_PROFILE=ci
 endif
 
 ifeq ($(E2E_PROFILE), ci)
+export E2E_KEY_PAIR_NAME
 export CI_ENV_NAMES
 export DD_TEAM
 export DD_TAGS
@@ -97,10 +99,3 @@ e2e-test:
 
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
 .PHONY: e2e-test-preserve-stacks
-e2e-test-preserve-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -preserveStacks=true
-
-# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
-.PHONY: e2e-test-cleanup-stacks
-e2e-test-cleanup-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -destroyStacks=true

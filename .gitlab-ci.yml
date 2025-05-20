@@ -5,12 +5,13 @@ stages:
 variables:
   RUN_E2E_TEST:
     description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
+  TEST_INFRA_DEFINITIONS_BUILDIMAGES: a7f0811474e6
 
 noop:
   stage: test
   script: 
     - echo "No op job to get merge queue working"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
 
 e2e:
@@ -35,29 +36,35 @@ e2e:
     - if: $RUN_E2E_TEST == "true"
       when: manual
     - when: never
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:
-    AWS_KEYPAIR_NAME: datadog-agent-ci
-    AWS_PRIVATE_KEY_FILE: $CI_PROJECT_DIR/ssh_key
-    KUBERNETES_CPU_REQUEST: 2
-    KUBERNETES_MEMORY_REQUEST: 4Gi
-    KUBERNETES_MEMORY_LIMIT: 12Gi
+    TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
+    E2E_AWS_PUBLIC_KEY_PATH: /tmp/agent-qa-ssh-key.pub
+    E2E_AWS_PRIVATE_KEY_PATH: /tmp/agent-qa-ssh-key
+    E2E_KEY_PAIR_NAME: ci.helm-charts
+    KUBERNETES_MEMORY_REQUEST: 12Gi
+    KUBERNETES_MEMORY_LIMIT: 16Gi
   before_script:
-    - mkdir -p ~/.aws
-    - set +x
+    # Initial credentials setup with default build-stable AWS profile
+    - echo "Starting setup for E2E testing..."
+
     # Set GITHUB_TOKEN to avoid getting rate-limited when pulumi sdk downloads the kubernetes provider
     - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
-    # Configure AWS EC2 ssh key needed for create pulumi EKS environment
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_key --with-decryption --query "Parameter.Value" --out text > $AWS_PRIVATE_KEY_FILE
-    - set -x
-    # Without the newline ssh silently fails and moves on to try other auth methods
-    - echo "" >> $AWS_PRIVATE_KEY_FILE
-    - chmod 600 $AWS_PRIVATE_KEY_FILE
-    # Configure AWS profile
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
-    - set -x
+
+    # Use S3 backend to store stack status
+    - export PULUMI_CONFIG_PASSPHRASE=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.pulumi_password --with-decryption --query "Parameter.Value" --out text)
+
+    # Configure and use datadog-agent-qa AWS profile
+    - mkdir -p ~/.aws
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - export AWS_PROFILE=agent-qa-ci
+
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+
+    # SSH Key retrieval for AWS
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PUBLIC_KEY_PATH
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_AWS_PRIVATE_KEY_PATH
+
   script:
     - make test-e2e
