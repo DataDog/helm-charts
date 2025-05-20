@@ -40,12 +40,12 @@ e2e:
     KUBERNETES_MEMORY_LIMIT: 16Gi
   parallel:
     matrix:
-      - E2E_GO_TAGS:
+      - E2E_BUILD_TAGS:
           - e2e
           - e2e_autopilot
           - e2e_autopilot_systemprobe
   before_script:
-    # Initial credentials setup
+    # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
 
     - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text)
@@ -57,7 +57,7 @@ e2e:
     # Use S3 backend to store stack status
     - export PULUMI_CONFIG_PASSPHRASE=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.pulumi_password --with-decryption --query "Parameter.Value" --out text)
 
-    # Configure AWS profile
+    # Configure and use datadog-agent-qa AWS profile
     - mkdir -p ~/.aws
     - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - export AWS_PROFILE=agent-qa-ci
@@ -79,4 +79,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_GO_TAGS=$E2E_GO_TAGS E2E_PROFILE=ci make test-e2e
+    - E2E_GO_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e

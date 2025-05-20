@@ -7,7 +7,7 @@ E2E_CONFIG_PARAMS?=
 E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
-E2E_GO_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe"
+E2E_BUILD_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe"
 
 ## Local profile
 E2E_PROFILE?=local
@@ -90,4 +90,4 @@ test-e2e: fmt vet e2e-test
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test
 .PHONY: e2e-test
 e2e-test:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=$E2E_GO_TAGS -v -vet=off -timeout 1h -count=1
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=$(E2E_BUILD_TAGS) -v -vet=off -timeout 1h -count=1
