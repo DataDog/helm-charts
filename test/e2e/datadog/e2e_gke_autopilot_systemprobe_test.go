@@ -5,10 +5,7 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/pulumi/pulumi/sdk/v3/go/auto"
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -35,13 +32,7 @@ func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	gcpPrivateKeyPassword := os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
-
-	runnerConfig := runner.ConfigMap{
-		"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.32"},
-		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
-		"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
-	}
+	runnerConfig := common.DefaultGKERunnerConfigs
 	runnerConfig.Merge(config)
 
 	helmValues := `

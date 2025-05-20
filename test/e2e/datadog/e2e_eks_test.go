@@ -1,4 +1,4 @@
-//go:build e2e
+//go:build e2e_eks
 
 package datadog
 

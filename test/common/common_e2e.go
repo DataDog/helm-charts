@@ -19,6 +19,14 @@ var defaultCIPulumiConfigs = runner.ConfigMap{
 	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("E2E_AWS_PRIVATE_KEY_PATH")},
 }
 
+var gcpPrivateKeyPassword = os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
+
+var DefaultGKERunnerConfigs = runner.ConfigMap{
+	"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.32"},
+	"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
+	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
+}
+
 func parseE2EConfigParams() []string {
 	// "key1=val1 key2=val2"
 	configParams := os.Getenv("E2E_CONFIG_PARAMS")

@@ -1,16 +1,14 @@
-//go:build e2e_autopilot
+//go:build e2e_gke
 
 package datadog
 
 import (
 	"context"
-	"fmt"
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
 
-	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -21,11 +19,11 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 )
 
-type gkeAutopilotSuite struct {
+type gkeSuite struct {
 	e2e.BaseSuite[environments.Kubernetes]
 }
 
-func TestGKEAutopilotSuite(t *testing.T) {
+func TestGKESuite(t *testing.T) {
 	config, err := common.SetupConfig()
 	if err != nil {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
@@ -34,10 +32,10 @@ func TestGKEAutopilotSuite(t *testing.T) {
 	runnerConfig := common.DefaultGKERunnerConfigs
 	runnerConfig.Merge(config)
 
-	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(runnerConfig))))
+	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))))
 }
 
-func (v *gkeAutopilotSuite) TestGKEAutopilot() {
+func (v *gkeSuite) TestGKE() {
 	v.T().Log("Running GKE test")
 	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
@@ -51,7 +49,12 @@ func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 		}
 	}
 	assert.True(v.T(), containsAgent, "Agent not found")
-	assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+
+	stdout, stderr, err := v.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", agent.Name, "agent", []string{"agent", "status"})
+	require.NoError(v.T(), err)
+	assert.Empty(v.T(), stderr)
+	assert.NotEmpty(v.T(), stdout)
 
 	var clusterAgent corev1.Pod
 	containsClusterAgent := false
@@ -63,5 +66,10 @@ func (v *gkeAutopilotSuite) TestGKEAutopilot() {
 		}
 	}
 	assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
-	assert.Equal(v.T(), corev1.PodPhase("Running"), clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
+
+	stdout, stderr, err = v.Env().KubernetesCluster.KubernetesClient.
+		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent", "status"})
+	require.NoError(v.T(), err)
+	assert.Empty(v.T(), stderr)
+	assert.NotEmpty(v.T(), stdout)
 }
