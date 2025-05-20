@@ -1,5 +1,70 @@
 # Datadog changelog
 
+## 3.116.1
+
+* (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
+
+## 3.116.0
+
+* Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
+* The `agents.containers.otelAgent.ports` allows to expose additional ports (e.g., for zPages, debugging, or custom extensions) on the `otel-agent` container.
+
+## 3.115.0
+
+* Add support for `secretBackend.refreshInterval` in chart/datadog.
+
+## 3.114.6
+
+* Upgrade default Agent version to `7.65.2`.
+
+## 3.114.5
+
+* Update default system-probe memory and CPU requests and limits.
+
+## 3.114.4
+
+* use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
+
+## 3.114.3
+
+* Show ERROR log if the chart is installed with different values for `datadog.dogstatsd.hostSocketPath` and `datadog.apm.hostSocketPath` while having same parent directories for `datadog.dogstatsd.socketPath` and `datadog.apm.socketPath`.
+
+## 3.114.2
+
+* Upgrade default Agent version to `7.65.1`.
+
+## 3.114.1
+
+* Fix default cluster checks runner container resources for GKE Autopilot.
+
+## 3.114.0
+
+* Add a new parameter `useFIPSAgent` to use FIPS-compliant images for the Agent and DCA.
+
+## 3.113.0
+
+* Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default. This option requires Agent **7.65.0+**.
+
+## 3.112.0
+
+* Upgrade default Agent version to `7.65.0`.
+
+## 3.111.1
+
+* Update `fips.image.tag` to `1.1.10` fixing CVEs and updating packages.
+
+## 3.111.0
+
+* Add support for using an existing/external ConfigMap to configure the DDOT Collector.
+
+## 3.110.16
+
+* Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
+
+## 3.110.15
+
+* Upgrade default Agent anf Cluster-Agent versions to `7.64.3`.
+
 ## 3.110.14
 
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).

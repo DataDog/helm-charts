@@ -8,7 +8,7 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.1
+  tag: v0.1.6
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -56,14 +56,13 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1005
 
+# If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
+tracingEnabled: true
+
 # Additional global env
 environment:
   QW_DISABLE_TELEMETRY: true
-  QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: true
   NO_COLOR: true
-  OTEL_EXPORTER_OTLP_ENDPOINT: http://$(HOST_IP):4317
-  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-  OTEL_EXPORTER_OTLP_TIMEOUT: 10
 
 environmentFrom: []
   # - secretRef:
@@ -534,6 +533,10 @@ config:
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
   data_dir: /quickwit/qwdata
+  grpc:
+    keep_alive:
+      interval: 30s
+      timeout: 10s
 
   # postgres:
   #   max_num_connections: 50
@@ -658,3 +661,7 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+# List of pipeline of processors in JSON format.
+# If unset, no pipeline will be created.
+pipelinesConfig: null

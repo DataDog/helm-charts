@@ -359,8 +359,11 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- end -}}
 {{- else -}}
 {{- $tagSuffix := "" -}}
+{{- if (eq (include "use-fips-images" .root) "true") -}}
+{{- $tagSuffix = printf "-%s" "fips" -}}
+{{- end -}}
 {{- if .image.tagSuffix -}}
-{{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
+{{- $tagSuffix = printf "%s-%s" $tagSuffix .image.tagSuffix -}}
 {{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
@@ -409,10 +412,21 @@ false
 {{- end -}}
 
 {{/*
+Return true if we should use the -fips image tags.
+*/}}
+{{- define "use-fips-images" -}}
+{{- if .useFIPSAgent -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the fips side car container should be created.
 */}}
-{{- define "should-enable-fips" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
+{{- define "should-enable-fips-proxy" -}}
+{{- if and (not (or (eq (include "use-fips-images" .Values) "true") (or .Values.providers.gke.autopilot .Values.providers.gke.gdc ))) (eq .Values.targetSystem "linux") .Values.fips.enabled -}}
 true
 {{- else -}}
 false
@@ -423,7 +437,7 @@ false
 Return true if the fips side car configMap should be mounted.
 */}}
 {{- define "should-mount-fips-configmap" -}}
-{{- if and (eq (include "should-enable-fips" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
+{{- if and (eq (include "should-enable-fips-proxy" .) "true") (not (empty .Values.fips.customFipsConfig)) -}}
 true
 {{- else -}}
 false
@@ -883,6 +897,19 @@ securityContext:
     {{- end -}}
     {{- if hasPrefix "localhost/" .seccomp }}
     localhostProfile: {{ trimPrefix "localhost/" .seccomp }}
+    {{- end }}
+{{- end -}}
+{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion) }}
+  appArmorProfile:
+    {{- if hasPrefix "localhost/" .apparmor }}
+    type: Localhost
+    {{- else if eq "runtime/default" .apparmor }}
+    type: RuntimeDefault
+    {{- else }}
+    type: Unconfined
+    {{- end -}}
+    {{- if hasPrefix "localhost/" .apparmor }}
+    localhostProfile: {{ trimPrefix "localhost/" .apparmor }}
     {{- end }}
 {{- end -}}
 {{- end -}}

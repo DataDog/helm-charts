@@ -570,6 +570,23 @@ However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `da
 {{- fail "OS Release information is required  when system-probe is enabled." }}
 {{- end }}
 
+{{- if (and (eq  (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath) ) (ne .Values.datadog.dogstatsd.hostSocketPath .Values.datadog.apm.hostSocketPath)) }}
+#################################################################
+####            ERROR: Conflicting socket host path          ####
+#################################################################
+
+Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
+However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
+
+It is not possible to mount two different host paths at the same mount path. 
+
+To resolve this:
+- use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
+- or use different parent directories for datadog.dogstatsd.socketPath and datadog.apm.socketPath
+
+{{- end }}
+
+
 
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
@@ -657,4 +674,17 @@ OTel collector is not supported on GKE Autopilot.
 ####               WARNING: Private Beta notice              ####
 #################################################################
 OTel collector is in preview. Please reach out to your Datadog representative for more information.
+{{- end }}
+
+
+{{- if (eq (include "should-enable-fips-proxy" .) "true")  }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+The FIPS Proxy is getting phased out in favor of FIPS-compliant images.
+For new deployments, we recommend using the FIPS Agent.
+You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml file.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}

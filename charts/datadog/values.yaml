@@ -72,6 +72,9 @@ datadog:
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
     timeout:  # 30
 
+    # datadog.secretBackend.refreshInterval -- [PREVIEW] Configure the secret backend command refresh interval in seconds.
+    refreshInterval:  # 0
+
     # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
     enableGlobalPermissions: true
 
@@ -316,6 +319,9 @@ datadog:
     # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
     # @default -- /var/lib/kubelet/pod-resources
     podResourcesSocketDir: /var/lib/kubelet/pod-resources
+    # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+)
+    # @default -- false
+    useApiServer: false
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
@@ -613,17 +619,25 @@ datadog:
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
     enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening on
     ports:
 
         # Default GRPC port of OTLP receiver
       - containerPort: "4317"
         name: otel-grpc
+        protocol: TCP
         # Default HTTP port of OTLP receiver
       - containerPort: "4318"
         name: otel-http
+        protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.configMap -- Use an existing ConfigMap for DDOT Collector configuration
+    configMap:
+      # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
+      name: null
+      # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
+      key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
 
@@ -1115,7 +1129,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.64.1
+    tag: 7.65.2
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1569,24 +1583,33 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
-# fips is used to enable the fips sidecar container for GOVCLOUD environments.
+# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments.
+# Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance.
+useFIPSAgent: false
+
+## fips is used to enable and configure the fips-proxy sidecar.
 fips:
-  # fips.enabled -- Enable fips sidecar
+  # fips.enabled -- Enable fips proxy sidecar.
+  # The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
   # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # This setting is only used for the fips-proxy sidecar.
   port: 9803
 
-  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577.
+  # This setting is only used for the fips-proxy sidecar.
   portRange: 15
 
-  # fips.use_https -- Option to enable https
+  # fips.use_https -- Option to enable https.
+  # This setting is only used for the fips-proxy sidecar.
   use_https: false
 
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
+  # This setting is only used for the fips-proxy sidecar.
   resources: {}
     # limits:
     #   cpu: 100m
@@ -1595,7 +1618,8 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
-  # fips.local_address -- Set local IP address
+  # fips.local_address -- Set local IP address.
+  # This setting is only used for the fips-proxy sidecar.
   local_address: "127.0.0.1"
 
   ## Define the Datadog image to work with
@@ -1604,7 +1628,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.9
+    tag: 1.1.10
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1647,7 +1671,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.65.2
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1963,11 +1987,11 @@ agents:
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
       resources: {}
       #  requests:
-      #    cpu: 100m
+      #    cpu: 150m
       #    memory: 200Mi
       #  limits:
-      #    cpu: 100m
-      #    memory: 200Mi
+      #    cpu: 300m
+      #    memory: 400Mi
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
@@ -2163,7 +2187,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.65.2
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

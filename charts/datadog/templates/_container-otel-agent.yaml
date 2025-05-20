@@ -32,9 +32,12 @@
         {{- if .hostPort }}
         hostPort: {{ .hostPort }}
         {{- end }}
-        protocol: TCP
+        protocol: {{ .protocol | default "TCP" }}
         name: {{ .name }}
     {{- end }}
+{{- if .Values.agents.containers.otelAgent.ports }}
+{{ toYaml .Values.agents.containers.otelAgent.ports | indent 6 }}
+{{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.otelAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}
@@ -51,6 +54,10 @@
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
+    {{- if .Values.datadog.otelCollector.enabled }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
+    {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
