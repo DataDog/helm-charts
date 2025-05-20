@@ -60,14 +60,11 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 	var agent corev1.Pod
-	//var agentPodName string
 	containsAgent := false
 	for _, pod := range res.Items {
-		v.T().Log("Checking pod: ", pod.Name)
 		if strings.Contains(pod.Name, "dda-linux-datadog-") && !strings.Contains(pod.Name, "cluster-agent") {
 			containsAgent = true
 			agent = pod
-			//agentPodName = pod.Name
 			break
 		}
 	}
@@ -75,23 +72,19 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
-		//agent, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").Get(context.TODO(), agentPodName, metav1.GetOptions{})
-		//assert.NoError(v.T(), err)
-
-		var systemProbeState *corev1.ContainerStatus
+		var systemProbeStatus *corev1.ContainerStatus
 		containsSystemProbe := false
 		for i, status := range agent.Status.ContainerStatuses {
 			if strings.Contains(status.Name, "system-probe") {
 				containsSystemProbe = true
-				systemProbeState = &agent.Status.ContainerStatuses[i]
+				systemProbeStatus = &agent.Status.ContainerStatuses[i]
 				break
 			}
 		}
 		assert.True(v.T(), containsSystemProbe, "System probe container not found")
-		assert.NotNil(v.T(), systemProbeState, "System probe container status is nil")
-		v.T().Log("WHAT IS THE SYSTEM PROBE RUNNING STATE: ", systemProbeState.State.Running.String())
+		assert.NotNil(v.T(), systemProbeStatus, "System probe container status is nil")
 		// corev1.ContainerStateRunning is non-nil if the container is running
-		assert.NotNil(v.T(), systemProbeState.State.Running, "System probe container is not running")
+		assert.NotNil(v.T(), systemProbeStatus.State.Running, "System probe container is not running")
 	}, 5*time.Minute, 30*time.Second, "system-probe readiness timed out")
 
 	var clusterAgent corev1.Pod
