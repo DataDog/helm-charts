@@ -54,7 +54,7 @@ func (s *eksSuite) TestEKS() {
 	assert.True(s.T(), containsAgent, "Agent not found")
 
 	stdout, stderr, err := s.Env().KubernetesCluster.KubernetesClient.
-		PodExec("datadog", agent.Name, "agent", []string{"agent status"})
+		PodExec("datadog", agent.Name, "agent", []string{"agent", "status"})
 	require.NoError(s.T(), err)
 	assert.Empty(s.T(), stderr)
 	assert.NotEmpty(s.T(), stdout)
@@ -71,7 +71,7 @@ func (s *eksSuite) TestEKS() {
 	assert.True(s.T(), containsClusterAgent, "Cluster Agent not found")
 
 	stdout, stderr, err = s.Env().KubernetesCluster.KubernetesClient.
-		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent status"})
+		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent", "status"})
 	require.NoError(s.T(), err)
 	assert.Empty(s.T(), stderr)
 	assert.NotEmpty(s.T(), stdout)
