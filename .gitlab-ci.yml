@@ -39,7 +39,6 @@ e2e:
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:
-    TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
     E2E_AWS_PUBLIC_KEY_PATH: /tmp/agent-qa-ssh-key.pub
     E2E_AWS_PRIVATE_KEY_PATH: /tmp/agent-qa-ssh-key
     E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
