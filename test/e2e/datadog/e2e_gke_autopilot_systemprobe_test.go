@@ -89,6 +89,7 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 		}
 		assert.True(v.T(), containsSystemProbe, "System probe container not found")
 		assert.NotNil(v.T(), systemProbeState, "System probe container status is nil")
+		v.T().Log("WHAT IS THE SYSTEM PROBE RUNNING STATE: ", systemProbeState.State.Running.String())
 		// corev1.ContainerStateRunning is non-nil if the container is running
 		assert.NotNil(v.T(), systemProbeState.State.Running, "System probe container is not running")
 	}, 5*time.Minute, 30*time.Second, "system-probe readiness timed out")
