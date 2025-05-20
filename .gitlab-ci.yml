@@ -49,7 +49,8 @@ e2e:
   parallel:
     matrix:
       - E2E_BUILD_TAGS:
-          - e2e
+          - e2e_eks
+          - e2e_gke
           - e2e_autopilot
           - e2e_autopilot_systemprobe
   before_script:
