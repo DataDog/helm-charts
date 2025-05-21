@@ -133,6 +133,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if Agent Data Plane needs to be deployed
+*/}}
+{{- define "should-enable-agent-data-plane" -}}
+{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole
 */}}
 {{- define "should-add-otel-agent-k8sattributes-rules" -}}

@@ -140,6 +140,9 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
           {{- include "container-otel-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
+          {{- include "container-agent-data-plane" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
