@@ -319,7 +319,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (toString .Values.datadog.securityContext.runAsUser) "0") }}
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (toString (default 0 .Values.datadog.securityContext.runAsUser)) "0") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
