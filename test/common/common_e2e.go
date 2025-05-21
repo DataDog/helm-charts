@@ -16,7 +16,7 @@ var defaultPulumiConfigs = runner.ConfigMap{
 
 var defaultCIPulumiConfigs = runner.ConfigMap{
 	"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
-	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")},
+	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD"), Secret: true},
 }
 
 func parseE2EConfigParams() []string {

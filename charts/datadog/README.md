@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.116.1](https://img.shields.io/badge/Version-3.116.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.116.2](https://img.shields.io/badge/Version-3.116.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -936,6 +936,7 @@ helm install <RELEASE_NAME> \
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
+| test.enabled | bool | `true` | Set to true to enable the test agent |
 | useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. |
 
 ## Configuration options for Windows deployments
