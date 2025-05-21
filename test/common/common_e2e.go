@@ -52,14 +52,13 @@ func SetupConfig() (runner.ConfigMap, error) {
 	if len(configs) > 0 {
 		for _, config := range configs {
 			kv := strings.Split(config, "=")
-			_, exists := res[kv[0]]
-			if !exists {
-				res[kv[0]] = auto.ConfigValue{Value: kv[1]}
+			if _, exists := res[kv[0]]; !exists {
+				isSecret := strings.Contains(strings.ToLower(kv[0]), "password")
+				res[kv[0]] = auto.ConfigValue{Value: kv[1], Secret: isSecret}
 			} else {
-				log.Printf("Config param %s used more than once. Value: %s", kv[0], kv[1])
+				log.Printf("Config param %s used more than once.", kv[0])
 			}
 		}
 	}
-	log.Printf("Setting up Pulumi E2E stack with configs: %v", res)
 	return res, nil
 }
