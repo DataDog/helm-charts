@@ -4,8 +4,15 @@ package datadog
 
 import (
 	"context"
+	"fmt"
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/test-infra-definitions/common/config"
+	"github.com/DataDog/test-infra-definitions/resources/helm"
+	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/stretchr/testify/require"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -14,6 +21,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
+	kubeComp "github.com/DataDog/test-infra-definitions/components/kubernetes"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
@@ -24,12 +32,12 @@ type gkeSuite struct {
 }
 
 func TestGKESuite(t *testing.T) {
-	config, err := common.SetupConfig()
+	runnerConfig, err := common.SetupConfig()
 	if err != nil {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(config))))
+	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig), gcpkubernetes.WithWorkloadApp(datadogHelmInstallFunc))), e2e.WithSkipDeleteOnFailure(), e2e.WithDevMode())
 }
 
 func (v *gkeSuite) TestGKE() {
@@ -69,4 +77,30 @@ func (v *gkeSuite) TestGKE() {
 	require.NoError(v.T(), err)
 	assert.Empty(v.T(), stderr)
 	assert.NotEmpty(v.T(), stdout)
+}
+
+func datadogHelmInstallFunc(e config.Env, kubeProvider *kubernetes.Provider) (*kubeComp.Workload, error) {
+	var opts []pulumi.ResourceOption
+	opts = append(opts, pulumi.Providers(kubeProvider), pulumi.DeletedWith(kubeProvider))
+
+	rootDir := os.Getenv("CI_PROJECT_DIR")
+	err := e.Ctx().Log.Info(fmt.Sprintf("WHAT IS ROOT DIR: %s", rootDir), nil)
+	if err != nil {
+		return nil, err
+	}
+	err = e.Ctx().Log.Info(fmt.Sprintf("WHAT IS CHART DIR: %s", path.Join(rootDir, "helm-charts", "charts", "datadog")), nil)
+	if err != nil {
+		return nil, err
+	}
+	_, err = helm.NewInstallation(e, helm.InstallArgs{
+		RepoURL:     path.Join(rootDir, "helm-charts", "charts", "datadog"),
+		ChartName:   "datadog",
+		InstallName: "dda-linux-datadog",
+		Namespace:   "datadog",
+		ValuesYAML:  nil,
+	}, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
 }
