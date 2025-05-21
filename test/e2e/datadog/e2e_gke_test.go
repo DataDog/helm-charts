@@ -24,15 +24,12 @@ type gkeSuite struct {
 }
 
 func TestGKESuite(t *testing.T) {
-	config, err := common.SetupConfig()
+	runnerConfig, err := common.SetupConfig()
 	if err != nil {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	runnerConfig := common.DefaultGKERunnerConfigs
-	runnerConfig.Merge(config)
-
-	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))))
+	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithSkipDeleteOnFailure(), e2e.WithDevMode())
 }
 
 func (v *gkeSuite) TestGKE() {

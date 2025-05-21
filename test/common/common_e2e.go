@@ -11,20 +11,12 @@ import (
 )
 
 var defaultPulumiConfigs = runner.ConfigMap{
-	"ddinfra:aws/defaultKeyPairName": auto.ConfigValue{Value: os.Getenv("E2E_KEY_PAIR_NAME")},
+	"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
 }
+
 var defaultCIPulumiConfigs = runner.ConfigMap{
-	"aws:skipCredentialsValidation":     auto.ConfigValue{Value: "true"},
-	"aws:skipMetadataApiCheck":          auto.ConfigValue{Value: "false"},
-	"ddinfra:aws/defaultPrivateKeyPath": auto.ConfigValue{Value: os.Getenv("E2E_AWS_PRIVATE_KEY_PATH")},
-}
-
-var gcpPrivateKeyPassword = os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD")
-
-var DefaultGKERunnerConfigs = runner.ConfigMap{
-	"ddinfra:kubernetesVersion":             auto.ConfigValue{Value: "1.32"},
 	"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
-	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: gcpPrivateKeyPassword},
+	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD"), Secret: true},
 }
 
 func parseE2EConfigParams() []string {

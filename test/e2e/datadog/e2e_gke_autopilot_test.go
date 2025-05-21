@@ -31,10 +31,7 @@ func TestGKEAutopilotSuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	runnerConfig := common.DefaultGKERunnerConfigs
-	runnerConfig.Merge(config)
-
-	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(runnerConfig))))
+	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotSuite) TestGKEAutopilot() {

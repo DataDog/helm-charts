@@ -32,9 +32,6 @@ func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	runnerConfig := common.DefaultGKERunnerConfigs
-	runnerConfig.Merge(config)
-
 	helmValues := `
 datadog:
   kubelet:
@@ -43,7 +40,7 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(runnerConfig))))
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
