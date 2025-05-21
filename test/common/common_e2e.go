@@ -54,9 +54,13 @@ func SetupConfig() (runner.ConfigMap, error) {
 			kv := strings.Split(config, "=")
 			_, exists := res[kv[0]]
 			if !exists {
-				res[kv[0]] = auto.ConfigValue{Value: kv[1]}
+				isSecret := false
+				if strings.Contains(strings.ToLower(kv[0]), "password") {
+					isSecret = true
+				}
+				res[kv[0]] = auto.ConfigValue{Value: kv[1], Secret: isSecret}
 			} else {
-				log.Printf("Config param %s used more than once. Value: %s", kv[0], kv[1])
+				log.Printf("Config param %s used more than once. Value: %s", kv[0])
 			}
 		}
 	}
