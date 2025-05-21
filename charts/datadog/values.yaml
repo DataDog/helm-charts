@@ -175,6 +175,64 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
     collectCrdMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectCrMetrics -- Enable watching CustomResource objects and collecting their corresponding metrics kubernetes_state_customresource.*
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    ##
+    ## See https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md for a full description of each field.
+    collectCrMetrics: []
+    # - groupVersionKind:
+    #     group: myteam.io
+    #     kind: "Foo"
+    #     version: "v1"
+    #   metrics:
+    #     - name: "uptime"
+    #       help: "Foo uptime"
+    #       each:
+    #         type: Gauge
+    #         gauge:
+    #           path: [status, uptime]
+    # - groupVersionKind:
+    #     group: myteam.io
+    #     kind: "Foo"
+    #     version: "v1"
+    #   # labels can be added to all metrics from a resource
+    #   commonLabels:
+    #     crd_type: "foo"
+    #   labelsFromPath:
+    #     name: [metadata, name]
+    #   metrics:
+    #     - name: "ready_count"
+    #       help: "Number Foo Bars ready"
+    #       each:
+    #         type: Gauge
+    #         gauge:
+    #           # targeting an object or array will produce a metric for each element
+    #           # labelsFromPath and value are relative to this path
+    #           path: [status, sub]
+    #
+    #           # if path targets an object, the object key will be used as label value
+    #           # This is not supported for StateSet type as all values will be truthy, which is redundant.
+    #           labelFromKey: type
+    #           # label values can be resolved specific to this path
+    #           labelsFromPath:
+    #             active: [active]
+    #           # The actual field to use as metric value. Should be a number, boolean or RFC3339 timestamp string.
+    #           valueFrom: [ready]
+    #       commonLabels:
+    #         custom_metric: "yes"
+    #       labelsFromPath:
+    #         # whole objects may be copied into labels by prefixing with "*"
+    #         # *anything will be copied into labels, with the highest sorted * strings first
+    #         "*": [metadata, labels]
+    #         # a prefix before the asterisk will be used as a label prefix
+    #         "lorem_*": [metadata, annotations]
+    #         "**": [metadata, annotations]
+    #
+    #         # or specific fields may be copied. these fields will always override values from *s
+    #         name: [metadata, name]
+    #         foo: [metadata, labels, foo]
+
     # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+)
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
