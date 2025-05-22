@@ -1,0 +1,6 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  agentDataPlane:
+    enabled: true

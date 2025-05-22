@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.0
+
+* Add support for Agent Data Plane.
+
 ## 3.116.1
 
 * (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
