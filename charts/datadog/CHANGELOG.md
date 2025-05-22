@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.116.2
+
+* test
+
 ## 3.116.1
 
 * (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
