@@ -1219,5 +1219,9 @@ false
   Returns true if the agent is running as the root user, else return false
 */}}
 {{- define "is-agent-user-root" -}}
-  {{- eq (toString (default "0" (if .Values.datadog.securityContext .Values.datadog.securityContext.runAsUser "0"))) "0" -}}
+  {{- if and .Values.datadog.securityContext .Values.datadog.securityContext.runAsUser (ne (toString .Values.datadog.securityContext.runAsUser) "0") -}}
+    false
+  {{- else -}}
+    true
+  {{- end -}}
 {{- end -}}
