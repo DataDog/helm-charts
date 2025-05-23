@@ -1,8 +1,9 @@
 package private_action_runner
 
 import (
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/helm"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
@@ -84,6 +85,22 @@ func Test_baseline_manifests(t *testing.T) {
 				},
 			},
 			snapshotName: "external-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom resource requirements",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.resources.limits.cpu":      `"500m"`,
+					"runner.resources.limits.memory":   `"2Gi"`,
+					"runner.resources.requests.cpu":    `"100m"`,
+					"runner.resources.requests.memory": `"512Mi"`,
+				},
+			},
+			snapshotName: "custom-resources",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}
