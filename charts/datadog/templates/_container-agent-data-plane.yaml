@@ -42,6 +42,11 @@
     - name: DD_SECURE_API_LISTEN_ADDRESS
     {{- $privilegedApiPort := .Values.agents.containers.agentDataPlane.privilegedApiPort }}
       value: "tcp://0.0.0.0:{{ $privilegedApiPort }}"
+    - name: DD_TELEMETRY_ENABLED
+      value: "true"
+    - name: DD_PROMETHEUS_LISTEN_ADDR
+    {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
+      value: "tcp://127.0.0.1:{{ $telemetryApiPort }}"
     {{- include "additional-env-entries" .Values.agents.containers.agentDataPlane.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agentDataPlane.envDict | indent 4 }}
   volumeMounts:

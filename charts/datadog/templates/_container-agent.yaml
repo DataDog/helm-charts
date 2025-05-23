@@ -79,6 +79,8 @@
     {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
     - name: DD_USE_DOGSTATSD
       value: "false"
+    - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+      value: "true"
     {{- else }}
     {{- include "containers-dogstatsd-env" . | nindent 4 }}
     {{- end }}

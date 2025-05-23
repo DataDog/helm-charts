@@ -1122,7 +1122,7 @@ datadog:
       name: agent-data-plane
 
       # datadog.agentDataPlane.image.tag -- Define the Agent version to use
-      tag: 0.1.8
+      tag: 0.1.9
 
       # datadog.agentDataPlane.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
       digest: ""
@@ -2095,6 +2095,10 @@ agents:
       # agents.containers.agentDataPlane.privilegedApiPort -- Port for privileged API server, used for lower-level operations that
       # can alter the state of the ADP process or expose internal information
       privilegedApiPort: 5101
+
+      # agents.containers.agentDataPlane.telemetryApiPort -- Port for telemetry API server, used for exposing internal
+      # telemetry to be scraped by the Agent
+      telemetryApiPort: 5102
 
       # agents.containers.agentDataPlane.livenessProbe -- Override default agent-data-plane liveness probe settings
       # @default -- Every 5s / 12 KO / 1 OK
