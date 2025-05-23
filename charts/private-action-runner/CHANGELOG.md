@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.1.2
+
+* Add customizable resource limits and requests for the private action runner container
+
 ## 1.1.1
 
 * Bump runner version to `v1.3.0`

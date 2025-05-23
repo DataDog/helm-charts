@@ -267,6 +267,42 @@
             "type": "object"
           }
         },
+        "resources": {
+          "type": "object",
+          "description": "Resource requirements for the Datadog Private Action Runner container",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "description": "Resource limits for the runner container",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "CPU limit for the runner container"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Memory limit for the runner container"
+                }
+              },
+              "additionalProperties": false
+            },
+            "requests": {
+              "type": "object",
+              "description": "Resource requests for the runner container",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "CPU request for the runner container"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Memory request for the runner container"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
         "credentialFiles": {
           "type": "array",
           "description": "List of credential files to be used by the Datadog Private Action Runner",
