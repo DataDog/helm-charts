@@ -266,9 +266,9 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"datadog.securityContext.runAsUser":   "100",
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"datadog.appKeyExistingSecret":      "datadog-secret",
+					"datadog.securityContext.runAsUser": "100",
 				},
 			},
 			assertions: verifyUnprivilegedAgentHandling,
