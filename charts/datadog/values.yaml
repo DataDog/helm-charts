@@ -241,6 +241,9 @@ datadog:
     #    zone: zone
     #    team: team
 
+    # datadog.kubeStateMetricsCore.tags -- List of static tags to attach to all KSM metrics
+    tags: []
+
   ## Manage Cluster checks feature
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/

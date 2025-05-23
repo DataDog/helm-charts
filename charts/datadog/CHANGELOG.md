@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.116.3
+
+* Add an option to configure KSM static tags.
+
 ## 3.116.2
 
 * Add an option to configure KSM custom resource metrics collection
