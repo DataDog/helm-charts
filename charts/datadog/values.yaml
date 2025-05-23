@@ -175,6 +175,24 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
     collectCrdMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectCrMetrics -- Enable watching CustomResource objects and collecting their corresponding metrics kubernetes_state_customresource.* (Requires Cluster Agent 7.63.0+)
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    ##
+    ## See https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md for a full description of each field.
+    collectCrMetrics: []
+    # - groupVersionKind:
+    #     group: myteam.io
+    #     kind: "Foo"
+    #     version: "v1"
+    #   metrics:
+    #     - name: "uptime"
+    #       help: "Foo uptime"
+    #       each:
+    #         type: Gauge
+    #         gauge:
+    #           path: [status, uptime]
+
     # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+)
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
