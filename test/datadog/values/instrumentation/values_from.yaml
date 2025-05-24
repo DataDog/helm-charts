@@ -1,0 +1,20 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      targets:
+        - name: "billing-service"
+          namespaceSelector:
+            matchNames:
+              - "foo"
+              - "bar"
+          ddTraceVersions:
+            python: "v2"
+          ddTraceConfigs:
+            - name: "DD_A"
+              value: "A"
+            - name: "DD_B"
+              valueFrom:
+                fieldRef:
+                  fieldPath: "metadata.labels['label']"
