@@ -41,7 +41,7 @@ spec:
       {{- if $.Values.bootstrap.sources.command }}
         command: {{- toYaml $.Values.bootstrap.sources.command | nindent 8 }}
       {{- else }}
-        command: ["/bin/bash","-c","quickwit source describe --index {{ .index }} --source {{ .source.source_id }} --endpoint ${QW_CLUSTER_ENDPOINT} || quickwit source create --index {{ .index }} --source-config {{ .source.source_id }}.yaml --endpoint ${QW_CLUSTER_ENDPOINT}"]
+        command: ["/bin/bash","-c","quickwit source describe --index {{ .index }} --source {{ .source.source_id }} --endpoint ${QW_CLUSTER_ENDPOINT} --retries 10 || quickwit source create --index {{ .index }} --source-config {{ .source.source_id }}.yaml --endpoint ${QW_CLUSTER_ENDPOINT} --retries 10"]
       {{- end }}
         env:
           {{- include "quickwit.environment" $ | nindent 10 }}

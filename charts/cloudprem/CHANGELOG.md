@@ -1,11 +1,18 @@
 # Changelog
 
+## 0.1.4
+
+* Enable preprocessing by default
+* Fix some field remapping issues (most notably, remap `msg` field)
+* Fix document tiebreaker
+* Fix index/source creation bootstrap job
+
 ## 0.1.3
 
-* Adds a config parameter to keep-alive connections. By default, it is enabled.
-* Isolates CloudPrem the gRPC endpoint as a different server running on a different port, to reduce risks of misconfiguration.
+* Add a config parameter to keep-alive connections. By default, it is enabled.
+* Isolate CloudPrem gRPC endpoint as a different server running on a different port, to reduce risks of misconfiguration.
 For backward compatibility, the CloudPrem endpoint is still available on the regular gRPC port too.
-* Added average aggregation
+* Add average aggregation
 * Support missing options on the attribute remapper:
     * tags can be used as a source and target via `source_type`/`target_type`
     * `target_format` tries to cast attributes into `string`, `integer` or `double`
