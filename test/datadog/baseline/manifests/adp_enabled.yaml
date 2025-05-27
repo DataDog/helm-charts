@@ -735,7 +735,17 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
+        ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
+        ad.datadoghq.com/agent-data-plane.instances: |
+          [{
+            "prometheus_url":"http://127.0.0.1:5102/metrics",
+            "metrics":["*"],
+            "namespace": "datadog.agent",
+            "send_distribution_buckets": true,
+            "max_returned_metrics": 4000
+          }]
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -789,6 +799,8 @@ spec:
               value: INFO
             - name: DD_USE_DOGSTATSD
               value: "false"
+            - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+              value: "true"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1069,7 +1081,11 @@ spec:
               value: tcp://0.0.0.0:5100
             - name: DD_SECURE_API_LISTEN_ADDRESS
               value: tcp://0.0.0.0:5101
-          image: gcr.io/datadoghq/agent-data-plane:0.1.8
+            - name: DD_TELEMETRY_ENABLED
+              value: "true"
+            - name: DD_PROMETHEUS_LISTEN_ADDR
+              value: tcp://127.0.0.1:5102
+          image: gcr.io/datadoghq/agent-data-plane:0.1.9
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
