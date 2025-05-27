@@ -30,7 +30,7 @@ func TestGKESuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))), e2e.WithSkipDeleteOnFailure(), e2e.WithDevMode())
+	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))))
 }
 
 func (v *gkeSuite) TestGKE() {
