@@ -46,13 +46,14 @@ e2e:
     KUBERNETES_MEMORY_LIMIT: 16Gi
   parallel:
     matrix:
-      - E2E_BUILD_TAGS:
+      - E2E_AGENT_IMG_TAG: "latest"
+        E2E_BUILD_TAGS:
           - e2e
           - e2e_autopilot
           - e2e_autopilot_systemprobe
-      - E2E_AGENT_IMG_TAG:
-          - "latest"
-          - "7-rc"
+      - E2E_AGENT_IMG_TAG: "7-rc"
+        E2E_BUILD_TAGS:
+          - e2e_autopilot
 
   before_script:
     # Initial credentials setup with default build-stable AWS profile
@@ -85,4 +86,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_CONFIG_PARAMS="ddagent:fullImagePath=gcr.io/datadoghq/agent:$E2E_AGENT_IMG_TAG" E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
+    - E2E_AGENT_IMG_TAG=$E2E_AGENT_IMG_TAG E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
