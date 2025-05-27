@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
@@ -34,39 +35,41 @@ func TestGKESuite(t *testing.T) {
 
 func (v *gkeSuite) TestGKE() {
 	v.T().Log("Running GKE test")
-	res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
+		res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
-	var agent corev1.Pod
-	containsAgent := false
-	for _, pod := range res.Items {
-		if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-			containsAgent = true
-			agent = pod
-			break
+		var agent corev1.Pod
+		containsAgent := false
+		for _, pod := range res.Items {
+			if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
+				containsAgent = true
+				agent = pod
+				break
+			}
 		}
-	}
-	assert.True(v.T(), containsAgent, "Agent not found")
+		assert.True(v.T(), containsAgent, "Agent not found")
 
-	stdout, stderr, err := v.Env().KubernetesCluster.KubernetesClient.
-		PodExec("datadog", agent.Name, "agent", []string{"agent", "status"})
-	require.NoError(v.T(), err)
-	assert.Empty(v.T(), stderr)
-	assert.NotEmpty(v.T(), stdout)
+		stdout, stderr, err := v.Env().KubernetesCluster.KubernetesClient.
+			PodExec("datadog", agent.Name, "agent", []string{"agent", "status"})
+		require.NoError(v.T(), err)
+		assert.Empty(v.T(), stderr)
+		assert.NotEmpty(v.T(), stdout)
 
-	var clusterAgent corev1.Pod
-	containsClusterAgent := false
-	for _, pod := range res.Items {
-		if strings.Contains(pod.Name, "cluster-agent") {
-			containsClusterAgent = true
-			clusterAgent = pod
-			break
+		var clusterAgent corev1.Pod
+		containsClusterAgent := false
+		for _, pod := range res.Items {
+			if strings.Contains(pod.Name, "cluster-agent") {
+				containsClusterAgent = true
+				clusterAgent = pod
+				break
+			}
 		}
-	}
-	assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
+		assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
 
-	stdout, stderr, err = v.Env().KubernetesCluster.KubernetesClient.
-		PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent", "status"})
-	require.NoError(v.T(), err)
-	assert.Empty(v.T(), stderr)
-	assert.NotEmpty(v.T(), stdout)
+		stdout, stderr, err = v.Env().KubernetesCluster.KubernetesClient.
+			PodExec("datadog", clusterAgent.Name, "cluster-agent", []string{"agent", "status"})
+		require.NoError(v.T(), err)
+		assert.Empty(v.T(), stderr)
+		assert.NotEmpty(v.T(), stdout)
+	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
 }
