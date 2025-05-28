@@ -1139,22 +1139,22 @@ datadog:
     enabled: false
 
     image:
-      # datadog.agentDataPlane.image.name -- Datadog Agent image name to use (relative to `registry`)
+      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
       name: agent-data-plane
 
-      # datadog.agentDataPlane.image.tag -- Define the Agent version to use
-      tag: 0.1.9
+      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
+      tag: 0.1.10
 
-      # datadog.agentDataPlane.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
+      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
       digest: ""
 
-      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent
+      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
       repository:
 
-      # datadog.agentDataPlane.image.pullPolicy -- Datadog Agent image pull policy
+      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
-      # datadog.agentDataPlane.image.pullSecrets -- Datadog Agent repository pullSecret (ex: specify docker registry credentials)
+      # datadog.agentDataPlane.image.pullSecrets -- Agent Data Plane repository pullSecret (ex: specify docker registry credentials)
 
       ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
       pullSecrets: []
@@ -2082,6 +2082,7 @@ agents:
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+    ## 
     agentDataPlane:
       # agents.containers.agentDataPlane.env -- Additional environment variables for the agent-data-plane container
       env: []
