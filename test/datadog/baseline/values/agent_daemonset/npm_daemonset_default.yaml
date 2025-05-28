@@ -1,0 +1,8 @@
+containers:
+  - system-probe
+  - process-agent
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  networkMonitoring:
+    enabled: true
