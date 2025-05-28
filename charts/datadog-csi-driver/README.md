@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -20,6 +20,9 @@ Datadog CSI Driver helm chart
 | image.repository | string | `nil` | Override default registry + image.name for CSI driver TODO: change to official repository when available |
 | image.tag | string | `"latest"` | CSI driver image tag to use TODO: change to a static stable version |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
+| registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
+| registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
+| registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
 | sockets.apmHostSocketPath | string | `"/var/run/datadog/apm.socket"` |  |
 | sockets.dsdHostSocketPath | string | `"/var/run/datadog/dsd.socket"` |  |
 

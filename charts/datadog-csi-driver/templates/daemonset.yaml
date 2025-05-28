@@ -14,23 +14,22 @@ spec:
         admission.datadoghq.com/enabled: "false"
     spec:
       hostNetwork: true
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
       containers:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.image.pullSecrets }}
-          imagePullSecrets:
-    {{ toYaml .Values.image.pullSecrets | indent 8 }}
-          {{- end }}
           securityContext:
             privileged: true 
           ports:
             - containerPort: 5000
               protocol: TCP 
           args:
-            - /dd-csi-driver
-            - -apm-host-socket-path="{{ dir .Values.sockets.apmHostSocketPath }}"
-            - -dsd-host-socket-path="{{ dir .Values.sockets.dsdHostSocketPath }}"
+            - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
+            - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
           volumeMounts:
             - name: plugin-dir
               mountPath: /csi
@@ -51,7 +50,8 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
         - name: csi-node-driver-registrar
-          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+          image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
+          imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"

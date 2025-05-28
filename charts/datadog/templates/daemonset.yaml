@@ -55,14 +55,14 @@ spec:
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
-        {{- if and (.Values.agents.podSecurity.apparmor.enabled) }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0" .Capabilities.KubeVersion.Version) }}
         container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
         {{- end }}
         {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (semverCompare "<1.30.0" .Capabilities.KubeVersion.Version) }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
         {{- if .Values.providers.gke.autopilot }}  # Workaround for GKE Autopilot bug in versions >= 1.32.2-gke.1182000 and < 1.32.2-gke.1652000.
@@ -125,7 +125,7 @@ spec:
         {{- if eq (include "should-enable-trace-agent" .) "true" }}
           {{- include "container-trace-agent" . | nindent 6 }}
         {{- end }}
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
         {{- if eq  (include "should-enable-process-agent" .) "true" }}
@@ -179,10 +179,17 @@ spec:
       {{- if eq (include "should-enable-otel-agent" .) "true" }}
       - name: otelconfig
         configMap:
+          {{- if .Values.datadog.otelCollector.configMap.name }}
+          name: {{ .Values.datadog.otelCollector.configMap.name }}
+          items:
+          - key: {{ .Values.datadog.otelCollector.configMap.key }}
+            path: otel-config.yaml
+          {{- else }}
           name: {{ include "agents-install-otel-configmap-name" . }}
           items:
           - key: otel-config.yaml
             path: otel-config.yaml
+          {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}

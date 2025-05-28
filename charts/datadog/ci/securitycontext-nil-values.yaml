@@ -2,6 +2,7 @@
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
-  kubeStateMetricsEnabled: false
+  kubelet:
+    tlsVerify: false
 
   securityContext:

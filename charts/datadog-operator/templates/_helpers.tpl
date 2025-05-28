@@ -85,6 +85,6 @@ Check operator image tag version.
 {{- if not .Values.image.doNotCheckTag -}}
 {{- .Values.image.tag -}}
 {{- else -}}
-{{ "1.14.0" }}
+{{ "1.15.0-rc.2" }}
 {{- end -}}
 {{- end -}}

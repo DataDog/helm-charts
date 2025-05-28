@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.10.0-dev.2
+
+* Update Datadog Operator chart for 1.15.0-rc.2.
+
+## 2.10.0-dev.1
+
+* Fix semverCompare to work with pre-release versions.
+
+## 2.10.0-dev
+
+* Update Datadog Operator chart for 1.15.0-rc.1.
+
+## 2.9.2
+
+* no-op chart bump to sync changlog with chart version.
+
 ## 2.9.0
 
 * Update Datadog Operator version to 1.14.0.

@@ -1,9 +1,18 @@
 stages:
   - e2e
+  - test
 
 variables:
   RUN_E2E_TEST:
     description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
+  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
+
+noop:
+  stage: test
+  script: 
+    - echo "No op job to get merge queue working"
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  tags: ["arch:amd64"]
 
 e2e:
   stage: e2e
@@ -27,29 +36,49 @@ e2e:
     - if: $RUN_E2E_TEST == "true"
       when: manual
     - when: never
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:95dca87f269a
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:
-    AWS_KEYPAIR_NAME: datadog-agent-ci
-    AWS_PRIVATE_KEY_FILE: $CI_PROJECT_DIR/ssh_key
-    KUBERNETES_CPU_REQUEST: 2
-    KUBERNETES_MEMORY_REQUEST: 4Gi
-    KUBERNETES_MEMORY_LIMIT: 12Gi
+    E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
+    E2E_GCP_PRIVATE_KEY_PATH: /tmp/agent-qa-gcp-ssh-key
+    E2E_KEY_PAIR_NAME: ci.helm-charts
+    KUBERNETES_MEMORY_REQUEST: 12Gi
+    KUBERNETES_MEMORY_LIMIT: 16Gi
+  parallel:
+    matrix:
+      - E2E_BUILD_TAGS:
+          - e2e
+          - e2e_autopilot
+          - e2e_autopilot_systemprobe
   before_script:
-    - mkdir -p ~/.aws
-    - set +x
+    # Initial credentials setup with default build-stable AWS profile
+    - echo "Starting setup for E2E testing..."
+
+    # TODO: Retrieve with datadog-agent-qa AWS profile when secret is moved to SSM in that account
+    - E2E_GCP_PRIVATE_KEY_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key_password --with-decryption --query "Parameter.Value" --out text)
+    - export E2E_GCP_PRIVATE_KEY_PASSWORD
+
     # Set GITHUB_TOKEN to avoid getting rate-limited when pulumi sdk downloads the kubernetes provider
     - export GITHUB_TOKEN=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.github_token --with-decryption --query "Parameter.Value" --out text)
-    # Configure AWS EC2 ssh key needed for create pulumi EKS environment
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_key --with-decryption --query "Parameter.Value" --out text > $AWS_PRIVATE_KEY_FILE
-    - set -x
-    # Without the newline ssh silently fails and moves on to try other auth methods
-    - echo "" >> $AWS_PRIVATE_KEY_FILE
-    - chmod 600 $AWS_PRIVATE_KEY_FILE
-    # Configure AWS profile
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e-agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
-    - set -x
+
+    # Use S3 backend to store stack status
+    - export PULUMI_CONFIG_PASSPHRASE=$(aws ssm get-parameter --region us-east-1 --name ci.helm-charts.pulumi_password --with-decryption --query "Parameter.Value" --out text)
+
+    # Configure and use datadog-agent-qa AWS profile
+    - mkdir -p ~/.aws
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.agent-qa-profile --with-decryption --query "Parameter.Value" --out text >> ~/.aws/config
     - export AWS_PROFILE=agent-qa-ci
+
     - pulumi login "s3://dd-pulumi-state?region=us-east-1&awssdk=v2&profile=$AWS_PROFILE"
+
+    # SSH Key retrieval for GCP
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_public_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PUBLIC_KEY_PATH || exit $?
+    - touch $E2E_GCP_PRIVATE_KEY_PATH && chmod 600 $E2E_GCP_PRIVATE_KEY_PATH && aws ssm get-parameter --region us-east-1 --name ci.helm-charts.ssh_private_key --with-decryption --query "Parameter.Value" --out text > $E2E_GCP_PRIVATE_KEY_PATH || exit $?
+
+    # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
+    # The service account is called `agent-e2e-tests`
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
+    - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
+
   script:
-    - make test-e2e
+    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e

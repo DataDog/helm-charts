@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.2.0
+  tag: v1.3.0
 
 # nameOverride -- Override name of app
 nameOverride: ""
@@ -90,7 +90,16 @@ runner:
     customObjects: []
   # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
   kubernetesPermissions: []
-
+  # -- Resource requirements for the Datadog Private Action Runner container
+  resources:
+    # -- Resource limits for the runner container
+    limits:
+      cpu: 250m
+      memory: 1Gi
+    # -- Resource requests for the runner container
+    requests:
+      cpu: 250m
+      memory: 1Gi
   # -- List of credential files to be used by the Datadog Private Action Runner
   credentialFiles: []
   # see examples/values.yaml for examples on how to specify secrets

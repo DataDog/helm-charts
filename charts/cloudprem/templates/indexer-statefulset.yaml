@@ -63,6 +63,10 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- if .Values.pipelinesConfig }}
+            - name: "QW_PIPELINE_CONFIG_PATH"
+              value: "/quickwit/pipelines_config.json"
+            {{- end }}
             {{- range $key, $value := .Values.indexer.extraEnv }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
@@ -86,8 +90,7 @@ spec:
             {{- toYaml .Values.indexer.readinessProbe | nindent 12 }}
           volumeMounts:
             - name: config
-              mountPath: /quickwit/node.yaml
-              subPath: node.yaml
+              mountPath: /quickwit/
             - name: data
               mountPath: /quickwit/qwdata
             {{- range .Values.configMaps }}
@@ -108,9 +111,6 @@ spec:
         - name: config
           configMap:
             name: {{ template "quickwit.fullname" . }}
-            items:
-              - key: node.yaml
-                path: node.yaml
         {{- if ne .Values.indexer.persistentVolume.enabled true }}
         - name: data
           emptyDir: {}
@@ -131,7 +131,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append .Values.tolerations .Values.indexer.tolerations | compact | uniq }}
+      {{- $tolerations := concat .Values.tolerations .Values.indexer.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if .Values.indexer.runtimeClassName }}
