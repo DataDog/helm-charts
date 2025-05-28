@@ -486,6 +486,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.agentDataPlane.privilegedApiPort | int | `5101` | Port for privileged API server, used for lower-level operations that can alter the state of the ADP process or expose internal information |
 | agents.containers.agentDataPlane.readinessProbe | object | Every 5s / 12 KO / 1 OK | Override default agent-data-plane readiness probe settings |
 | agents.containers.agentDataPlane.resources | object | `{}` | Resource requests and limits for the agent-data-plane container |
+| agents.containers.agentDataPlane.telemetryApiPort | int | `5102` | Port for telemetry API server, used for exposing internal telemetry to be scraped by the Agent |
 | agents.containers.agentDataPlane.unprivilegedApiPort | int | `5100` | Port for unprivileged API server, used primarily for health checks |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
@@ -704,12 +705,11 @@ helm install <RELEASE_NAME> \
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
-| datadog.agentDataPlane.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
-| datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Datadog Agent image name to use (relative to `registry`) |
-| datadog.agentDataPlane.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
-| datadog.agentDataPlane.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
-| datadog.agentDataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| datadog.agentDataPlane.image.tag | string | `"0.1.8"` | Define the Agent version to use |
+| datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
+| datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
+| datadog.agentDataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
+| datadog.agentDataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
+| datadog.agentDataPlane.image.tag | string | `"0.1.10"` | Define the Agent Data Plane version to use |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
