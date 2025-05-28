@@ -21,6 +21,8 @@ env:
       valueFrom:
         fieldRef:
             fieldPath: status.hostIP
+    - name: DD_KUBELET_USE_API_SERVER
+      value: "false"
     - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
       value: "0"
     - name: HELM_FORCE_RENDER
@@ -56,7 +58,7 @@ env:
       value: /var/run/datadog/dsd.socket
     - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
       value: "true"
-image: gcr.io/datadoghq/agent:7.64.1
+image: gcr.io/datadoghq/agent:7.65.2
 imagePullPolicy: IfNotPresent
 name: process-agent
 resources:

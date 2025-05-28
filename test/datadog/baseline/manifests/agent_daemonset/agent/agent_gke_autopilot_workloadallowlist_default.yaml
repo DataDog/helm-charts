@@ -21,6 +21,8 @@ env:
       valueFrom:
         fieldRef:
             fieldPath: status.hostIP
+    - name: DD_KUBELET_USE_API_SERVER
+      value: "false"
     - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
       value: "0"
     - name: HELM_FORCE_RENDER
@@ -71,7 +73,7 @@ env:
     - name: DD_DOGSTATSD_SOCKET
       value: /var/run/datadog/dsd.socket
     - name: DD_EXTRA_CONFIG_PROVIDERS
-      value: clusterchecks endpointschecks
+      value: endpointschecks
     - name: DD_IGNORE_AUTOCONF
       value: kubernetes_state
     - name: DD_CONTAINER_LIFECYCLE_ENABLED
@@ -86,7 +88,7 @@ env:
       value: "true"
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: "true"
-image: gcr.io/datadoghq/agent:7.64.1
+image: gcr.io/datadoghq/agent:7.65.2
 imagePullPolicy: IfNotPresent
 livenessProbe:
     failureThreshold: 6
