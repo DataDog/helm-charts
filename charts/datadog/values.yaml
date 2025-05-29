@@ -2135,6 +2135,9 @@ agents:
         successThreshold: 1
         failureThreshold: 12
 
+      # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
     initContainers:
       # agents.containers.initContainers.resources -- Resource requests and limits for the init containers
       resources: {}
