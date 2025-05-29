@@ -77,9 +77,8 @@ e2e:
 
     # Setup GCP credentials. https://www.pulumi.com/registry/packages/gcp/installation-configuration/
     # The service account is called `agent-e2e-tests`
-    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --out text  > ~/gcp-credentials.json || exit $?
+    - aws ssm get-parameter --region us-east-1 --name ci.helm-charts.e2e_tests_gcp_credentials --with-decryption --query "Parameter.Value" --debug --out text  > ~/gcp-credentials.json || exit $?
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
-    - echo $GOOGLE_APPLICATION_CREDENTIALS
 
   script:
     - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
