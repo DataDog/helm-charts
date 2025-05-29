@@ -2077,7 +2077,6 @@ agents:
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
-    ## 
     agentDataPlane:
       # agents.containers.agentDataPlane.env -- Additional environment variables for the agent-data-plane container
       env: []
