@@ -69,11 +69,12 @@ spec:
         autopilot.gke.io/no-connect: "true"
         {{- end }}
         {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
+        {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
         ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
         ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
         ad.datadoghq.com/agent-data-plane.instances: |
           [{
-            "prometheus_url":"http://127.0.0.1:5102/metrics",
+            "prometheus_url":"http://127.0.0.1:{{ $telemetryApiPort }}/metrics",
             "metrics":["*"],
             "namespace": "datadog.agent",
             "send_distribution_buckets": true,
