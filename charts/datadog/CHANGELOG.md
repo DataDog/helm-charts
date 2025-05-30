@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.0
+
+* Add support for Agent Data Plane.
+
 ## 3.116.3
 
 * Add an option to configure KSM static tags.

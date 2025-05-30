@@ -52,8 +52,6 @@ data:
       - collectors:
         - secrets
         - configmaps
-        - verticalpodautoscalers
-        - customresourcedefinitions
         - nodes
         - pods
         - services
@@ -79,47 +77,6 @@ data:
           {}
         annotations_as_tags:
           {}
-        custom_resource:
-          spec:
-            resources:
-              - commonLabels:
-                  crd_type: eniconfig
-                groupVersionKind:
-                  group: crd.k8s.amazonaws.com
-                  kind: ENIConfig
-                  version: v1alpha1
-                labelsFromPath:
-                  crd_name:
-                  - metadata
-                  - name
-                metrics:
-                - each:
-                    gauge:
-                      path:
-                      - metadata
-                      - generation
-                    type: gauge
-                  help: ENI Config
-                  name: eniconfig
-              - commonLabels:
-                  crd_type: cninode
-                groupVersionKind:
-                  group: vpcresources.k8s.aws
-                  kind: CNINode
-                  version: v1alpha1
-                labelsFromPath:
-                  crd_name:
-                  - metadata
-                  - name
-                metrics:
-                - each:
-                    gauge:
-                      path:
-                      - metadata
-                      - generation
-                    type: gauge
-                  help: CNI Node
-                  name: cninode
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -490,13 +447,6 @@ rules:
       - list
       - watch
   - apiGroups:
-      - autoscaling.k8s.io
-    resources:
-      - verticalpodautoscalers
-    verbs:
-      - list
-      - watch
-  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
@@ -507,20 +457,6 @@ rules:
       - apiextensions.k8s.io
     resources:
       - customresourcedefinitions
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - crd.k8s.amazonaws.com
-    resources:
-      - eniconfigs
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - vpcresources.k8s.aws
-    resources:
-      - cninodes
     verbs:
       - list
       - watch
@@ -799,7 +735,17 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
+        ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
+        ad.datadoghq.com/agent-data-plane.instances: |
+          [{
+            "prometheus_url":"http://127.0.0.1:5102/metrics",
+            "metrics":["*"],
+            "namespace": "datadog.agent",
+            "send_distribution_buckets": true,
+            "max_returned_metrics": 4000
+          }]
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -851,14 +797,10 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_DOGSTATSD_PORT
-              value: "8125"
-            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+            - name: DD_USE_DOGSTATSD
+              value: "false"
+            - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
               value: "true"
-            - name: DD_DOGSTATSD_TAG_CARDINALITY
-              value: low
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -932,10 +874,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           name: agent
-          ports:
-            - containerPort: 8125
-              name: dogstatsdport
-              protocol: UDP
+          ports: null
           readinessProbe:
             failureThreshold: 6
             httpGet:
@@ -1099,6 +1038,105 @@ spec:
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
+              readOnly: true
+        - command:
+            - agent-data-plane
+            - run
+            - --config=/etc/datadog-agent/datadog.yaml
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-secret
+            - name: DD_REMOTE_CONFIGURATION_ENABLED
+              value: "true"
+            - name: DD_AUTH_TOKEN_FILE_PATH
+              value: /etc/datadog-agent/auth/token
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
+            - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_DOGSTATSD_TAG_CARDINALITY
+              value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_LOG_LEVEL
+              value: INFO
+            - name: DD_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5100
+            - name: DD_SECURE_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5101
+            - name: DD_TELEMETRY_ENABLED
+              value: "true"
+            - name: DD_PROMETHEUS_LISTEN_ADDR
+              value: tcp://127.0.0.1:5102
+          image: gcr.io/datadoghq/agent-data-plane:0.1.11
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /live
+              port: 5100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: agent-data-plane
+          ports:
+            - containerPort: 8125
+              name: dogstatsdport
+              protocol: UDP
+          readinessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /ready
+              port: 5100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: false
+            - mountPath: /etc/datadog-agent/auth
+              name: auth-token
+              readOnly: false
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: false
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
               readOnly: true
       hostPID: true
       initContainers:
