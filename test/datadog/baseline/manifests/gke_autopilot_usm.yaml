@@ -1204,7 +1204,13 @@ spec:
           image: gcr.io/datadoghq/agent:7.65.2
           imagePullPolicy: IfNotPresent
           name: system-probe
-          resources: {}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 400Mi
+            requests:
+              cpu: 100m
+              memory: 400Mi
           securityContext:
             appArmorProfile:
               type: Unconfined
