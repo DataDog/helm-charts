@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.116.1
+## 3.116.4
 
 * add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.116.3
+
+* Add an option to configure KSM static tags.
+
+## 3.116.2
+
+* Add an option to configure KSM custom resource metrics collection
+
+## 3.116.1
+
+* (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
 
 ## 3.116.0
 

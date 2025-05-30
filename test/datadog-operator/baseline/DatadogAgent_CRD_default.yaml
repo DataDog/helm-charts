@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.16.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.8.0-dev'
+    helm.sh/chart: 'datadogCRDs-2.8.0-dev.1'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -1514,6 +1514,9 @@ spec:
                           type: string
                         enableGlobalPermissions:
                           type: boolean
+                        refreshInterval:
+                          format: int32
+                          type: integer
                         roles:
                           items:
                             properties:
