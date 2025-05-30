@@ -113,7 +113,7 @@
             },
             "deployments": {
               "type": "array",
-              "description": "Actions related to deployments (options: get, list, create, update, patch, delete, deleteMultiple, restart)",
+              "description": "Actions related to deployments (options: get, list, create, update, patch, delete, deleteMultiple, restart, rollback, scale)",
               "items": {
                 "type": "string"
               }

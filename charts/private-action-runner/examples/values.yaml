@@ -24,7 +24,7 @@ runner:
   kubernetesActions:
     controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-    deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart"]
+    deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale"]
     replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
