@@ -152,3 +152,12 @@ Transform a list of actions into the list of k8s verbs that are required to perf
 {{- end -}}
 {{- $allVerbs | toJson -}}
 {{- end -}}
+
+{{/*
+Generates additional RBAC rules for special cases.
+*/}}
+{{- define "chart.additionalK8sPermissions" -}}
+  {{- if and (eq .verb "rollback") (eq .resource "deployment") }}
+    {{- include "rbacRule" (dict "apiGroup" "apps" "resource" "replicasets" "verbs" (list "list")) }}
+  {{- end }}
+{{- end }}

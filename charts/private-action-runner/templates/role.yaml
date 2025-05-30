@@ -13,4 +13,9 @@ rules:
         {{- include "rbacRule" (dict "apiGroup" (include "chart.k8sApiGroup" $bundle) "resource" (lower $resourceType) "verbs"  (fromJsonArray (include "chart.k8sVerbs" (index $.Values.runner.kubernetesActions $resourceType))))}}
     {{- end }}
   {{- end }}
+  {{- range $resourceType, $verbs := .Values.runner.kubernetesActions }}
+    {{- range $i, $verb := $verbs }}
+      {{- include "chart.additionalK8sPermissions" (dict "resource" (include "chart.k8sResourceSingular" $resourceType) "verb" $verb) }}
+    {{- end }}
+  {{- end }}
 {{- end }}
