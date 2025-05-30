@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.0
+
+* Enable local fallback by default when workload autoscaling is enabled.
+
 ## 3.117.2
 
 * Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
