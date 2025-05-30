@@ -78,4 +78,6 @@
 - name: DD_CLOUD_PROVIDER_METADATA
   value: '["gcp"]'
 {{- end }}
+- name: DD_CSI_ENABLED
+  value: {{ .Values.datadog.csi.enabled | quote }}
 {{- end }}
