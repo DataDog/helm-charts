@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.1
+
+* Add default resource limits for system-probe container on GKE Autopilot
+
 ## 3.117.0
 
 * Add support for Agent Data Plane.
