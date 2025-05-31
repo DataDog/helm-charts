@@ -30,6 +30,8 @@ stringData:
       - com.datadoghq.kubernetes.apps.deleteControllerRevision
       - com.datadoghq.kubernetes.apps.deleteMultipleControllerRevisions
       - com.datadoghq.kubernetes.apps.restartDeployment
+      - com.datadoghq.kubernetes.apps.rollbackDeployment
+      - com.datadoghq.kubernetes.apps.scaleDeployment
       - com.datadoghq.kubernetes.core.patchEndpoints
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
@@ -70,6 +72,7 @@ rules:
   - deployments
   verbs:
   - patch
+  - get
 - apiGroups:
   - ""
   resources:
@@ -82,6 +85,12 @@ rules:
   - pods
   verbs:
   - get
+  - list
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
   - list
 ---
 # Source: private-action-runner/templates/rolebinding.yaml
@@ -121,7 +130,7 @@ metadata:
   name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.1.2
+    helm.sh/chart: private-action-runner-1.2.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: kubernetes-test
     app.kubernetes.io/version: "v1.3.0"
@@ -136,13 +145,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.1.2
+        helm.sh/chart: private-action-runner-1.2.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: kubernetes-test
         app.kubernetes.io/version: "v1.3.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: bc9653cc3fcc293b677fb19450d6d14ab5a8fa5288f8f605a457f57ffa8d876e
+        checksum/values: 5901f670e03cd3023bf5efe0089c9551aaa54f7cdf6c537a0db1f73968573733
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:

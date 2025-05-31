@@ -142,9 +142,22 @@ Transform a list of actions into the list of k8s verbs that are required to perf
     {{- $allVerbs = concat $allVerbs (list "delete" "list") -}}
   {{- else if eq $action "restart" -}}
     {{- $allVerbs = append $allVerbs "patch" -}}
+  {{- else if eq $action "rollback" -}}
+    {{- $allVerbs = concat $allVerbs (list "get" "patch") -}}
+  {{- else if eq $action "scale" -}}
+    {{- $allVerbs = append $allVerbs "patch" -}}
   {{- else -}}
     {{- $allVerbs = append $allVerbs $action -}}
   {{- end -}}
 {{- end -}}
 {{- $allVerbs | toJson -}}
 {{- end -}}
+
+{{/*
+Generates additional RBAC rules for special cases.
+*/}}
+{{- define "chart.additionalK8sPermissions" -}}
+  {{- if and (eq .verb "rollback") (eq .resource "deployment") }}
+    {{- include "rbacRule" (dict "apiGroup" "apps" "resource" "replicasets" "verbs" (list "list")) }}
+  {{- end }}
+{{- end }}
