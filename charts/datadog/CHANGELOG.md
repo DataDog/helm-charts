@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.2
+
+* Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
+
 ## 3.117.1
 
 * Add default resource limits for system-probe container on GKE Autopilot
