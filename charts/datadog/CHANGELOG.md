@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.2
+
+* Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
+
 ## 3.117.1
 
 * Add default resource limits for system-probe container on GKE Autopilot
