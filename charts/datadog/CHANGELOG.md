@@ -1,8 +1,20 @@
 # Datadog changelog
 
+## 3.117.1
+
+* Add default resource limits for system-probe container on GKE Autopilot
+
+## 3.117.0
+
+* Add support for Agent Data Plane.
+
+## 3.116.3
+
+* Add an option to configure KSM static tags.
+
 ## 3.116.2
 
-* Stop `/etc/passwd` mount on `agent` container if running unprivileged to prevent incorrect user running the agent.
+* Add an option to configure KSM custom resource metrics collection
 
 ## 3.116.1
 
