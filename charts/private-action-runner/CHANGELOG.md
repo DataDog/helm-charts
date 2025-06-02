@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.2.1
+
+* Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.
+
 ## 1.2.0
 
 * Add support for kubernetes scaleDeployment and rollbackDeployment actions
