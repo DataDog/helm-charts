@@ -72,15 +72,15 @@
 
 ## 0.15.8
 
-* Update private action image version to `v0.1.14*beta`
+* Update private action image version to `v0.1.14-beta`
 
 ## 0.15.7
 
-* Update private action image version to `v0.1.12*beta`
+* Update private action image version to `v0.1.12-beta`
 
 ## 0.15.6
 
-* Update private action image version to `v0.1.11*beta`
+* Update private action image version to `v0.1.11-beta`
 
 ## 0.15.5
 
@@ -88,23 +88,23 @@
 
 ## 0.15.4
 
-* Update private action image version to `v0.1.10*beta`
+* Update private action image version to `v0.1.10-beta`
 
 ## 0.15.3
 
-* Update private action image version to `v0.1.9*beta`
+* Update private action image version to `v0.1.9-beta`
 
 ## 0.15.2
 
-* Update private action image version to `v0.1.8*beta`
+* Update private action image version to `v0.1.8-beta`
 
 ## 0.15.1
 
-* Update private action image version to `v0.1.6*beta`
+* Update private action image version to `v0.1.6-beta`
 
 ## 0.15.0
 
-* Update private action image version to `v0.1.5*beta`
+* Update private action image version to `v0.1.5-beta`
 
 ## 0.14.3
 
@@ -112,11 +112,11 @@
 
 ## 0.14.2
 
-* Update private action image version to `v0.1.3*beta`
+* Update private action image version to `v0.1.3-beta`
 
 ## 0.14.1
 
-* Update private action image version to `v0.1.2*beta`
+* Update private action image version to `v0.1.2-beta`
 
 ## 0.14.0
 
@@ -124,7 +124,7 @@
 
 ## 0.13.0
 
-* Update private action image version to `v0.1.1*beta`
+* Update private action image version to `v0.1.1-beta`
 
 ## 0.12.0
 
@@ -133,7 +133,7 @@
 
 ## 0.11.0
 
-* Added top level `port` configuration option, superseding `appBuilder.port`. Update the private action image to the beta image, `v0.1.0*beta`.
+* Added top level `port` configuration option, superseding `appBuilder.port`. Update the private action image to the beta image, `v0.1.0-beta`.
 
 ### 0.10.0
 
