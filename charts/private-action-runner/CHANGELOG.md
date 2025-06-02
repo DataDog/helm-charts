@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.1.3
+
+* Add customizable nodeSelector, tolerations, affinity for the private action runner deployment
+
 ## 1.1.2
 
 * Add customizable resource limits and requests for the private action runner container

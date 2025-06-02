@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -30,7 +30,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -44,27 +44,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: default-test-private-action-runner
+    name: resources-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: default-test
+      app.kubernetes.io/instance: resources-test
   ports:
     - name: http
       port: 9016
@@ -74,12 +74,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: default-test-private-action-runner
+  name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.1.3
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: default-test
+    app.kubernetes.io/instance: resources-test
     app.kubernetes.io/version: "v1.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -88,19 +88,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: default-test
+      app.kubernetes.io/instance: resources-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.1.3
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: default-test
+        app.kubernetes.io/instance: resources-test
         app.kubernetes.io/version: "v1.3.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 7dad6e8716f9476eb4673d48b1c8ff5c8936427d0c4d82b9baf45ff23ddf55ef
+        checksum/values: 771b75ee032ccd66d5eb207f416c8b8a948e85133f4df7e11514d98bfb82e2da
     spec:
-      serviceAccountName: default-test-private-action-runner
+      serviceAccountName: resources-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.3.0"
@@ -118,7 +118,22 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
+      nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      tolerations:
+        - effect: NoSchedule
+          key: taint.custom.com/key
+          operator: Exists
       volumes:
         - name: secrets
           secret:
-            secretName: default-test-private-action-runner
+            secretName: resources-test-private-action-runner
