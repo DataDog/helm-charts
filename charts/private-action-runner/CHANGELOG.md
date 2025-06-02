@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.2.0
+
+* Add support for kubernetes scaleDeployment and rollbackDeployment actions
+
 ## 1.1.2
 
 * Add customizable resource limits and requests for the private action runner container
