@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.117.3](https://img.shields.io/badge/Version-3.117.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.117.4](https://img.shields.io/badge/Version-3.117.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -705,6 +705,7 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| datadog.advancedConfd | object | `{}` | Provide additional check configurations. Each key is an integration containing several config files. |
 | datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
 | datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
 | datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |

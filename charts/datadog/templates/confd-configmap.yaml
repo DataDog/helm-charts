@@ -1,4 +1,4 @@
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf) (.Values.datadog.advancedConfd)) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,6 +9,7 @@ metadata:
   annotations:
     checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
     checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
+    checksum/advanced-confd-config: {{ tpl (toYaml .Values.datadog.advancedConfd) . | sha256sum }}
 data:
 {{/*
 Merge the legacy autoconf dict before so confd static configurations
@@ -19,5 +20,11 @@ override duplicates
 {{- end }}
 {{- if .Values.datadog.confd }}
 {{ tpl (toYaml .Values.datadog.confd) . | indent 2 }}
+{{- end }}
+{{- range $integration, $configs := $.Values.datadog.advancedConfd }}
+{{- range $name, $config := $configs }}
+  {{ printf "%s--%s: |" $integration $name }}
+    {{ tpl $config $ | indent 4 | trim }}
+{{- end }}
 {{- end }}
 {{- end -}}
