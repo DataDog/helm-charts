@@ -3,6 +3,7 @@
 ## 3.117.2
 
 * Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
+* Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
 
 ## 3.117.1
 
