@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.117.3
+## 3.117.4
 
 * add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.117.3
+
+* Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
 
 ## 3.117.2
 
