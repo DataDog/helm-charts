@@ -46,7 +46,7 @@ runner:
     controllerRevisions: []
     # -- Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
     daemonSets: []
-    # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart")
+    # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale")
     deployments: []
     # -- Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
     replicaSets: []

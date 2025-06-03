@@ -133,6 +133,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if Agent Data Plane needs to be deployed
+*/}}
+{{- define "should-enable-agent-data-plane" -}}
+{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole
 */}}
 {{- define "should-add-otel-agent-k8sattributes-rules" -}}
@@ -1208,9 +1219,22 @@ false
     false
   {{- else if .Values.providers.talos.enabled -}}
     false
+  {{- else if not (eq (include "is-agent-user-root" .) "true") -}}
+    false
   {{- else if not .Values.datadog.disablePasswdMount -}}
     true
   {{- else -}}
     false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the agent is running as the root user (UID 0), else return false
+*/}}
+{{- define "is-agent-user-root" -}}
+  {{- if and .Values.datadog.securityContext .Values.datadog.securityContext.runAsUser (ne (toString .Values.datadog.securityContext.runAsUser) "0") -}}
+    false
+  {{- else -}}
+    true
   {{- end -}}
 {{- end -}}

@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.116.4
+## 3.117.3
 
 * add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.117.2
+
+* Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
+
+## 3.117.1
+
+* Add default resource limits for system-probe container on GKE Autopilot
+
+## 3.117.0
+
+* Add support for Agent Data Plane.
 
 ## 3.116.3
 

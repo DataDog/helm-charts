@@ -47,7 +47,7 @@ func Test_baseline_manifests(t *testing.T) {
 					"runner.roleType": `"ClusterRole"`,
 					"runner.kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
 					"runner.kubernetesActions.customObjects":       `["deleteMultiple"]`,
-					"runner.kubernetesActions.deployments":         `["restart"]`,
+					"runner.kubernetesActions.deployments":         `["restart", "rollback", "scale"]`,
 					"runner.kubernetesActions.endpoints":           `["patch"]`,
 					"runner.kubernetesPermissions[0].apiGroups":    `["example.com"]`,
 					"runner.kubernetesPermissions[0].resources":    `["tests"]`,

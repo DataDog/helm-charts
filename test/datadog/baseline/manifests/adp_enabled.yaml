@@ -114,66 +114,6 @@ metadata:
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
 ---
-apiVersion: v1
-data:
-  otel-config.yaml: |
-    receivers:
-      prometheus:
-        config:
-          scrape_configs:
-            - job_name: "otelcol"
-              scrape_interval: 10s
-              static_configs:
-                - targets: ["0.0.0.0:8888"]
-      otlp:
-        protocols:
-          grpc:
-             endpoint: 0.0.0.0:4317
-          http:
-             endpoint: 0.0.0.0:4318
-    exporters:
-      debug:
-        verbosity: detailed
-      datadog:
-        api:
-          key: ${env:DD_API_KEY}
-          site: ""
-    processors:
-      infraattributes:
-        cardinality: 2
-      batch:
-        timeout: 10s
-    connectors:
-      datadog/connector:
-        traces:
-          compute_top_level_by_span_kind: true
-          peer_tags_aggregation: true
-          compute_stats_by_span_kind: true
-    service:
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [infraattributes, batch]
-          exporters: [datadog, datadog/connector]
-        metrics:
-          receivers: [otlp, datadog/connector, prometheus]
-          processors: [infraattributes, batch]
-          exporters: [datadog]
-        logs:
-          receivers: [otlp]
-          processors: [infraattributes, batch]
-          exporters: [datadog]
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-config
-  namespace: datadog-agent
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -774,14 +714,6 @@ spec:
       port: 8126
       protocol: TCP
       targetPort: 8126
-    - name: otel-grpc
-      port: 4317
-      protocol: TCP
-      targetPort: 4317
-    - name: otel-http
-      port: 4318
-      protocol: TCP
-      targetPort: 4318
   selector:
     app: datadog
 ---
@@ -803,7 +735,17 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
+        ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
+        ad.datadoghq.com/agent-data-plane.instances: |
+          [{
+            "prometheus_url":"http://127.0.0.1:5102/metrics",
+            "metrics":["*"],
+            "namespace": "datadog.agent",
+            "send_distribution_buckets": true,
+            "max_returned_metrics": 4000
+          }]
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -831,8 +773,6 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -855,20 +795,12 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
-            - name: DD_AGENT_IPC_PORT
-              value: "5009"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_DOGSTATSD_PORT
-              value: "8125"
-            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+            - name: DD_USE_DOGSTATSD
+              value: "false"
+            - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
               value: "true"
-            - name: DD_DOGSTATSD_TAG_CARDINALITY
-              value: low
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -927,8 +859,6 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-            - name: DD_OTELCOLLECTOR_ENABLED
-              value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
           image: gcr.io/datadoghq/agent:7.65.2
@@ -944,10 +874,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           name: agent
-          ports:
-            - containerPort: 8125
-              name: dogstatsdport
-              protocol: UDP
+          ports: null
           readinessProbe:
             failureThreshold: 6
             httpGet:
@@ -1022,8 +949,6 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1115,10 +1040,9 @@ spec:
               name: runtimesocketdir
               readOnly: true
         - command:
-            - otel-agent
-            - --config=/etc/otel-agent/otel-config.yaml
-            - --core-config=/etc/datadog-agent/datadog.yaml
-            - --sync-delay=30s
+            - agent-data-plane
+            - run
+            - --config=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -1131,8 +1055,6 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1145,47 +1067,69 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-            - name: DD_CLUSTER_AGENT_ENABLED
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
               value: "true"
-            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-              value: datadog-cluster-agent
-            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  key: token
-                  name: datadog-cluster-agent
-            - name: DD_AGENT_IPC_PORT
-              value: "5009"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "60"
-            - name: DD_OTELCOLLECTOR_ENABLED
-              value: "true"
+            - name: DD_DOGSTATSD_TAG_CARDINALITY
+              value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.65.2
+            - name: DD_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5100
+            - name: DD_SECURE_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5101
+            - name: DD_TELEMETRY_ENABLED
+              value: "true"
+            - name: DD_PROMETHEUS_LISTEN_ADDR
+              value: tcp://127.0.0.1:5102
+          image: gcr.io/datadoghq/agent-data-plane:0.1.11
           imagePullPolicy: IfNotPresent
-          name: otel-agent
+          livenessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /live
+              port: 5100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: agent-data-plane
           ports:
-            - containerPort: 4317
-              name: otel-grpc
-              protocol: TCP
-            - containerPort: 4318
-              name: otel-http
-              protocol: TCP
+            - containerPort: 8125
+              name: dogstatsdport
+              protocol: UDP
+          readinessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /ready
+              port: 5100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
           resources: {}
           volumeMounts:
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
-            - mountPath: /var/log/datadog
-              name: logdatadog
               readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
+              readOnly: false
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
               readOnly: true
-            - mountPath: /etc/otel-agent
-              name: otelconfig
-              readOnly: true
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1193,19 +1137,6 @@ spec:
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
-            - mountPath: /tmp
-              name: tmpdir
-              readOnly: false
-            - mountPath: /var/run/datadog
-              name: dsdsocket
-              readOnly: true
-            - mountPath: /host/var/run
-              mountPropagation: None
-              name: runtimesocketdir
-              readOnly: true
-            - mountPath: /var/log/custom
-              name: logscustompath
               readOnly: true
       hostPID: true
       initContainers:
@@ -1239,8 +1170,6 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1315,15 +1244,6 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
-        - configMap:
-            items:
-              - key: otel-config.yaml
-                path: otel-config.yaml
-            name: datadog-otel-config
-          name: otelconfig
-        - hostPath:
-            path: /var/log/custom
-          name: logscustompath
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
@@ -1393,8 +1313,6 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
