@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.3
+
+* Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
+
 ## 3.117.2
 
 * Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
