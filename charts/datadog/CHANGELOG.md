@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.4
+
+* add support for enabling csi driver globally and as admission controller config mode.
+
 ## 3.117.3
 
 * Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
@@ -94,6 +98,7 @@
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
 
 ## 3.110.13
+
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
 ## 3.110.12
