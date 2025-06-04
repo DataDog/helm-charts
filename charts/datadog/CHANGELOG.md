@@ -4,6 +4,14 @@
 
 * Enable local fallback by default when workload autoscaling is enabled.
 
+## 3.117.4
+
+* Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
+
+## 3.117.3
+
+* Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
+
 ## 3.117.2
 
 * Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
