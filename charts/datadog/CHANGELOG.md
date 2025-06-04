@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.0
+
+* Enable local fallback by default when workload autoscaling is enabled.
+
 ## 3.117.4
 
 * Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
