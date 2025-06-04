@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.4
+
+* Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
+
 ## 3.117.3
 
 * Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
