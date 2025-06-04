@@ -21,6 +21,7 @@ var FilterKeys = map[string]interface{}{
 	"checksum/clusteragent-configmap": nil,
 	"checksum/install_info":           nil,
 	"checksum":                        nil,
+	"checksum/advanced-confd-config":  nil,
 	"checksum/autoconf-config":        nil,
 	"checksum/checksd-config":         nil,
 	"checksum/confd-config":           nil,
