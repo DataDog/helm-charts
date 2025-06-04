@@ -72,23 +72,8 @@ specs:
         {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
     egress:
-      # toServices works only for endpoints outside of the cluster
-      # This section handles the case where the control plane is outside
-      # of the cluster.
-      - toServices:
-          - k8sService:
-              namespace: default
-              serviceName: kubernetes
-      # When the control plane is on the same cluster, we must allow connections
-      # to the node entity.
       - toEntities:
           - kube-apiserver
-          - host
-          - remote-node
-        toPorts:
-          - ports:
-              - port: "443"
-                protocol: TCP
   - description: Ingress from cluster agent
     endpointSelector:
       matchLabels:

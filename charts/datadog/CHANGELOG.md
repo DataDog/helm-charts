@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.117.5
+
+* Upgrade Cluster Agent CiliumNetworkPolicy to be valid for Kube API server egress.
+
 ## 3.117.4
 
 * Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
