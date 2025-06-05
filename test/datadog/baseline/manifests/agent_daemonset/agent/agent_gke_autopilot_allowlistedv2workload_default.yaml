@@ -49,6 +49,8 @@ env:
       value: "true"
     - name: DD_DOGSTATSD_TAG_CARDINALITY
       value: low
+    - name: DD_DOGSTATSD_SOCKET
+      value: /var/run/datadog/dsd.socket
     - name: DD_CLUSTER_AGENT_ENABLED
       value: "true"
     - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -70,8 +72,6 @@ env:
       value: "false"
     - name: DD_HEALTH_PORT
       value: "5555"
-    - name: DD_DOGSTATSD_SOCKET
-      value: /var/run/datadog/dsd.socket
     - name: DD_EXTRA_CONFIG_PROVIDERS
       value: endpointschecks
     - name: DD_IGNORE_AUTOCONF
