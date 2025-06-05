@@ -52,7 +52,7 @@ env:
     - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
       value: agent
     - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-      value: 7.65.2
+      value: 7.66.1
     - name: DD_REMOTE_CONFIGURATION_ENABLED
       value: "false"
     - name: DD_CLUSTER_CHECKS_ENABLED
@@ -115,7 +115,7 @@ env:
         configMapKeyRef:
             key: install_type
             name: datadog-kpi-telemetry-configmap
-image: gcr.io/datadoghq/cluster-agent:7.65.2
+image: gcr.io/datadoghq/cluster-agent:7.66.1
 imagePullPolicy: IfNotPresent
 livenessProbe:
     failureThreshold: 6

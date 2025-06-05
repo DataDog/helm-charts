@@ -1219,9 +1219,22 @@ false
     false
   {{- else if .Values.providers.talos.enabled -}}
     false
+  {{- else if not (eq (include "is-agent-user-root" .) "true") -}}
+    false
   {{- else if not .Values.datadog.disablePasswdMount -}}
     true
   {{- else -}}
     false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the agent is running as the root user (UID 0), else return false
+*/}}
+{{- define "is-agent-user-root" -}}
+  {{- if and .Values.datadog.securityContext .Values.datadog.securityContext.runAsUser (ne (toString .Values.datadog.securityContext.runAsUser) "0") -}}
+    false
+  {{- else -}}
+    true
   {{- end -}}
 {{- end -}}
