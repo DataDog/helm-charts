@@ -151,6 +151,9 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
+      - name: agent-ipc-root-ca
+        secret:
+          secretName: datadog-agent-ipc-root-ca-secret
       {{- if (not .Values.providers.gke.autopilot) }}
       - name: auth-token
         emptyDir: {}
