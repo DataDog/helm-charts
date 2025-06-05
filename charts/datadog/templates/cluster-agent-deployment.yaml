@@ -397,6 +397,8 @@ spec:
           {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
           - name: DD_AUTOSCALING_WORKLOAD_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          - name: DD_AUTOSCALING_FAILOVER_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
