@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.1
+
+* fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).
+
 ## 3.118.0
 
 * Enable local fallback by default when workload autoscaling is enabled.

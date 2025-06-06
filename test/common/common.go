@@ -27,6 +27,7 @@ type HelmCommand struct {
 	Overrides     map[string]string // helm template `--set` flag
 	OverridesJson map[string]string // helm template `--set-json` flag
 	Logger        *logger.Logger    // logger to use for helm output. Set to logger.Discard by default.
+	ExtraArgs     []string
 }
 
 func Unmarshal[T any](t *testing.T, manifest string, destObj *T) {
@@ -51,7 +52,7 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 		options.Logger = logger.Discard
 	}
 
-	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly /*, "--debug"*/)
+	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly, cmd.ExtraArgs...)
 
 	return output, err
 }
