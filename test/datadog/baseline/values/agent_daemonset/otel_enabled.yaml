@@ -1,0 +1,8 @@
+containers:
+  - otel-agent
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  
+  otelCollector:
+    enabled: true

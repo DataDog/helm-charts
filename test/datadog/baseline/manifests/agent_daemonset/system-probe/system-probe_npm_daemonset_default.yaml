@@ -1,0 +1,99 @@
+command:
+    - system-probe
+    - --config=/etc/datadog-agent/system-probe.yaml
+env:
+    - name: DD_API_KEY
+      valueFrom:
+        secretKeyRef:
+            key: api-key
+            name: datadog-secret
+    - name: DD_REMOTE_CONFIGURATION_ENABLED
+      value: "true"
+    - name: DD_AUTH_TOKEN_FILE_PATH
+      value: /etc/datadog-agent/auth/token
+    - name: KUBERNETES
+      value: "yes"
+    - name: DD_LANGUAGE_DETECTION_ENABLED
+      value: "false"
+    - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+      value: "false"
+    - name: DD_KUBERNETES_KUBELET_HOST
+      valueFrom:
+        fieldRef:
+            fieldPath: status.hostIP
+    - name: DD_KUBELET_USE_API_SERVER
+      value: "false"
+    - name: DD_OTLP_CONFIG_LOGS_ENABLED
+      value: "false"
+    - name: DD_LOG_LEVEL
+      value: INFO
+image: gcr.io/datadoghq/agent:7.66.1
+imagePullPolicy: IfNotPresent
+name: system-probe
+resources: {}
+securityContext:
+    appArmorProfile:
+        type: Unconfined
+    capabilities:
+        add:
+            - SYS_ADMIN
+            - SYS_RESOURCE
+            - SYS_PTRACE
+            - NET_ADMIN
+            - NET_BROADCAST
+            - NET_RAW
+            - IPC_LOCK
+            - CHOWN
+            - DAC_READ_SEARCH
+    privileged: false
+    seccompProfile:
+        localhostProfile: system-probe
+        type: Localhost
+volumeMounts:
+    - mountPath: /etc/datadog-agent/auth
+      name: auth-token
+      readOnly: true
+    - mountPath: /var/log/datadog
+      name: logdatadog
+      readOnly: false
+    - mountPath: /tmp
+      name: tmpdir
+      readOnly: false
+    - mountPath: /sys/kernel/debug
+      mountPropagation: None
+      name: debugfs
+      readOnly: false
+    - mountPath: /sys/fs/bpf
+      mountPropagation: None
+      name: bpffs
+      readOnly: true
+    - mountPath: /etc/datadog-agent
+      name: config
+      readOnly: true
+    - mountPath: /etc/datadog-agent/system-probe.yaml
+      name: sysprobe-config
+      readOnly: true
+      subPath: system-probe.yaml
+    - mountPath: /var/run/sysprobe
+      name: sysprobe-socket-dir
+      readOnly: false
+    - mountPath: /host/proc
+      mountPropagation: None
+      name: procdir
+      readOnly: true
+    - mountPath: /host/sys/fs/cgroup
+      mountPropagation: None
+      name: cgroups
+      readOnly: true
+    - mountPath: /host/etc/os-release
+      name: os-release-file
+      readOnly: true
+    - mountPath: /host/etc/redhat-release
+      name: etc-redhat-release
+      readOnly: true
+    - mountPath: /host/etc/fedora-release
+      name: etc-fedora-release
+      readOnly: true
+    - mountPath: /host/etc/lsb-release
+      name: etc-lsb-release
+      readOnly: true
