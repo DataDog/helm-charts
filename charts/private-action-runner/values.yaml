@@ -38,6 +38,12 @@ runner:
     actionsAllowlist: []
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env: []
+  # -- Allow the private action runner pods to schedule on selected nodes
+  nodeSelector: {}
+  # -- Kubernetes affinity settings for the runner pods
+  affinity: {}
+  # -- Tolerations to allow scheduling runner pods on nodes with taints
+  tolerations: []
   # -- Reference to a kubernetes secrets that contains the runner identity
   runnerIdentitySecret: ""
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account

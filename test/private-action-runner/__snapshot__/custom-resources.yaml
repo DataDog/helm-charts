@@ -77,7 +77,7 @@ metadata:
   name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.2.0
+    helm.sh/chart: private-action-runner-1.2.1
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: resources-test
     app.kubernetes.io/version: "v1.3.0"
@@ -92,13 +92,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.2.0
+        helm.sh/chart: private-action-runner-1.2.1
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: resources-test
         app.kubernetes.io/version: "v1.3.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: ac8a95d8feb0ebf0c9638eda2b0071685c4429327d4242172750e28f75f325a8
+        checksum/values: c26123076ee7a48e3936560f3db1a97a34a8cd57119ab1a3ec7bb10ba7ce7e1b
     spec:
       serviceAccountName: resources-test-private-action-runner
       containers:

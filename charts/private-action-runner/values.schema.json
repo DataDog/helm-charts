@@ -89,6 +89,21 @@
             "type": "object"
           }
         },
+        "nodeSelector": {
+          "type": "object",
+          "description": "Key Value pairs of node labels used to select nodes for scheduling the runner pods"
+        },
+        "affinity": {
+          "type": "object",
+          "description": "Kubernetes affinity settings for the runner pods"
+        },
+        "tolerations": {
+          "type": "array",
+          "description": "Tolerations to allow scheduling runner pods on nodes with taints",
+          "items": {
+            "type": "object"
+          }
+        },
         "runnerIdentitySecret": {
           "type": "string",
           "description": "Name of the secret containing the runner's identity"

@@ -103,6 +103,21 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "custom-resources",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "Custom pod scheduling",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.nodeSelector": `{"kubernetes.io/os": "linux"}`,
+					"runner.tolerations":  `[{"key": "taint.custom.com/key", "effect": "NoSchedule", "operator": "Exists"}]`,
+					"runner.affinity":     `{"nodeAffinity": {"requiredDuringSchedulingIgnoredDuringExecution": {"nodeSelectorTerms": [{"matchExpressions": [{"key": "kubernetes.io/arch", "operator": "In", "values": ["amd64"]}]}]}}}`,
+				},
+			},
+			snapshotName: "custom-pod-scheduling",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {
