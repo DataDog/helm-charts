@@ -926,6 +926,7 @@ helm install <RELEASE_NAME> \
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
+| extraObjects | list | `[]` | Extra Kubernetes objects to deploy with the helm chart |
 | fips.customFipsConfig | object | `{}` | Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used. |
 | fips.enabled | bool | `false` | Enable fips proxy sidecar. The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting). |
 | fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
