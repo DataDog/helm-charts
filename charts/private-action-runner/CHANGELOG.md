@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 1.2.1
+## 1.2.2
 
 * Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.
+
+## 1.2.1
+
+* Bump runner version to `v1.4.0`
 
 ## 1.2.0
 
