@@ -6,13 +6,13 @@ type: application
 version: 1.2.2
 appVersion: "v1.4.0"
 keywords:
-  - app builder
-  - workflow automation
+- app builder
+- workflow automation
 home: https://www.datadoghq.com
 icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
 sources:
-  - https://docs.datadoghq.com/service_management/workflows/private_actions
-  - https://app.datadoghq.com/app-builder/private-action-runners
+- https://docs.datadoghq.com/service_management/workflows/private_actions
+- https://app.datadoghq.com/app-builder/private-action-runners
 maintainers:
-  - name: Datadog
-    email: support@datadoghq.com
+- name: Datadog
+  email: support@datadoghq.com
