@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.1
+
+* Update `datadog-crds` dependency to `2.8.0`
+
 ## 3.118.0
 
 * Enable local fallback by default when workload autoscaling is enabled.
