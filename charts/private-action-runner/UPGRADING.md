@@ -1,3 +1,8 @@
+# Upgrade to version 1.3.0
+
+In version 1.3.0 the chart has been updated to change the default location for the runner's configuration and credentials files. The configuration file has been moved from `/etc/datadog-runner/config.yaml` to `/etc/datadog-runner/config/config.yaml`. 
+Credentials have been moved from `/etc/datadog-runner/credentials` to `/etc/datadog-runner/config/credentials` so you might need to update your connection configurations to point to the new location.
+
 # Upgrade from version 0.x to version 1.x
 
 Version 1.0.0 introduces changes to simplify the chart and better align with Helm best practices. The most significant change is the restructuring of the values.yaml file.
