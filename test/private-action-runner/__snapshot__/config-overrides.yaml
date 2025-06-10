@@ -118,7 +118,7 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-          env:
+          env: 
             - name: FOO
               value: foo
             - name: BAR
