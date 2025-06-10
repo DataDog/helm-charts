@@ -98,7 +98,7 @@ spec:
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: d763c657f165984896697eea8bec32e2692a667c08fc31e28d745c69dea8510e
+        checksum/values: efd72170c12dfc431c95c216061404eb4cf2b67bd26d6aa18d44f544022634c5
     spec:
       serviceAccountName: resources-test-private-action-runner
       containers:
@@ -110,14 +110,29 @@ spec:
               containerPort: 9016
           resources:
             limits:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 250m
+              memory: 1Gi
             requests:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 250m
+              memory: 1Gi
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
+      nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      tolerations:
+        - effect: NoSchedule
+          key: taint.custom.com/key
+          operator: Exists
       volumes:
         - name: secrets
           secret:

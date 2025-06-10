@@ -211,7 +211,7 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.2.1
+    helm.sh/chart: private-action-runner-1.2.2
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
     app.kubernetes.io/version: "v1.4.0"
@@ -226,13 +226,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.2.1
+        helm.sh/chart: private-action-runner-1.2.2
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: f4b7669e56883fe9ae5cf1ec811201b44cd9c553042ecfa5cd4c2e4f048077a3
+        checksum/values: dc3fc008bf045c62538b8bb9ceb8af81a802a92d4dda996c3e42560619c86cf4
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
@@ -252,23 +252,10 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-            - name: all-secrets-at-once
-              mountPath: /etc/dd-action-runner/credentials/
-            - name: jenkins-secret
-              mountPath: /etc/dd-action-runner/credentials/jenkins
           env: 
             - name: ENV_VAR_NAME
               value: ENV_VAR_VALUE
-          envFrom:
-            - secretRef:
-                name: A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN
       volumes:
         - name: secrets
           secret:
             secretName: example-test-private-action-runner
-        - name: all-secrets-at-once
-          secret:
-            secretName: all-secrets-at-once
-        - name: jenkins-secret
-          secret:
-            secretName: jenkins-secret
