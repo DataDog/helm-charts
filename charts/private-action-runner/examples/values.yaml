@@ -17,8 +17,8 @@ runner:
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
   env:
-    - name: "ENV_VAR_NAME"
-      value: "ENV_VAR_VALUE"
+    - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+      value: /etc/dd-action-runner/config
   livenessProbe:
     httpGet:
       path: /liveness
@@ -73,7 +73,7 @@ runner:
   #        - "patch"
   #        - "update"
   #        - "delete"
-  # credential files provided here will be mounted in /etc/dd-action-runner/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
   # it is safe to remove unneeded files from this section
   credentialFiles:
     - fileName: "http_basic.json"
@@ -212,9 +212,9 @@ runner:
         }
 
   credentialSecrets: []
-    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/config/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
     # - secretName: all-secrets-at-once
     #   directoryName: ""
-    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/config/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
     # - secretName: jenkins-secret
     #   directoryName: jenkins

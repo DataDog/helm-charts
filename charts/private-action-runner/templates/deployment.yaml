@@ -38,10 +38,10 @@ spec:
             {{- toYaml $.Values.runner.resources | nindent 12 }}
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
+              mountPath: /etc/dd-action-runner/config
             {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
             - name: {{ $credentialSecret.secretName }}
-              mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
+              mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
           {{- if $.Values.runner.env }}
           env: {{ $.Values.runner.env | toYaml | nindent 12 }}
