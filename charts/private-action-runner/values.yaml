@@ -109,8 +109,8 @@ runner:
   # -- List of credential files to be used by the Datadog Private Action Runner
   credentialFiles: []
   # see examples/values.yaml for examples on how to specify secrets
-  # credential files provided here will be mounted in /etc/dd-action-runner/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
   # -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
   credentialSecrets: []
-  # credential files provided here will be mounted in /etc/dd-action-runner/credentials/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
   # see examples/values.yaml for examples on how to specify secrets
