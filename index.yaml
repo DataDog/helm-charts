@@ -21822,6 +21822,19 @@ entries:
   datadog-csi-driver:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2025-06-10T09:21:17.619876613Z"
+    description: Datadog CSI Driver helm chart
+    digest: 937fd1df23c1def9f85369fe98fa13c0a65ca6415af3ab6ffc3d360d2b82a018
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-csi-driver
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-csi-driver-0.3.4/datadog-csi-driver-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2025-05-12T14:59:27.791492995Z"
     description: Datadog CSI Driver helm chart
     digest: 30e0321c26b8c392f4f7f77cfe39b408ad0dfe87de5f4c5e75de5f3a1bf4fee8
@@ -27894,4 +27907,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-06T14:37:57.320497177Z"
+generated: "2025-06-10T09:21:17.62178222Z"
