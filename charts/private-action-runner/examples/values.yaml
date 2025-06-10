@@ -19,7 +19,7 @@ runner:
   env:
     - name: "ENV_VAR_NAME"
       value: "ENV_VAR_VALUE"
-  runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN"
+  # runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN" # Reference a kubernetes secrets that contains the runner identity instead of providing it in the config section see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
   kubernetesActions:
     controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
@@ -197,10 +197,10 @@ runner:
           ]
         }
 
-  credentialSecrets:
-    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/credentials/<filename-from-secret>
-    - secretName: all-secrets-at-once
-      directoryName: ""
-    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/credentials/jenkins/<filename-from-secret>
-    - secretName: jenkins-secret
-      directoryName: jenkins
+  credentialSecrets: []
+    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: all-secrets-at-once
+    #   directoryName: ""
+    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: jenkins-secret
+    #   directoryName: jenkins

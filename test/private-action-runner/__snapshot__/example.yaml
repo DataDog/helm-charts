@@ -232,7 +232,7 @@ spec:
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: bfdb7cac6e471a817fb84523add469d7e2de4ec2de569ce68abf605bcd4a8225
+        checksum/values: dc3fc008bf045c62538b8bb9ceb8af81a802a92d4dda996c3e42560619c86cf4
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
@@ -252,23 +252,10 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner
-            - name: all-secrets-at-once
-              mountPath: /etc/dd-action-runner/credentials/
-            - name: jenkins-secret
-              mountPath: /etc/dd-action-runner/credentials/jenkins
           env: 
             - name: ENV_VAR_NAME
               value: ENV_VAR_VALUE
-          envFrom:
-            - secretRef:
-                name: A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN
       volumes:
         - name: secrets
           secret:
             secretName: example-test-private-action-runner
-        - name: all-secrets-at-once
-          secret:
-            secretName: all-secrets-at-once
-        - name: jenkins-secret
-          secret:
-            secretName: jenkins-secret
