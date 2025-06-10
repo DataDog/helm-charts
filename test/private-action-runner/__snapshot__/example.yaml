@@ -211,7 +211,7 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.2.2
+    helm.sh/chart: private-action-runner-1.3.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
     app.kubernetes.io/version: "v1.4.0"
@@ -226,7 +226,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.2.2
+        helm.sh/chart: private-action-runner-1.3.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
         app.kubernetes.io/version: "v1.4.0"
@@ -251,11 +251,11 @@ spec:
               memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
+              mountPath: /etc/dd-action-runner/config
             - name: all-secrets-at-once
-              mountPath: /etc/dd-action-runner/credentials/
+              mountPath: /etc/dd-action-runner/config/credentials/
             - name: jenkins-secret
-              mountPath: /etc/dd-action-runner/credentials/jenkins
+              mountPath: /etc/dd-action-runner/config/credentials/jenkins
           env: 
             - name: ENV_VAR_NAME
               value: ENV_VAR_VALUE

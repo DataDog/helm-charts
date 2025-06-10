@@ -77,7 +77,7 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.2.2
+    helm.sh/chart: private-action-runner-1.3.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
     app.kubernetes.io/version: "v1.4.0"
@@ -92,7 +92,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.2.2
+        helm.sh/chart: private-action-runner-1.3.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
         app.kubernetes.io/version: "v1.4.0"
@@ -117,8 +117,8 @@ spec:
               memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
-          env:
+              mountPath: /etc/dd-action-runner/config
+          env: 
             - name: FOO
               value: foo
             - name: BAR
