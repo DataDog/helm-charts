@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.1.4](https://img.shields.io/badge/Version-0.1.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.7](https://img.shields.io/badge/AppVersion-v0.1.7-informational?style=flat-square)
+![Version: 0.1.5](https://img.shields.io/badge/Version-0.1.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.7](https://img.shields.io/badge/AppVersion-v0.1.7-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -41,21 +41,23 @@ Any parameters not explicitly overridden in `datadog-values.yaml` will fall back
 ```yaml
 aws:
   accountId: "123456789012"
+  # AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
+  partition: aws-cn
 
 # Environment variables
 # Any environment variables defined here will be available to all pods in the deployment
 environment:
-  AWS_REGION: us-east-1
+  AWS_REGION: cn-north-1
 
 # Service account configuration
 # If `serviceAccount.create` is set to `true`, a service account will be created with the specified name.
-# The service account will be annotated with the IAM role ARN if `aws.accountId` and serviceAccount.eksRoleName` are set.
+# The service account will be annotated with the IAM role ARN if `aws.partition`, `aws.accountId`, and serviceAccount.eksRoleName` are set.
 # Additional annotations can be added using serviceAccount.extraAnnotations.
 serviceAccount:
   create: true
   name: cloudprem
   # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
-  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/role-arn: arn:<aws.partition>:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
   # - eks.amazonaws.com/sts-regional-endpoints: "true"
   eksRoleName: cloudprem
   extraAnnotations: {}
@@ -175,6 +177,7 @@ This command removes all the Kubernetes resources associated with the chart and 
 | Key | Type | Default | Description
 | :--------------- |:---------------:| -----:|--- |
 |aws.accountId | string | null | AWS account ID used for the EKS role ARN service account annotation|
+|aws.partition | string | aws | AWS partition used for the EKS role ARN service account annotation|
 |config.* | dict | config defaults | Config used by the CloudPrem prods|
 |environment | dict | {} | Key-value environment variables passed to CloudPrem pods|
 |environmentFrom | list | [] | List of sources to populate environment variables (e.g., Secrets or ConfigMaps)|
