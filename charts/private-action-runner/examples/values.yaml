@@ -11,7 +11,9 @@ runner:
     modes:
       - appBuilder
       - workflowAutomation
-    port: 9016
+    port:
+      name: http
+      containerPort: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
@@ -19,6 +21,20 @@ runner:
   env:
     - name: "ENV_VAR_NAME"
       value: "ENV_VAR_VALUE"
+  livenessProbe:
+    httpGet:
+      path: /liveness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
   # runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN" # Reference a kubernetes secrets that contains the runner identity instead of providing it in the config section see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
   kubernetesActions:
