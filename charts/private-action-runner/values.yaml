@@ -33,7 +33,9 @@ runner:
       - "workflowAutomation"
       - "appBuilder"
     # -- Port for HTTP server liveness checks and App Builder mode
-    port: 9016
+    port:
+      containerPort: 9016
+      name: http
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
   # -- Environment variables to be passed to the Datadog Private Action Runner

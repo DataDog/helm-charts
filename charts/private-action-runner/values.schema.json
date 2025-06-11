@@ -68,8 +68,18 @@
               }
             },
             "port": {
-              "type": "integer",
-              "description": "Port for HTTP server liveness checks and App Builder mode"
+              "type": "object",
+              "description": "Port configuration",
+              "properties": {
+                "containerPort": {
+                  "type": "integer",
+                  "description": "Port for HTTP server liveness checks and App Builder mode"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the Port"
+                }
+              }
             },
             "actionsAllowlist": {
               "type": "array",

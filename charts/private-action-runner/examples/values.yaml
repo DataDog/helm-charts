@@ -11,7 +11,9 @@ runner:
     modes:
       - appBuilder
       - workflowAutomation
-    port: 9016
+    port:
+      name: http
+      containerPort: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
