@@ -2,7 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 aws:
+  # -- AWS account ID
   accountId: ""
+  # -- AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
+  partition: aws
 
 image:
   # The CloudPrem image is also available on DockerHub:
@@ -28,7 +31,7 @@ serviceAccount:
   # The name of the service account to use.
   name: cloudprem
   # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
-  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/role-arn: arn:<aws.partition>:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
   # - eks.amazonaws.com/sts-regional-endpoints: "true"
   eksRoleName: cloudprem
   extraAnnotations: {}

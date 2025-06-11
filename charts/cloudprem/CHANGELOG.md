@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+* Introduce `aws.partition` parameter to support service account role ARNs in China regions.
+
 ## 0.1.4
 
 * Enable preprocessing by default
