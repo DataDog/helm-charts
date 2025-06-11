@@ -882,20 +882,24 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 Returns securityContext depending of the OS
 */}}
 {{- define "generate-security-context" -}}
-{{- if .securityContext -}}
 {{- if eq .targetSystem "windows" -}}
-  {{- if .securityContext.windowsOptions }}
+  {{- if and .securityContext .securityContext.windowsOptions }}
 securityContext:
   windowsOptions:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
+{{- if or .securityContext .sysAdmin (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
 securityContext:
+{{- if .securityContext -}}
 {{- if .sysAdmin }}
 {{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
 {{ toYaml (merge $capabilities .securityContext) | indent 2 }}
 {{- else }}
 {{ toYaml .securityContext | indent 2 }}
+{{- end -}}
+{{- else if .sysAdmin }}
+{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
 {{- end -}}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
@@ -923,11 +927,8 @@ securityContext:
     localhostProfile: {{ trimPrefix "localhost/" .apparmor }}
     {{- end }}
 {{- end -}}
-{{- end -}}
-{{- else if .sysAdmin }}
-securityContext:
-{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
-{{- end -}}
+{{- end -}}{{- /* or securityContext... */ -}}
+{{- end -}}{{- /* targetSystem == "linux" */ -}}
 {{- end -}}
 
 {{/*

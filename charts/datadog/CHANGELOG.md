@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.2
+
+* fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).
+
 ## 3.118.1
 
 * Update `datadog-crds` dependency to `2.8.0`
