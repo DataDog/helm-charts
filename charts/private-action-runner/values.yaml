@@ -44,6 +44,10 @@ runner:
   affinity: {}
   # -- Tolerations to allow scheduling runner pods on nodes with taints
   tolerations: []
+  # -- LivenessProbe settings
+  livenessProbe: {}
+  # -- ReadinessProbe settings
+  readinessProbe: {}
   # -- Reference to a kubernetes secrets that contains the runner identity
   runnerIdentitySecret: ""
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account

@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.2.2](https://img.shields.io/badge/Version-1.2.2-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
+![Version: 1.2.3](https://img.shields.io/badge/Version-1.2.3-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
 
 ## Overview
 
@@ -255,7 +255,9 @@ If actions requiring credentials fail:
 | runner.kubernetesActions.services | list | `[]` | Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.statefulSets | list | `[]` | Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
+| runner.livenessProbe | object | `{}` | LivenessProbe settings |
 | runner.nodeSelector | object | `{}` | Allow the private action runner pods to schedule on selected nodes |
+| runner.readinessProbe | object | `{}` | ReadinessProbe settings |
 | runner.replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
 | runner.resources | object | `{"limits":{"cpu":"250m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Resource requirements for the Datadog Private Action Runner container |
 | runner.resources.limits | object | `{"cpu":"250m","memory":"1Gi"}` | Resource limits for the runner container |
