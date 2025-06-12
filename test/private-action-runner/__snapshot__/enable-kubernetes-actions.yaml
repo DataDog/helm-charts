@@ -151,7 +151,7 @@ spec:
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: aba61cfcf36467b22e1aec22ee5f87550b1bef0081f00caaad6500f9545919ba
+        checksum/values: f4f90da3d2bfbbd0e2687d4510f7a514de0fd5050be81346a24407a7fe766f9d
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:

@@ -220,11 +220,11 @@ If actions requiring credentials fail:
 | image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.4.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
-| runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":{"containerPort":9016,"name":"http"},"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
+| runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
 | runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
-| runner.config.port | object | `{"containerPort":9016,"name":"http"}` | Port for HTTP server liveness checks and App Builder mode |
+| runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
