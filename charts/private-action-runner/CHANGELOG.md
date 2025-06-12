@@ -2,7 +2,7 @@
 
 ## 1.2.3
 
-* Add ability to include liveness probe and readiness probe configurations.
+* Add ability to include livenessProbe and readinessProbe configurations.
 
 ## 1.2.2
 
