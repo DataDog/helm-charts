@@ -1462,7 +1462,7 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
-            - mountPath: /sys/fs/bpf
+            - mountPath: /host/sys/fs/bpf
               mountPropagation: None
               name: bpffs
               readOnly: true

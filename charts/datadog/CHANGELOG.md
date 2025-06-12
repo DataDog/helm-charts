@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.3
+
+* Mount /sys/fs/bpf to /host/fs/bpf in system-probe container
+
 ## 3.118.2
 
 * fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).

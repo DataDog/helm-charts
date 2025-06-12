@@ -56,7 +56,7 @@
       readOnly: false # Need RW for kprobe_events
 {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: bpffs
-      mountPath: /sys/fs/bpf
+      mountPath: /host/sys/fs/bpf
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
