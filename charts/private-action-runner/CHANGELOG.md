@@ -2,7 +2,7 @@
 
 ## 1.2.3
 
-* Add ability to include liveness probe and readiness probe configurations with option to change/assign port name.
+* Add ability to include liveness probe and readiness probe configurations.
 
 ## 1.2.2
 
