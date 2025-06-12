@@ -44,7 +44,7 @@ runner:
   affinity: {}
   # -- Tolerations to allow scheduling runner pods on nodes with taints
   tolerations: []
-    # -- LivenessProbe settings
+  # -- LivenessProbe settings
   livenessProbe: {}
   # -- ReadinessProbe settings
   readinessProbe: {}
