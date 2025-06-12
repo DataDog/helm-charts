@@ -52,12 +52,12 @@ unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
-	helm dependency update ./charts/datadog
+	helm dependency update ./charts/datadog 2>/dev/null
 	go test -C test ./datadog -count=1
 
 .PHONY: unit-test-operator
 unit-test-operator:
-	helm dependency update ./charts/datadog-operator
+	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1
 
 .PHONY: unit-test-private-action-runner
@@ -73,12 +73,12 @@ update-test-baselines-private-action-runner:
 
 .PHONY: update-test-baselines-operator
 update-test-baselines-operator: 
-	helm dependency update ./charts/datadog-operator
+	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
 .PHONY: update-test-baselines-datadog-agent
 update-test-baselines-datadog-agent: 
-	helm dependency update ./charts/datadog
+	helm dependency update ./charts/datadog 2>/dev/null
 	go test -C test ./datadog -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
