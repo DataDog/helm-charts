@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.2.3
+
+* Add ability to include livenessProbe and readinessProbe configurations.
+
 ## 1.2.2
 
 * Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.

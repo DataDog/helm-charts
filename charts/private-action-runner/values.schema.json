@@ -104,6 +104,14 @@
             "type": "object"
           }
         },
+        "livenessProbe": {
+          "type": "object",
+          "description": "Liveness Probe configuration"
+        },
+        "readinessProbe": {
+          "type": "object",
+          "description": "Readiness Probe configuration"
+        },
         "runnerIdentitySecret": {
           "type": "string",
           "description": "Name of the secret containing the runner's identity"

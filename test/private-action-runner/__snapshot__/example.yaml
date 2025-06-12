@@ -211,7 +211,7 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.2.2
+    helm.sh/chart: private-action-runner-1.2.3
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
     app.kubernetes.io/version: "v1.4.0"
@@ -226,13 +226,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.2.2
+        helm.sh/chart: private-action-runner-1.2.3
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: dc3fc008bf045c62538b8bb9ceb8af81a802a92d4dda996c3e42560619c86cf4
+        checksum/values: 3b75798f4bb7b59d37785b8e41a17b4d01ae2b2b48dda58807cf1e697d7917b3
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
@@ -242,6 +242,20 @@ spec:
           ports:
             - name: http
               containerPort: 9016
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /liveness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
           resources:
             limits:
               cpu: 250m
