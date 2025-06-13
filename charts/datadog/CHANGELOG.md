@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.3
+
+* Update `process_config.run_in_core_agent.enabled` to `false` on the cluster check worker.
+
 ## 3.118.2
 
 * fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).
