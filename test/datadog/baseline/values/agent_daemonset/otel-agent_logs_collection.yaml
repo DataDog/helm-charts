@@ -1,0 +1,21 @@
+containers:
+  - otel-agent
+
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+    logs:
+      enabled: true
+    config: |
+      receivers:
+        filelog:
+      exporters:
+        debug:
+      service:
+        pipelines:
+          logs:
+            receivers: [filelog]
+            exporters: [debug]

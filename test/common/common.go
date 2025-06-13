@@ -132,7 +132,7 @@ func Contains(str string, list []string) bool {
 	return false
 }
 
-// Takes multi-document YAML and filter out keys from each document.
+// FilterYamlKeysMultiManifest Takes multi-document YAML and filter out keys from each document.
 func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interface{}) (string, error) {
 	reader := strings.NewReader(manifest)
 	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
@@ -183,4 +183,88 @@ func filterKeysRecursive(yamlMap *map[string]interface{}, keys map[string]interf
 			filterKeysRecursive(&nested, keys)
 		}
 	}
+}
+
+func ExtractContainersManifests(t *testing.T, manifest, values string) (map[string]string, error) {
+	containerManifests := make(map[string]string)
+	targetContainers := make(map[string]interface{})
+	var resources []map[string]interface{}
+
+	// Read and parse values file
+	valuesYaml := ReadFile(t, values)
+	var valuesObj map[string]interface{}
+	if err := yaml.Unmarshal([]byte(valuesYaml), &valuesObj); err != nil {
+		t.Fatalf("Could not unmarshal values.yaml file: %s. Error:%v\n", values, err)
+		return map[string]string{}, err
+	}
+
+	// Extract target containers from values
+	if containers, ok := valuesObj["containers"].([]interface{}); ok {
+		for _, container := range containers {
+			if containerName, ok := container.(string); ok {
+				targetContainers[containerName] = nil
+			}
+		}
+	}
+
+	// Default target containers if none are found
+	if len(targetContainers) == 0 {
+		if strings.Contains(values, "cluster-agent") {
+			targetContainers["cluster-agent"] = nil
+		} else {
+			targetContainers["agent"] = nil
+		}
+	}
+
+	// Decode manifest into container resources
+	manifestDecoder := yaml.NewDecoder(strings.NewReader(manifest))
+	for {
+		var resource map[string]interface{}
+		if err := manifestDecoder.Decode(&resource); err != nil {
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return map[string]string{}, fmt.Errorf("couldn't decode manifest for extracting target containers: %s", err)
+			}
+			return nil, err
+		}
+		resources = append(resources, resource)
+	}
+
+	// Extract container manifests
+	for _, resource := range resources {
+		spec, _ := resource["spec"].(map[string]interface{})
+		template, _ := spec["template"].(map[string]interface{})
+		templateSpec, _ := template["spec"].(map[string]interface{})
+		containers, _ := templateSpec["containers"].([]interface{})
+
+		for _, container := range containers {
+			containerMap, _ := container.(map[string]interface{})
+			name, _ := containerMap["name"].(string)
+
+			if _, ok := targetContainers[name]; ok {
+				containerYaml, err := yaml.Marshal(containerMap)
+				if err != nil {
+					t.Fatalf("couldn't marshal container manifest for container: %s, values file: %s. %v", name, values, err)
+					return nil, err
+				}
+				containerManifests[name] = string(containerYaml)
+			}
+		}
+	}
+	return containerManifests, nil
+}
+
+func VolumeExists(volumes []interface{}, volumeName string) bool {
+	for _, volume := range volumes {
+		volumeMap, ok := volume.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if name, ok := volumeMap["name"].(string); ok && name == volumeName {
+			return true
+		}
+	}
+	return false
 }
