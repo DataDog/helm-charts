@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.3.0
+
+* Change the configuration directory to be `/etc/dd-action-runner/config`.
+
 ## 1.2.3
 
 * Add ability to include livenessProbe and readinessProbe configurations.

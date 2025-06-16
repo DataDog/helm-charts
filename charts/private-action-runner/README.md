@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.2.3](https://img.shields.io/badge/Version-1.2.3-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
 
 ## Overview
 
@@ -164,10 +164,10 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/credentials/
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/
     - secretName: action-credentials
       directoryName: ""
-    # Mount files in a subdirectory at /etc/dd-action-runner/credentials/jenkins/
+    # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"
 ```
@@ -204,9 +204,9 @@ If actions requiring credentials fail:
 1. Verify that your credential files are properly formatted
 2. Check that the credentials are mounted correctly in the pod:
    ```bash
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/credentials/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config/credentials/
    ## Depending on how you pass the credentials they might appear in a different directory
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config
    ```
 
 3. Check the pod logs for credential-related errors
@@ -229,7 +229,7 @@ If actions requiring credentials fail:
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
-| runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
+| runner.env | list | `[{"name":"DD_PRIVATE_RUNNER_CONFIG_DIR","value":"/etc/dd-action-runner/config"}]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
