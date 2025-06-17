@@ -38,6 +38,11 @@ dd_url:  # <DATADOG_API_ENDPOINT>
 # env -- Define any environment variables to be passed to the operator.
 env: []
 
+# extraEnv -- Additional Kubernetes environment variables to inject into the operator Pod.
+# This field supports full `env` object syntax including `valueFrom`, `secretKeyRef`, and `configMapKeyRef`.
+# Use this for advanced scenarios (e.g., injecting values from pod labels or secrets).
+extraEnv: []
+
 # appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
 
 ## If set, this parameter takes precedence over "appKey".
