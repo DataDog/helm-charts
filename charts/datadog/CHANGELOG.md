@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.4
+
+* Update `fips.image.tag` to `1.1.12` fixing CVEs and updating packages.
+
 ## 3.118.3
 
 * Update `process_config.run_in_core_agent.enabled` to `false` on the cluster check worker.
