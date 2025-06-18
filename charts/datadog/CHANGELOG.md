@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.118.5
+* Enable `DD_USE_DOGSTATSD` when JMX image is used for the cluster check runners.
+
 ## 3.118.4
 
 * Update `fips.image.tag` to `1.1.12` fixing CVEs and updating packages.
