@@ -197,14 +197,22 @@ spec:
         configMap:
           {{- if .Values.datadog.otelCollector.configMap.name }}
           name: {{ .Values.datadog.otelCollector.configMap.name }}
+          {{- if .Values.datadog.otelCollector.configMap.items }}
           items:
-          - key: {{ .Values.datadog.otelCollector.configMap.key }}
-            path: otel-config.yaml
+            {{- range .Values.datadog.otelCollector.configMap.items }}
+            - key: {{ .key }}
+              path: {{ .path }}
+            {{- end }}
+          {{- else if .Values.datadog.otelCollector.configMap.key }}
+          items:
+            - key: {{ .Values.datadog.otelCollector.configMap.key }}
+              path: otel-config.yaml
+          {{- end }}
           {{- else }}
           name: {{ include "agents-install-otel-configmap-name" . }}
           items:
-          - key: otel-config.yaml
-            path: otel-config.yaml
+            - key: otel-config.yaml
+              path: otel-config.yaml
           {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
