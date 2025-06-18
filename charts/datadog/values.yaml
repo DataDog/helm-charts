@@ -659,10 +659,10 @@ datadog:
       name: null
       # datadog.otelCollector.configMap.items -- Items within the ConfigMap that contain DDOT Collector configuration
       items:
-        - key: otel-config.yaml
-          path: otel-config.yaml
-        - key: otel-config-two.yaml
-          path: otel-config-two.yaml
+      #   - key: otel-config.yaml
+      #     path: otel-config.yaml
+      #   - key: otel-config-two.yaml
+      #     path: otel-config-two.yaml
       # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
       key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list

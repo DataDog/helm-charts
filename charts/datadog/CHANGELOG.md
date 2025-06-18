@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.118.4
+
+* Add support for passing multiple collector configs for Otel agent (`otelCollector.configMap.items`)
+
 ## 3.118.3
 
 * Update `process_config.run_in_core_agent.enabled` to `false` on the cluster check worker.
