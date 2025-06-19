@@ -36,6 +36,8 @@ runner:
     port: 9016
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
+    # -- Bundles specific configuration
+    bundles: {}
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env:
     - name: DD_PRIVATE_RUNNER_CONFIG_DIR

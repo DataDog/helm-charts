@@ -77,6 +77,13 @@
               "items": {
                 "type": "string"
               }
+            },
+            "bundles": {
+              "type": "object",
+              "description": "Bundles specific configurations",
+              "items": {
+                "type": "object"
+              }
             }
           },
           "required": ["ddBaseURL", "modes"],

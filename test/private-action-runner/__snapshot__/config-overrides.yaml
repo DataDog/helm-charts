@@ -98,7 +98,7 @@ spec:
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 7d3e9ebc39f014d37ff1cbc7a8a8b0e3d4d60f707e5906d23a60895a452789b4
+        checksum/values: 0db53883c86e483633008d8ee006c1da8513f80861b9d020934ee32f0c62e158
     spec:
       serviceAccountName: custom-full-name
       containers:
