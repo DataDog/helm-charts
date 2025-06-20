@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.118.7
+
+* Upgrade default Agent version to `7.67.0`.
+
+## 3.118.6
+
+* Update `fips.image.tag` to `1.1.13` fixing CVEs and updating packages.
+
 ## 3.118.5
 * Enable `DD_USE_DOGSTATSD` when JMX image is used for the cluster check runners.
 
