@@ -117,6 +117,9 @@ spec:
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            {{- with .Values.extraEnv }}
+            {{ toYaml . | indent 12 }}
+            {{- end }}
           args:
             - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
             - "-logEncoder=json"

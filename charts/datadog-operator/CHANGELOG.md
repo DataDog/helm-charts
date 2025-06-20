@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0-dev.3
+
+* Add support for the `extraEnv` in the datadog-operator helm chart.
+
 ## 2.11.0-dev.2
 
 * Update default image tag for Datadog Operator to `1.16.0-rc.1`.
