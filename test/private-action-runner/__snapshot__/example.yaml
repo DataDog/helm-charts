@@ -24,7 +24,22 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod  
+      - com.datadoghq.kubernetes.core.listPod
+    bundles: 
+      com.datadoghq.script:
+        runPredefinedScript:
+          echo-multiple-parametrized:
+            command:
+            - echo
+            - '{{ parameters.echoValue1 }} {{ parameters.echoValue2 }}'
+          echo-nested-parametrized:
+            command:
+            - echo
+            - '{{ parameters.nested.echoValue }}'
+          echo-parametrized:
+            command:
+            - echo
+            - '{{ parameters.echoValue }}'  
   http_basic.json: |
     {
       "auth_type": "Basic Auth",
@@ -232,12 +247,12 @@ spec:
         app.kubernetes.io/version: "v1.4.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: fe8a7c5d8265721edb6aa41d28e0e3851956c0f44afa636db8d96e7cf4445cab
+        checksum/values: a5e2fcdc91ae3a20313e36b7380c73fee7c2e63c139c9afec2c358817f96fca0
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.4.0"
+          image: "datadog/private-action-runner-dev:latest@sha256:4e990e496b79d02514c19a633042d27be1ba8e7a4b9018efd0e942ed1a070ad8"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
