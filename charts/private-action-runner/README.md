@@ -105,7 +105,18 @@ runner:
     deployments: ["get", "list", "create", "update"]
 ```
 
-4. Update your Helm release
+4. Pick the appropriate role type for your runner. The `roleType` determines the permissions granted to the runner in your Kubernetes cluster.
+
+- **Role**: Grants permissions only in the namespace where the runner is deployed.
+- **ClusterRole**: Grants permissions across the entire cluster.
+
+Example configuration:
+```yaml
+runner:
+  roleType: "Role"
+```
+
+5. Update your Helm release
 ```bash
 helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 ```
