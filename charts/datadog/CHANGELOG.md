@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.120.0
+
+* `apm.instrumentation.targets` supports `valueFrom`.
+
 ## 3.118.7
 
 * Upgrade default Agent version to `7.67.0`.
