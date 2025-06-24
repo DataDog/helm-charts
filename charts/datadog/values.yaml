@@ -563,9 +563,9 @@ datadog:
       libVersions: {}
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
-      # Requires Cluster Agent 7.64.0+
+      # Requires Cluster Agent 7.64.0+.
       #
-      # ddTraceConfigs[..]valueFrom requires agent 7.66.0+.
+      # ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
