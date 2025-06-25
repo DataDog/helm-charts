@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.120.1
+
+* Added ports for gRPC and HTTP OTLP ingest in NetworkPolicy and CiliumNetworkPolicy when `datadog.networkPolicy.create` and `datadog.networkPolicy.flavor` are configured respectively as `"kubernetes"` or `"cilium"`.
+
 ## 3.120.0
 
 * `apm.instrumentation.targets` supports `valueFrom`.
