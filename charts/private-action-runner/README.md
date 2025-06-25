@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
+![Version: 1.4.0](https://img.shields.io/badge/Version-1.4.0-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
 
 ## Overview
 
@@ -105,7 +105,18 @@ runner:
     deployments: ["get", "list", "create", "update"]
 ```
 
-4. Update your Helm release
+4. Pick the appropriate role type for your runner. The `roleType` determines the permissions granted to the runner in your Kubernetes cluster.
+
+- **Role**: Grants permissions only in the namespace where the runner is deployed.
+- **ClusterRole**: Grants permissions across the entire cluster.
+
+Example configuration:
+```yaml
+runner:
+  roleType: "Role"
+```
+
+5. Update your Helm release
 ```bash
 helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 ```
@@ -217,7 +228,7 @@ If actions requiring credentials fail:
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.4.0"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.4.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
 | runner.config | object | `{"actionsAllowlist":[],"bundles":{},"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |

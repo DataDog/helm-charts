@@ -563,7 +563,9 @@ datadog:
       libVersions: {}
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
-      # Requires Cluster Agent 7.64.0+
+      # Requires Cluster Agent 7.64.0+.
+      #
+      # ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
@@ -577,6 +579,10 @@ datadog:
       #    ddTraceConfigs:
       #      - name: "DD_PROFILING_ENABLED"
       #        value: "true"
+      #      - name: "DD_SERVICE"
+      #        valueFrom:
+      #          fieldRef:
+      #            fieldPath: metadata.labels[my-label]
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -1171,7 +1177,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.66.1
+    tag: 7.67.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1670,7 +1676,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.12
+    tag: 1.1.13
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1713,7 +1719,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.66.1
+    tag: 7.67.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2289,7 +2295,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.66.1
+    tag: 7.67.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
