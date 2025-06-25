@@ -1,6 +1,6 @@
 dependencies:
   - name: datadog-crds
-    version: 1.7.2
+    version: 2.8.0
     repository: https://helm.datadoghq.com
     condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
     tags:

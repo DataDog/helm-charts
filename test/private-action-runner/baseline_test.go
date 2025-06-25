@@ -1,8 +1,9 @@
 package private_action_runner
 
 import (
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/helm"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
@@ -18,31 +19,104 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Private Action Runner default",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "default-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				Overrides:   map[string]string{},
 			},
 			snapshotName: "default",
 			assertions:   verifyPrivateActionRunner,
+		}, {
+			name: "Private Action Runner example file",
+			command: common.HelmCommand{
+				ReleaseName: "example-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/examples/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			snapshotName: "example",
+			assertions:   verifyPrivateActionRunner,
 		},
 		{
 			name: "Enable kubernetes actions",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "kubernetes-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
-				Overrides: map[string]string{
-					"runners[0].kubernetesActions.controllerRevisions": "{get,list,create,update,patch,delete,deleteMultiple}",
-					"runners[0].kubernetesActions.customObjects":       "{deleteMultiple}",
-					"runners[0].kubernetesActions.deployments":         "{restart}",
-					"runners[0].kubernetesActions.endpoints":           "{patch}",
-					"runners[0].kubernetesPermissions[0].apiGroups":    "{example.com}",
-					"runners[0].kubernetesPermissions[0].resources":    "{tests}",
-					"runners[0].kubernetesPermissions[0].verbs":        "{list,get,create,patch,update,delete}",
+				OverridesJson: map[string]string{
+					"runner.roleType": `"ClusterRole"`,
+					"runner.kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
+					"runner.kubernetesActions.customObjects":       `["deleteMultiple"]`,
+					"runner.kubernetesActions.deployments":         `["restart", "rollback", "scale"]`,
+					"runner.kubernetesActions.endpoints":           `["patch"]`,
+					"runner.kubernetesPermissions[0].apiGroups":    `["example.com"]`,
+					"runner.kubernetesPermissions[0].resources":    `["tests"]`,
+					"runner.kubernetesPermissions[0].verbs":        `["list","get","create","patch","update","delete"]`,
 				},
 			},
 			snapshotName: "enable-kubernetes-actions",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify certain config overrides",
+			command: common.HelmCommand{
+				ReleaseName: "override-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"fullnameOverride": `"custom-full-name"`,
+					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"image.pullPolicy": `"Always"`,
+				},
+			},
+			snapshotName: "config-overrides",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify secrets externally",
+			command: common.HelmCommand{
+				ReleaseName: "secrets-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.runnerIdentitySecret": `"the-name-of-the-secret"`,
+					"runner.config.urn":           ``,
+					"runner.config.privateKey":    ``,
+					"runner.credentialSecrets":    `[{"secretName": "first-secret"}, {"secretName": "second-secret", "directoryName": "second-secret-directory"}]`,
+				},
+			},
+			snapshotName: "external-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom resource requirements",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.resources.limits.cpu":      `"500m"`,
+					"runner.resources.limits.memory":   `"2Gi"`,
+					"runner.resources.requests.cpu":    `"100m"`,
+					"runner.resources.requests.memory": `"512Mi"`,
+				},
+			},
+			snapshotName: "custom-resources",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom pod scheduling",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.nodeSelector": `{"kubernetes.io/os": "linux"}`,
+					"runner.tolerations":  `[{"key": "taint.custom.com/key", "effect": "NoSchedule", "operator": "Exists"}]`,
+					"runner.affinity":     `{"nodeAffinity": {"requiredDuringSchedulingIgnoredDuringExecution": {"nodeSelectorTerms": [{"matchExpressions": [{"key": "kubernetes.io/arch", "operator": "In", "values": ["amd64"]}]}]}}}`,
+				},
+			},
+			snapshotName: "custom-pod-scheduling",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

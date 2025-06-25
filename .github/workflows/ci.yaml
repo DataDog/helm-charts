@@ -5,6 +5,11 @@ on:
     paths:
       - "charts/**"
 
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+  # packages: read
+
 jobs:
   changed:
     runs-on: ubuntu-latest
@@ -12,18 +17,18 @@ jobs:
       charts: ${{ steps.list-changed.outputs.changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: Set up Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5.0
         with:
-          version: v3.6.3
-      - uses: actions/setup-python@v4
+          version: v3.17.2
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
-          python-version: 3.7
+          python-version: 3.12
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
       - name: Run chart-testing (list-changed)
         id: list-changed
         env:
@@ -47,14 +52,14 @@ jobs:
       - changed
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
-          python-version: 3.7
+          python-version: 3.12
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
 
@@ -64,7 +69,7 @@ jobs:
       - changed
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: Run helm-docs
@@ -87,10 +92,15 @@ jobs:
           - v1.22.17
           - v1.24.17
           - v1.25.16
-          - v1.26.13
+          - v1.26.15
+          - v1.27.16
+          - v1.28.13
+          - v1.29.8
+          - v1.30.4
+          - v1.31.1
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: Add datadog helm repo
@@ -105,34 +115,48 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     needs:
       - lint-chart
       - kubeconform-chart
     strategy:
       matrix:
-        k8s:
-          - v1.18.20
-          - v1.22.9
-          - v1.24.2
-          - v1.25.16
-          - v1.26.13
+        versions:
+          - k8s: v1.22.17
+            kind: v0.22.0
+          - k8s: v1.24.17
+            kind: v0.22.0
+          - k8s: v1.25.16
+            kind: v0.22.0
+          - k8s: v1.26.15
+            kind: v0.22.0
+          - k8s: v1.27.16
+            kind: v0.22.0
+          - k8s: v1.28.13
+            kind: v0.22.0
+          - k8s: v1.29.8
+            kind: v0.22.0
+          - k8s: v1.30.4
+            kind: v0.22.0
+          - k8s: v1.31.1
+            kind: v0.22.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
-      - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@v1.5.0
+      - name: Create kind ${{ matrix.versions.k8s }} cluster with kind version ${{ matrix.versions.kind }}
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
         with:
-          node_image: kindest/node:${{ matrix.k8s }}
+          version: ${{ matrix.versions.kind }}
+          node_image: kindest/node:${{ matrix.versions.k8s}}
           config: .github/kind_config.yaml
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
-          python-version: 3.7
+          python-version: 3.12
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
 

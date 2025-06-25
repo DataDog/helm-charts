@@ -5,3 +5,4 @@ kubeconform
 vendor/
 .vscode
 go.work*
+.DS_Store

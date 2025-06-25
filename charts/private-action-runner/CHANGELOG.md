@@ -1,5 +1,139 @@
 # Datadog changelog
 
+## 1.4.0
+
+* Image pull policy can now be overriden.
+
+## 1.3.0
+
+* Change the configuration directory to be `/etc/dd-action-runner/config`.
+
+## 1.2.3
+
+* Add ability to include livenessProbe and readinessProbe configurations.
+
+## 1.2.2
+
+* Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.
+
+## 1.2.1
+
+* Bump runner version to `v1.4.0`
+
+## 1.2.0
+
+* Add support for kubernetes scaleDeployment and rollbackDeployment actions
+
+## 1.1.2
+
+* Add customizable resource limits and requests for the private action runner container
+
+## 1.1.1
+
+* Bump runner version to `v1.3.0`
+
+## 1.1.0
+
+* Add the `$schema` key to the `values.yaml` file to enable schema validation in IDEs.
+
+## 1.0.3
+
+* Allow a `global` object in values so this chart can be used in a subchart.
+
+## 1.0.2
+
+* Update private action runner version to `v1.2.0`
+  * Bugfix: `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` are now honored for all http requests from the runner
+  * Feat: more flexible credentials loading.
+
+## 1.0.1
+
+* Improve Readme
+
+## 1.0.0
+
+* BREAKING CHANGES: Updates the chart for simplification and better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
+
+## 0.20.1
+
+* Various cleanup for the chart.
+
+## 0.20.0
+
+* Add the ability to specify kubernetes secrets to store credential files.
+
+## 0.19.0
+
+* Use a role instead of a cluster role for the runner's service account by default.
+
+## 0.18.0
+
+* Add the ability to specify a kubernetes secret to store the runner's identity.
+
+## 0.17.2
+
+* Update postgresql credentials file example
+
+## 0.17.1
+
+* Update private action image version to `v1.1.1`
+
+## 0.17.0
+
+* Update private action image version to `v1.0.0`
+
+## 0.16.0
+
+* Add support for passing environment variables to the Datadog Private Action Runner container.
+
+## 0.15.8
+
+* Update private action image version to `v0.1.14-beta`
+
+## 0.15.7
+
+* Update private action image version to `v0.1.12-beta`
+
+## 0.15.6
+
+* Update private action image version to `v0.1.11-beta`
+
+## 0.15.5
+
+* Add gitlab credentials file example
+
+## 0.15.4
+
+* Update private action image version to `v0.1.10-beta`
+
+## 0.15.3
+
+* Update private action image version to `v0.1.9-beta`
+
+## 0.15.2
+
+* Update private action image version to `v0.1.8-beta`
+
+## 0.15.1
+
+* Update private action image version to `v0.1.6-beta`
+
+## 0.15.0
+
+* Update private action image version to `v0.1.5-beta`
+
+## 0.14.3
+
+* Add GitLab private actions and fix image repository link.
+
+## 0.14.2
+
+* Update private action image version to `v0.1.3-beta`
+
+## 0.14.1
+
+* Update private action image version to `v0.1.2-beta`
+
 ## 0.14.0
 
 * Add support for `kubernetesActions`.

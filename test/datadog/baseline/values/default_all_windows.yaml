@@ -1,0 +1,5 @@
+targetSystem: windows
+
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret

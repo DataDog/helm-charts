@@ -1,174 +1,220 @@
-runners:
-  - name: "custom-runner"
-    # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
-    config:
-      ddBaseURL: "https://app.datadoghq.com"
-      urn: "CHANGE_ME_URN_FROM_CONFIG"
-      privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
-      modes:
-        - appBuilder
-        - workflowAutomation
-      port: 9016
-      actionsAllowlist:
-        - com.datadoghq.http.request
-    # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
-    kubernetesActions:
-      controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart"]
-      replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      configMaps: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      endpoints: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      events: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      limitRanges: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      namespaces: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      nodes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      persistentVolumes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      persistentVolumeClaims: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      pods: ["get", "list" ] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      podTemplates: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      replicationControllers: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      resourceQuotas: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      services: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      serviceAccounts: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      customResourceDefinitions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-      customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-    # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
-    kubernetesPermissions:
-    # CRD example
-#      - apiGroups:
-#          - "example.com"
-#        resources:
-#          - "tests"
-#        verbs:
-#          - "list"
-#          - "get"
-#          - "create"
-#          - "patch"
-#          - "update"
-#          - "delete"
-# credential files provided here will be mounted in /etc/dd-action-runner/
-# it is safe to remove unneeded files from this section
-credentialFiles:
-  - fileName: "http_basic_creds.json"
-    data: |
-      {
-        "auth_type": "Basic Auth",
-        "credentials": [
-          {
-            "username": "USERNAME",
-            "password": "PASSWORD"
-          }
-        ]
-      }
-  - fileName: "http_token_creds.json"
-    data: |
-      {
-        "auth_type": "Token Auth",
-        "credentials": [
-          {
-            "tokenName": "TOKEN1",
-            "tokenValue": "VALUE1"
-          }
-        ]
-      }
-  - fileName: "jenkins_creds.json"
-    data: |
-      {
-        "auth_type": "Token Auth",
-        "credentials": [
-          {
-            "username": "localhost:7233",
-            "token": "TOKEN",
-            "domain": "DOMAIN"
-          }
-        ]
-      }
-  - fileName: "creds.pgpass"
-    data: |
-      {
-        "auth_type": "Token Auth",
-        "credentials": [
-          {
-            "tokenName": "host",
-            "tokenValue": "HOST"
-          },
-          {
-            "tokenName": "port",
-            "tokenValue": "5432"
-          },
-          {
-            "tokenName": "user",
-            "tokenValue": "USER"
-          },
-          {
-            "tokenName": "password",
-            "tokenValue": "PASSWORD"
-          },
-          {
-            "tokenName": "database",
-            "tokenValue": "DATABASE"
-          },
-          {
-            "tokenName": "sslmode",
-            "tokenValue": "verify-full"
-          },
-          {
-            "tokenName": "applicationName",
-            "tokenValue": "OPTIONAL: application name"
-          },
-          {
-            "tokenName": "searchPath",
-            "tokenValue": "OPTIONAL: search path"
-          }
-        ]
-      }
-  - fileName: "temporal_mtls_creds.json"
-    data: |
-      {
-        "auth_type": "Token Auth",
-        "credentials": [
-          {
-            "tokenName": "serverAddress",
-            "tokenValue": "SERVERADDRESS"
-          },
-          {
-            "tokenName": "serverNameOverride",
-            "tokenValue": "SERVERNAMEOERRIDE"
-          },
-          {
-            "tokenName": "serverRootCACertificate",
-            "tokenValue": "SERVERROOTCACERTIFICATE"
-          },
-          {
-            "tokenName": "clientCertPairCrt",
-            "tokenValue": "CLIENTCERTPAIRCRT"
-          },
-          {
-            "tokenName": "clientCertPairKey",
-            "tokenValue": "CLIENTCERTPAIRKEY"
-          }
-        ]
-      }
-  - fileName: "temporal_tls_creds.json"
-    data: |
-      {
-        "auth_type": "Token Auth",
-        "credentials": [
-          {
-            "tokenName": "serverAddress",
-            "tokenValue": "SERVERADDRESS"
-          },
-          {
-            "tokenName": "serverNameOverride",
-            "tokenValue": "SERVERNAMEOERRIDE"
-          },
-          {
-            "tokenName": "serverRootCACertificate",
-            "tokenValue": "CLIENTCERTPAIRKEY"
-          }
-        ]
-      }
+# This is for the https://marketplace.visualstudio.com/items/?itemName=redhat.vscode-yaml VSCode extension
+# yaml-language-server: $schema=https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json
+# This is for jetbrains IDEs
+$schema: https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json
+runner:
+  # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
+  config:
+    ddBaseURL: "https://app.datadoghq.com"
+    urn: "CHANGE_ME_URN_FROM_CONFIG"
+    privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
+    modes:
+      - appBuilder
+      - workflowAutomation
+    port: 9016
+    actionsAllowlist:
+      - com.datadoghq.http.request
+  # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
+  roleType: "Role"
+  env:
+    - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+      value: /etc/dd-action-runner/config
+  livenessProbe:
+    httpGet:
+      path: /liveness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+  # runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN" # Reference a kubernetes secrets that contains the runner identity instead of providing it in the config section see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+  # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
+  kubernetesActions:
+    controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale"]
+    replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    configMaps: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    endpoints: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    events: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    limitRanges: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    namespaces: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    nodes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    persistentVolumes: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    persistentVolumeClaims: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    pods: ["get", "list" ] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    podTemplates: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    replicationControllers: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    resourceQuotas: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    services: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    serviceAccounts: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    customResourceDefinitions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+    customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
+  # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
+  kubernetesPermissions:
+  # CRD example
+  #    - apiGroups:
+  #        - "example.com"
+  #      resources:
+  #        - "tests"
+  #      verbs:
+  #        - "list"
+  #        - "get"
+  #        - "create"
+  #        - "patch"
+  #        - "update"
+  #        - "delete"
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
+  # it is safe to remove unneeded files from this section
+  credentialFiles:
+    - fileName: "http_basic.json"
+      data: |
+        {
+          "auth_type": "Basic Auth",
+          "credentials": [
+            {
+              "username": "USERNAME",
+              "password": "PASSWORD"
+            }
+          ]
+        }
+    - fileName: "http_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "tokenName": "TOKEN1",
+              "tokenValue": "VALUE1"
+            }
+          ]
+        }
+    - fileName: "jenkins_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "username": "localhost:7233",
+              "token": "TOKEN",
+              "domain": "DOMAIN"
+            }
+          ]
+        }
+    - fileName: "postgresql_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "tokenName": "host",
+              "tokenValue": "HOST"
+            },
+            {
+              "tokenName": "port",
+              "tokenValue": "5432"
+            },
+            {
+              "tokenName": "user",
+              "tokenValue": "USER"
+            },
+            {
+              "tokenName": "password",
+              "tokenValue": "PASSWORD"
+            },
+            {
+              "tokenName": "database",
+              "tokenValue": "DATABASE"
+            },
+            {
+              "tokenName": "sslmode",
+              "tokenValue": "require"
+            },
+            {
+              "tokenName": "applicationName",
+              "tokenValue": "APPLICATION_NAME"
+            },
+            {
+              "tokenName": "searchPath",
+              "tokenValue": "SEARCH_PATH"
+            }
+          ]
+        }
+    - fileName: "temporal_mTLS_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "tokenName": "serverAddress",
+              "tokenValue": "SERVERADDRESS"
+            },
+            {
+              "tokenName": "serverNameOverride",
+              "tokenValue": "SERVERNAMEOERRIDE"
+            },
+            {
+              "tokenName": "serverRootCACertificate",
+              "tokenValue": "SERVERROOTCACERTIFICATE"
+            },
+            {
+              "tokenName": "clientCertPairCrt",
+              "tokenValue": "CLIENTCERTPAIRCRT"
+            },
+            {
+              "tokenName": "clientCertPairKey",
+              "tokenValue": "CLIENTCERTPAIRKEY"
+            }
+          ]
+        }
+    - fileName: "temporal_TLS_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "tokenName": "serverAddress",
+              "tokenValue": "SERVERADDRESS"
+            },
+            {
+              "tokenName": "serverNameOverride",
+              "tokenValue": "SERVERNAMEOERRIDE"
+            },
+            {
+              "tokenName": "serverRootCACertificate",
+              "tokenValue": "CLIENTCERTPAIRKEY"
+            }
+          ]
+        }
+    - fileName: "gitlab_token.json"
+      data: |
+        {
+          "auth_type": "Token Auth",
+          "credentials": [
+            {
+              "tokenName": "baseURL",
+              "tokenValue": "GITLAB_BASE_URL"
+            },
+            {
+              "tokenName": "gitlabApiToken",
+              "tokenValue": "GITLAB_API_TOKEN"
+            }
+          ]
+        }
+
+  credentialSecrets: []
+    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/config/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: all-secrets-at-once
+    #   directoryName: ""
+    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/config/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: jenkins-secret
+    #   directoryName: jenkins

@@ -1,0 +1,17 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+    ports:
+      - containerPort: 4317
+        hostPort: 4317
+        name: otel-grpc
+      - containerPort: 4318
+        hostPort: 4318
+        name: otel-http
+      - containerPort: 8125
+        hostPort: 8125
+        name: otel-statsd
+        protocol: UDP

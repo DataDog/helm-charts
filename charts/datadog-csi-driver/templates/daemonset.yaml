@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "datadog-csi-driver.daemonsetName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "datadog-csi-driver.daemonsetName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "datadog-csi-driver.daemonsetName" . }}
+        admission.datadoghq.com/enabled: "false"
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+        - name: csi-node-driver
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true 
+          ports:
+            - containerPort: 5000
+              protocol: TCP 
+          args:
+            - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
+            - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: apm-socket
+              mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
+              readOnly: false
+            {{- if ne (dir .Values.sockets.dsdHostSocketPath) (dir .Values.sockets.apmHostSocketPath) }}
+            - name: dsd-socket
+              mountPath: {{ (dir .Values.sockets.dsdHostSocketPath) }}
+              readOnly: false
+            {{- end }}
+            - mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+        - name: csi-node-driver-registrar
+          image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
+          imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/datadog.csi/driver/csi.sock
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi # Match this to ADDRESS
+            - name: registration-dir
+              mountPath: /registration # This is where the registrar writes the registration information
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/datadog.csi/driver
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: {{ dir .Values.sockets.apmHostSocketPath }}
+            type: DirectoryOrCreate
+          name: apm-socket
+        - hostPath:
+            path: {{ dir .Values.sockets.dsdHostSocketPath }}
+            type: DirectoryOrCreate
+          name: dsd-socket

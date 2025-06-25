@@ -1,0 +1,50 @@
+name: Release datadog-crds
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/datadog-crds/**'
+
+permissions: {}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      # https://github.com/helm/chart-releaser-action
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Add repo
+        run: |
+          helm repo add datadog https://helm.datadoghq.com
+          helm repo add kube-state-metrics https://prometheus-community.github.io/helm-charts
+      - name: Extract chart version
+        id: chart_version
+        run: |
+          version=$(yq e '.version' charts/datadog-crds/Chart.yaml)
+          echo "chart_version=$version" >> "$GITHUB_OUTPUT"
+      - name: Set mark_as_latest flag
+        id: is_prerelease
+        run: |
+          if [[ "${{ steps.chart_version.outputs.chart_version }}" == *-* ]]; then
+            echo "mark_as_latest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "mark_as_latest=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f # v1.7.0
+        with:
+          skip_existing: true # Ignore chart changes when version was not updated (documentation)
+          mark_as_latest: ${{ steps.is_prerelease.outputs.mark_as_latest }}
+        env:
+          CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

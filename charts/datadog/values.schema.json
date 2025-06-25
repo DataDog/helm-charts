@@ -1,0 +1,403 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Values",
+  "type": "object",
+  "properties": {
+    "datadog": {
+      "type": "object",
+      "properties": {
+        "apm": {
+          "type": "object",
+          "properties": {
+            "errorTrackingStandalone": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "instrumentation": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "enabledNamespaces": {
+                  "$ref": "#/$defs/stringArray"
+                },
+                "disabledNamespaces": {
+                  "$ref": "#/$defs/stringArray"
+                },
+                "libVersions": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "podSelector": {
+                        "type": "object",
+                        "properties": {
+                          "matchLabels": {
+                            "$ref": "#/$defs/matchLabels"
+                          },
+                          "matchExpressions": {
+                            "$ref": "#/$defs/matchExpressions"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "namespaceSelector": {
+                        "type": "object",
+                        "properties": {
+                          "matchNames": {
+                            "$ref": "#/$defs/stringArray"
+                          },
+                          "matchLabels": {
+                            "$ref": "#/$defs/matchLabels"
+                          },
+                          "matchExpressions": {
+                            "$ref": "#/$defs/matchExpressions"
+                          }
+                        },
+                        "anyOf": [
+                          {
+                            "if": {
+                              "properties": {
+                                "matchNames": {
+                                  "type": "array",
+                                  "minItems": 1
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "matchLabels": {
+                                  "type": "object",
+                                  "maxProperties": 0
+                                },
+                                "matchExpressions": {
+                                  "type": "array",
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "if": {
+                              "properties": {
+                                "matchLabels": {
+                                  "type": "object",
+                                  "minProperties": 1
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "matchNames": {
+                                  "type": "array",
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "if": {
+                              "properties": {
+                                "matchExpressions": {
+                                  "type": "array",
+                                  "minItems": 1
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "matchNames": {
+                                  "type": "array",
+                                  "maxItems": 0
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "additionalProperties": false
+                      },
+                      "ddTraceVersions": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "ddTraceConfigs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "valueFrom": {
+                              "$ref": "#/$defs/k8s.api.envVarSource"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "skipKPITelemetry": {
+                  "type": "boolean"
+                },
+                "language_detection": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "injector": {
+                  "type": "object",
+                  "properties": {
+                    "imageTag": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "enabledNamespaces": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "targets": {
+                        "type": "array",
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "libVersions": {
+                        "type": "object",
+                        "minProperties": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "targets": {
+                        "type": "array",
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "enabledNamespaces": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "disabledNamespaces": {
+                        "type": "array",
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "matchLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "matchExpressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "In",
+              "NotIn",
+              "Exists",
+              "DoesNotExist"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "key",
+          "operator"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "k8s.api.envVarSource": {
+      "description": "EnvVarSource represents a source for the value of an EnvVar.",
+      "properties": {
+        "secretKeyRef": {
+          "required": [
+            "key"
+          ],
+          "description": "SecretKeySelector selects a key of a Secret.",
+          "properties": {
+            "optional": {
+              "type": "boolean",
+              "description": "Specify whether the Secret or it's key must be defined"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
+            },
+            "key": {
+              "type": "string",
+              "description": "The key of the secret to select from.  Must be a valid secret key."
+            }
+          }
+        },
+        "fieldRef": {
+          "required": [
+            "fieldPath"
+          ],
+          "description": "ObjectFieldSelector selects an APIVersioned field of an object.",
+          "properties": {
+            "fieldPath": {
+              "type": "string",
+              "description": "Path of the field to select in the specified API version."
+            },
+            "apiVersion": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Version of the schema the FieldPath is written in terms of, defaults to \"v1\"."
+            }
+          }
+        },
+        "configMapKeyRef": {
+          "required": [
+            "key"
+          ],
+          "description": "Selects a key from a ConfigMap.",
+          "properties": {
+            "optional": {
+              "type": "boolean",
+              "description": "Specify whether the ConfigMap or it's key must be defined"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
+            },
+            "key": {
+              "type": "string",
+              "description": "The key to select."
+            }
+          }
+        },
+        "resourceFieldRef": {
+          "required": [
+            "resource"
+          ],
+          "description": "ResourceFieldSelector represents container resources (cpu, memory) and their output format",
+          "properties": {
+            "containerName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Container name: required for volumes, optional for env vars"
+            },
+            "resource": {
+              "type": "string",
+              "description": "Required: resource to select"
+            },
+            "divisor": {
+              "oneOf": [
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

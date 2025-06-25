@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name:  "private-action-runner-default-serviceaccount" 
+  name: default-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name:  "private-action-runner-default-secrets" 
+  name: default-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -27,10 +27,10 @@ stringData:
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   namespace: datadog-agent
-  name:  "private-action-runner-default-role" 
+  name: default-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -42,28 +42,29 @@ rules:
 ---
 # Source: private-action-runner/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name:  "private-action-runner-default-rolebinding" 
+  name: default-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name:  "private-action-runner-default-role" 
+  kind: Role
+  name: default-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name:  "private-action-runner-default-serviceaccount" 
+    name: default-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name:  "private-action-runner-default-service" 
+  name: default-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
-    service:  "private-action-runner-default-service" 
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: default-test
   ports:
     - name: http
       port: 9016
@@ -73,34 +74,36 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  "private-action-runner-default" 
+  name: default-test-private-action-runner
   namespace: datadog-agent
   labels:
-    service:  "private-action-runner-default-service" 
-    app:  "private-action-runner-default" 
+    helm.sh/chart: private-action-runner-1.4.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: default-test
+    app.kubernetes.io/version: "v1.4.0"
+    app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
-      app:  "private-action-runner-default" 
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: default-test
   template:
     metadata:
       labels:
-        app:  "private-action-runner-default" 
-        service:  "private-action-runner-default-service" 
+        helm.sh/chart: private-action-runner-1.4.0
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: default-test
+        app.kubernetes.io/version: "v1.4.0"
+        app.kubernetes.io/managed-by: Helm
       annotations:
-        config-hash: 38d507cd658bf8dcb55de19e2b1f8adac892783287bbbc1c74c33303d420f41a
+        checksum/values: 886679ade3266d07335f317a2c2e9230d62db111b99dc1538777c87ab2f78548
     spec:
-      serviceAccountName:  "private-action-runner-default-serviceaccount" 
-      tolerations:
-        - effect: NoSchedule
-          key: node
-          operator: Equal
-          value: nodeless
+      serviceAccountName: default-test-private-action-runner
       containers:
         - name: runner
-          image: "us-east4-docker.pkg.dev/datadog-sandbox/apps-on-prem/onprem-runner:v0.1.1-beta"
+          image: "gcr.io/datadoghq/private-action-runner:v1.4.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -108,17 +111,17 @@ spec:
           resources:
             limits:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
             requests:
               cpu: 250m
-              memory: 2Gi
+              memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
-          env:
-            - name: MANAGED_BY
-              value: "helm"
+              mountPath: /etc/dd-action-runner/config
+          env: 
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: /etc/dd-action-runner/config
       volumes:
         - name: secrets
           secret:
-            secretName:  "private-action-runner-default-secrets"
+            secretName: default-test-private-action-runner

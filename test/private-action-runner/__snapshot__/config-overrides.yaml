@@ -1,0 +1,129 @@
+---
+# Source: private-action-runner/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: custom-full-name
+  namespace: datadog-agent
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: custom-full-name
+  namespace: datadog-agent
+stringData:
+  config.yaml: |
+    ddBaseURL: https://app.datadoghq.com
+    urn: CHANGE_ME_URN_FROM_CONFIG
+    privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
+    modes:
+      - workflowAutomation
+      - appBuilder
+    port: 9016
+    actionsAllowlist:
+      - com.datadoghq.kubernetes.core.getPod
+      - com.datadoghq.kubernetes.core.listPod
+---
+# Source: private-action-runner/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: datadog-agent
+  name: custom-full-name
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+# Source: private-action-runner/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: custom-full-name
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: custom-full-name
+subjects:
+  - kind: ServiceAccount
+    name: custom-full-name
+    namespace: datadog-agent
+---
+# Source: private-action-runner/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: custom-full-name
+  namespace: datadog-agent
+spec:
+  selector:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: override-test
+  ports:
+    - name: http
+      port: 9016
+      targetPort: 9016
+---
+# Source: private-action-runner/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-full-name
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.4.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: override-test
+    app.kubernetes.io/version: "v1.4.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: override-test
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: private-action-runner-1.4.0
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: override-test
+        app.kubernetes.io/version: "v1.4.0"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/values: 706b59c137bf4a98f87130740d120bfb6c713571a4083d8df3ff8a3c0faa3800
+    spec:
+      serviceAccountName: custom-full-name
+      containers:
+        - name: runner
+          image: "gcr.io/datadoghq/private-action-runner:v1.4.0"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 9016
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner/config
+          env: 
+            - name: FOO
+              value: foo
+            - name: BAR
+              value: bar
+      volumes:
+        - name: secrets
+          secret:
+            secretName: custom-full-name

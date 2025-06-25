@@ -43,6 +43,40 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
+      enable_http_monitoring: {{ $.Values.datadog.serviceMonitoring.httpMonitoringEnabled }}
+      {{- end }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.http2MonitoringEnabled nil) }}
+      enable_http2_monitoring: {{ $.Values.datadog.serviceMonitoring.http2MonitoringEnabled }}
+      {{- end }}
+      tls:
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.go.enabled nil) }}
+        go:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.go.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.istio.enabled nil) }}
+        istio:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.istio.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.nodejs.enabled nil) }}
+        nodejs:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.nodejs.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.native.enabled nil) }}
+        native:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
+        {{- end }}
+    traceroute:
+      enabled: {{ $.Values.datadog.traceroute.enabled }}
+    {{- if not (eq .Values.datadog.discovery.enabled nil) }}
+    discovery:
+      enabled: {{ $.Values.datadog.discovery.enabled }}
+      network_stats:
+        enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
+    {{- end }}
+    gpu_monitoring:
+      enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}
+      configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
@@ -106,6 +140,7 @@ data:
             "clone",
             "clone3",
             "close",
+            "close_range",
             "connect",
             "copy_file_range",
             "creat",
@@ -193,6 +228,8 @@ data:
             "openat2",
             "pause",
             "perf_event_open",
+            "pidfd_open",
+            "pidfd_send_signal",
             "pipe",
             "pipe2",
             "poll",
@@ -256,6 +293,7 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
+            "tkill",
             "umask",
             "uname",
             "unlink",

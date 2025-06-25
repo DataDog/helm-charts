@@ -1,10 +1,10 @@
 # Datadog
 
-![Version: 3.73.4](https://img.shields.io/badge/Version-3.73.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.120.1](https://img.shields.io/badge/Version-3.120.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
-Datadog [offers two variants](https://hub.docker.com/r/datadog/agent/tags/), switch to a `-jmx` tag if you need to run JMX/java integrations. The chart also supports running [the standalone dogstatsd image](https://hub.docker.com/r/datadog/dogstatsd/tags/).
+Datadog [offers three build variants](https://hub.docker.com/r/datadog/agent/tags/), switch to a `-jmx` tag if you need to run JMX/java integrations or set the `useFIPSAgent: true` value to use the `-fips` tags if you require FIPS compliant cryptography modules. The chart also supports running [the standalone dogstatsd image](https://hub.docker.com/r/datadog/dogstatsd/tags/).
 
 See the [Datadog JMX integration](https://docs.datadoghq.com/integrations/java/) to learn more.
 
@@ -28,7 +28,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | 1.7.2 |
+| https://helm.datadoghq.com | datadog-crds | 2.8.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -441,6 +441,16 @@ agents:
 # (...)
 ```
 
+## Set an environment variable with the `--set` helm flag
+
+You can set environment variables using the `--set` helm's flag  thanks to the `datadog.envDict` field.
+
+For example, to set the `DD_ENV` environment variable:
+
+```console
+$ helm install --set datadog.envDict.DD_ENV=prod <release name> datadog/datadog
+```
+
 ## All configuration options
 
 The following table lists the configurable parameters of the Datadog chart and their default values. Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
@@ -468,6 +478,17 @@ helm install <RELEASE_NAME> \
 | agents.containers.agent.resources | object | `{}` | Resource requests and limits for the agent container. |
 | agents.containers.agent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the agent container. |
 | agents.containers.agent.startupProbe | object | Every 15s / 6 KO / 1 OK | Override default agent startup probe settings |
+| agents.containers.agentDataPlane.env | list | `[]` | Additional environment variables for the agent-data-plane container |
+| agents.containers.agentDataPlane.envDict | object | `{}` | Set environment variables specific to agent-data-plane container defined in a dict |
+| agents.containers.agentDataPlane.envFrom | list | `[]` | Set environment variables specific to agent-data-plane container from configMaps and/or secrets |
+| agents.containers.agentDataPlane.livenessProbe | object | Every 5s / 12 KO / 1 OK | Override default agent-data-plane liveness probe settings |
+| agents.containers.agentDataPlane.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
+| agents.containers.agentDataPlane.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
+| agents.containers.agentDataPlane.privilegedApiPort | int | `5101` | Port for privileged API server, used for lower-level operations that can alter the state of the ADP process or expose internal information |
+| agents.containers.agentDataPlane.readinessProbe | object | Every 5s / 12 KO / 1 OK | Override default agent-data-plane readiness probe settings |
+| agents.containers.agentDataPlane.resources | object | `{}` | Resource requests and limits for the agent-data-plane container |
+| agents.containers.agentDataPlane.telemetryApiPort | int | `5102` | Port for telemetry API server, used for exposing internal telemetry to be scraped by the Agent |
+| agents.containers.agentDataPlane.unprivilegedApiPort | int | `5100` | Port for unprivileged API server, used primarily for health checks |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
 | agents.containers.initContainers.volumeMounts | list | `[]` | Specify additional volumes to mount for the init containers |
@@ -477,6 +498,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
+| agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -515,7 +537,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.57.2"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.67.0"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
@@ -540,6 +562,7 @@ helm install <RELEASE_NAME> \
 | agents.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
 | agents.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if agents.rbac.create is true |
 | agents.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| agents.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
 | agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
@@ -561,11 +584,18 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines the pod selector for sidecar injection, currently only one rule is supported. |
 | clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", or "socket". |
 | clusterAgent.admissionController.containerRegistry | string | `nil` | Override the default registry for the admission controller. |
+| clusterAgent.admissionController.cwsInstrumentation.enabled | bool | `false` | Enable the CWS Instrumentation admission controller endpoint. |
+| clusterAgent.admissionController.cwsInstrumentation.mode | string | `"remote_copy"` | Mode defines how the CWS Instrumentation should behave. Options are "remote_copy" or "init_container" |
 | clusterAgent.admissionController.enabled | bool | `true` | Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods |
 | clusterAgent.admissionController.failurePolicy | string | `"Ignore"` | Set the failure policy for dynamic admission control.' |
+| clusterAgent.admissionController.kubernetesAdmissionEvents.enabled | bool | `false` | Enable the Kubernetes Admission Events feature. |
 | clusterAgent.admissionController.mutateUnlabelled | bool | `false` | Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"' |
+| clusterAgent.admissionController.mutation | object | `{"enabled":true}` | Mutation Webhook configuration options |
+| clusterAgent.admissionController.mutation.enabled | bool | `true` | Enabled enables the Admission Controller mutation webhook. Default: true. (Requires Agent 7.59.0+). |
 | clusterAgent.admissionController.port | int | `8000` | Set port of cluster-agent admission controller service |
 | clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config. # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
+| clusterAgent.admissionController.validation | object | `{"enabled":true}` | Validation Webhook configuration options |
+| clusterAgent.admissionController.validation.enabled | bool | `true` | Enabled enables the Admission Controller validation webhook. Default: true. (Requires Agent 7.59.0+). |
 | clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
@@ -574,7 +604,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |
 | clusterAgent.containerInclude | string | `nil` | Include containers in the Cluster Agent Autodiscovery, as a space-separated list.  If a container matches an include rule, it’s always included in the Autodiscovery. (Requires Agent/Cluster Agent 7.50.0+) |
 | clusterAgent.containers.clusterAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"readOnlyRootFilesystem":true}` | Specify securityContext on the cluster-agent container. |
-| clusterAgent.containers.initContainers.securityContext | object | `{}` |  |
+| clusterAgent.containers.initContainers.resources | object | `{}` | Resource requests and limits for the Cluster Agent init containers |
+| clusterAgent.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the initContainers. |
 | clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
 | clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
@@ -590,7 +621,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.57.2"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.67.0"` | Cluster Agent image tag to use |
+| clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
 | clusterAgent.metricsProvider.createReaderRbac | bool | `true` | Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent) |
@@ -610,6 +642,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.flareAdditionalPermissions | bool | `true` | If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace |
+| clusterAgent.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterAgent.rbac.create is false |
 | clusterAgent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent readiness probe settings |
@@ -629,6 +662,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.volumes | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
+| clusterChecksRunner.containers.agent.securityContext | object | `{}` | Specify securityContext on the agent container |
+| clusterChecksRunner.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the init containers |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
 | clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
@@ -642,7 +677,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.57.2"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.67.0"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -653,6 +688,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true |
 | clusterChecksRunner.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterChecksRunner.rbac.dedicated | bool | `false` | If true, use a dedicated RBAC resource for the cluster checks agent(s) |
+| clusterChecksRunner.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
@@ -669,20 +705,30 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
+| datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
+| datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
+| datadog.agentDataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
+| datadog.agentDataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
+| datadog.agentDataPlane.image.tag | string | `"0.1.11"` | Define the Agent Data Plane version to use |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
+| datadog.apm.errorTrackingStandalone.enabled | bool | `false` | Enables Error Tracking for backend services. |
 | datadog.apm.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the trace-agent socket |
-| datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces (beta). |
-| datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster (beta). |
-| datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces (beta). |
-| datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (beta). |
-| datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation (beta). |
+| datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces. |
+| datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster. |
+| datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces. |
+| datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
+| datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (preview). |
+| datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. |
 | datadog.apm.instrumentation.skipKPITelemetry | bool | `false` | Disable generating Configmap for APM Instrumentation KPIs |
+| datadog.apm.instrumentation.targets | list | `[]` | Enable target based workload selection. Requires Cluster Agent 7.64.0+.  ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+. |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |
 | datadog.apm.portEnabled | bool | `false` | Enable APM over TCP communication (hostPort 8126 by default) |
 | datadog.apm.socketEnabled | bool | `true` | Enable APM over Socket (Unix Socket or windows named pipe) |
 | datadog.apm.socketPath | string | `"/var/run/datadog/apm.socket"` | Path to the trace-agent socket |
+| datadog.apm.useLocalService | bool | `false` | Enable APM over TCP communication to use the local service only (requires Kubernetes v1.22+) Note: The hostPort 8126 is disabled when this is enabled. |
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
@@ -708,6 +754,10 @@ helm install <RELEASE_NAME> \
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
+| datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
+| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
+| datadog.discovery.enabled | bool | `nil` | Enable Service Discovery |
+| datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog/"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |
@@ -724,6 +774,9 @@ helm install <RELEASE_NAME> \
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
+| datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
+| datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring |
+| datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. |
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
@@ -732,6 +785,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.collectApiServicesMetrics | bool | `false` | Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+) |
 | datadog.kubeStateMetricsCore.collectConfigMaps | bool | `true` | Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.* |
+| datadog.kubeStateMetricsCore.collectCrMetrics | list | `[]` | Enable watching CustomResource objects and collecting their corresponding metrics kubernetes_state_customresource.* (Requires Cluster Agent 7.63.0+) |
 | datadog.kubeStateMetricsCore.collectCrdMetrics | bool | `false` | Enable watching CRD objects and collecting their corresponding metrics kubernetes_state.crd.* |
 | datadog.kubeStateMetricsCore.collectSecretMetrics | bool | `true` | Enable watching secret objects and collecting their corresponding metrics kubernetes_state.secret.* |
 | datadog.kubeStateMetricsCore.collectVpaMetrics | bool | `false` | Enable watching VPA objects and collecting their corresponding metrics kubernetes_state.vpa.* |
@@ -739,6 +793,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |
 | datadog.kubeStateMetricsEnabled | bool | `false` | If true, deploys the kube-state-metrics deployment |
 | datadog.kubeStateMetricsNetworkPolicy.create | bool | `false` | If true, create a NetworkPolicy for kube state metrics |
@@ -747,12 +802,16 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.host | object | `{"valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}}` | Override kubelet IP |
 | datadog.kubelet.hostCAPath | string | None (no mount from host) | Path (on host) where the Kubelet CA certificate is stored |
 | datadog.kubelet.podLogsPath | string | /var/log/pods on Linux, C:\var\log\pods on Windows | Path (on host) where the PODs logs are located |
+| datadog.kubelet.podResourcesSocketDir | string | /var/lib/kubelet/pod-resources | Path (on host) where the kubelet.sock socket for the PodResources API is located |
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
+| datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
+| datadog.kubernetesEvents.sourceDetectionEnabled | bool | `false` | Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+). |
 | datadog.kubernetesEvents.unbundleEvents | bool | `false` | Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+). |
 | datadog.kubernetesResourcesAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Annotations to Datadog Tags |
 | datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
+| datadog.kubernetesUseEndpointSlices | bool | `false` | Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+). |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. Can be: * "lease" / "leases". Only supported in agent 7.47+ * "configmap" / "configmaps". "" to automatically detect which one to use. |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
@@ -773,9 +832,16 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
-| datadog.otelCollector.config | object | `{}` | OTel collector configuration |
+| datadog.otelCollector.config | string | `nil` | OTel collector configuration |
+| datadog.otelCollector.configMap | object | `{"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
+| datadog.otelCollector.configMap.key | string | `"otel-config.yaml"` | Key within the ConfigMap that contains the DDOT Collector configuration |
+| datadog.otelCollector.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the DDOT Collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
-| datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc"},{"containerPort":"4318","name":"otel-http"}]` | Ports that OTel Collector is listening |
+| datadog.otelCollector.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
+| datadog.otelCollector.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
+| datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
+| datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
+| datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
 | datadog.otlp.logs.enabled | bool | `false` | Enable logs support in the OTLP ingest endpoint |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |
@@ -789,7 +855,7 @@ helm install <RELEASE_NAME> \
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
-| datadog.processAgent.runInCoreAgent | bool | `false` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This is an experimental feature requiring Agent 7.53.0+ and Linux. Currently not compatible with APM Single Step Instrumentation. |
+| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes # Requires datadog.processAgent.processCollection to be set to true to have any effect # ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing |
 | datadog.profiling.enabled | string | `nil` | Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED` environment variable with the same value to all pods in the cluster Valid values are: - false: Profiler is turned off and can not be turned on by other means. - null: Profiler is turned off, but can be turned on by other means. - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling. - true: Profiler is turned on. |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
@@ -798,12 +864,14 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. DEPRECATED: Consider using remoteConfiguration.enabled instead |
 | datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
-| datadog.sbom.containerImage.uncompressedLayersSupport | bool | `false` | Use container runtime snapshotter This should be set to true when using EKS, GKE or if containerd is configured to discard uncompressed layers. This feature will cause the SYS_ADMIN capability to be added to the Agent container. |
+| datadog.sbom.containerImage.overlayFSDirectScan | bool | `false` | Use experimental overlayFS direct scan |
+| datadog.sbom.containerImage.uncompressedLayersSupport | bool | `true` | Use container runtime snapshotter This should be set to true when using EKS, GKE or if containerd is configured to discard uncompressed layers. This feature will cause the SYS_ADMIN capability to be added to the Agent container. Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer. See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers |
 | datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
 | datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
+| datadog.secretBackend.refreshInterval | string | `nil` | [PREVIEW] Configure the secret backend command refresh interval in seconds. |
 | datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`. |
 | datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
@@ -827,6 +895,12 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer |
 | datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
+| datadog.serviceMonitoring.http2MonitoringEnabled | string | `nil` | Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent. |
+| datadog.serviceMonitoring.httpMonitoringEnabled | string | `nil` | Enable HTTP monitoring for Universal Service Monitoring (Requires Agent 7.40.0+). Empty values use the default setting in the datadog agent. |
+| datadog.serviceMonitoring.tls.go.enabled | bool | `nil` | Enable TLS monitoring for Golang services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent. |
+| datadog.serviceMonitoring.tls.istio.enabled | bool | `nil` | Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the default setting in the datadog agent. |
+| datadog.serviceMonitoring.tls.native.enabled | bool | `nil` | Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent. |
+| datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
@@ -846,23 +920,24 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.seccomp | string | `"localhost/system-probe"` | Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges |
 | datadog.systemProbe.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.tags | list | `[]` | List of static tags to attach to every metric, event and service check collected by this Agent. |
+| datadog.traceroute.enabled | bool | `false` | Enable traceroutes in system-probe for Network Path |
 | datadog.useHostPID | bool | `true` | Run the agent in the host's PID namespace, required for origin detection / unified service tagging |
 | existingClusterAgent.clusterchecksEnabled | bool | `true` | set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent |
 | existingClusterAgent.join | bool | `false` | set this to true if you want the agents deployed by this chart to connect to a Cluster Agent deployed independently |
 | existingClusterAgent.serviceName | string | `nil` | Existing service name to use for reaching the external Cluster Agent |
 | existingClusterAgent.tokenSecretName | string | `nil` | Existing secret name to use for external Cluster Agent token |
 | fips.customFipsConfig | object | `{}` | Configure a custom configMap to provide the FIPS configuration. Specify custom contents for the FIPS proxy sidecar container config (/etc/datadog-fips-proxy/datadog-fips-proxy.cfg). If empty, the default FIPS proxy sidecar container config is used. |
-| fips.enabled | bool | `false` | Enable fips sidecar |
+| fips.enabled | bool | `false` | Enable fips proxy sidecar. The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting). |
 | fips.image.digest | string | `""` | Define the FIPS sidecar image digest to use, takes precedence over `fips.image.tag` if specified. |
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.5"` | Define the FIPS sidecar container version to use. |
-| fips.local_address | string | `"127.0.0.1"` | Set local IP address |
-| fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. |
-| fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577 |
-| fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. |
-| fips.use_https | bool | `false` | Option to enable https |
+| fips.image.tag | string | `"1.1.13"` | Define the FIPS sidecar container version to use. |
+| fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
+| fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
+| fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
+| fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. This setting is only used for the fips-proxy sidecar. |
+| fips.use_https | bool | `false` | Option to enable https. This setting is only used for the fips-proxy sidecar. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
 | kube-state-metrics.image.repository | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics"` | Default kube-state-metrics image repository. |
 | kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |
@@ -875,9 +950,12 @@ helm install <RELEASE_NAME> \
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
+| providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
+| providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
+| useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. |
 
 ## Configuration options for Windows deployments
 <a name="windows-config"></a>

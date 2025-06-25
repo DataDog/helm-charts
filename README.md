@@ -7,6 +7,7 @@ Official Helm charts for Datadog products. Currently supported:
 - [Datadog Operator](charts/datadog-operator/README.md) (`datadog/datadog-operator`)
 - [Extended DaemonSet](charts/extended-daemon-set/README.md) (`datadog/extendeddaemonset`)
 - [Observability Pipelines Worker](charts/observability-pipelines-worker/README.md) (`datadog/observability-pipelines-worker`)
+- [Private Action Runner](charts/private-action-runner/README.md) (`datadog/private-action-runner`)
 - [Synthetics Private Location](charts/synthetics-private-location/README.md) (`datadog/synthetics-private-location`)
 
 ## How to use Datadog Helm repository
