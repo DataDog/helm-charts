@@ -66,6 +66,7 @@ func Test_baseline_manifests(t *testing.T) {
 				OverridesJson: map[string]string{
 					"fullnameOverride": `"custom-full-name"`,
 					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"image.pullPolicy": `"Always"`,
 				},
 			},
 			snapshotName: "config-overrides",
