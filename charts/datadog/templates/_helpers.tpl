@@ -389,15 +389,15 @@ Return a remote otel-agent based on `.Values` (passed as .)
 */}}
 {{- define "ddot-collector-image" -}}
 {{- if .Values.datadog.otelCollector.useStandaloneImage -}}
-{{- if semverCompare "<7.67.0" (include "agent-version" .) -}}
+{{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
 {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
 {{- end -}}
-{{ include "registry" . }}/ddot-collector:{{ include "agent-version" . }}
+{{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
 {{- else -}}
 {{- if ne .Values.agents.image.tagSuffix "full" -}}
 {{- fail "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full' to use the agent image with OTel collector" -}}
 {{- end -}}
-{{ include "image-path" (dict "root" . "image" .agents.image) }}
+{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
 {{- end -}}
 {{- end -}}
 
