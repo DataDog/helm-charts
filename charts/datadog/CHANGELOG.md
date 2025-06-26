@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.121.0
+
+* Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
+/!\ If `datadog.otelCollector.enabled` is set to `true`, please ensure you can pull the image `{{- agents.image.registry -}}/ddot-collector:{{- agents.image.tag}}` (i.e. `gcr.io/datadoghq/ddot-collector:7.67.0`).
+
 ## 3.120.0
 
 * `apm.instrumentation.targets` supports `valueFrom`.

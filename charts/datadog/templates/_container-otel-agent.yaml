@@ -1,6 +1,6 @@
 {{- define "container-otel-agent" -}}
 - name: otel-agent
-  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  image: "{{ include "ddot-collector-image" . }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
   command:

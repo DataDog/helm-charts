@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.59.0" -}}
+{{- $version = "7.67.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -381,6 +381,23 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- else -}}
 {{ include "registry" .root }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return a remote otel-agent based on `.Values` (passed as .)
+*/}}
+{{- define "ddot-collector-image" -}}
+{{- if .Values.datadog.otelCollector.useStandaloneImage -}}
+{{- if semverCompare "<7.67.0" (include "agent-version" .) -}}
+{{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
+{{- end -}}
+{{ include "registry" . }}/ddot-collector:{{ include "agent-version" . }}
+{{- else -}}
+{{- if ne .Values.agents.image.tagSuffix "full" -}}
+{{- fail "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full' to use the agent image with OTel collector" -}}
+{{- end -}}
+{{ include "image-path" (dict "root" . "image" .agents.image) }}
 {{- end -}}
 {{- end -}}
 
