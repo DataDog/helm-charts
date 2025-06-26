@@ -217,14 +217,9 @@ func verifyStandaloneOtelImage(t *testing.T, manifest string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
 
-	// Get the otel-agent container
 	otelAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
 	assert.True(t, ok, "should find otel-agent container")
-
-	// Check that it uses the standalone ddot-collector image
 	assert.Contains(t, otelAgentContainer.Image, "gcr.io/datadoghq/ddot-collector:", "should use standalone ddot-collector image")
-
-	// Verify the image doesn't have -full suffix since it's standalone
 	assert.NotContains(t, otelAgentContainer.Image, "-full", "standalone image should not have -full suffix")
 }
 
@@ -232,16 +227,9 @@ func verifyFullTagSuffixOtelImage(t *testing.T, manifest string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
 
-	// Get the otel-agent container
 	otelAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
 	assert.True(t, ok, "should find otel-agent container")
-
-	// Check that it uses the agent image with -full suffix
 	assert.Contains(t, otelAgentContainer.Image, "-full", "should use agent image with -full suffix when useStandaloneImage is false")
-
-	// Verify it's not using the standalone ddot-collector image
 	assert.NotContains(t, otelAgentContainer.Image, "ddot-collector", "should not use ddot-collector when useStandaloneImage is false")
-
-	// Verify it's using the regular agent image
 	assert.Contains(t, otelAgentContainer.Image, "gcr.io/datadoghq/agent:", "should use regular agent image when useStandaloneImage is false")
 }
