@@ -1,8 +1,27 @@
 # Datadog changelog
 
+## 3.120.1
+
+* Added ports for gRPC and HTTP OTLP ingest in NetworkPolicy and CiliumNetworkPolicy when `datadog.networkPolicy.create` and `datadog.networkPolicy.flavor` are configured respectively as `"kubernetes"` or `"cilium"`.
+
+## 3.120.0
+
+* `apm.instrumentation.targets` supports `valueFrom`.
+
+## 3.118.7
+
+* Upgrade default Agent version to `7.67.0`.
+
+## 3.118.6
+
+* Update `fips.image.tag` to `1.1.13` fixing CVEs and updating packages.
+
+## 3.118.5
+* Enable `DD_USE_DOGSTATSD` when JMX image is used for the cluster check runners.
+
 ## 3.118.4
 
-* Add support for passing multiple collector configs for Otel agent (`otelCollector.configMap.items`)
+* Update `fips.image.tag` to `1.1.12` fixing CVEs and updating packages.
 
 ## 3.118.3
 

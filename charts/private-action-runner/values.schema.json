@@ -18,6 +18,10 @@
         "tag": {
           "type": "string",
           "description": "Tag for the Datadog Private Action Runner image"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "description": "Image pull policy for the Datadog Private Action Runner"
         }
       },
       "required": ["repository", "tag"]

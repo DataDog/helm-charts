@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.4.0
+
+* Image pull policy can now be overriden.
+
 ## 1.3.0
 
 * Change the configuration directory to be `/etc/dd-action-runner/config`.
