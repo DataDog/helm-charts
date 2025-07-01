@@ -368,6 +368,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals
   - datadogagentprofiles
   verbs:
   - create
@@ -380,6 +381,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/finalizers
   - datadogagentprofiles/finalizers
   verbs:
   - create
@@ -392,6 +394,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/status
   - datadogagentprofiles/status
   verbs:
   - get
