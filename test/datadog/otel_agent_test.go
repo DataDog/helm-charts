@@ -98,7 +98,9 @@ func Test_ddotCollectorImage(t *testing.T) {
 				},
 			},
 			expectError: false,
-			assertion:   verifyStandaloneOtelImage,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
+			},
 		},
 		{
 			name: "useStandaloneImage true with agent version 7.68.0",
@@ -116,7 +118,9 @@ func Test_ddotCollectorImage(t *testing.T) {
 				},
 			},
 			expectError: false,
-			assertion:   verifyStandaloneOtelImage,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.68.0")
+			},
 		},
 		{
 			name: "useStandaloneImage true with agent version 7.66.0 should fail",
@@ -153,7 +157,9 @@ func Test_ddotCollectorImage(t *testing.T) {
 				},
 			},
 			expectError: false,
-			assertion:   verifyFullTagSuffixOtelImage,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
+			},
 		},
 		{
 			name: "useStandaloneImage false without tagSuffix full should fail",
@@ -213,23 +219,12 @@ func Test_ddotCollectorImage(t *testing.T) {
 	}
 }
 
-func verifyStandaloneOtelImage(t *testing.T, manifest string) {
+func verifyOtelImage(t *testing.T, manifest string, expectedImage string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
 
 	otelAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
 	assert.True(t, ok, "should find otel-agent container")
-	assert.Contains(t, otelAgentContainer.Image, "gcr.io/datadoghq/ddot-collector:", "should use standalone ddot-collector image")
-	assert.NotContains(t, otelAgentContainer.Image, "-full", "standalone image should not have -full suffix")
-}
 
-func verifyFullTagSuffixOtelImage(t *testing.T, manifest string) {
-	var deployment appsv1.DaemonSet
-	common.Unmarshal(t, manifest, &deployment)
-
-	otelAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
-	assert.True(t, ok, "should find otel-agent container")
-	assert.Contains(t, otelAgentContainer.Image, "-full", "should use agent image with -full suffix when useStandaloneImage is false")
-	assert.NotContains(t, otelAgentContainer.Image, "ddot-collector", "should not use ddot-collector when useStandaloneImage is false")
-	assert.Contains(t, otelAgentContainer.Image, "gcr.io/datadoghq/agent:", "should use regular agent image when useStandaloneImage is false")
+	assert.Equal(t, expectedImage, otelAgentContainer.Image, "should use exact expected otel image")
 }
