@@ -673,6 +673,11 @@ datadog:
       key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
+    # datadog.otelCollector.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
+    # The tag is retrieved from the `agents.image.tag` value.
+    # This is only supported for agent versions 7.67.0+
+    # If set to false, you will need to set `agents.image.tagSuffix` to `-full`
+    useStandaloneImage: true
 
     ## Provide OTel Collector RBAC configuration
     rbac:
