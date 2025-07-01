@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0
+
+* Update Datadog Operator chart for 1.16.0.
+
 ## 2.11.0-dev.3
 
 * Document `datadogCRDs.crds.datadogAgentProfiles` option to install the DatadogAgentProfile CRD.
