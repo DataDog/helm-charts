@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quickwit.fullname" . }}
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+data:
+  node.yaml: |-
+    {{- toYaml .Values.config | nindent 4 }}
+  {{- if .Values.pipelinesConfig }}
+  # We parse the deserialize / reserialize the json to :
+  # 1. make sure the json is valid
+  # 2. make it more compact and help a little bit with the limit of etcd.
+  pipelines_config.json: |-
+    {{ .Values.pipelinesConfig | fromJsonArray | mustToJson }}
+  {{- end }}

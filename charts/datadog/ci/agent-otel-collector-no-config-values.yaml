@@ -1,16 +1,11 @@
 targetSystem: "linux"
 agents:
   image:
-    repository: datadog/agent-dev
-    tag: nightly-ot-beta-main
-    doNotCheckTag: true
-  containers:
-    agent:
-      env:
-        - name: DD_HOSTNAME
-          value: "datadog"
+    tagSuffix: full
 datadog:
-  apiKey: "00000000000000000000000000000000"
-  appKey: "0000000000000000000000000000000000000000"
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
   otelCollector:
     enabled: true

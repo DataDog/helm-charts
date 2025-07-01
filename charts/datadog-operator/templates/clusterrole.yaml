@@ -16,7 +16,12 @@ rules:
   resources:
   - componentstatuses
   - deployments
+  - limitranges
   - namespaces
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  - resourcequotas
   verbs:
   - get
   - list
@@ -38,17 +43,6 @@ rules:
   - list
   - patch
   - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - limitranges
-  - persistentvolumeclaims
-  - persistentvolumes
-  - replicationcontrollers
-  - resourcequotas
-  verbs:
-  - list
   - watch
 - apiGroups:
   - ""
@@ -83,7 +77,6 @@ rules:
   - '*'
 - apiGroups:
   - apiextensions.k8s.io
-  - extensions
   resources:
   - customresourcedefinitions
   verbs:
@@ -95,6 +88,7 @@ rules:
   - apiservices
   verbs:
   - '*'
+  - deletecollection
   - list
   - watch
 - apiGroups:
@@ -120,29 +114,14 @@ rules:
   - list
   - watch
 - apiGroups:
-  - apps
-  resources:
-  - replicationcontrollers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs:
-  - list
-  - watch
-- apiGroups:
   - authentication.k8s.io
   resources:
   - tokenreviews
   verbs:
   - create
   - get
+  - list
+  - watch
 - apiGroups:
   - authorization.k8s.io
   resources:
@@ -150,23 +129,6 @@ rules:
   verbs:
   - create
   - get
-- apiGroups:
-  - authorization.k8s.io
-  - rbac.authorization.k8s.io
-  - roles.rbac.authorization.k8s.io
-  resources:
-  - clusterrolebindings
-  - clusterroles
-  - rolebindings
-  - roles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - autoscaling
   resources:
@@ -195,6 +157,7 @@ rules:
   resources:
   - certificatesigningrequests
   verbs:
+  - get
   - list
   - watch
 - apiGroups:
@@ -265,6 +228,7 @@ rules:
   verbs:
   - create
   - delete
+  - get
   - list
   - watch
 - apiGroups:
@@ -278,14 +242,16 @@ rules:
   - datadoghq.com
   resources:
   - extendeddaemonsetreplicasets
-  verbs:
-  - get
-- apiGroups:
-  - datadoghq.com
-  resources:
   - watermarkpodautoscalers
   verbs:
   - get
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
   - list
   - watch
 - apiGroups:
@@ -296,6 +262,13 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - metrics.eks.amazonaws.com
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -335,6 +308,33 @@ rules:
   - get
   - list
 - apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - security.openshift.io
   resourceNames:
   - restricted
@@ -348,6 +348,7 @@ rules:
   - storageclasses
   - volumeattachments
   verbs:
+  - get
   - list
   - watch
 - apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics

@@ -22,11 +22,15 @@
 - name: DD_KUBELET_TLS_VERIFY
   value: {{ .Values.datadog.kubelet.tlsVerify | quote }}
 {{- end }}
+{{- if .Values.datadog.kubelet.useApiServer | quote }}
+- name: DD_KUBELET_USE_API_SERVER
+  value: {{ .Values.datadog.kubelet.useApiServer | quote }}
+{{- end }}
 {{- if ne (include "datadog.kubelet.mountPath" .) "" }}
 - name: DD_KUBELET_CLIENT_CA
   value: {{ include "datadog.kubelet.mountPath" . }}
 {{- end }}
-{{- if .Values.providers.gke.autopilot }}
+{{- if (and .Values.providers.gke.autopilot (not .Values.datadog.kubelet.useApiServer)) }}
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
@@ -166,5 +170,38 @@ Return a list of env-vars if the cluster-agent is enabled
     secretKeyRef:
         name: {{ .Values.existingClusterAgent.tokenSecretName | quote }}
         key: token
+{{- end }}
+{{- end -}}
+
+{{- define "containers-dogstatsd-env" -}}
+{{- if .Values.datadog.dogstatsd.port }}
+- name: DD_DOGSTATSD_PORT
+  value: {{ .Values.datadog.dogstatsd.port | quote }}
+{{- end }}
+{{- if .Values.datadog.dogstatsd.nonLocalTraffic }}
+- name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+  value: {{ .Values.datadog.dogstatsd.nonLocalTraffic | quote }}
+{{- end }}
+{{- if .Values.datadog.dogstatsd.originDetection }}
+- name: DD_DOGSTATSD_ORIGIN_DETECTION
+  value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+- name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
+  value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
+{{- end }}
+{{- if .Values.datadog.originDetectionUnified.enabled }}
+- name: DD_ORIGIN_DETECTION_UNIFIED
+  value: {{ .Values.datadog.originDetectionUnified.enabled | quote }}
+{{- end }}
+{{- if .Values.datadog.dogstatsd.tagCardinality }}
+- name: DD_DOGSTATSD_TAG_CARDINALITY
+  value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
+{{- end }}
+{{- if .Values.datadog.dogstatsd.tags }}
+- name: DD_DOGSTATSD_TAGS
+  value: {{ tpl (.Values.datadog.dogstatsd.tags | join " " | quote) . }}
+{{- end }}
+{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
+- name: DD_DOGSTATSD_SOCKET
+  value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
 {{- end }}
 {{- end -}}

@@ -1,5 +1,49 @@
 # Changelog
 
+## 2.11.0-dev.3
+
+* Document `datadogCRDs.crds.datadogAgentProfiles` option to install the DatadogAgentProfile CRD.
+
+## 2.11.0-dev.2
+
+* Update default image tag for Datadog Operator to `1.16.0-rc.1`.
+
+## 2.11.0-dev.1
+
+* Update Datadog Operator chart for 1.16.0-rc.1.
+
+## 2.10.0
+
+* Update Datadog Operator chart for 1.15.1
+
+## 2.10.0-dev.2
+
+* Update Datadog Operator chart for 1.15.0-rc.2.
+
+## 2.10.0-dev.1
+
+* Fix semverCompare to work with pre-release versions.
+
+## 2.10.0-dev
+
+* Update Datadog Operator chart for 1.15.0-rc.1.
+
+## 2.9.2
+
+* no-op chart bump to sync changlog with chart version.
+
+## 2.9.0
+
+* Update Datadog Operator version to 1.14.0.
+
+## 2.9.0-dev
+
+* Update Datadog Operator version to 1.14.0-rc.3.
+
+## 2.8.0
+
+* Update Datadog Operator version to 1.13.0.
+
 ## 2.7.0
 
 * Update Datadog Operator version to 1.12.1.

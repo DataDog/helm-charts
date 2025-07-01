@@ -1,0 +1,42 @@
+targetSystem: "linux"
+agents:
+  image:
+    tagSuffix: full
+  containers:
+    otelAgent:
+      volumeMounts:
+        - name: logscustompath
+          mountPath: /var/log/custom
+          readOnly: true
+  volumes:
+    - hostPath:
+        path: /var/log/custom
+      name: logscustompath
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  otelCollector:
+    enabled: true
+    config: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:5317"
+      exporters:
+        datadog:
+          api:
+            key: "f0000000000000000000000000000000"
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [datadog]
+          metrics:
+            receivers: [otlp]
+            exporters: [datadog]
+          logs:
+            receivers: [otlp]
+            exporters: [datadog]

@@ -13,6 +13,10 @@
 - name: DD_SECRET_BACKEND_TIMEOUT
   value: {{ .Values.datadog.secretBackend.timeout | quote }}
 {{- end }}
+{{- if .Values.datadog.secretBackend.refreshInterval | quote }}
+- name: DD_SECRET_REFRESH_INTERVAL
+  value: {{ .Values.datadog.secretBackend.refreshInterval | quote }}
+{{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME
@@ -69,5 +73,9 @@
   value: /certs/tls.crt
 - name: DD_KUBELET_CLIENT_KEY
   value: /certs/tls.key
+{{- end }}
+{{- if .Values.providers.gke.autopilot }}
+- name: DD_CLOUD_PROVIDER_METADATA
+  value: '["gcp"]'
 {{- end }}
 {{- end }}

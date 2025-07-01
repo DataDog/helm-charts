@@ -1,0 +1,10 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      enabledNamespaces:
+        - "application"
+        - "test"
+      libVersions:
+        python: "v2"

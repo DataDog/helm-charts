@@ -87,7 +87,11 @@ spec:
             mountPath: /opt/datadog-agent
             readOnly: false # Need RW for writing agent config files
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
@@ -108,9 +112,13 @@ spec:
             readOnly: true
           {{- end }}
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       containers:
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
       - name: agent
@@ -164,10 +172,17 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          # Remove unused features
+          {{- if eq .Values.clusterChecksRunner.image.tagSuffix "jmx" }}
+          - name: DD_USE_DOGSTATSD
+            value: "true"
+          {{- else }}
           - name: DD_USE_DOGSTATSD
             value: "false"
+          {{- end }}
+          # Remove unused features
           - name: DD_PROCESS_AGENT_ENABLED
+            value: "false"
+          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
           - name: DD_LOGS_ENABLED
             value: "false"
@@ -184,7 +199,11 @@ spec:
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
+{{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
+{{- include "default-cluster-check-runner-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- end }}
 {{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
         securityContext:
 {{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}

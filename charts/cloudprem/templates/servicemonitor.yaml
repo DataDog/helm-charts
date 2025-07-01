@@ -1,0 +1,25 @@
+{{- if and ( .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" ) .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "quickwit.fullname" . }}
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+    {{- with .Values.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+    - path: /metrics
+      port: rest 
+      interval: {{ .Values.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+      metricRelabelings:
+        {{- toYaml .Values.serviceMonitor.metricRelabelings | nindent 8 }}
+      relabelings:
+        {{- toYaml .Values.serviceMonitor.relabelings | nindent 8 }}
+  jobLabel: app.kubernetes.io/instance
+  selector:
+    matchLabels:
+      {{- include "quickwit.selectorLabels" . | nindent 6 }}
+{{- end }}

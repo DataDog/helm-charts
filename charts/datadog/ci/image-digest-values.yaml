@@ -7,3 +7,6 @@ agents:
 clusterChecksRunner:
   image:
     digest: sha256:9b4be18f644bd35dad2387f37d9859674080889642b970c0e924d027c4182f6d  # corresponds to 7.59.0
+datadog:
+  kubelet:
+    tlsVerify: false

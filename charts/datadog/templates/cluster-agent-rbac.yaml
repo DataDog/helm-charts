@@ -270,6 +270,9 @@ rules:
 - apiGroups: ["apps"]
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
+- apiGroups: [""]
+  resources: ["replicationcontrollers"]
+  verbs: ["get"]
 {{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
 - apiGroups: [""]
   resources: ["pods/exec"]
@@ -336,6 +339,14 @@ rules:
   verbs: ["get"]
 {{- end }}
 {{- if .Values.datadog.orchestratorExplorer.enabled }}
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
@@ -518,7 +529,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
-{{- $mergedResources := mergeOverwrite dict (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags) (default dict .Values.datadog.kubernetesResourcesLabelsAsTags)}}
+{{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
 {{- range $resource, $labels := $mergedResources }}
   {{- $parts := splitList "." $resource }}
   {{- $apiGroup := "" }}

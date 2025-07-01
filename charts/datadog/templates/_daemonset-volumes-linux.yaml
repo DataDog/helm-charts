@@ -10,6 +10,11 @@
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
+- name: pod-resources-socket
+  hostPath:
+    path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
     path: /proc
@@ -17,7 +22,7 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled) }}
+{{- if eq (include "should-add-host-path-for-os-release-file" .) "true"}}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
@@ -36,7 +41,7 @@
     path: /etc/system-release
   name: etc-system-release
 {{- end -}}
-{{- if eq (include "should-enable-fips" . ) "true" }}
+{{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
@@ -198,7 +203,7 @@
   name: runtimesocketdir
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir

@@ -49,4 +49,14 @@ kubernetes_state_core.yaml.default: |-
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
       annotations_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.annotationsAsTags | toYaml | indent 8 }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+      custom_resource:
+        spec:
+          resources:
+{{ .Values.datadog.kubeStateMetricsCore.collectCrMetrics | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.tags }}
+      tags:
+{{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}
+{{- end }}
 {{- end -}}

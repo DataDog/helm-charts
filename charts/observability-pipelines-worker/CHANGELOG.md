@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.6.0
+
+- Official image `2.6.0`
+
+## 2.5.2
+
+- Official image `2.5.2`
+
+## 2.5.1
+
+- Official image `2.5.1`
+
+## 2.5.0
+
+* Official image `2.5.0`
+
+## 2.4.2
+
+* Official image `2.4.2`
+
+## 2.4.1
+
+* Official image `2.4.1`
+
+## 2.4.0
+
+* Official image `2.4.0`
+
 ## 2.3.0
 
 * Official image `2.3.0`
