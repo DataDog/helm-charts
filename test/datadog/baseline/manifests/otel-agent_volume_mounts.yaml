@@ -1576,4 +1576,3 @@ spec:
         - emptyDir: {}
           name: config
 ---
-
