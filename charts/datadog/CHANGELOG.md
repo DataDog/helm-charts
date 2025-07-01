@@ -5,6 +5,14 @@
 * Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
 /!\ If `datadog.otelCollector.enabled` is set to `true`, please ensure you can pull the image `{{- agents.image.registry -}}/ddot-collector:{{- agents.image.tag}}` (i.e. `gcr.io/datadoghq/ddot-collector:7.67.0`).
 
+## 3.120.2
+
+* Add support for passing multiple collector configs for Otel agent (`otelCollector.configMap.items`)
+
+## 3.120.1
+
+* Added ports for gRPC and HTTP OTLP ingest in NetworkPolicy and CiliumNetworkPolicy when `datadog.networkPolicy.create` and `datadog.networkPolicy.flavor` are configured respectively as `"kubernetes"` or `"cilium"`.
+
 ## 3.120.0
 
 * `apm.instrumentation.targets` supports `valueFrom`.

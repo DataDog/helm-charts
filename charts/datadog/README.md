@@ -833,7 +833,8 @@ helm install <RELEASE_NAME> \
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
-| datadog.otelCollector.configMap | object | `{"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
+| datadog.otelCollector.configMap | object | `{"items":null,"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
+| datadog.otelCollector.configMap.items | string | `nil` | Items within the ConfigMap that contain DDOT Collector configuration |
 | datadog.otelCollector.configMap.key | string | `"otel-config.yaml"` | Key within the ConfigMap that contains the DDOT Collector configuration |
 | datadog.otelCollector.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the DDOT Collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
