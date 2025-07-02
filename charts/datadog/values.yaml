@@ -2292,6 +2292,15 @@ agents:
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
     forceLocalServiceEnabled: false
 
+  # agents.lifecycle -- Configure the lifecycle of the Agent
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+
+  # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
+  terminationGracePeriodSeconds:  # 70
+
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
 

@@ -1580,4 +1580,3 @@ spec:
         - emptyDir: {}
           name: config
 ---
-

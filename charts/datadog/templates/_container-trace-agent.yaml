@@ -2,6 +2,10 @@
 - name: trace-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if and (.Values.agents.lifecycle) (not .Values.providers.gke.autopilot) }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}

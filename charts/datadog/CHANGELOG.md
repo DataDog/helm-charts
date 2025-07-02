@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.122.0
+
+* Support a lifecycle handler for the agent via `agents.lifecycle`.
+* Support a termination grace period for the agent via `agents.terminationGracePeriodSeconds`.
+
 ## 3.121.0
 
 * Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
