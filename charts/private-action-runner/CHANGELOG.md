@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.5.0
+
+* Bump runner version to `v1.5.0`
+
 ## 1.4.0
 
 * Image pull policy can now be overriden.
