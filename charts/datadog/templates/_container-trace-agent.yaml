@@ -12,7 +12,7 @@
   {{- if eq .Values.targetSystem "windows" }}
   command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.traceAgent.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-container-resources" . | indent 4 }}

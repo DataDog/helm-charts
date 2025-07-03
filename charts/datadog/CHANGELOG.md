@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.122.1
+
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
+
 ## 3.122.0
 
 * Support a lifecycle handler for the agent via `agents.lifecycle`.

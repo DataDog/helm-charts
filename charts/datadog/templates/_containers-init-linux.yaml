@@ -1,6 +1,6 @@
 {{- define "containers-init-linux" -}}
 - name: init-volume
-{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["bash", "-c"]
@@ -17,7 +17,7 @@
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
 {{- end }}
 - name: init-config
-{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{- include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command:
