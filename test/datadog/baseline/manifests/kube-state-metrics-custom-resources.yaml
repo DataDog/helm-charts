@@ -106,6 +106,7 @@ data:
                 groupVersionKind:
                   group: vpcresources.k8s.aws
                   kind: CNINode
+                  resource: cninode-pluralized
                   version: v1alpha1
                 labelsFromPath:
                   crd_name:
@@ -520,7 +521,7 @@ rules:
   - apiGroups:
       - vpcresources.k8s.aws
     resources:
-      - cninodes
+      - cninode-pluralized
     verbs:
       - list
       - watch
@@ -1466,3 +1467,4 @@ spec:
         - emptyDir: {}
           name: config
 ---
+
