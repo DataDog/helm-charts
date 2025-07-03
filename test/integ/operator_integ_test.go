@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	apiKeyEnv     = "API_KEY"
-	appKeyEnv     = "APP_KEY"
+	apiKeyEnv     = "DD_API_KEY"
+	appKeyEnv     = "DD_APP_KEY"
 	k8sVersionEnv = "K8S_VERSION"
 )
 

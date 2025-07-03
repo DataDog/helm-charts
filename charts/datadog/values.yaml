@@ -185,6 +185,7 @@ datadog:
     #     group: myteam.io
     #     kind: "Foo"
     #     version: "v1"
+    #     resource: "foos" # optional, if not set, the resource will be pluralized from the kind by adding "s" to the end
     #   metrics:
     #     - name: "uptime"
     #       help: "Foo uptime"

@@ -29,6 +29,7 @@ datadog:
           group: "vpcresources.k8s.aws"
           kind: "CNINode"
           version: "v1alpha1"
+          resource: "cninode-pluralized"
         commonLabels:
           crd_type: "cninode"
         labelsFromPath:
