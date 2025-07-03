@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.1
+
+* Handle Operator image tag with a digest gracefully.
+
 ## 2.11.0
 
 * Update Datadog Operator chart for 1.16.0.
