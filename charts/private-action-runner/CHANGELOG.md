@@ -2,7 +2,8 @@
 
 ## 1.5.0
 
-* Bump runner version to `v1.5.0`
+* Bump runner version to `v1.5.1`
+* Make it possible to configure the runner to allow IMDS endpoints
 
 ## 1.4.0
 

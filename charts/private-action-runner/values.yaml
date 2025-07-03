@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.5.0
+  tag: v1.5.1
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -35,6 +35,8 @@ runner:
       - "appBuilder"
     # -- Port for HTTP server liveness checks and App Builder mode
     port: 9016
+    # -- Whether to allow the runner to access IDM services endpoint
+    allowIMDSEndpoint: false
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
   # -- Environment variables to be passed to the Datadog Private Action Runner

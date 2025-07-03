@@ -21,6 +21,7 @@ stringData:
       - workflowAutomation
       - appBuilder
     port: 9016
+    allowIDMSEndpoint: true
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
@@ -80,7 +81,7 @@ metadata:
     helm.sh/chart: private-action-runner-1.5.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
-    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/version: "v1.5.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -95,15 +96,15 @@ spec:
         helm.sh/chart: private-action-runner-1.5.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
-        app.kubernetes.io/version: "v1.5.0"
+        app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: dfe7295c01e231167555b8faba6088a705dab15710d517ecbc6958ee5f58570e
+        checksum/values: 4868e85788e07f463f821a0cda493b8f48a1d8d99117a4b1f57f6967a81171c6
     spec:
       serviceAccountName: custom-full-name
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.5.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.5.1"
           imagePullPolicy: Always
           ports:
             - name: http
