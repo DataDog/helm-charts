@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.123.0
+
+* Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
+
 ## 3.122.0
 
 * Support a lifecycle handler for the agent via `agents.lifecycle`.
