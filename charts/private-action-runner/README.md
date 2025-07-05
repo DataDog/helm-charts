@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.4.0](https://img.shields.io/badge/Version-1.4.0-informational?style=flat-square) ![AppVersion: v1.4.0](https://img.shields.io/badge/AppVersion-v1.4.0-informational?style=flat-square)
+![Version: 1.5.0](https://img.shields.io/badge/Version-1.5.0-informational?style=flat-square) ![AppVersion: v1.5.1](https://img.shields.io/badge/AppVersion-v1.5.1-informational?style=flat-square)
 
 ## Overview
 
@@ -228,11 +228,12 @@ If actions requiring credentials fail:
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.4.0"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.5.1"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
-| runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
+| runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
+| runner.config.allowIMDSEndpoint | bool | `false` | Whether to allow the runner to access IDM services endpoint |
 | runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
 | runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |

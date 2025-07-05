@@ -75,6 +75,10 @@
               "type": "integer",
               "description": "Port for HTTP server liveness checks and App Builder mode"
             },
+            "allowIMDSEndpoint": {
+              "type": "boolean",
+              "description": "Allow the runner to access IMDS endpoint"
+            },
             "actionsAllowlist": {
               "type": "array",
               "description": "List of actions that the Datadog Private Action Runner is allowed to execute",
