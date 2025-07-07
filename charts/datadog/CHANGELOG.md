@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.123.0
+
+* Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
+
 ## 3.122.1
 
 * Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
