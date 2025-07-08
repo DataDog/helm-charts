@@ -64,9 +64,10 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"fullnameOverride": `"custom-full-name"`,
-					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
-					"image.pullPolicy": `"Always"`,
+					"fullnameOverride":                `"custom-full-name"`,
+					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runner.config.allowIMDSEndpoint": `true`,
+					"image.pullPolicy":                `"Always"`,
 				},
 			},
 			snapshotName: "config-overrides",
