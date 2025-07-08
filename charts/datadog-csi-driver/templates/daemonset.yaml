@@ -34,11 +34,11 @@ spec:
               mountPath: /csi
             - name: apm-socket
               mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
-              readOnly: false
+              readOnly: true
             {{- if ne (dir .Values.sockets.dsdHostSocketPath) (dir .Values.sockets.apmHostSocketPath) }}
             - name: dsd-socket
               mountPath: {{ (dir .Values.sockets.dsdHostSocketPath) }}
-              readOnly: false
+              readOnly: true
             {{- end }}
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
