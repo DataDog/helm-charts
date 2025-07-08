@@ -218,6 +218,9 @@ spec:
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
 {{- end }}
+      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
+      {{- end }}
       tolerations:
       {{- if eq .Values.targetSystem "windows" }}
       - effect: NoSchedule

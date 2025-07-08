@@ -1,5 +1,18 @@
 # Datadog changelog
 
+## 3.123.0
+
+* Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
+
+## 3.122.1
+
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
+
+## 3.122.0
+
+* Support a lifecycle handler for the agent via `agents.lifecycle`.
+* Support a termination grace period for the agent via `agents.terminationGracePeriodSeconds`.
+
 ## 3.121.0
 
 * Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
