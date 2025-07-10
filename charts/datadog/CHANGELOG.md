@@ -6,6 +6,7 @@
   - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version < 7.67.0: Falls back to using the agent image (legacy behavior).
   - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version >= 7.67.0: Fails with a clear error message and actionable solutions .
 * Fix documentation of `datadog.otelCollector.useStandaloneImage` mentioning the option to set `agents.image.tagSuffix` to `-full` instead of `full`.
+* Mention `full` in the `tagSuffix` documentation.
 
 ## 3.123.0
 

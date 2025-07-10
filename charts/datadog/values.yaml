@@ -1741,6 +1741,7 @@ agents:
     ## Ex:
     ##  jmx        to enable jmx fetch collection
     ##  servercore to get Windows images based on servercore
+    ##  full       to get as many features as possible, currently ddot-collector and jmx (e.g. 7.67.0-full)
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
