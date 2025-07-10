@@ -141,6 +141,27 @@ func Test_ddotCollectorImage(t *testing.T) {
 			errorMessage: "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+",
 		},
 		{
+			name: "useStandaloneImage true with tagSuffix full should still use the standalone image without the tagSuffix",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tagSuffix":                   "full",
+					"agents.image.tag":                         "7.67.0",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
+			},
+		},
+		{
 			name: "useStandaloneImage false with tagSuffix full",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
@@ -197,6 +218,64 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError:  true,
 			errorMessage: "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full'",
+		},
+		{
+			name: "useStandaloneImage false with -full suffix in tag should use agent image",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "false",
+					"agents.image.tag":                         "7.67.0-full",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
+			},
+		},
+		{
+			name: "useStandaloneImage true with -full suffix in tag and version >= 7.67.0 should fail",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7.67.0-full",
+				},
+			},
+			expectError:  true,
+			errorMessage: "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0.",
+		},
+		{
+			name: "useStandaloneImage true with -full suffix in tag and version < 7.67.0 should use agent image",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7.66.0-full",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
+			},
 		},
 	}
 
