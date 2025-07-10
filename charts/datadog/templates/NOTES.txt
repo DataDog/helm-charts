@@ -669,11 +669,18 @@ OTel collector is not supported on GKE Autopilot.
 {{- end }}
 
 
-{{- if (eq (include "should-enable-otel-agent" .) "true")  }}
+{{- if and (eq (include "should-enable-otel-agent" .) "true") (hasSuffix "-full" (.Values.agents.image.tag | toString)) }}
 #################################################################
-####               WARNING: Private Beta notice              ####
+####               WARNING: Configuration notice             ####
 #################################################################
-OTel collector is in preview. Please reach out to your Datadog representative for more information.
+You have set the `-full` suffix directly in `agents.image.tag` ({{ .Values.agents.image.tag }}) while using the OpenTelemetry Collector.
+This is only supported in one of these conditions:
+- `datadog.otelCollector.useStandaloneImage` is set to `false`
+- `datadog.otelCollector.useStandaloneImage` is set to `true` and the agent version is 7.65 or 7.66.
+
+Please consider either removing this suffix from the `agents.image.tag` override.
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/fr/opentelemetry/setup/ddot_collector/install/?tab=helm
 {{- end }}
 
 
