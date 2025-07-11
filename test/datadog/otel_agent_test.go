@@ -160,7 +160,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
 			},
 		},
