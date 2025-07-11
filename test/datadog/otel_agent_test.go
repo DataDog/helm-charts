@@ -99,6 +99,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
 			},
 		},
@@ -119,6 +120,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.68.0")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.68.0")
 			},
 		},
@@ -158,6 +160,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
 			},
 		},
@@ -179,6 +182,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 			},
 		},
@@ -236,6 +240,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
 			},
 		},
@@ -274,6 +279,7 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 			},
 		},
@@ -306,4 +312,14 @@ func verifyOtelImage(t *testing.T, manifest string, expectedImage string) {
 	assert.True(t, ok, "should find otel-agent container")
 
 	assert.Equal(t, expectedImage, otelAgentContainer.Image, "should use exact expected otel image")
+}
+
+func verifyAgentImage(t *testing.T, manifest string, expectedImage string) {
+	var deployment appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &deployment)
+
+	agentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+	assert.True(t, ok, "should find otel-agent container")
+
+	assert.Equal(t, expectedImage, agentContainer.Image, "should use exact expected agent image")
 }
