@@ -410,17 +410,7 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
     {{- end -}}
   {{- else -}}
-    {{/*
-    In the normal case, we should use the agent image with the `-full` suffix set in tagSuffix
-    */}}
-    {{- $agentTag := .Values.agents.image.tag | toString -}}
-    {{- if hasSuffix "-full" $agentTag -}}
-      {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
-    {{- else if ne .Values.agents.image.tagSuffix "full" -}}
-      {{- fail "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full' to use the agent image with DDOT collector" -}}
-    {{- else -}}
-      {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
-    {{- end -}}
+    {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
   {{- end -}}
 {{- end -}}
 
