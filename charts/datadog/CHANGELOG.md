@@ -5,7 +5,7 @@
 * Fix a breaking change introduced in `3.121.0`. If users set `-full` suffix directly in `agents.image.tag` when using OpenTelemetry Collector. The chart now gracefully handles this scenario:
   - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version < 7.67.0: Falls back to using the agent image (legacy behavior).
   - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version >= 7.67.0: Fails with a clear error message and actionable solutions .
-* Fix documentation of `datadog.otelCollector.useStandaloneImage` mentioning the option to set `agents.image.tagSuffix` to `-full` instead of `full`.
+* Fix documentation of `datadog.otelCollector.useStandaloneImage` to clarify that `agents.image.tagSuffix` must be set to `full` (not `-full`).
 * Mention `full` in the `tagSuffix` documentation.
 
 ## 3.123.0

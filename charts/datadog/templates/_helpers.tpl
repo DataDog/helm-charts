@@ -417,7 +417,7 @@ Return a remote otel-agent based on `.Values` (passed as .)
     {{- if hasSuffix "-full" $agentTag -}}
       {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
     {{- else if ne .Values.agents.image.tagSuffix "full" -}}
-      {{- fail "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full' to use the agent image with OTel collector" -}}
+      {{- fail "When datadog.otelCollector.useStandaloneImage is false, agents.image.tagSuffix must be set to 'full' to use the agent image with DDOT collector" -}}
     {{- else -}}
       {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
     {{- end -}}
