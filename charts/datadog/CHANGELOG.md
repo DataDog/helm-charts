@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.123.1
+
+* Bump the default ADP version to v0.1.16. ([#1956](https://github.com/DataDog/helm-charts/pull/1956)).
+
 ## 3.123.0
 
 * Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
