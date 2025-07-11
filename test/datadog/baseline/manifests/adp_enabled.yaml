@@ -1085,7 +1085,7 @@ spec:
               value: "true"
             - name: DD_PROMETHEUS_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: gcr.io/datadoghq/agent-data-plane:0.1.11
+          image: gcr.io/datadoghq/agent-data-plane:0.1.16
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
