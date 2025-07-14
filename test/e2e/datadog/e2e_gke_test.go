@@ -71,5 +71,5 @@ func (v *gkeSuite) TestGKE() {
 		require.NoError(v.T(), err)
 		assert.Empty(v.T(), stderr)
 		assert.NotEmpty(v.T(), stdout)
-	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
+	}, 5*time.Minute, 30*time.Second, "GKE readiness timed out")
 }
