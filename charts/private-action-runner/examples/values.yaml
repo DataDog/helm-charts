@@ -11,6 +11,7 @@ runner:
     modes:
       - appBuilder
       - workflowAutomation
+    allowIMDSEndpoint: false
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
