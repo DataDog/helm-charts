@@ -390,7 +390,7 @@ Return a remote otel-agent based on `.Values` (passed as .)
 {{- define "ddot-collector-image" -}}
   {{- if .Values.datadog.otelCollector.useStandaloneImage -}}
     {{/*
-    Edge case: Setting `7.X.Y-full` in `agents.image.tag` is not recommended but supported for versions < 7.67.0
+    Edge case: Setting `7.X.Y-full` in `agents.image.tag` is not recommended, but is supported, for versions < 7.67.0
     */}}
     {{- $agentTag := .Values.agents.image.tag | toString -}}
     {{- if hasSuffix "-full" $agentTag -}}
