@@ -7,9 +7,9 @@ $schema: ./values.schema.json
 
 # -- Current Datadog Private Action Runner image
 image:
-  repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.5.1
-  pullPolicy: IfNotPresent
+  repository: datadog/private-action-runner-dev
+  tag: latest@sha256:7cb533bf1f59051bc4ad36d34c2a161ddaf5a8cd0a2dc62998397eb623070145
+  pullPolicy: Always
 
 # nameOverride -- Override name of app
 nameOverride: ""
@@ -39,6 +39,8 @@ runner:
     allowIMDSEndpoint: false
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
+    # -- Bundles specific configuration
+    bundles: {}
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env:
     - name: DD_PRIVATE_RUNNER_CONFIG_DIR
