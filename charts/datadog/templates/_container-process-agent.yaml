@@ -2,13 +2,17 @@
 - name: process-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if and (.Values.agents.lifecycle) (not .Values.providers.gke.autopilot) }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["process-agent", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end }}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
 {{- if .Values.agents.containers.processAgent.ports }}
   ports:
 {{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}

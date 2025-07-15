@@ -105,7 +105,11 @@ rules:
 - apiGroups:
     - {{ .groupVersionKind.group }}
   resources:
-    - {{ .groupVersionKind.kind | lower }}s
+    - {{ if .groupVersionKind.resource }}
+        {{ .groupVersionKind.resource | lower }}
+      {{ else }}
+        {{ .groupVersionKind.kind | lower }}s
+      {{ end }}
   verbs:
     - list
     - watch

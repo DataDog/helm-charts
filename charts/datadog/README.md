@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.120.0](https://img.shields.io/badge/Version-3.120.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.123.1](https://img.shields.io/badge/Version-3.123.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -539,6 +539,7 @@ helm install <RELEASE_NAME> \
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
 | agents.image.tag | string | `"7.67.0"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
+| agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -567,6 +568,7 @@ helm install <RELEASE_NAME> \
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
 | agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
 | agents.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Daemonset |
+| agents.terminationGracePeriodSeconds | int | `nil` | Configure the termination grace period for the Agent |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
 | agents.useConfigMap | string | `nil` | Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter. |
@@ -833,7 +835,8 @@ helm install <RELEASE_NAME> \
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
-| datadog.otelCollector.configMap | object | `{"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
+| datadog.otelCollector.configMap | object | `{"items":null,"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
+| datadog.otelCollector.configMap.items | string | `nil` | Items within the ConfigMap that contain DDOT Collector configuration |
 | datadog.otelCollector.configMap.key | string | `"otel-config.yaml"` | Key within the ConfigMap that contains the DDOT Collector configuration |
 | datadog.otelCollector.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the DDOT Collector configuration |
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
@@ -842,6 +845,7 @@ helm install <RELEASE_NAME> \
 | datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
+| datadog.otelCollector.useStandaloneImage | bool | `true` | If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image The tag is retrieved from the `agents.image.tag` value. This is only supported for agent versions 7.67.0+ If set to false, you will need to set `agents.image.tagSuffix` to `full` |
 | datadog.otlp.logs.enabled | bool | `false` | Enable logs support in the OTLP ingest endpoint |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |
