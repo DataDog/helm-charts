@@ -1,11 +1,21 @@
 {{- define "container-otel-agent" -}}
 - name: otel-agent
-  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  image: "{{ include "ddot-collector-image" . }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command:
     - "otel-agent"
+    {{- if .Values.datadog.otelCollector.configMap.items }}
+    {{- range .Values.datadog.otelCollector.configMap.items }}
+    - "--config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
     - "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+    {{- end }}
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
     - "--sync-delay=30s"
     {{- if .Values.datadog.otelCollector.featureGates }}
@@ -16,7 +26,13 @@
   command:
     - "otel-agent"
     - "-foreground"
+    {{- if .Values.datadog.otelCollector.configMap.items }}
+    {{- range .Values.datadog.otelCollector.configMap.items }}
+    - "-config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
     - "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+    {{- end }}
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
     - "--sync-delay=30s"
     {{- if .Values.datadog.otelCollector.featureGates }}

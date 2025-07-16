@@ -878,7 +878,7 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1003,7 +1003,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources:
@@ -1044,7 +1044,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1095,7 +1095,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1252,6 +1252,8 @@ spec:
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
               value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "false"
             - name: DD_LOGS_ENABLED
               value: "false"
             - name: DD_APM_ENABLED
@@ -1264,7 +1266,7 @@ spec:
                   fieldPath: spec.nodeName
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1319,7 +1321,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1338,7 +1340,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1522,7 +1524,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1601,7 +1603,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

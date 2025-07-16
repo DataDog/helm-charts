@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.59.0" -}}
+{{- $version = "7.67.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -382,6 +382,36 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{ include "registry" .root }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return a remote otel-agent based on `.Values` (passed as .)
+*/}}
+{{- define "ddot-collector-image" -}}
+  {{- if .Values.datadog.otelCollector.useStandaloneImage -}}
+    {{/*
+    Edge case: Setting `7.X.Y-full` in `agents.image.tag` is not recommended, but is supported, for versions < 7.67.0
+    */}}
+    {{- $agentTag := .Values.agents.image.tag | toString -}}
+    {{- if hasSuffix "-full" $agentTag -}}
+      {{- $cleanVersion := $agentTag | trimSuffix "-full" -}}
+      {{- if semverCompare "<7.67.0" $cleanVersion -}}
+        {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
+      {{- else -}}
+        {{- fail "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0. Options: (1) Remove the `-full` suffix from `agents.image.tag`, or (2) Set `datadog.otelCollector.useStandaloneImage=false`." -}}
+      {{- end -}}
+    {{- else -}}
+      {{/*
+      In the normal case, we should use the standalone image for Agent 7.67.0+ or error out
+      */}}
+      {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
+        {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
+      {{- end -}}
+      {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
+    {{- end -}}
+  {{- else -}}
+    {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
+  {{- end -}}
 {{- end -}}
 
 {{/*
@@ -882,20 +912,24 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 Returns securityContext depending of the OS
 */}}
 {{- define "generate-security-context" -}}
-{{- if .securityContext -}}
 {{- if eq .targetSystem "windows" -}}
-  {{- if .securityContext.windowsOptions }}
+  {{- if and .securityContext .securityContext.windowsOptions }}
 securityContext:
   windowsOptions:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
+{{- if or .securityContext .sysAdmin (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
 securityContext:
+{{- if .securityContext -}}
 {{- if .sysAdmin }}
 {{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
 {{ toYaml (merge $capabilities .securityContext) | indent 2 }}
 {{- else }}
 {{ toYaml .securityContext | indent 2 }}
+{{- end -}}
+{{- else if .sysAdmin }}
+{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
 {{- end -}}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
@@ -923,11 +957,8 @@ securityContext:
     localhostProfile: {{ trimPrefix "localhost/" .apparmor }}
     {{- end }}
 {{- end -}}
-{{- end -}}
-{{- else if .sysAdmin }}
-securityContext:
-{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
-{{- end -}}
+{{- end -}}{{- /* or securityContext... */ -}}
+{{- end -}}{{- /* targetSystem == "linux" */ -}}
 {{- end -}}
 
 {{/*

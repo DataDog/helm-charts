@@ -18,6 +18,10 @@
         "tag": {
           "type": "string",
           "description": "Tag for the Datadog Private Action Runner image"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "description": "Image pull policy for the Datadog Private Action Runner"
         }
       },
       "required": ["repository", "tag"]
@@ -71,6 +75,10 @@
               "type": "integer",
               "description": "Port for HTTP server liveness checks and App Builder mode"
             },
+            "allowIMDSEndpoint": {
+              "type": "boolean",
+              "description": "Allow the runner to access IMDS endpoint"
+            },
             "actionsAllowlist": {
               "type": "array",
               "description": "List of actions that the Datadog Private Action Runner is allowed to execute",
@@ -88,6 +96,29 @@
           "items": {
             "type": "object"
           }
+        },
+        "nodeSelector": {
+          "type": "object",
+          "description": "Key Value pairs of node labels used to select nodes for scheduling the runner pods"
+        },
+        "affinity": {
+          "type": "object",
+          "description": "Kubernetes affinity settings for the runner pods"
+        },
+        "tolerations": {
+          "type": "array",
+          "description": "Tolerations to allow scheduling runner pods on nodes with taints",
+          "items": {
+            "type": "object"
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "description": "Liveness Probe configuration"
+        },
+        "readinessProbe": {
+          "type": "object",
+          "description": "Readiness Probe configuration"
         },
         "runnerIdentitySecret": {
           "type": "string",

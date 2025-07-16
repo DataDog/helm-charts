@@ -185,6 +185,7 @@ datadog:
     #     group: myteam.io
     #     kind: "Foo"
     #     version: "v1"
+    #     resource: "foos" # optional, if not set, the resource will be pluralized from the kind by adding "s" to the end
     #   metrics:
     #     - name: "uptime"
     #       help: "Foo uptime"
@@ -563,7 +564,9 @@ datadog:
       libVersions: {}
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
-      # Requires Cluster Agent 7.64.0+
+      # Requires Cluster Agent 7.64.0+.
+      #
+      # ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
@@ -577,6 +580,10 @@ datadog:
       #    ddTraceConfigs:
       #      - name: "DD_PROFILING_ENABLED"
       #        value: "true"
+      #      - name: "DD_SERVICE"
+      #        valueFrom:
+      #          fieldRef:
+      #            fieldPath: metadata.labels[my-label]
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -657,10 +664,21 @@ datadog:
     configMap:
       # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
       name: null
+      # datadog.otelCollector.configMap.items -- Items within the ConfigMap that contain DDOT Collector configuration
+      items:
+      #   - key: otel-config.yaml
+      #     path: otel-config.yaml
+      #   - key: otel-config-two.yaml
+      #     path: otel-config-two.yaml
       # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
       key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
+    # datadog.otelCollector.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
+    # The tag is retrieved from the `agents.image.tag` value.
+    # This is only supported for agent versions 7.67.0+
+    # If set to false, you will need to set `agents.image.tagSuffix` to `full`
+    useStandaloneImage: true
 
     ## Provide OTel Collector RBAC configuration
     rbac:
@@ -1177,7 +1195,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1678,7 +1696,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.11
+    tag: 1.1.13
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1721,7 +1739,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1731,6 +1749,7 @@ agents:
     ## Ex:
     ##  jmx        to enable jmx fetch collection
     ##  servercore to get Windows images based on servercore
+    ##  full       to get as many features as possible, currently ddot-collector and jmx (e.g. 7.67.0-full)
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
@@ -2283,6 +2302,15 @@ agents:
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
     forceLocalServiceEnabled: false
 
+  # agents.lifecycle -- Configure the lifecycle of the Agent
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+
+  # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
+  terminationGracePeriodSeconds:  # 70
+
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
 
@@ -2297,7 +2325,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

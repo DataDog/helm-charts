@@ -2,6 +2,10 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if and (.Values.agents.lifecycle) (not .Values.providers.gke.autopilot) }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   command: ["agent", "run"]
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined")) | indent 2 }}
   resources:
@@ -236,6 +240,12 @@
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
+    {{- end }}
+    {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+    - name: DD_AUTOSCALING_FAILOVER_ENABLED
+      value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+    - name: DD_AUTOSCALING_FAILOVER_METRICS
+      value: "container.memory.usage container.cpu.usage"
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}

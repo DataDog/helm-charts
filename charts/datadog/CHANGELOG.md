@@ -1,8 +1,81 @@
 # Datadog changelog
 
-## 3.117.4
+## 3.123.2
 
 * add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.123.1
+
+* Fix a breaking change introduced in `3.121.0`. If users set `-full` suffix directly in `agents.image.tag` when using OpenTelemetry Collector. The chart now gracefully handles this scenario:
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version < 7.67.0: Falls back to using the agent image (legacy behavior).
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version >= 7.67.0: Fails with a clear error message and actionable solutions .
+* Fix documentation of `datadog.otelCollector.useStandaloneImage` to clarify that `agents.image.tagSuffix` must be set to `full` (not `-full`).
+* Mention `full` in the `tagSuffix` documentation.
+
+## 3.123.0
+
+* Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
+
+## 3.122.1
+
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
+
+## 3.122.0
+
+* Support a lifecycle handler for the agent via `agents.lifecycle`.
+* Support a termination grace period for the agent via `agents.terminationGracePeriodSeconds`.
+
+## 3.121.0
+
+* Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
+/!\ If `datadog.otelCollector.enabled` is set to `true`, please ensure you can pull the image `{{- agents.image.registry -}}/ddot-collector:{{- agents.image.tag}}` (i.e. `gcr.io/datadoghq/ddot-collector:7.67.0`).
+
+## 3.120.2
+
+* Add support for passing multiple collector configs for Otel agent (`otelCollector.configMap.items`)
+
+## 3.120.1
+
+* Added ports for gRPC and HTTP OTLP ingest in NetworkPolicy and CiliumNetworkPolicy when `datadog.networkPolicy.create` and `datadog.networkPolicy.flavor` are configured respectively as `"kubernetes"` or `"cilium"`.
+
+## 3.120.0
+
+* `apm.instrumentation.targets` supports `valueFrom`.
+
+## 3.118.7
+
+* Upgrade default Agent version to `7.67.0`.
+
+## 3.118.6
+
+* Update `fips.image.tag` to `1.1.13` fixing CVEs and updating packages.
+
+## 3.118.5
+* Enable `DD_USE_DOGSTATSD` when JMX image is used for the cluster check runners.
+
+## 3.118.4
+
+* Update `fips.image.tag` to `1.1.12` fixing CVEs and updating packages.
+
+## 3.118.3
+
+* Update `process_config.run_in_core_agent.enabled` to `false` on the cluster check worker.
+
+## 3.118.2
+
+* fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).
+
+## 3.118.1
+
+* Update `datadog-crds` dependency to `2.8.0`
+
+## 3.118.0
+
+* Enable local fallback by default when workload autoscaling is enabled.
+
+## 3.117.4
+
+* Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
 
 ## 3.117.3
 
