@@ -165,6 +165,25 @@ spec:
                     schedulingOptions:
                       description: Configuration options for scheduling.
                       properties:
+                        customSchedule:
+                          description: Configuration options for the custom schedule. If start is omitted, the monitor creation time will be used.
+                          properties:
+                            recurrence:
+                              description: DatadogMonitorOptionsSchedulingOptionsCustomScheduleRecurrence is a struct of the recurrence definition
+                              properties:
+                                rrule:
+                                  description: The recurrence rule in iCalendar format. For example, `FREQ=MONTHLY;BYMONTHDAY=28,29,30,31;BYSETPOS=-1`.
+                                  type: string
+                                start:
+                                  description: |-
+                                    The start date of the recurrence rule defined in `YYYY-MM-DDThh:mm:ss` format.
+                                    If omitted, the monitor creation time will be used.
+                                  type: string
+                                timezone:
+                                  description: The timezone in `tz database` format, in which the recurrence rule is defined. For example, `America/New_York` or `UTC`.
+                                  type: string
+                              type: object
+                          type: object
                         evaluationWindow:
                           description: |-
                             Configuration options for the evaluation window. If hour_starts is set, no other fields may be set.

@@ -836,10 +836,10 @@ spec:
                           description: Triggers defines the triggers that will generate recommendations.
                           properties:
                             staleRecommendationThresholdSeconds:
-                              default: 600
+                              default: 1800
                               description: StaleRecommendationThresholdSeconds defines the time window the controller will wait after detecting an error before applying recommendations.
                               format: int32
-                              maximum: 1200
+                              maximum: 3600
                               minimum: 100
                               type: integer
                           type: object
