@@ -46,7 +46,7 @@ datadog:
     useApiServer: true
 `),
 		),
-	)), e2e.WithDevMode(), e2e.WithSkipDeleteOnFailure())
+	)))
 }
 
 func (s *gkeAutopilotSuite) TestGKEAutopilot() {
