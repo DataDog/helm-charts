@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+* Set node server image tag to `1.0.0`.
+
 ## 0.3.4
 
 * Remove `hostNetwork: true` from csi driver daemonset.
