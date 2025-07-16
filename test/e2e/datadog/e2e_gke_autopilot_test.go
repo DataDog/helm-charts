@@ -23,6 +23,7 @@ import (
 )
 
 type gkeAutopilotSuite struct {
+	k8sSuite
 	e2e.BaseSuite[environments.Kubernetes]
 }
 
