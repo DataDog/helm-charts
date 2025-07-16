@@ -27,15 +27,6 @@ type gkeAutopilotSuite struct {
 	e2e.BaseSuite[environments.Kubernetes]
 }
 
-//func (s *gkeAutopilotSuite) SetupSuite() {
-//	s.BaseSuite.SetupSuite()
-//	//config, err := common.SetupConfig()
-//	//if err != nil {
-//	//	s.Error(err)
-//	//}
-//	//s.DefaultConfig = config
-//}
-
 func TestGKEAutopilotSuite(t *testing.T) {
 	config, err := common.SetupConfig()
 	if err != nil {
@@ -48,8 +39,8 @@ func TestGKEAutopilotSuite(t *testing.T) {
 		gcpkubernetes.WithExtraConfigParams(config),
 		gcpkubernetes.WithAgentOptions(
 			kubernetesagentparams.WithGKEAutopilot(),
-			kubernetesagentparams.WithHelmRepoURL(""),
-			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			//kubernetesagentparams.WithHelmRepoURL(""),
+			//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 			kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:

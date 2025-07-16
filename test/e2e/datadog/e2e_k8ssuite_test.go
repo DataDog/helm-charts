@@ -89,8 +89,8 @@ func (s *k8sSuite) TestGenericK8s() {
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(
 				kubernetesagentparams.WithGKEAutopilot(),
-				kubernetesagentparams.WithHelmRepoURL(""),
-				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+				//kubernetesagentparams.WithHelmRepoURL(""),
+				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 				kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:
@@ -135,8 +135,8 @@ datadog:
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(
 				kubernetesagentparams.WithGKEAutopilot(),
-				kubernetesagentparams.WithHelmRepoURL(""),
-				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+				//kubernetesagentparams.WithHelmRepoURL(""),
+				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 				kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:
@@ -191,8 +191,8 @@ datadog:
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(
 				kubernetesagentparams.WithGKEAutopilot(),
-				kubernetesagentparams.WithHelmRepoURL(""),
-				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+				//kubernetesagentparams.WithHelmRepoURL(""),
+				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 				kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:

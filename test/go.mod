@@ -5,10 +5,10 @@ go 1.24.0
 toolchain go1.24.4
 
 require (
-	github.com/DataDog/datadog-agent/test/fakeintake v0.68.0
-	github.com/DataDog/datadog-agent/test/new-e2e v0.68.0
+	github.com/DataDog/datadog-agent/test/fakeintake v0.64.3
+	github.com/DataDog/datadog-agent/test/new-e2e v0.64.3
 	github.com/DataDog/datadog-operator/test/e2e v0.0.0-20250715181224-c3a76a0689ba
-	github.com/DataDog/test-infra-definitions v0.0.4-0.20250702205004-751d8a97931b
+	github.com/DataDog/test-infra-definitions v0.0.2-0.20250513083729-2e9af8ebdfcb
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
 	github.com/pulumi/pulumi/sdk/v3 v3.145.0
@@ -73,7 +73,6 @@ require (
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/charmbracelet/bubbles v0.20.0 // indirect
 	github.com/charmbracelet/bubbletea v1.2.4 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
@@ -150,7 +149,7 @@ require (
 	github.com/mitchellh/hashstructure v1.1.0 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/spdystream v0.5.0 // indirect
-	github.com/moby/sys/sequential v0.6.0 // indirect
+	github.com/moby/sys/atomicwriter v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
