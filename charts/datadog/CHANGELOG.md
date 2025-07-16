@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.124.0
+
+* Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
+
 ## 3.123.1
 
 * Fix a breaking change introduced in `3.121.0`. If users set `-full` suffix directly in `agents.image.tag` when using OpenTelemetry Collector. The chart now gracefully handles this scenario:
