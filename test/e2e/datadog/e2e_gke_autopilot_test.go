@@ -5,6 +5,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 	"github.com/DataDog/helm-charts/test/common"
 	"strings"
 	"testing"
@@ -23,16 +24,17 @@ import (
 
 type gkeAutopilotSuite struct {
 	k8sSuite
+	e2e.BaseSuite[environments.Kubernetes]
 }
 
-func (s *gkeAutopilotSuite) SetupSuite() {
-	s.BaseSuite.SetupSuite()
-	//config, err := common.SetupConfig()
-	//if err != nil {
-	//	s.Error(err)
-	//}
-	//s.DefaultConfig = config
-}
+//func (s *gkeAutopilotSuite) SetupSuite() {
+//	s.BaseSuite.SetupSuite()
+//	//config, err := common.SetupConfig()
+//	//if err != nil {
+//	//	s.Error(err)
+//	//}
+//	//s.DefaultConfig = config
+//}
 
 func TestGKEAutopilotSuite(t *testing.T) {
 	config, err := common.SetupConfig()
