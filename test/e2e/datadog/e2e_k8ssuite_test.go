@@ -3,6 +3,10 @@ package datadog
 import (
 	"github.com/DataDog/datadog-agent/test/fakeintake/aggregator"
 	"github.com/DataDog/datadog-agent/test/fakeintake/client"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
+	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
+	"github.com/DataDog/helm-charts/test/common"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -13,10 +17,10 @@ var (
 	matchOpts = []client.MatchOpt[*aggregator.MetricSeries]{client.WithMatchingTags[*aggregator.MetricSeries](matchTags)}
 )
 
-//type k8sSuite struct {
-//	e2e.BaseSuite[environments.Kubernetes]
-//	DefaultConfig runner.ConfigMap
-//}
+type k8sSuite struct {
+	e2e.BaseSuite[environments.Kubernetes]
+	DefaultConfig runner.ConfigMap
+}
 
 func datadogChartPath() string {
 	currentDir, _ := os.Getwd()
@@ -24,42 +28,45 @@ func datadogChartPath() string {
 	return chartPath
 }
 
-//func (s *k8sSuite) SetupSuite() {
-//	s.BaseSuite.SetupSuite()
-//	config, err := common.SetupConfig()
-//	if err != nil {
-//		s.Error(err)
-//	}
-//	s.DefaultConfig = config
-//	s.Assert().NotEmpty(datadogChartPath())
-//}
-//
-//func (s *k8sSuite) TestGenericK8s() {
-//	s.T().Logf("DO WE GET HERE?")
-//	s.Assert().EventuallyWithT(func(c *assert.CollectT) {
-//		kubeletCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes.kubelet.check")
-//		assert.NoError(c, err)
-//		assert.NotEmpty(c, kubeletCheckRun)
-//		s.T().Logf("KUBELET CHECK RUN: %+v", kubeletCheckRun)
-//		//assert.Equal(c, 0, kubeletCheckRun[0].Status, "kubelet check status should be running")
-//
-//		kubeletMetricSeries, err := s.Env().FakeIntake.Client().FilterMetrics("kubernetes.cpu.usage.total", matchOpts...)
-//		s.Assert().NoError(err)
-//		s.Assert().NotEmptyf(kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
-//
-//	}, 1*time.Minute, 15*time.Second, "could not validate kubelet check in time")
-//
-//	s.Assert().EventuallyWithT(func(c *assert.CollectT) {
-//		s.verifyKSMCheck(c)
-//	}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
+func (s *k8sSuite) SetupSuite() {
+	s.BaseSuite.SetupSuite()
+	config, err := common.SetupConfig()
+	if err != nil {
+		s.Error(err)
+	}
+	s.DefaultConfig = config
+	s.Assert().NotEmpty(datadogChartPath())
+}
 
-//	s.Run("KSM core check works", func() {
+//func (s *k8sSuite) TestGenericK8s() {
+//	s.Run("Kubelet check works", func() {
+//		s.T().Logf("DO WE GET HERE?")
+//		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
+//			kubeletCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes.kubelet.check")
+//			assert.NoError(c, err)
+//			assert.NotEmpty(c, kubeletCheckRun)
+//			s.T().Logf("KUBELET CHECK RUN: %+v", kubeletCheckRun)
+//			//assert.Equal(c, 0, kubeletCheckRun[0].Status, "kubelet check status should be running")
+//
+//			kubeletMetricSeries, err := s.Env().FakeIntake.Client().FilterMetrics("kubernetes.cpu.usage.total", matchOpts...)
+//			s.Assert().NoError(err)
+//			s.Assert().NotEmptyf(kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
+//
+//		}, 1*time.Minute, 15*time.Second, "could not validate kubelet check in time")
+//
 //		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 //			s.verifyKSMCheck(c)
 //		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
 //
 //	})
 //
+//	s.Run("KSM core check works", func() {
+//		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
+//			s.verifyKSMCheck(c)
+//		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
+//
+//	})
+
 //	s.Run("KSM check works cluster check runner", func() {
 //		s.T().Logf("CHART PATH: %s", datadogChartPath())
 //
@@ -281,7 +288,7 @@ func datadogChartPath() string {
 //	//	//	//	}, 5*time.Minute, 15*time.Second, "could not validate traces on agent pod") // TODO: check duration
 //	//	//	//})
 //}
-
+//
 //func (s *k8sSuite) verifyAPILogs() {
 //	logs, err := s.Env().FakeIntake.Client().FilterLogs("agent")
 //	s.Assert().NoError(err)

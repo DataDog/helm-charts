@@ -34,6 +34,8 @@ github.com/DataDog/datadog-agent/test/new-e2e v0.67.0 h1:uavPBjLypXSvC1PZMvfj+hi
 github.com/DataDog/datadog-agent/test/new-e2e v0.67.0/go.mod h1:56RinYkh4eYSqppENC0OulaznuHoHrBEpQ6XrhO8j/s=
 github.com/DataDog/datadog-api-client-go/v2 v2.38.0 h1:0f2SuTVOFyDDtYvkOs+xawZLO08h10CBeiEfXsx5kVc=
 github.com/DataDog/datadog-api-client-go/v2 v2.38.0/go.mod h1:d3tOEgUd2kfsr9uuHQdY+nXrWp4uikgTgVCPdKNK30U=
+github.com/DataDog/datadog-operator/test/e2e v0.0.0-20250715181224-c3a76a0689ba h1:wrZcJdRhM220FkI0WLumOpMQs/kegIv569Y8T04Oc8I=
+github.com/DataDog/datadog-operator/test/e2e v0.0.0-20250715181224-c3a76a0689ba/go.mod h1:4E4WYJKamyGD0p2ZW5WFrnnNMNH46KJajB6t9HFEI/E=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYxD74QmMw0/3CqSKhEr6teh0ncQ=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49/go.mod h1:SvsjzyJlSg0rKsqYgdcFxeEVflx3ZNAyFfkUHP0TxXg=
 github.com/DataDog/test-infra-definitions v0.0.4-0.20250710131718-7cdc477d053f h1:khnj0J6/nU4X59I/dJkUxdulX+wieOcPkhIxqOBUWcw=
