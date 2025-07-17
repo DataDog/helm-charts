@@ -45,7 +45,7 @@ func (s *gkeAutopilotSuite) SetupSuite() {
 func TestGKEAutopilotSuite(t *testing.T) {
 	config, err := common.SetupConfig()
 	if err != nil {
-		t.Skipf("Skipping test, problem setting up stack config: %s", err)
+		t.Skipf("Skipping test, was problem setting up stack config: %s", err)
 	}
 	assert.NoError(t, err)
 
