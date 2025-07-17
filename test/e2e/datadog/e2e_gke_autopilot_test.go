@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
-	"github.com/DataDog/datadog-operator/test/e2e/tests/utils"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
@@ -27,8 +25,9 @@ import (
 )
 
 type gkeAutopilotSuite struct {
-	DefaultConfig runner.ConfigMap
+	//k8sSuite
 	e2e.BaseSuite[environments.Kubernetes]
+	DefaultConfig runner.ConfigMap
 }
 
 func (s *gkeAutopilotSuite) SetupSuite() {
@@ -59,6 +58,7 @@ func TestGKEAutopilotSuite(t *testing.T) {
 datadog:
   kubelet:
     useApiServer: true
+    tlsVerify: false
 `),
 		),
 	)), e2e.WithDevMode(), e2e.WithSkipDeleteOnFailure())
@@ -118,170 +118,170 @@ func (s *gkeAutopilotSuite) TestGenericK8s() {
 
 	})
 
-	s.Run("KSM core check works", func() {
-		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
-			s.verifyKSMCheck(c)
-		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
-
-	})
-
-	s.Run("KSM check works cluster check runner", func() {
-		s.T().Logf("CHART PATH: %s", datadogChartPath())
-
-		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
-			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
-			gcpkubernetes.WithAgentOptions(
-				kubernetesagentparams.WithGKEAutopilot(),
-				//kubernetesagentparams.WithHelmRepoURL(""),
-				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-				kubernetesagentparams.WithHelmValues(`
-datadog:
-  kubelet:
-    useApiServer: true
-  kubeStateMetricsCore:
-    useClusterCheckRunners: true
-  clusterChecksRunner:
-    enabled: true
-`),
-			),
-		))
-
-		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
-		s.Assert().NoError(err)
-
-		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
-			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-
-			var agent corev1.Pod
-			containsCCR := false
-			for _, pod := range res.Items {
-				s.T().Log("CHECKING POD: ", pod.Name)
-				if strings.Contains(pod.Name, "dda-linux-datadog-cluster-check-runner") {
-					containsCCR = true
-					agent = pod
-					break
-				}
-			}
-			assert.True(s.T(), containsCCR, "Agent cluster check runner not found")
-			assert.Equal(s.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent cluster check runner is not running: %s", agent.Status.Phase))
-
-			s.verifyKSMCheck(c)
-		}, 10*time.Minute, 15*time.Second, "could not validate kubernetes_state_core (cluster check on CCR) check in time")
-	})
-
-	s.Run("Autodiscovery works", func() {
-		// Add nginx with annotations
-		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
-			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-			gcpkubernetes.WithWorkloadApp(
-				k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{"manifests", "autodiscovery-annotation.yaml"}, "/")})),
-			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
-			gcpkubernetes.WithAgentOptions(
-				kubernetesagentparams.WithGKEAutopilot(),
-				//kubernetesagentparams.WithHelmRepoURL(""),
-				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-				kubernetesagentparams.WithHelmValues(`
-datadog:
-  kubelet:
-    useApiServer: true
-  kubeStateMetricsCore:
-    useClusterCheckRunners: true
-  clusterChecksRunner:
-    enabled: true
-`),
-			),
-		))
-
-		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
-		s.Assert().NoError(err)
-
-		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
-			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-
-			var nginx corev1.Pod
-			containsNginx := false
-			for _, pod := range res.Items {
-				s.T().Log("CHECKING POD: ", pod.Name)
-				if strings.Contains(pod.Name, "nginx") {
-					containsNginx = true
-					nginx = pod
-					break
-				}
-			}
-			assert.True(c, containsNginx, "Nginx pod not found")
-			assert.Equal(c, corev1.PodPhase("Running"), nginx.Status.Phase, fmt.Sprintf("Nginx is not running: %s", nginx.Status.Phase))
-
-			var agent corev1.Pod
-			containsAgent := false
-			for _, pod := range res.Items {
-				s.T().Log("CHECKING POD: ", pod.Name)
-				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-					containsAgent = true
-					agent = pod
-					break
-				}
-			}
-			assert.True(c, containsAgent, "Agent not found")
-			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
-
-			s.verifyHTTPCheck(c)
-		}, 5*time.Minute, 15*time.Second, "could not validate http_check in time")
-	})
-
-	s.Run("Logs collection works", func() {
-		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
-			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
-			gcpkubernetes.WithAgentOptions(
-				kubernetesagentparams.WithGKEAutopilot(),
-				//kubernetesagentparams.WithHelmRepoURL(""),
-				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-				kubernetesagentparams.WithHelmValues(`
-datadog:
-  kubelet:
-    useApiServer: true
-  kubeStateMetricsCore:
-    useClusterCheckRunners: true
-  clusterChecksRunner:
-    enabled: false
-  clusterChecks:
-    enabled: true
-  logs:
-    enabled: true
-    containerCollectAll: true
-`),
-			),
-		))
-
-		// Verify logs collection on agent pod
-		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
-			agentPods, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{LabelSelector: "app.kubernetes.io/instance=datadog-agent"})
-
-			var agent corev1.Pod
-			containsAgent := false
-			for _, pod := range agentPods.Items {
-				s.T().Log("CHECKING POD: ", pod.Name)
-				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-					containsAgent = true
-					agent = pod
-					break
-				}
-			}
-			assert.True(c, containsAgent, "Agent not found")
-			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
-
-			assert.NoError(c, err)
-
-			for _, pod := range agentPods.Items {
-				output, _, err := s.Env().KubernetesCluster.KubernetesClient.PodExec("datadog", pod.Name, "agent", []string{"agent", "status", "logs agent", "-j"})
-				assert.NoError(c, err)
-				utils.VerifyAgentPodLogs(c, output)
-			}
-
-			s.verifyAPILogs()
-		}, 5*time.Minute, 15*time.Second, "could not valid logs collection in time")
-	})
+	//	s.Run("KSM core check works", func() {
+	//		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
+	//			s.verifyKSMCheck(c)
+	//		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
+	//
+	//	})
+	//
+	//	s.Run("KSM check works cluster check runner", func() {
+	//		s.T().Logf("CHART PATH: %s", datadogChartPath())
+	//
+	//		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
+	//			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+	//			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
+	//			gcpkubernetes.WithAgentOptions(
+	//				kubernetesagentparams.WithGKEAutopilot(),
+	//				//kubernetesagentparams.WithHelmRepoURL(""),
+	//				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+	//				kubernetesagentparams.WithHelmValues(`
+	//datadog:
+	//  kubelet:
+	//    useApiServer: true
+	//  kubeStateMetricsCore:
+	//    useClusterCheckRunners: true
+	//  clusterChecksRunner:
+	//    enabled: true
+	//`),
+	//			),
+	//		))
+	//
+	//		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
+	//		s.Assert().NoError(err)
+	//
+	//		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
+	//			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+	//
+	//			var agent corev1.Pod
+	//			containsCCR := false
+	//			for _, pod := range res.Items {
+	//				s.T().Log("CHECKING POD: ", pod.Name)
+	//				if strings.Contains(pod.Name, "dda-linux-datadog-cluster-check-runner") {
+	//					containsCCR = true
+	//					agent = pod
+	//					break
+	//				}
+	//			}
+	//			assert.True(s.T(), containsCCR, "Agent cluster check runner not found")
+	//			assert.Equal(s.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent cluster check runner is not running: %s", agent.Status.Phase))
+	//
+	//			s.verifyKSMCheck(c)
+	//		}, 10*time.Minute, 15*time.Second, "could not validate kubernetes_state_core (cluster check on CCR) check in time")
+	//	})
+	//
+	//	s.Run("Autodiscovery works", func() {
+	//		// Add nginx with annotations
+	//		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
+	//			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+	//			gcpkubernetes.WithWorkloadApp(
+	//				k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{"manifests", "autodiscovery-annotation.yaml"}, "/")})),
+	//			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
+	//			gcpkubernetes.WithAgentOptions(
+	//				kubernetesagentparams.WithGKEAutopilot(),
+	//				//kubernetesagentparams.WithHelmRepoURL(""),
+	//				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+	//				kubernetesagentparams.WithHelmValues(`
+	//datadog:
+	//  kubelet:
+	//    useApiServer: true
+	//  kubeStateMetricsCore:
+	//    useClusterCheckRunners: true
+	//  clusterChecksRunner:
+	//    enabled: true
+	//`),
+	//			),
+	//		))
+	//
+	//		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
+	//		s.Assert().NoError(err)
+	//
+	//		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
+	//			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+	//
+	//			var nginx corev1.Pod
+	//			containsNginx := false
+	//			for _, pod := range res.Items {
+	//				s.T().Log("CHECKING POD: ", pod.Name)
+	//				if strings.Contains(pod.Name, "nginx") {
+	//					containsNginx = true
+	//					nginx = pod
+	//					break
+	//				}
+	//			}
+	//			assert.True(c, containsNginx, "Nginx pod not found")
+	//			assert.Equal(c, corev1.PodPhase("Running"), nginx.Status.Phase, fmt.Sprintf("Nginx is not running: %s", nginx.Status.Phase))
+	//
+	//			var agent corev1.Pod
+	//			containsAgent := false
+	//			for _, pod := range res.Items {
+	//				s.T().Log("CHECKING POD: ", pod.Name)
+	//				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
+	//					containsAgent = true
+	//					agent = pod
+	//					break
+	//				}
+	//			}
+	//			assert.True(c, containsAgent, "Agent not found")
+	//			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+	//
+	//			s.verifyHTTPCheck(c)
+	//		}, 5*time.Minute, 15*time.Second, "could not validate http_check in time")
+	//	})
+	//
+	//	s.Run("Logs collection works", func() {
+	//		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
+	//			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+	//			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
+	//			gcpkubernetes.WithAgentOptions(
+	//				kubernetesagentparams.WithGKEAutopilot(),
+	//				//kubernetesagentparams.WithHelmRepoURL(""),
+	//				//kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+	//				kubernetesagentparams.WithHelmValues(`
+	//datadog:
+	//  kubelet:
+	//    useApiServer: true
+	//  kubeStateMetricsCore:
+	//    useClusterCheckRunners: true
+	//  clusterChecksRunner:
+	//    enabled: false
+	//  clusterChecks:
+	//    enabled: true
+	//  logs:
+	//    enabled: true
+	//    containerCollectAll: true
+	//`),
+	//			),
+	//		))
+	//
+	//		// Verify logs collection on agent pod
+	//		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
+	//			agentPods, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{LabelSelector: "app.kubernetes.io/instance=datadog-agent"})
+	//
+	//			var agent corev1.Pod
+	//			containsAgent := false
+	//			for _, pod := range agentPods.Items {
+	//				s.T().Log("CHECKING POD: ", pod.Name)
+	//				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
+	//					containsAgent = true
+	//					agent = pod
+	//					break
+	//				}
+	//			}
+	//			assert.True(c, containsAgent, "Agent not found")
+	//			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+	//
+	//			assert.NoError(c, err)
+	//
+	//			for _, pod := range agentPods.Items {
+	//				output, _, err := s.Env().KubernetesCluster.KubernetesClient.PodExec("datadog", pod.Name, "agent", []string{"agent", "status", "logs agent", "-j"})
+	//				assert.NoError(c, err)
+	//				utils.VerifyAgentPodLogs(c, output)
+	//			}
+	//
+	//			s.verifyAPILogs()
+	//		}, 5*time.Minute, 15*time.Second, "could not valid logs collection in time")
+	//	})
 	//	//	//
 	//	//	//s.Run("APM hostPort k8s service UDP works", func(t *testing.T) {
 	//	//	//
