@@ -13,12 +13,10 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  # TODO: change to a static stable version
-  tag: latest
+  tag: 1.0.0
 
   # image.repository -- Override default registry + image.name for CSI driver
-  # TODO: change to official repository when available
-  repository:
+  repository: datadog/csi-driver
 
   # image.pullPolicy -- CSI driver image pullPolicy
   pullPolicy: IfNotPresent
