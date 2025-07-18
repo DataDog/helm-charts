@@ -432,8 +432,8 @@ spec:
                 name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
                 key: install_type
           {{- include "fips-envvar" . | nindent 10 }}
-          {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
-          {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
+          {{- include "additional-env-entries" (dict "envs" .Values.clusterAgent.env "context" $) | indent 10 }}
+          {{- include "additional-env-dict-entries" (dict "envs" .Values.clusterAgent.envDict "context" $) | indent 10 }}
         livenessProbe:
 {{- $live := .Values.clusterAgent.livenessProbe }}
 {{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 10 }}

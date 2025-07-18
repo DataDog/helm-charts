@@ -196,8 +196,8 @@ spec:
                 fieldPath: spec.nodeName
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
-          {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
-          {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
+          {{- include "additional-env-entries" (dict "envs" .Values.clusterChecksRunner.env "context" $) | indent 10 }}
+          {{- include "additional-env-dict-entries" (dict "envs" .Values.clusterChecksRunner.envDict "context" $) | indent 10 }}
         resources:
 {{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
 {{- include "default-cluster-check-runner-resources" . | indent 10 }}

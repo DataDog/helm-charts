@@ -257,8 +257,8 @@
     - name: DD_AUTOSCALING_FAILOVER_METRICS
       value: "container.memory.usage container.cpu.usage"
     {{- end }}
-    {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
-    {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
+    {{- include "additional-env-entries" (dict "envs" .Values.agents.containers.agent.env "context" $) | indent 4 }}
+    {{- include "additional-env-dict-entries" (dict "envs" .Values.agents.containers.agent.envDict "context" $) | indent 4 }}
   volumeMounts:
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
