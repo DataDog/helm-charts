@@ -47,8 +47,8 @@
     - name: DD_PROMETHEUS_LISTEN_ADDR
     {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
       value: "tcp://127.0.0.1:{{ $telemetryApiPort }}"
-    {{- include "additional-env-entries" .Values.agents.containers.agentDataPlane.env | indent 4 }}
-    {{- include "additional-env-dict-entries" .Values.agents.containers.agentDataPlane.envDict | indent 4 }}
+    {{- include "additional-env-entries" (dict "envs" .Values.agents.containers.agentDataPlane.env "context" $) | indent 4 }}
+    {{- include "additional-env-dict-entries" (dict "envs" .Values.agents.containers.agentDataPlane.envDict "context" $) | indent 4 }}
   volumeMounts:
     {{- if eq .Values.targetSystem "linux" }}
     - name: tmpdir
