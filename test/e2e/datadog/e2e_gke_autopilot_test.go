@@ -142,6 +142,7 @@ func (s *gkeAutopilotSuite) TestGenericK8s() {
 datadog:
   kubelet:
     useApiServer: true
+    tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
 clusterChecksRunner:
@@ -187,6 +188,7 @@ clusterChecksRunner:
 datadog:
   kubelet:
     useApiServer: true
+    tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
 clusterChecksRunner:
@@ -242,6 +244,7 @@ clusterChecksRunner:
 datadog:
   kubelet:
     useApiServer: true
+    tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
   clusterChecks:
@@ -300,6 +303,7 @@ datadog:
 datadog:
   kubelet:
     useApiServer: true
+    tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
   clusterChecks:
