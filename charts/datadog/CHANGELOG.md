@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.123.3
+
+* Add tpl to `additional-env-entries` and `additional-env-dict-entries`.
+
 ## 3.123.2
 
 * add support for enabling csi driver globally and as admission controller config mode.

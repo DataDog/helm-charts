@@ -1,0 +1,14 @@
+foo: bar
+
+datadog:
+  envDict:
+    FOO: "{{ .Values.foo }}"
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  kubeStateMetricsCore:
+    useClusterCheckRunners: true
+  clusterChecks:
+    enabled": true
+  clusterChecksRunner:
+    enabled: true
+  clusterAgent:
