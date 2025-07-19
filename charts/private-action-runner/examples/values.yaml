@@ -1,7 +1,7 @@
 # This is for the https://marketplace.visualstudio.com/items/?itemName=redhat.vscode-yaml VSCode extension
-# yaml-language-server: $schema=https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/gabriel.plassard/ACTP-757/add-support-for-script-action/charts/private-action-runner/values.schema.json
 # This is for jetbrains IDEs
-$schema: https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json
+$schema: https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/gabriel.plassard/ACTP-757/add-support-for-script-action/charts/private-action-runner/values.schema.json
 runner:
   # Replace this section with the output of the private action runner enrollment process with the `--enroll-and-print-config` flag
   config:
@@ -15,6 +15,15 @@ runner:
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
+    bundles:
+      "com.datadoghq.script":
+        runPredefinedScript:
+          echo-parametrized:
+            command: [ "echo", "{{ parameters.echoValue }}" ]
+          echo-nested-parametrized:
+            command: [ "echo", "{{ parameters.nested.echoValue }}" ]
+          echo-multiple-parametrized:
+            command: [ "echo", "{{ parameters.echoValue1 }} {{ parameters.echoValue2 }}" ]
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
   env:
