@@ -47,7 +47,7 @@ func Test_baseline_manifests(t *testing.T) {
 					"runner.roleType": `"ClusterRole"`,
 					"runner.kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
 					"runner.kubernetesActions.customObjects":       `["deleteMultiple"]`,
-					"runner.kubernetesActions.deployments":         `["restart"]`,
+					"runner.kubernetesActions.deployments":         `["restart", "rollback", "scale"]`,
 					"runner.kubernetesActions.endpoints":           `["patch"]`,
 					"runner.kubernetesPermissions[0].apiGroups":    `["example.com"]`,
 					"runner.kubernetesPermissions[0].resources":    `["tests"]`,
@@ -64,8 +64,10 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"fullnameOverride": `"custom-full-name"`,
-					"runner.env":       `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"fullnameOverride":                `"custom-full-name"`,
+					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runner.config.allowIMDSEndpoint": `true`,
+					"image.pullPolicy":                `"Always"`,
 				},
 			},
 			snapshotName: "config-overrides",
@@ -101,6 +103,21 @@ func Test_baseline_manifests(t *testing.T) {
 				},
 			},
 			snapshotName: "custom-resources",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom pod scheduling",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.nodeSelector": `{"kubernetes.io/os": "linux"}`,
+					"runner.tolerations":  `[{"key": "taint.custom.com/key", "effect": "NoSchedule", "operator": "Exists"}]`,
+					"runner.affinity":     `{"nodeAffinity": {"requiredDuringSchedulingIgnoredDuringExecution": {"nodeSelectorTerms": [{"matchExpressions": [{"key": "kubernetes.io/arch", "operator": "In", "values": ["amd64"]}]}]}}}`,
+				},
+			},
+			snapshotName: "custom-pod-scheduling",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

@@ -78,6 +78,10 @@ spec:
             - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
               value: {{ .Values.watchNamespacesAgentProfile | join "," }}
             {{- end }}
+            - name: DD_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
             - name: POD_NAME
               valueFrom:
                 fieldRef:

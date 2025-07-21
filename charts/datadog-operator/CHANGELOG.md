@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.12.0-dev.1
+
+* Update Datadog Operator chart for 1.17.0-rc.1.
+
+## 2.11.1
+
+* Handle Operator image tag with a digest gracefully.
+
+## 2.11.0
+
+* Update Datadog Operator chart for 1.16.0.
+
+## 2.11.0-dev.3
+
+* Document `datadogCRDs.crds.datadogAgentProfiles` option to install the DatadogAgentProfile CRD.
+
+## 2.11.0-dev.2
+
+* Update default image tag for Datadog Operator to `1.16.0-rc.1`.
+
+## 2.11.0-dev.1
+
+* Update Datadog Operator chart for 1.16.0-rc.1.
+
+## 2.10.0
+
+* Update Datadog Operator chart for 1.15.1
+
 ## 2.10.0-dev.2
 
 * Update Datadog Operator chart for 1.15.0-rc.2.

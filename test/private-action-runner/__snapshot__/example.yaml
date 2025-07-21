@@ -211,10 +211,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.1.2
+    helm.sh/chart: private-action-runner-1.5.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.3.0"
+    app.kubernetes.io/version: "v1.5.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -226,22 +226,36 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.1.2
+        helm.sh/chart: private-action-runner-1.5.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.3.0"
+        app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: fb688436760d2258344d27e977bfbba94c6342defab873e029bf9e8019612cf0
+        checksum/values: 2868f600f5e302f23589692ee1efa4b11a8b3c2b46ab7af07889e68ed1601c1e
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.3.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.5.1"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 9016
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /liveness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
           resources:
             limits:
               cpu: 250m
@@ -251,24 +265,11 @@ spec:
               memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
-            - name: all-secrets-at-once
-              mountPath: /etc/dd-action-runner/credentials/
-            - name: jenkins-secret
-              mountPath: /etc/dd-action-runner/credentials/jenkins
+              mountPath: /etc/dd-action-runner/config
           env: 
-            - name: ENV_VAR_NAME
-              value: ENV_VAR_VALUE
-          envFrom:
-            - secretRef:
-                name: A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: /etc/dd-action-runner/config
       volumes:
         - name: secrets
           secret:
             secretName: example-test-private-action-runner
-        - name: all-secrets-at-once
-          secret:
-            secretName: all-secrets-at-once
-        - name: jenkins-secret
-          secret:
-            secretName: jenkins-secret

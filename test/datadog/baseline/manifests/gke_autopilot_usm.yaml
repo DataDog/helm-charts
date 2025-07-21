@@ -1015,6 +1015,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1051,6 +1053,8 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_TAG_CARDINALITY
               value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1072,8 +1076,6 @@ spec:
               value: "false"
             - name: DD_HEALTH_PORT
               value: "5555"
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_EXTRA_CONFIG_PROVIDERS
               value: clusterchecks endpointschecks
             - name: DD_IGNORE_AUTOCONF
@@ -1090,7 +1092,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1181,6 +1183,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1201,10 +1205,16 @@ spec:
               value: gke-autopilot
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: system-probe
-          resources: {}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 400Mi
+            requests:
+              cpu: 100m
+              memory: 400Mi
           securityContext:
             appArmorProfile:
               type: Unconfined
@@ -1293,7 +1303,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1324,6 +1334,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1342,7 +1354,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1375,7 +1387,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -1541,6 +1553,8 @@ spec:
               value: "yes"
             - name: DD_CLOUD_PROVIDER_METADATA
               value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1629,7 +1643,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1708,7 +1722,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

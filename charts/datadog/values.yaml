@@ -185,6 +185,7 @@ datadog:
     #     group: myteam.io
     #     kind: "Foo"
     #     version: "v1"
+    #     resource: "foos" # optional, if not set, the resource will be pluralized from the kind by adding "s" to the end
     #   metrics:
     #     - name: "uptime"
     #       help: "Foo uptime"
@@ -563,7 +564,9 @@ datadog:
       libVersions: {}
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
-      # Requires Cluster Agent 7.64.0+
+      # Requires Cluster Agent 7.64.0+.
+      #
+      # ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
@@ -577,6 +580,10 @@ datadog:
       #    ddTraceConfigs:
       #      - name: "DD_PROFILING_ENABLED"
       #        value: "true"
+      #      - name: "DD_SERVICE"
+      #        valueFrom:
+      #          fieldRef:
+      #            fieldPath: metadata.labels[my-label]
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -657,10 +664,21 @@ datadog:
     configMap:
       # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
       name: null
+      # datadog.otelCollector.configMap.items -- Items within the ConfigMap that contain DDOT Collector configuration
+      items:
+      #   - key: otel-config.yaml
+      #     path: otel-config.yaml
+      #   - key: otel-config-two.yaml
+      #     path: otel-config-two.yaml
       # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
       key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
+    # datadog.otelCollector.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
+    # The tag is retrieved from the `agents.image.tag` value.
+    # This is only supported for agent versions 7.67.0+
+    # If set to false, you will need to set `agents.image.tagSuffix` to `full`
+    useStandaloneImage: true
 
     ## Provide OTel Collector RBAC configuration
     rbac:
@@ -1133,6 +1151,33 @@ datadog:
     # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
     enabled: true
 
+  csi:
+    # datadog.csi.enabled -- Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver)
+    # This feature is still in beta
+    # Requires version 7.67 or later of the cluster agent
+    enabled: false
+
+  ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
+  agentDataPlane:
+    # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
+    enabled: false
+
+    image:
+      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      name: agent-data-plane
+
+      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
+      tag: 0.1.11
+
+      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      digest: ""
+
+      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      repository:
+
+      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      pullPolicy: IfNotPresent
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1150,7 +1195,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1316,7 +1361,7 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", "socket" or "csi".
 
     ## If clusterAgent.admissionController.configMode is not set:
     ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
@@ -1324,8 +1369,10 @@ clusterAgent:
     ##   * and datadog.apm.useLocalService is true and the aformentioned two are false, the Admission Controller uses service.
     ##   * Otherwise, the Admission Controller defaults to hostip.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## Note: "csi" mode requires enabling csi with `datadog.csi.enabled`. If not set, the admission controller will fallback to "socket" mode.
+    ## Note: "csi" mode requires version 7.65 or later of the cluster agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
-    configMode:  # "hostip", "socket" or "service"
+    configMode:  # "hostip", "socket", "csi" or "service"
 
     # clusterAgent.admissionController.failurePolicy -- Set the failure policy for dynamic admission control.'
 
@@ -1649,7 +1696,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.10
+    tag: 1.1.13
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1692,7 +1739,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1702,6 +1749,7 @@ agents:
     ## Ex:
     ##  jmx        to enable jmx fetch collection
     ##  servercore to get Windows images based on servercore
+    ##  full       to get as many features as possible, currently ddot-collector and jmx (e.g. 7.67.0-full)
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
@@ -2056,6 +2104,66 @@ agents:
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+    agentDataPlane:
+      # agents.containers.agentDataPlane.env -- Additional environment variables for the agent-data-plane container
+      env: []
+
+      # agents.containers.agentDataPlane.envFrom -- Set environment variables specific to agent-data-plane container from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # agents.containers.agentDataPlane.envDict -- Set environment variables specific to agent-data-plane container defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # agents.containers.agentDataPlane.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # If not set, fall back to the value of datadog.logLevel.
+      logLevel:  # INFO
+
+      # agents.containers.agentDataPlane.resources -- Resource requests and limits for the agent-data-plane container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # agents.containers.agentDataPlane.unprivilegedApiPort -- Port for unprivileged API server, used primarily for health checks
+      unprivilegedApiPort: 5100
+
+      # agents.containers.agentDataPlane.privilegedApiPort -- Port for privileged API server, used for lower-level operations that
+      # can alter the state of the ADP process or expose internal information
+      privilegedApiPort: 5101
+
+      # agents.containers.agentDataPlane.telemetryApiPort -- Port for telemetry API server, used for exposing internal
+      # telemetry to be scraped by the Agent
+      telemetryApiPort: 5102
+
+      # agents.containers.agentDataPlane.livenessProbe -- Override default agent-data-plane liveness probe settings
+      # @default -- Every 5s / 12 KO / 1 OK
+      livenessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 12
+
+      # agents.containers.agentDataPlane.readinessProbe -- Override default agent-data-plane readiness probe settings
+      # @default -- Every 5s / 12 KO / 1 OK
+      readinessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 12
+
+      # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
     initContainers:
       # agents.containers.initContainers.resources -- Resource requests and limits for the init containers
       resources: {}
@@ -2194,6 +2302,15 @@ agents:
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
     forceLocalServiceEnabled: false
 
+  # agents.lifecycle -- Configure the lifecycle of the Agent
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+
+  # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
+  terminationGracePeriodSeconds:  # 70
+
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
 
@@ -2208,7 +2325,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.65.2
+    tag: 7.67.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

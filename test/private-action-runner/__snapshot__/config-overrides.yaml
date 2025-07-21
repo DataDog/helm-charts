@@ -21,6 +21,7 @@ stringData:
       - workflowAutomation
       - appBuilder
     port: 9016
+    allowIMDSEndpoint: true
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
@@ -77,10 +78,10 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.1.2
+    helm.sh/chart: private-action-runner-1.5.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
-    app.kubernetes.io/version: "v1.3.0"
+    app.kubernetes.io/version: "v1.5.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -92,19 +93,19 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.1.2
+        helm.sh/chart: private-action-runner-1.5.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
-        app.kubernetes.io/version: "v1.3.0"
+        app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 682dbfc13e707fe2f2f2268f2c96f14e9f8d6c33fdacf72351c89ce729ec7ec9
+        checksum/values: 4868e85788e07f463f821a0cda493b8f48a1d8d99117a4b1f57f6967a81171c6
     spec:
       serviceAccountName: custom-full-name
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.3.0"
-          imagePullPolicy: IfNotPresent
+          image: "gcr.io/datadoghq/private-action-runner:v1.5.1"
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 9016
@@ -117,7 +118,7 @@ spec:
               memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
+              mountPath: /etc/dd-action-runner/config
           env: 
             - name: FOO
               value: foo

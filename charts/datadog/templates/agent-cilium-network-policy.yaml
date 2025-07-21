@@ -172,6 +172,38 @@ specs:
               - port: "{{ $.Values.datadog.apm.port }}"
                 protocol: TCP
 {{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.grpc.enabled }}
+  - description: "Ingress for gRPC OTLP"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    ingress:
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: "{{  .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}"
+                protocol: TCP
+{{- end }}
+{{- if .Values.datadog.otlp.receiver.protocols.http.enabled }}
+  - description: "Ingress for HTTP OTLP"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+        {{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    ingress:
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: "{{  .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}"
+                protocol: TCP
+{{- end }}
 # The agents are susceptible to an issue connecting to any pod that
 # is annotated with auto-discovery annotations.
 #

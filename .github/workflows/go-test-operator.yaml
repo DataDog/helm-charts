@@ -60,9 +60,13 @@ jobs:
             kind: v0.22.0
           - k8s: v1.29.8
             kind: v0.22.0
-          - k8s: v1.30.4
+          - k8s: v1.30.13
             kind: v0.22.0
-          - k8s: v1.31.1
+          - k8s: v1.31.9
+            kind: v0.22.0
+          - k8s: v1.32.5
+            kind: v0.22.0
+          - k8s: v1.33.1
             kind: v0.22.0
     steps:
       - name: Checkout

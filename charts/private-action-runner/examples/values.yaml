@@ -11,20 +11,35 @@ runner:
     modes:
       - appBuilder
       - workflowAutomation
+    allowIMDSEndpoint: false
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
   env:
-    - name: "ENV_VAR_NAME"
-      value: "ENV_VAR_VALUE"
-  runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN"
+    - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+      value: /etc/dd-action-runner/config
+  livenessProbe:
+    httpGet:
+      path: /liveness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
+  # runnerIdentitySecret: "A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN" # Reference a kubernetes secrets that contains the runner identity instead of providing it in the config section see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
   kubernetesActions:
     controllerRevisions: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     daemonSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
-    deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart"]
+    deployments: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale"]
     replicaSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     statefulSets: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     cronJobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
@@ -59,7 +74,7 @@ runner:
   #        - "patch"
   #        - "update"
   #        - "delete"
-  # credential files provided here will be mounted in /etc/dd-action-runner/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
   # it is safe to remove unneeded files from this section
   credentialFiles:
     - fileName: "http_basic.json"
@@ -197,10 +212,10 @@ runner:
           ]
         }
 
-  credentialSecrets:
-    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/credentials/<filename-from-secret>
-    - secretName: all-secrets-at-once
-      directoryName: ""
-    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/credentials/jenkins/<filename-from-secret>
-    - secretName: jenkins-secret
-      directoryName: jenkins
+  credentialSecrets: []
+    # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/config/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: all-secrets-at-once
+    #   directoryName: ""
+    # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/config/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
+    # - secretName: jenkins-secret
+    #   directoryName: jenkins

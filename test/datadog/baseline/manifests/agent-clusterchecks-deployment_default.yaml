@@ -798,6 +798,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -828,6 +830,8 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_TAG_CARDINALITY
               value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -870,8 +874,6 @@ spec:
               value: "false"
             - name: DD_HEALTH_PORT
               value: "5555"
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_EXTRA_CONFIG_PROVIDERS
               value: clusterchecks endpointschecks
             - name: DD_IGNORE_AUTOCONF
@@ -890,7 +892,7 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -981,6 +983,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1029,7 +1033,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1078,7 +1082,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1103,6 +1107,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1115,7 +1121,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1235,6 +1241,8 @@ spec:
           env:
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -1271,6 +1279,8 @@ spec:
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
               value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "false"
             - name: DD_LOGS_ENABLED
               value: "false"
             - name: DD_APM_ENABLED
@@ -1281,7 +1291,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1330,7 +1340,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1343,7 +1353,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.65.2
+          image: gcr.io/datadoghq/agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1425,6 +1435,8 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1515,7 +1527,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1588,7 +1600,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.65.2
+          image: gcr.io/datadoghq/cluster-agent:7.67.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

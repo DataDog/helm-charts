@@ -68,6 +68,19 @@ spec:
         {{- if .Values.providers.gke.autopilot }}  # Workaround for GKE Autopilot bug in versions >= 1.32.2-gke.1182000 and < 1.32.2-gke.1652000.
         autopilot.gke.io/no-connect: "true"
         {{- end }}
+        {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
+        {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
+        ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
+        ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
+        ad.datadoghq.com/agent-data-plane.instances: |
+          [{
+            "prometheus_url":"http://127.0.0.1:{{ $telemetryApiPort }}/metrics",
+            "metrics":["*"],
+            "namespace": "datadog.agent",
+            "send_distribution_buckets": true,
+            "max_returned_metrics": 4000
+          }]
+        {{- end }}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
@@ -140,6 +153,9 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
           {{- include "container-otel-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
+          {{- include "container-agent-data-plane" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
@@ -181,19 +197,30 @@ spec:
         configMap:
           {{- if .Values.datadog.otelCollector.configMap.name }}
           name: {{ .Values.datadog.otelCollector.configMap.name }}
+          {{- if .Values.datadog.otelCollector.configMap.items }}
           items:
-          - key: {{ .Values.datadog.otelCollector.configMap.key }}
-            path: otel-config.yaml
+            {{- range .Values.datadog.otelCollector.configMap.items }}
+            - key: {{ .key }}
+              path: {{ .path }}
+            {{- end }}
+          {{- else if .Values.datadog.otelCollector.configMap.key }}
+          items:
+            - key: {{ .Values.datadog.otelCollector.configMap.key }}
+              path: otel-config.yaml
+          {{- end }}
           {{- else }}
           name: {{ include "agents-install-otel-configmap-name" . }}
           items:
-          - key: otel-config.yaml
-            path: otel-config.yaml
+            - key: otel-config.yaml
+              path: otel-config.yaml
           {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
 {{- end }}
+      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
+      {{- end }}
       tolerations:
       {{- if eq .Values.targetSystem "windows" }}
       - effect: NoSchedule

@@ -83,8 +83,10 @@ Check operator image tag version.
 */}}
 {{- define "check-image-tag" -}}
 {{- if not .Values.image.doNotCheckTag -}}
-{{- .Values.image.tag -}}
+{{- $tag := .Values.image.tag -}}
+{{- $parts := split "@" $tag -}}
+{{- index $parts "_0"}}
 {{- else -}}
-{{ "1.15.0-rc.2" }}
+{{ "1.17.0-rc.1" }}
 {{- end -}}
 {{- end -}}

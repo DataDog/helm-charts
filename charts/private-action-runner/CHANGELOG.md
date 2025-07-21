@@ -1,5 +1,34 @@
 # Datadog changelog
 
+## 1.5.0
+
+* Bump runner version to `v1.5.1`
+* Make it possible to configure the runner to allow IMDS endpoints
+
+## 1.4.0
+
+* Image pull policy can now be overriden.
+
+## 1.3.0
+
+* Change the configuration directory to be `/etc/dd-action-runner/config`.
+
+## 1.2.3
+
+* Add ability to include livenessProbe and readinessProbe configurations.
+
+## 1.2.2
+
+* Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.
+
+## 1.2.1
+
+* Bump runner version to `v1.4.0`
+
+## 1.2.0
+
+* Add support for kubernetes scaleDeployment and rollbackDeployment actions
+
 ## 1.1.2
 
 * Add customizable resource limits and requests for the private action runner container
