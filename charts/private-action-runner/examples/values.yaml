@@ -17,9 +17,7 @@ runner:
       - com.datadoghq.http.request
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
-  env:
-    - name: DD_PRIVATE_RUNNER_CONFIG_DIR
-      value: /etc/dd-action-runner/config
+  env: []
   livenessProbe:
     httpGet:
       path: /liveness

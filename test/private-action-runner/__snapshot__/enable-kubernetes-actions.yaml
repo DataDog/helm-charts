@@ -130,7 +130,7 @@ metadata:
   name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.5.0
+    helm.sh/chart: private-action-runner-1.5.1
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: kubernetes-test
     app.kubernetes.io/version: "v1.5.1"
@@ -145,13 +145,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.5.0
+        helm.sh/chart: private-action-runner-1.5.1
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: kubernetes-test
         app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 4a587fd8e085cb71c4817ed012cced5f548e0f56ae5f423fadad226957c04f08
+        checksum/values: a064a57166471403ef890ec03c688e0adbdbaab2e60058527ee7e9886aa79b9a
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:
@@ -171,7 +171,7 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
-          env: 
+          env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
       volumes:
