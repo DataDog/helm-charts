@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.123.3
+* Enable cluster agent advanced dispatching for cluster check by default 
+
 ## 3.123.2
 
 * add support for enabling csi driver globally and as admission controller config mode.

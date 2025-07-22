@@ -1189,6 +1189,16 @@ clusterAgent:
   # clusterAgent.shareProcessNamespace -- Set the process namespace sharing on the Datadog Cluster Agent
   shareProcessNamespace: false
 
+  # clusterAgent.clusterChecks -- define cluster checks config options
+  clusterChecks:
+    advancedDispatching:
+      # Set this to true to enable advanced dispatching of cluster checks
+      enabled: true
+      # clusterAgent.clusterChecks.advancedDispatching.rebalanceWithUtilization --  distributing the cluster checks more fairly across the multiple cluster check runner
+      rebalanceWithUtilization: true
+      # clusterAgent.clusterChecks.excludeChecksFromDispatching -- List of cluster checks to exclude from rebalancing
+      exclude_checks_from_dispatching: [] # e.g., ["kube_scheduler"]
+
   ## Define the Datadog Cluster-Agent image to work with
   image:
     # clusterAgent.image.name -- Cluster Agent image name to use (relative to `registry`)

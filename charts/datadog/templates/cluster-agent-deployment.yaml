@@ -416,6 +416,21 @@ spec:
                 name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
                 key: install_type
           {{- include "fips-envvar" . | nindent 10 }}
+          
+          {{- if and .Values.clusterChecks .Values.clusterChecks.advancedDispatching }}
+            {{- if hasKey .Values.clusterChecks.advancedDispatching "enabled" }}
+          - name: DD_CLUSTER_CHECKS_ADVANCED_DISPATCHING_ENABLED
+            value: {{ .Values.clusterChecks.advancedDispatching.enabled | quote }}
+            {{- end }}
+            {{- if hasKey .Values.clusterChecks.advancedDispatching "rebalanceWithUtilization" }}
+          - name: DD_CLUSTER_CHECKS_REBALANCE_WITH_UTILIZATION
+            value: {{ .Values.clusterChecks.advancedDispatching.rebalanceWithUtilization | quote }}
+            {{- end }}
+            {{- if and (hasKey .Values.clusterChecks.advancedDispatching "exclude_checks_from_dispatching") (gt (len .Values.clusterChecks.advancedDispatching.exclude_checks_from_dispatching) 0) }}
+          - name: DD_CLUSTER_CHECKS_ADVANCED_DISPATCHING_EXCLUDE_CHECKS
+            value: {{ .Values.clusterChecks.advancedDispatching.exclude_checks_from_dispatching | join "," | quote }}
+            {{- end }}
+          {{- end }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
         livenessProbe:
