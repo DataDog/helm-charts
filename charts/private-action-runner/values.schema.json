@@ -47,6 +47,10 @@
           "type": "integer",
           "description": "Number of pod instances for the Datadog Private Action Runner"
         },
+        "configDirectory": {
+          "type": "string",
+          "description": "The directory containing the Datadog Private Action Runner configuration"
+        },
         "config": {
           "type": "object",
           "description": "Configuration for the Datadog Private Action Runner",
@@ -94,7 +98,17 @@
           "type": "array",
           "description": "Environment variables to be passed to the Datadog Private Action Runner",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the environment variable"
+              },
+              "value": {
+                "type": "string",
+                "description": "Value of the environment variable"
+              }
+            }
           }
         },
         "nodeSelector": {
