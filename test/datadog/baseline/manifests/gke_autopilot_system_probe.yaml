@@ -987,6 +987,7 @@ spec:
     metadata:
       annotations:
         autopilot.gke.io/no-connect: "true"
+        container.apparmor.security.beta.kubernetes.io/system-probe: unconfined
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog
@@ -1329,8 +1330,6 @@ spec:
               cpu: 100m
               memory: 400Mi
           securityContext:
-            appArmorProfile:
-              type: Unconfined
             capabilities:
               add:
                 - SYS_ADMIN
