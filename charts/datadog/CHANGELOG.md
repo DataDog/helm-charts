@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.124.0
+
+* Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
+
 ## 3.123.3
 
 * Add otel config to args rather than command
