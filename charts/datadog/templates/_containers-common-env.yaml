@@ -49,8 +49,8 @@
   value: /var/lib/cloud/data/instance-id
 {{- end }}
 {{- end }}
-{{- include "additional-env-entries" .Values.datadog.env }}
-{{- include "additional-env-dict-entries" .Values.datadog.envDict }}
+{{- include "additional-env-entries" (dict "envs" .Values.datadog.env "context" $) }}
+{{- include "additional-env-dict-entries" (dict "envs" .Values.datadog.envDict "context" $) }}
 {{- if .Values.datadog.acInclude }}
 - name: DD_AC_INCLUDE
   value: {{ .Values.datadog.acInclude | quote }}
