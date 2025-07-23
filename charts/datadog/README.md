@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.123.2](https://img.shields.io/badge/Version-3.123.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.123.3](https://img.shields.io/badge/Version-3.123.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -601,6 +601,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
+| clusterAgent.clusterChecks | object | `{"advancedDispatching":{"enabled":true,"exclude_checks_from_dispatching":[],"rebalanceWithUtilization":true}}` | define cluster checks config options |
+| clusterAgent.clusterChecks.advancedDispatching.rebalanceWithUtilization | bool | `true` | distributing the cluster checks more fairly across the multiple cluster check runner |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
 | clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |
