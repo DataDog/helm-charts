@@ -161,14 +161,11 @@ func (s *k8sSuite) testGenericK8sKSMCore() {
 
 func (s *k8sSuite) testGenericK8sKSMCoreCCR(withAutopilot bool) {
 	s.Run("KSM check works cluster check runner", func() {
-		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
-			gcpkubernetes.WithGKEOptions(s.getGKEOptions(withAutopilot)...),
-			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
-			gcpkubernetes.WithAgentOptions(
-				kubernetesagentparams.WithGKEAutopilot(),
-				kubernetesagentparams.WithHelmRepoURL(""),
-				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-				kubernetesagentparams.WithHelmValues(`
+		var gkeOpts []gke.Option
+		agentOpts := []kubernetesagentparams.Option{
+			kubernetesagentparams.WithHelmRepoURL(""),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:
     useApiServer: true
@@ -176,7 +173,17 @@ datadog:
   kubeStateMetricsCore:
     useClusterCheckRunners: true
 clusterChecksRunner:
-  enabled: true`))))
+  enabled: true`)}
+
+		if withAutopilot {
+			gkeOpts = append(gkeOpts, gke.WithAutopilot())
+			agentOpts = append(agentOpts, kubernetesagentparams.WithGKEAutopilot())
+		}
+
+		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
+			gcpkubernetes.WithGKEOptions(gkeOpts...),
+			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
+			gcpkubernetes.WithAgentOptions(agentOpts...)))
 
 		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
 		s.Assert().NoError(err)
@@ -239,14 +246,4 @@ func (s *k8sSuite) verifyHTTPCheck(c *assert.CollectT) {
 			assert.Greater(c, points.Value, float64(0))
 		}
 	}
-}
-
-func (s *k8sSuite) getGKEOptions(autopilot bool) []gke.Option {
-	if autopilot {
-		return []gke.Option{
-			gke.WithAutopilot(),
-		}
-
-	}
-	return []gke.Option{}
 }
