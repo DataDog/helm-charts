@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1
+
+* Mount `apm-socket` and `dsd-socket` to CSI node server container in readonly mode.
+* Mount `plugins-dir` to node registrar container in readonly mode.
+
+## 0.4.0
+
+* Set node server image tag to `1.0.0`.
+
 ## 0.3.4
 
 * Remove `hostNetwork: true` from csi driver daemonset.

@@ -43,9 +43,10 @@ spec:
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
-          {{- if $.Values.runner.env }}
-          env: {{ $.Values.runner.env | toYaml | nindent 12 }}
-          {{- end }}
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: {{ $.Values.runner.configDirectory }}
+          {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
           {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
             - secretRef:

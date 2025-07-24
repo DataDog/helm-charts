@@ -1,5 +1,25 @@
 # Datadog changelog
 
+## 3.124.0
+
+* Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
+
+## 3.123.3
+
+* Add otel config to args rather than command
+
+## 3.123.2
+
+* add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.123.1
+
+* Fix a breaking change introduced in `3.121.0`. If users set `-full` suffix directly in `agents.image.tag` when using OpenTelemetry Collector. The chart now gracefully handles this scenario:
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version < 7.67.0: Falls back to using the agent image (legacy behavior).
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version >= 7.67.0: Fails with a clear error message and actionable solutions .
+* Fix documentation of `datadog.otelCollector.useStandaloneImage` to clarify that `agents.image.tagSuffix` must be set to `full` (not `-full`).
+* Mention `full` in the `tagSuffix` documentation.
+
 ## 3.123.0
 
 * Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
@@ -159,6 +179,7 @@
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
 
 ## 3.110.13
+
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
 ## 3.110.12

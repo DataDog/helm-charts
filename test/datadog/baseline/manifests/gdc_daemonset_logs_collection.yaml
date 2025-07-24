@@ -769,6 +769,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -939,6 +941,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1075,6 +1079,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED

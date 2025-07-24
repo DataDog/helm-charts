@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.123.0](https://img.shields.io/badge/Version-3.123.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.124.0](https://img.shields.io/badge/Version-3.124.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -584,7 +584,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.agentSidecarInjection.profiles | list | `[]` | Defines the sidecar configuration override, currently only one profile is supported. |
 | clusterAgent.admissionController.agentSidecarInjection.provider | string | `nil` | Used by the admission controller to add infrastructure provider-specific configurations to the Agent sidecar. |
 | clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines the pod selector for sidecar injection, currently only one rule is supported. |
-| clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", or "socket". |
+| clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", "socket" or "csi". |
 | clusterAgent.admissionController.containerRegistry | string | `nil` | Override the default registry for the admission controller. |
 | clusterAgent.admissionController.cwsInstrumentation.enabled | bool | `false` | Enable the CWS Instrumentation admission controller endpoint. |
 | clusterAgent.admissionController.cwsInstrumentation.mode | string | `"remote_copy"` | Mode defines how the CWS Instrumentation should behave. Options are "remote_copy" or "init_container" |
@@ -755,6 +755,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerLifecycle.enabled | bool | `true` | Enable container lifecycle events collection |
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
+| datadog.csi.enabled | bool | `false` | Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver) This feature is still in beta Requires version 7.67 or later of the cluster agent |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
@@ -825,6 +826,7 @@ helm install <RELEASE_NAME> \
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
+| datadog.networkPath.connectionsMonitoring.enabled | bool | `false` | Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled. |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
@@ -845,7 +847,7 @@ helm install <RELEASE_NAME> \
 | datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
-| datadog.otelCollector.useStandaloneImage | bool | `true` | If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image The tag is retrieved from the `agents.image.tag` value. This is only supported for agent versions 7.67.0+ If set to false, you will need to set `agents.image.tagSuffix` to `-full` |
+| datadog.otelCollector.useStandaloneImage | bool | `true` | If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image The tag is retrieved from the `agents.image.tag` value. This is only supported for agent versions 7.67.0+ If set to false, you will need to set `agents.image.tagSuffix` to `full` |
 | datadog.otlp.logs.enabled | bool | `false` | Enable logs support in the OTLP ingest endpoint |
 | datadog.otlp.receiver.protocols.grpc.enabled | bool | `false` | Enable the OTLP/gRPC endpoint |
 | datadog.otlp.receiver.protocols.grpc.endpoint | string | `"0.0.0.0:4317"` | OTLP/gRPC endpoint |

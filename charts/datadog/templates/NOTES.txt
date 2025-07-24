@@ -669,11 +669,34 @@ OTel collector is not supported on GKE Autopilot.
 {{- end }}
 
 
-{{- if (eq (include "should-enable-otel-agent" .) "true")  }}
+{{- if and (eq (include "should-enable-otel-agent" .) "true") (hasSuffix "-full" (.Values.agents.image.tag | toString)) }}
 #################################################################
-####               WARNING: Private Beta notice              ####
+####               WARNING: Configuration notice             ####
 #################################################################
-OTel collector is in preview. Please reach out to your Datadog representative for more information.
+You have set the `-full` suffix directly in `agents.image.tag` ({{ .Values.agents.image.tag }}) while using the DDOT Collector.
+This is only supported in one of these conditions:
+- `datadog.otelCollector.useStandaloneImage` is set to `false`
+- `datadog.otelCollector.useStandaloneImage` is set to `true` and the agent version is 7.65 or 7.66.
+
+Please consider removing the `-full` suffix from the `agents.image.tag` and upgrade to the Agent 7.67.0+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/fr/opentelemetry/setup/ddot_collector/install/?tab=helm
+{{- end }}
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.datadog.otelCollector.useStandaloneImage (eq .Values.agents.image.tagSuffix "full") }}
+#################################################################
+####               WARNING: Configuration notice         ####
+#################################################################
+You have set `agents.image.tagSuffix: "full"` while `datadog.otelCollector.useStandaloneImage` is enabled.
+
+This configuration uses both the ddot-collector standalone image and the `full` flavor of the agent image which is also wrapping the ddot-collector image's content.
+
+To optimize performance, choose one of these options:
+- Remove the `agents.image.tagSuffix: "full"` override to use the default flavor of the Agent.
+- Set `datadog.otelCollector.useStandaloneImage: false` to stop using the ddot-collector standalone image.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/fr/opentelemetry/setup/ddot_collector/install/?tab=helm
 {{- end }}
 
 
@@ -687,4 +710,13 @@ You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml f
 
 To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
+{{- end }}
+
+{{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
+################################################################                                                             
+###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
+################################################################
+Enabling csi via `datadog.csi.enabled` is required to benefit from `csi` admission controller config mode.
+
+Otherwise, `socket` config mode will be used.
 {{- end }}
