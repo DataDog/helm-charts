@@ -45,6 +45,9 @@ datadog:
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 	v.T().Log("Running GKE Autopilot with system-probe test")
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
+		err := v.Env().KubernetesCluster.Client().ExtensionsV1beta1().RESTClient().Delete().Resource("workloadallowlists").Name("datadog-datadog-daemonset-exemption-v1.0.1").Error()
+		v.Assert().NoError(err)
+
 		res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
 
 		var agent corev1.Pod
