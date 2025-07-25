@@ -7,7 +7,7 @@ toolchain go1.24.4
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.67.0
 	github.com/DataDog/datadog-agent/test/new-e2e v0.70.0-devel.0.20250723220959-40fc15132396
-	github.com/DataDog/test-infra-definitions v0.0.4-0.20250723164547-e6adaa71038b
+	github.com/DataDog/test-infra-definitions v0.0.4-0.20250725152824-342cb400715f
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
 	github.com/pulumi/pulumi/sdk/v3 v3.181.0
