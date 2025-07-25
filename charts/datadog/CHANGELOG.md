@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.125.0
+
+* Add `datadog.sbom.containerImage.containerInclude` and
+`datadog.sbom.containerImage.containerExclude` to allow targeting specific
+container images for SBOM generation.
+
 ## 3.124.0
 
 * Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
