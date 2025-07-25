@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+* Add support for NGINX Ingress Controller
+
 ## 0.1.5
 
 * Introduce `aws.partition` parameter to support service account role ARNs in China regions.
