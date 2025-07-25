@@ -50,6 +50,8 @@ datadog:
   logs:
     enabled: true
     containerCollectAll: true
+clusterChecksRunner:
+  enabled: false
 `)))))
 }
 
