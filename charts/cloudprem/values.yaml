@@ -11,7 +11,7 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.7
+  tag: v0.1.8
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -535,6 +535,7 @@ config:
   version: 0.8
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
+  cloudprem_listen_port: 7283
   data_dir: /quickwit/qwdata
   grpc:
     keep_alive:
@@ -631,9 +632,13 @@ service:
 
 ingress:
   # Route inbound traffic from Datadog via the public internet to searchers using gRPC + mTLS.
-  # This ingress configuration will provision an internet-facing ALB in the cluster's public subnets.
   public:
     enabled: true
+    # The ingress controller to use.
+    # - `alb` for AWS ALB
+    # - `nginx` or any string that contains `nginx` for Ingress NGINX Controller.
+    # When using `alb`, the ingress controller will provision an internet-facing ALB in the cluster's public subnets.
+    # When using `*nginx*`, the ingress controller will create a LoadBalancer service.
     ingressClassName: alb
     extraAnnotations: {}
     host: ""
@@ -642,10 +647,50 @@ ingress:
       #     - "cloudprem.acme.corp"
       #   secretName: cloudprem-acme-corp-tls
 
+    # The client CA certificate used by Datadog to connect to the CloudPrem service.
+    clientCa: |
+      -----BEGIN CERTIFICATE-----
+      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
+      Dn8SYLNTdzyEDglFposs32DKuLQi
+      -----END CERTIFICATE-----
+
   # Route inbound internal traffic to the right services over HTTP.
-  # This ingress configuration will provision an internal ALB in the cluster's private subnets.
   internal:
     enabled: true
+    # The ingress controller to use.
+    # - `alb` for AWS ALB
+    # - `nginx` or any string that contains `nginx` for Ingress NGINX Controller.
+    # When using `alb`, the ingress controller will provision an internal ALB in the cluster's private subnets.
+    # When using `*nginx*`, the ingress controller will create a LoadBalancer service.
+    ingressClassName: alb
     extraAnnotations: {}
     host: ""
     tls: []
