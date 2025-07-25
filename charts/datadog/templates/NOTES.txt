@@ -712,7 +712,7 @@ To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
-{{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
+{{- if (and (not .Values.datadog.csi.enabled ) .Values.clusterAgent.admissionController.configMode (eq .Values.clusterAgent.admissionController.configMode "csi")) }}
 ################################################################                                                             
 ###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
 ################################################################
