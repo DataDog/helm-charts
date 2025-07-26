@@ -441,6 +441,9 @@ spec:
           - name: tmpdir
             mountPath: /tmp
             readOnly: false
+          - name: agent-ipc-root-ca
+            mountPath: /etc/datadog-agent/agent-ipc-root-ca
+            readOnly: true
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -473,6 +476,9 @@ spec:
           - name: config
             mountPath: /etc/datadog-agent
       volumes:
+        - name: agent-ipc-root-ca
+          secret:
+            secretName: datadog-agent-ipc-root-ca-secret
         - name: datadogrun
           emptyDir: {}
         - name: varlog
