@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 1.5.2
+## 1.6.0
 
 * Add support for long-running actions.
 * Add support for new Gitlab actions.
