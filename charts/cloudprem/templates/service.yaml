@@ -22,11 +22,13 @@ spec:
   ports:
     - port: 7280
       targetPort: rest
-      protocol: TCP
       name: rest
     - port: 7281
       targetPort: grpc
       name: grpc
+    - port: 7283
+      targetPort: cloudprem
+      name: cloudprem
   selector:
     {{- include "quickwit.searcher.selectorLabels" . | nindent 4 }}
 ---
@@ -54,14 +56,17 @@ spec:
     # Needed by istio with mTLS mode set to STRICT.
     # The port names must starts with "tcp-" or "udp-" to work...
     # See https://istio.io/latest/docs/ops/common-problems/network-issues/#503-error-while-accessing-headless-services
-    - name: udp
-      port: 7282
-      protocol: UDP
     - name: tcp-http
       port: 7280
       protocol: TCP
     - name: tcp-grpc
       port: 7281
+      protocol: TCP
+    - name: udp
+      port: 7282
+      protocol: UDP
+    - name: tcp-cloudprem
+      port: 7283
       protocol: TCP
   selector:
     {{- include "quickwit.selectorLabels" . | nindent 4 }}
