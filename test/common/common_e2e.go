@@ -13,7 +13,7 @@ import (
 var (
 	defaultAgentVersion  = "latest"
 	agentVersion         = os.Getenv("E2E_AGENT_VERSION")
-	clusterAgentVersion  = os.Getenv("E2E_AGENT_VERSION")
+	clusterAgentVersion  = agentVersion
 	defaultImageRegistry = "gcr.io/datadoghq"
 	defaultPulumiConfigs = runner.ConfigMap{
 		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
@@ -42,12 +42,10 @@ func SetupConfig() (runner.ConfigMap, error) {
 
 	if agentVersion == "" {
 		agentVersion = defaultAgentVersion
-	}
-
-	if clusterAgentVersion == "" {
 		clusterAgentVersion = defaultAgentVersion
 	}
 
+	// DCA release candidates are tagged as "rc" in the registry.
 	if clusterAgentVersion == "7-rc" {
 		clusterAgentVersion = "rc"
 	}
