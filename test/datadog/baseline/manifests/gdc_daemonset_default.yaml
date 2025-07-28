@@ -881,7 +881,6 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
-              readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir

@@ -42,7 +42,6 @@
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: true
     {{- end }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
@@ -58,58 +57,48 @@
     - name: bpffs
       mountPath: /sys/fs/bpf
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      readOnly: true
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
-      readOnly: true
     {{- end }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
-      readOnly: true
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
       readOnly: false # Need RW for sys-probe socket
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
   {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
-      readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/fedora-release" }}
     - name: etc-fedora-release
       mountPath: /host/etc/fedora-release
-      readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/lsb-release" }}
     - name: etc-lsb-release
       mountPath: /host/etc/lsb-release
-      readOnly: true
     {{- end }}
   {{- end }}
 {{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- end }}
 {{- if .Values.datadog.gpuMonitoring.enabled }}
     - name: gpu-devices
@@ -119,18 +108,15 @@
     - name: modules
       mountPath: /lib/modules
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- if eq (include "can-mount-host-usr-src" .) "false" }}
     - name: src
       mountPath: /usr/src
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
 {{- end }}
 {{- end }}
 {{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
-      readOnly: true
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
     - name: runtime-compiler-output-dir
@@ -143,37 +129,28 @@
 {{- if not .Values.datadog.systemProbe.mountPackageManagementDirs }}
     - name: apt-config-dir
       mountPath: /host/etc/apt
-      readOnly: true
     - name: yum-repos-dir
       mountPath: /host/etc/yum.repos.d
-      readOnly: true
     - name: opensuse-repos-dir
       mountPath: /host/etc/zypp
-      readOnly: true
     - name: public-key-dir
       mountPath: /host/etc/pki
-      readOnly: true
     - name: yum-vars-dir
       mountPath: /host/etc/yum/vars
-      readOnly: true
     - name: dnf-vars-dir
       mountPath: /host/etc/dnf/vars
-      readOnly: true
     - name: rhel-subscription-dir
       mountPath: /host/etc/rhsm
-      readOnly: true
 {{- else }}
 {{- range .Values.datadog.systemProbe.mountPackageManagementDirs }}
     - name: {{ .name }}
       mountPath: {{ .mountPath }}
-      readOnly: true
 {{- end }}
 {{- end }}
 {{- end }}
 {{- if .Values.datadog.systemProbe.btfPath }}
     - name: btf-path
       mountPath: {{ .Values.datadog.systemProbe.btfPath }}
-      readOnly: true
 {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}

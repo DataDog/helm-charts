@@ -881,7 +881,6 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
-              readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
@@ -899,11 +898,9 @@ spec:
             - mountPath: /var/log/pods
               mountPropagation: None
               name: logpodpath
-              readOnly: true
             - mountPath: /var/log/containers
               mountPropagation: None
               name: logscontainerspath
-              readOnly: true
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:

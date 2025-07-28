@@ -946,13 +946,11 @@ spec:
           volumeMounts:
             - mountPath: C:/ProgramData/Datadog
               name: config
-              readOnly: true
             - mountPath: C:/ProgramData/Datadog/logs
               name: logdatadog
               readOnly: false
             - mountPath: C:/ProgramData/Datadog/auth
               name: auth-token
-              readOnly: true
             - mountPath: \\.\pipe\docker_engine
               name: runtimesocket
             - mountPath: \\.\pipe\containerd-containerd
@@ -975,7 +973,6 @@ spec:
               readOnly: false
             - mountPath: C:/Temp/install_info
               name: installinfo
-              readOnly: true
         - args:
             - Get-ChildItem 'entrypoint-ps1' | ForEach-Object { & $_.FullName if (-Not $?) { exit 1 } }
           command:

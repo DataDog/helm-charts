@@ -16,11 +16,9 @@
       readOnly: false # Need RW for config path
     - name: installinfo
       mountPath: C:/Temp/install_info
-      readOnly: true
     {{- if .Values.agents.useConfigMap }}
     - name: datadog-yaml
       mountPath: C:/Temp/datadog_yaml
-      readOnly: true
     {{- end}}
   resources:
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
@@ -37,12 +35,10 @@
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: C:/conf.d
-      readOnly: true
     {{- end }}
     {{- if .Values.datadog.checksd }}
     - name: checksd
       mountPath: C:/checks.d
-      readOnly: true
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- if .Values.agents.containers.initContainers.volumeMounts }}

@@ -82,31 +82,26 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      readOnly: true
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: true
     {{- end }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
-      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- end }}
     - name: tmpdir
       mountPath: /tmp

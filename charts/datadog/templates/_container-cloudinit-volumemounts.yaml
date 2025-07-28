@@ -3,7 +3,6 @@
 {{- if eq .Values.targetSystem "linux" }}
 - name: cloudinit-instance-id-file
   mountPath: /var/lib/cloud/data/instance-id
-  readOnly: true
 {{- end }}
 {{- end }}
 {{- end -}}

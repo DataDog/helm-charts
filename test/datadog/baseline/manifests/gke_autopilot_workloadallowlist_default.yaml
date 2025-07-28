@@ -916,7 +916,6 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
-              readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
@@ -927,21 +926,17 @@ spec:
             - mountPath: /host/var/run/containerd
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /etc/passwd
               name: passwd
-              readOnly: true
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt
@@ -1019,11 +1014,9 @@ spec:
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/var/run/containerd
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:

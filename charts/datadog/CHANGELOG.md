@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.125.1
+
+* Remove hard-coded `readOnly: true` from Agent daemonset host volumeMounts. 
+
 ## 3.125.0
 
 * Add `datadog.sbom.containerImage.containerInclude` and

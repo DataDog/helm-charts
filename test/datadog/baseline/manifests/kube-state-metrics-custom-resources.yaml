@@ -966,14 +966,12 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
-              readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
-              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
@@ -983,21 +981,17 @@ spec:
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /etc/passwd
               name: passwd
-              readOnly: true
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1080,21 +1074,17 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: true
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
@@ -1104,7 +1094,6 @@ spec:
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
       hostPID: true
       initContainers:
         - args:
@@ -1165,11 +1154,9 @@ spec:
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:

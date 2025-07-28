@@ -265,7 +265,6 @@
     - name: installinfo
       subPath: install_info
       mountPath: /etc/datadog-agent/install_info
-      readOnly: true
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to /tmp directory
@@ -288,7 +287,6 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
-      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
@@ -303,24 +301,19 @@
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
-      readOnly: true
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
-      readOnly: true
     {{- end }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
-      readOnly: true
     {{- end }}
     {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
@@ -331,59 +324,46 @@
     - name: logpodpath
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     - name: logscontainerspath
       mountPath: /var/log/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- end }}
     {{- end }}
     {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
     - name: host-containerd-dir
       mountPath: /host/var/lib/containerd
-      readOnly: true
     - name: host-docker-dir
       mountPath: /host/var/lib/docker
-      readOnly: true
     - name: host-crio-dir
       mountPath: /host/var/lib/containers
-      readOnly: true
     {{- end }}
     {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
     - name: host-apk-dir
       mountPath: /host/var/lib/apk
-      readOnly: true
     - name: host-dpkg-dir
       mountPath: /host/var/lib/dpkg
-      readOnly: true
     - name: host-rpm-dir
       mountPath: /host/var/lib/rpm
-      readOnly: true
     {{- if eq (include "should-add-host-path-for-os-release-paths" .) "true" }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
-      readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/fedora-release" }}
     - name: etc-fedora-release
       mountPath: /host/etc/fedora-release
-      readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/lsb-release" }}
     - name: etc-lsb-release
       mountPath: /host/etc/lsb-release
-      readOnly: true
     {{- end }}
     {{- if ne .Values.datadog.osReleasePath "/etc/system-release" }}
     - name: etc-system-release
       mountPath: /host/etc/system-release
-      readOnly: true
     {{- end }}
     {{- end }}
     {{- end }}
@@ -395,10 +375,8 @@
       readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: C:/var/log/pods
-      readOnly: true
     - name: logdockercontainerpath
       mountPath: C:/ProgramData
-      readOnly: true
     {{- end }}
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}

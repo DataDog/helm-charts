@@ -795,7 +795,6 @@ Return Kubelet volumeMount
   {{- if eq .Values.targetSystem "windows" }}
   mountPath: {{ dir (include "datadog.kubelet.mountPath" .) }}
   {{- end }}
-  readOnly: true
 {{- end -}}
 
 {{/*

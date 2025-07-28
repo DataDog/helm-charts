@@ -68,7 +68,6 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
-      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if not .Values.providers.gke.gdc }}
@@ -78,11 +77,9 @@
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- end }}
     {{- end }}
 {{- if .Values.agents.volumeMounts }}

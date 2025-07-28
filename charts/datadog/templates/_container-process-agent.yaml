@@ -60,14 +60,12 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      readOnly: true
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if (not .Values.providers.gke.autopilot) }}
@@ -86,30 +84,24 @@
     - name: datadog-yaml
       mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
       subPath: datadog.yaml
-      readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection) }}
     - name: passwd
       mountPath: /etc/passwd
-      readOnly: true
     {{- end }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: true
     {{- if eq (include "should-enable-system-probe" .) "true" }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
-      readOnly: true
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
-      readOnly: true
     {{- end }}
     {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}

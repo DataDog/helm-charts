@@ -10,7 +10,6 @@
   volumeMounts:
   - name: datadog-agent-security
     mountPath: /etc/config
-    readOnly: true
   - name: seccomp-root
     mountPath: /host/var/lib/kubelet/seccomp
     mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

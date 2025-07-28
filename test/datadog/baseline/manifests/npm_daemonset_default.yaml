@@ -1154,14 +1154,12 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
-              readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
-              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
@@ -1171,28 +1169,22 @@ spec:
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: true
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
-              readOnly: true
               subPath: system-probe.yaml
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /etc/passwd
               name: passwd
-              readOnly: true
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1275,21 +1267,17 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: true
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
@@ -1299,7 +1287,6 @@ spec:
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
         - command:
             - process-agent
             - --cfgpath=/etc/datadog-agent/datadog.yaml
@@ -1365,13 +1352,11 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
@@ -1380,28 +1365,21 @@ spec:
               readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
-              readOnly: true
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /etc/passwd
               name: passwd
-              readOnly: true
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: true
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
-              readOnly: true
               subPath: system-probe.yaml
         - command:
             - system-probe
@@ -1459,7 +1437,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
@@ -1473,13 +1450,10 @@ spec:
             - mountPath: /sys/fs/bpf
               mountPropagation: None
               name: bpffs
-              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
-              readOnly: true
               subPath: system-probe.yaml
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
@@ -1487,23 +1461,17 @@ spec:
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
-              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
-              readOnly: true
             - mountPath: /host/etc/redhat-release
               name: etc-redhat-release
-              readOnly: true
             - mountPath: /host/etc/fedora-release
               name: etc-fedora-release
-              readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
-              readOnly: true
       hostPID: true
       initContainers:
         - args:
@@ -1564,14 +1532,11 @@ spec:
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
-              readOnly: true
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
-              readOnly: true
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
-              readOnly: true
               subPath: system-probe.yaml
         - command:
             - cp
@@ -1584,7 +1549,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/config
               name: datadog-agent-security
-              readOnly: true
             - mountPath: /host/var/lib/kubelet/seccomp
               mountPropagation: None
               name: seccomp-root
