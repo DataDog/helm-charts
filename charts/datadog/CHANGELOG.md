@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.127.0
+
+* Add:
+  - `datadog.securityAgent.runtime.containerInclude`
+  - `datadog.securityAgent.runtime.containerExclude`
+  - `datadog.securityAgent.compliance.containerInclude`
+  - `datadog.securityAgent.compliance.containerExclude`
+
 ## 3.126.1
 
 * Update `fips.image.tag` to `1.1.14` fixing CVEs and updating packages.
