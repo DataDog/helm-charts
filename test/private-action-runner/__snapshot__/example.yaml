@@ -158,6 +158,24 @@ stringData:
         }
       ]
     }
+    
+  script.yaml: |
+    schemaId: script-credentials-v1
+    runPredefinedScript:
+      echo:
+        # you have to use an array to specify the command
+        command: ["echo", "Hello world"]
+      echo-parametrized:
+        # you can use [workflow-like syntax](https://docs.datadoghq.com/actions/workflows/variables/) to retrieve values from the parameters object
+        command: [ "echo", "{{ parameters.echoValue }}" ]
+        # you can use [json schema](https://json-schema.org/) to validate the parameters
+        parameterSchema:
+          properties:
+            echoValue:
+              type: string
+              const: "world"
+          required:
+            - echoValue
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -232,7 +250,7 @@ spec:
         app.kubernetes.io/version: "v1.6.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: adad3f640e0ae87995cb9d411c902915bdfa984442f8093f376bedf70ede7832
+        checksum/values: bc5340f0df311224d5c13a1126c9adfe482a5dff66f5c9d24987f3b2780a006d
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
