@@ -98,12 +98,12 @@ spec:
         app.kubernetes.io/version: "v1.6.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 603e51a6472754d7d1fa421e5cf8daab7da1060093f34cef388a51a5c0d494ed
+        checksum/values: 8e775192c1a3941d43ff3190be9c86e0ad374b31af34afb5bccd659dca0aef47
     spec:
       serviceAccountName: resources-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.6.0"
+          image: "datadog/private-action-runner-dev:latest@sha256:363444a0b2cb47de3f4734806181cdf071ad4a0eed598c0558308fd9df312d4d"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
