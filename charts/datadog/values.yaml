@@ -976,7 +976,6 @@ datadog:
     # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
 
-
   # Software Bill of Materials configuration
   sbom:
     containerImage:
@@ -993,6 +992,17 @@ datadog:
 
       # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
       overlayFSDirectScan: false
+
+      # datadog.sbom.containerImage.containerExclude -- Exclude containers from SBOM generation, as a space-separated list
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+      containerExclude:  # "image:datadog/agent"
+
+      # datadog.sbom.containerImage.containerInclude -- Include containers in SBOM generation, as a space-separated list.
+      # If a container matches an include rule, it’s always included in SBOM generation
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
 
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
@@ -1200,7 +1210,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.67.0
+    tag: 7.68.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1744,7 +1754,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.67.0
+    tag: 7.68.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2330,7 +2340,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.67.0
+    tag: 7.68.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

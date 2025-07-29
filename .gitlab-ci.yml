@@ -50,6 +50,9 @@ e2e:
           - e2e
           - e2e_autopilot
           - e2e_autopilot_systemprobe
+        E2E_AGENT_VERSION:
+          - "latest"
+          - "7-rc"
   before_script:
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
@@ -81,4 +84,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci make test-e2e
+    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci E2E_AGENT_VERSION=$E2E_AGENT_VERSION make test-e2e

@@ -10,14 +10,20 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 )
 
-var defaultPulumiConfigs = runner.ConfigMap{
-	"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
-}
+var (
+	defaultAgentVersion  = "latest"
+	agentVersion         = os.Getenv("E2E_AGENT_VERSION")
+	clusterAgentVersion  = agentVersion
+	defaultImageRegistry = "gcr.io/datadoghq"
+	defaultPulumiConfigs = runner.ConfigMap{
+		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
+	}
 
-var defaultCIPulumiConfigs = runner.ConfigMap{
-	"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
-	"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD"), Secret: true},
-}
+	defaultCIPulumiConfigs = runner.ConfigMap{
+		"ddinfra:env":                           auto.ConfigValue{Value: "gcp/agent-qa"},
+		"ddinfra:gcp/defaultPrivateKeyPassword": auto.ConfigValue{Value: os.Getenv("E2E_GCP_PRIVATE_KEY_PASSWORD"), Secret: true},
+	}
+)
 
 func parseE2EConfigParams() []string {
 	// "key1=val1 key2=val2"
@@ -33,6 +39,23 @@ func parseE2EConfigParams() []string {
 func SetupConfig() (runner.ConfigMap, error) {
 	res := runner.ConfigMap{}
 	configs := parseE2EConfigParams()
+
+	if agentVersion == "" {
+		agentVersion = defaultAgentVersion
+		clusterAgentVersion = defaultAgentVersion
+	}
+
+	// DCA release candidates are tagged as "rc" in the registry.
+	if clusterAgentVersion == "7-rc" {
+		clusterAgentVersion = "rc"
+	}
+
+	agentImageConfigs := runner.ConfigMap{
+		"ddagent:fullImagePath":             auto.ConfigValue{Value: fmt.Sprintf("%s/agent:%s", defaultImageRegistry, agentVersion)},
+		"ddagent:clusterAgentFullImagePath": auto.ConfigValue{Value: fmt.Sprintf("%s/cluster-agent:%s", defaultImageRegistry, clusterAgentVersion)},
+	}
+	defaultPulumiConfigs.Merge(agentImageConfigs)
+
 	if os.Getenv("E2E_PROFILE") == "ci" {
 		res.Merge(defaultPulumiConfigs)
 		res.Merge(defaultCIPulumiConfigs)

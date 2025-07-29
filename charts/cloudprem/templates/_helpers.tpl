@@ -124,6 +124,9 @@ Quickwit ports
 - name: discovery
   containerPort: 7282
   protocol: UDP
+- name: cloudprem
+  containerPort: 7283
+  protocol:  TCP
 {{- end }}
 
 
