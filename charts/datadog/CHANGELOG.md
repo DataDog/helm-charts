@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.126.1
+
+* Update `fips.image.tag` to `1.1.14` fixing CVEs and updating packages.
+
 ## 3.126.0
 
 * Upgrade default Agent version to `7.68.3`.
