@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.126.2
+
+* Add support for otel agent in GKE autopilot.
+
 ## 3.126.1
 
 * Update `fips.image.tag` to `1.1.14` fixing CVEs and updating packages.
