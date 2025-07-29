@@ -77,7 +77,7 @@ metadata:
   name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.6.0
+    helm.sh/chart: private-action-runner-1.7.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: resources-test
     app.kubernetes.io/version: "v1.6.0"
@@ -92,7 +92,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.6.0
+        helm.sh/chart: private-action-runner-1.7.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: resources-test
         app.kubernetes.io/version: "v1.6.0"
