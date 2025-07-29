@@ -24,22 +24,7 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod
-    bundles: 
-      com.datadoghq.script:
-        runPredefinedScript:
-          echo-multiple-parametrized:
-            command:
-            - echo
-            - '{{ parameters.echoValue1 }} {{ parameters.echoValue2 }}'
-          echo-nested-parametrized:
-            command:
-            - echo
-            - '{{ parameters.nested.echoValue }}'
-          echo-parametrized:
-            command:
-            - echo
-            - '{{ parameters.echoValue }}'  
+      - com.datadoghq.kubernetes.core.listPod  
   http_basic.json: |
     {
       "auth_type": "Basic Auth",
@@ -173,6 +158,23 @@ stringData:
         }
       ]
     }
+    
+  script.yaml: |
+    schemaId: script-credentials-v1
+     
+    runPredefinedScript:
+      echo-multiple-parametrized:
+        command:
+        - echo
+        - '{{ parameters.echoValue1 }} {{ parameters.echoValue2 }}'
+      echo-nested-parametrized:
+        command:
+        - echo
+        - '{{ parameters.nested.echoValue }}'
+      echo-parametrized:
+        command:
+        - echo
+        - '{{ parameters.echoValue }}'
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -247,12 +249,12 @@ spec:
         app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 3a98c291ca5aee521cf55e65528e9b23e1badeb9a5ee51f1b44ab0870f56141d
+        checksum/values: 01e235c8a8f451ff275ba030e5d51b1ec5296b2911549f8d9aa276f70e686263
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "datadog/private-action-runner-dev:latest@sha256:7cb533bf1f59051bc4ad36d34c2a161ddaf5a8cd0a2dc62998397eb623070145"
+          image: "datadog/private-action-runner-dev:latest@sha256:363444a0b2cb47de3f4734806181cdf071ad4a0eed598c0558308fd9df312d4d"
           imagePullPolicy: Always
           ports:
             - name: http

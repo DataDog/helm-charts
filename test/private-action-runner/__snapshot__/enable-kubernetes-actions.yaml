@@ -151,12 +151,12 @@ spec:
         app.kubernetes.io/version: "v1.5.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: a3bd559cb9599647e90f7167869c949221cb1dd19348272cf1074a1cd54e4a1b
+        checksum/values: e817507124d28e74bfde89be9e696e55d6f7a3b522076d7807e8070cc5d55d52
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:
         - name: runner
-          image: "datadog/private-action-runner-dev:latest@sha256:7cb533bf1f59051bc4ad36d34c2a161ddaf5a8cd0a2dc62998397eb623070145"
+          image: "datadog/private-action-runner-dev:latest@sha256:363444a0b2cb47de3f4734806181cdf071ad4a0eed598c0558308fd9df312d4d"
           imagePullPolicy: Always
           ports:
             - name: http
