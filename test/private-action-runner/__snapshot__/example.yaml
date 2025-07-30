@@ -232,7 +232,7 @@ metadata:
     helm.sh/chart: private-action-runner-1.7.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.6.0"
+    app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -247,7 +247,7 @@ spec:
         helm.sh/chart: private-action-runner-1.7.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.6.0"
+        app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/values: 400c67f275a4b8dd87bf92a0ee2c66b31af4d6049325c8d18e00ddbf4351c24d
