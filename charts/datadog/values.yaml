@@ -1020,6 +1020,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
+      # datadog.securityAgent.compliance.containerInclude -- Include containers in CSPM monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
+
       # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
         enabled: false
@@ -1037,6 +1043,15 @@ datadog:
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
       useSecruntimeTrack: true
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+      containerExclude:  # "image:datadog/agent"
+
+      # datadog.securityAgent.runtime.containerInclude -- Include containers in runtime security monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used

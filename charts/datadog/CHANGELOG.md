@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.126.2
+## 3.127.1
 
 * Add support for otel agent in GKE autopilot.
+
+## 3.127.0
+
+* Add:
+  - `datadog.securityAgent.runtime.containerInclude`
+  - `datadog.securityAgent.runtime.containerExclude`
+  - `datadog.securityAgent.compliance.containerInclude`
+  - `datadog.securityAgent.compliance.containerExclude`
 
 ## 3.126.1
 
