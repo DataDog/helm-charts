@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.7.0
+
+* Bump runner version to `v1.7.0`
+* Add example for script action credentials file
+
 ## 1.6.0
 
 * Add support for long-running actions.
