@@ -68,3 +68,18 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Check if target cluster supports GKE Autopilot WorkloadAllowlists.
+GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.1729000.
+
+Note: HELM_FORCE_RENDER is used for the CI as a workaround to force helm template rendering for GKE Autopilot WorkloadAllowlist-dependent resources
+since the helm built-in .Capabilities.APIVersions.Has function requires connecting to the Kubernetes API Server in order to return correct values.
+*/}}
+{{- define "gke-autopilot-workloadallowlists-enabled" -}}
+{{- if and .Values.providers.gke.autopilot (or (and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist") (semverCompare ">=v1.32.1-gke.1729000" .Capabilities.KubeVersion.Version)) .Values.datadog.envDict.HELM_FORCE_RENDER) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
