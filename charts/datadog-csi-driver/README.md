@@ -20,6 +20,7 @@ Datadog CSI Driver helm chart
 | image.repository | string | `"datadog/csi-driver"` | Override default registry + image.name for CSI driver |
 | image.tag | string | `"1.0.0"` | CSI driver image tag to use |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
+| providers.gke.autopilot | bool | `false` | Enables Datadog CSI Driver deployment on GKE Autopilot |
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
