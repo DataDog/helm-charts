@@ -8,5 +8,5 @@ metadata:
     "helm.sh/hook-weight": "-1"
 spec:
   allowlistPaths:
-  - Datadog/datadog/datadog-datadog-csi-daemonset-exemption-v1.0.0.yaml
+  - Datadog/datadog-csi-driver/datadog-datadog-csi-driver-daemonset-exemption-v1.0.1.yaml
 {{- end }}
