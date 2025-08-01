@@ -1,9 +1,12 @@
 dependencies:
 - name: datadog-crds
-  repository: https://helm.datadoghq.com
-  version: 2.8.0
+  repository: file://../datadog-crds
+  version: 2.10.0-dev.1
 - name: kube-state-metrics
   repository: https://prometheus-community.github.io/helm-charts
   version: 2.13.2
-digest: sha256:15f05b44b105c4e1a08082ef0b12b1e7da076ef5db04ca880474c1e4a58dd36f
-generated: "2025-06-10T12:39:11.353853-04:00"
+- name: datadog-operator
+  repository: file://../datadog-operator
+  version: 2.12.0-dev.3
+digest: sha256:d4213dca38fd2e0a7aa5a608e38f1e0fcd8e9b13364f0a9a64b9bb9b573693dd
+generated: "2025-08-01T16:37:22.363025-04:00"

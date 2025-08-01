@@ -1269,3 +1269,11 @@ false
     true
   {{- end -}}
 {{- end -}}
+
+{{- define "datadogagents-crd-ready" -}}
+{{- if .Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

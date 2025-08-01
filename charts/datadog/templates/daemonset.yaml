@@ -1,6 +1,7 @@
 {{- template "check-version" . }}
 {{- if .Values.agents.enabled }}
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
+{{- if not .Values.datadog.operator.enabled }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -244,5 +245,6 @@ spec:
       {{- end }}
   updateStrategy:
 {{ toYaml .Values.agents.updateStrategy | indent 4 }}
+{{ end }}
 {{ end }}
 {{ end }}

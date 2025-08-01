@@ -113,6 +113,8 @@ serviceAccount:
   name:
   # serviceAccount.annotations -- Allows setting additional annotations for service account
   annotations: {}
+  # serviceAccount.automountServiceAccountToken -- Specifies whether the service account token should be automatically mounted into the pods
+  automountServiceAccountToken: false
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
