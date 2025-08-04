@@ -240,6 +240,8 @@
       value: all
     - name: DD_ENABLE_NVML_DETECTION
       value: "true"
+    - name: DD_GPU_ENABLED
+      value: "true"
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
