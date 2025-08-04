@@ -1,4 +1,4 @@
-{{ if and .Values.datadog.operator.enabled (.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent") }}
+{{ if .Values.datadog.operator.enabled }}
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:

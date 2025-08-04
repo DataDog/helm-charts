@@ -2592,7 +2592,6 @@ datadog-crds:
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
     # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
-    datadogAgents: true
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
   image:
@@ -2661,3 +2660,6 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+datadog-operator:
+  installCRDs: false
