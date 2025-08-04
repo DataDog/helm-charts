@@ -2,7 +2,10 @@
 
 ## 3.128.0
 
-* `datadog.gpuMonitoring.enabled` enables now the new config flag for the gpum core-check
+* Update:
+  - `datadog.gpuMonitoring.enabled` enables only the gpum core-check
+* Add:
+  - `datadog.gpuMonitoring.privilegedMode` enables system-probe GPU Probe for advanced metrics
 
 ## 3.127.2
 
