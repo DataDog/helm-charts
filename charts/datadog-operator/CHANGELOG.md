@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.12.0-dev.5
+
+* Fix minor syntax issue in service account. 
+
 ## 2.12.0-dev.4
 
 * Add option to disable service account automountServiceAccountToken. 
