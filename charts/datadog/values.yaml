@@ -969,7 +969,7 @@ datadog:
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
-    
+
     # datadog.gpuMonitoring.privilegedMode -- Enable advanced GPU metrics and monitoring via system-probe
     # Note: system-probe component of the agent runs with elevated privileges
     privilegedMode: false
