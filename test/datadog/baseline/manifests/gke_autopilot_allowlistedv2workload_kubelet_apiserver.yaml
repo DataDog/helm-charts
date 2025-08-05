@@ -800,7 +800,7 @@ spec:
             - name: DD_STRIP_PROCESS_ARGS
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -848,8 +848,6 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-            - name: DD_SYSTEM_PROBE_ENABLED
-              value: "false"
           image: gcr.io/datadoghq/agent:7.68.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -913,100 +911,8 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
-        - command:
-            - process-agent
-            - -config=/etc/datadog-agent/datadog.yaml
-          env:
-            - name: DD_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: api-key
-                  name: datadog-secret
-            - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "true"
-            - name: KUBERNETES
-              value: "yes"
-            - name: DD_CLOUD_PROVIDER_METADATA
-              value: '["gcp"]'
-            - name: DD_CSI_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
-              value: "false"
-            - name: DD_KUBERNETES_KUBELET_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: DD_KUBELET_USE_API_SERVER
-              value: "true"
-            - name: HELM_FORCE_RENDER
-              value: "false"
-            - name: DD_OTLP_CONFIG_LOGS_ENABLED
-              value: "false"
-            - name: DD_PROVIDER_KIND
-              value: gke-autopilot
-            - name: DD_CLUSTER_AGENT_ENABLED
-              value: "true"
-            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-              value: datadog-cluster-agent
-            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  key: token
-                  name: datadog-cluster-agent
-            - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
-              value: "false"
-            - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
-              value: "true"
-            - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-              value: "true"
-            - name: DD_STRIP_PROCESS_ARGS
-              value: "false"
-            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-              value: "false"
-            - name: DD_LOG_LEVEL
-              value: INFO
-            - name: DD_SYSTEM_PROBE_ENABLED
-              value: "false"
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
-            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-              value: "true"
-          image: gcr.io/datadoghq/agent:7.68.3
-          imagePullPolicy: IfNotPresent
-          name: process-agent
-          resources:
-            limits:
-              cpu: 100m
-              memory: 200Mi
-            requests:
-              cpu: 100m
-              memory: 200Mi
-          volumeMounts:
-            - mountPath: /etc/datadog-agent
-              name: config
-              readOnly: true
-            - mountPath: /var/log/datadog
-              name: logdatadog
-              readOnly: false
-            - mountPath: /tmp
-              name: tmpdir
-              readOnly: false
-            - mountPath: /host/var/run/containerd
-              mountPropagation: None
-              name: runtimesocketdir
-              readOnly: true
-            - mountPath: /host/sys/fs/cgroup
-              mountPropagation: None
-              name: cgroups
-              readOnly: true
             - mountPath: /etc/passwd
               name: passwd
-              readOnly: true
-            - mountPath: /host/proc
-              mountPropagation: None
-              name: procdir
               readOnly: true
       initContainers:
         - args:
