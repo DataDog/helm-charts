@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.127.1
+
+* Update `fips.image.tag` to `1.1.15` fixing CVEs and updating packages.
+
+
 ## 3.127.0
 
 * Add:
