@@ -21,11 +21,11 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+    {{- if or .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
-    {{- if .Values.datadog.gpuMonitoring.privilegedMode }}
+    {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
      # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
     - name: NVIDIA_VISIBLE_DEVICES
       value: all
@@ -81,7 +81,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -105,13 +105,13 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+{{- if or .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if .Values.datadog.gpuMonitoring.privilegedMode }}
+{{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
 {{- end }}
