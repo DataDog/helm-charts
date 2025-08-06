@@ -1,5 +1,19 @@
 # Datadog changelog
 
+## 1.7.0
+
+* Bump runner version to `v1.7.0`
+* Add example for script action credentials file
+
+## 1.6.0
+
+* Add support for long-running actions.
+* Add support for new Gitlab actions.
+
+## 1.5.1
+
+* Ensure that the `DD_PRIVATE_RUNNER_CONFIG_DIR` environment variable is set even when custom env variables are passed. 
+
 ## 1.5.0
 
 * Bump runner version to `v1.5.1`

@@ -194,6 +194,14 @@
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerExclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerExclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerInclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
+    {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
@@ -231,6 +239,8 @@
     - name: NVIDIA_VISIBLE_DEVICES
       value: all
     - name: DD_ENABLE_NVML_DETECTION
+      value: "true"
+    - name: DD_GPU_ENABLED
       value: "true"
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}

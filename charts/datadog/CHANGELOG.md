@@ -1,5 +1,50 @@
 # Datadog changelog
 
+## 3.128.0
+
+* Update:
+  - `datadog.gpuMonitoring.enabled` enables only the gpum core-check
+* Add:
+  - `datadog.gpuMonitoring.privilegedMode` enables system-probe GPU Probe for advanced metrics
+
+## 3.127.2
+
+* Clean up GKE provider references for enabling process checks in core agent.
+
+## 3.127.1
+
+* Update `fips.image.tag` to `1.1.15` fixing CVEs and updating packages.
+
+## 3.127.0
+
+* Add:
+  - `datadog.securityAgent.runtime.containerInclude`
+  - `datadog.securityAgent.runtime.containerExclude`
+  - `datadog.securityAgent.compliance.containerInclude`
+  - `datadog.securityAgent.compliance.containerExclude`
+
+## 3.126.1
+
+* Update `fips.image.tag` to `1.1.14` fixing CVEs and updating packages.
+
+## 3.126.0
+
+* Upgrade default Agent version to `7.68.3`.
+ 
+## 3.125.0
+
+* Add `datadog.sbom.containerImage.containerInclude` and
+`datadog.sbom.containerImage.containerExclude` to allow targeting specific
+container images for SBOM generation.
+
+## 3.124.0
+
+* Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
+
+## 3.123.3
+
+* Add otel config to args rather than command
+
 ## 3.123.2
 
 * add support for enabling csi driver globally and as admission controller config mode.

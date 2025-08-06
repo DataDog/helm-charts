@@ -77,10 +77,10 @@ metadata:
   name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.5.0
+    helm.sh/chart: private-action-runner-1.7.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: resources-test
-    app.kubernetes.io/version: "v1.5.1"
+    app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -92,18 +92,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.5.0
+        helm.sh/chart: private-action-runner-1.7.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: resources-test
-        app.kubernetes.io/version: "v1.5.1"
+        app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 414b787698840132284d14463a383a324e45c8b5393eb1252e2ad8ecc10f68e0
+        checksum/values: c8aa8a8bfafaf5f792cd6b9e005c89357db0f23f560c68eadb2182765466fb4a
     spec:
       serviceAccountName: resources-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.5.1"
+          image: "gcr.io/datadoghq/private-action-runner:v1.7.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -118,7 +118,7 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
-          env: 
+          env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
       nodeSelector:

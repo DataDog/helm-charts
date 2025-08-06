@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.5.0](https://img.shields.io/badge/Version-1.5.0-informational?style=flat-square) ![AppVersion: v1.5.1](https://img.shields.io/badge/AppVersion-v1.5.1-informational?style=flat-square)
+![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![AppVersion: v1.7.0](https://img.shields.io/badge/AppVersion-v1.7.0-informational?style=flat-square)
 
 ## Overview
 
@@ -228,7 +228,7 @@ If actions requiring credentials fail:
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.5.1"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.7.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
 | runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
@@ -239,9 +239,10 @@ If actions requiring credentials fail:
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runner.configDirectory | string | `"/etc/dd-action-runner/config"` | The directory containing the Datadog Private Action Runner configuration |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
-| runner.env | list | `[{"name":"DD_PRIVATE_RUNNER_CONFIG_DIR","value":"/etc/dd-action-runner/config"}]` | Environment variables to be passed to the Datadog Private Action Runner |
+| runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |

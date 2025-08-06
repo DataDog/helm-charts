@@ -17,9 +17,7 @@ runner:
       - com.datadoghq.http.request
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
-  env:
-    - name: DD_PRIVATE_RUNNER_CONFIG_DIR
-      value: /etc/dd-action-runner/config
+  env: []
   livenessProbe:
     httpGet:
       path: /liveness
@@ -211,6 +209,25 @@ runner:
             }
           ]
         }
+    - fileName: "script.yaml"
+      data: |
+        schemaId: script-credentials-v1
+        runPredefinedScript:
+          echo:
+            # you have to use an array to specify the command
+            command: ["echo", "Hello world"]
+          echo-parametrized:
+            # you can use [workflow-like syntax](https://docs.datadoghq.com/actions/workflows/variables/) to retrieve values from the parameters object
+            command: [ "echo", "{{ parameters.echoValue }}" ]
+            # you can use [json schema](https://json-schema.org/) to validate the parameters
+            parameterSchema:
+              properties:
+                echoValue:
+                  type: string
+                  const: "world"
+              required:
+                - echoValue
+
 
   credentialSecrets: []
     # a kubernetes secret containing multiple credentials files mounted at /etc/dd-action-runner/config/credentials/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md

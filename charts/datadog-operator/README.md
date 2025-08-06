@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.12.0-dev.1](https://img.shields.io/badge/Version-2.12.0--dev.1-informational?style=flat-square) ![AppVersion: 1.17.0-rc.1](https://img.shields.io/badge/AppVersion-1.17.0--rc.1-informational?style=flat-square)
+![Version: 2.12.0-dev.4](https://img.shields.io/badge/Version-2.12.0--dev.4-informational?style=flat-square) ![AppVersion: 1.17.0-rc.3](https://img.shields.io/badge/AppVersion-1.17.0--rc.3-informational?style=flat-square)
 
 ## Values
 
@@ -36,7 +36,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.17.0-rc.1"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.17.0-rc.3"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -56,6 +56,7 @@
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
 | serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
+| serviceAccount.automountServiceAccountToken | bool | `true` | Specifies whether the service account token should be automatically mounted |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |

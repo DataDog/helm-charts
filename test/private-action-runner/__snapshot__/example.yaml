@@ -158,6 +158,24 @@ stringData:
         }
       ]
     }
+    
+  script.yaml: |
+    schemaId: script-credentials-v1
+    runPredefinedScript:
+      echo:
+        # you have to use an array to specify the command
+        command: ["echo", "Hello world"]
+      echo-parametrized:
+        # you can use [workflow-like syntax](https://docs.datadoghq.com/actions/workflows/variables/) to retrieve values from the parameters object
+        command: [ "echo", "{{ parameters.echoValue }}" ]
+        # you can use [json schema](https://json-schema.org/) to validate the parameters
+        parameterSchema:
+          properties:
+            echoValue:
+              type: string
+              const: "world"
+          required:
+            - echoValue
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -211,10 +229,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.5.0
+    helm.sh/chart: private-action-runner-1.7.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.5.1"
+    app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -226,18 +244,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.5.0
+        helm.sh/chart: private-action-runner-1.7.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.5.1"
+        app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 2868f600f5e302f23589692ee1efa4b11a8b3c2b46ab7af07889e68ed1601c1e
+        checksum/values: eaf27909280efe805a787fb5ae1054e52edb07e9522caedb339e2a0d5f928619
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.5.1"
+          image: "gcr.io/datadoghq/private-action-runner:v1.7.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -266,7 +284,7 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
-          env: 
+          env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
       volumes:
