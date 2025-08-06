@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.127.2
+
+* Clean up GKE provider references for enabling process checks in core agent.
+
 ## 3.127.1
 
 * Update `fips.image.tag` to `1.1.15` fixing CVEs and updating packages.
