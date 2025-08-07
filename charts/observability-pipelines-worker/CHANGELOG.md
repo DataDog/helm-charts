@@ -1,5 +1,9 @@
 # Changelog
 
+## NaN.7.1
+
+* [OPA-955] Enable Liveness Probes for OP Chart ([#1997](https://github.com/DataDog/helm-charts/pull/1997)).
+
 ## 2.7.0
 
 - Official image `2.7.0`
