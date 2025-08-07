@@ -1270,10 +1270,12 @@ false
   {{- end -}}
 {{- end -}}
 
-{{- define "datadogagents-crd-ready" -}}
-{{- if .Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" -}}
-true
-{{- else -}}
-false
-{{- end -}}
+{{- define "datadogagents-crd-ready" }}
+{{- $crdsReady := false }}
+{{- range $i := until 10 }}
+  {{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+    {{- $crdsReady = true }}
+  {{- end }}
+{{- end }}
+{{ $crdsReady }}
 {{- end -}}

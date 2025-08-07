@@ -1,4 +1,4 @@
-{{ if .Values.datadog.operator.enabled }}
+{{ if and .Values.datadogoperator.deployOperator ( include "datadogagents-crd-ready" . )}}
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
@@ -7,6 +7,8 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: agent
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
 spec:
   global:
     clusterName: {{ .Values.datadog.clusterName }}
@@ -19,4 +21,4 @@ spec:
       appSecret:
         secretName: {{ template "datadog.appKeySecretName" . }}
         keyName: app-key
-  {{- end }}
+{{- end }}

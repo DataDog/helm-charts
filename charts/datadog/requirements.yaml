@@ -10,8 +10,6 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
     condition: datadog.kubeStateMetricsEnabled
   - name: datadog-operator
-    version: 2.12.0-dev.3
+    version: 2.12.0-dev.4
     repository: file://../datadog-operator
-    condition: datadog.operator.enabled
-    tags:
-    - operator
+    alias: datadogoperator

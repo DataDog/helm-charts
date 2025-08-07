@@ -53,10 +53,6 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
-  # datadog.operator.enabled -- Enable Datadog Operator
-  operator:
-    enabled: false
-
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
   #   key: "value"
@@ -2592,6 +2588,8 @@ datadog-crds:
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
     # datadog-crds.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    datadogAgents: true
+
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
   image:
@@ -2661,5 +2659,5 @@ remoteConfiguration:
   # Preferred way to enable Remote Configuration.
   enabled: true
 
-datadog-operator:
-  installCRDs: false
+datadogoperator:
+  deployOperator: false

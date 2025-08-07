@@ -1,7 +1,7 @@
 {{- template "check-version" . }}
 {{- if .Values.agents.enabled }}
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
-{{- if not .Values.datadog.operator.enabled }}
+{{- if not .Values.datadogoperator.deployOperator }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
