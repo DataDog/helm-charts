@@ -58,20 +58,11 @@ func verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal(t *testing.T, manifest
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
 	agentContainer := &corev1.Container{}
-	processAgentContainer := &corev1.Container{}
 
-	assert.Equal(t, 2, len(ds.Spec.Template.Spec.Containers))
-
-	for _, container := range ds.Spec.Template.Spec.Containers {
-		if container.Name == "agent" {
-			agentContainer = &container
-		} else if container.Name == "process-agent" {
-			processAgentContainer = &container
-		}
-	}
+	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
+	assert.Equal(t, ds.Spec.Template.Spec.Containers[0].Name, "agent")
 
 	assert.NotNil(t, agentContainer)
-	assert.NotNil(t, processAgentContainer)
 
 	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
