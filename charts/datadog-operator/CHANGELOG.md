@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.12.0 
+
+* Update Datadog Operator chart for 1.17.0.
+
 ## 2.12.0-dev.4
 
 * Add option to disable service account automountServiceAccountToken. 
