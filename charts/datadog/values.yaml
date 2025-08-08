@@ -929,6 +929,17 @@ datadog:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
       enabled: false
+    collector:
+      # datadog.networkPath.collector.workers -- Override the number of workers
+      workers:
+      # datadog.networkPath.collector.pathtestTTL -- Override TTL in minutes for pathtests
+      pathtestTTL:
+      # datadog.networkPath.collector.pathtestInterval -- Override time interval between pathtest runs
+      pathtestInterval:
+      # datadog.networkPath.collector.pathtestContextsLimit -- Override maximum number of pathtests stored to run
+      pathtestContextsLimit:
+      # datadog.networkPath.collector.pathtestMaxPerMinute -- Override limit for total pathtests run, per minute
+      pathtestMaxPerMinute:
 
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring

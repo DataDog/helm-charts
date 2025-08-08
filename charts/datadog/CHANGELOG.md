@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.129.0
+
+* Add:
+  - `datadog.networkPath.collector.pathtestContextsLimit`
+  - `datadog.networkPath.collector.pathtestInterval`
+  - `datadog.networkPath.collector.pathtestMaxPerMinute`
+  - `datadog.networkPath.collector.pathtestTTL`
+  - `datadog.networkPath.collector.workers`
+
 ## 3.128.0
 
 * Update:
