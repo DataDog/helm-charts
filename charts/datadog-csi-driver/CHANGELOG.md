@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+* Add gke AllowlistSynchronizer
+
 ## 0.4.1
 
 * Mount `apm-socket` and `dsd-socket` to CSI node server container in readonly mode.
