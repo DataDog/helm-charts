@@ -875,13 +875,10 @@ spec:
           volumeMounts:
             - mountPath: C:/ProgramData/Datadog/logs
               name: logdatadog
-              readOnly: false
             - mountPath: C:/ProgramData/Datadog
               name: config
-              readOnly: false
             - mountPath: C:/ProgramData/Datadog/auth
               name: auth-token
-              readOnly: false
             - mountPath: \\.\pipe\docker_engine
               name: runtimesocket
             - mountPath: \\.\pipe\containerd-containerd
@@ -949,7 +946,6 @@ spec:
               readOnly: true
             - mountPath: C:/ProgramData/Datadog/logs
               name: logdatadog
-              readOnly: false
             - mountPath: C:/ProgramData/Datadog/auth
               name: auth-token
               readOnly: true
@@ -972,7 +968,6 @@ spec:
           volumeMounts:
             - mountPath: C:/Temp/Datadog
               name: config
-              readOnly: false
             - mountPath: C:/Temp/install_info
               name: installinfo
               readOnly: true
@@ -1014,7 +1009,6 @@ spec:
           volumeMounts:
             - mountPath: C:/ProgramData/Datadog
               name: config
-              readOnly: false
             - mountPath: \\.\pipe\docker_engine
               name: runtimesocket
             - mountPath: \\.\pipe\containerd-containerd
@@ -1252,13 +1246,10 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
-              readOnly: false
             - mountPath: /var/log/datadog
               name: varlog
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: C:/ProgramData/Datadog/install_info
               name: installinfo
               readOnly: true

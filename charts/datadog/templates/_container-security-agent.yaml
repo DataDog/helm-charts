@@ -75,19 +75,16 @@
       readOnly: true
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
-      readOnly: false # Need RW to write logs
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false # Need RW for UDS DSD socket
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false # Need RW to write to tmp directory
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
