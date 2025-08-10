@@ -13,7 +13,6 @@
   volumeMounts:
     - name: config
       mountPath: C:/Temp/Datadog
-      readOnly: false # Need RW for config path
     - name: installinfo
       mountPath: C:/Temp/install_info
       readOnly: true
@@ -33,7 +32,6 @@
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      readOnly: false # Need RW for config path
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: C:/conf.d

@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.130.0
+
+* Remove:
+  - `readOnly: false` because it is the default state.
+
 ## 3.129.0
 
 * Add:

@@ -938,30 +938,25 @@ spec:
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: false
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1061,7 +1056,6 @@ spec:
               readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: true
@@ -1075,10 +1069,8 @@ spec:
               readOnly: true
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
@@ -1103,7 +1095,6 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
-              readOnly: false
         - args:
             - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
           command:
@@ -1148,10 +1139,8 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1351,7 +1340,6 @@ spec:
               subPath: install_info
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
       imagePullSecrets: []
       initContainers:
         - args:
@@ -1372,7 +1360,6 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
-              readOnly: false
         - args:
             - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
           command:
@@ -1391,7 +1378,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -1616,13 +1602,10 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
-              readOnly: false
             - mountPath: /var/log/datadog
               name: varlog
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true

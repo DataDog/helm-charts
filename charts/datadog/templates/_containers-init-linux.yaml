@@ -9,7 +9,6 @@
   volumeMounts:
     - name: config
       mountPath: /opt/datadog-agent
-      readOnly: false # Need RW for config path
   resources:
 {{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-container-resources" . | indent 4 }}
@@ -28,7 +27,6 @@
   volumeMounts:
     - name: config
       mountPath: /etc/datadog-agent
-      readOnly: false # Need RW for config path
     {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
     - name: confd
       mountPath: /conf.d
@@ -42,7 +40,6 @@
     {{- if not .Values.providers.gke.gdc }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
-      readOnly: false # Need RW to write logs
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
