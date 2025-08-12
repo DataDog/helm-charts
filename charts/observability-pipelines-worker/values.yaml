@@ -37,7 +37,7 @@ datadog:
     playground: false
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
-    address: "127.0.0.1:8686"
+    address: "0.0.0.0:8686"
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
