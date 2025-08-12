@@ -85,7 +85,8 @@ affinity: {}
 
 searcher:
   enabled: true
-  replicaCount: 3
+  # When autoscaling is enabled, replicaCount is ignored.
+  replicaCount: 1
 
   # Extra env for searcher
   extraEnv: {}
@@ -175,9 +176,45 @@ searcher:
 
   runtimeClassName: ""
 
+  # Enable and configure autoscaling using Horizontal Pod Autoscaler (HPA)
+  autoscaling:
+    enabled: false
+    annotations: {}
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+      # Search is a "latency game", so we aim for low CPU utilization
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+    #     selectPolicy: Max
+    #     policies:
+    #     - type: Percent
+    #       value: 20
+    #       periodSeconds: 60
+    #     - type: Pods
+    #       value: 2
+    #       periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+    #     selectPolicy: Max
+    #     policies:
+    #     - type: Percent
+    #       value: 20
+    #       periodSeconds: 60
+    #     - type: Pods
+    #       value: 2
+    #       periodSeconds: 60
+
 indexer:
   enabled: true
-
+  # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 1
 
   # Extra env for indexer
@@ -263,9 +300,45 @@ indexer:
 
   # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published
   # See https://quickwit.io/docs/configuration/index-config#indexing-settings
-  terminationGracePeriodSeconds: 120
+  terminationGracePeriodSeconds: 300
 
   runtimeClassName: ""
+
+  # Enable and configure autoscaling using Horizontal Pod Autoscaler (HPA)
+  autoscaling:
+    enabled: false
+    annotations: {}
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+      # Indexing is a "throughput game", so we aim for high CPU utilization
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        # selectPolicy: Max
+        # policies:
+        # - type: Percent
+        #   value: 20
+        #   periodSeconds: 60
+        # - type: Pods
+        #   value: 2
+        #   periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        # selectPolicy: Max
+        # policies:
+        # - type: Percent
+        #   value: 20
+        #   periodSeconds: 60
+        # - type: Pods
+        #   value: 2
+        #   periodSeconds: 60
 
   persistentVolume:
     enabled: false
