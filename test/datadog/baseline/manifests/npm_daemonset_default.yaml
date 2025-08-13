@@ -1151,30 +1151,25 @@ spec:
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
               subPath: install_info
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
-              readOnly: false
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
               readOnly: true
@@ -1278,7 +1273,6 @@ spec:
               readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: true
@@ -1292,10 +1286,8 @@ spec:
               readOnly: true
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
@@ -1368,16 +1360,13 @@ spec:
               readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1462,14 +1451,11 @@ spec:
               readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /sys/kernel/debug
               mountPropagation: None
               name: debugfs
-              readOnly: false
             - mountPath: /sys/fs/bpf
               mountPropagation: None
               name: bpffs
@@ -1483,7 +1469,6 @@ spec:
               subPath: system-probe.yaml
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1518,7 +1503,6 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
-              readOnly: false
         - args:
             - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
           command:
@@ -1557,10 +1541,8 @@ spec:
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: false
             - mountPath: /var/log/datadog
               name: logdatadog
-              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1588,7 +1570,6 @@ spec:
             - mountPath: /host/var/lib/kubelet/seccomp
               mountPropagation: None
               name: seccomp-root
-              readOnly: false
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -1870,13 +1851,10 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
-              readOnly: false
             - mountPath: /var/log/datadog
               name: varlog
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
