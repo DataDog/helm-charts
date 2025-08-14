@@ -1,4 +1,3 @@
-{{- if .Values.deployOperator -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,9 +5,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
 {{- if .Values.deployment.annotations }}
   annotations:
-    "helm.sh/hook": post-delete
-    "helm.sh/hook-weight": "10"
-    "helm.sh/hook-delete-policy": hook-succeeded # Ensure the operator is deleted after the DDA is deleted
 {{ toYaml .Values.deployment.annotations | indent 4 }}
 {{- end }}
   labels:
@@ -199,4 +195,3 @@ spec:
       {{- if .Values.volumes }}
       {{- toYaml .Values.volumes | nindent 6 }}
       {{- end }}
-{{- end -}}

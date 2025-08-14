@@ -5,9 +5,6 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.3
-    "helm.sh/hook": pre-install, pre-upgrade, post-delete
-    "helm.sh/hook-weight": "-10"
-    "helm.sh/hook-delete-policy": hook-succeeded # Ensure this CRD is created before the DDA and deleted before the operator is deleted
   name: datadogagents.datadoghq.com
   labels:
     helm.sh/chart: '{{ include "datadog-crds.chart" . }}'

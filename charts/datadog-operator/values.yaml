@@ -2,9 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# deploy -- Set to true to deploy the Datadog Operator
-deployOperator: true
-
 # replicaCount -- Number of instances of Datadog Operator
 replicaCount: 1
 

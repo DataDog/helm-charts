@@ -1,5 +1,4 @@
 {{- if gt (int .Values.replicaCount) 1 -}}
-{{- if .Values.deployOperator }}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -13,5 +12,4 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
 {{- end -}}
