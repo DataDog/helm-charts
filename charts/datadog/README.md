@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.127.0](https://img.shields.io/badge/Version-3.127.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.129.0](https://img.shields.io/badge/Version-3.129.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -778,7 +778,8 @@ helm install <RELEASE_NAME> \
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
-| datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring |
+| datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
+| datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
 | datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. |
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
@@ -826,6 +827,11 @@ helm install <RELEASE_NAME> \
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
+| datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
+| datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
+| datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |
+| datadog.networkPath.collector.pathtestTTL | string | `nil` | Override TTL in minutes for pathtests |
+| datadog.networkPath.collector.workers | string | `nil` | Override the number of workers |
 | datadog.networkPath.connectionsMonitoring.enabled | bool | `false` | Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled. |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
@@ -943,7 +949,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.14"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.15"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |

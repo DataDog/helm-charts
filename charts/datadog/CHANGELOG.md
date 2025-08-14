@@ -1,5 +1,29 @@
 # Datadog changelog
 
+## 3.129.0
+
+* Add:
+  - `datadog.networkPath.collector.pathtestContextsLimit`
+  - `datadog.networkPath.collector.pathtestInterval`
+  - `datadog.networkPath.collector.pathtestMaxPerMinute`
+  - `datadog.networkPath.collector.pathtestTTL`
+  - `datadog.networkPath.collector.workers`
+
+## 3.128.0
+
+* Update:
+  - `datadog.gpuMonitoring.enabled` enables only the gpum core-check
+* Add:
+  - `datadog.gpuMonitoring.privilegedMode` enables system-probe GPU Probe for advanced metrics
+
+## 3.127.2
+
+* Clean up GKE provider references for enabling process checks in core agent.
+
+## 3.127.1
+
+* Update `fips.image.tag` to `1.1.15` fixing CVEs and updating packages.
+
 ## 3.127.0
 
 * Add:

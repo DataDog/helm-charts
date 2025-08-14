@@ -2,7 +2,7 @@ apiVersion: v2
 name: cloudprem
 description: Datadog CloudPrem
 type: application
-version: 0.1.6
+version: 0.1.7
 # This is the version of the "application". Right now, we follow the image version.
 appVersion: v0.1.8
 home: https://www.datadoghq.com/
