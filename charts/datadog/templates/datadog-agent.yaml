@@ -21,8 +21,4 @@ spec:
       appSecret:
         secretName: {{ template "datadog.appKeySecretName" . }}
         keyName: app-key
-  override:
-    nodeAgent:
-      annotations:
-        helm.sh/resource-policy: keep
 {{- end }}
