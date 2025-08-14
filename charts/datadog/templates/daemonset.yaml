@@ -1,7 +1,6 @@
 {{- template "check-version" . }}
 {{- if .Values.agents.enabled }}
 {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
-{{- if not .Values.datadogoperator.deployOperator }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -16,12 +15,14 @@ metadata:
 {{ include "provider-labels" . | indent 4 }}
   {{- if .Values.agents.daemonsetAnnotations }}
   annotations: {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}
+    helm.sh/resource-policy: keep
   {{- end }}
 spec:
   revisionHistoryLimit: {{ .Values.agents.revisionHistoryLimit }}
   selector:
     matchLabels:
-      app: {{ template "datadog.fullname" . }}
+      agent.datadoghq.com/name: datadog
+      agent.datadoghq.com/component: agent
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 6 }}
         {{- end }}
@@ -29,6 +30,8 @@ spec:
     metadata:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
+        agent.datadoghq.com/name: datadog
+        agent.datadoghq.com/component: agent
         app.kubernetes.io/component: agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}
@@ -41,6 +44,7 @@ spec:
 {{ (include "provider-labels" .) | indent 8 }}
       name: {{ template "datadog.fullname" . }}
       annotations:
+        helm.sh/resource-policy: keep
         checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
         {{- if not .Values.datadog.apiKeyExistingSecret }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
@@ -245,6 +249,5 @@ spec:
       {{- end }}
   updateStrategy:
 {{ toYaml .Values.agents.updateStrategy | indent 4 }}
-{{ end }}
 {{ end }}
 {{ end }}

@@ -1,14 +1,14 @@
-{{ if and .Values.datadogoperator.deployOperator ( include "datadogagents-crd-ready" . )}}
+{{ if and .Values.datadog.operator.createDDAManifest ( include "datadogagents-crd-ready" . )}}
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
-  name: {{ template "datadog.fullname" . }}
+  name: datadog
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: agent
   annotations:
-    helm.sh/hook: post-install,post-upgrade
+    helm.sh/resource-policy: keep
 spec:
   global:
     clusterName: {{ .Values.datadog.clusterName }}
@@ -21,4 +21,8 @@ spec:
       appSecret:
         secretName: {{ template "datadog.appKeySecretName" . }}
         keyName: app-key
+  override:
+    nodeAgent:
+      annotations:
+        helm.sh/resource-policy: keep
 {{- end }}

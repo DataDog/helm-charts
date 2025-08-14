@@ -9,7 +9,8 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: {{ template "datadog.fullname" . }}-cluster-agent
+    agent.datadoghq.com/component: cluster-agent
+    agent.datadoghq.com/name: datadog
   ports:
   - port: 5005
     name: agentport
@@ -32,7 +33,8 @@ metadata:
 spec:
   type: {{ .Values.clusterAgent.metricsProvider.service.type }}
   selector:
-    app: {{ template "datadog.fullname" . }}-cluster-agent
+    agent.datadoghq.com/component: cluster-agent
+    agent.datadoghq.com/name: datadog
   ports:
   - port: {{ template "clusterAgent.metricsProvider.port" . }}
     name: metricsapi
@@ -54,7 +56,8 @@ metadata:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
   selector:
-    app: {{ template "datadog.fullname" . }}-cluster-agent
+    agent.datadoghq.com/component: cluster-agent
+    agent.datadoghq.com/name: datadog
   ports:
   - port: 443
     targetPort: {{ .Values.clusterAgent.admissionController.port }}

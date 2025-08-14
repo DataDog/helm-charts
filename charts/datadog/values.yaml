@@ -32,6 +32,10 @@ commonLabels: {}
 registry:  # gcr.io/datadoghq
 
 datadog:
+  # datadog.operatorManagedDDA.enabled -- Enable the Operator Managed Datadog Agent Deployment
+  operator:
+    enabled: false
+    createDDAManifest: false
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -2658,6 +2662,3 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
-
-datadogoperator:
-  deployOperator: false

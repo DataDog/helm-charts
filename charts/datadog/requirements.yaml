@@ -13,3 +13,4 @@ dependencies:
     version: 2.12.0-dev.4
     repository: file://../datadog-operator
     alias: datadogoperator
+    condition: datadog.operator.enabled
