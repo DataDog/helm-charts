@@ -32,9 +32,10 @@ commonLabels: {}
 registry:  # gcr.io/datadoghq
 
 datadog:
-  # datadog.operatorManagedDDA.enabled -- Enable the Operator Managed Datadog Agent Deployment
   operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator
     enabled: false
+    # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
     createDDAManifest: false
   # datadog.apiKey -- Your Datadog API key
 
