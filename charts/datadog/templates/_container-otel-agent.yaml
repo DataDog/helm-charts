@@ -134,6 +134,9 @@
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}
+    - name: agent-ipc-root-ca
+      mountPath: /var/run/secrets/agent-ipc-root-ca/ca.crt
+      readOnly: true
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
