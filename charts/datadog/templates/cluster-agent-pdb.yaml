@@ -1,4 +1,4 @@
-{{- if .Values.clusterAgent.createPodDisruptionBudget -}}
+{{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterAgent.pdb.enable -}}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -7,7 +7,7 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
-  minAvailable: 1
+  minAvailable: {{ .Values.clusterAgent.pdb.minAvailable | default 1 }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}-cluster-agent

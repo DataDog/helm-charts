@@ -1,4 +1,4 @@
-{{- if .Values.clusterChecksRunner.createPodDisruptionBudget -}}
+{{- if .Values.clusterChecksRunner.createPodDisruptionBudget .Values.clusterChecksRunner.pdb.enable -}}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -7,7 +7,7 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
-  maxUnavailable: 1
+  maxUnavailable: {{ .Values.clusterChecksRunner.pdb.maxUnavailable | default 1 }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}-clusterchecks
