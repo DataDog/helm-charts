@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.12.0 
+## 2.12.1
+
+* Update `datadog-crds` dependency to stable version (no-op change).
+
+## 2.12.0
 
 * Update Datadog Operator chart for 1.17.0.
 
