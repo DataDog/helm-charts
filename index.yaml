@@ -26029,6 +26029,30 @@ entries:
         - name: Chart Source
           url: https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
     apiVersion: v2
+    appVersion: 2.8.0
+    created: "2025-08-19T14:33:02.754358072Z"
+    description: Observability Pipelines Worker
+    digest: 9e73f9700f60a4852265e4022f3ac93a12608c64968e5be7cc0276523574316c
+    home: https://www.datadoghq.com
+    icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+    keywords:
+    - observability
+    - logs
+    - metrics
+    - traces
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: observability-pipelines-worker
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/observability-pipelines-worker-2.8.0/observability-pipelines-worker-2.8.0.tgz
+    version: 2.8.0
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
+    apiVersion: v2
     appVersion: 2.7.0
     created: "2025-07-30T09:27:28.157107578Z"
     description: Observability Pipelines Worker
@@ -29526,4 +29550,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2025-08-19T13:42:05.094696112Z"
+generated: "2025-08-19T14:33:02.755854858Z"
