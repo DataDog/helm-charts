@@ -572,6 +572,11 @@ spec:
                         useClusterChecksRunners:
                           type: boolean
                       type: object
+                    controlPlaneMonitoring:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     cspm:
                       properties:
                         checkInterval:
@@ -789,6 +794,8 @@ spec:
                     gpu:
                       properties:
                         enabled:
+                          type: boolean
+                        privilegedMode:
                           type: boolean
                         requiredRuntimeClassName:
                           type: string
@@ -1151,6 +1158,11 @@ spec:
                       type: object
                     criSocketPath:
                       type: string
+                    csi:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     disableNonResourceRules:
                       type: boolean
                     dockerSocketPath:
@@ -4441,6 +4453,11 @@ spec:
                             useClusterChecksRunners:
                               type: boolean
                           type: object
+                        controlPlaneMonitoring:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         cspm:
                           properties:
                             checkInterval:
@@ -4658,6 +4675,8 @@ spec:
                         gpu:
                           properties:
                             enabled:
+                              type: boolean
+                            privilegedMode:
                               type: boolean
                             requiredRuntimeClassName:
                               type: string
