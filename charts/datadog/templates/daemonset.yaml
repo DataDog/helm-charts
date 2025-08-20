@@ -10,13 +10,15 @@ metadata:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: agent
     app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
+    agent.datadoghq.com/name: datadog
+    agent.datadoghq.com/component: agent
     {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
   annotations:
   {{- if .Values.datadog.operator.migrationEnabled }}
-    agent.datadoghq.com/helm-migration: "true"
+    helm.sh/resource-policy: "keep"
   {{- end }}
   {{- if .Values.agents.daemonsetAnnotations }}
     {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}

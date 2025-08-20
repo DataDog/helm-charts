@@ -19,7 +19,7 @@ metadata:
   {{- if .Values.clusterAgent.deploymentAnnotations }}
     {{ toYaml .Values.clusterAgent.deploymentAnnotations | nindent 4 }}
   {{- if .Values.datadog.operator.migrationEnabled }}
-    agent.datadoghq.com/helm-migration: "true"
+    helm.sh/resource-policy: "keep"
   {{- end }}
   {{- end }}
 spec:
