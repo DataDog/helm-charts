@@ -44,7 +44,10 @@ spec:
         {{- if $.Values.bootstrap.indexes.command }}
         command: {{- toYaml $.Values.bootstrap.sources.command | nindent 8 }}
         {{- else }}
-        command: ["/bin/bash","-c","quickwit index describe --index {{ $index_id }} --endpoint ${QW_CLUSTER_ENDPOINT} --retries 10 || quickwit index create --index-config {{ . }} --endpoint ${QW_CLUSTER_ENDPOINT} --retries 10"]
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            quickwit index update --yes --create --retries 10 --index {{ $index_id }} --index-config {{ . }} --endpoint ${QW_CLUSTER_ENDPOINT}
         {{- end }}
         env:
           {{- include "quickwit.environment" $ | nindent 10 }}

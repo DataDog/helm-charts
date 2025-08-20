@@ -7,6 +7,24 @@ aws:
   # -- AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
   partition: aws
 
+azure:
+  # -- Azure tenant ID
+  tenantId: ""
+  # -- Azure client ID
+  clientId: ""
+  # -- Azure client secret reference
+  clientSecretRef: {}
+    # name: azure-client-secret
+    # key: client-secret
+  # -- Azure storage account name and access key secret reference
+  storageAccount:
+    # -- Azure storage account name
+    name: ""
+    # -- Azure storage account access key secret reference
+    accessKeySecretRef: {}
+      # name: azure-storage-account-access-key
+      # key: access-key
+
 image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem

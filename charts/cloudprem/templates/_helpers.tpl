@@ -161,16 +161,42 @@ Quickwit environment
 {{- if .Values.tracingEnabled }}
 - name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
   value: "true"
+{{- if .Values.azure.tenantId }}
+- name: AZURE_TENANT_ID
+  value: {{ .Values.azure.tenantId }}
+{{- end }}
+{{- if .Values.azure.clientId }}
+- name: AZURE_CLIENT_ID
+  value: {{ .Values.azure.clientId }}
+{{- end }}
+{{- if .Values.azure.clientSecretRef }}
+- name: AZURE_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.azure.clientSecretRef.name }}
+      key: {{ .Values.azure.clientSecretRef.key }}
+{{- end }}
+{{- if .Values.azure.storageAccount.name }}
+- name: QW_AZURE_STORAGE_ACCOUNT
+  value: {{ .Values.azure.storageAccount.name }}
+{{- end }}
+{{- if .Values.azure.storageAccount.accessKeySecretRef }}
+- name: QW_AZURE_STORAGE_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.azure.storageAccount.accessKeySecretRef.name }}
+      key: {{ .Values.azure.storageAccount.accessKeySecretRef.key }}
+{{- end}}
+{{- range $key, $value := .Values.environment }}
+- name: "{{ $key }}"
+  value: "{{ $value }}"
+{{- end }}
 - name: OTEL_EXPORTER_OTLP_ENDPOINT
   value: http://{{ include "quickwit.fullname" $ }}-indexer:7281
 - name: OTEL_EXPORTER_OTLP_PROTOCOL
   value: "grpc"
 - name: OTEL_EXPORTER_OTLP_TIMEOUT
   value: "10"
-{{- end}}
-{{- range $key, $value := .Values.environment }}
-- name: "{{ $key }}"
-  value: "{{ $value }}"
 {{- end }}
 {{- end }}
 
