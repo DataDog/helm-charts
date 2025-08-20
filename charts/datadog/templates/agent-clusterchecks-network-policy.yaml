@@ -26,6 +26,7 @@ spec:
       to:
         - podSelector:
             matchLabels:
+              app: {{ template "datadog.fullname" . }}-cluster-agent
               agent.datadoghq.com/component: cluster-agent
               agent.datadoghq.com/name: datadog
 {{- end }}

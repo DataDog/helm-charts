@@ -2,13 +2,14 @@
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
-  name: datadog
+  name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: agent
   annotations:
     helm.sh/resource-policy: keep
+    agent.datadoghq.com/helm-migration: "true"
 spec:
   global:
     clusterName: {{ .Values.datadog.clusterName }}

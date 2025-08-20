@@ -9,6 +9,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
+    app: {{ template "datadog.fullname" . }}-cluster-agent
     agent.datadoghq.com/component: cluster-agent
     agent.datadoghq.com/name: datadog
   ports:
@@ -33,6 +34,7 @@ metadata:
 spec:
   type: {{ .Values.clusterAgent.metricsProvider.service.type }}
   selector:
+    app: {{ template "datadog.fullname" . }}-cluster-agent
     agent.datadoghq.com/component: cluster-agent
     agent.datadoghq.com/name: datadog
   ports:
@@ -56,6 +58,7 @@ metadata:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
   selector:
+    app: {{ template "datadog.fullname" . }}-cluster-agent
     agent.datadoghq.com/component: cluster-agent
     agent.datadoghq.com/name: datadog
   ports:
@@ -82,6 +85,8 @@ metadata:
 spec:
   selector:
     app: {{ template "datadog.fullname" . }}
+    agent.datadoghq.com/name: datadog
+    agent.datadoghq.com/component: agent
   ports:
     - protocol: UDP
       port: {{ .Values.datadog.dogstatsd.port }}

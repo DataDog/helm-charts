@@ -37,6 +37,9 @@ datadog:
     enabled: false
     # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
     createDDAManifest: false
+    # datadog.operator.migration.enabled -- Enable migration to the operator
+    migrationEnabled: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -2676,3 +2679,9 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+datadog-operator:
+  image:
+    repository: docker.io/fannyatdd/operator
+    doNotCheckTag: true
+  logLevel: debug

@@ -3,18 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: datadog-cluster-agent
+  name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+    app.kubernetes.io/component: cluster-agent
+    app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
     agent.datadoghq.com/component: cluster-agent
     agent.datadoghq.com/name: datadog
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  annotations:
   {{- if .Values.clusterAgent.deploymentAnnotations }}
-  annotations: {{ toYaml .Values.clusterAgent.deploymentAnnotations | nindent 4 }}
+    {{ toYaml .Values.clusterAgent.deploymentAnnotations | nindent 4 }}
+  {{- if .Values.datadog.operator.migrationEnabled }}
+    agent.datadoghq.com/helm-migration: "true"
+  {{- end }}
   {{- end }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
@@ -30,6 +36,7 @@ spec:
 {{- end }}
   selector:
     matchLabels:
+      app: {{ template "datadog.fullname" . }}-cluster-agent
       agent.datadoghq.com/component: cluster-agent
       agent.datadoghq.com/name: datadog
         {{- if .Values.clusterAgent.podLabels }}
@@ -39,8 +46,10 @@ spec:
     metadata:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
+        app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
+        app: {{ template "datadog.fullname" . }}-cluster-agent
         agent.datadoghq.com/component: cluster-agent
         agent.datadoghq.com/name: datadog
         {{- if .Values.clusterAgent.podLabels }}
@@ -558,6 +567,7 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchLabels:
+                  app: {{ template "datadog.fullname" . }}-cluster-agent
                   agent.datadoghq.com/component: cluster-agent
                   agent.datadoghq.com/name: datadog
               topologyKey: kubernetes.io/hostname
