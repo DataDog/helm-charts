@@ -2,7 +2,7 @@
 
 ## 3.130.0
 
-* Update Cluster Agent RBAC to allow get/List/watch on all Datadog custom resources if the orchestrator check is enabled.
+* Update Cluster Agent RBAC to allow list/watch on all Datadog custom resources if the orchestrator check is enabled.
 
 ## 3.129.0
 
