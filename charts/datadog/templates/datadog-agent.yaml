@@ -12,9 +12,101 @@ metadata:
     agent.datadoghq.com/helm-migration: "true"
 spec:
   global:
+{{- if .Values.datadog.clusterName }}
     clusterName: {{ .Values.datadog.clusterName }}
+{{- end }}
+{{- if .Values.registry }}
+    registry: {{ .Values.registry }}
+{{- end }}
+{{- if .Values.datadog.site }}
+    site: {{ .Values.datadog.site }}
+{{- end }}
+    logLevel: {{ .Values.datadog.logLevel }}
+{{- if .Values.datadog.tags }}
+    tags:
+{{ .Values.datadog.tags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.nodeLabelsAsTags }}
+    nodeLabelsAsTags:
+{{ .Values.datadog.nodeLabelsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.podLabelsAsTags }}
+    podLabelsAsTags:
+{{ .Values.datadog.podLabelsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.podAnnotationsAsTags }}
+    podAnnotationsAsTags:
+{{ .Values.datadog.podAnnotationsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.namespaceLabelsAsTags }}
+    namespaceLabelsAsTags:
+{{ .Values.datadog.namespaceLabelsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.namespaceAnnotationsAsTags }}
+    namespaceAnnotationsAsTags:
+{{ .Values.datadog.namespaceAnnotationsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.kubernetesResourcesLabelsAsTags }}
+    kubernetesResourcesLabelsAsTags:
+{{ .Values.datadog.kubernetesResourcesLabelsAsTags | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.kubernetesResourcesAnnotationsAsTags }}
+    kubernetesResourcesAnnotationsAsTags:
+{{ .Values.datadog.kubernetesResourcesAnnotationsAsTags | toYaml | indent 6 }}
+{{- end }}
+    originDetectionUnified:
+      enabled: {{ .Values.datadog.originDetectionUnified.enabled }}
     kubelet:
+{{- if .Values.datadog.kubelet.tlsVerify }}
       tlsVerify: {{ .Values.datadog.kubelet.tlsVerify }}
+{{- end }}
+{{- if .Values.datadog.kubelet.host.valueFrom.fieldRef }}
+      host:
+        fieldRef:
+          fieldPath: {{ .Values.datadog.kubelet.host.valueFrom.fieldRef.fieldPath }}
+{{- if .Values.datadog.kubelet.host.valueFrom.fieldRef.apiVersion }}
+          apiVersion: {{ .Values.datadog.kubelet.host.valueFrom.fieldRef.apiVersion }}
+{{- end }}
+{{- else if .Values.datadog.kubelet.host.valueFrom.configMapKeyRef }}
+      host:
+        configMapKeyRef:
+          name: {{ .Values.datadog.kubelet.host.valueFrom.configMapKeyRef.name }}
+          key: {{ .Values.datadog.kubelet.host.valueFrom.configMapKeyRef.key }}
+{{- if .Values.datadog.kubelet.host.valueFrom.configMapKeyRef.optional }}
+          optional: {{ .Values.datadog.kubelet.host.valueFrom.configMapKeyRef.optional }}
+{{- end }}
+{{- else if .Values.datadog.kubelet.host.valueFrom.secretKeyRef }}
+      host:
+        secretKeyRef:
+          name: {{ .Values.datadog.kubelet.host.valueFrom.secretKeyRef.name }}
+          key: {{ .Values.datadog.kubelet.host.valueFrom.secretKeyRef.key }}
+{{- if .Values.datadog.kubelet.host.valueFrom.secretKeyRef.optional }}
+          optional: {{ .Values.datadog.kubelet.host.valueFrom.secretKeyRef.optional }}
+{{- end }}
+{{- else if .Values.datadog.kubelet.host.valueFrom.resourceFieldRef }}
+      host:
+        resourceFieldRef:
+          resource: {{ .Values.datadog.kubelet.host.valueFrom.resourceFieldRef.resource }}
+{{- if .Values.datadog.kubelet.host.valueFrom.resourceFieldRef.containerName }}
+          containerName: {{ .Values.datadog.kubelet.host.valueFrom.resourceFieldRef.containerName }}
+{{- end }}
+{{- if .Values.datadog.kubelet.host.valueFrom.resourceFieldRef.divisor }}
+          divisor: {{ .Values.datadog.kubelet.host.valueFrom.resourceFieldRef.divisor }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.kubelet.hostCAPath }}
+      hostCAPath: {{ .Values.datadog.kubelet.hostCAPath }}
+{{- end }}
+{{- if .Values.datadog.kubelet.agentCAPath }}
+      agentCAPath: {{ .Values.datadog.kubelet.agentCAPath }}
+{{- end }}
+      podResourcesSocketPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- if .Values.datadog.criSocketPath }}
+    criSocketPath: {{ .Values.datadog.criSocketPath }}
+{{- end }}
+{{- if .Values.datadog.dockerSocketPath }}
+    dockerSocketPath: {{ .Values.datadog.dockerSocketPath }}
+{{- end }}
     credentials:
       apiSecret:
         secretName: {{ template "datadog.apiSecretName" . }}
@@ -22,4 +114,658 @@ spec:
       appSecret:
         secretName: {{ template "datadog.appKeySecretName" . }}
         keyName: app-key
+{{- if .Values.datadog.apiKey }}
+      apiKey: {{ .Values.datadog.apiKey }}
+{{- end }}
+{{- if .Values.datadog.appKey }}
+      appKey: {{ .Values.datadog.appKey }}
+{{- end }}
+    localService:
+      forceEnableLocalService: {{ .Values.agents.localService.forceLocalServiceEnabled }}
+{{- if .Values.agents.localService.overrideName }}
+      nameOverride: {{ .Values.agents.localService.overrideName }}
+{{- end }}
+{{- if .Values.clusterAgent.token }}
+    clusterAgentToken: {{ .Values.clusterAgent.token }}
+{{- end }}
+{{- if .Values.clusterAgent.tokenExistingSecret }}
+    clusterAgentTokenSecret:
+      secretName: {{ .Values.clusterAgent.tokenExistingSecret }}
+{{- end }}
+{{- if or .Values.datadog.secretBackend.command .Values.datadog.secretBackend.arguments .Values.datadog.secretBackend.timeout .Values.datadog.secretBackend.roles }}
+    secretBackend:
+{{- if .Values.datadog.secretBackend.command }}
+      command: {{ .Values.datadog.secretBackend.command }}
+{{- end }}
+{{- if .Values.datadog.secretBackend.arguments }}
+      args: {{ .Values.datadog.secretBackend.arguments }}
+{{- end }}
+{{- if .Values.datadog.secretBackend.timeout }}
+      timeout: {{ .Values.datadog.secretBackend.timeout }}
+{{- end }}
+      enableGlobalPermissions: {{ .Values.datadog.secretBackend.enableGlobalPermissions }}
+{{- if .Values.datadog.secretBackend.roles }}
+      roles:
+{{ .Values.datadog.secretBackend.roles | toYaml | indent 8 }}
+{{- end }}
+{{- end }}
+    networkPolicy:
+      create: {{ .Values.datadog.networkPolicy.create }}
+      flavor: {{ .Values.datadog.networkPolicy.flavor }}
+{{- if .Values.datadog.networkPolicy.cilium.dnsSelector.toEndpoints }}
+      dnsSelectorEndpoints:
+{{ .Values.datadog.networkPolicy.cilium.dnsSelector.toEndpoints | toYaml | indent 8 }}
+{{- end }}
+    fips:
+      enabled: {{ .Values.fips.enabled }}
+      port: {{ .Values.fips.port }}
+      portRange: {{ .Values.fips.portRange }}
+      useHTTPS: {{ .Values.fips.use_https }}
+      localAddress: {{ .Values.fips.local_address }}
+      image:
+        name: {{ .Values.fips.image.name }}
+        tag: {{ .Values.fips.image.tag }}
+{{- if .Values.datadog.dd_url }}
+  endpoint:
+    url: {{ .Values.datadog.dd_url }}
+{{- end }}
+  features:
+    clusterChecks:
+      enabled: {{ .Values.datadog.clusterChecks.enabled }}
+      useClusterChecksRunners: {{ .Values.clusterChecksRunner.enabled }}
+    externalMetricsServer:
+      enabled: {{ .Values.clusterAgent.metricsProvider.enabled }}
+{{- if .Values.clusterAgent.metricsProvider.endpoint }}
+      endpoint: {{ .Values.clusterAgent.metricsProvider.endpoint }}
+{{- end }}
+      registerAPIService: {{ .Values.clusterAgent.metricsProvider.registerAPIService }}
+      port: {{ .Values.clusterAgent.metricsProvider.service.port }}
+      useDatadogMetrics: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
+      wpaController: {{ .Values.clusterAgent.metricsProvider.wpaController }}
+    admissionController:
+      enabled: {{ .Values.clusterAgent.admissionController.enabled }}
+{{- if .Values.clusterAgent.admissionController.configMode }}
+      agentCommunicationMode: {{ .Values.clusterAgent.admissionController.configMode }}
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.containerRegistry }}
+      registry: {{ .Values.clusterAgent.admissionController.containerRegistry }}
+{{- end }}
+      cwsInstrumentation:
+        enabled: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.enabled }}
+        mode: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode }}
+      failurePolicy: {{ .Values.clusterAgent.admissionController.failurePolicy }}
+      kubernetesAdmissionEvents:
+        enabled: {{ .Values.clusterAgent.admissionController.kubernetesAdmissionEvents.enabled }}
+      mutateUnlabelled: {{ .Values.clusterAgent.admissionController.mutateUnlabelled }}
+      mutation:
+        enabled: {{ .Values.clusterAgent.admissionController.mutation.enabled }}
+      validation:
+        enabled: {{ .Values.clusterAgent.admissionController.validation.enabled }}
+      webhookName: {{ .Values.clusterAgent.admissionController.webhookName }}
+      agentSidecarInjection:
+        enabled: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.enabled }}
+        clusterAgentCommunicationEnabled: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
+        registry: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.containerRegistry }}
+{{- end }}
+{{- if or .Values.clusterAgent.admissionController.agentSidecarInjection.imageName .Values.clusterAgent.admissionController.agentSidecarInjection.imageTag }}
+        image:
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.imageName }}
+          name: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.imageName }}
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.imageTag }}
+          tag: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.imageTag }}
+{{- end }}
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.profiles }}
+        profiles:
+{{ .Values.clusterAgent.admissionController.agentSidecarInjection.profiles | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
+        provider: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.selectors }}
+        selectors:
+{{ .Values.clusterAgent.admissionController.agentSidecarInjection.selectors | toYaml | indent 10 }}
+{{- end }}
+    apm:
+      enabled: {{ .Values.datadog.apm.socketEnabled }}
+      hostPortConfig:
+        enabled: {{ .Values.datadog.apm.portEnabled }}
+        hostPort: {{ .Values.datadog.apm.port }}
+{{- if .Values.datadog.apm.hostSocketPath }}
+      unixDomainSocketConfig:
+        path: {{ .Values.datadog.apm.hostSocketPath }}
+{{- end }}
+      errorTrackingStandalone:
+        enabled: {{ .Values.datadog.apm.errorTrackingStandalone.enabled }}
+{{- if or .Values.datadog.apm.instrumentation.targets .Values.datadog.apm.instrumentation.injector.imageTag }}
+      instrumentation:
+{{- if .Values.datadog.apm.instrumentation.targets }}
+        targets:
+{{ .Values.datadog.apm.instrumentation.targets | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
+        injector:
+          imageTag: {{ .Values.datadog.apm.instrumentation.injector.imageTag }}
+{{- end }}
+{{- end }}
+    dogstatsd:
+      originDetectionEnabled: {{ .Values.datadog.dogstatsd.originDetection }}
+      hostPortConfig:
+        enabled: {{ .Values.datadog.dogstatsd.useHostPort }}
+        hostPort: {{ .Values.datadog.dogstatsd.port }}
+      unixDomainSocketConfig:
+        enabled: {{ .Values.datadog.dogstatsd.useSocketVolume }}
+        path: {{ .Values.datadog.dogstatsd.socketPath }}
+      tagCardinality: {{ .Values.datadog.dogstatsd.tagCardinality }}
+    eventCollection:
+      collectKubernetesEvents: {{ .Values.datadog.collectEvents }}
+{{- if .Values.datadog.kubernetesEvents.collectedEventTypes }}
+      collectedEventTypes:
+{{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | indent 8 }}
+{{- end }}
+      unbundleEvents: {{ .Values.datadog.kubernetesEvents.unbundleEvents }}
+    logCollection:
+      enabled: {{ .Values.datadog.logs.enabled }}
+      containerCollectAll: {{ .Values.datadog.logs.containerCollectAll }}
+      containerCollectUsingFiles: {{ .Values.datadog.logs.containerCollectUsingFiles }}
+    npm:
+      enabled: {{ .Values.datadog.networkMonitoring.enabled }}
+      enableConntrack: {{ .Values.datadog.systemProbe.enableConntrack }}
+      collectDNSStats: {{ .Values.datadog.systemProbe.collectDNSStats }}
+    usm:
+      enabled: {{ .Values.datadog.serviceMonitoring.enabled }}
+    gpu:
+      enabled: {{ .Values.datadog.gpuMonitoring.enabled }}
+      requiredRuntimeClassName: {{ .Values.datadog.gpuMonitoring.runtimeClassName }}
+    processDiscovery:
+      enabled: {{ .Values.datadog.processAgent.processDiscovery }}
+    liveProcessCollection:
+      stripProcessArguments: {{ .Values.datadog.processAgent.stripProcessArguments }}
+    orchestratorExplorer:
+      enabled: {{ .Values.datadog.orchestratorExplorer.enabled }}
+      scrubContainers: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled }}
+{{- if .Values.datadog.orchestratorExplorer.customResources }}
+      customResources:
+{{ .Values.datadog.orchestratorExplorer.customResources | toYaml | indent 8 }}
+{{- end }}
+    kubeStateMetricsCore:
+      enabled: {{ .Values.datadog.kubeStateMetricsCore.enabled }}
+    helmCheck:
+      enabled: {{ .Values.datadog.helmCheck.enabled }}
+      collectEvents: {{ .Values.datadog.helmCheck.collectEvents }}
+{{- if .Values.datadog.helmCheck.valuesAsTags }}
+      valuesAsTags:
+{{ .Values.datadog.helmCheck.valuesAsTags | toYaml | indent 8 }}
+{{- end }}
+    cspm:
+      enabled: {{ .Values.datadog.securityAgent.compliance.enabled }}
+      checkInterval: {{ .Values.datadog.securityAgent.compliance.checkInterval }}
+      hostBenchmarks:
+        enabled: {{ .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
+{{- if .Values.datadog.securityAgent.compliance.configMap }}
+      customBenchmarks:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.compliance.configMap }}
+{{- end }}
+    cws:
+      enabled: {{ .Values.datadog.securityAgent.runtime.enabled }}
+      syscallMonitorEnabled: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
+      network:
+        enabled: {{ .Values.datadog.securityAgent.runtime.network.enabled }}
+      securityProfiles:
+        enabled: {{ .Values.datadog.securityAgent.runtime.securityProfile.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+      customPolicies:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- end }}
+    oomKill:
+      enabled: {{ .Values.datadog.systemProbe.enableOOMKill }}
+    tcpQueueLength:
+      enabled: {{ .Values.datadog.systemProbe.enableTCPQueueLength }}
+    sbom:
+      containerImage:
+        enabled: {{ .Values.datadog.sbom.containerImage.enabled }}
+        overlayFSDirectScan: {{ .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
+      host:
+        enabled: {{ .Values.datadog.sbom.host.enabled }}
+    otlp:
+      receiver:
+        protocols:
+          grpc:
+            enabled: {{ .Values.datadog.otlp.receiver.protocols.grpc.enabled }}
+            endpoint: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint }}
+          http:
+            enabled: {{ .Values.datadog.otlp.receiver.protocols.http.enabled }}
+            endpoint: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint }}
+    otelCollector:
+      enabled: {{ .Values.datadog.otelCollector.enabled }}
+{{- if .Values.datadog.otelCollector.ports }}
+      ports:
+{{- range .Values.datadog.otelCollector.ports }}
+        - containerPort: {{ .containerPort | int }}
+          name: {{ .name }}
+          protocol: {{ .protocol }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.otelCollector.config }}
+      conf:
+        configData: {{ .Values.datadog.otelCollector.config }}
+{{- end }}
+    prometheusScrape:
+      enabled: {{ .Values.datadog.prometheusScrape.enabled }}
+      enableServiceEndpoints: {{ .Values.datadog.prometheusScrape.serviceEndpoints }}
+      version: {{ .Values.datadog.prometheusScrape.version }}
+{{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+      additionalConfigs:
+{{ .Values.datadog.prometheusScrape.additionalConfigs | toYaml | indent 8 }}
+{{- end }}
+    remoteConfiguration:
+      enabled: {{ .Values.datadog.remoteConfiguration.enabled }}
+  override:
+    nodeAgent:
+      containers:
+        agent:
+{{- if .Values.agents.containers.agent.readinessProbe }}
+          readinessProbe:
+{{ .Values.agents.containers.agent.readinessProbe | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.agent.resources }}
+          resources:
+{{ .Values.agents.containers.agent.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.agent.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.agent.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if or .Values.agents.containers.initContainers.resources .Values.agents.containers.initContainers.securityContext .Values.agents.containers.initContainers.volumeMounts }}
+        init-config:
+{{- if .Values.agents.containers.initContainers.resources }}
+          resources:
+{{ .Values.agents.containers.initContainers.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.initContainers.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.initContainers.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.initContainers.volumeMounts }}
+          volumeMounts:
+{{ .Values.agents.containers.initContainers.volumeMounts | toYaml | indent 12 }}
+{{- end }}
+        init-volume:
+{{- if .Values.agents.containers.initContainers.resources }}
+          resources:
+{{ .Values.agents.containers.initContainers.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.initContainers.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.initContainers.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.initContainers.volumeMounts }}
+          volumeMounts:
+{{ .Values.agents.containers.initContainers.volumeMounts | toYaml | indent 12 }}
+{{- end }}
+{{- end }}
+{{- if or .Values.agents.containers.processAgent.env .Values.agents.containers.processAgent.logLevel .Values.agents.containers.processAgent.resources .Values.agents.containers.processAgent.securityContext }}
+        process-agent:
+{{- if .Values.agents.containers.processAgent.env }}
+          env:
+{{ .Values.agents.containers.processAgent.env | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.logLevel }}
+          logLevel: {{ .Values.agents.containers.processAgent.logLevel }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.resources }}
+          resources:
+{{ .Values.agents.containers.processAgent.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.processAgent.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- end }}
+{{- if or .Values.agents.containers.securityAgent.env .Values.agents.containers.securityAgent.logLevel .Values.agents.containers.securityAgent.resources }}
+        security-agent:
+{{- if .Values.agents.containers.securityAgent.env }}
+          env:
+{{ .Values.agents.containers.securityAgent.env | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.securityAgent.logLevel }}
+          logLevel: {{ .Values.agents.containers.securityAgent.logLevel }}
+{{- end }}
+{{- if .Values.agents.containers.securityAgent.resources }}
+          resources:
+{{ .Values.agents.containers.securityAgent.resources | toYaml | indent 12 }}
+{{- end }}
+{{- end }}
+{{- if eq (include "should-enable-system-probe" .) "true" }}
+        system-probe:
+{{- if .Values.agents.containers.systemProbe.env }}
+          env:
+{{ .Values.agents.containers.systemProbe.env | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.logLevel }}
+          logLevel: {{ .Values.agents.containers.systemProbe.logLevel }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.resources }}
+          resources:
+{{ .Values.agents.containers.systemProbe.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.systemProbe.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.datadog.systemProbe.apparmor }}
+          appArmorProfileName: {{ .Values.datadog.systemProbe.apparmor }}
+{{- end }}
+{{- if or .Values.datadog.systemProbe.seccomp .Values.datadog.systemProbe.seccompRoot }}
+          seccompConfig:
+{{- if .Values.datadog.systemProbe.seccomp }}
+            customProfile:
+              configData: {{ .Values.datadog.systemProbe.seccomp }}
+{{- end }}
+{{- if .Values.datadog.systemProbe.seccompRoot }}
+            customRootPath: {{ .Values.datadog.systemProbe.seccompRoot }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if or .Values.agents.containers.traceAgent.env .Values.agents.containers.traceAgent.livenessProbe .Values.agents.containers.traceAgent.logLevel .Values.agents.containers.traceAgent.resources .Values.agents.containers.traceAgent.securityContext }}
+        trace-agent:
+{{- if .Values.agents.containers.traceAgent.env }}
+          env:
+{{ .Values.agents.containers.traceAgent.env | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.livenessProbe }}
+          livenessProbe:
+{{ .Values.agents.containers.traceAgent.livenessProbe | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.logLevel }}
+          logLevel: {{ .Values.agents.containers.traceAgent.logLevel }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.resources }}
+          resources:
+{{ .Values.agents.containers.traceAgent.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.securityContext }}
+          securityContext:
+{{ .Values.agents.containers.traceAgent.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- end }}
+{{- if .Values.agents.customAgentConfig }}
+      customConfigurations:
+        datadog.yaml:
+          configData: |
+{{ .Values.agents.customAgentConfig | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.datadog.confd }}
+      extraConfd:
+{{ .Values.datadog.confd | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.datadog.checksd }}
+      extraChecksd:
+{{ .Values.datadog.checksd | toYaml | indent 8 }}
+{{- end }}
+      env:
+        - name: DD_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+{{- if .Values.datadog.env }}
+{{ .Values.datadog.env | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.datadog.envFrom }}
+      envFrom:
+{{ .Values.datadog.envFrom | toYaml | indent 8 }}
+{{- end }}
+      hostPID: {{ .Values.datadog.useHostPID }}
+{{- if .Values.agents.dnsConfig }}
+      dnsConfig:
+{{ .Values.agents.dnsConfig | toYaml | indent 8 }}
+{{- end }}
+      image:
+        name: {{ .Values.agents.image.name }}
+        pullPolicy: {{ .Values.agents.image.pullPolicy }}
+{{- if .Values.agents.image.pullSecrets }}
+        pullSecrets:
+{{ .Values.agents.image.pullSecrets | toYaml | indent 10 }}
+{{- end }}
+        tag: {{ .Values.agents.image.tag }}
+{{- if .Values.agents.nodeSelector }}
+      nodeSelector:
+{{ .Values.agents.nodeSelector | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.agents.podAnnotations }}
+      annotations:
+{{ .Values.agents.podAnnotations | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.agents.podLabels }}
+      labels:
+{{ .Values.agents.podLabels | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.agents.priorityClassName }}
+      priorityClassName: {{ .Values.agents.priorityClassName }}
+{{- end }}
+      createRbac: {{ .Values.agents.rbac.create }}
+{{- if .Values.agents.rbac.serviceAccountAnnotations }}
+      serviceAccountAnnotations:
+{{ .Values.agents.rbac.serviceAccountAnnotations | toYaml | indent 8 }}
+{{- end }}
+      serviceAccountName: {{ .Values.agents.rbac.serviceAccountName }}
+{{- if .Values.agents.tolerations }}
+      tolerations:
+{{ .Values.agents.tolerations | toYaml | indent 8 }}
+{{- end }}
+      updateStrategy:
+{{ .Values.agents.updateStrategy | toYaml | indent 8 }}
+      hostNetwork: {{ .Values.agents.useHostNetwork }}
+{{- if .Values.agents.volumes }}
+      volumes:
+{{ .Values.agents.volumes | toYaml | indent 8 }}
+{{- end }}
+    clusterAgent:
+{{- if .Values.clusterAgent.additionalLabels }}
+      labels:
+{{ .Values.clusterAgent.additionalLabels | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.affinity }}
+      affinity:
+{{ .Values.clusterAgent.affinity | toYaml | indent 8 }}
+{{- end }}
+      containers:
+        cluster-agent:
+{{- if .Values.clusterAgent.command }}
+          command:
+{{ .Values.clusterAgent.command | toYaml | indent 12 }}
+{{- end }}
+          healthPort: {{ .Values.clusterAgent.healthPort }}
+{{- if .Values.clusterAgent.livenessProbe }}
+          livenessProbe:
+{{- $live := .Values.clusterAgent.livenessProbe }}
+{{- $healthPort := .Values.clusterAgent.healthPort }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.readinessProbe }}
+          readinessProbe:
+{{- $ready := .Values.clusterAgent.readinessProbe }}
+{{- $healthPort := .Values.clusterAgent.healthPort }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.startupProbe }}
+          startupProbe:
+{{- $startup := .Values.clusterAgent.startupProbe }}
+{{- $healthPort := .Values.clusterAgent.healthPort }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.resources }}
+          resources:
+{{ .Values.clusterAgent.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.containers.clusterAgent.securityContext }}
+          securityContext:
+{{ .Values.clusterAgent.containers.clusterAgent.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.volumeMounts }}
+          volumeMounts:
+{{ .Values.clusterAgent.volumeMounts | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.containers.initContainers.securityContext }}
+        init-config:
+          securityContext:
+{{ .Values.clusterAgent.containers.initContainers.securityContext | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.confd }}
+      extraConfd:
+{{ .Values.clusterAgent.confd | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.datadog_cluster_yaml }}
+      customConfigurations:
+        datadog-cluster.yaml:
+          configData: |
+{{ .Values.clusterAgent.datadog_cluster_yaml | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterAgent.dnsConfig }}
+      dnsConfig:
+{{ .Values.clusterAgent.dnsConfig | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.env }}
+      env:
+{{ .Values.clusterAgent.env | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.envFrom }}
+      envFrom:
+{{ .Values.clusterAgent.envFrom | toYaml | indent 8 }}
+{{- end }}
+      image:
+        name: {{ .Values.clusterAgent.image.name }}
+        pullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
+{{- if .Values.clusterAgent.image.pullSecrets }}
+        pullSecrets:
+{{ .Values.clusterAgent.image.pullSecrets | toYaml | indent 10 }}
+{{- end }}
+        tag: {{ .Values.clusterAgent.image.tag }}
+{{- if .Values.clusterAgent.nodeSelector }}
+      nodeSelector:
+{{ .Values.clusterAgent.nodeSelector | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.podAnnotations }}
+      annotations:
+{{ .Values.clusterAgent.podAnnotations | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterAgent.priorityClassName }}
+      priorityClassName: {{ .Values.clusterAgent.priorityClassName }}
+{{- end }}
+      createRbac: {{ .Values.clusterAgent.rbac.create }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
+      serviceAccountAnnotations:
+{{ .Values.clusterAgent.rbac.serviceAccountAnnotations | toYaml | indent 8 }}
+{{- end }}
+      serviceAccountName: {{ .Values.clusterAgent.rbac.serviceAccountName }}
+      replicas: {{ .Values.clusterAgent.replicas }}
+{{- if .Values.clusterAgent.securityContext }}
+      securityContext:
+{{ .Values.clusterAgent.securityContext | toYaml | indent 8 }}
+{{- end }}
+      updateStrategy:
+{{ .Values.clusterAgent.strategy | toYaml | indent 8 }}
+{{- if .Values.clusterAgent.tolerations }}
+      tolerations:
+{{ .Values.clusterAgent.tolerations | toYaml | indent 8 }}
+{{- end }}
+      hostNetwork: {{ .Values.clusterAgent.useHostNetwork }}
+{{- if .Values.clusterAgent.volumes }}
+      volumes:
+{{ .Values.clusterAgent.volumes | toYaml | indent 8 }}
+{{- end }}
+    clusterChecksRunner:
+{{- if .Values.clusterChecksRunner.additionalLabels }}
+      labels:
+{{ .Values.clusterChecksRunner.additionalLabels | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.affinity }}
+      affinity:
+{{ .Values.clusterChecksRunner.affinity | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.dnsConfig }}
+      dnsConfig:
+{{ .Values.clusterChecksRunner.dnsConfig | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.env }}
+      env:
+{{ .Values.clusterChecksRunner.env | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.envFrom }}
+      envFrom:
+{{ .Values.clusterChecksRunner.envFrom | toYaml | indent 8 }}
+{{- end }}
+      containers:
+        agent:
+          healthPort: {{ .Values.clusterChecksRunner.healthPort }}
+{{- if .Values.clusterChecksRunner.livenessProbe }}
+          livenessProbe:
+{{- $live := .Values.clusterChecksRunner.livenessProbe }}
+{{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.readinessProbe }}
+          readinessProbe:
+{{- $ready := .Values.clusterChecksRunner.readinessProbe }}
+{{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.startupProbe }}
+          startupProbe:
+{{- $startup := .Values.clusterChecksRunner.startupProbe }}
+{{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 12 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.resources }}
+          resources:
+{{ .Values.clusterChecksRunner.resources | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.volumeMounts }}
+          volumeMounts:
+{{ .Values.clusterChecksRunner.volumeMounts | toYaml | indent 12 }}
+{{- end }}
+      image:
+        name: {{ .Values.clusterChecksRunner.image.name }}
+        pullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
+{{- if .Values.clusterChecksRunner.image.pullSecrets }}
+        pullSecrets:
+{{ .Values.clusterChecksRunner.image.pullSecrets | toYaml | indent 10 }}
+{{- end }}
+        tag: {{ .Values.clusterChecksRunner.image.tag }}
+{{- if .Values.clusterChecksRunner.nodeSelector }}
+      nodeSelector:
+{{ .Values.clusterChecksRunner.nodeSelector | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.podAnnotations }}
+      annotations:
+{{ .Values.clusterChecksRunner.podAnnotations | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.priorityClassName }}
+      priorityClassName: {{ .Values.clusterChecksRunner.priorityClassName }}
+{{- end }}
+      createRbac: {{ .Values.clusterChecksRunner.rbac.create }}
+{{- if .Values.clusterChecksRunner.rbac.serviceAccountAnnotations }}
+      serviceAccountAnnotations:
+{{ .Values.clusterChecksRunner.rbac.serviceAccountAnnotations | toYaml | indent 8 }}
+{{- end }}
+      serviceAccountName: {{ .Values.clusterChecksRunner.rbac.serviceAccountName }}
+      replicas: {{ .Values.clusterChecksRunner.replicas }}
+{{- if .Values.clusterChecksRunner.securityContext }}
+      securityContext:
+{{ .Values.clusterChecksRunner.securityContext | toYaml | indent 8 }}
+{{- end }}
+      updateStrategy:
+{{ .Values.clusterChecksRunner.strategy | toYaml | indent 8 }}
+{{- if .Values.clusterChecksRunner.tolerations }}
+      tolerations:
+{{ .Values.clusterChecksRunner.tolerations | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.volumes }}
+      volumes:
+{{ .Values.clusterChecksRunner.volumes | toYaml | indent 8 }}
+{{- end }}
 {{- end }}
