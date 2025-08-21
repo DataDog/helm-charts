@@ -4,7 +4,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ template "datadog.fullname" . }}-agent
+  name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
