@@ -14,6 +14,11 @@
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+- name: hostrun
+  hostPath:
+    path: /run
+{{- end }}
 {{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
