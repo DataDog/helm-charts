@@ -352,7 +352,6 @@ rules:
   resources:
   - "*"
   verbs:
-  - get
   - list
   - watch
 {{- include "orchestratorExplorer-config-crs" . }}
