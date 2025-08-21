@@ -53,15 +53,12 @@
     {{- if eq .Values.targetSystem "linux" }}
     - name: tmpdir
       mountPath: /tmp
-      readOnly: false # Need RW to write to /tmp directory
     {{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
-      readOnly: false # Need RW to mount to config path
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
-      readOnly: false # Need RW to write auth token
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
@@ -74,7 +71,6 @@
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

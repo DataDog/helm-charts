@@ -85,7 +85,6 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
-            readOnly: false # Need RW for writing agent config files
         resources:
 {{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-container-resources" . | indent 10 }}
@@ -105,7 +104,6 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
-            readOnly: false # Need RW for writing datadog.yaml config file
           {{- if .Values.datadog.checksd }}
           - name: checksd
             mountPath: /checks.d
@@ -219,7 +217,6 @@ spec:
             readOnly: true
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
-            readOnly: false # Need RW for config path
 {{- if eq (include "should-mount-fips-configmap" .) "true" }}
 {{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
 {{- end }}
