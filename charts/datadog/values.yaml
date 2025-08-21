@@ -1197,7 +1197,7 @@ datadog:
     enabled: true
 
   csi:
-    # datadog.csi.enabled -- Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver)
+    # datadog.csi.enabled -- Enable datadog csi driver
     # This feature is still in beta
     # Requires version 7.67 or later of the cluster agent
     enabled: false
