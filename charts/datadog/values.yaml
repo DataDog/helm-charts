@@ -1656,7 +1656,13 @@ clusterAgent:
   datadog_cluster_yaml: {}
 
   # clusterAgent.createPodDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
-  createPodDisruptionBudget: false
+  createPodDisruptionBudget: false # To be deprecated
+  # Define PodDisruptionBudget for Cluster Agent deployments
+  pdb:
+    # clusterAgent.pdb.create -- Create pod disruption budget for Cluster Agent deployments
+    create: false
+    # clusterAgent.pdb.minAvailable -- PDB minAvailable to be available at all times
+    minAvailable: 1
 
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
@@ -2395,7 +2401,13 @@ clusterChecksRunner:
     #   - name: "<REG_SECRET>"
 
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
-  createPodDisruptionBudget: false
+  createPodDisruptionBudget: false # To be deprecated
+  # Define PodDisruptionBudget for cluster checks agents
+  pdb:
+    # clusterChecksRunner.pdb.create -- Create the pod disruption budget to apply to the cluster checks agents
+    create: false
+    # clusterChecksRunner.pdb.maxUnavailable -- PDB maxUnavailable allowed to be unavailable during a disruption
+    maxUnavailable: 1
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:

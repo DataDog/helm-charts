@@ -637,6 +637,8 @@ helm install <RELEASE_NAME> \
 | clusterAgent.metricsProvider.wpaController | bool | `false` | Enable informer and controller of the watermark pod autoscaler |
 | clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
+| clusterAgent.pdb.create | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
+| clusterAgent.pdb.minAvailable | int | `1` | PDB minAvailable to be available at all times |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
@@ -684,6 +686,8 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
+| clusterChecksRunner.pdb.create | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
+| clusterChecksRunner.pdb.maxUnavailable | int | `1` | PDB maxUnavailable allowed to be unavailable during a disruption |
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | clusterChecksRunner.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster checks runners |
