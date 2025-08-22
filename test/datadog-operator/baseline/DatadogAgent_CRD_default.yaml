@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.16.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.10.0-dev.1'
+    helm.sh/chart: 'datadogCRDs-2.11.0-dev.1'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -578,6 +578,11 @@ spec:
                         useClusterChecksRunners:
                           type: boolean
                       type: object
+                    controlPlaneMonitoring:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     cspm:
                       properties:
                         checkInterval:
@@ -795,6 +800,8 @@ spec:
                     gpu:
                       properties:
                         enabled:
+                          type: boolean
+                        privilegedMode:
                           type: boolean
                         requiredRuntimeClassName:
                           type: string
@@ -1157,6 +1164,11 @@ spec:
                       type: object
                     criSocketPath:
                       type: string
+                    csi:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     disableNonResourceRules:
                       type: boolean
                     dockerSocketPath:
@@ -4447,6 +4459,11 @@ spec:
                             useClusterChecksRunners:
                               type: boolean
                           type: object
+                        controlPlaneMonitoring:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         cspm:
                           properties:
                             checkInterval:
@@ -4664,6 +4681,8 @@ spec:
                         gpu:
                           properties:
                             enabled:
+                              type: boolean
+                            privilegedMode:
                               type: boolean
                             requiredRuntimeClassName:
                               type: string
