@@ -1,5 +1,11 @@
 # Datadog changelog
 
+* Add:
+- Allow configuring `minAvailable` and `maxUnavailable` in the `PodDisruptionBudget` for the cluster agent and cluster-checks runner.
+
+* Update:
+- The `createPodDisruptionBudget` setting is now set to be deprecated for both components in favor of a new, unified `pdb` configuration block.
+
 ## 3.130.0
 
 * Update Cluster Agent RBAC to allow list/watch on all Datadog custom resources if the orchestrator check is enabled.
