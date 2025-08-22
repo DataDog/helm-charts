@@ -1,4 +1,4 @@
-{{- if .Values.clusterChecksRunner.createPodDisruptionBudget .Values.clusterChecksRunner.pdb.enable -}}
+{{- if or .Values.clusterChecksRunner.createPodDisruptionBudget .Values.clusterChecksRunner.pdb.enable -}}
 apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
