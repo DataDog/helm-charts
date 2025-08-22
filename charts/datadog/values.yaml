@@ -1198,7 +1198,6 @@ datadog:
 
   csi:
     # datadog.csi.enabled -- Enable datadog csi driver
-    # This feature is still in beta
     # Requires version 7.67 or later of the cluster agent
     enabled: false
 
