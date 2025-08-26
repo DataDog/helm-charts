@@ -28,8 +28,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}
-      agent.datadoghq.com/name: datadog
-      agent.datadoghq.com/component: agent
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 6 }}
         {{- end }}
