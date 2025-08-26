@@ -6,6 +6,14 @@
 * Update:
 - The `createPodDisruptionBudget` setting is now set to be deprecated for both components in favor of a new, unified `pdb` configuration block.
 
+## 3.131.0
+
+* Upgrade default Agent version to `7.69.3`.
+
+## 3.130.1
+
+* Mount `/host/run` when `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
 ## 3.130.0
 
 * Update Cluster Agent RBAC to allow list/watch on all Datadog custom resources if the orchestrator check is enabled.
@@ -49,7 +57,7 @@
 ## 3.126.0
 
 * Upgrade default Agent version to `7.68.3`.
- 
+
 ## 3.125.0
 
 * Add `datadog.sbom.containerImage.containerInclude` and
@@ -82,7 +90,7 @@ container images for SBOM generation.
 
 ## 3.122.1
 
-* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.
 
 ## 3.122.0
 
