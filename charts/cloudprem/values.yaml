@@ -7,11 +7,29 @@ aws:
   # -- AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
   partition: aws
 
+azure:
+  # -- Azure tenant ID
+  tenantId: ""
+  # -- Azure client ID
+  clientId: ""
+  # -- Azure client secret reference
+  clientSecretRef: {}
+    # name: azure-client-secret
+    # key: client-secret
+  # -- Azure storage account name and access key secret reference
+  storageAccount:
+    # -- Azure storage account name
+    name: ""
+    # -- Azure storage account access key secret reference
+    accessKeySecretRef: {}
+      # name: azure-storage-account-access-key
+      # key: access-key
+
 image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.8
+  tag: v0.1.9
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -62,6 +80,15 @@ securityContext:
 # If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
 tracingEnabled: true
 
+dogstatsdServer:
+  host:
+    # if `value` is non-empty, then it takes precedence over `valueFrom`
+    value: ""
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  port: 8125
+
 # Additional global env
 environment:
   QW_DISABLE_TELEMETRY: true
@@ -86,7 +113,7 @@ affinity: {}
 searcher:
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for searcher
   extraEnv: {}
@@ -180,7 +207,7 @@ searcher:
   autoscaling:
     enabled: false
     annotations: {}
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 10
     metrics:
       # Search is a "latency game", so we aim for low CPU utilization
@@ -215,7 +242,7 @@ searcher:
 indexer:
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for indexer
   extraEnv: {}
@@ -308,7 +335,7 @@ indexer:
   autoscaling:
     enabled: false
     annotations: {}
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 10
     metrics:
       # Indexing is a "throughput game", so we aim for high CPU utilization
@@ -346,7 +373,7 @@ indexer:
     # storageClass: ""
 
 metastore:
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for metastore
   extraEnv: {}
