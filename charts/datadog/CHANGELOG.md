@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.131.0
+
+* Upgrade default Agent version to `7.69.3`.
+
 ## 3.130.1
 
 * Mount `/host/run` when `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
