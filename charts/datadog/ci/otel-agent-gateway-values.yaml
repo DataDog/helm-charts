@@ -1,0 +1,62 @@
+targetSystem: "linux"
+agents:
+  image:
+    tagSuffix: full
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  otelCollector:
+    enabled: true
+    config: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:4317"
+      exporters:
+        otlp:
+          endpoint: http://otel-agent-gateway:4317
+          tls:
+            insecure: true
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [otlp]
+          metrics:
+            receivers: [otlp]
+            exporters: [otlp]
+          logs:
+            receivers: [otlp]
+            exporters: [otlp]
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "4317"
+      hostPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    exporters:
+      datadog:
+        api:
+          key: "f0000000000000000000000000000000"
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [datadog]
+        metrics:
+          receivers: [otlp]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          exporters: [datadog]
+  featureGates: "-datadog.EnableOperationAndResourceNameV2"
+  replicas: 3
+  nodeSelector:
+    gateway: "true"

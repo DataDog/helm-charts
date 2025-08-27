@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.0
+
+* Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
+
 ## 3.135.2
 
 * Pass APM and DSD hostSocketPath to Cluster Agent deployment.

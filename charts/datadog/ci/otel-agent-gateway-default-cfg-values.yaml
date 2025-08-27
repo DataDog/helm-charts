@@ -1,0 +1,20 @@
+targetSystem: "linux"
+agents:
+  image:
+    tagSuffix: full
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  otelCollector:
+    enabled: true
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "4317"
+      hostPort: "4317"
+      name: "otel-grpc"
+    - containerPort: "4318"
+      hostPort: "4318"
+      name: "otel-http"
+  nodeSelector:
+    gateway: "true"

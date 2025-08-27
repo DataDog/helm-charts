@@ -1,5 +1,45 @@
 {{- define "otel-agent-config-configmap-content" -}}
 otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Values.datadog.otelCollector.config | indent 4 }}
+  {{- else if .Values.otelAgentGateway.enabled }} |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-grpc") }}
+          http:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
+    exporters:
+      debug:
+        verbosity: detailed
+      otlphttp:
+        endpoint: http://{{ template "datadog.fullname" . }}-otel-agent-gateway:4318
+        tls:
+          insecure: true
+    processors:
+      infraattributes:
+        cardinality: 2
+      batch:
+        timeout: 10s
+    connectors:
+      datadog/connector:
+        traces:
+          compute_top_level_by_span_kind: true
+          peer_tags_aggregation: true
+          compute_stats_by_span_kind: true
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [infraattributes, batch]
+          exporters: [otlphttp, datadog/connector]
+        metrics:
+          receivers: [otlp, datadog/connector]
+          processors: [infraattributes, batch]
+          exporters: [otlphttp]
+        logs:
+          receivers: [otlp]
+          processors: [infraattributes, batch]
+          exporters: [otlphttp]
   {{- else }} |
     receivers:
       prometheus:
