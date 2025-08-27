@@ -250,6 +250,14 @@ rules:
   verbs:
   - "update"
 {{- end }}
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogservicemonitors"
+  verbs:
+  - "get"
+  - "list"
+  - "watch"
 {{- if .Values.clusterAgent.admissionController.enabled }}
 - apiGroups:
   - admissionregistration.k8s.io

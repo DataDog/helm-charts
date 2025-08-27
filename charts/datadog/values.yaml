@@ -2729,6 +2729,8 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
+    # datadog-crds.crds.datadogServiceMonitors -- Set to true to deploy the DatadogServiceMonitors CRD
+    datadogServiceMonitors: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.

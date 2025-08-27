@@ -31,6 +31,7 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
 | crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
+| crds.datadogServiceMonitors | bool | `false` | Set to true to deploy the DatadogServiceMonitors CRD |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
 | keepCrds | string | `nil` | Instruct Helm to skip deleting CRD resources when a helm operation (such as helm uninstall, helm upgrade or helm rollback) would result in its deletion. These resources will become orphaned unless another Helm installation is instructed to take ownership of the resources using the `--take-ownership` flag. For more details: https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource |
 | nameOverride | string | `""` | Override name of app |
