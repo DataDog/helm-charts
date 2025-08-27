@@ -1,0 +1,272 @@
+{{- if .Values.otelAgentGateway.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+    app.kubernetes.io/component: otel-agent-gateway
+    {{- if .Values.otelAgentGateway.additionalLabels }}
+{{ toYaml .Values.otelAgentGateway.additionalLabels | indent 4 }}
+    {{- end }}
+{{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.otelAgentGateway.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.otelAgentGateway.deploymentAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.otelAgentGateway.replicas }}
+  revisionHistoryLimit: {{ .Values.otelAgentGateway.revisionHistoryLimit }}
+  strategy:
+{{- if .Values.otelAgentGateway.strategy }}
+{{ toYaml .Values.otelAgentGateway.strategy | indent 4 }}
+{{- else }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-otel-agent-gateway
+        {{- if .Values.otelAgentGateway.podLabels }}
+{{ toYaml .Values.otelAgentGateway.podLabels | indent 6 }}
+        {{- end }}
+  template:
+    metadata:
+      labels:
+{{ include "datadog.template-labels" . | indent 8 }}
+        app.kubernetes.io/component: otel-agent-gateway
+        admission.datadoghq.com/enabled: "false"
+        app: {{ template "datadog.fullname" . }}-otel-agent-gateway
+        {{- if .Values.otelAgentGateway.podLabels }}
+{{ toYaml .Values.otelAgentGateway.podLabels | indent 8 }}
+        {{- end }}
+        {{- if .Values.otelAgentGateway.additionalLabels }}
+{{ toYaml .Values.otelAgentGateway.additionalLabels | indent 8 }}
+        {{- end }}
+{{ include "provider-labels" . | indent 8 }}
+      name: {{ template "datadog.fullname" . }}-otel-agent-gateway
+      annotations:
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if not .Values.datadog.appKeyExistingSecret }}
+        checksum/application_key: {{ include (print $.Template.BasePath "/secret-application-key.yaml") . | sha256sum }}
+        {{- end }}
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
+      {{- if .Values.otelAgentGateway.podAnnotations }}
+{{ tpl (toYaml .Values.otelAgentGateway.podAnnotations) . | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.otelAgentGateway.shareProcessNamespace }}
+      shareProcessNamespace: {{ .Values.otelAgentGateway.shareProcessNamespace }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.priorityClassName }}
+      priorityClassName: "{{ .Values.otelAgentGateway.priorityClassName }}"
+      {{- end }}
+      {{- if .Values.otelAgentGateway.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.otelAgentGateway.image.pullSecrets | indent 8 }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.useHostNetwork }}
+      hostNetwork: {{ .Values.otelAgentGateway.useHostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      {{- if .Values.otelAgentGateway.dnsConfig }}
+      dnsConfig:
+{{ toYaml .Values.otelAgentGateway.dnsConfig | indent 8 }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.securityContext }}
+      securityContext:
+        {{ toYaml .Values.otelAgentGateway.securityContext | nindent 8 }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.initContainers }}
+      initContainers:
+{{ toYaml .Values.otelAgentGateway.initContainers | indent 8 }}
+      {{- end }}
+      containers:
+      # TODO(songy23): merge below and _container-otel-agent.yaml
+      # For now we cannot reuse container-otel-agent in GW because many features won't work in GW and GW needs a different config
+      - name: otel-agent
+        image: "{{ include "ddot-collector-image" . }}"
+        imagePullPolicy: {{ .Values.otelAgentGateway.image.pullPolicy }}
+        {{- if .Values.otelAgentGateway.lifecycle }}
+        lifecycle:
+      {{ toYaml .Values.otelAgentGateway.lifecycle | indent 10 }}
+        {{- end }}
+        {{- if eq .Values.targetSystem "linux" }}
+        command:
+          - "otel-agent"
+          - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
+          - "--sync-delay=30s"
+        args:
+          {{- if .Values.otelAgentGateway.configMap.items }}
+          {{- range .Values.otelAgentGateway.configMap.items }}
+          - "--config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+          {{- end }}
+          {{- else }}
+          - "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+          {{- end }}
+          {{- if .Values.otelAgentGateway.featureGates }}
+          - "--feature-gates={{ .Values.otelAgentGateway.featureGates }}"
+          {{- end }}
+        {{- end -}}
+        {{- if eq .Values.targetSystem "windows" }}
+        command:
+          - "otel-agent"
+          - "-foreground"
+          {{- if .Values.otelAgentGateway.configMap.items }}
+          {{- range .Values.otelAgentGateway.configMap.items }}
+          - "-config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+          {{- end }}
+          {{- else }}
+          - "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+          {{- end }}
+          - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
+          - "--sync-delay=30s"
+          {{- if .Values.otelAgentGateway.featureGates }}
+          - "--feature-gates={{ .Values.otelAgentGateway.featureGates }}"
+          {{- end }}
+        {{- end -}}
+      {{ include "generate-security-context" (dict "securityContext" .Values.otelAgentGateway.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+        resources:
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.resources | indent 10 }}
+        ports:
+          {{- range .Values.otelAgentGateway.ports }}
+            - containerPort: {{ .containerPort }}
+              {{- if .hostPort }}
+              hostPort: {{ .hostPort }}
+              {{- end }}
+              protocol: {{ .protocol | default "TCP" }}
+              name: {{ .name }}
+          {{- end }}
+      {{- if .Values.otelAgentGateway.containers.otelAgent.ports }}
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.ports | indent 10 }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.containers.otelAgent.envFrom }}
+        envFrom:
+      {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 10 }}
+      {{- end }}
+        env:
+          - name: DD_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "datadog.apiSecretName" . }}
+                key: api-key
+          - name: DD_APP_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "datadog.appKeySecretName" . }}
+                key: app-key
+          - name: DD_OTELCOLLECTOR_ENABLED
+            value: "true"
+          - name: DD_HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          # Disable features that are not needed / won't work in standalone ddot-collector
+          - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
+            value: "health_check,zpages,pprof" # exclude infra attribute, prometheus and DD flare
+          - name: DD_ENABLE_METADATA_COLLECTION
+            value: "false"
+          - name: DD_PROCESS_AGENT_ENABLED
+            value: "false"
+          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+            value: "false"
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: "false"
+          - name: DD_AGENT_IPC_PORT
+            value: "0"
+          - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+            value: "0"
+
+          {{- include "fips-envvar" . | nindent 4 }}
+          - name: DD_LOG_LEVEL
+            value: {{ .Values.otelAgentGateway.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
+          {{- include "additional-env-entries" .Values.otelAgentGateway.containers.otelAgent.env | indent 4 }}
+          {{- include "additional-env-dict-entries" .Values.otelAgentGateway.containers.otelAgent.envDict | indent 4 }}
+        volumeMounts:
+          - name: config
+            mountPath: {{ template "datadog.confPath" . }}
+            readOnly: true
+          - name: logdatadog
+            mountPath: {{ template "datadog.logDirectoryPath" . }}
+            readOnly: false # Need RW to write logs
+          {{- if (not .Values.providers.gke.autopilot) }}
+          - name: auth-token
+            mountPath: {{ template "datadog.confPath" . }}/auth
+            readOnly: true
+          {{- end }}
+          - name: otelconfig
+            mountPath: {{ template "datadog.otelconfPath" . }}
+            readOnly: true
+          {{- if eq .Values.targetSystem "linux" }}
+          {{- if not .Values.providers.gke.autopilot }}
+          - name: procdir
+            mountPath: /host/proc
+            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+            readOnly: true
+          - name: cgroups
+            mountPath: /host/sys/fs/cgroup
+            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+            readOnly: true
+          {{- end }}
+          - name: tmpdir
+            mountPath: /tmp
+            readOnly: false # Need RW for tmp directory
+          - name: dsdsocket
+            mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+            readOnly: true
+          {{- if and .Values.otelAgentGateway.logs.enabled (eq (include "should-mount-logs-for-otel-agent-gateway" .) "true") }}
+          - name: logpodpath
+            mountPath: /var/log/pods
+            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+            readOnly: true
+          - name: logscontainerspath
+            mountPath: /var/log/containers
+            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+            readOnly: true
+          {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
+          - name: logdockercontainerpath
+            mountPath: /var/lib/docker/containers
+            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+            readOnly: true
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- include "container-crisocket-volumemounts" . | nindent 10 }}
+          {{- include "container-cloudinit-volumemounts" . | nindent 10 }}
+      {{- if .Values.otelAgentGateway.volumeMounts }}
+      {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.containers.otelAgent.volumeMounts }}
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 10 }}
+      {{- end }}
+
+      volumes:
+{{- if .Values.otelAgentGateway.volumes }}
+{{ toYaml .Values.otelAgentGateway.volumes | indent 8 }}
+{{- end }}
+      {{- if .Values.otelAgentGateway.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.otelAgentGateway.terminationGracePeriodSeconds }}
+      {{- end }}
+      {{- if .Values.otelAgentGateway.tolerations }}
+      tolerations:
+{{ toYaml .Values.otelAgentGateway.tolerations | indent 8 }}
+      {{- end }}
+      affinity:
+{{- if .Values.otelAgentGateway.affinity }}
+{{ toYaml .Values.otelAgentGateway.affinity | indent 8 }}
+{{- end }}
+      nodeSelector:
+        {{ template "label.os" . }}: {{ .Values.targetSystem }}
+      {{- if .Values.otelAgentGateway.nodeSelector }}
+{{ toYaml .Values.otelAgentGateway.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- with .Values.otelAgentGateway.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

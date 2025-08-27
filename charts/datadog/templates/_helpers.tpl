@@ -174,6 +174,21 @@ Return true if conatiner and pod logs volumes should be mounted in the OTel Agen
 {{- end -}}
 
 {{/*
+Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container in Gateway
+*/}}
+{{- define "should-mount-logs-for-otel-agent-gateway" -}}
+{{- $return := false }}
+{{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
+{{- range $key, $val := $config.receivers }}
+  {{- if hasPrefix "filelog" $key }}
+    {{- $return = true }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
+
+{{/*
 Return secret name to be used based on provided values.
 */}}
 {{- define "datadog.apiSecretName" -}}
