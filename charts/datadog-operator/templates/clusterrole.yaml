@@ -6,6 +6,14 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogservicemonitors
+  verbs:
+  - get
+  - list
+  - watch
 - nonResourceURLs:
   - /metrics
   - /metrics/slis
