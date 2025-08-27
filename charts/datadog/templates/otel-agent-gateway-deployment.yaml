@@ -93,7 +93,7 @@ spec:
         imagePullPolicy: {{ .Values.otelAgentGateway.image.pullPolicy }}
         {{- if .Values.otelAgentGateway.lifecycle }}
         lifecycle:
-      {{ toYaml .Values.otelAgentGateway.lifecycle | indent 4 }}
+      {{ toYaml .Values.otelAgentGateway.lifecycle | indent 10 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
         command:
@@ -131,7 +131,7 @@ spec:
         {{- end -}}
       {{ include "generate-security-context" (dict "securityContext" .Values.otelAgentGateway.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
         resources:
-      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.resources | indent 4 }}
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.resources | indent 10 }}
         ports:
           {{- range .Values.otelAgentGateway.ports }}
             - containerPort: {{ .containerPort }}
@@ -142,11 +142,11 @@ spec:
               name: {{ .name }}
           {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.ports }}
-      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.ports | indent 6 }}
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.ports | indent 10 }}
       {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.envFrom }}
         envFrom:
-      {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 4 }}
+      {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 10 }}
       {{- end }}
         env:
           - name: DD_API_KEY
@@ -236,13 +236,13 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-          {{- include "container-crisocket-volumemounts" . | nindent 4 }}
-          {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+          {{- include "container-crisocket-volumemounts" . | nindent 10 }}
+          {{- include "container-cloudinit-volumemounts" . | nindent 10 }}
       {{- if .Values.otelAgentGateway.volumeMounts }}
-      {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 4 }}
+      {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
       {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.volumeMounts }}
-      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 4 }}
+      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 10 }}
       {{- end }}
 
       volumes:
