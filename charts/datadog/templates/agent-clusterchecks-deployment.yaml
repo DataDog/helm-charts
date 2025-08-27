@@ -7,12 +7,19 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: clusterchecks-agent
+    app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
+    agent.datadoghq.com/component: clusterchecks-agent
+    agent.datadoghq.com/name: datadog
     {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
+  annotations:
   {{- if .Values.clusterChecksRunner.deploymentAnnotations }}
-  annotations: {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
+    {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if .Values.datadog.operator.migrationEnabled }}
+    helm.sh/resource-policy: "keep"
   {{- end }}
 spec:
   replicas: {{ .Values.clusterChecksRunner.replicas }}
@@ -27,7 +34,10 @@ spec:
       labels:
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
+        app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: clusterchecks-agent
+        agent.datadoghq.com/name: datadog
         app: {{ template "datadog.fullname" . }}-clusterchecks
         {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
