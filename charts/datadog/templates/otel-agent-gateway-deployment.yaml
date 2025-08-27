@@ -91,9 +91,9 @@ spec:
       - name: otel-agent
         image: "{{ include "ddot-collector-image" . }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-        {{- if .Values.agents.lifecycle }}
+        {{- if .Values.otelAgentGateway.lifecycle }}
         lifecycle:
-      {{ toYaml .Values.agents.lifecycle | indent 4 }}
+      {{ toYaml .Values.otelAgentGateway.lifecycle | indent 4 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
         command:
@@ -146,9 +146,6 @@ spec:
       {{- end }}
       {{- if or .Values.datadog.envFrom .Values.otelAgentGateway.containers.otelAgent.envFrom }}
         envFrom:
-      {{- if .Values.datadog.envFrom }}
-      {{ .Values.datadog.envFrom | toYaml | indent 4 }}
-      {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.envFrom }}
       {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 4 }}
       {{- end }}
@@ -252,7 +249,6 @@ spec:
       {{- if .Values.otelAgentGateway.containers.otelAgent.volumeMounts }}
       {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 4 }}
       {{- end }}
-      {{- end -}}
 
       volumes:
 {{- if .Values.datadog.helmCheck.enabled }}
@@ -267,7 +263,6 @@ spec:
 {{- range $name, $config := $configs }}
             - key: {{ printf "%s--%s" $integration $name | quote }}
               path: {{ printf "%s/%s" $integration $name | quote }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
