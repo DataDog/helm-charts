@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.132.0
+
+* Add a new Deployment for otel-agent Gateway, configured by `otelAgentGateway`.
+
 ## 3.131.0
 
 * Upgrade default Agent version to `7.69.3`.
