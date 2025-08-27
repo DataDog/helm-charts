@@ -641,9 +641,8 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
-  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
-  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
-  ## OTel collector related configuration
+
+  ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
     enabled: false
@@ -2671,3 +2670,85 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+## OTel collector related configuration for otel-agent in Gateway Deployment
+## There can be more than one Gateway Deployments with different configs.
+otelAgentGateway:
+  # otelAgentGateway.enabled -- Enable otel-agent Gateway
+  enabled: false
+  # otelAgentGateway.ports -- Ports that OTel Collector is listening on
+  ports:
+      # Default GRPC port of OTLP receiver
+    - containerPort: "4317"
+      name: otel-grpc
+      protocol: TCP
+      # Default HTTP port of OTLP receiver
+    - containerPort: "4318"
+      name: otel-http
+      protocol: TCP
+  # otelAgentGateway.config -- OTel collector configuration
+  config: null
+  # otelAgentGateway.configMap -- Use an existing ConfigMap for DDOT Collector configuration
+  configMap:
+    # otelAgentGateway.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
+    name: null
+    # otelAgentGateway.configMap.items -- Items within the ConfigMap that contain DDOT Collector configuration
+    items:
+    #   - key: otel-config.yaml
+    #     path: otel-config.yaml
+    #   - key: otel-config-two.yaml
+    #     path: otel-config-two.yaml
+    # otelAgentGateway.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
+    key: otel-config.yaml
+  # otelAgentGateway.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+  featureGates: null
+  # otelAgentGateway.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
+  # The tag is retrieved from the `agents.image.tag` value.
+  # This is only supported for agent versions 7.67.0+
+  # If set to false, you will need to set `agents.image.tagSuffix` to `full`
+  useStandaloneImage: true
+
+  containers:
+    otelAgent:
+      # otelAgentGateway.containers.otelAgent.env -- Additional environment variables for the otel-agent container
+      env: []
+
+      # otelAgentGateway.containers.otelAgent.envFrom -- Set environment variables specific to otel-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # otelAgentGateway.containers.otelAgent.envDict -- Set environment variables specific to otel-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # otelAgentGateway.containers.otelAgent.resources -- Resource requests and limits for the otel-agent container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # otelAgentGateway.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
+      securityContext: {}
+
+      # otelAgentGateway.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
+      # otelAgentGateway.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+      volumeMounts: []
+      #   - name: <VOLUME_NAME>
+      #     mountPath: <CONTAINER_PATH>
+      #     readOnly: true
+
+
+  ## Provide OTel Collector logs configuration
+  logs:
+    # otelAgentGateway.logs.enabled -- Enable logs support in the OTel Collector.
+    # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+    # and pods logs.
+    enabled: false
