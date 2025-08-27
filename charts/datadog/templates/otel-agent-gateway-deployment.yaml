@@ -90,7 +90,7 @@ spec:
       # For now we cannot reuse container-otel-agent in GW because many features won't work in GW and GW needs a different config
       - name: otel-agent
         image: "{{ include "ddot-collector-image" . }}"
-        imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.otelAgentGateway.image.pullPolicy }}
         {{- if .Values.otelAgentGateway.lifecycle }}
         lifecycle:
       {{ toYaml .Values.otelAgentGateway.lifecycle | indent 4 }}
@@ -144,11 +144,9 @@ spec:
       {{- if .Values.otelAgentGateway.containers.otelAgent.ports }}
       {{ toYaml .Values.otelAgentGateway.containers.otelAgent.ports | indent 6 }}
       {{- end }}
-      {{- if or .Values.datadog.envFrom .Values.otelAgentGateway.containers.otelAgent.envFrom }}
-        envFrom:
       {{- if .Values.otelAgentGateway.containers.otelAgent.envFrom }}
+        envFrom:
       {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 4 }}
-      {{- end }}
       {{- end }}
         env:
           - name: DD_API_KEY
@@ -240,31 +238,14 @@ spec:
           {{- end }}
           {{- include "container-crisocket-volumemounts" . | nindent 4 }}
           {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
-          {{- if .Values.datadog.kubelet.hostCAPath }}
-      {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
-          {{- end }}
-      {{- if .Values.agents.volumeMounts }}
-      {{ toYaml .Values.agents.volumeMounts | indent 4 }}
+      {{- if .Values.otelAgentGateway.volumeMounts }}
+      {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 4 }}
       {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.volumeMounts }}
       {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 4 }}
       {{- end }}
 
       volumes:
-{{- if .Values.datadog.helmCheck.enabled }}
-            - key: helm.yaml
-              path: helm.yaml
-{{- end }}
-{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
-            - key: kubernetes_apiserver.yaml
-              path: kubernetes_apiserver.yaml
-{{- end }}
-{{- range $integration, $configs := $.Values.otelAgentGateway.advancedConfd }}
-{{- range $name, $config := $configs }}
-            - key: {{ printf "%s--%s" $integration $name | quote }}
-              path: {{ printf "%s/%s" $integration $name | quote }}
-{{- end }}
-{{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
 {{ toYaml .Values.otelAgentGateway.volumes | indent 8 }}
 {{- end }}
