@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.132.0
+
+* Add `datadog.logFormat` to configure the log format of the agent.
+
 ## 3.131.1
 
 * Update `fips.image.tag` to `1.1.16` fixing CVEs and updating packages.
