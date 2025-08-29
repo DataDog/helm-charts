@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+* Add RBAC for the leader election lease.
+
 ## 0.3.1
 
 * Migrate from `kubeval` to `kubeconform` for ci chart validation.

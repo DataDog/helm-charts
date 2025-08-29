@@ -2,10 +2,12 @@ datadog:
   clusterName: kubernetes-cluster.example.comkubernetes-cluster.example.com.kube.rnetes-80chars
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
-  kubeStateMetricsEnabled: false
+  kubelet:
+    tlsVerify: false
   clusterChecks:
     enabled: true
   kubernetesEvents:
+    filteringEnabled: true
     unbundleEvents: true
   clusterTagger:
     collectKubernetesTags: true

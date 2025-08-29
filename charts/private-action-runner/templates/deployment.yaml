@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  minReadySeconds: 10
+  replicas: {{ $.Values.runner.replicas }}
+  selector:
+    matchLabels:
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "chart.labels" . | nindent 8 }}
+      annotations:
+        checksum/values: {{ $.Values | toJson | sha256sum }}
+    spec:
+      serviceAccountName: {{ include "chart.fullname" . }}
+      containers:
+        - name: runner
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9016
+          {{- if .Values.runner.livenessProbe }}
+          livenessProbe:
+            {{- toYaml $.Values.runner.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.runner.readinessProbe }}
+          readinessProbe:
+            {{- toYaml $.Values.runner.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml $.Values.runner.resources | nindent 12 }}
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner/config
+            {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
+            - name: {{ $credentialSecret.secretName }}
+              mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
+            {{- end }}
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: {{ $.Values.runner.configDirectory }}
+          {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
+          {{- if $.Values.runner.runnerIdentitySecret }}
+          envFrom:
+            - secretRef:
+                name: {{ $.Values.runner.runnerIdentitySecret }}
+          {{- end }}
+      {{- with .Values.runner.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ include "chart.fullname" . }}
+        {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
+        - name: {{ $credentialSecret.secretName }}
+          secret:
+            secretName: {{ $credentialSecret.secretName }}
+        {{- end }}

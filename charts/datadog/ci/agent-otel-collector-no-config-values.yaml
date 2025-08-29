@@ -1,0 +1,11 @@
+targetSystem: "linux"
+agents:
+  image:
+    tagSuffix: full
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  otelCollector:
+    enabled: true

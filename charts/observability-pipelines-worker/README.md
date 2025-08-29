@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.0.2](https://img.shields.io/badge/Version-2.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.2](https://img.shields.io/badge/AppVersion-2.0.2-informational?style=flat-square)
+![Version: 2.8.0](https://img.shields.io/badge/Version-2.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.8.0](https://img.shields.io/badge/AppVersion-2.8.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -94,9 +94,9 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
-| datadog.workerAPI.address | string | `"127.0.0.1:8686"` | Local address to bind the Worker's API to. |
-| datadog.workerAPI.enabled | bool | `false` | Whether to enable the Worker's API. |
-| datadog.workerAPI.playground | bool | `true` | Whether to enable the Worker's API GraphQL playground. |
+| datadog.workerAPI.address | string | `"0.0.0.0:8686"` | Local address to bind the Worker's API to. if you change this port, you'll need to update the livenessProbe and readinessProbe |
+| datadog.workerAPI.enabled | bool | `true` | Whether to enable the Worker's API. |
+| datadog.workerAPI.playground | bool | `false` | Whether to enable the Worker's API GraphQL playground. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
@@ -110,7 +110,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
 | image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
-| image.tag | string | `"2.0.2"` | Specify the image tag to use. |
+| image.tag | string | `"2.8.0"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
@@ -118,7 +118,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | ingress.tls | list | `[]` | Configure TLS for the Ingress. |
 | initContainers | list | `[]` | Specify initContainers to be added. |
 | lifecycle | object | `{}` | Specify lifecycle hooks for Containers. |
-| livenessProbe | object | `{}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
+| livenessProbe | object | `{"failureThreshold":5,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
@@ -137,7 +137,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podManagementPolicy | string | `"OrderedReady"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
-| readinessProbe | object | `{}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
+| readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
 | replicas | int | `1` | Specify the number of replicas to create. |
 | resources | object | `{}` | Specify resource requests and limits. |
 | securityContext | object | `{}` | Specify securityContext for Containers. |

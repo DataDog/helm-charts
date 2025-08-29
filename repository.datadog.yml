@@ -1,19 +1,21 @@
 ---
 schema-version: v1
 kind: mergequeue
-gitlab_check_enable: false
+gitlab_check_enable: true
 github_teams_restrictions:
+  - action-platform
   - agent-all
   - container-app
   - container-ecosystems
   - container-helm-chart-maintainers
   - container-integrations
   - container-t2
-  - Synthetics
-  - Documentation
-  - Observability Pipelines
-  - Telemetry and Analytics
-  - Vector
+  - logs-cloudprem
+  - synthetics
+  - documentation
+  - observability-pipelines
+  - telemetry-and-analytics
+  - vector
 github_users_restrictions:
   - cahillsf
   - clamoriniere

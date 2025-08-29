@@ -27,6 +27,7 @@ Then run:
 {{- end }}
 
 {{- $healthPort := .Values.agents.containers.agent.healthPort }}
+
 {{- with $liveness := .Values.agents.containers.agent.livenessProbe.httpGet }}
 {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -37,6 +38,7 @@ Then run:
 Node Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
 {{- with $readiness := .Values.agents.containers.agent.readinessProbe.httpGet }}
 {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -47,6 +49,18 @@ Node Agent liveness probe port ({{ $liveness.port }}) is different from the conf
 Node Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
 {{- end }}
 {{- end }}
+
+{{- with $startup := .Values.agents.containers.agent.startupProbe.httpGet }}
+{{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Node Agent startup probe misconfiguration       ####
+##############################################################################
+
+Node Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+{{- end }}
+{{- end }}
+
 {{- if eq (include "should-deploy-cluster-agent" .) "true" }}
 
   {{- if .Values.clusterAgent.metricsProvider.enabled }}
@@ -65,6 +79,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
     {{- end }}
   {{- end }}
   {{- $healthPort := .Values.clusterAgent.healthPort }}
+
   {{- with $liveness := .Values.clusterAgent.livenessProbe.httpGet }}
   {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -75,6 +90,7 @@ Create an application key at https://app.datadoghq.com/account/settings#api
 Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
   {{- with $readiness := .Values.clusterAgent.readinessProbe.httpGet }}
   {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -85,8 +101,21 @@ Cluster Agent liveness probe port ({{ $liveness.port }}) is different from the c
 Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
   {{- end }}
   {{- end }}
+
+  {{- with $startup := .Values.clusterAgent.startupProbe.httpGet }}
+  {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+##############################################################################
+####               ERROR: Cluster Agent startup probe misconfiguration    ####
+##############################################################################
+
+Cluster Agent readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+  {{- end }}
+  {{- end }}
+
   {{- if (eq (include "should-enable-cluster-check-workers" .) "true") }}
     {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+
     {{- with $liveness := .Values.clusterChecksRunner.livenessProbe.httpGet }}
     {{- if and $liveness.port (ne $healthPort $liveness.port) }}
 
@@ -97,6 +126,7 @@ Cluster Agent readiness probe port ({{ $readiness.port }}) is different from the
 Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
     {{- with $readiness := .Values.clusterChecksRunner.readinessProbe.httpGet }}
     {{- if and $readiness.port (ne $healthPort $readiness.port) }}
 
@@ -107,6 +137,18 @@ Cluster Checks Runner liveness probe port ({{ $liveness.port }}) is different fr
 Cluster Checks Runner readiness probe port ({{ $readiness.port }}) is different from the configured health port ({{ $healthPort }}).
     {{- end }}
     {{- end }}
+
+    {{- with $startup := .Values.clusterChecksRunner.startupProbe.httpGet }}
+    {{- if and $startup.port (ne $healthPort $startup.port) }}
+
+#####################################################################################
+####               ERROR: Cluster Checks Runner startup probe misconfiguration   ####
+#####################################################################################
+
+Cluster Checks Runner readiness probe port ({{ $startup.port }}) is different from the configured health port ({{ $healthPort }}).
+    {{- end }}
+    {{- end }}
+
   {{- end }}
 {{- end }}
 {{- if or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled }}
@@ -132,6 +174,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 ###################################################################################
 
 {{- fail "The options `datadog.apm.instrumentation.enabledNamespaces` and `datadog.apm.instrumentation.disabledNamespaces` cannot be set together." }}
+
+{{- end }}
+
+{{- if and (((.Values.datadog.autoscaling).workload).enabled) (not .Values.remoteConfiguration.enabled) }}
+
+###################################################################################
+####               ERROR: Container Autoscaling misconfiguration               ####
+###################################################################################
+
+{{- fail "Workload autoscaling is activated without remote configuration. Remote configuration is required (remoteConfiguration.enabled = true)" }}
 
 {{- end }}
 
@@ -185,6 +237,20 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 The option `datadog.apm.enabled` is deprecated, please use `datadog.apm.portEnabled` to enable TCP communication to the trace-agent.
 The option `datadog.apm.socketEnabled` is enabled by default and can be used to rely on unix socket or name-pipe communication.
+
+{{- end }}
+
+{{- if .Values.datadog.apm.useLocalService }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+The option `datadog.apm.useLocalService` will disable the trace-agent's hostPort.
+Make sure that `datadog.apm.portEnabled` is set to `false` for this to take effect.
+
+If you are using the Admission Controller APM library injection method to send traces to Datadog, this option will send traces via TCP to the local service.
+Make sure that `datadog.apm.socketEnabled` is set to `false` when enabling this or it defaults to sending traces via UDS.
 
 {{- end }}
 
@@ -271,7 +337,7 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if .Values.providers.gke.autopilot}}
+{{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
 
 ###########################################################################################
 ####   WARNING: Only one Datadog chart release allowed by namespace on GKE Autopilot   ####
@@ -281,12 +347,12 @@ On GKE Autopilot, only one "datadog" Helm chart release is allowed by Kubernetes
 * The serviceAccountName must be "datadog-agent".
 * All ConfigMap names mounted must be hardcode.
 
-{{- if eq (include "system-probe-feature" .) "true" }}
+{{- if and (eq (include "system-probe-feature" .) "true") (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") }}
 
-#####################################################################
-####   WARNING: System Probe is not supported on GKE Autopilot   ####
-#####################################################################
-{{- fail "On GKE Autopilot environments, System Probe is not supported. The option 'datadog.securityAgent.runtime.enabled' must be set 'false'" }}
+##############################################################################################
+####   WARNING: System Probe on GKE Autopilot requires GKE v1.32.1-gke.1729000 or later   ####
+##############################################################################################
+{{- fail "System Probe on GKE Autopilot environments requires GKE v1.32.1-gke.1729000 or later. The option 'datadog.securityAgent.runtime.enabled', 'datadog.securityAgent.runtime.fimEnabled', 'datadog.networkMonitoring.enabled', 'datadog.systemProbe.enableTCPQueueLength', 'datadog.systemProbe.enableOOMKill', 'datadog.serviceMonitoring.enabled', 'datadog.traceroute.enabled', and 'datadog.discovery.enabled' must be set 'false'" }}
 
 {{- end }}
 
@@ -346,13 +412,45 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- end }}
+
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+
+{{- if or .Values.datadog.sbom.containerImage.enabled .Values.datadog.sbom.host.enabled }}
+
+#######################################################################################
+####   WARNING: SBOM Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'datadog.sbom.containerImage.enabled' and 'datadog.sbom.host.enabled' must be set to 'false'.
+
+{{- end }}
+
+{{- end }}
+
+{{- if .Values.providers.gke.autopilot }}
+
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+
+#######################################################################################
+####   WARNING: GPU Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, GPU Monitoring is not supported. The option 'datadog.gpu.enabled' must be set to 'false'.
+
+{{- end }}
+
+{{- end }}
+
+{{- if .Values.providers.gke.gdc }}
+
 {{- if .Values.datadog.networkMonitoring.enabled }}
 
 #######################################################################################
-####   WARNING: Network Performance Monitoring is not supported on GKE Autopilot   ####
+####   WARNING: Network Performance Monitoring is not supported on GKE GDC   ####
 #######################################################################################
 
-{{- fail "On GKE Autopilot environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
+{{- fail "On GKE GDC environments, Network Performance Monitoring is not supported. The option 'datadog.networkMonitoring.enabled' must be set to 'false'" }}
 
 {{- end }}
 
@@ -468,6 +566,42 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 {{- end }}
 
 
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-sbom-host-fs-collection" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The SBOM host filesystem collection feature requires access to the os-release information from the host.
+`datadog.sbom.host.enabled: true` can't be used with `datadog.disableDefaultOsReleasePaths: true`.
+{{- fail "The SBOM host filesystem collection feature requires access to the os-release information from the host." }}
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (eq .Values.datadog.osReleasePath "") (eq (include "should-add-host-path-for-os-release-paths" .) "false") (eq (include "should-enable-system-probe" .) "true") }}
+#################################################################
+####               ERROR: Configuration notice             ####
+#################################################################
+The current set of options used to install the chart requires the system-probe container to be enabled.
+However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `datadog.osReleasePath` is empty which is not compatible when the system-probe container is required.
+{{- fail "OS Release information is required  when system-probe is enabled." }}
+{{- end }}
+
+{{- if (and (eq  (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath) ) (ne .Values.datadog.dogstatsd.hostSocketPath .Values.datadog.apm.hostSocketPath)) }}
+#################################################################
+####            ERROR: Conflicting socket host path          ####
+#################################################################
+
+Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
+However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
+
+It is not possible to mount two different host paths at the same mount path. 
+
+To resolve this:
+- use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
+- or use different parent directories for datadog.dogstatsd.socketPath and datadog.apm.socketPath
+
+{{- end }}
+
+
+
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
   {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
@@ -537,4 +671,66 @@ You should deactivate these options: clusterAgent.podSecurity.podSecurityPolicy.
 You are using the datadog.securityAgent.compliance.xccdf.enabled parameter which has been replaced by datadog.securityAgent.compliance.host_benchmarks.enabled.
 This version still supports both but the support of the old name will be dropped in the next major version of our Helm chart.
 More information about this change: https://github.com/DataDog/helm-charts/pull/1161
+{{- end }}
+
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.providers.gke.autopilot }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+OTel collector is not supported on GKE Autopilot.
+{{- fail "The OTel collector cannot be run on GKE Autopilot." }}
+{{- end }}
+
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") (hasSuffix "-full" (.Values.agents.image.tag | toString)) }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+You have set the `-full` suffix directly in `agents.image.tag` ({{ .Values.agents.image.tag }}) while using the DDOT Collector.
+This is only supported in one of these conditions:
+- `datadog.otelCollector.useStandaloneImage` is set to `false`
+- `datadog.otelCollector.useStandaloneImage` is set to `true` and the agent version is 7.65 or 7.66.
+
+Please consider removing the `-full` suffix from the `agents.image.tag` and upgrade to the Agent 7.67.0+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/fr/opentelemetry/setup/ddot_collector/install/?tab=helm
+{{- end }}
+
+{{- if and (eq (include "should-enable-otel-agent" .) "true") .Values.datadog.otelCollector.useStandaloneImage (eq .Values.agents.image.tagSuffix "full") }}
+#################################################################
+####               WARNING: Configuration notice         ####
+#################################################################
+You have set `agents.image.tagSuffix: "full"` while `datadog.otelCollector.useStandaloneImage` is enabled.
+
+This configuration uses both the ddot-collector standalone image and the `full` flavor of the agent image which is also wrapping the ddot-collector image's content.
+
+To optimize performance, choose one of these options:
+- Remove the `agents.image.tagSuffix: "full"` override to use the default flavor of the Agent.
+- Set `datadog.otelCollector.useStandaloneImage: false` to stop using the ddot-collector standalone image.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/fr/opentelemetry/setup/ddot_collector/install/?tab=helm
+{{- end }}
+
+
+{{- if (eq (include "should-enable-fips-proxy" .) "true")  }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+The FIPS Proxy is getting phased out in favor of FIPS-compliant images.
+For new deployments, we recommend using the FIPS Agent.
+You can enable it by setting `useFIPSAgent` to true in your datadog-agent.yaml file.
+
+To learn more about it please refer to the following documentation:
+https://docs.datadoghq.com/agent/guide/fips-agent/
+{{- end }}
+
+{{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
+################################################################                                                             
+###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
+################################################################
+Enabling csi via `datadog.csi.enabled` is required to benefit from `csi` admission controller config mode.
+
+Otherwise, `socket` config mode will be used.
 {{- end }}

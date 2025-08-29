@@ -77,3 +77,16 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1beta1"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Check operator image tag version.
+*/}}
+{{- define "check-image-tag" -}}
+{{- if not .Values.image.doNotCheckTag -}}
+{{- $tag := .Values.image.tag -}}
+{{- $parts := split "@" $tag -}}
+{{- index $parts "_0"}}
+{{- else -}}
+{{ "1.17.0" }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,97 @@
+{{- define "container-agent-data-plane" -}}
+- name: agent-data-plane
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.datadog.agentDataPlane.image) }}"
+  imagePullPolicy: {{ .Values.datadog.agentDataPlane.image.pullPolicy }}
+  command: ["agent-data-plane", "run", "--config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  resources:
+{{- if and (empty .Values.agents.containers.agentDataPlane.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
+{{ toYaml .Values.agents.containers.agentDataPlane.resources | indent 4 }}
+{{- end }}
+  ports:
+  - containerPort: {{ .Values.datadog.dogstatsd.port }}
+    {{- if .Values.datadog.dogstatsd.useHostPort }}
+    hostPort: {{ .Values.datadog.dogstatsd.port }}
+    {{- end }}
+    name: dogstatsdport
+    protocol: UDP
+
+{{- if .Values.agents.containers.agentDataPlane.ports }}
+{{ toYaml .Values.agents.containers.agentDataPlane.ports | indent 2 }}
+{{- end }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.agentDataPlane.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.agentDataPlane.envFrom }}
+{{ .Values.agents.containers.agentDataPlane.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-dogstatsd-env" . | nindent 4 }}
+    {{- if .Values.datadog.logLevel }}
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.agentDataPlane.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- end }}
+    - name: DD_API_LISTEN_ADDRESS
+    {{- $unprivilegedApiPort := .Values.agents.containers.agentDataPlane.unprivilegedApiPort }}
+      value: "tcp://0.0.0.0:{{ $unprivilegedApiPort }}"
+    - name: DD_SECURE_API_LISTEN_ADDRESS
+    {{- $privilegedApiPort := .Values.agents.containers.agentDataPlane.privilegedApiPort }}
+      value: "tcp://0.0.0.0:{{ $privilegedApiPort }}"
+    - name: DD_TELEMETRY_ENABLED
+      value: "true"
+    - name: DD_PROMETHEUS_LISTEN_ADDR
+    {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
+      value: "tcp://127.0.0.1:{{ $telemetryApiPort }}"
+    {{- include "additional-env-entries" .Values.agents.containers.agentDataPlane.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.agentDataPlane.envDict | indent 4 }}
+  volumeMounts:
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW to write to /tmp directory
+    {{- end }}
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false # Need RW to mount to config path
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: false # Need RW to write auth token
+    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
+    - name: datadog-yaml
+      mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
+      subPath: datadog.yaml
+      readOnly: true
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if not .Values.providers.gke.gdc }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
+    {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+  livenessProbe:
+{{- $live := .Values.agents.containers.agentDataPlane.livenessProbe }}
+{{ include "probe.http" (dict "path" "/live" "port" $unprivilegedApiPort "settings" $live) | indent 4 }}
+  readinessProbe:
+{{- $ready := .Values.agents.containers.agentDataPlane.readinessProbe }}
+{{ include "probe.http" (dict "path" "/ready" "port" $unprivilegedApiPort "settings" $ready) | indent 4 }}
+{{- end -}}

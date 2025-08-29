@@ -1,6 +1,9 @@
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  clusterName: kubernetes-cluster.example.comkubernetes-cluster.example.com.kube.rnetes-80chars
   kubeStateMetricsCore:
     enabled: true
   orchestratorExplorer:

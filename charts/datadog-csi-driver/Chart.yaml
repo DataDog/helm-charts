@@ -1,0 +1,9 @@
+apiVersion: v2
+name: datadog-csi-driver
+description: Datadog CSI Driver helm chart
+type: application
+version: 0.4.1
+appVersion: "0.1.0"
+maintainers:
+  - name: Datadog
+    email: support@datadoghq.com

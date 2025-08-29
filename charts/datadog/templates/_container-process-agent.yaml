@@ -2,19 +2,27 @@
 - name: process-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if and (.Values.agents.lifecycle) (not .Values.providers.gke.autopilot) }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["process-agent", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end }}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["process-agent", "-foreground", "{{template "process-agent-config-file-flag" . }}={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.processAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
 {{- if .Values.agents.containers.processAgent.ports }}
   ports:
 {{ toYaml .Values.agents.containers.processAgent.ports | indent 2 }}
 {{- end }}
   resources:
+{{- if and (empty .Values.agents.containers.processAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.processAgent.resources | indent 4 }}
+{{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.processAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}
@@ -28,16 +36,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
-    {{- if .Values.datadog.processAgent.processCollection }}
-    - name: DD_PROCESS_AGENT_ENABLED
-      value: "true"
-    {{- end }}
-    - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
-      value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
-    {{- if .Values.datadog.processAgent.stripProcessArguments }}
-    - name: DD_STRIP_PROCESS_ARGS
-      value: "true"
-    {{- end }}
+    {{- include "processes-common-envs" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.processAgent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- if eq .Values.datadog.logFormat "json" }}
@@ -49,6 +48,30 @@
     {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.connectionsMonitoring.enabled }}
+    - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+      value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.workers }}
+    - name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+      value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+      value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+      value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+      value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+      value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
@@ -65,11 +88,13 @@
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
-    {{- if eq .Values.targetSystem "linux" }}
     {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket
@@ -92,7 +117,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery}}
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection) }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true

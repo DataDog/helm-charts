@@ -2,6 +2,10 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq  (include "should-enable-compliance" .) "true" }}
   securityContext:
     capabilities:
@@ -34,14 +38,20 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-    {{- if or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
     - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
-      value:  "true"
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
     - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
-      value:  "true"
-    {{- end }}
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
     - name: HOST_ROOT
       value: /host/root
+    {{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+    {{- end }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
@@ -93,9 +103,11 @@
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
+    {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+    {{- end }}
     - name: group
       mountPath: /etc/group
       readOnly: true
