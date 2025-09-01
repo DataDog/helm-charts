@@ -1,4 +1,7 @@
 # Datadog changelog
+## 3.131.2
+
+* Add support for otel agent in GKE autopilot.
 
 ## 3.131.1
 
