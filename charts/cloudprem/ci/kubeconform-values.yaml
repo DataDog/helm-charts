@@ -12,6 +12,9 @@ seed:
 control_plane:
   enabled: false
 
+metastore:
+  replicaCount: 1
+
 indexer:
   enabled: false
 

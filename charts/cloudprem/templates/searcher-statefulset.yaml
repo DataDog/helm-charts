@@ -5,6 +5,9 @@ metadata:
   name: {{ include "quickwit.fullname" . }}-searcher
   labels:
     {{- include "quickwit.labels" . | nindent 4 }}
+    {{- if .Values.azure.clientId }}
+    azure.workload.identity/use: "true"
+    {{- end }}
   annotations:
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -13,7 +16,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  {{- if hasKey .Values.searcher "replicaCount" }}
+  {{- if and (hasKey .Values.searcher "replicaCount") (not .Values.searcher.autoscaling.enabled) }}
   replicas: {{ .Values.searcher.replicaCount }}
   {{- end }}
   serviceName: {{ include "quickwit.fullname" . }}-headless

@@ -49,6 +49,26 @@
     - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
       value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
     {{- end }}
+    {{- if .Values.datadog.networkPath.collector.workers }}
+    - name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+      value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+      value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+      value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+      value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+    - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+      value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
+    {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}

@@ -428,6 +428,20 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 
 {{- end }}
 
+{{- if .Values.providers.gke.autopilot }}
+
+{{- if .Values.datadog.gpuMonitoring.enabled }}
+
+#######################################################################################
+####   WARNING: GPU Monitoring is not supported on GKE Autopilot   ####
+#######################################################################################
+
+On GKE Autopilot environments, GPU Monitoring is not supported. The option 'datadog.gpu.enabled' must be set to 'false'.
+
+{{- end }}
+
+{{- end }}
+
 {{- if .Values.providers.gke.gdc }}
 
 {{- if .Values.datadog.networkMonitoring.enabled }}

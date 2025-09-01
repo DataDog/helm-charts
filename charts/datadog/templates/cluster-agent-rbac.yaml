@@ -347,6 +347,13 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---

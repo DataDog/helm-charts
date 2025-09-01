@@ -75,7 +75,7 @@ data:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}
     gpu_monitoring:
-      enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}
+      enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
       configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
