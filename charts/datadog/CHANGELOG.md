@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.131.2
+## 3.132.0
 
 * Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.
 
