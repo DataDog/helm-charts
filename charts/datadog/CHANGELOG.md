@@ -1,8 +1,25 @@
 # Datadog changelog
 
-## 3.130.0
+## 3.131.2
 
 * Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.
+
+## 3.131.1
+
+* Update `fips.image.tag` to `1.1.16` fixing CVEs and updating packages.
+
+
+## 3.131.0
+
+* Upgrade default Agent version to `7.69.3`.
+
+## 3.130.1
+
+* Mount `/host/run` when `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
+## 3.130.0
+
+* Update Cluster Agent RBAC to allow list/watch on all Datadog custom resources if the orchestrator check is enabled.
 
 ## 3.129.0
 
@@ -43,7 +60,7 @@
 ## 3.126.0
 
 * Upgrade default Agent version to `7.68.3`.
- 
+
 ## 3.125.0
 
 * Add `datadog.sbom.containerImage.containerInclude` and
@@ -76,7 +93,7 @@ container images for SBOM generation.
 
 ## 3.122.1
 
-* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.  
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.
 
 ## 3.122.0
 

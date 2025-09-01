@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8
+
+* Add support for Azure
+
 ## 0.1.7
 
 * Add support for autoscaling via Horizontal Pod Autoscaler (HPA) for the indexer and search StatefulSets.
