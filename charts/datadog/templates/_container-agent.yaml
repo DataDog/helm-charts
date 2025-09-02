@@ -410,6 +410,9 @@
     - name: kubelet-cert-volume
       mountPath: /certs
     {{- end }}
+    - name: agent-cluster-ca
+      mountPath: /etc/datadog-agent/agent-cluster-ca
+      readOnly: true
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}

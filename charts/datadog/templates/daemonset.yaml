@@ -151,6 +151,9 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
+      - name: agent-cluster-ca
+        secret:
+          secretName: datadog-agent-cluster-ca-secret
       {{- if (not .Values.providers.gke.autopilot) }}
       - name: auth-token
         emptyDir: {}
