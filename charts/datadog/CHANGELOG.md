@@ -1,4 +1,8 @@
 # Datadog changelog
+
+## 3.131.3
+* Update Cluster Agent RBAC to allow list/watch on `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*` and `argoproj.io/rollouts` if the orchestrator check is enabled.
+
 ## 3.131.2
 
 * Add support for otel agent in GKE autopilot.
