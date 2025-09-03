@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.131.4
+* Enable the orchestrator check to collect the following custom resources if autoscaling is enabled: `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*`, and `argoproj.io/rollouts`.
+
 ## 3.131.3
 * Update Cluster Agent RBAC to allow list/watch on `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*` and `argoproj.io/rollouts` if the orchestrator check is enabled.
 
