@@ -962,6 +962,7 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.resources | object | `{}` | Resource requests and limits for the kube-state-metrics container. |
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
+| kube-state-metrics.tolerations | list | `[]` | Tolerations for KSM.  |
 | nameOverride | string | `nil` | Override name of app |
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
