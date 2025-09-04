@@ -4,6 +4,16 @@
 
 * Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.
 
+## 3.131.4
+* Enable the orchestrator check to collect the following custom resources if autoscaling is enabled: `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*`, and `argoproj.io/rollouts`.
+
+## 3.131.3
+* Update Cluster Agent RBAC to allow list/watch on `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*` and `argoproj.io/rollouts` if the orchestrator check is enabled.
+
+## 3.131.2
+
+* Add support for otel agent in GKE autopilot.
+
 ## 3.131.1
 
 * Update `fips.image.tag` to `1.1.16` fixing CVEs and updating packages.
