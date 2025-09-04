@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.132.0
+
+* Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.
+
 ## 3.131.4
 * Enable the orchestrator check to collect the following custom resources if autoscaling is enabled: `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*`, and `argoproj.io/rollouts`.
 
