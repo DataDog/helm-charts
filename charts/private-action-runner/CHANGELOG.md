@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.8.0
+
+* Add support for `runner.useSeparateSecretForCredentials` to match with the default expected file layout.
+
 ## 1.7.0
 
 * Bump runner version to `v1.7.0`
