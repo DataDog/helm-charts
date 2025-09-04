@@ -176,9 +176,9 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/
-    - secretName: action-credentials
-      directoryName: ""
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
     # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"

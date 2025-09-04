@@ -51,6 +51,10 @@
           "type": "string",
           "description": "The directory containing the Datadog Private Action Runner configuration"
         },
+        "useSeparateSecretForCredentials": {
+          "type": "boolean",
+          "description": "Configure whether to use a separate kubernetes secret for the credentials and the config"
+        },
         "config": {
           "type": "object",
           "description": "Configuration for the Datadog Private Action Runner",

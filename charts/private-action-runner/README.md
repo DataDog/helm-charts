@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![AppVersion: v1.7.0](https://img.shields.io/badge/AppVersion-v1.7.0-informational?style=flat-square)
+![Version: 1.8.0](https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square) ![AppVersion: v1.7.0](https://img.shields.io/badge/AppVersion-v1.7.0-informational?style=flat-square)
 
 ## Overview
 
@@ -175,9 +175,9 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/
-    - secretName: action-credentials
-      directoryName: ""
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
     # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"
@@ -278,3 +278,4 @@ If actions requiring credentials fail:
 | runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
 | runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
+| runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
