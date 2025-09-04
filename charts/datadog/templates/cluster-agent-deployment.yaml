@@ -18,9 +18,9 @@ metadata:
   annotations:
   {{- if .Values.clusterAgent.deploymentAnnotations }}
     {{ toYaml .Values.clusterAgent.deploymentAnnotations | nindent 4 }}
+  {{- end }}
   {{- if .Values.datadog.operator.migrationEnabled }}
     helm.sh/resource-policy: "keep"
-  {{- end }}
   {{- end }}
 spec:
   replicas: {{ .Values.clusterAgent.replicas }}
