@@ -129,7 +129,3 @@ runner:
   scriptFiles: []
   # script files provided here will be mounted in /home/scriptuser/
   # see examples/values.yaml for examples on how to specify scripts
-  # -- References to kubernetes configmaps that contain scripts to be used by the Datadog Private Action Runner
-  scriptConfigMaps: []
-  # script files provided here will be mounted in /home/scriptuser/
-  # see examples/values.yaml for examples on how to specify script configmaps

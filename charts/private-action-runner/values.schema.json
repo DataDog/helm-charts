@@ -408,25 +408,6 @@
             "required": ["fileName", "data"],
             "additionalProperties": false
           }
-        },
-        "scriptConfigMaps": {
-          "type": "array",
-          "description": "List of configmaps containing scripts to be used by the Datadog Private Action Runner",
-          "items": {
-            "type": "object",
-            "properties": {
-              "configMapName": {
-                "type": "string",
-                "description": "Name of the configmap containing the scripts"
-              },
-              "directoryName": {
-                "type": "string",
-                "description": "Name of the directory where the scripts will be mounted"
-              }
-            },
-            "required": ["configMapName"],
-            "additionalProperties": false
-          }
         }
       },
       "required": ["config"],

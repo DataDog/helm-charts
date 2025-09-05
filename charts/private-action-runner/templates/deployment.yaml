@@ -51,10 +51,6 @@ spec:
             - name: scripts
               mountPath: /home/scriptuser
             {{- end }}
-            {{- range $_, $scriptConfigMap := $.Values.runner.scriptConfigMaps }}
-            - name: {{ $scriptConfigMap.configMapName }}
-              mountPath: /home/scriptuser/{{ $scriptConfigMap.directoryName }}
-            {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: {{ $.Values.runner.configDirectory }}
@@ -94,9 +90,4 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "chart.fullname" . }}-scripts
-        {{- end }}
-        {{- range $_, $scriptConfigMap := $.Values.runner.scriptConfigMaps }}
-        - name: {{ $scriptConfigMap.configMapName }}
-          configMap:
-            name: {{ $scriptConfigMap.configMapName }}
         {{- end }}

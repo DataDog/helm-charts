@@ -245,10 +245,3 @@ runner:
         #!/bin/bash
         echo "Hello World from bash!"
 
-  scriptConfigMaps: []
-    # a kubernetes configmap containing multiple script files mounted at /home/scriptuser/<filename-from-configmap>
-    # - configMapName: custom-scripts
-    #   directoryName: ""
-    # a kubernetes configmap containing a single script file mounted at /home/scriptuser/custom/<filename-from-configmap>
-    # - configMapName: deployment-scripts
-    #   directoryName: custom
