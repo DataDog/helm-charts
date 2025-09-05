@@ -7,7 +7,7 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.13.0-dev.5
+    helm.sh/chart: datadog-operator-2.13.0-dev.6
     app.kubernetes.io/instance: datadog-operator
     app.kubernetes.io/version: "1.18.0-rc.4"
     app.kubernetes.io/managed-by: Helm
@@ -74,6 +74,7 @@ spec:
             httpGet:
               path: /healthz/
               port: 8081
+            initialDelaySeconds: 15
             periodSeconds: 10
           resources:
             {}
