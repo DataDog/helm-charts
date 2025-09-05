@@ -1,0 +1,39 @@
+datadog:
+  operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator
+    enabled: true
+    # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
+    # FLIP TO TRUE TO MIGRATE
+    createDDAManifest: false
+    # datadog.operator.migration.enabled -- Enable migration to the operator
+    migrationEnabled: true
+
+    # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
+  ## If set, this parameter takes precedence over "apiKey".
+  apiKeyExistingSecret:  datadog-secret
+
+  ## If set, this parameter takes precedence over "appKey".
+  appKeyExistingSecret:  datadog-secret
+
+  clusterName:  migration-poc1
+
+  kubelet:
+    tlsVerify:  false
+
+  securityAgent:
+    compliance:
+      enabled: true
+
+  processAgent:
+    enabled: true
+
+clusterAgent:
+  enabled: true
+  replicas: 5
+
+clusterChecksRunner:
+  enabled: true
+  replicas: 5
+
+agents: 
+  enabled: true
