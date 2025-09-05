@@ -197,7 +197,7 @@ runner:
         #!/bin/bash
         echo "Deploying application..."
         kubectl apply -f /path/to/manifest.yaml
-        
+       
     - fileName: "health-check.py"
       data: |
         #!/usr/bin/env python3
