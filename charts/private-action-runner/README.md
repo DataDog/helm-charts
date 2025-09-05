@@ -191,18 +191,19 @@ The Private Action Runner supports custom scripts via the `runner.scriptFiles` p
 
 ```yaml
 runner:
-  credentialFiles:
-    - fileName: "script.yaml"
-      data: |
-        schemaId: script-credentials-v1
-        runPredefinedScript:
-          echoInBash:
-            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
   scriptFiles:
-    - fileName: "hello-from-bash.sh"
+    - fileName: "deploy.sh"
       data: |
         #!/bin/bash
-        echo "Hello World from bash!"
+        echo "Deploying application..."
+        kubectl apply -f /path/to/manifest.yaml
+       
+    - fileName: "health-check.py"
+      data: |
+        #!/usr/bin/env python3
+        import requests
+        response = requests.get("http://my-service:8080/health")
+        print(f"Health check: {response.status_code}")
 ```
 
 ## Architecture
