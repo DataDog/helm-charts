@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.9.0
+
+* Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
+
 ## 1.8.0
 
 * Add support for `runner.useSeparateSecretForCredentials` to match with the default expected file layout.
