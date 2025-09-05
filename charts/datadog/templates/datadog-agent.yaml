@@ -564,6 +564,7 @@ spec:
       volumes:
 {{ .Values.agents.volumes | toYaml | indent 8 }}
 {{- end }}
+{{- if .Values.clusterAgent.enabled }}
     clusterAgent:
 {{- if .Values.clusterAgent.additionalLabels }}
       labels:
@@ -678,6 +679,8 @@ spec:
       volumes:
 {{ .Values.clusterAgent.volumes | toYaml | indent 8 }}
 {{- end }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.enabled }}
     clusterChecksRunner:
 {{- if .Values.clusterChecksRunner.additionalLabels }}
       labels:
@@ -767,5 +770,6 @@ spec:
 {{- if .Values.clusterChecksRunner.volumes }}
       volumes:
 {{ .Values.clusterChecksRunner.volumes | toYaml | indent 8 }}
+{{- end }}
 {{- end }}
 {{- end }}

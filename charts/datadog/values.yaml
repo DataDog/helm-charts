@@ -2682,6 +2682,9 @@ remoteConfiguration:
 
 datadog-operator:
   image:
-    repository: docker.io/fannyatdd/operator
+    # datadog-operator.image.repository -- Repository to use for Datadog Operator image
+    repository: gcr.io/datadoghq/operator
+    # datadog-operator.image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
     doNotCheckTag: true
-  logLevel: debug
+  # datadog-operator.logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
+  logLevel: "info"
