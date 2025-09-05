@@ -183,6 +183,34 @@ runner:
       directoryName: "jenkins"
 ```
 
+## Using Custom Scripts
+
+The Private Action Runner supports custom scripts that can be used by your private actions. Scripts are automatically mounted in the `/home/scriptuser/` directory inside the runner container and are available for use in your private action configurations.
+
+### Configuration
+
+Define your custom scripts directly in your `values.yaml` file using the `runner.scriptFiles` parameter:
+
+```yaml
+runner:
+  scriptFiles:
+    - fileName: "deploy.sh"
+      data: |
+        #!/bin/bash
+        echo "Deploying application..."
+        kubectl apply -f /path/to/manifest.yaml
+        kubectl rollout status deployment/my-app --timeout=300s
+        echo "Deployment completed!"
+        
+    - fileName: "health-check.py"
+      data: |
+        #!/usr/bin/env python3
+        import requests
+        
+        response = requests.get("http://my-service:8080/health")
+        print(f"Health check: {response.status_code}")
+```
+
 ## Architecture
 
 The Private Action Runner Helm chart deploys the following components:

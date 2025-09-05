@@ -2,9 +2,9 @@
 
 ## 1.9.0
 
-- Add support for custom scripts via `runner.scriptFiles`
-- Scripts are mounted in `/home/scriptuser/` directory
-- Support for inline script files
+* Add support for custom scripts via `runner.scriptFiles`
+* Scripts are mounted in `/home/scriptuser/` directory
+* Support for inline script files
 
 ## 1.8.0
 

@@ -117,7 +117,7 @@ spec:
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 4f175038561fd85270fdc70c3b3bc78363caa2681178467eafbac672273158f2
+        checksum/values: 807bf1dc4c77f880ecf1e19db28f72a3aa8115adc620f67950a82dddbeb85a7b
     spec:
       serviceAccountName: scripts-test-private-action-runner
       containers:
@@ -139,8 +139,6 @@ spec:
               mountPath: /etc/dd-action-runner/config
             - name: scripts
               mountPath: /home/scriptuser
-            - name: external-scripts
-              mountPath: /home/scriptuser/external
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
@@ -151,6 +149,3 @@ spec:
         - name: scripts
           configMap:
             name: scripts-test-private-action-runner-scripts
-        - name: external-scripts
-          configMap:
-            name: external-scripts

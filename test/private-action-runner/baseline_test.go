@@ -128,8 +128,7 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"runner.scriptFiles":      `[{"fileName": "my-script.sh", "data": "#!/bin/bash\necho \"Hello World from bash!\""}]`,
-					"runner.scriptConfigMaps": `[{"configMapName": "external-scripts", "directoryName": "external"}]`,
+					"runner.scriptFiles": `[{"fileName": "my-script.sh", "data": "#!/bin/bash\necho \"Hello World from bash!\""}]`,
 				},
 			},
 			snapshotName: "scripts-configuration",

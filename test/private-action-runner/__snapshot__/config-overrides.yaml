@@ -99,7 +99,7 @@ spec:
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: dd463ceb0c2800806875358789917e63e430e39596fe4b0b28efc52aa6378182
+        checksum/values: bc4d232b58a296704f944f8d8fc3ae1490e90a9bc0e61ed5371a675ba85fc2a6
     spec:
       serviceAccountName: custom-full-name
       containers:
