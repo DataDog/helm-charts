@@ -1620,6 +1620,10 @@ clusterAgent:
   podAnnotations: {}
   #   key: "value"
 
+  # clusterAgent.serviceAnnotations -- Annotations to add to the cluster-agent service
+  serviceAnnotations: {}
+  #   key: "value"
+
   # clusterAgent.useHostNetwork -- Bind ports on the hostNetwork
 
   ## Useful for CNI networking where hostPort might
@@ -2258,6 +2262,10 @@ agents:
 
   # agents.podAnnotations -- Annotations to add to the DaemonSet's Pods
   podAnnotations: {}
+  #   key: "value"
+
+  # agents.serviceAnnotations -- Annotations to add to the agent local service 
+  serviceAnnotations: {}
   #   key: "value"
 
   # agents.tolerations -- Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6)

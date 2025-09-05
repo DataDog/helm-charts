@@ -568,6 +568,7 @@ helm install <RELEASE_NAME> \
 | agents.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if agents.rbac.create is true |
 | agents.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if agents.rbac.create is false |
 | agents.revisionHistoryLimit | int | `10` | The number of ControllerRevision to keep in this DaemonSet. |
+| agents.serviceAnnotations | object | `{}` | Annotations to add to the agent local service  |
 | agents.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Daemonset |
 | agents.terminationGracePeriodSeconds | int | `nil` | Configure the termination grace period for the Agent |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
@@ -653,6 +654,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.resources | object | `{}` | Datadog cluster-agent resource requests and limits. |
 | clusterAgent.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | clusterAgent.securityContext | object | `{}` | Allows you to overwrite the default PodSecurityContext on the cluster-agent pods. |
+| clusterAgent.serviceAnnotations | object | `{}` | Annotations to add to the cluster-agent service |
 | clusterAgent.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Cluster Agent |
 | clusterAgent.startupProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent startup probe settings |
 | clusterAgent.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the Cluster Agent deployment to perform a rolling update on helm update |

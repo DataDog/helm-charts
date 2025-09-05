@@ -6,6 +6,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+  {{- if .Values.clusterAgent.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.clusterAgent.serviceAnnotations | indent 4 }}
+  {{- end }}
 spec:
   type: ClusterIP
   selector:
@@ -76,6 +80,10 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}
+  {{- if .Values.agents.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.agents.serviceAnnotations | indent 4 }}
+  {{- end }}
 spec:
   selector:
     app: {{ template "datadog.fullname" . }}
