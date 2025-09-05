@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -17,7 +17,7 @@ Datadog CSI Driver helm chart
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
 | image.pullSecrets | list | `[]` | CSI driver repository pullSecret (for example: specify Docker registry credentials) |
-| image.repository | string | `"datadog/csi-driver"` | Override default registry + image.name for CSI driver |
+| image.repository | string | `"gcr.io/datadoghq/csi-driver"` | Override default registry + image.name for CSI driver |
 | image.tag | string | `"1.0.0"` | CSI driver image tag to use |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
