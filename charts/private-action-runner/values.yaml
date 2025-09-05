@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.6.0
+  tag: v1.7.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -23,6 +23,8 @@ runner:
   replicas: 1
   # -- The directory containing the Datadog Private Action Runner configuration
   configDirectory: "/etc/dd-action-runner/config"
+  # -- Configure whether to use a separate kubernetes secret for the credentials and the config
+  useSeparateSecretForCredentials: false
   # -- Configuration for the Datadog Private Action Runner
   config:
     # -- Base URL of the Datadog app

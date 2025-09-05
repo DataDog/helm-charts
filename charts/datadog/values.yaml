@@ -929,6 +929,17 @@ datadog:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
       enabled: false
+    collector:
+      # datadog.networkPath.collector.workers -- Override the number of workers
+      workers:
+      # datadog.networkPath.collector.pathtestTTL -- Override TTL in minutes for pathtests
+      pathtestTTL:
+      # datadog.networkPath.collector.pathtestInterval -- Override time interval between pathtest runs
+      pathtestInterval:
+      # datadog.networkPath.collector.pathtestContextsLimit -- Override maximum number of pathtests stored to run
+      pathtestContextsLimit:
+      # datadog.networkPath.collector.pathtestMaxPerMinute -- Override limit for total pathtests run, per minute
+      pathtestMaxPerMinute:
 
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
@@ -967,8 +978,12 @@ datadog:
       enabled: true
 
   gpuMonitoring:
-    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
+
+    # datadog.gpuMonitoring.privilegedMode -- Enable advanced GPU metrics and monitoring via system-probe
+    # Note: system-probe component of the agent runs with elevated privileges
+    privilegedMode: false
 
     # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
     configureCgroupPerms: false
@@ -1020,6 +1035,12 @@ datadog:
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
 
+      # datadog.securityAgent.compliance.containerInclude -- Include containers in CSPM monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
+
       # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
         enabled: false
@@ -1037,6 +1058,15 @@ datadog:
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
       useSecruntimeTrack: true
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+      containerExclude:  # "image:datadog/agent"
+
+      # datadog.securityAgent.runtime.containerInclude -- Include containers in runtime security monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
@@ -1167,8 +1197,7 @@ datadog:
     enabled: true
 
   csi:
-    # datadog.csi.enabled -- Enable datadog csi driver (Requires installation of Datadog CSI Driver https://github.com/DataDog/helm-charts/tree/main/charts/datadog-csi-driver)
-    # This feature is still in beta
+    # datadog.csi.enabled -- Enable datadog csi driver
     # Requires version 7.67 or later of the cluster agent
     enabled: false
 
@@ -1210,7 +1239,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.68.3
+    tag: 7.69.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1711,7 +1740,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.14
+    tag: 1.1.16
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1754,7 +1783,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.68.3
+    tag: 7.69.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2340,7 +2369,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.68.3
+    tag: 7.69.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

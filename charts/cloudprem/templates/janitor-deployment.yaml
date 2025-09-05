@@ -5,6 +5,9 @@ metadata:
   name: {{ include "quickwit.fullname" . }}-janitor
   labels:
     {{- include "quickwit.labels" . | nindent 4 }}
+    {{- if .Values.azure.clientId }}
+    azure.workload.identity/use: "true"
+    {{- end }}
   annotations:
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
