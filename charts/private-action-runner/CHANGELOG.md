@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 1.9.0
+
+* Add support for custom scripts via `runner.scriptFiles`
+* Scripts are mounted in `/home/scriptuser/` directory
+* Support for inline script files
+
 ## 1.8.0
 
 * Add support for `runner.useSeparateSecretForCredentials` to match with the default expected file layout.

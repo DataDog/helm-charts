@@ -389,6 +389,25 @@
             "required": ["secretName"],
             "additionalProperties": false
           }
+        },
+        "scriptFiles": {
+          "type": "array",
+          "description": "List of script files to be used by the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "Name of the script file"
+              },
+              "data": {
+                "type": "string",
+                "description": "Content of the script file"
+              }
+            },
+            "required": ["fileName", "data"],
+            "additionalProperties": false
+          }
         }
       },
       "required": ["config"],
