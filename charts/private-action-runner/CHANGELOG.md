@@ -2,7 +2,7 @@
 
 ## 1.9.0
 
-* Add your changelog here!
+* Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
 
 ## 1.8.0
 
