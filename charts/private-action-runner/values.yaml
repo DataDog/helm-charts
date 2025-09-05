@@ -125,3 +125,11 @@ runner:
   credentialSecrets: []
   # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
   # see examples/values.yaml for examples on how to specify secrets
+  # -- List of script files to be used by the Datadog Private Action Runner
+  scriptFiles: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify scripts
+  # -- References to kubernetes configmaps that contain scripts to be used by the Datadog Private Action Runner
+  scriptConfigMaps: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify script configmaps

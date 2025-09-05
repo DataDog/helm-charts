@@ -185,6 +185,25 @@ stringData:
           required:
             - echoValue
 ---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.9.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.7.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: a908cc3df7da2a44f6eca4893440b0dfe1c29e60b61291c172b6a2c1df2bae67
+data:
+  my-script.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
+---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -237,7 +256,7 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.8.0
+    helm.sh/chart: private-action-runner-1.9.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
     app.kubernetes.io/version: "v1.7.0"
@@ -252,13 +271,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.8.0
+        helm.sh/chart: private-action-runner-1.9.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: cff526e485a64effebfb9cc431754edd9a644132e3233ac303aaa8e4014134d3
+        checksum/values: 305f1d584b80aca673192a38c4e46d24093a63cf4a8c0561e2141a7ea74f6397
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
@@ -294,6 +313,8 @@ spec:
               mountPath: /etc/dd-action-runner/config
             - name: credentials
               mountPath: /etc/dd-action-runner/config/credentials
+            - name: scripts
+              mountPath: /home/scriptuser
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
@@ -304,3 +325,6 @@ spec:
         - name: credentials
           secret:
             secretName: example-test-private-action-runner-credentials
+        - name: scripts
+          configMap:
+            name: example-test-private-action-runner-scripts

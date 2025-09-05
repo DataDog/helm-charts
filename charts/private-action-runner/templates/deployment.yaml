@@ -47,6 +47,14 @@ spec:
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
+            {{- if $.Values.runner.scriptFiles }}
+            - name: scripts
+              mountPath: /home/scriptuser
+            {{- end }}
+            {{- range $_, $scriptConfigMap := $.Values.runner.scriptConfigMaps }}
+            - name: {{ $scriptConfigMap.configMapName }}
+              mountPath: /home/scriptuser/{{ $scriptConfigMap.directoryName }}
+            {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: {{ $.Values.runner.configDirectory }}
@@ -81,4 +89,14 @@ spec:
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}
+        {{- end }}
+        {{- if $.Values.runner.scriptFiles }}
+        - name: scripts
+          configMap:
+            name: {{ include "chart.fullname" . }}-scripts
+        {{- end }}
+        {{- range $_, $scriptConfigMap := $.Values.runner.scriptConfigMaps }}
+        - name: {{ $scriptConfigMap.configMapName }}
+          configMap:
+            name: {{ $scriptConfigMap.configMapName }}
         {{- end }}

@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -25,12 +25,31 @@ stringData:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
 ---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.9.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: scripts-test
+    app.kubernetes.io/version: "v1.7.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 3dbc258fe3956d8d13ee59bdcbba61b45b1111bcdcae385de3faef641be84b8a
+data:
+  my-script.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
+---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -44,27 +63,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: resources-test-private-action-runner
+    name: scripts-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: scripts-test
   ports:
     - name: http
       port: 9016
@@ -74,12 +93,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: resources-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.9.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: resources-test
+    app.kubernetes.io/instance: scripts-test
     app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -88,19 +107,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: scripts-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.9.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: resources-test
+        app.kubernetes.io/instance: scripts-test
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 215dceee7a8a528e0e192e06e8bdda86b3e5a6b2acc013401c62682ede5544be
+        checksum/values: 4f175038561fd85270fdc70c3b3bc78363caa2681178467eafbac672273158f2
     spec:
-      serviceAccountName: resources-test-private-action-runner
+      serviceAccountName: scripts-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.7.0"
@@ -118,25 +137,20 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
+            - name: scripts
+              mountPath: /home/scriptuser
+            - name: external-scripts
+              mountPath: /home/scriptuser/external
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
-      nodeSelector:
-        kubernetes.io/os: linux
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-      tolerations:
-        - effect: NoSchedule
-          key: taint.custom.com/key
-          operator: Exists
       volumes:
         - name: secrets
           secret:
-            secretName: resources-test-private-action-runner
+            secretName: scripts-test-private-action-runner
+        - name: scripts
+          configMap:
+            name: scripts-test-private-action-runner-scripts
+        - name: external-scripts
+          configMap:
+            name: external-scripts

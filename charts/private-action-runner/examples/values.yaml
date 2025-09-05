@@ -60,7 +60,7 @@ runner:
     jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
   # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
-  kubernetesPermissions:
+  kubernetesPermissions: []
   # CRD example
   #    - apiGroups:
   #        - "example.com"
@@ -237,3 +237,18 @@ runner:
     # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/config/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
     # - secretName: jenkins-secret
     #   directoryName: jenkins
+
+  # script files provided here will be mounted in /home/scriptuser/
+  scriptFiles:
+    - fileName: "my-script.sh"
+      data: |
+        #!/bin/bash
+        echo "Hello World from bash!"
+
+  scriptConfigMaps: []
+    # a kubernetes configmap containing multiple script files mounted at /home/scriptuser/<filename-from-configmap>
+    # - configMapName: custom-scripts
+    #   directoryName: ""
+    # a kubernetes configmap containing a single script file mounted at /home/scriptuser/custom/<filename-from-configmap>
+    # - configMapName: deployment-scripts
+    #   directoryName: custom
