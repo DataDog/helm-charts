@@ -240,7 +240,7 @@ metadata:
     helm.sh/chart: private-action-runner-1.9.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "1.8.0"
+    app.kubernetes.io/version: "v1.8.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -255,7 +255,7 @@ spec:
         helm.sh/chart: private-action-runner-1.9.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "1.8.0"
+        app.kubernetes.io/version: "v1.8.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/values: 8cbf51583e2f8d172645f26b6a240a3ded639ac0d6898e17d2fb88b2114f2252
@@ -263,7 +263,7 @@ spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:1.8.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.8.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
