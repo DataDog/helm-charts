@@ -60,7 +60,7 @@ runner:
     jobs: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
     customObjects: [] # select your actions among ["get", "list", "create", "update", "patch", "delete", "deleteMultiple"]
   # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
-  kubernetesPermissions: []
+  kubernetesPermissions:
   # CRD example
   #    - apiGroups:
   #        - "example.com"
@@ -228,6 +228,8 @@ runner:
                   const: "world"
               required:
                 - echoValue
+          echoInBash:
+            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
 
 
   credentialSecrets: []
@@ -240,7 +242,7 @@ runner:
 
   # script files provided here will be mounted in /home/scriptuser/
   scriptFiles:
-    - fileName: "my-script.sh"
+    - fileName: "hello-from-bash.sh"
       data: |
         #!/bin/bash
         echo "Hello World from bash!"

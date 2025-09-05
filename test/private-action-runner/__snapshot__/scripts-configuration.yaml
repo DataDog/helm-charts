@@ -23,7 +23,10 @@ stringData:
     port: 9016
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod
+      - com.datadoghq.kubernetes.core.listPod  
+  script.yaml: |
+    echoInBash:
+      command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
 ---
 # Source: private-action-runner/templates/scripts-configmap.yaml
 apiVersion: v1
@@ -38,9 +41,9 @@ metadata:
     app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    checksum/scripts: 3dbc258fe3956d8d13ee59bdcbba61b45b1111bcdcae385de3faef641be84b8a
+    checksum/scripts: 4851b03137485a89f46dace45318681a71dfca1317a040de2cb69d36929bd9f7
 data:
-  my-script.sh: |
+  hello-from-bash.sh: |
     #!/bin/bash
     echo "Hello World from bash!"
 ---
@@ -117,7 +120,7 @@ spec:
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 807bf1dc4c77f880ecf1e19db28f72a3aa8115adc620f67950a82dddbeb85a7b
+        checksum/values: f0b595946923515be6a2aefc3b97e08caf263da0d07d36a034135ea86fc83602
     spec:
       serviceAccountName: scripts-test-private-action-runner
       containers:
