@@ -15,11 +15,12 @@ metadata:
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
 {{ include "provider-labels" . | indent 4 }}
-  annotations:
   {{- if .Values.clusterAgent.deploymentAnnotations }}
+  annotations:
     {{ toYaml .Values.clusterAgent.deploymentAnnotations | nindent 4 }}
   {{- end }}
   {{- if .Values.datadog.operator.migrationEnabled }}
+  annotations:
     helm.sh/resource-policy: "keep"
   {{- end }}
 spec:
