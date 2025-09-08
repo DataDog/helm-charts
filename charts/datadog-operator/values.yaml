@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.17.0-rc.2
+  tag: 1.18.0-rc.4
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -113,6 +113,8 @@ serviceAccount:
   name:
   # serviceAccount.annotations -- Allows setting additional annotations for service account
   annotations: {}
+  # serviceAccount.automountServiceAccountToken -- Specifies whether the service account token should be automatically mounted
+  automountServiceAccountToken: true
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious

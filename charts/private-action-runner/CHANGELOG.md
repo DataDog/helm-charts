@@ -1,5 +1,25 @@
 # Datadog changelog
 
+## 1.9.0
+
+* Add support for custom scripts via `runner.scriptFiles`
+* Scripts are mounted in `/home/scriptuser/` directory
+* Support for inline script files
+
+## 1.8.0
+
+* Add support for `runner.useSeparateSecretForCredentials` to match with the default expected file layout.
+
+## 1.7.0
+
+* Bump runner version to `v1.7.0`
+* Add example for script action credentials file
+
+## 1.6.0
+
+* Add support for long-running actions.
+* Add support for new Gitlab actions.
+
 ## 1.5.1
 
 * Ensure that the `DD_PRIVATE_RUNNER_CONFIG_DIR` environment variable is set even when custom env variables are passed. 

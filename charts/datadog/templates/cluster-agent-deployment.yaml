@@ -399,6 +399,8 @@ spec:
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_THIRD_PARTY_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:

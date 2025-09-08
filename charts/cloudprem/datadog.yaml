@@ -5,6 +5,7 @@ indexing_settings:
 search_settings:
   default_search_fields: []
 doc_mapping:
+  doc_mapping_uid: "01K3KH524TS42N2G1MX637RN1T"
   mode: dynamic
   field_mappings:
     - name: timestamp
@@ -15,6 +16,96 @@ doc_mapping:
         - iso8601
         - unix_timestamp
       fast_precision: milliseconds
+      indexed: false
+    - name: message
+      type: text
+      tokenizer: default
+      record: position
+      fast: true
+      fieldnorms: false
+    - name: id
+      type: text
+      tokenizer: raw
+      record: basic
+      fieldnorms: false
+    - name: custom
+      type: json
+      tokenizer: raw
+      record: basic
+      fast: true
+    - name: tag
+      type: json
+      tokenizer: raw
+      fast: true
+      stored: false
+    - name: tags
+      type: 'array<text>'
+      stored: true
+      indexed: false
+      fast: false
+    - name: error
+      type: json
+      tokenizer: default
+      record: position
+      fast: false
+      stored: false
+    - name: service
+      type: text
+      indexed: true
+      tokenizer: raw
+      record: basic
+      fieldnorms: false
+      fast: true
+    - name: source
+      type: text
+      tokenizer: raw
+      fast: true
+      fieldnorms: false
+      record: basic
+    - name: service_type
+      type: text
+      tokenizer: raw
+      fast: true
+      fieldnorms: false
+      record: basic
+    - name: status
+      type: text
+      tokenizer: raw
+      fast: true
+      record: basic
+      fieldnorms: false
+    - name: host
+      type: text
+      tokenizer: raw
+      fast: true
+      record: basic
+      fieldnorms: false
+    - name: trace_id
+      type: text
+      tokenizer: raw
+      fast: true
+      fieldnorms: false
+      record: basic
+    - name: span_id
+      type: text
+      indexed: true
+      tokenizer: raw
+      fieldnorms: false
+      record: basic
+    - name: all
+      type: concatenate
+      concatenate_fields:
+        - error
+        - source
+        - service
+        - service_type
+        - status
+        - host
+        - trace_id
+        - span_id
+        - custom
+      tokenizer: raw_lowercase
+      record: basic
     - name: discovery_timestamp
       type: datetime
       fast: false
@@ -33,83 +124,6 @@ doc_mapping:
       fast: true
       indexed: false
       stored: true
-    - name: message
-      type: text
-      tokenizer: default
-      record: position
-      fast: true
-    - name: id
-      type: text
-      tokenizer: raw
-    - name: custom
-      type: json
-      tokenizer: default
-      record: position
-      fast: true
-    - name: tag
-      type: json
-      tokenizer: default
-      fast: true
-    - name: tags
-      type: 'array<text>'
-      stored: true
-      indexed: false
-      fast: false
-    - name: error
-      type: json
-      tokenizer: default
-      record: position
-      fast: false
-      stored: false
-    - name: service
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: source
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: service_type
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: status
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: host
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: trace_id
-      type: text
-      tokenizer: raw
-      fast: true
-    - name: span_id
-      type: text
-      tokenizer: raw
-    - name: default
-      type: concatenate
-      concatenate_fields:
-        - message
-        - error
-      tokenizer: default
-      record: position
-    - name: all
-      type: concatenate
-      concatenate_fields:
-        - message
-        - error
-        - source
-        - service
-        - service_type
-        - status
-        - host
-        - trace_id
-        - span_id
-        - custom
-      tokenizer: default
-      record: position
   tag_fields: []
   timestamp_field: timestamp
   index_field_presence: true

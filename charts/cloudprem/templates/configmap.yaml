@@ -1,3 +1,14 @@
+{{- $config := .Values.config }}
+{{- $ingress := .Values.ingress.public }}
+{{- $mtlsHeader := "X-Amzn-Mtls-Clientcert" }}
+
+{{- if regexMatch "nginx" $ingress.ingressClassName }}
+  {{- $mtlsHeader = "ssl-client-cert" }}
+{{- end }}
+
+{{- $cloudpremConfig := set ($config.cloudprem | default dict) "mtls_header" $mtlsHeader }}
+{{- $config = merge $config (dict "cloudprem" $cloudpremConfig) }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,7 +17,7 @@ metadata:
     {{- include "quickwit.labels" . | nindent 4 }}
 data:
   node.yaml: |-
-    {{- toYaml .Values.config | nindent 4 }}
+    {{- toYaml $config | nindent 4 }}
   {{- if .Values.pipelinesConfig }}
   # We parse the deserialize / reserialize the json to :
   # 1. make sure the json is valid
@@ -14,3 +25,30 @@ data:
   pipelines_config.json: |-
     {{ .Values.pipelinesConfig | fromJsonArray | mustToJson }}
   {{- end }}
+---
+{{- range .Values.extraConfigMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quickwit.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "quickwit.labels" $ | nindent 4 }}
+    {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- if or .data .binaryData }}
+{{- with .data }}
+data:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .binaryData }}
+binaryData:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+---
+{{- end }}

@@ -124,6 +124,9 @@ Quickwit ports
 - name: discovery
   containerPort: 7282
   protocol: UDP
+- name: cloudprem
+  containerPort: 7283
+  protocol:  TCP
 {{- end }}
 
 
@@ -131,30 +134,89 @@ Quickwit ports
 Quickwit environment
 */}}
 {{- define "quickwit.environment" -}}
-- name: NAMESPACE
+- name: KUBERNETES_NAMESPACE
   valueFrom:
     fieldRef:
       fieldPath: metadata.namespace
-- name: POD_NAME
+- name: KUBERNETES_COMPONENT
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['app.kubernetes.io/component']
+- name: KUBERNETES_POD_NAME
   valueFrom:
     fieldRef:
       fieldPath: metadata.name
-- name: POD_IP
+- name: KUBERNETES_POD_IP
   valueFrom:
     fieldRef:
-      fieldPath: status.podIP
+      fieldPath: metadata.name
+- name: KUBERNETES_LIMITS_CPU
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: limits.cpu
+- name: KUBERNETES_LIMITS_MEMORY
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: limits.memory
+- name: KUBERNETES_REQUESTS_CPU
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: requests.cpu
+- name: KUBERNETES_REQUESTS_MEMORY
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: requests.memory
 - name: QW_CONFIG
   value: {{ .Values.configLocation }}
 - name: QW_CLUSTER_ID
   value: {{ .Release.Namespace }}-{{ include "quickwit.fullname" . }}
 - name: QW_NODE_ID
-  value: "$(POD_NAME)"
+  value: "$(KUBERNETES_POD_NAME)"
 - name: QW_PEER_SEEDS
   value: {{ include "quickwit.fullname" . }}-headless
 - name: QW_ADVERTISE_ADDRESS
-  value: "$(POD_IP)"
+  value: "$(KUBERNETES_POD_IP)"
 - name: QW_CLUSTER_ENDPOINT
   value: http://{{ include "quickwit.fullname" $ }}-metastore.{{ $.Release.Namespace }}.svc.{{ .Values.clusterDomain }}:7280
+{{- if .Values.azure.tenantId }}
+- name: AZURE_TENANT_ID
+  value: {{ .Values.azure.tenantId }}
+{{- end }}
+{{- if .Values.azure.clientId }}
+- name: AZURE_CLIENT_ID
+  value: {{ .Values.azure.clientId }}
+{{- end }}
+{{- if .Values.azure.clientSecretRef }}
+- name: AZURE_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.azure.clientSecretRef.name }}
+      key: {{ .Values.azure.clientSecretRef.key }}
+{{- end }}
+{{- if .Values.azure.storageAccount.name }}
+- name: QW_AZURE_STORAGE_ACCOUNT
+  value: {{ .Values.azure.storageAccount.name }}
+{{- end }}
+{{- if .Values.azure.storageAccount.accessKeySecretRef }}
+- name: QW_AZURE_STORAGE_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.azure.storageAccount.accessKeySecretRef.name }}
+      key: {{ .Values.azure.storageAccount.accessKeySecretRef.key }}
+{{- end}}
+- name: CLOUDPREM_DOGSTATSD_SERVER_HOST
+{{- if .Values.dogstatsdServer.host.value }}
+  value: {{ .Values.dogstatsdServer.host.value | quote }}
+{{- else if .Values.dogstatsdServer.host.valueFrom }}
+  valueFrom:
+      {{- toYaml .Values.dogstatsdServer.host.valueFrom | nindent 4 }}
+{{- end }}
+- name: CLOUDPREM_DOGSTATSD_SERVER_PORT
+  value: {{ .Values.dogstatsdServer.port | quote }}
 {{- if .Values.tracingEnabled }}
 - name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
   value: "true"
@@ -164,10 +226,13 @@ Quickwit environment
   value: "grpc"
 - name: OTEL_EXPORTER_OTLP_TIMEOUT
   value: "10"
-{{- end}}
+- name: IMAGE_NAME
+  value: {{ .Values.image.repository }}
+- name: IMAGE_TAG
+  value: {{ .Values.image.tag }}
+{{- end }}
 {{- range $key, $value := .Values.environment }}
 - name: "{{ $key }}"
   value: "{{ $value }}"
 {{- end }}
 {{- end }}
-

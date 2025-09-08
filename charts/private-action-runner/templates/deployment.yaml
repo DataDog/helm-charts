@@ -39,9 +39,17 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
+            {{- if $.Values.runner.useSeparateSecretForCredentials }}
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            {{- end}}
             {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
             - name: {{ $credentialSecret.secretName }}
               mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
+            {{- end }}
+            {{- if $.Values.runner.scriptFiles }}
+            - name: scripts
+              mountPath: /home/scriptuser
             {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
@@ -68,8 +76,18 @@ spec:
         - name: secrets
           secret:
             secretName: {{ include "chart.fullname" . }}
+        {{- if $.Values.runner.useSeparateSecretForCredentials }}
+        - name: credentials
+          secret:
+            secretName: {{ include "chart.fullname" . }}-credentials
+        {{- end }}
         {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}
+        {{- end }}
+        {{- if $.Values.runner.scriptFiles }}
+        - name: scripts
+          configMap:
+            name: {{ include "chart.fullname" . }}-scripts
         {{- end }}

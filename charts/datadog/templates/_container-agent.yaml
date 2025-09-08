@@ -240,6 +240,8 @@
       value: all
     - name: DD_ENABLE_NVML_DETECTION
       value: "true"
+    - name: DD_GPU_ENABLED
+      value: "true"
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -295,6 +297,11 @@
     - name: pod-resources-socket
       mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
+    {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    - name: hostrun
+      mountPath: /host/run
+      readOnly: false
+    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket

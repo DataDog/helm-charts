@@ -116,7 +116,7 @@ metastore:
 # The indexer is responsible for processing and indexing incoming data it receives data from various sources (e.g., Datadog agents, log collectors)
 # and transforms it into searchable files called "splits" stored in S3.
 #
-# The indexer is horizontally scalable - you can increase `replicaCount` to handle higher indexing throughput.
+# The indexer is horizontally scalable - you can increase `replicaCount` or enable autoscaling to increase the cluster's indexing throughput.
 # Resource requests and limits should be tuned based on your indexing workload.
 #
 # The default values are suitable for moderate indexing loads of up to 20MB/s per indexer pod.
@@ -131,15 +131,18 @@ indexer:
       cpu: "4"
       memory: "8Gi"
 
+  autoscaling:
+    enabled: false
+
 # Searcher configuration
 # The searcher is responsible for executing search queries against the indexed data stored in S3.
 # It handles search requests from Datadog's query service and returns matching results.
 #
-# The searcher is horizontally scalable - you can increase `replicaCount` to handle more concurrent searches.
+# The searcher is horizontally scalable - you can increase `replicaCount` or enable autoscaling to handle more concurrent search requests.
 # Resource requirements for searchers are highly workload-dependent and should be determined empirically.
 # Key factors that impact searcher performance include:
 # - Query complexity (e.g., number of terms, use of wildcards or regex)
-# - Query concurrency (number of simultaneous searches)
+# - Query concurrency (number of simultaneous search requests)
 # - Amount of data scanned per query
 # - Data access patterns (cache hit rates)
 #
@@ -155,6 +158,25 @@ searcher:
     limits:
       cpu: "4"
       memory: "16Gi"
+
+  autoscaling:
+    enabled: false
+
+# Additional ConfigMaps
+# Create custom ConfigMaps for application configuration, scripts, or other data
+extraConfigMaps:
+  - name: custom-app-config
+    labels:
+      component: application
+    annotations:
+      description: "Custom application configuration"
+    data:
+      app.properties: |
+        database.pool.size=10
+        logging.level=INFO
+      init-script.sh: |
+        #!/bin/bash
+        echo "Initializing application..."
 ```
 
 ### Installing or upgrading the Helm chart
@@ -183,6 +205,7 @@ This command removes all the Kubernetes resources associated with the chart and 
 |config.* | dict | config defaults | Config used by the CloudPrem prods|
 |environment | dict | {} | Key-value environment variables passed to CloudPrem pods|
 |environmentFrom | list | [] | List of sources to populate environment variables (e.g., Secrets or ConfigMaps)|
+|extraConfigMaps | list | [] | Additional ConfigMaps to create with custom data and configuration|
 |image.pullPolicy | string | IfNotPresent | Image pull policy for CloudPrem containers|
 |image.repository | string | public.ecr.aws/datadog/cloudprem | Repository of the CloudPrem image|
 |image.tag | string | devel | Tag of the CloudPrem image to deploy|

@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.9
+
+* Add support for reverse connection
+* Add tokenizer that behaves like the one used in the SaaS products
+* Improve CPU utilization for configurations with fewer than 4 vCPUs
+* Export metrics from CloudPrem pods to Datadog Agent or DogStatsD server
+* Add sensible defaults for indexer resources
+* Add ability to set retention period from the helm chart values
+* Improve observability
+* Fix bug occurring with TableView widget
+
+## 0.1.8
+
+* Add support for Azure
+
+## 0.1.7
+
+* Add support for autoscaling via Horizontal Pod Autoscaler (HPA) for the indexer and search StatefulSets.
+
+## 0.1.6
+
+* Add support for NGINX Ingress Controller
+
 ## 0.1.5
 
 * Introduce `aws.partition` parameter to support service account role ARNs in China regions.
