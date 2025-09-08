@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.1.7](https://img.shields.io/badge/Version-0.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.8](https://img.shields.io/badge/AppVersion-v0.1.8-informational?style=flat-square)
+![Version: 0.1.9](https://img.shields.io/badge/Version-0.1.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.10](https://img.shields.io/badge/AppVersion-v0.1.10-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -159,6 +159,22 @@ searcher:
 
   autoscaling:
     enabled: false
+
+# Additional ConfigMaps
+# Create custom ConfigMaps for application configuration, scripts, or other data
+extraConfigMaps:
+  - name: custom-app-config
+    labels:
+      component: application
+    annotations:
+      description: "Custom application configuration"
+    data:
+      app.properties: |
+        database.pool.size=10
+        logging.level=INFO
+      init-script.sh: |
+        #!/bin/bash
+        echo "Initializing application..."
 ```
 
 ### Installing or upgrading the Helm chart
@@ -187,6 +203,7 @@ This command removes all the Kubernetes resources associated with the chart and 
 |config.* | dict | config defaults | Config used by the CloudPrem prods|
 |environment | dict | {} | Key-value environment variables passed to CloudPrem pods|
 |environmentFrom | list | [] | List of sources to populate environment variables (e.g., Secrets or ConfigMaps)|
+|extraConfigMaps | list | [] | Additional ConfigMaps to create with custom data and configuration|
 |image.pullPolicy | string | IfNotPresent | Image pull policy for CloudPrem containers|
 |image.repository | string | public.ecr.aws/datadog/cloudprem | Repository of the CloudPrem image|
 |image.tag | string | devel | Tag of the CloudPrem image to deploy|

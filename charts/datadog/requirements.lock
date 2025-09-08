@@ -5,8 +5,11 @@ dependencies:
 - name: kube-state-metrics
   repository: https://prometheus-community.github.io/helm-charts
   version: 2.13.2
+- name: datadog-csi-driver
+  repository: https://helm.datadoghq.com
+  version: 0.4.1
 - name: datadog-operator
   repository: https://helm.datadoghq.com
-  version: 2.12.0
-digest: sha256:b1ddfca63e66f8031c1de6ef4b8d55cf823aac74bff862ed1a2f506fa8770e19
-generated: "2025-08-14T16:07:28.736964-04:00"
+  version: 2.13.0-dev.5
+digest: sha256:8b4d924dde101014bbc26fcd5322659d85f47622f9e2c3043fc3b3c49e31a4fe
+generated: "2025-09-08T15:51:20.559039-04:00"

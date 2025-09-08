@@ -51,6 +51,10 @@
           "type": "string",
           "description": "The directory containing the Datadog Private Action Runner configuration"
         },
+        "useSeparateSecretForCredentials": {
+          "type": "boolean",
+          "description": "Configure whether to use a separate kubernetes secret for the credentials and the config"
+        },
         "config": {
           "type": "object",
           "description": "Configuration for the Datadog Private Action Runner",
@@ -383,6 +387,25 @@
               }
             },
             "required": ["secretName"],
+            "additionalProperties": false
+          }
+        },
+        "scriptFiles": {
+          "type": "array",
+          "description": "List of script files to be used by the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "Name of the script file"
+              },
+              "data": {
+                "type": "string",
+                "description": "Content of the script file"
+              }
+            },
+            "required": ["fileName", "data"],
             "additionalProperties": false
           }
         }

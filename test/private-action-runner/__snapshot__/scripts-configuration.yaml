@@ -3,32 +3,56 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
     ddBaseURL: https://app.datadoghq.com
+    urn: CHANGE_ME_URN_FROM_CONFIG
+    privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
     modes:
       - workflowAutomation
       - appBuilder
     port: 9016
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod
+      - com.datadoghq.kubernetes.core.listPod  
+  script.yaml: |
+    echoInBash:
+      command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.9.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: scripts-test
+    app.kubernetes.io/version: "v1.7.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 4851b03137485a89f46dace45318681a71dfca1317a040de2cb69d36929bd9f7
+data:
+  hello-from-bash.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -42,27 +66,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: secrets-test-private-action-runner
+    name: scripts-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: secrets-test
+      app.kubernetes.io/instance: scripts-test
   ports:
     - name: http
       port: 9016
@@ -72,12 +96,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: secrets-test-private-action-runner
+  name: scripts-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.9.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: secrets-test
+    app.kubernetes.io/instance: scripts-test
     app.kubernetes.io/version: "v1.7.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -86,19 +110,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: secrets-test
+      app.kubernetes.io/instance: scripts-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.9.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: secrets-test
+        app.kubernetes.io/instance: scripts-test
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 741803a205d32aff9bb388a38e383a6805511f1fa56f6f604dcf701054c3f49c
+        checksum/values: f0b595946923515be6a2aefc3b97e08caf263da0d07d36a034135ea86fc83602
     spec:
-      serviceAccountName: secrets-test-private-action-runner
+      serviceAccountName: scripts-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.7.0"
@@ -116,25 +140,15 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
-            - name: first-secret
-              mountPath: /etc/dd-action-runner/config/credentials/
-            - name: second-secret
-              mountPath: /etc/dd-action-runner/config/credentials/second-secret-directory
+            - name: scripts
+              mountPath: /home/scriptuser
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
-            - name: FOO
-              value: foo
-          envFrom:
-            - secretRef:
-                name: the-name-of-the-secret
       volumes:
         - name: secrets
           secret:
-            secretName: secrets-test-private-action-runner
-        - name: first-secret
-          secret:
-            secretName: first-secret
-        - name: second-secret
-          secret:
-            secretName: second-secret
+            secretName: scripts-test-private-action-runner
+        - name: scripts
+          configMap:
+            name: scripts-test-private-action-runner-scripts

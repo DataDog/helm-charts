@@ -1,6 +1,30 @@
 # Changelog
 
-## 2.12.0 
+## 2.13.0-dev.5
+
+* Update Datadog Operator image tag to 1.18.0-rc.4.
+
+## 2.13.0-dev.4
+
+* Update Datadog Operator image tag to 1.18.0-rc.3.
+
+## 2.13.0-dev.3
+
+* Update Datadog Operator image tag to 1.18.0-rc.2.
+
+## 2.13.0-dev.2
+
+* Update Datadog Operator image tag to 1.18.0-rc.1.
+
+## 2.13.0-dev.1
+
+* Update Datadog Operator chart for 1.18.0-rc.1.
+
+## 2.12.1
+
+* Update `datadog-crds` dependency to stable version (no-op change).
+
+## 2.12.0
 
 * Update Datadog Operator chart for 1.17.0.
 

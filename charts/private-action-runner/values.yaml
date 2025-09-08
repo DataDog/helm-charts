@@ -23,6 +23,8 @@ runner:
   replicas: 1
   # -- The directory containing the Datadog Private Action Runner configuration
   configDirectory: "/etc/dd-action-runner/config"
+  # -- Configure whether to use a separate kubernetes secret for the credentials and the config
+  useSeparateSecretForCredentials: false
   # -- Configuration for the Datadog Private Action Runner
   config:
     # -- Base URL of the Datadog app
@@ -123,3 +125,7 @@ runner:
   credentialSecrets: []
   # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
   # see examples/values.yaml for examples on how to specify secrets
+  # -- List of script files to be used by the Datadog Private Action Runner
+  scriptFiles: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify scripts

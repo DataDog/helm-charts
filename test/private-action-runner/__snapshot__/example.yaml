@@ -24,7 +24,15 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod  
+      - com.datadoghq.kubernetes.core.listPod
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-test-private-action-runner-credentials
+  namespace: datadog-agent
+stringData:  
   http_basic.json: |
     {
       "auth_type": "Basic Auth",
@@ -176,6 +184,27 @@ stringData:
               const: "world"
           required:
             - echoValue
+      echoInBash:
+        command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.9.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.7.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
+data:
+  hello-from-bash.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -229,7 +258,7 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.7.0
+    helm.sh/chart: private-action-runner-1.9.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
     app.kubernetes.io/version: "v1.7.0"
@@ -244,13 +273,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.7.0
+        helm.sh/chart: private-action-runner-1.9.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
         app.kubernetes.io/version: "v1.7.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: eaf27909280efe805a787fb5ae1054e52edb07e9522caedb339e2a0d5f928619
+        checksum/values: 4564d0f1d3032a3f99ca6aeecba4481455468451563f0b8eed6d936e3ca1ba16
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
@@ -284,6 +313,10 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            - name: scripts
+              mountPath: /home/scriptuser
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
@@ -291,3 +324,9 @@ spec:
         - name: secrets
           secret:
             secretName: example-test-private-action-runner
+        - name: credentials
+          secret:
+            secretName: example-test-private-action-runner-credentials
+        - name: scripts
+          configMap:
+            name: example-test-private-action-runner-scripts

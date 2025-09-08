@@ -7,11 +7,29 @@ aws:
   # -- AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
   partition: aws
 
+azure:
+  # -- Azure tenant ID
+  tenantId: ""
+  # -- Azure client ID
+  clientId: ""
+  # -- Azure client secret reference
+  clientSecretRef: {}
+    # name: azure-client-secret
+    # key: client-secret
+  # -- Azure storage account name and access key secret reference
+  storageAccount:
+    # -- Azure storage account name
+    name: ""
+    # -- Azure storage account access key secret reference
+    accessKeySecretRef: {}
+      # name: azure-storage-account-access-key
+      # key: access-key
+
 image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.8
+  tag: v0.1.10
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -38,19 +56,7 @@ serviceAccount:
 
 annotations: {}
 
-podAnnotations:
-  ad.datadoghq.com/cloudprem.checks: |
-      {
-        "openmetrics": {
-          "instances": [
-            {
-              "openmetrics_endpoint": "http://%%host%%:7280/metrics",
-              "namespace": "cloudprem",
-              "metrics": [".*"]
-            }
-          ]
-        }
-      }
+podAnnotations: {}
 
 podSecurityContext:
   fsGroup: 1005
@@ -61,6 +67,15 @@ securityContext:
 
 # If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
 tracingEnabled: true
+
+dogstatsdServer:
+  host:
+    # if `value` is non-empty, then it takes precedence over `valueFrom`
+    value: ""
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  port: 8125
 
 # Additional global env
 environment:
@@ -77,6 +92,25 @@ configMaps: []
   # - name: configmap1
   #   mountPath: /quickwit/configmaps/
 
+# -- Additional ConfigMaps to create
+extraConfigMaps: []
+  # - name: custom-config
+  #   labels:
+  #     component: custom
+  #   annotations:
+  #     description: "Custom configuration"
+  #   data:
+  #     config.yaml: |
+  #       key1: value1
+  #       key2: value2
+  #     script.sh: |
+  #       #!/bin/bash
+  #       echo "Hello World"
+  # - name: another-config
+  #   data:
+  #     app.properties: |
+  #       database.url=jdbc:postgresql://localhost:5432/mydb
+
 # Global tolerations applied to all deployments
 tolerations: []
 
@@ -86,7 +120,7 @@ affinity: {}
 searcher:
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for searcher
   extraEnv: {}
@@ -103,13 +137,13 @@ searcher:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -180,7 +214,7 @@ searcher:
   autoscaling:
     enabled: false
     annotations: {}
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 10
     metrics:
       # Search is a "latency game", so we aim for low CPU utilization
@@ -215,7 +249,7 @@ searcher:
 indexer:
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for indexer
   extraEnv: {}
@@ -232,13 +266,14 @@ indexer:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+    requests:
+      cpu: "4"
+      memory: "8Gi"
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -308,7 +343,7 @@ indexer:
   autoscaling:
     enabled: false
     annotations: {}
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 10
     metrics:
       # Indexing is a "throughput game", so we aim for high CPU utilization
@@ -346,7 +381,7 @@ indexer:
     # storageClass: ""
 
 metastore:
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for metastore
   extraEnv: {}
@@ -559,13 +594,10 @@ bootstrap:
     # - configMapRef:
     #     name: quickwit-bootstrap
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
   nodeSelector: {}
 
@@ -648,6 +680,8 @@ config:
 seed:
   indexes:
     - datadog.yaml
+  retention: 30 days
+  # min_num_shards: 12
 
   sources: []
     # - index: my-index
@@ -771,17 +805,6 @@ ingress:
       #     - "cloudprem.acme.internal"
       #   secretName: cloudprem-acme-internal-tls
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
 # List of pipeline of processors in JSON format.
 # If unset, no pipeline will be created.

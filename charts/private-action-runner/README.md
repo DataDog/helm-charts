@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.7.0](https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square) ![AppVersion: v1.7.0](https://img.shields.io/badge/AppVersion-v1.7.0-informational?style=flat-square)
+![Version: 1.9.0](https://img.shields.io/badge/Version-1.9.0-informational?style=flat-square) ![AppVersion: v1.7.0](https://img.shields.io/badge/AppVersion-v1.7.0-informational?style=flat-square)
 
 ## Overview
 
@@ -175,12 +175,34 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/
-    - secretName: action-credentials
-      directoryName: ""
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
     # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"
+```
+
+## Using Custom Scripts
+
+The Run Predefined Script Action can run inline commands by creating a script configuration file, but it can also run more advanced custom scripts. The Private Action Runner supports custom scripts via the `runner.scriptFiles` parameter. Scripts are mounted in `/home/scriptuser/` directory.
+
+### Example
+
+```yaml
+runner:
+  credentialFiles:
+    - fileName: "script.yaml"
+      data: |
+        schemaId: script-credentials-v1
+        runPredefinedScript:
+          echoInBash:
+            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+  scriptFiles:
+    - fileName: "hello-from-bash.sh"
+      data: |
+        #!/bin/bash
+        echo "Hello World from bash!"
 ```
 
 ## Architecture
@@ -277,4 +299,6 @@ If actions requiring credentials fail:
 | runner.resources.requests | object | `{"cpu":"250m","memory":"1Gi"}` | Resource requests for the runner container |
 | runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
 | runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
+| runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
+| runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
