@@ -98,7 +98,6 @@ spec:
         {{- if eq .Values.targetSystem "linux" }}
         command:
           - "otel-agent"
-          - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
           - "--sync-delay=30s"
         args:
           {{- if .Values.otelAgentGateway.configMap.items }}
@@ -123,7 +122,6 @@ spec:
           {{- else }}
           - "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
           {{- end }}
-          - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
           - "--sync-delay=30s"
           {{- if .Values.otelAgentGateway.featureGates }}
           - "--feature-gates={{ .Values.otelAgentGateway.featureGates }}"
@@ -188,64 +186,37 @@ spec:
           {{- include "additional-env-entries" .Values.otelAgentGateway.containers.otelAgent.env | indent 4 }}
           {{- include "additional-env-dict-entries" .Values.otelAgentGateway.containers.otelAgent.envDict | indent 4 }}
         volumeMounts:
-          - name: config
-            mountPath: {{ template "datadog.confPath" . }}
-            readOnly: true
-          - name: logdatadog
-            mountPath: {{ template "datadog.logDirectoryPath" . }}
-            readOnly: false # Need RW to write logs
-          {{- if (not .Values.providers.gke.autopilot) }}
-          - name: auth-token
-            mountPath: {{ template "datadog.confPath" . }}/auth
-            readOnly: true
-          {{- end }}
           - name: otelconfig
             mountPath: {{ template "datadog.otelconfPath" . }}
             readOnly: true
-          {{- if eq .Values.targetSystem "linux" }}
-          {{- if not .Values.providers.gke.autopilot }}
-          - name: procdir
-            mountPath: /host/proc
-            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-            readOnly: true
-          - name: cgroups
-            mountPath: /host/sys/fs/cgroup
-            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-            readOnly: true
-          {{- end }}
-          - name: tmpdir
-            mountPath: /tmp
-            readOnly: false # Need RW for tmp directory
-          - name: dsdsocket
-            mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-            readOnly: true
-          {{- if and .Values.otelAgentGateway.logs.enabled (eq (include "should-mount-logs-for-otel-agent-gateway" .) "true") }}
-          - name: logpodpath
-            mountPath: /var/log/pods
-            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-            readOnly: true
-          - name: logscontainerspath
-            mountPath: /var/log/containers
-            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-            readOnly: true
-          {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
-          - name: logdockercontainerpath
-            mountPath: /var/lib/docker/containers
-            mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-            readOnly: true
-          {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- include "container-crisocket-volumemounts" . | nindent 10 }}
-          {{- include "container-cloudinit-volumemounts" . | nindent 10 }}
       {{- if .Values.otelAgentGateway.volumeMounts }}
       {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
       {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.volumeMounts }}
       {{ toYaml .Values.otelAgentGateway.containers.otelAgent.volumeMounts | indent 10 }}
       {{- end }}
-
       volumes:
+      - name: otelconfig
+        configMap:
+          {{- if .Values.otelAgentGateway.configMap.name }}
+          name: {{ .Values.otelAgentGateway.configMap.name }}
+          {{- if .Values.otelAgentGateway.configMap.items }}
+          items:
+            {{- range .Values.otelAgentGateway.configMap.items }}
+            - key: {{ .key }}
+              path: {{ .path }}
+            {{- end }}
+          {{- else if .Values.otelAgentGateway.configMap.key }}
+          items:
+            - key: {{ .Values.otelAgentGateway.configMap.key }}
+              path: otel-config.yaml
+          {{- end }}
+          {{- else }}
+          name: {{ include "agents-install-otel-configmap-name" . }}
+          items:
+            - key: otel-config.yaml
+              path: otel-config.yaml
+          {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
 {{ toYaml .Values.otelAgentGateway.volumes | indent 8 }}
 {{- end }}
