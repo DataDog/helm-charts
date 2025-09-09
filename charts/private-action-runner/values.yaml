@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.7.0
+  tag: v1.8.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -125,3 +125,7 @@ runner:
   credentialSecrets: []
   # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
   # see examples/values.yaml for examples on how to specify secrets
+  # -- List of script files to be used by the Datadog Private Action Runner
+  scriptFiles: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify scripts

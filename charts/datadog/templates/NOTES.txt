@@ -412,6 +412,15 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
+{{- if and .Values.agents.lifecycle (or (and .Values.agents.lifecycle.postStart .Values.agents.lifecycle.postStart.exec) (and .Values.agents.lifecycle.preStop .Values.agents.lifecycle.preStop.exec)) }}
+##############################################################################
+####   WARNING: Agent lifecycle exec handler is not supported in GKE Autopilot
+##############################################################################
+
+{{ fail "On GKE autopilot environments, agents.lifecycle.[postStart|preStop].exec.command is not supported." }}
+
+{{- end }}
+
 {{- end }}
 
 {{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}

@@ -1,8 +1,12 @@
 # Changelog
 
-## 2.13.0-dev.6
+## 2.13.1
 
 * Add default `initialDelaySeconds: 15` to the Liveness Probe
+
+## 2.13.0
+
+* Update Datadog Operator chart for 1.18.0.
 
 ## 2.13.0-dev.5
 
