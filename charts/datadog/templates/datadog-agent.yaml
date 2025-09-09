@@ -170,9 +170,7 @@ spec:
     url: {{ .Values.datadog.dd_url }}
 {{- end }}
   features:
-    clusterChecks:
-      enabled: {{ .Values.datadog.clusterChecks.enabled }}
-      useClusterChecksRunners: {{ .Values.clusterChecksRunner.enabled }}
+{{- if .Values.clusterAgent.enabled }}
     externalMetricsServer:
       enabled: {{ .Values.clusterAgent.metricsProvider.enabled }}
 {{- if .Values.clusterAgent.metricsProvider.endpoint }}
@@ -182,8 +180,6 @@ spec:
       port: {{ .Values.clusterAgent.metricsProvider.service.port }}
       useDatadogMetrics: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
       wpaController: {{ .Values.clusterAgent.metricsProvider.wpaController }}
-    admissionController:
-      enabled: {{ .Values.clusterAgent.admissionController.enabled }}
 {{- if .Values.clusterAgent.admissionController.configMode }}
       agentCommunicationMode: {{ .Values.clusterAgent.admissionController.configMode }}
 {{- end }}
@@ -228,6 +224,18 @@ spec:
         selectors:
 {{ .Values.clusterAgent.admissionController.agentSidecarInjection.selectors | toYaml | indent 10 }}
 {{- end }}
+    prometheusScrape:
+      enabled: {{ .Values.datadog.prometheusScrape.enabled }}
+      enableServiceEndpoints: {{ .Values.datadog.prometheusScrape.serviceEndpoints }}
+      version: {{ .Values.datadog.prometheusScrape.version }}
+{{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+      additionalConfigs:
+{{ .Values.datadog.prometheusScrape.additionalConfigs | toYaml | indent 8 }}
+{{- end }}
+  helmCheck:
+    enabled: {{ .Values.datadog.helmCheck.enabled }}
+    collectEvents: {{ .Values.datadog.helmCheck.collectEvents }}
+{{- end }}
     apm:
       enabled: {{ .Values.datadog.apm.socketEnabled }}
       hostPortConfig:
@@ -239,8 +247,9 @@ spec:
 {{- end }}
       errorTrackingStandalone:
         enabled: {{ .Values.datadog.apm.errorTrackingStandalone.enabled }}
-{{- if or .Values.datadog.apm.instrumentation.targets .Values.datadog.apm.instrumentation.injector.imageTag }}
       instrumentation:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.apm.instrumentation.enabled}}
+{{- if or .Values.datadog.apm.instrumentation.targets .Values.datadog.apm.instrumentation.injector.imageTag }}
 {{- if .Values.datadog.apm.instrumentation.targets }}
         targets:
 {{ .Values.datadog.apm.instrumentation.targets | toYaml | indent 10 }}
@@ -250,6 +259,53 @@ spec:
           imageTag: {{ .Values.datadog.apm.instrumentation.injector.imageTag }}
 {{- end }}
 {{- end }}
+    admissionController:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.clusterAgent.admissionController.enabled }}
+    controlPlaneMonitoring:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.controlPlaneMonitoring.enabled }}
+    eventCollection:
+      collectKubernetesEvents: {{ and .Values.clusterAgent.enabled .Values.datadog.collectEvents }}
+{{- if and .Values.clusterAgent.enabled  .Values.datadog.kubernetesEvents.collectedEventTypes }}
+      collectedEventTypes:
+{{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | indent 8 }}
+{{- end }}
+      unbundleEvents: {{ and .Values.clusterAgent.enabled .Values.datadog.kubernetesEvents.unbundleEvents }}
+    kubeStateMetricsCore:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.kubeStateMetricsCore.enabled }}
+    orchestratorExplorer:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.orchestratorExplorer.enabled }}
+      scrubContainers: {{ and .Values.clusterAgent.enabled .Values.datadog.orchestratorExplorer.container_scrubbing.enabled }}
+{{- if .Values.datadog.orchestratorExplorer.customResources }}
+      customResources:
+{{ .Values.datadog.orchestratorExplorer.customResources | toYaml | indent 8 }}
+{{- end }}
+    clusterChecks:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.clusterChecks.enabled }}
+      useClusterChecksRunners: {{ and .Values.clusterAgent.enabled .Values.clusterChecksRunner.enabled }}
+    cspm:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.enabled }}
+      checkInterval: {{ .Values.datadog.securityAgent.compliance.checkInterval }}
+      hostBenchmarks:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
+{{- if .Values.datadog.securityAgent.compliance.configMap }}
+      customBenchmarks:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.compliance.configMap }}
+{{- end }}
+    cws:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.enabled }}
+      syscallMonitorEnabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
+      network:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.network.enabled }}
+      securityProfiles:
+        enabled: {{ and .Values.clusterAgent.enabled  .Values.datadog.securityAgent.runtime.securityProfile.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+      customPolicies:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- end }}
+    remoteConfiguration:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.remoteConfiguration.enabled }}
     dogstatsd:
       originDetectionEnabled: {{ .Values.datadog.dogstatsd.originDetection }}
       hostPortConfig:
@@ -259,13 +315,6 @@ spec:
         enabled: {{ .Values.datadog.dogstatsd.useSocketVolume }}
         path: {{ .Values.datadog.dogstatsd.socketPath }}
       tagCardinality: {{ .Values.datadog.dogstatsd.tagCardinality }}
-    eventCollection:
-      collectKubernetesEvents: {{ .Values.datadog.collectEvents }}
-{{- if .Values.datadog.kubernetesEvents.collectedEventTypes }}
-      collectedEventTypes:
-{{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | indent 8 }}
-{{- end }}
-      unbundleEvents: {{ .Values.datadog.kubernetesEvents.unbundleEvents }}
     logCollection:
       enabled: {{ .Values.datadog.logs.enabled }}
       containerCollectAll: {{ .Values.datadog.logs.containerCollectAll }}
@@ -283,43 +332,9 @@ spec:
       enabled: {{ .Values.datadog.processAgent.processDiscovery }}
     liveProcessCollection:
       stripProcessArguments: {{ .Values.datadog.processAgent.stripProcessArguments }}
-    orchestratorExplorer:
-      enabled: {{ .Values.datadog.orchestratorExplorer.enabled }}
-      scrubContainers: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled }}
-{{- if .Values.datadog.orchestratorExplorer.customResources }}
-      customResources:
-{{ .Values.datadog.orchestratorExplorer.customResources | toYaml | indent 8 }}
-{{- end }}
-    kubeStateMetricsCore:
-      enabled: {{ .Values.datadog.kubeStateMetricsCore.enabled }}
-    helmCheck:
-      enabled: {{ .Values.datadog.helmCheck.enabled }}
-      collectEvents: {{ .Values.datadog.helmCheck.collectEvents }}
 {{- if .Values.datadog.helmCheck.valuesAsTags }}
       valuesAsTags:
 {{ .Values.datadog.helmCheck.valuesAsTags | toYaml | indent 8 }}
-{{- end }}
-    cspm:
-      enabled: {{ .Values.datadog.securityAgent.compliance.enabled }}
-      checkInterval: {{ .Values.datadog.securityAgent.compliance.checkInterval }}
-      hostBenchmarks:
-        enabled: {{ .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
-{{- if .Values.datadog.securityAgent.compliance.configMap }}
-      customBenchmarks:
-        configMap:
-          name: {{ .Values.datadog.securityAgent.compliance.configMap }}
-{{- end }}
-    cws:
-      enabled: {{ .Values.datadog.securityAgent.runtime.enabled }}
-      syscallMonitorEnabled: {{ .Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
-      network:
-        enabled: {{ .Values.datadog.securityAgent.runtime.network.enabled }}
-      securityProfiles:
-        enabled: {{ .Values.datadog.securityAgent.runtime.securityProfile.enabled }}
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
-      customPolicies:
-        configMap:
-          name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
 {{- end }}
     oomKill:
       enabled: {{ .Values.datadog.systemProbe.enableOOMKill }}
@@ -354,16 +369,6 @@ spec:
       conf:
         configData: {{ .Values.datadog.otelCollector.config }}
 {{- end }}
-    prometheusScrape:
-      enabled: {{ .Values.datadog.prometheusScrape.enabled }}
-      enableServiceEndpoints: {{ .Values.datadog.prometheusScrape.serviceEndpoints }}
-      version: {{ .Values.datadog.prometheusScrape.version }}
-{{- if .Values.datadog.prometheusScrape.additionalConfigs }}
-      additionalConfigs:
-{{ .Values.datadog.prometheusScrape.additionalConfigs | toYaml | indent 8 }}
-{{- end }}
-    remoteConfiguration:
-      enabled: {{ .Values.datadog.remoteConfiguration.enabled }}
   override:
     nodeAgent:
       containers:
@@ -680,7 +685,7 @@ spec:
 {{ .Values.clusterAgent.volumes | toYaml | indent 8 }}
 {{- end }}
 {{- end }}
-{{- if .Values.clusterChecksRunner.enabled }}
+{{- if and .Values.clusterAgent.enabled .Values.clusterChecksRunner.enabled }}
     clusterChecksRunner:
 {{- if .Values.clusterChecksRunner.additionalLabels }}
       labels:

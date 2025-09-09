@@ -29,11 +29,20 @@ datadog:
 
 clusterAgent:
   enabled: true
-  replicas: 5
+  replicas: 2
 
 clusterChecksRunner:
   enabled: true
-  replicas: 5
+  replicas: 2
 
 agents: 
   enabled: true
+
+datadog-operator:
+#  image:
+#    repository:
+#    tag:
+#    doNotCheckTag: true
+  logLevel: debug
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
