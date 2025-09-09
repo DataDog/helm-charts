@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.14
+
+* Add support for namespaces
+
 ## 0.17.13
 
 * Update private location image version to `1.59.1`.
