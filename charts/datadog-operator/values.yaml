@@ -139,6 +139,7 @@ affinity: {}
 installCRDs: true
 
 datadogCRDs:
+  keepInstalledCrds: false
   crds:
     # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
     datadogAgents: true

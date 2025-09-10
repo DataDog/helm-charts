@@ -5,7 +5,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.16.3
+    {{- if .Values.keepInstalledCrds }}
     helm.sh/resource-policy: keep
+    {{- end }}
   name: datadogagents.datadoghq.com
   labels:
     helm.sh/chart: '{{ include "datadog-crds.chart" . }}'

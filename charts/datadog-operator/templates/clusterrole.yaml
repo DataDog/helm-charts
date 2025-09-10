@@ -82,6 +82,30 @@ rules:
   verbs:
   - list
   - watch
+  - get
+  - patch
+  - update
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  resourceNames:
+  - datadogagents
+  - datadogagents.datadoghq.com
+  - datadoggenericresources.datadoghq.com
+  - datadogmonitors.datadoghq.com
+  - datadogmetrics.datadoghq.com
+  - datadogagentprofiles.datadoghq.com
+  - datadogagentinternals.datadoghq.com
+  - datadogdashboards.datadoghq.com
+  - datadogslos.datadoghq.com
+  - extendeddaemonsets.datadoghq.com
+  - extendeddaemonsetreplicasets.datadoghq.com
+  - watermarkpodautoscalers.datadoghq.com
+  verbs:
+  - get
+  - patch
+  - update  
 - apiGroups:
   - apiregistration.k8s.io
   resources:

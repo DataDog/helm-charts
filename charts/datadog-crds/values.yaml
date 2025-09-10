@@ -27,3 +27,7 @@ nameOverride: ""
 
 # fullnameOverride -- Override the fully qualified app name
 fullnameOverride: ""
+
+# keepInstalledCrds -- Set to true to add resource-policy: keep annotation to CRDs
+keepInstalledCrds: false
+orphanInstalledCrds: false

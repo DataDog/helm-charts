@@ -1,0 +1,47 @@
+{{- if .Values.orphanInstalledCrds }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: crds-post-install-hook
+  labels:
+    app.kubernetes.io/name: {{ include "datadog-crds.name" . }}
+    helm.sh/chart: {{ include "datadog-crds.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    helm.sh/hook: "post-install,post-upgrade"
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded"
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "datadog-crds.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        "helm.sh/hook": "post-install,post-upgrade"
+    spec:
+      restartPolicy: Never
+      serviceAccountName: datadog-datadog-operator
+      containers:
+      - name: post-install-hook
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Removing helm metadata from installed CRDs"
+          echo "finding crds with label app.kubernetes.io/name=datadogCRDs"
+          kubectl get crd -l "app.kubernetes.io/name=datadogCRDs" -o name
+          echo "updating annotations"
+          kubectl get crd -l "app.kubernetes.io/name=datadogCRDs" -o name | xargs -n1 -I{} kubectl annotate --overwrite {} meta.helm.sh/release-name=datadog-operator meta.helm.sh/release-namespace=datadog-agent
+          sleep 20
+          echo "Post-install hook completed successfully"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+{{- end }}
