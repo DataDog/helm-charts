@@ -23,7 +23,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5.0
         with:
-          version: v3.6.3
+          version: v3.17.2
       - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: 3.12
@@ -115,7 +115,7 @@ jobs:
 
   install-chart:
     name: install-chart
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     needs:
       - lint-chart
@@ -123,8 +123,6 @@ jobs:
     strategy:
       matrix:
         versions:
-          - k8s: v1.18.20
-            kind: v0.17.0
           - k8s: v1.22.17
             kind: v0.22.0
           - k8s: v1.24.17

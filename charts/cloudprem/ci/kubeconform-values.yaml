@@ -1,0 +1,25 @@
+aws:
+  accountId: "012345678901"
+
+config:
+  default_index_root_uri: file://qwdata/indexes
+  metastore_uri: file://qwdata/metastore
+  peer_seeds: []
+
+seed:
+  indexes: []
+
+control_plane:
+  enabled: false
+
+metastore:
+  replicaCount: 1
+
+indexer:
+  enabled: false
+
+searcher:
+  enabled: false
+
+janitor:
+  enabled: false

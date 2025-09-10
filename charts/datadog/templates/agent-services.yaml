@@ -102,7 +102,7 @@ spec:
  {{- end }}
 {{- if eq (include "should-enable-otel-agent" .) "true" }}
 {{- range .Values.datadog.otelCollector.ports }}
-    - protocol: TCP
+    - protocol: {{ .protocol | default "TCP" }}
       port: {{ .containerPort }}
       targetPort: {{ .containerPort }}
       name: {{ .name }}

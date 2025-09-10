@@ -75,10 +75,22 @@ data:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}
     gpu_monitoring:
-      enabled: {{ $.Values.datadog.gpuMonitoring.enabled }}
+      enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
       configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.containerInclude }}
+      container_include:
+{{- range (split " " .Values.datadog.securityAgent.runtime.containerInclude) }}
+      - {{ .  | quote }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.runtime.containerExclude }}
+      container_exclude:
+{{- range (split " " .Values.datadog.securityAgent.runtime.containerExclude) }}
+      - {{ . | quote }}
+{{- end }}
+{{- end }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
       socket: /var/run/sysprobe/runtime-security.sock
@@ -140,6 +152,7 @@ data:
             "clone",
             "clone3",
             "close",
+            "close_range",
             "connect",
             "copy_file_range",
             "creat",
@@ -227,6 +240,8 @@ data:
             "openat2",
             "pause",
             "perf_event_open",
+            "pidfd_open",
+            "pidfd_send_signal",
             "pipe",
             "pipe2",
             "poll",
@@ -290,6 +305,7 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
+            "tkill",
             "umask",
             "uname",
             "unlink",

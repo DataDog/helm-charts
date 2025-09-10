@@ -270,6 +270,9 @@ rules:
 - apiGroups: ["apps"]
   resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
   verbs: ["get"]
+- apiGroups: [""]
+  resources: ["replicationcontrollers"]
+  verbs: ["get"]
 {{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
 - apiGroups: [""]
   resources: ["pods/exec"]
@@ -336,6 +339,31 @@ rules:
   verbs: ["get"]
 {{- end }}
 {{- if .Values.datadog.orchestratorExplorer.enabled }}
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "datadoghq.com"
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---

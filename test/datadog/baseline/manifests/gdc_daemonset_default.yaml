@@ -345,6 +345,12 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
+    verbs:
+      - get
+  - apiGroups:
       - security.openshift.io
     resourceNames:
       - datadog-cluster-agent
@@ -353,6 +359,31 @@ rules:
       - securitycontextconstraints
     verbs:
       - use
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+      - karpenter.azure.com
+      - karpenter.k8s.aws
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -755,6 +786,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -763,6 +796,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -819,7 +854,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.63.3
+          image: gcr.io/datadoghq/agent:7.69.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -882,7 +917,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.63.3
+          image: gcr.io/datadoghq/agent:7.69.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -911,6 +946,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -919,6 +956,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -930,7 +969,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.63.3
+          image: gcr.io/datadoghq/agent:7.69.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1036,6 +1075,8 @@ spec:
               value: /certs/tls.crt
             - name: DD_KUBELET_CLIENT_KEY
               value: /certs/tls.key
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1124,7 +1165,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.63.3
+          image: gcr.io/datadoghq/cluster-agent:7.69.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1197,7 +1238,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.63.3
+          image: gcr.io/datadoghq/cluster-agent:7.69.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

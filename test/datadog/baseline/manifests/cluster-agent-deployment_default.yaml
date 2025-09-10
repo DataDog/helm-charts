@@ -359,6 +359,12 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
+    verbs:
+      - get
+  - apiGroups:
       - security.openshift.io
     resourceNames:
       - datadog-cluster-agent
@@ -367,6 +373,31 @@ rules:
       - securitycontextconstraints
     verbs:
       - use
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+      - karpenter.azure.com
+      - karpenter.k8s.aws
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -781,6 +812,8 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -869,7 +902,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.63.3
+          image: gcr.io/datadoghq/cluster-agent:7.69.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -942,7 +975,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.63.3
+          image: gcr.io/datadoghq/cluster-agent:7.69.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

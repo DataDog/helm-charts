@@ -10,10 +10,15 @@
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
-{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+{{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+- name: hostrun
+  hostPath:
+    path: /run
+{{- end }}
 {{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
@@ -41,7 +46,7 @@
     path: /etc/system-release
   name: etc-system-release
 {{- end -}}
-{{- if eq (include "should-enable-fips" . ) "true" }}
+{{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
