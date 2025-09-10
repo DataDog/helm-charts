@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.133.0
+
+* Revert changes in 3.131.4 because the configuration is going to be deprecated.
+
 ## 3.132.1
 
 * Support lifecycle handlers for the agent via `agents.lifecycle` in GKE Autopilot.
