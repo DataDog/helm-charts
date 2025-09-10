@@ -184,6 +184,27 @@ stringData:
               const: "world"
           required:
             - echoValue
+      echoInBash:
+        command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.10.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
+data:
+  hello-from-bash.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -237,10 +258,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.8.0
+    helm.sh/chart: private-action-runner-1.10.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.7.0"
+    app.kubernetes.io/version: "v1.8.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -252,18 +273,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.8.0
+        helm.sh/chart: private-action-runner-1.10.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.7.0"
+        app.kubernetes.io/version: "v1.8.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: cff526e485a64effebfb9cc431754edd9a644132e3233ac303aaa8e4014134d3
+        checksum/values: 9746723c16877c5690fbdd255cfffdce78bf1852a21ca176b0b0de09decdb5c1
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.7.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.8.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -294,6 +315,8 @@ spec:
               mountPath: /etc/dd-action-runner/config
             - name: credentials
               mountPath: /etc/dd-action-runner/config/credentials
+            - name: scripts
+              mountPath: /home/scriptuser
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
@@ -304,3 +327,6 @@ spec:
         - name: credentials
           secret:
             secretName: example-test-private-action-runner-credentials
+        - name: scripts
+          configMap:
+            name: example-test-private-action-runner-scripts

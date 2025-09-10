@@ -121,6 +121,20 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "custom-pod-scheduling",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "Scripts configuration",
+			command: common.HelmCommand{
+				ReleaseName: "scripts-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.credentialFiles": `[{"fileName": "script.yaml", "data": "echoInBash:\n  command: [\"bash\", \"/home/scriptuser/hello-from-bash.sh\"]"}]`,
+					"runner.scriptFiles":     `[{"fileName": "hello-from-bash.sh", "data": "#!/bin/bash\necho \"Hello World from bash!\""}]`,
+				},
+			},
+			snapshotName: "scripts-configuration",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {
