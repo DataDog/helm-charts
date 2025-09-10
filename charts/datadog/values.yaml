@@ -2673,6 +2673,7 @@ providers:
     # https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/
     enabled: false
 
+
 remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
   # Can be overridden if `datadog.remoteConfiguration.enabled`
