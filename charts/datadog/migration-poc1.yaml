@@ -6,7 +6,7 @@ datadog:
     # FLIP TO TRUE TO MIGRATE
     createDDAManifest: false
     # datadog.operator.migration.enabled -- Enable migration to the operator
-    migrationEnabled: true
+    migrationEnabled: false
 
     # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
   ## If set, this parameter takes precedence over "apiKey".
