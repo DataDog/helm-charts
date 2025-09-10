@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "charts/datadog/values.yaml" 
-
+  workflow_dispatch:
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
   contents: read
