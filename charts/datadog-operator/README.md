@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.13.0-dev.5](https://img.shields.io/badge/Version-2.13.0--dev.5-informational?style=flat-square) ![AppVersion: 1.18.0-rc.4](https://img.shields.io/badge/AppVersion-1.18.0--rc.4-informational?style=flat-square)
+![Version: 2.13.1](https://img.shields.io/badge/Version-2.13.1-informational?style=flat-square) ![AppVersion: 1.18.0](https://img.shields.io/badge/AppVersion-1.18.0-informational?style=flat-square)
 
 ## Values
 
@@ -36,11 +36,11 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.18.0-rc.4"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.18.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
-| livenessProbe | object | `{"periodSeconds":10}` | Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator. |
+| livenessProbe | object | `{"initialDelaySeconds":15,"periodSeconds":10}` | Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator. |
 | logLevel | string | `"info"` | Set Datadog Operator log level (debug, info, error, panic, fatal) |
 | maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |

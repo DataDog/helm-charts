@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.18.0-rc.4
+  tag: 1.18.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -243,8 +243,8 @@ volumeMounts: []
 # livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
 livenessProbe:
   periodSeconds: 10
+  initialDelaySeconds: 15
   # Example fields of livenessProbe that are also configurable:
-  # initialDelaySeconds: 15
   # timeoutSeconds: 1
   # successThreshold: 1
   # failureThreshold: 3
