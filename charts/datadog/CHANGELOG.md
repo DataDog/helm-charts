@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.134.0
+## 3.133.1
 
 * Bump Datadog CSI Driver chart dependency version to allow installing datadog agent in gke autopilot with CSI driver activated.
 
