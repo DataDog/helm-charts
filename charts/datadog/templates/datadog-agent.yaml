@@ -107,6 +107,7 @@ spec:
 {{- if .Values.datadog.dockerSocketPath }}
     dockerSocketPath: {{ .Values.datadog.dockerSocketPath }}
 {{- end }}
+{{/* todo: fix this */}}
     credentials:
       apiSecret:
         secretName: {{ template "datadog.apiSecretName" . }}
@@ -180,6 +181,68 @@ spec:
       port: {{ .Values.clusterAgent.metricsProvider.service.port }}
       useDatadogMetrics: {{ .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
       wpaController: {{ .Values.clusterAgent.metricsProvider.wpaController }}
+    prometheusScrape:
+      enabled: {{ .Values.datadog.prometheusScrape.enabled }}
+      enableServiceEndpoints: {{ .Values.datadog.prometheusScrape.serviceEndpoints }}
+      version: {{ .Values.datadog.prometheusScrape.version }}
+{{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+      additionalConfigs: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+{{- end }}
+    helmCheck:
+      enabled: {{ .Values.datadog.helmCheck.enabled }}
+      collectEvents: {{ .Values.datadog.helmCheck.collectEvents }}
+  {{- if .Values.datadog.helmCheck.valuesAsTags }}
+        valuesAsTags:
+  {{ .Values.datadog.helmCheck.valuesAsTags | toYaml | indent 8 }}
+  {{- end }}
+    cspm:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.enabled }}
+      checkInterval: {{ .Values.datadog.securityAgent.compliance.checkInterval }}
+      hostBenchmarks:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
+{{- if .Values.datadog.securityAgent.compliance.configMap }}
+      customBenchmarks:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.compliance.configMap }}
+{{- end }}
+    cws:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.enabled }}
+      syscallMonitorEnabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
+      network:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.network.enabled }}
+      securityProfiles:
+        enabled: {{ and .Values.clusterAgent.enabled  .Values.datadog.securityAgent.runtime.securityProfile.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
+      customPolicies:
+        configMap:
+          name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- end }}
+{{- end }}
+    apm:
+      enabled: {{ .Values.datadog.apm.socketEnabled }}
+      hostPortConfig:
+        enabled: {{ .Values.datadog.apm.portEnabled }}
+        hostPort: {{ .Values.datadog.apm.port }}
+{{- if .Values.datadog.apm.hostSocketPath }}
+      unixDomainSocketConfig:
+        path: {{ .Values.datadog.apm.hostSocketPath }}
+{{- end }}
+      errorTrackingStandalone:
+        enabled: {{ .Values.datadog.apm.errorTrackingStandalone.enabled }}
+      instrumentation:
+        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.apm.instrumentation.enabled}}
+{{- if or .Values.datadog.apm.instrumentation.targets .Values.datadog.apm.instrumentation.injector.imageTag }}
+{{- if .Values.datadog.apm.instrumentation.targets }}
+        targets:
+{{ .Values.datadog.apm.instrumentation.targets | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
+        injector:
+          imageTag: {{ .Values.datadog.apm.instrumentation.injector.imageTag }}
+{{- end }}
+{{- end }}
+    admissionController:
+      enabled: {{ and .Values.clusterAgent.enabled .Values.clusterAgent.admissionController.enabled }}
 {{- if .Values.clusterAgent.admissionController.configMode }}
       agentCommunicationMode: {{ .Values.clusterAgent.admissionController.configMode }}
 {{- end }}
@@ -224,43 +287,6 @@ spec:
         selectors:
 {{ .Values.clusterAgent.admissionController.agentSidecarInjection.selectors | toYaml | indent 10 }}
 {{- end }}
-    prometheusScrape:
-      enabled: {{ .Values.datadog.prometheusScrape.enabled }}
-      enableServiceEndpoints: {{ .Values.datadog.prometheusScrape.serviceEndpoints }}
-      version: {{ .Values.datadog.prometheusScrape.version }}
-{{- if .Values.datadog.prometheusScrape.additionalConfigs }}
-      additionalConfigs:
-{{ .Values.datadog.prometheusScrape.additionalConfigs | toYaml | indent 8 }}
-{{- end }}
-  helmCheck:
-    enabled: {{ .Values.datadog.helmCheck.enabled }}
-    collectEvents: {{ .Values.datadog.helmCheck.collectEvents }}
-{{- end }}
-    apm:
-      enabled: {{ .Values.datadog.apm.socketEnabled }}
-      hostPortConfig:
-        enabled: {{ .Values.datadog.apm.portEnabled }}
-        hostPort: {{ .Values.datadog.apm.port }}
-{{- if .Values.datadog.apm.hostSocketPath }}
-      unixDomainSocketConfig:
-        path: {{ .Values.datadog.apm.hostSocketPath }}
-{{- end }}
-      errorTrackingStandalone:
-        enabled: {{ .Values.datadog.apm.errorTrackingStandalone.enabled }}
-      instrumentation:
-        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.apm.instrumentation.enabled}}
-{{- if or .Values.datadog.apm.instrumentation.targets .Values.datadog.apm.instrumentation.injector.imageTag }}
-{{- if .Values.datadog.apm.instrumentation.targets }}
-        targets:
-{{ .Values.datadog.apm.instrumentation.targets | toYaml | indent 10 }}
-{{- end }}
-{{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
-        injector:
-          imageTag: {{ .Values.datadog.apm.instrumentation.injector.imageTag }}
-{{- end }}
-{{- end }}
-    admissionController:
-      enabled: {{ and .Values.clusterAgent.enabled .Values.clusterAgent.admissionController.enabled }}
     controlPlaneMonitoring:
       enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.controlPlaneMonitoring.enabled }}
     eventCollection:
@@ -282,28 +308,6 @@ spec:
     clusterChecks:
       enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.clusterChecks.enabled }}
       useClusterChecksRunners: {{ and .Values.clusterAgent.enabled .Values.clusterChecksRunner.enabled }}
-    cspm:
-      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.enabled }}
-      checkInterval: {{ .Values.datadog.securityAgent.compliance.checkInterval }}
-      hostBenchmarks:
-        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled }}
-{{- if .Values.datadog.securityAgent.compliance.configMap }}
-      customBenchmarks:
-        configMap:
-          name: {{ .Values.datadog.securityAgent.compliance.configMap }}
-{{- end }}
-    cws:
-      enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.enabled }}
-      syscallMonitorEnabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
-      network:
-        enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.securityAgent.runtime.network.enabled }}
-      securityProfiles:
-        enabled: {{ and .Values.clusterAgent.enabled  .Values.datadog.securityAgent.runtime.securityProfile.enabled }}
-{{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
-      customPolicies:
-        configMap:
-          name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
-{{- end }}
     remoteConfiguration:
       enabled: {{ and .Values.clusterAgent.enabled .Values.datadog.remoteConfiguration.enabled }}
     dogstatsd:
@@ -332,10 +336,6 @@ spec:
       enabled: {{ .Values.datadog.processAgent.processDiscovery }}
     liveProcessCollection:
       stripProcessArguments: {{ .Values.datadog.processAgent.stripProcessArguments }}
-{{- if .Values.datadog.helmCheck.valuesAsTags }}
-      valuesAsTags:
-{{ .Values.datadog.helmCheck.valuesAsTags | toYaml | indent 8 }}
-{{- end }}
     oomKill:
       enabled: {{ .Values.datadog.systemProbe.enableOOMKill }}
     tcpQueueLength:
@@ -562,8 +562,10 @@ spec:
       tolerations:
 {{ .Values.agents.tolerations | toYaml | indent 8 }}
 {{- end }}
+{{- if .Values.agents.updateStrategy }}
       updateStrategy:
 {{ .Values.agents.updateStrategy | toYaml | indent 8 }}
+{{- end }}
       hostNetwork: {{ .Values.agents.useHostNetwork }}
 {{- if .Values.agents.volumes }}
       volumes:

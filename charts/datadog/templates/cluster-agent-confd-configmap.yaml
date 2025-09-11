@@ -1,4 +1,4 @@
-{{- if and .Values.clusterAgent.enabled (eq (include "need-cluster-agent-confd" .) "true") }}
+{{- if eq (include "need-cluster-agent-confd" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
