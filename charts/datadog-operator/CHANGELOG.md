@@ -1,10 +1,10 @@
 # Changelog
 
-# 2.13.2
+## 2.13.2
 
 * Fix Operator RBAC for orchestrator explorer check. 
 
-## 2.13.2
+## 2.13.1
 
 * Add default `initialDelaySeconds: 15` to the Liveness Probe
 
