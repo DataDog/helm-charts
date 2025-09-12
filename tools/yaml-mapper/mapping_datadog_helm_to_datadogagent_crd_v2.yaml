@@ -102,14 +102,19 @@ agents.image.tag: spec.override.nodeAgent.image.tag
 agents.image.tagSuffix: ""
 agents.localService.forceLocalServiceEnabled: spec.global.localService.forceEnableLocalService
 agents.localService.overrideName: spec.global.localService.nameOverride
-agents.networkPolicy.create: ""
+agents.networkPolicy.create: spec.global.networkPolicy.create
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
 agents.podLabels: spec.override.nodeAgent.labels
 agents.podSecurity.allowedUnsafeSysctls: ""
 agents.podSecurity.apparmor.enabled: ""
 agents.podSecurity.apparmorProfiles: ""
-agents.podSecurity.capabilities: spec.override.nodeAgent.containers.agent.securityContext.capabilities
+agents.podSecurity.capabilities:
+- spec.override.nodeAgent.containers.agent.securityContext.capabilities.add
+- spec.override.nodeAgent.containers.process-agent.securityContext.capabilities.add
+- spec.override.nodeAgent.containers.trace-agent.securityContext.capabilities.add
+- spec.override.nodeAgent.containers.system-probe.securityContext.capabilities.add
+- spec.override.nodeAgent.containers.security-agent.securityContext.capabilities.add
 agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
@@ -141,7 +146,7 @@ agents.updateStrategy.type: spec.override.nodeAgent.updateStrategy.type
 agents.useConfigMap: ""
 agents.useHostNetwork: spec.override.nodeAgent.hostNetwork
 agents.volumeMounts:
-- spec.override.nodeAgent.containers.node-agent.volumeMounts
+- spec.override.nodeAgent.containers.agent.volumeMounts
 - spec.override.nodeAgent.containers.process-agent.volumeMounts
 - spec.override.nodeAgent.containers.trace-agent.volumeMounts
 - spec.override.nodeAgent.containers.system-probe.volumeMounts
@@ -169,7 +174,7 @@ clusterAgent.admissionController.port: ""
 clusterAgent.admissionController.remoteInstrumentation.enabled: spec.features.admissionController.cwsInstrumentation.enabled
 clusterAgent.admissionController.validation.enabled: spec.features.admissionController.validation.enabled
 clusterAgent.admissionController.webhookName: spec.features.admissionController.webhookName
-clusterAgent.advancedConfd: ""
+clusterAgent.advancedConfd: spec.override.clusterAgent.extraConfd.configDataMap
 clusterAgent.affinity: spec.override.clusterAgent.affinity
 clusterAgent.command: spec.override.clusterAgent.containers.cluster-agent.command
 clusterAgent.confd: spec.override.clusterAgent.extraConfd
@@ -181,7 +186,7 @@ clusterAgent.containers.clusterAgent.securityContext.readOnlyRootFilesystem: spe
 clusterAgent.containers.initContainer.securityContext: spec.override.clusterAgent.containers.init-config.securityContext
 clusterAgent.createPodDisruptionBudget: ""
 clusterAgent.datadog_cluster_yaml: spec.override.clusterAgent.customConfigurations.datadog-cluster.yaml.configData
-clusterAgent.deploymentAnnotations: ""
+clusterAgent.deploymentAnnotations: spec.override.clusterAgent.annotations
 clusterAgent.dnsConfig: spec.override.clusterAgent.dnsConfig
 clusterAgent.enabled: ""
 clusterAgent.env: spec.override.clusterAgent.env
@@ -193,7 +198,7 @@ clusterAgent.image.doNotCheckTag: ""
 clusterAgent.image.name: spec.override.clusterAgent.image.name
 clusterAgent.image.pullPolicy: spec.override.clusterAgent.image.pullPolicy
 clusterAgent.image.pullSecrets: spec.override.clusterAgent.image.pullSecrets
-clusterAgent.image.repository: ""
+clusterAgent.image.repository: "" # TODO: add to crd
 clusterAgent.image.tag: spec.override.clusterAgent.image.tag
 clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus: ""
 clusterAgent.livenessProbe: spec.override.clusterAgent.containers.cluster-agent.livenessProbe
@@ -211,7 +216,7 @@ clusterAgent.metricsProvider.service.port: spec.features.externalMetricsServer.p
 clusterAgent.metricsProvider.service.type: ""
 clusterAgent.metricsProvider.useDatadogMetrics: spec.features.externalMetricsServer.useDatadogMetrics
 clusterAgent.metricsProvider.wpaController: spec.features.externalMetricsServer.wpaController
-clusterAgent.networkPolicy.create: ""
+clusterAgent.networkPolicy.create: spec.global.networkPolicy.create
 clusterAgent.nodeSelector: spec.override.clusterAgent.nodeSelector
 clusterAgent.podAnnotations: spec.override.clusterAgent.annotations
 clusterAgent.podSecurity.podSecurityPolicy.create: ""
@@ -272,7 +277,7 @@ clusterChecksRunner.livenessProbe.initialDelaySeconds: spec.override.clusterChec
 clusterChecksRunner.livenessProbe.periodSeconds: spec.override.clusterChecksRunner.containers.agent.livenessProbe.periodSeconds
 clusterChecksRunner.livenessProbe.successThreshold: spec.override.clusterChecksRunner.containers.agent.livenessProbe.successThreshold
 clusterChecksRunner.livenessProbe.timeoutSeconds: spec.override.clusterChecksRunner.containers.agent.livenessProbe.timeoutSeconds
-clusterChecksRunner.networkPolicy.create: ""
+clusterChecksRunner.networkPolicy.create: spec.global.networkPolicy.create
 clusterChecksRunner.nodeSelector: spec.override.clusterChecksRunner.nodeSelector
 clusterChecksRunner.podAnnotations: spec.override.clusterChecksRunner.annotations
 clusterChecksRunner.ports: ""
@@ -318,7 +323,9 @@ datadog.agentDataPlane.image.pullPolicy: ""
 datadog.agentDataPlane.image.repository: ""
 datadog.agentDataPlane.image.tag: ""
 datadog.apiKey: spec.global.credentials.apiKey
-datadog.apiKeyExistingSecret: spec.global.credentials.apiSecret.secretName
+datadog.apiKeyExistingSecret:
+  newPath: spec.global.credentials.apiSecret.secretName
+  mapFunc: mapApiSecretKey
 datadog.apm.enabled: spec.features.apm.hostPortConfig.enabled
 datadog.apm.errorTrackingStandalone.enabled: spec.features.apm.errorTrackingStandalone.enabled
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
@@ -337,11 +344,13 @@ datadog.apm.socketPath: spec.features.apm.unixDomainSocketConfig.path
 datadog.apm.useLocalService: ""
 datadog.apm.useSocketVolume: spec.features.apm.unixDomainSocketConfig.enabled
 datadog.appKey: spec.global.credentials.appKey
-datadog.appKeyExistingSecret: spec.global.credentials.appSecret.secretName
+datadog.appKeyExistingSecret:
+  newPath: spec.global.credentials.appSecret.secretName
+  mapFunc: mapAppSecretKey
 datadog.asm.iast.enabled: spec.features.asm.iast.enabled
 datadog.asm.sca.enabled: spec.features.asm.sca.enabled
 datadog.asm.threats.enabled: spec.features.asm.threats.enabled
-datadog.checksCardinality: global.checksTagCardinality
+datadog.checksCardinality: spec.global.checksTagCardinality
 datadog.checksd: spec.override.nodeAgent.extraChecksd
 datadog.clusterChecks.enabled: spec.features.clusterChecks.enabled
 datadog.clusterChecks.shareProcessNamespace: "" # TODO: crd
@@ -479,7 +488,7 @@ datadog.processAgent.runInCoreAgent: ""
 datadog.processAgent.stripProcessArguments: spec.features.liveProcessCollection.stripProcessArguments
 datadog.profiling.enabled: ""
 datadog.prometheusScrape.additionalConfigs:
-  newName: spec.features.prometheusScrape.additionalConfigs
+  newPath: spec.features.prometheusScrape.additionalConfigs
   newType: string
 datadog.prometheusScrape.enabled: spec.features.prometheusScrape.enabled
 datadog.prometheusScrape.serviceEndpoints: spec.features.prometheusScrape.enableServiceEndpoints
@@ -547,7 +556,7 @@ datadog.systemProbe.enableTCPQueueLength: spec.features.tcpQueueLength.enabled
 datadog.systemProbe.maxTrackedConnections: ""
 datadog.systemProbe.mountPackageManagementDirs: ""
 datadog.systemProbe.runtimeCompilationAssetDir: ""
-datadog.systemProbe.seccomp: spec.override.nodeAgent.containers.system-probe.seccompConfig.customProfile
+datadog.systemProbe.seccomp: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.localhostProfile
 datadog.systemProbe.seccompRoot: spec.override.nodeAgent.containers.system-probe.seccompConfig.customRootPath
 datadog.tags: spec.global.tags
 datadog.traceroute.enabled: ""
@@ -556,7 +565,7 @@ existingClusterAgent.clusterchecksEnabled: ""
 existingClusterAgent.join: ""
 existingClusterAgent.serviceName: ""
 existingClusterAgent.tokenSecretName: ""
-fips.customFipsConfig: ""
+fips.customFipsConfig: spec.global.fips.customFIPSConfig.configData
 fips.enabled: spec.global.fips.enabled
 fips.image.digest: ""
 fips.image.name: spec.global.fips.image.name
@@ -585,4 +594,4 @@ providers.talos.enabled: ""
 registry: spec.global.registry
 remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 targetSystem: ""
-useFIPSAgent: ""
+useFIPSAgent: spec.global.fips.enabled

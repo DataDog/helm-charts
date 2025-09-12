@@ -185,12 +185,12 @@ func main() {
 			}
 		} else if rt.Kind() == reflect.Map {
 			// Perform type remapping
-			newName := destKey.(map[string]interface{})["newName"].(string)
-			newType := destKey.(map[string]interface{})["newType"].(string)
+			newPath := destKey.(map[string]interface{})["newPath"].(string)
+			newType, newTypeOk := destKey.(map[string]interface{})["newType"].(string)
 			// if values type is different from new type, convert it
 			pathValType := reflect.TypeOf(pathVal).Kind().String()
 
-			if newType != "nil" && pathValType != newType {
+			if newTypeOk && newType != "" && pathValType != newType {
 				switch {
 				case newType == "string":
 					switch {
@@ -200,18 +200,23 @@ func main() {
 							fmt.Println(err)
 							return
 						}
-						interim[newName] = string(newPathVal)
+						interim[newPath] = string(newPathVal)
 					}
 				case newType == "integer":
 					switch {
 					case pathValType == "string":
-						interim[newName], err = strconv.Atoi(pathVal.(string))
+						interim[newPath], err = strconv.Atoi(pathVal.(string))
 						if err != nil {
 							fmt.Println(err)
 							return
 						}
 					}
 				}
+			}
+
+			//	Use custom map func
+			if mapFunc, ok := destKey.(map[string]interface{})["mapFunc"].(string); ok {
+				customMapFuncs[mapFunc](interim, newPath, pathVal)
 			}
 
 		} else if destKey.(string) == "metadata.name" && len(pathVal.(string)) > 63 {
@@ -350,13 +355,19 @@ func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}
 }
 
 var customMapFuncs = map[string]customMapFunc{
-	"testFunc": func() interface{} {
-		return nil
-	},
+	"mapApiSecretKey": mapApiSecretKey,
+	"mapAppSecretKey": mapAppSecretKey,
 }
 
-type customMapFunc func() interface{}
+type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{})
 
-func getCustomMapFunc(name string) customMapFunc {
-	return customMapFuncs[name]
+func mapApiSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	//	if existing apikey secret, need to add key-name
+	interim[newPath] = pathVal
+	interim["spec.global.credentials.apiSecret.keyName"] = "api-key"
+}
+
+func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	interim[newPath] = pathVal
+	interim["spec.global.credentials.appSecret.keyName"] = "app-key"
 }
