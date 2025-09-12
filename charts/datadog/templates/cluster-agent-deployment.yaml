@@ -218,11 +218,11 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.validation.enabled | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
             value: {{ .Values.clusterAgent.admissionController.mutation.enabled | quote }}
-          {{- if .Values.datadog.dogstatsd.hostSocketPath }}
+          {{- if .Values.datadog.apm.hostSocketPath }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_TRACE_AGENT_HOST_SOCKET_PATH
             value: {{ .Values.datadog.apm.hostSocketPath | quote }}
           {{- end }}
-          {{- if .Values.datadog.apm.hostSocketPath }}
+          {{- if .Values.datadog.dogstatsd.hostSocketPath }}
           - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_DOGSTATSD_AGENT_HOST_SOCKET_PATH
             value: {{ .Values.datadog.dogstatsd.hostSocketPath | quote }}
           {{- end }}
