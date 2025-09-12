@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.132.2
+
+* [CONTP-841]: Cluster-agent-deployment template change to fix admission webhook bug ([#2040](https://github.com/DataDog/helm-charts/pull/2040)).
+
 ## 3.132.1
 
 * Support lifecycle handlers for the agent via `agents.lifecycle` in GKE Autopilot.
