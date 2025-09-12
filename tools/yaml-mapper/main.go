@@ -355,8 +355,9 @@ func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}
 }
 
 var customMapFuncs = map[string]customMapFunc{
-	"mapApiSecretKey": mapApiSecretKey,
-	"mapAppSecretKey": mapAppSecretKey,
+	"mapApiSecretKey":   mapApiSecretKey,
+	"mapAppSecretKey":   mapAppSecretKey,
+	"mapTokenSecretKey": mapTokenSecretKey,
 }
 
 type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{})
@@ -370,4 +371,9 @@ func mapApiSecretKey(interim map[string]interface{}, newPath string, pathVal int
 func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
 	interim[newPath] = pathVal
 	interim["spec.global.credentials.appSecret.keyName"] = "app-key"
+}
+
+func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	interim[newPath] = pathVal
+	interim["spec.global.clusterAgentTokenSecret.keyName"] = "token"
 }

@@ -248,7 +248,9 @@ clusterAgent.strategy.rollingUpdate.maxSurge: spec.override.clusterAgent.updateS
 clusterAgent.strategy.rollingUpdate.maxUnavailable: spec.override.clusterAgent.updateStrategy.rollingUpdate.maxUnavailable
 clusterAgent.strategy.type: spec.override.clusterAgent.updateStrategy.type
 clusterAgent.token: spec.global.clusterAgentToken
-clusterAgent.tokenExistingSecret: spec.global.clusterAgentTokenSecret.secretName
+clusterAgent.tokenExistingSecret:
+  newPath: spec.global.clusterAgentTokenSecret.secretName
+  mapFunc: mapTokenSecretKey
 clusterAgent.tolerations: spec.override.clusterAgent.tolerations
 clusterAgent.topologySpreadConstraints: ""
 clusterAgent.useHostNetwork: spec.override.clusterAgent.hostNetwork
