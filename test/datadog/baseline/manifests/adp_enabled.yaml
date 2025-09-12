@@ -1350,6 +1350,10 @@ spec:
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
+            - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_TRACE_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog/
+            - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_DOGSTATSD_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog/
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
               value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED

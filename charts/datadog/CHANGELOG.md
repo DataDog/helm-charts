@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.133.1
+
+* Fix handling of `hostSocketPath` values so mutated pods correctly mount custom UDS sockets.
+
 ## 3.133.0
 
 * Revert changes in 3.131.4 because the configuration is going to be deprecated.
