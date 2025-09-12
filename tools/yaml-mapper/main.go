@@ -12,7 +12,10 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"helm.sh/helm/v3/pkg/chartutil"
 )
@@ -26,12 +29,12 @@ func main() {
 		case "help":
 			fmt.Println("Helper binary to convert a YAML file into another YAML file using a provided mapping.")
 			fmt.Println("Flags (all optional):")
-			fmt.Println("  -printOutput (bool)")
-			fmt.Println("  -mappingFile (string)")
-			fmt.Println("  -sourceFile (string)")
-			fmt.Println("  -destFile (string)")
-			fmt.Println("  -prefixFile (string)")
-			fmt.Println("  -updateMap (bool)")
+			fmt.Println("  -printOutput (bool) [default: true]")
+			fmt.Println(fmt.Sprintf("  -mappingFile (string) [default: %s]", defaultDDAMappingPath))
+			fmt.Println("  -sourceFile (string) [default: ../../charts/datadog/values.yaml]")
+			fmt.Println("  -destFile (string) [default: destination.yaml]")
+			fmt.Println("  -namespace (string)")
+			fmt.Println("  -updateMap (bool) [default: false]")
 			return
 		}
 	}
@@ -41,20 +44,21 @@ func main() {
 	var mappingFile string
 	var sourceFile string
 	var destFile string
-	var prefixFile string
+	var namespace string
 	var updateMap bool
 	flag.StringVar(&mappingFile, "mappingFile", "", "Path to mapping YAML file. Example: mapping.yaml")
 	flag.StringVar(&sourceFile, "sourceFile", "", "Path to source YAML file. Example: source.yaml")
 	flag.StringVar(&destFile, "destFile", "destination.yaml", "Path to destination YAML file.")
-	flag.StringVar(&prefixFile, "prefixFile", "example_prefix.yaml", "Path to prefix YAML file. The content in this file will be prepended to the output.")
+	flag.StringVar(&namespace, "namespace", "", "Namespace to use in destination DDA manifest.")
 	flag.BoolVar(&updateMap, "updateMap", false, fmt.Sprintf("Update 'mappingFile' with provided 'sourceFile'. (default false) If set to 'true', default mappingFile is %s and default sourceFile is latest published Datadog chart values.yaml.", defaultDDAMappingPath))
 
 	flag.Parse()
 
+	fmt.Println("Mapper Config: ")
 	fmt.Println("mappingFile:", mappingFile)
 	fmt.Println("sourceFile:", sourceFile)
 	fmt.Println("destFile:", destFile)
-	fmt.Println("prefixFile:", prefixFile)
+	fmt.Println("namespace:", namespace)
 	fmt.Println("updateMap:", updateMap)
 	fmt.Println("printOutput:", *printPtr)
 	fmt.Println("")
@@ -106,7 +110,18 @@ func main() {
 	var pathVal interface{}
 	var destKey interface{}
 	var ok bool
-	interim := make(map[string]interface{})
+	interim := map[string]interface{}{
+		"apiVersion": "datadoghq.com/v2alpha1",
+		"kind":       "DatadogAgent",
+		"metadata": map[string]interface{}{
+			"name": "datadog",
+		},
+	}
+
+	if namespace != "" {
+		metadata := interim["metadata"].(map[string]interface{})
+		metadata["namespace"] = namespace
+	}
 
 	if updateMap {
 		// Populate interim map with keys from latest chart's values.yaml
@@ -146,9 +161,16 @@ func main() {
 	// Map values.yaml => DDA
 	for sourceKey := range mappingValues {
 		pathVal, _ = sourceValues.PathValue(sourceKey)
-		// If there is no corresponding key in the destination, then the pathVal will be nil
+		mapVal := sourceValues[sourceKey]
+
+		// Source val might be a value at the end of path or a map
 		if pathVal == nil {
-			continue
+			if mapVal == nil {
+				continue
+			}
+			if m, ok := mapVal.(map[string]interface{}); ok && m != nil {
+				pathVal = mapVal
+			}
 		}
 
 		destKey, ok = mappingValues[sourceKey]
@@ -161,6 +183,40 @@ func main() {
 			for _, v := range destKey.([]interface{}) {
 				interim[v.(string)] = pathVal
 			}
+		} else if rt.Kind() == reflect.Map {
+			// Perform type remapping
+			newName := destKey.(map[string]interface{})["newName"].(string)
+			newType := destKey.(map[string]interface{})["newType"].(string)
+			// if values type is different from new type, convert it
+			pathValType := reflect.TypeOf(pathVal).Kind().String()
+
+			if newType != "nil" && pathValType != newType {
+				switch {
+				case newType == "string":
+					switch {
+					case pathValType == "slice":
+						newPathVal, err := yaml.Marshal(pathVal)
+						if err != nil {
+							fmt.Println(err)
+							return
+						}
+						interim[newName] = string(newPathVal)
+					}
+				case newType == "integer":
+					switch {
+					case pathValType == "string":
+						interim[newName], err = strconv.Atoi(pathVal.(string))
+						if err != nil {
+							fmt.Println(err)
+							return
+						}
+					}
+				}
+			}
+
+		} else if destKey.(string) == "metadata.name" && len(pathVal.(string)) > 63 {
+			truncated := pathVal.(string)[:63]
+			interim["metadata"].(map[string]interface{})["name"] = truncated
 		} else {
 			interim[destKey.(string)] = pathVal
 		}
@@ -177,20 +233,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 		return
-	}
-
-	// Read prefix yaml file
-	var prefix []byte
-	if prefixFile != "" {
-		prefix, err = os.ReadFile(prefixFile)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	}
-
-	if len(prefix) > 0 {
-		out = string(prefix) + out
 	}
 
 	if *printPtr {
@@ -233,7 +275,7 @@ func makeTable(path string, val interface{}, mapName map[string]interface{}) map
 // Inspired by: https://stackoverflow.com/a/60420264
 func mergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
 	for key, rightVal := range map2 {
-		if leftVal, found := map1[key]; found {
+		if leftVal, found := map1[key]; found && reflect.TypeOf(leftVal).Kind().String() == "map" {
 			// Recurse on the found key
 			map1[key] = mergeMaps(leftVal.(map[string]interface{}), rightVal.(map[string]interface{}))
 		} else {
@@ -305,4 +347,16 @@ func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}
 		}
 	}
 	return valuesMap
+}
+
+var customMapFuncs = map[string]customMapFunc{
+	"testFunc": func() interface{} {
+		return nil
+	},
+}
+
+type customMapFunc func() interface{}
+
+func getCustomMapFunc(name string) customMapFunc {
+	return customMapFuncs[name]
 }

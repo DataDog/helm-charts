@@ -651,11 +651,11 @@ datadog:
     ports:
 
         # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
+      - containerPort: 4317
         name: otel-grpc
         protocol: TCP
         # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
+      - containerPort: 4318
         name: otel-http
         protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
