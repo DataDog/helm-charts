@@ -15,6 +15,6 @@ dependencies:
     condition: datadog.csi.enabled
 
   - name: datadog-operator
-    version: 2.13.0-dev.5
-    repository: https://helm.datadoghq.com
+    version: 2.13.1
+    repository: file://../datadog-operator
     condition: datadog.operator.enabled

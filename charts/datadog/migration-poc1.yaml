@@ -4,7 +4,7 @@ datadog:
     enabled: true
     # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
     # FLIP TO TRUE TO MIGRATE
-    createDDAManifest: false
+    createDDAManifest: true
     # datadog.operator.migration.enabled -- Enable migration to the operator
     migrationEnabled: true
 
@@ -35,14 +35,15 @@ clusterChecksRunner:
   enabled: true
   replicas: 2
 
-agents: 
+agents:
   enabled: true
 
 datadog-operator:
-#  image:
-#    repository:
-#    tag:
-#    doNotCheckTag: true
+  image:
+    repository: fannyatdd/operator
+    tag: migration-57
+    doNotCheckTag: true
   logLevel: debug
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
+#  allowReadAllResources: true
