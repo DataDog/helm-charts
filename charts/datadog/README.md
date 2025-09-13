@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.133.0](https://img.shields.io/badge/Version-3.133.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.134.0](https://img.shields.io/badge/Version-3.134.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -665,6 +665,13 @@ helm install <RELEASE_NAME> \
 | clusterAgent.volumes | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
+| clusterChecksRunner.autoscaling | object | `{"behavior":{},"enabled":false,"maxReplicas":5,"minReplicas":2,"targetCPUUtilizationPercentage":80,"targetMemoryUtilizationPercentage":80}` | Horizontal Pod Autoscaler configuration for Cluster Checks Runner |
+| clusterChecksRunner.autoscaling.behavior | object | `{}` | HPA scaling behavior configuration |
+| clusterChecksRunner.autoscaling.enabled | bool | `false` | Enable autoscaling for Cluster Checks Runner deployment |
+| clusterChecksRunner.autoscaling.maxReplicas | int | `5` | Maximum number of replicas |
+| clusterChecksRunner.autoscaling.minReplicas | int | `2` | Minimum number of replicas |
+| clusterChecksRunner.autoscaling.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage |
+| clusterChecksRunner.autoscaling.targetMemoryUtilizationPercentage | int | `80` | Target memory utilization percentage (optional) |
 | clusterChecksRunner.containers.agent.securityContext | object | `{}` | Specify securityContext on the agent container |
 | clusterChecksRunner.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the init containers |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |

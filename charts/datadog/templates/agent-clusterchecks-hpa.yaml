@@ -1,0 +1,37 @@
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.autoscaling.enabled -}}
+apiVersion: {{ template "autoscaling.horizontalpodautoscaler.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "datadog.fullname" . }}-clusterchecks
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "datadog.fullname" . }}-clusterchecks
+  minReplicas: {{ .Values.clusterChecksRunner.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.clusterChecksRunner.autoscaling.maxReplicas }}
+  metrics:
+  {{- if .Values.clusterChecksRunner.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.clusterChecksRunner.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.clusterChecksRunner.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.clusterChecksRunner.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.clusterChecksRunner.autoscaling.behavior }}
+  behavior:
+{{ toYaml .Values.clusterChecksRunner.autoscaling.behavior | indent 4 }}
+  {{- end }}
+{{- end }}

@@ -1267,3 +1267,14 @@ false
     true
   {{- end -}}
 {{- end -}}
+
+{{/*
+Return the appropriate apiVersion for HorizontalPodAutoscaler APIs.
+*/}}
+{{- define "autoscaling.horizontalpodautoscaler.apiVersion" -}}
+{{- if or (.Capabilities.APIVersions.Has "autoscaling/v2/HorizontalPodAutoscaler") (semverCompare ">=1.23" .Capabilities.KubeVersion.Version) -}}
+"autoscaling/v2"
+{{- else -}}
+"autoscaling/v2beta2"
+{{- end -}}
+{{- end -}}

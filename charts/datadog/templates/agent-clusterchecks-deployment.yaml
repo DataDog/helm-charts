@@ -15,7 +15,9 @@ metadata:
   annotations: {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
   {{- end }}
 spec:
+  {{- if not .Values.clusterChecksRunner.autoscaling.enabled }}
   replicas: {{ .Values.clusterChecksRunner.replicas }}
+  {{- end }}
   revisionHistoryLimit: {{ .Values.clusterChecksRunner.revisionHistoryLimit }}
   strategy:
 {{ toYaml .Values.clusterChecksRunner.strategy | indent 4 }}

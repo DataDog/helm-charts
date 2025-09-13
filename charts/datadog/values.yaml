@@ -2428,7 +2428,8 @@ clusterChecksRunner:
   # clusterChecksRunner.replicas -- Number of Cluster Checks Runner instances
 
   ## If you want to deploy the clusterChecks agent in HA, keep at least clusterChecksRunner.replicas set to 2.
-  ## And increase the clusterChecksRunner.replicas according to the number of Cluster Checks.
+  ## And increase the clusterChecksRunner.replicas according to the number of Cluster Checks or
+  ## use clusterChecksRunner.autoscaling to enable HPA.
   replicas: 2
 
   # clusterChecksRunner.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
@@ -2442,6 +2443,37 @@ clusterChecksRunner:
   # limits:
   #   cpu: 200m
   #   memory: 500Mi
+
+  # clusterChecksRunner.autoscaling -- Horizontal Pod Autoscaler configuration for Cluster Checks Runner
+  autoscaling:
+    # clusterChecksRunner.autoscaling.enabled -- Enable autoscaling for Cluster Checks Runner deployment
+    enabled: false
+    # clusterChecksRunner.autoscaling.minReplicas -- Minimum number of replicas
+    minReplicas: 2
+    # clusterChecksRunner.autoscaling.maxReplicas -- Maximum number of replicas
+    maxReplicas: 5
+    # clusterChecksRunner.autoscaling.targetCPUUtilizationPercentage -- Target CPU utilization percentage
+    targetCPUUtilizationPercentage: 80
+    # clusterChecksRunner.autoscaling.targetMemoryUtilizationPercentage -- Target memory utilization percentage (optional)
+    targetMemoryUtilizationPercentage: 80
+    # clusterChecksRunner.autoscaling.behavior -- HPA scaling behavior configuration
+    behavior: {}
+    # scaleDown:
+    #   stabilizationWindowSeconds: 300
+    #   policies:
+    #   - type: Percent
+    #     value: 100
+    #     periodSeconds: 15
+    # scaleUp:
+    #   stabilizationWindowSeconds: 0
+    #   policies:
+    #   - type: Percent
+    #     value: 100
+    #     periodSeconds: 15
+    #   - type: Pods
+    #     value: 4
+    #     periodSeconds: 15
+    #   selectPolicy: Max
 
   # clusterChecksRunner.affinity -- Allow the ClusterChecks Deployment to schedule using affinity rules.
 
