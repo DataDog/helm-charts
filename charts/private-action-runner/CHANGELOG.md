@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.11.0
+
+* Add your changelog here!
+
 ## 1.10.0
 
 * Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
