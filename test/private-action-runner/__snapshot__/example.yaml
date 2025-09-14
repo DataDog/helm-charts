@@ -18,8 +18,7 @@ stringData:
     urn: CHANGE_ME_URN_FROM_CONFIG
     privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
     modes:
-      - appBuilder
-      - workflowAutomation
+      - pull
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
@@ -279,7 +278,7 @@ spec:
         app.kubernetes.io/version: "v1.9.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: ad62963a7efa09122c62936b0bd2f70ecb058b84e7274e7c2eda6409855e2808
+        checksum/values: c139d3fee561da83dc6b48d70d3ec369a201edd36db557c68d01ab4bf09255bc
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
