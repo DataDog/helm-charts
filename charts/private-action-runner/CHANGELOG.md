@@ -3,7 +3,7 @@
 ## 1.11.0
 
 * Bump private runner version to 1.9.0
-* Rename `workflowAutomation` mode to `pull` and `appBuilder` mode to `push`
+* Introduce to new modes `pull` and `push` to replace respectively `workflowAutomation`and `appBuilder` modes.
 
 ## 1.10.0
 
