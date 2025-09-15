@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-job
+  labels:
+    app: agent
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migration-job
+          image: gcr.io/distroless/static:nonroot
+          command:
+            - bin/bash
+            - -c
+            - echo "Hello!" && sleep 3600
+          volumeMounts:
+            - mountPath: /tmp
+              name: migration-values
+      volumes:
+        - name: migration-values
+          configMap:
+            name: {{ template "datadog.fullname" . }}-migration-config
+            items:
+              - key: values.yaml
+                path: values.yaml

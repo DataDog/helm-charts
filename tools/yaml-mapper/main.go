@@ -31,7 +31,7 @@ func main() {
 			fmt.Println("Flags (all optional):")
 			fmt.Println("  -printOutput (bool) [default: true]")
 			fmt.Println(fmt.Sprintf("  -mappingFile (string) [default: %s]", defaultDDAMappingPath))
-			fmt.Println("  -sourceFile (string) [default: ../../charts/datadog/values.yaml]")
+			fmt.Println("  -sourceFile (string) [default: datadog/values.yaml]")
 			fmt.Println("  -destFile (string) [default: destination.yaml]")
 			fmt.Println("  -namespace (string)")
 			fmt.Println("  -updateMap (bool) [default: false]")

@@ -33,6 +33,31 @@ datadog:
     originDetection: true
     useSocketVolume: true
     useHostPort: false
+  prometheusScrape:
+    additionalConfigs:
+     -
+       autodiscovery:
+         kubernetes_annotations:
+           include:
+             custom_include_label: 'true'
+           exclude:
+             custom_exclude_label: 'true'
+         kubernetes_container_names:
+         - my-app
+       configurations:
+       - send_distribution_buckets: true
+         timeout: 5
+  otelCollector:
+    enabled: true
+    ports:
+      - containerPort: 4317
+        name: otel-grpc
+        protocol: TCP
+        # Default HTTP port of OTLP receiver
+      - containerPort: 4318
+        name: otel-http
+        protocol: TCP
+
 agents:
   volumeMounts:
     - name: example

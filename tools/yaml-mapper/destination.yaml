@@ -2,60 +2,426 @@ apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
   name: datadog
-  namespace: datadog
 spec:
   features:
+    admissionController:
+      agentSidecarInjection:
+        clusterAgentCommunicationEnabled: true
+        enabled: false
+        profiles: []
+        selectors: []
+      cwsInstrumentation:
+        enabled: false
+        mode: remote_copy
+      enabled: true
+      failurePolicy: Ignore
+      kubernetesAdmissionEvents:
+        enabled: false
+      mutateUnlabelled: false
+      mutation:
+        enabled: true
+      validation:
+        enabled: true
+      webhookName: datadog-webhook
+    apm:
+      errorTrackingStandalone:
+        enabled: false
+      hostPortConfig:
+        enabled: false
+        hostPort: 8126
+      instrumentation:
+        disabledNamespaces: []
+        enabled: false
+        enabledNamespaces: []
+        injector:
+          imageTag: ""
+        languageDetection:
+          enabled: true
+        targets: []
+      unixDomainSocketConfig:
+        enabled: true
+        path: /var/run/datadog/apm.socket
+    asm:
+      iast:
+        enabled: false
+      sca:
+        enabled: false
+      threats:
+        enabled: false
     clusterChecks:
       enabled: true
+      useClusterChecksRunners: false
+    cspm:
+      checkInterval: 20m
+      enabled: false
+      hostBenchmarks:
+        enabled: true
+    cws:
+      enabled: false
+      network:
+        enabled: true
+      securityProfiles:
+        enabled: true
+      syscallMonitorEnabled: false
     dogstatsd:
       hostPortConfig:
         enabled: false
-        hostPort: 1234
-      originDetectionEnabled: true
+        hostPort: 8125
+      originDetectionEnabled: false
+      tagCardinality: low
       unixDomainSocketConfig:
         enabled: true
+        path: /var/run/datadog/dsd.socket
+    eventCollection:
+      collectKubernetesEvents: true
+      collectedEventTypes:
+      - kind: Pod
+        reasons:
+        - Failed
+        - BackOff
+        - Unhealthy
+        - FailedScheduling
+        - FailedMount
+        - FailedAttachVolume
+      - kind: Node
+        reasons:
+        - TerminatingEvictedPod
+        - NodeNotReady
+        - Rebooted
+        - HostPortConflict
+      - kind: CronJob
+        reasons:
+        - SawCompletedJob
+      unbundleEvents: false
+    externalMetricsServer:
+      enabled: false
+      port: 8443
+      registerAPIService: true
+      useDatadogMetrics: false
+      wpaController: false
+    gpu:
+      enabled: false
+      requiredRuntimeClassName: nvidia
+    helmCheck:
+      collectEvents: false
+      enabled: false
     kubeStateMetricsCore:
       enabled: true
+    liveProcessCollection:
+      stripProcessArguments: false
+    logCollection:
+      containerCollectAll: false
+      containerCollectUsingFiles: true
+      enabled: false
+    npm:
+      collectDNSStats: true
+      enableConntrack: true
+      enabled: false
+    oomKill:
+      enabled: true
+    orchestratorExplorer:
+      customResources: []
+      enabled: true
+      scrubContainers: true
+    otelCollector:
+      enabled: false
+      ports:
+      - containerPort: 4317
+        name: otel-grpc
+        protocol: TCP
+      - containerPort: 4318
+        name: otel-http
+        protocol: TCP
+    otlp:
+      receiver:
+        protocols:
+          grpc:
+            enabled: false
+            endpoint: 0.0.0.0:4317
+          http:
+            enabled: false
+            endpoint: 0.0.0.0:4318
+    processDiscovery:
+      enabled: true
+    prometheusScrape:
+      additionalConfigs: |
+        []
+      enableServiceEndpoints: false
+      enabled: false
+      version: 2
+    remoteConfiguration:
+      enabled: true
+    sbom:
+      containerImage:
+        enabled: false
+        overlayFSDirectScan: false
+      host:
+        enabled: false
+    tcpQueueLength:
+      enabled: false
+    usm:
+      enabled: false
   global:
+    clusterAgentTokenSecret:
+      keyName: token
+      secretName: datadog-token
+    clusterName: fanny-kind
     credentials:
-      apiKey: testapikey
-      appKey: testappkey
+      apiSecret:
+        keyName: api-key
+        secretName: datadog-secret
+      appSecret:
+        keyName: app-key
+        secretName: datadog-secret
+    fips:
+      customFIPSConfig:
+        configData: |
+          foobar
+             foo bar baz
+      enabled: false
+      image:
+        name: fips-proxy
+        tag: 1.1.16
+      localAddress: 127.0.0.1
+      port: 9803
+      portRange: 15
+      useHTTPS: false
     kubelet:
+      podResourcesSocketPath: /var/lib/kubelet/pod-resources
       tlsVerify: false
-    logLevel: debug
-    registry: docker.io/datadog
-    tags:
-    - test:tag
+    localService:
+      forceEnableLocalService: false
+      nameOverride: ""
+    logLevel: INFO
+    networkPolicy:
+      create: false
+      flavor: kubernetes
+    originDetectionUnified:
+      enabled: false
+    registry: gcr.io/datadoghq
+    secretBackend:
+      enableGlobalPermissions: true
+      roles: []
+    tags: []
   override:
+    clusterAgent:
+      containers:
+        cluster-agent:
+          command: []
+          healthPort: 5556
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts: []
+        clusterAgent:
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+      createRbac: true
+      env: []
+      envFrom: []
+      hostNetwork: false
+      image:
+        name: cluster-agent
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+        tag: 7.69.3
+      labels:
+        team_name: dev
+      replicas: 1
+      serviceAccountName: default
+      tolerations: []
+      updateStrategy:
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate
+      volumes: []
+    clusterChecksRunner:
+      containers:
+        agent:
+          healthPort: 5557
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts: []
+        init-config:
+          volumeMounts: []
+      createRbac: true
+      env: []
+      envFrom: []
+      image:
+        name: agent
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+        tag: 7.69.3
+      labels:
+        team_name: dev
+      replicas: 2
+      serviceAccountName: default
+      tolerations: []
+      updateStrategy:
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate
+      volumes: []
     nodeAgent:
       containers:
-        node-agent:
-          volumeMounts:
-          - mountPath: this/is/a/volume/mount
-            name: example
-            readOnly: true
+        agent:
+          healthPort: 5555
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          ports: []
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - SYS_PTRACE
+              - NET_ADMIN
+              - NET_BROADCAST
+              - NET_RAW
+              - IPC_LOCK
+              - CHOWN
+              - AUDIT_CONTROL
+              - AUDIT_READ
+              - DAC_READ_SEARCH
+            privileged: false
+            seLinuxOptions:
+              level: s0
+              role: system_r
+              type: spc_t
+              user: system_u
+          startupProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts: []
+        init-config:
+          volumeMounts: []
+        init-volume:
+          volumeMounts: []
         process-agent:
-          volumeMounts:
-          - mountPath: this/is/a/volume/mount
-            name: example
-            readOnly: true
+          env: []
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - SYS_PTRACE
+              - NET_ADMIN
+              - NET_BROADCAST
+              - NET_RAW
+              - IPC_LOCK
+              - CHOWN
+              - AUDIT_CONTROL
+              - AUDIT_READ
+              - DAC_READ_SEARCH
+          volumeMounts: []
         security-agent:
-          volumeMounts:
-          - mountPath: this/is/a/volume/mount
-            name: example
-            readOnly: true
+          env: []
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - SYS_PTRACE
+              - NET_ADMIN
+              - NET_BROADCAST
+              - NET_RAW
+              - IPC_LOCK
+              - CHOWN
+              - AUDIT_CONTROL
+              - AUDIT_READ
+              - DAC_READ_SEARCH
+          volumeMounts: []
         system-probe:
-          volumeMounts:
-          - mountPath: this/is/a/volume/mount
-            name: example
-            readOnly: true
+          appArmorProfileName: unconfined
+          env: []
+          seccompConfig:
+            customRootPath: /var/lib/kubelet/seccomp
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - SYS_PTRACE
+              - NET_ADMIN
+              - NET_BROADCAST
+              - NET_RAW
+              - IPC_LOCK
+              - CHOWN
+              - DAC_READ_SEARCH
+            privileged: false
+          volumeMounts: []
         trace-agent:
-          volumeMounts:
-          - mountPath: this/is/a/volume/mount
-            name: example
-            readOnly: true
+          env: []
+          livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - SYS_PTRACE
+              - NET_ADMIN
+              - NET_BROADCAST
+              - NET_RAW
+              - IPC_LOCK
+              - CHOWN
+              - AUDIT_CONTROL
+              - AUDIT_READ
+              - DAC_READ_SEARCH
+          volumeMounts: []
+      createRbac: true
+      env: []
+      envFrom: []
+      hostNetwork: false
       hostPID: true
-      volumes:
-      - hostPath:
-          path: this/is/a/host/path
-        name: example
+      image:
+        name: agent
+        pullPolicy: IfNotPresent
+        pullSecrets: []
+        tag: 7.69.3
+      labels:
+        team_name: dev
+      serviceAccountName: default
+      tolerations: []
+      updateStrategy:
+        rollingUpdate:
+          maxUnavailable: 10%
+        type: RollingUpdate
+      volumes: []
