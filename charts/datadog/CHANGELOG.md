@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.133.1
+
+* Add `datadog.csi.autoInstall` flag to control automatic installation of the CSI driver subchart.  
+  This allows users to enable CSI features (`datadog.csi.enabled=true`) while managing the CSI driver installation separately (`datadog.csi.autoInstall=false`).
+
 ## 3.133.0
 
 * Revert changes in 3.131.4 because the configuration is going to be deprecated.
