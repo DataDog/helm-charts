@@ -12,4 +12,4 @@ dependencies:
   - name: datadog-csi-driver
     version: 0.4.1
     repository: https://helm.datadoghq.com
-    condition: datadog.csi.enabled
+    condition: datadog.csi.autoInstall
