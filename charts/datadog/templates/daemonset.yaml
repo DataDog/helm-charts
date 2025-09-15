@@ -66,10 +66,10 @@ spec:
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
         {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0" .Capabilities.KubeVersion.Version) }}
-        container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
+        container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor | default "unconfined" }}
         {{- end }}
         {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
-        container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
+        container.seccomp.security.alpha.kubernetes.io/system-probe: {{ include "seccomp-profile-name" . }}
         {{- end }}
         {{- end }}
         {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (semverCompare "<1.30.0" .Capabilities.KubeVersion.Version) }}
@@ -173,7 +173,7 @@ spec:
         {{- if eq .Values.targetSystem "linux" }}
           {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
-        {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
+        {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq (include "seccomp-profile-name" .) "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:

@@ -1,0 +1,46 @@
+{{- if and .Values.datadog.operator.migrationEnabled .Values.datadog.operator.createDDAManifest }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-job
+  labels:
+    app: agent
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Release.Name }}-datadog-operator
+      restartPolicy: OnFailure
+      containers:
+        - name: helm-migrator
+          image: fannyatdd/operator:migration-63
+          command: ["/helm-mapper", "-sourceFile=/tmp/values.yaml", "-destFile=/tmp/destination.yaml", "-mappingFile=mapping_datadog_helm_to_datadogagent_crd_v2.yaml", "-name={{ template "datadog.fullname" . }}", "-namespace={{ .Release.Namespace }}"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: migration-values
+              mountPath: /tmp/values.yaml
+              subPath: values.yaml
+              readOnly: true
+        - name: kubectl
+          image: bitnami/kubectl:latest
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          command:
+            - "sh"
+            - "-c"
+            - |
+              while [ ! -s /tmp/destination.yaml ]; do sleep 1; done
+              kubectl apply -f /tmp/destination.yaml && echo "Applied."
+              kubectl get datadogagent {{ .Release.Name }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: migration-values
+          configMap:
+            name: {{ template "datadog.fullname" . }}-migration-config
+            items:
+              - key: values.yaml
+                path: values.yaml
+{{- end }}

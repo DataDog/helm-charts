@@ -909,6 +909,39 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 {{- end -}}
 
 {{/*
+Returns default agent pod security capabilities.
+*/}}
+{{- define "default-agent-pod-security-capabilities" }}
+- SYS_ADMIN
+- SYS_RESOURCE
+- SYS_PTRACE
+- NET_ADMIN
+- NET_BROADCAST
+- NET_RAW
+- IPC_LOCK
+- CHOWN
+- AUDIT_CONTROL
+- AUDIT_READ
+- DAC_READ_SEARCH
+{{- end }}
+
+{{/*
+Returns default system-probe container security context
+*/}}
+{{- define "default-system-probe-security-context" }}
+privileged: false
+capabilities:
+  add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
+{{- end }}
+
+{{/*
+Returns seccomp profile name
+*/}}
+{{- define "seccomp-profile-name" }}
+{{ .Values.datadog.systemProbe.seccomp | default "localhost/system-probe" }}
+{{- end }}
+
+{{/*
 Returns securityContext depending of the OS
 */}}
 {{- define "generate-security-context" -}}

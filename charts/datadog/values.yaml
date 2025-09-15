@@ -659,11 +659,11 @@ datadog:
     ports:
 
         # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
+      - containerPort: 4317
         name: otel-grpc
         protocol: TCP
         # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
+      - containerPort: 4318
         name: otel-http
         protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
@@ -833,16 +833,16 @@ datadog:
     # datadog.systemProbe.seccomp -- Apply an ad-hoc seccomp profile to the system-probe agent to restrict its privileges
 
     ## Note that this will break `kubectl exec … -c system-probe -- /bin/bash`
-    seccomp: localhost/system-probe
+    seccomp: # localhost/system-probe
 
     # datadog.systemProbe.seccompRoot -- Specify the seccomp profile root directory
-    seccompRoot: /var/lib/kubelet/seccomp
+    seccompRoot: # /var/lib/kubelet/seccomp
 
     # datadog.systemProbe.bpfDebug -- Enable logging for kernel debug
     bpfDebug: false
 
     # datadog.systemProbe.apparmor -- Specify a apparmor profile for system-probe
-    apparmor: unconfined
+    apparmor: # unconfined
 
     # datadog.systemProbe.enableTCPQueueLength -- Enable the TCP queue length eBPF-based check
     enableTCPQueueLength: false
@@ -1873,18 +1873,18 @@ agents:
     # agents.podSecurity.capabilities -- Allowed capabilities
 
     ## note: capabilities must contain all agents.containers.*.securityContext.capabilities.
-    capabilities:
-      - SYS_ADMIN
-      - SYS_RESOURCE
-      - SYS_PTRACE
-      - NET_ADMIN
-      - NET_BROADCAST
-      - NET_RAW
-      - IPC_LOCK
-      - CHOWN
-      - AUDIT_CONTROL
-      - AUDIT_READ
-      - DAC_READ_SEARCH
+    capabilities: {}
+     # - SYS_ADMIN
+     # - SYS_RESOURCE
+     # - SYS_PTRACE
+     # - NET_ADMIN
+     # - NET_BROADCAST
+     # - NET_RAW
+     # - IPC_LOCK
+     # - CHOWN
+     # - AUDIT_CONTROL
+     # - AUDIT_READ
+     # - DAC_READ_SEARCH
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -2122,10 +2122,10 @@ agents:
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
       ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
-      securityContext:
-        privileged: false
-        capabilities:
-          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
+      securityContext: {}
+       # privileged: false
+       # capabilities:
+       #   add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
 
       # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []

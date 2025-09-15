@@ -80,12 +80,12 @@
 - name: sysprobe-config
   configMap:
     name: {{ template "datadog.fullname" . }}-system-probe-config
-{{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
+{{- if eq (include "seccomp-profile-name" .) "localhost/system-probe" }}
 - name: datadog-agent-security
   configMap:
     name: {{ template "datadog.fullname" . }}-security
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.seccompRoot }}
+    path: {{ .Values.datadog.systemProbe.seccompRoot | default "/var/lib/kubelet/seccomp" }}
   name: seccomp-root
 {{- end }}
 - hostPath:

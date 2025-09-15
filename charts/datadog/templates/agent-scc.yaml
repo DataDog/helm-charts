@@ -30,7 +30,7 @@ seLinuxContext:
 seccompProfiles:
 {{ toYaml .Values.agents.podSecurity.seccompProfiles | indent 2 }}
 allowedCapabilities:
-{{ toYaml .Values.agents.podSecurity.capabilities | indent 2 }}
+{{ toYaml .Values.agents.podSecurity.capabilities | default include "default-agent-pod-security-capabilities" . | indent 2 }}
 #
 # The rest is copied from restricted SCC
 #

@@ -1,4 +1,4 @@
-{{ if and .Values.datadog.operator.createDDAManifest ( include "datadogagents-crd-ready" . )}}
+{{ if false }}
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
@@ -462,17 +462,17 @@ spec:
           securityContext:
 {{ .Values.agents.containers.systemProbe.securityContext | toYaml | indent 12 }}
 {{- end }}
-{{- if .Values.datadog.systemProbe.apparmor }}
-          appArmorProfileName: {{ .Values.datadog.systemProbe.apparmor }}
+{{- if (.Values.datadog.systemProbe.apparmor | default "unconfined" ) }}
+          appArmorProfileName: {{ .Values.datadog.systemProbe.apparmor | default "unconfined" }}
 {{- end }}
-{{- if or .Values.datadog.systemProbe.seccomp .Values.datadog.systemProbe.seccompRoot }}
+{{- if or (include "seccomp-profile-name" .) (.Values.datadog.systemProbe.seccompRoot | default "/var/lib/kubelet/seccomp") }}
           seccompConfig:
-{{- if .Values.datadog.systemProbe.seccomp }}
+{{- if include "seccomp-profile-name" . }}
             customProfile:
-              configData: {{ .Values.datadog.systemProbe.seccomp }}
+              configData: {{ (include "seccomp-profile-name" .) }}
 {{- end }}
-{{- if .Values.datadog.systemProbe.seccompRoot }}
-            customRootPath: {{ .Values.datadog.systemProbe.seccompRoot }}
+{{- if .Values.datadog.systemProbe.seccompRoot | default "/var/lib/kubelet/seccomp" }}
+            customRootPath: {{ .Values.datadog.systemProbe.seccompRoot | default "/var/lib/kubelet/seccomp" }}
 {{- end }}
 {{- end }}
 {{- end }}

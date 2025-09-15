@@ -122,7 +122,7 @@ data:
         auto_suppression:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
 
-{{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
+{{- if eq (include "seccomp-profile-name" .) "localhost/system-probe" }}
 ---
 apiVersion: v1
 kind: ConfigMap

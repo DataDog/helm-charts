@@ -22,7 +22,7 @@ spec:
   {{- end }}
   hostPID: {{ include "should-enable-host-pid" . }}
   allowedCapabilities:
-{{ toYaml .Values.agents.podSecurity.capabilities | indent 4 }}
+{{ toYaml .Values.agents.podSecurity.capabilities | default include "default-agent-pod-security-capabilities"  . | indent 4 }}
   allowedUnsafeSysctls:
 {{ toYaml .Values.agents.podSecurity.allowedUnsafeSysctls | indent 4 }}
   volumes:

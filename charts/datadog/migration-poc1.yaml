@@ -28,7 +28,7 @@ datadog:
     enabled: true
 
 clusterAgent:
-  enabled: true
+  enabled: false
   replicas: 2
 
 clusterChecksRunner:
@@ -41,9 +41,9 @@ agents:
 datadog-operator:
   image:
     repository: fannyatdd/operator
-    tag: migration-57
+    tag: migration-68
     doNotCheckTag: true
   logLevel: debug
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
-#  allowReadAllResources: true
+  allowReadAllResources: true
