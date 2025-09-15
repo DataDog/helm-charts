@@ -9,8 +9,7 @@ runner:
     urn: "CHANGE_ME_URN_FROM_CONFIG"
     privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
     modes:
-      - appBuilder
-      - workflowAutomation
+      - pull
     allowIMDSEndpoint: false
     port: 9016
     actionsAllowlist:
