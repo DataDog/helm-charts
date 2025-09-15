@@ -86,10 +86,20 @@ rules:
 - apiGroups:  # Kubelet connectivity
   - ""
   resources:
+  {{ if .Values.datadog.kubelet.fineGrainedAuthorization }}
+  - nodes/metrics
+  - nodes/spec
+  - nodes/stats
+  - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
+  {{ else }}
   - nodes/metrics
   - nodes/spec
   - nodes/proxy
   - nodes/stats
+  {{ end }}
   verbs:
   - get
 {{- if .Values.datadog.kubelet.useApiServer }}
