@@ -1,3 +1,4 @@
+{{- if or .Values.datadog.operator.createDDAManifest .Values.datadog.operator.deployDDAManifest }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -10,16 +11,38 @@ spec:
     spec:
       restartPolicy: OnFailure
       containers:
-        - name: migration-job
-          image: gcr.io/distroless/static:nonroot
+        - name: helm-migrator
+          image: fannyatdd/operator:migration-69
           command:
-            - bin/bash
-            - -c
-            - echo "Hello!" && sleep 3600
+            - /helm-mapper
+            - -sourceFile=/tmp/values.yaml
+            - -mappingFile=mapping_datadog_helm_to_datadogagent_crd_v2.yaml
+            - -ddaName={{ template "datadog.fullname" . }}
+            - -namespace={{ .Release.Namespace }}
+            - -destFile=/tmp/{{ template "datadog.fullname" . }}.yaml
           volumeMounts:
-            - mountPath: /tmp
-              name: migration-values
+            - name: tmp
+              mountPath: /tmp
+            - name: migration-values
+              mountPath: /tmp/values.yaml
+              subPath: values.yaml
+              readOnly: true
+  {{- if .Values.datadog.operator.deployDDAManifest }}
+        - name: k8s
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
+              kubectl apply -f {{ template "datadog.fullname" . }}.yaml
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+  {{- end }}
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: migration-values
           configMap:
             name: {{ template "datadog.fullname" . }}-migration-config
