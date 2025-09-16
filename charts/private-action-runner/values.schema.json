@@ -76,7 +76,7 @@
               "description": "Modes that the runner can run in",
               "items": {
                 "type": "string",
-                "enum": ["appBuilder", "workflowAutomation"]
+                "enum": ["appBuilder", "workflowAutomation", "push", "pull"]
               }
             },
             "port": {

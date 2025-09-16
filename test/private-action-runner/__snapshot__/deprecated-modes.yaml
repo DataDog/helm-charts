@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -22,63 +22,16 @@ stringData:
       - appBuilder
     port: 9016
     actionsAllowlist:
-      - com.datadoghq.kubernetes.apps.getControllerRevision
-      - com.datadoghq.kubernetes.apps.listControllerRevision
-      - com.datadoghq.kubernetes.apps.createControllerRevision
-      - com.datadoghq.kubernetes.apps.updateControllerRevision
-      - com.datadoghq.kubernetes.apps.patchControllerRevision
-      - com.datadoghq.kubernetes.apps.deleteControllerRevision
-      - com.datadoghq.kubernetes.apps.deleteMultipleControllerRevisions
-      - com.datadoghq.kubernetes.apps.restartDeployment
-      - com.datadoghq.kubernetes.apps.rollbackDeployment
-      - com.datadoghq.kubernetes.apps.scaleDeployment
-      - com.datadoghq.kubernetes.core.patchEndpoints
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
-      - com.datadoghq.kubernetes.customresources.deleteMultipleCustomObjects
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   namespace: datadog-agent
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
 rules:
-- apiGroups:
-  - example.com
-  resources:
-  - tests
-  verbs:
-  - list
-  - get
-  - create
-  - patch
-  - update
-  - delete
-- apiGroups:
-  - apps
-  resources:
-  - controllerrevisions
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - patch
-  - get
-- apiGroups:
-  - ""
-  resources:
-  - endpoints
-  verbs:
-  - patch
 - apiGroups:
   - ""
   resources:
@@ -86,38 +39,32 @@ rules:
   verbs:
   - get
   - list
-- apiGroups:
-  - apps
-  resources:
-  - replicasets
-  verbs:
-  - list
 ---
 # Source: private-action-runner/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kubernetes-test-private-action-runner
+  kind: Role
+  name: deprecated-modes-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: kubernetes-test-private-action-runner
+    name: deprecated-modes-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: kubernetes-test
+      app.kubernetes.io/instance: deprecated-modes-test
   ports:
     - name: http
       port: 9016
@@ -127,12 +74,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kubernetes-test-private-action-runner
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.11.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: kubernetes-test
+    app.kubernetes.io/instance: deprecated-modes-test
     app.kubernetes.io/version: "v1.9.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -141,19 +88,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: kubernetes-test
+      app.kubernetes.io/instance: deprecated-modes-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.11.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: kubernetes-test
+        app.kubernetes.io/instance: deprecated-modes-test
         app.kubernetes.io/version: "v1.9.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 213ec801330a7b451ddb03639b6ee50b2e37d68bb188061f3abae5be8c2af322
+        checksum/values: 033bbd3c12b02e201e84efcf6870a994a648adfcb2f34d46d16eca7849ce3756
     spec:
-      serviceAccountName: kubernetes-test-private-action-runner
+      serviceAccountName: deprecated-modes-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.9.0"
@@ -177,4 +124,4 @@ spec:
       volumes:
         - name: secrets
           secret:
-            secretName: kubernetes-test-private-action-runner
+            secretName: deprecated-modes-test-private-action-runner
