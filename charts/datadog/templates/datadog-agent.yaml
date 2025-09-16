@@ -1,4 +1,4 @@
-{{ if false }}
+{{ if and (include "datadogagents-crd-ready" .) .Values.datadog.operator.createDDAManifest.templateEnabled .Values.datadog.operator.deployDDAManifest }}
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:

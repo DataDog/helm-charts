@@ -1,4 +1,4 @@
-{{- if and .Values.datadog.operator.migrationEnabled .Values.datadog.operator.createDDAManifest }}
+{{- if and (include "datadogagents-crd-ready" .) (or .Values.datadog.operator.createDDAManifest.migratorJobEnabled .Values.datadog.operator.deployDDAManifest) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -9,12 +9,19 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: {{ .Release.Name }}-datadog-operator
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
       restartPolicy: OnFailure
       containers:
         - name: helm-migrator
-          image: fannyatdd/operator:migration-63
-          command: ["/helm-mapper", "-sourceFile=/tmp/values.yaml", "-destFile=/tmp/destination.yaml", "-mappingFile=mapping_datadog_helm_to_datadogagent_crd_v2.yaml", "-name={{ template "datadog.fullname" . }}", "-namespace={{ .Release.Namespace }}"]
+          image: fannyatdd/operator:migration-69
+          command:
+            - /helm-mapper
+            - -sourceFile=/tmp/values.yaml
+            - -mappingFile=mapping_datadog_helm_to_datadogagent_crd_v2.yaml
+            - -ddaName={{ template "datadog.fullname" . }}
+            - -namespace={{ .Release.Namespace }}
+            - -destFile=/tmp/{{ template "datadog.fullname" . }}.yaml
+            - sleep 3600
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -22,18 +29,20 @@ spec:
               mountPath: /tmp/values.yaml
               subPath: values.yaml
               readOnly: true
-        - name: kubectl
+  {{- if .Values.datadog.operator.deployDDAManifest }}
+        - name: k8s
           image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
+              kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml
+              sleep 3600
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-          command:
-            - "sh"
-            - "-c"
-            - |
-              while [ ! -s /tmp/destination.yaml ]; do sleep 1; done
-              kubectl apply -f /tmp/destination.yaml && echo "Applied."
-              kubectl get datadogagent {{ .Release.Name }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
+  {{- end }}
       volumes:
         - name: tmp
           emptyDir: {}
@@ -43,4 +52,4 @@ spec:
             items:
               - key: values.yaml
                 path: values.yaml
-{{- end }}
+  {{- end }}

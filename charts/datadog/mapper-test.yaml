@@ -1,12 +1,14 @@
-registry: "docker.io/datadog"
 datadog:
   operator:
     # datadog.operator.enabled -- Enable the Datadog Operator
     enabled: true
     # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
     # FLIP TO TRUE TO MIGRATE
-    createDDAManifest: true
+    createDDAManifest:
+      templateEnabled: false
+      migratorJobEnabled: true
     # datadog.operator.migration.enabled -- Enable migration to the operator
+    deployDDAManifest: true
     migrationEnabled: true
   ## If set, this parameter takes precedence over "apiKey".
   apiKeyExistingSecret:  datadog-secret
@@ -71,10 +73,10 @@ datadog:
         protocol: TCP
 
 datadog-operator:
-  #  image:
-  #    repository:
-  #    tag:
-  #    doNotCheckTag: true
+  image:
+    repository: fannyatdd/operator
+    tag: migration-69
+    doNotCheckTag: true
   logLevel: debug
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
