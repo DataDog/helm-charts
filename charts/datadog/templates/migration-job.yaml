@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ template "datadog.fullname" . }}-migration-job
+  namespace: {{ .Release.Namespace }}
   labels:
     app: agent
 {{ include "datadog.labels" . | indent 4 }}
@@ -21,7 +22,6 @@ spec:
             - -ddaName={{ template "datadog.fullname" . }}
             - -namespace={{ .Release.Namespace }}
             - -destFile=/tmp/{{ template "datadog.fullname" . }}.yaml
-            - sleep 3600
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -38,7 +38,7 @@ spec:
             - |
               while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
               kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml
-              sleep 3600
+              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
           volumeMounts:
             - name: tmp
               mountPath: /tmp

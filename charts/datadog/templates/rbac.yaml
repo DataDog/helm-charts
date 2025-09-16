@@ -152,6 +152,7 @@ rules:
     - datadogagents
   verbs:
     - get
+    - patch
     - create
 {{- end }}
 ---
