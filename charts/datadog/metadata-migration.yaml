@@ -1,0 +1,17 @@
+datadog:
+  apiKeyExistingSecret:  datadog-secret
+  appKeyExistingSecret:  datadog-secret
+
+  kubelet:
+    tlsVerify:  false
+
+
+clusterAgent:
+  token: e52ac769c334aa0932b88e121ac7951d31ee1f997b7feee5eb7c6dc2cc4b3e6a
+  enabled: true
+  replicas: 2
+  
+
+clusterChecksRunner:
+  enabled: true
+  replicas: 2

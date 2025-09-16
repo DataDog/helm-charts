@@ -21,10 +21,17 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.strategy | indent 4 }}
   selector:
     matchLabels:
+    {{- if .Values.operator.migration.migrateWorkloadSelector }}
+      agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+      agent.datadoghq.com/component: cluster-checks-runner
+    {{- else }}
       app: {{ template "datadog.fullname" . }}-clusterchecks
+    {{- end }}
   template:
     metadata:
       labels:
+        agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+        agent.datadoghq.com/component: cluster-checks-runner
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"

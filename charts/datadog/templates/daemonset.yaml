@@ -20,13 +20,20 @@ spec:
   revisionHistoryLimit: {{ .Values.agents.revisionHistoryLimit }}
   selector:
     matchLabels:
+    {{- if .Values.operator.migration.migrateWorkloadSelector }}
+      agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+      agent.datadoghq.com/component: agent
+    {{- else }}
       app: {{ template "datadog.fullname" . }}
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 6 }}
         {{- end }}
+    {{- end }}
   template:
     metadata:
       labels:
+        agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+        agent.datadoghq.com/component: agent
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: agent
         admission.datadoghq.com/enabled: "false"

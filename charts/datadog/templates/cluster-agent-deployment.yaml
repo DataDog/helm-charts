@@ -29,13 +29,20 @@ spec:
 {{- end }}
   selector:
     matchLabels:
+    {{- if .Values.operator.migration.migrateWorkloadSelector }}
+      agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+      agent.datadoghq.com/component: cluster-agent
+    {{- else }}
       app: {{ template "datadog.fullname" . }}-cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 6 }}
         {{- end }}
+    {{- end }}
   template:
     metadata:
       labels:
+        agent.datadoghq.com/name: {{ .Values.operator.migration.ddaName }}
+        agent.datadoghq.com/component: cluster-agent
 {{ include "datadog.template-labels" . | indent 8 }}
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
