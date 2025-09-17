@@ -1199,13 +1199,12 @@ datadog:
   csi:
     # datadog.csi.enabled -- Enable datadog csi driver
     # Requires version 7.67 or later of the cluster agent
+    # Note:
+    #   - When set to true, the CSI driver subchart will be installed automatically.
+    #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
+    #   - To disable CSI functionality entirely, leave this as false.
     enabled: false
-    # datadog.csi.autoInstall -- Control whether Helm installs the CSI driver chart as a dependency
-    # Set to false if you manage the CSI driver separately
-    # Note: This only controls Helm's subchart installation. It does not affect CSI features in the Agent.
-    # To actually enable CSI functionality, you must also set datadog.csi.enabled=true.
-    # In practice: set autoInstall=true only when CSI is enabled and you have not already installed the CSI driver yourself.
-    autoInstall: false
+   
 
   ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
   agentDataPlane:

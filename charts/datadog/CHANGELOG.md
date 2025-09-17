@@ -2,8 +2,9 @@
 
 ## 3.133.1
 
-* Add `datadog.csi.autoInstall` flag to control automatic installation of the CSI driver subchart.  
-  This allows users to enable CSI features (`datadog.csi.enabled=true`) while managing the CSI driver installation separately (`datadog.csi.autoInstall=false`).
+* Update CSI driver documentation in `values.yaml`:
+  - Clarify that when set to `true`, the CSI driver subchart will be installed automatically.
+  - Warn users not to install the CSI driver separately when enabled to avoid conflicts.
 
 ## 3.133.0
 
