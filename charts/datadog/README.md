@@ -756,8 +756,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerLifecycle.enabled | bool | `true` | Enable container lifecycle events collection |
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
-| datadog.csi.autoInstall | bool | `false` | Control whether Helm installs the CSI driver chart as a dependency Set to false if you manage the CSI driver separately Note: This only controls Helm's subchart installation. It does not affect CSI features in the Agent. To actually enable CSI functionality, you must also set datadog.csi.enabled=true. In practice: set autoInstall=true only when CSI is enabled and you have not already installed the CSI driver yourself. |
-| datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent |
+| datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.   - To disable CSI functionality entirely, leave this as false. |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
