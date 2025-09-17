@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.134.0
+
+* Add a new Deployment for otel-agent Gateway, configured by `otelAgentGateway`.
+
 ## 3.133.0
 
 * Revert changes in 3.131.4 because the configuration is going to be deprecated.
