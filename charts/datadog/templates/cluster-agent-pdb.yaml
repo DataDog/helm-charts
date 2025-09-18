@@ -7,11 +7,16 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
-  {{- if .Values.clusterAgent.pdb.minAvailable -}}
-  minAvailable: {{ .Values.clusterAgent.pdb.minAvailable | default 1 }}
-  {{- else -}}
+  {{- if and .Values.clusterAgent.pdb.minAvailable .Values.clusterAgent.pdb.maxUnavailable }}
+  {{- fail "clusterAgent.pdb: set only one of minAvailable or maxUnavailable" }}
+  {{- end }}
+  {{- if .Values.clusterAgent.pdb.minAvailable }}
+  minAvailable: {{ .Values.clusterAgent.pdb.minAvailable }}
+  {{- else if .Values.clusterAgent.pdb.maxUnavailable }}
   maxUnavailable: {{ .Values.clusterAgent.pdb.maxUnavailable }}
-  {{- end -}}
+  {{- else }}
+  minAvailable: 1
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}-cluster-agent
