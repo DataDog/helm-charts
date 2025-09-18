@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.13.2
+* Add `nodes/pods`, `nodes/healthz`, `nodes/configz`, and `nodes/logs` resources to the operator’s ClusterRole.
+
 ## 2.13.1
 
 * Add default `initialDelaySeconds: 15` to the Liveness Probe
