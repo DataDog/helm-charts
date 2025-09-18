@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.11.0
+
+* Bump private runner version to 1.9.0
+* Introduce to new modes `pull` and `push` to replace respectively `workflowAutomation`and `appBuilder` modes.
+
 ## 1.10.0
 
 * Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
