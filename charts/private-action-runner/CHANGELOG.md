@@ -2,7 +2,7 @@
 
 ## 1.12.0
 
-* Add your changelog here!
+* Bump private runner version to 1.10.0
 
 ## 1.11.0
 
