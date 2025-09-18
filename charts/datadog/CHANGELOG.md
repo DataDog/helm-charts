@@ -1,5 +1,9 @@
 # Datadog changelog
 
+# 3.134.0
+
+* Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners.
+
 ## 3.133.0
 
 * Revert changes in 3.131.4 because the configuration is going to be deprecated.
