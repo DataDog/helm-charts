@@ -1204,7 +1204,7 @@ datadog:
     #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     #   - To disable CSI functionality entirely, leave this as false.
     enabled: false
-  
+
   ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
   agentDataPlane:
     # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
