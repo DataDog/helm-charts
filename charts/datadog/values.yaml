@@ -1661,9 +1661,10 @@ clusterAgent:
     # clusterAgent.pdb.create -- Enable pod disruption budget for Cluster Agent deployments.
 
     ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, minAvailable is set to 1 for cluster agent.
     create: false
-    # clusterAgent.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption
-    minAvailable: 1
+    # clusterAgent.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption -- default to 1
+    minAvailable:
     # clusterAgent.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
     maxUnavailable:
 
@@ -2418,11 +2419,12 @@ clusterChecksRunner:
     # clusterChecksRunner.pdb.create -- Enable pod disruption budget for Cluster Checks Runner deployments.
 
     ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, maxUnavailable is set to 1 for cluster checks runners.
     create: false
     # clusterChecksRunner.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption
     minAvailable:
     # clusterChecksRunner.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
-    maxUnavailable: 1
+    maxUnavailable:
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:

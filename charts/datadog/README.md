@@ -640,7 +640,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
 | clusterAgent.pdb.create | bool | `false` | Enable pod disruption budget for Cluster Agent deployments. |
 | clusterAgent.pdb.maxUnavailable | string | `nil` | Maximum number of pods that can be unavailable during a disruption |
-| clusterAgent.pdb.minAvailable | int | `1` | Minimum number of pods that must remain available during a disruption |
+| clusterAgent.pdb.minAvailable | string | `nil` |  |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
@@ -689,7 +689,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
 | clusterChecksRunner.pdb.create | bool | `false` | Enable pod disruption budget for Cluster Checks Runner deployments. |
-| clusterChecksRunner.pdb.maxUnavailable | int | `1` | Maximum number of pods that can be unavailable during a disruption |
+| clusterChecksRunner.pdb.maxUnavailable | string | `nil` | Maximum number of pods that can be unavailable during a disruption |
 | clusterChecksRunner.pdb.minAvailable | string | `nil` | Minimum number of pods that must remain available during a disruption |
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
