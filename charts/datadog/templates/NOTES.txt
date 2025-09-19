@@ -396,7 +396,7 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+{{- if and .Values.datadog.dogstatsd.useSocketVolume (not .Values.datadog.csi.enabled)}}
 
 ###################################################################################
 ####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
@@ -404,7 +404,7 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if .Values.datadog.apm.socketEnabled }}
+{{- if and .Values.datadog.apm.socketEnabled (not .Values.datadog.csi.enabled) }}
 
 ##############################################################################
 ####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####

@@ -90,7 +90,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if (not .Values.providers.gke.autopilot) }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket
