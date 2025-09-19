@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.133.0](https://img.shields.io/badge/Version-3.133.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.134.0](https://img.shields.io/badge/Version-3.134.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -609,7 +609,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.containers.clusterAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"readOnlyRootFilesystem":true}` | Specify securityContext on the cluster-agent container. |
 | clusterAgent.containers.initContainers.resources | object | `{}` | Resource requests and limits for the Cluster Agent init containers |
 | clusterAgent.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the initContainers. |
-| clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments |
+| clusterAgent.createPodDisruptionBudget | bool | `false` | Create pod disruption budget for Cluster Agent deployments DEPRECATED. Use clusterAgent.pdb.create instead |
 | clusterAgent.datadog_cluster_yaml | object | `{}` | Specify custom contents for the datadog cluster agent config (datadog-cluster.yaml) |
 | clusterAgent.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-agents's deployment |
 | clusterAgent.dnsConfig | object | `{}` | Specify dns configuration options for datadog cluster agent containers e.g ndots |
@@ -638,6 +638,9 @@ helm install <RELEASE_NAME> \
 | clusterAgent.metricsProvider.wpaController | bool | `false` | Enable informer and controller of the watermark pod autoscaler |
 | clusterAgent.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster agent. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterAgent.nodeSelector | object | `{}` | Allow the Cluster Agent Deployment to be scheduled on selected nodes |
+| clusterAgent.pdb.create | bool | `false` | Enable pod disruption budget for Cluster Agent deployments. |
+| clusterAgent.pdb.maxUnavailable | string | `nil` | Maximum number of pods that can be unavailable during a disruption |
+| clusterAgent.pdb.minAvailable | string | `nil` |  |
 | clusterAgent.podAnnotations | object | `{}` | Annotations to add to the cluster-agents's pod(s) |
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
@@ -667,7 +670,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
 | clusterChecksRunner.containers.agent.securityContext | object | `{}` | Specify securityContext on the agent container |
 | clusterChecksRunner.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the init containers |
-| clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents |
+| clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents DEPRECATED. Use clusterChecksRunner.pdb.create instead |
 | clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |
 | clusterChecksRunner.dnsConfig | object | `{}` | specify dns configuration options for datadog cluster agent containers e.g ndots |
 | clusterChecksRunner.enabled | bool | `false` | If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents. |
@@ -685,6 +688,9 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
+| clusterChecksRunner.pdb.create | bool | `false` | Enable pod disruption budget for Cluster Checks Runner deployments. |
+| clusterChecksRunner.pdb.maxUnavailable | string | `nil` | Maximum number of pods that can be unavailable during a disruption |
+| clusterChecksRunner.pdb.minAvailable | string | `nil` | Minimum number of pods that must remain available during a disruption |
 | clusterChecksRunner.podAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's pod(s) |
 | clusterChecksRunner.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | clusterChecksRunner.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster checks runners |
