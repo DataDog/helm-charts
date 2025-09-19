@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.133.1
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
+
 ## 3.133.0
 
 * Revert changes in 3.131.4 because the configuration is going to be deprecated.
