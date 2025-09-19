@@ -1199,6 +1199,9 @@ datadog:
   csi:
     # datadog.csi.enabled -- Enable datadog csi driver
     # Requires version 7.67 or later of the cluster agent
+    # Note:
+    #   - When set to true, the CSI driver subchart will be installed automatically.
+    #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
   ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.

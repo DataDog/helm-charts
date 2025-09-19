@@ -2,7 +2,7 @@
 
 ## 3.133.1
 
-* Fix handling of `hostSocketPath` values so mutated pods correctly mount custom UDS sockets.
+* Fix handling of `hostSocketPath` values so mutated pods correctly mount custom UDS sockets and update CSI driver documentation in `values.yaml`to Clarify that when set to `true`, the CSI driver subchart will be installed automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
 
 ## 3.133.0
 

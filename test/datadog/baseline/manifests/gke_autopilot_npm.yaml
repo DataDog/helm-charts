@@ -1072,6 +1072,8 @@ spec:
               value: low
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
