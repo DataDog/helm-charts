@@ -77,10 +77,10 @@ metadata:
   name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.11.0
+    helm.sh/chart: private-action-runner-1.12.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deprecated-modes-test
-    app.kubernetes.io/version: "v1.9.0"
+    app.kubernetes.io/version: "v1.10.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -92,18 +92,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.11.0
+        helm.sh/chart: private-action-runner-1.12.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deprecated-modes-test
-        app.kubernetes.io/version: "v1.9.0"
+        app.kubernetes.io/version: "v1.10.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 033bbd3c12b02e201e84efcf6870a994a648adfcb2f34d46d16eca7849ce3756
+        checksum/values: 0f8fc6b7ffff372c4e7dc53b75aebf55092f1172e58acb7a8c7d765a95018848
     spec:
       serviceAccountName: deprecated-modes-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.9.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.10.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
