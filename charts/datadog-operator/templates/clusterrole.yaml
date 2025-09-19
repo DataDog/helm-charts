@@ -59,6 +59,10 @@ rules:
   - nodes/proxy
   - nodes/spec
   - nodes/stats
+  - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
   verbs:
   - get
 - apiGroups:
