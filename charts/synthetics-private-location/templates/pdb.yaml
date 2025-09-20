@@ -3,6 +3,7 @@ apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "synthetics-private-location.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "synthetics-private-location.labels" . | nindent 4 }}
 spec:
