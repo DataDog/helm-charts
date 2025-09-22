@@ -90,6 +90,13 @@ spec:
                         This is useful for AWS CloudWatch and other backfilled metrics to ensure the monitor always has data during evaluation.
                       format: int64
                       type: integer
+                    groupRetentionDuration:
+                      description: |-
+                        The time span after which groups with missing data are dropped from the monitor state.
+                        The minimum value is one hour, and the maximum value is 72 hours.
+                        Example values are: "60m", "1h", and "2d".
+                        This option is only available for APM Trace Analytics, Audit Trail, CI, Error Tracking, Event, Logs, and RUM monitors.
+                      type: string
                     groupbySimpleMonitor:
                       description: A Boolean indicating whether the log alert monitor triggers a single alert or multiple alerts when any group breaches a threshold.
                       type: boolean
