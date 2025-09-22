@@ -129,13 +129,6 @@ datadog:
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
   logLevel: INFO
 
-  operator:
-    # datadog.operator.createDDAManifest -- Map values.yaml to a compatible the DDA manifest
-    createDDAManifest: false
-
-    # datadog.operator.deployDDAManifest -- Deploy remapped DDA manifest
-    deployDDAManifest: false
-
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
   ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
