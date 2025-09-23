@@ -1198,6 +1198,12 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            directSendFromSystemProbe:
+                              description: |-
+                                DirectSendFromSystemProbe configures CWS to send payloads directly from the system-probe, without using the security-agent.
+                                This is an experimental feature. Contact support before using.
+                                Default: false
+                              type: boolean
                             enabled:
                               description: |-
                                 Enabled enables Cloud Workload Security.
@@ -1477,6 +1483,12 @@ spec:
                                 Enabled enables GPU monitoring core check.
                                 Default: false
                               type: boolean
+                            patchCgroupPermissions:
+                              description: |-
+                                PatchCgroupPermissions enables the patch of cgroup permissions for GPU monitoring, in case
+                                the container runtime is not properly configured and the Agent containers lose access to GPU devices.
+                                Default: false
+                              type: boolean
                             privilegedMode:
                               description: |-
                                 PrivilegedMode enables GPU Probe module in System Probe.
@@ -1601,6 +1613,11 @@ spec:
                         logCollection:
                           description: LogCollection configuration.
                           properties:
+                            autoMultiLineDetection:
+                              description: |-
+                                AutoMultiLineDetection allows the Agent to detect and aggregate common multi-line logs automatically.
+                                See also: https://docs.datadoghq.com/agent/logs/auto_multiline_detection/
+                              type: boolean
                             containerCollectAll:
                               description: |-
                                 ContainerCollectAll enables Log collection from all containers.

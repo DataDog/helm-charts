@@ -647,6 +647,8 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        directSendFromSystemProbe:
+                          type: boolean
                         enabled:
                           type: boolean
                         network:
@@ -795,6 +797,8 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        patchCgroupPermissions:
+                          type: boolean
                         privilegedMode:
                           type: boolean
                         requiredRuntimeClassName:
@@ -860,6 +864,8 @@ spec:
                       type: object
                     logCollection:
                       properties:
+                        autoMultiLineDetection:
+                          type: boolean
                         containerCollectAll:
                           type: boolean
                         containerCollectUsingFiles:
@@ -4528,6 +4534,8 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            directSendFromSystemProbe:
+                              type: boolean
                             enabled:
                               type: boolean
                             network:
@@ -4676,6 +4684,8 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            patchCgroupPermissions:
+                              type: boolean
                             privilegedMode:
                               type: boolean
                             requiredRuntimeClassName:
@@ -4741,6 +4751,8 @@ spec:
                           type: object
                         logCollection:
                           properties:
+                            autoMultiLineDetection:
+                              type: boolean
                             containerCollectAll:
                               type: boolean
                             containerCollectUsingFiles:
