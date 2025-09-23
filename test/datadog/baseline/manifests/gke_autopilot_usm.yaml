@@ -1072,8 +1072,6 @@ spec:
               value: low
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
-            - name: DD_APM_RECEIVER_SOCKET
-              value: /var/run/datadog/apm.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1111,7 +1109,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.70.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1224,7 +1222,7 @@ spec:
               value: gke-autopilot
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.70.2
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources:
@@ -1322,7 +1320,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.70.2
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1373,7 +1371,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.70.2
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1406,7 +1404,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.70.2
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -1588,6 +1586,10 @@ spec:
               value: /var/run/datadog/
             - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_DOGSTATSD_AGENT_HOST_SOCKET_PATH
               value: /var/run/datadog/
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
               value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
@@ -1666,7 +1668,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.69.3
+          image: gcr.io/datadoghq/cluster-agent:7.70.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1745,7 +1747,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.69.3
+          image: gcr.io/datadoghq/cluster-agent:7.70.2
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

@@ -229,6 +229,17 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `<component>.createPodDisruptionBudget` has been deprecated, please use `<component>.pdb.create` instead.
+You can further configure the PodDisruptionBudget using `<component>.pdb.minAvailable` or `<component>.pdb.maxUnavailable`.
+
+{{- end }}
+
 {{- if .Values.datadog.apm.enabled }}
 
 #################################################################
