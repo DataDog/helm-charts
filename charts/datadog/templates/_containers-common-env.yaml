@@ -204,8 +204,4 @@ Return a list of env-vars if the cluster-agent is enabled
 - name: DD_DOGSTATSD_SOCKET
   value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
 {{- end }}
-{{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
-- name: DD_APM_RECEIVER_SOCKET
-  value: {{ .Values.datadog.apm.socketPath | quote }}
-{{- end }}
 {{- end -}}
