@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.135.1
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
+
 # 3.135.0
 
 * Upgrade default Agent version to `7.70.2`.
@@ -7,6 +10,7 @@
 # 3.134.0
 
 * Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners. Using solely `<component>.pdb.create` without specifying `minAvailable`/`maxUnavailable` will create the same PodDisruptionBudget as the previous option.
+
 
 ## 3.133.0
 
