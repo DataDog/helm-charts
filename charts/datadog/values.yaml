@@ -617,6 +617,31 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
+
+    # App & API Protection Injector is used to automatically configure your proxy to forward traffic to a custom security processor delegating
+    # traffic analysis, WAF capabilities and API Posture managnment to Datadog's App and API Protection product.
+    injector:
+      # datadog.asm.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
+      enabled: false
+      
+      # datadog.asm.injector.proxy -- Choose between a list of available deployment modes:
+      # - "auto": install all proxies when they are detected
+      # - "envoy-async": deploy the envoy security external processor  and change envoy configuration to process request async
+      # - "envoy-sync": deploy the envoy security external processor and change envoy configuration to process request synchronously to be able to block malicious request via our WAF capabilities
+      # - "istio-gateway": modify Istio configuration at the gateway level, async processor
+      # - "istio-sidecar": modify Istio configuration at the gateway level, async processor
+      # - "nginx": inject our nginx module directly in your ingress-nginx deployment, synchronous processing of requests
+      # - "haproxy": use the SPOE capabilities of HAProxy to 
+      # - "gateway-api": automatically add an HTTPRequestMirror filter on your HTTPRoute resources to forward traffic to our security processor
+      proxy: "auto"
+
+      # datadog.asm.injector.serviceSelector -- If specified, the datadog helm-chart will not create a Deployment and Service resource for you which will let
+      # you manage the scaling of the deployment.
+      # TODO: add link to docs 
+      serviceSelector:
+        name: ""
+        namespace: ""
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
