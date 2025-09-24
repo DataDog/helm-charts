@@ -154,10 +154,11 @@ func main() {
 		destKey, ok = mappingValues[sourceKey]
 		rt := reflect.TypeOf(destKey)
 		if !ok || destKey == "" || destKey == nil {
-			fmt.Printf("Warning: key not found: %s\n", sourceKey)
+			fmt.Printf("WARNING: source key with value '%s' has no mapping defined or maps to an empty value. This key will be skipped in the migration. Review your configuration if this key should be included.\n", sourceKey)
 			// Continue through loop
 		} else if rt.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys
+			fmt.Printf("WARNING: the source key with value '%s' maps to %d destination keys. Please verify that migrating this value across multiple fields is intended in your configuration.\n", sourceKey, len(destKey.([]interface{})))
 			for _, v := range destKey.([]interface{}) {
 				interim[v.(string)] = pathVal
 			}
