@@ -26,7 +26,21 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			snapshotName: "default",
 			assertions:   verifyPrivateActionRunner,
-		}, {
+		},
+		{
+			name: "Private Action Runner deprecated mode values",
+			command: common.HelmCommand{
+				ReleaseName: "deprecated-modes-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.config.modes": `["workflowAutomation", "appBuilder"]`,
+				},
+			},
+			snapshotName: "deprecated-modes",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
 			name: "Private Action Runner example file",
 			command: common.HelmCommand{
 				ReleaseName: "example-test",

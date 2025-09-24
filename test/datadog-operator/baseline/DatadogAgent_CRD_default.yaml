@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.16.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.11.0'
+    helm.sh/chart: 'datadogCRDs-2.12.0-dev.1'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -653,6 +653,8 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        directSendFromSystemProbe:
+                          type: boolean
                         enabled:
                           type: boolean
                         network:
@@ -801,6 +803,8 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        patchCgroupPermissions:
+                          type: boolean
                         privilegedMode:
                           type: boolean
                         requiredRuntimeClassName:
@@ -866,6 +870,8 @@ spec:
                       type: object
                     logCollection:
                       properties:
+                        autoMultiLineDetection:
+                          type: boolean
                         containerCollectAll:
                           type: boolean
                         containerCollectUsingFiles:
@@ -4534,6 +4540,8 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            directSendFromSystemProbe:
+                              type: boolean
                             enabled:
                               type: boolean
                             network:
@@ -4682,6 +4690,8 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            patchCgroupPermissions:
+                              type: boolean
                             privilegedMode:
                               type: boolean
                             requiredRuntimeClassName:
@@ -4747,6 +4757,8 @@ spec:
                           type: object
                         logCollection:
                           properties:
+                            autoMultiLineDetection:
+                              type: boolean
                             containerCollectAll:
                               type: boolean
                             containerCollectUsingFiles:

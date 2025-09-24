@@ -344,6 +344,8 @@ datadog:
     # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+)
     # @default -- false
     useApiServer: false
+    # datadog.kubelet.fineGrainedAuthorization -- Enable fine-grained authentication for kubelet (requires: Kubernetes 1.32+)
+    fineGrainedAuthorization: false
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
@@ -1239,7 +1241,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.69.3
+    tag: 7.70.2
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1655,7 +1657,18 @@ clusterAgent:
   datadog_cluster_yaml: {}
 
   # clusterAgent.createPodDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
+  # DEPRECATED. Use clusterAgent.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterAgent.pdb.create -- Enable pod disruption budget for Cluster Agent deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, minAvailable is set to 1 for cluster agent.
+    create: false
+    # clusterAgent.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption -- default to 1
+    minAvailable:
+    # clusterAgent.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
@@ -1783,7 +1796,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.69.3
+    tag: 7.70.2
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2377,7 +2390,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.69.3
+    tag: 7.70.2
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2402,7 +2415,18 @@ clusterChecksRunner:
     #   - name: "<REG_SECRET>"
 
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
+  # DEPRECATED. Use clusterChecksRunner.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterChecksRunner.pdb.create -- Enable pod disruption budget for Cluster Checks Runner deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, maxUnavailable is set to 1 for cluster checks runners.
+    create: false
+    # clusterChecksRunner.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption
+    minAvailable:
+    # clusterChecksRunner.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:
