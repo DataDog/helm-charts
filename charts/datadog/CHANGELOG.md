@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.135.1
+## 3.135.2
 
 * Fix handling of `hostSocketPath` values so mutated pods correctly mount custom UDS sockets and update CSI driver documentation in `values.yaml`to Clarify that when set to `true`, the CSI driver subchart will be installed automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
+## 3.135.1
+
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
 
 # 3.135.0
 
@@ -11,6 +15,7 @@
 # 3.134.0
 
 * Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners. Using solely `<component>.pdb.create` without specifying `minAvailable`/`maxUnavailable` will create the same PodDisruptionBudget as the previous option.
+
 
 ## 3.133.0
 
