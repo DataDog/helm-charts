@@ -1,6 +1,12 @@
 # Datadog changelog
 
+## 3.135.2
+
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
 ## 3.135.1
+
 * Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
 
 # 3.135.0
