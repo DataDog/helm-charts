@@ -2,7 +2,8 @@
 
 ## 3.135.2
 
-* Fix handling of `hostSocketPath` values so mutated pods correctly mount custom UDS sockets and update CSI driver documentation in `values.yaml`to Clarify that when set to `true`, the CSI driver subchart will be installed automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
 
 ## 3.135.1
 
