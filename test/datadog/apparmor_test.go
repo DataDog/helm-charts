@@ -74,4 +74,76 @@ func TestApparmor(t *testing.T) {
 		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/agent")
 		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/system-probe")
 	})
+	t.Run("1.30+_USM_GKE_COS", func(t *testing.T) {
+		manifest, err := common.RenderChart(t, common.HelmCommand{
+			ReleaseName: "datadog",
+			ChartPath:   "../../charts/datadog",
+			ShowOnly:    []string{"templates/daemonset.yaml"},
+			Values:      []string{"../../charts/datadog/values.yaml"},
+			Overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":      "datadog-secret",
+				"datadog.appKeyExistingSecret":      "datadog-secret",
+				"datadog.serviceMonitoring.enabled": "true",
+				"providers.gke.cos":                 "true",
+			},
+			ExtraArgs: []string{"--kube-version=1.33.4-gke.1172000"},
+		})
+		require.NoError(t, err)
+		var deployment appsv1.DaemonSet
+		common.Unmarshal(t, manifest, &deployment)
+		_, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+		assert.True(t, ok, "has agent container") // This configuration does not require the agent container container to be unconfined
+		systemProbeContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "system-probe")
+		if assert.True(t, ok, "has system-probe container") {
+			if assert.NotNil(t, systemProbeContainer.SecurityContext, "system-probe securityContext not found") {
+				profile := systemProbeContainer.SecurityContext.AppArmorProfile
+				if assert.NotNil(t, profile, "system-probe apparmor profile not found") {
+					assert.Equal(t, v1.AppArmorProfileTypeUnconfined, profile.Type, "system-probe apparmor profile type")
+				}
+			}
+		}
+		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/agent")
+		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/system-probe")
+	})
+	t.Run("1.30+_USM_SBOM_GKE_COS", func(t *testing.T) {
+		manifest, err := common.RenderChart(t, common.HelmCommand{
+			ReleaseName: "datadog",
+			ChartPath:   "../../charts/datadog",
+			ShowOnly:    []string{"templates/daemonset.yaml"},
+			Values:      []string{"../../charts/datadog/values.yaml"},
+			Overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":                          "datadog-secret",
+				"datadog.appKeyExistingSecret":                          "datadog-secret",
+				"datadog.serviceMonitoring.enabled":                     "true",
+				"datadog.sbom.containerImage.enabled":                   "true",
+				"datadog.sbom.containerImage.uncompressedLayersSupport": "true",
+				"providers.gke.cos":                                     "true",
+			},
+			ExtraArgs: []string{"--kube-version=1.33.4-gke.1172000"},
+		})
+		require.NoError(t, err)
+		var deployment appsv1.DaemonSet
+		common.Unmarshal(t, manifest, &deployment)
+		coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+		if assert.True(t, ok, "has agent container") {
+			if assert.NotNil(t, coreAgentContainer.SecurityContext, "agent securityContext not found") {
+			profile := coreAgentContainer.SecurityContext.AppArmorProfile
+			if assert.NotNil(t, profile, "agent apparmor profile not found") {
+					assert.Equal(t, v1.AppArmorProfileTypeUnconfined, profile.Type, "agent apparmor profile type")
+				}
+			}
+		}
+		systemProbeContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "system-probe")
+		if assert.True(t, ok, "has system-probe container") {
+			if assert.NotNil(t, systemProbeContainer.SecurityContext, "system-probe securityContext not found") {
+				profile := systemProbeContainer.SecurityContext.AppArmorProfile
+				if assert.NotNil(t, profile, "system-probe apparmor profile not found") {
+					assert.Equal(t, v1.AppArmorProfileTypeUnconfined, profile.Type, "system-probe apparmor profile type")
+				}
+			}
+		}
+		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/agent")
+		assert.NotContains(t, deployment.Spec.Template.Annotations, "container.apparmor.security.beta.kubernetes.io/system-probe")
+	})
+
 }
