@@ -52,7 +52,7 @@ spec:
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
         # It is fine for Gateway Deployment to not have an API key, e.g. in multi-layer Gateway setup.
-        {{- if and ((not .Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
+        {{- if and (not .Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey) }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
         {{- end }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
