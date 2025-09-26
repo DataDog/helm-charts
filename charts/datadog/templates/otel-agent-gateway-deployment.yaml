@@ -51,7 +51,8 @@ spec:
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
-        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        # It is fine for Gateway Deployment to not have an API key, e.g. in multi-layer Gateway setup.
+        {{- if and ((not .Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
         {{- end }}
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
@@ -155,6 +156,7 @@ spec:
       {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 10 }}
       {{- end }}
         env:
+          # It is fine for Gateway Deployment to not have an API key, e.g. in multi-layer Gateway setup.
           {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
           - name: DD_API_KEY
             valueFrom:

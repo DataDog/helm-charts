@@ -16,5 +16,3 @@ otelAgentGateway:
     - containerPort: "4318"
       hostPort: "4318"
       name: "otel-http"
-  nodeSelector:
-    gateway: "true"
