@@ -5,6 +5,9 @@ agents:
 datadog:
   apiKey: "f0000000000000000000000000000000"
   appKey: "f000000000000000000000000000000000000000"
+  env:
+    - name: DD_HOSTNAME
+      value: ci-test-host
   otelCollector:
     enabled: true
 otelAgentGateway:
