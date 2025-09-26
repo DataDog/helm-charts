@@ -963,7 +963,7 @@ securityContext:
     localhostProfile: {{ trimPrefix "localhost/" .seccomp }}
     {{- end }}
 {{- end -}}
-{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion) }}
+{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0-0" .kubeversion) }}
   appArmorProfile:
     {{- if hasPrefix "localhost/" .apparmor }}
     type: Localhost

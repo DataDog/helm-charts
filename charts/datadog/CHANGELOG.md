@@ -4,6 +4,10 @@
 
 * Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
 
+## 3.135.3
+
+* Fix AppArmor profile for agent and system-probe containers on GKE.
+
 ## 3.135.2
 
 * Pass APM and DSD hostSocketPath to Cluster Agent deployment.
