@@ -13,9 +13,9 @@ datadog:
 otelAgentGateway:
   enabled: true
   ports:
-    - containerPort: "4317"
-      hostPort: "4317"
+    - containerPort: "5317"
+      hostPort: "5317"
       name: "otel-grpc"
-    - containerPort: "4318"
-      hostPort: "4318"
+    - containerPort: "5318"
+      hostPort: "5318"
       name: "otel-http"
