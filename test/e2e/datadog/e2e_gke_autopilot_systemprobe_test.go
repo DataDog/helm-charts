@@ -19,11 +19,10 @@ import (
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 )
 
 type gkeAutopilotSystemProbeSuite struct {
-	e2e.BaseSuite[environments.Kubernetes]
+	k8sSuite
 }
 
 func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
