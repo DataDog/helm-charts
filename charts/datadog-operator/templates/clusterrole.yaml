@@ -385,6 +385,12 @@ rules:
   - ksh/metrics
   verbs:
   - get
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals
+  verbs:
+  - list
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
