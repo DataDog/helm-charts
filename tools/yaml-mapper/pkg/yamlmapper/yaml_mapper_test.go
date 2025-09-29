@@ -112,11 +112,8 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	var ddaResult map[string]interface{}
 	err = yaml.Unmarshal(outputBytes, &ddaResult)
 	require.NoError(t, err)
-	t.Logf("CHECK DEST FILE: %s", destFile.Name())
-	//time.Sleep(120 * time.Second)
 
 	// Get agent conf from helm install
-
 	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
 	require.NoError(t, err)
 	assert.NotEmpty(t, helmAgentPods)
@@ -134,7 +131,6 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 
 	// Get agent conf from operator install
 	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{})
-	t.Logf("OPERATOR AGENT PODS: %v", operatorAgentPods)
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, operatorAgentPods)

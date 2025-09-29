@@ -5,3 +5,6 @@ datadog:
   appKeyExistingSecret: datadog-secret
   kubelet:
     tlsVerify: false
+agent:
+  image:
+    tag: latest
