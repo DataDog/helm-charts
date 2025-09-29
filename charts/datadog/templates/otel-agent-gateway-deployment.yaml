@@ -183,6 +183,10 @@ spec:
             value: "false"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
+          - name: DD_INVENTORIES_ENABLED
+            value: "false"
+          - name: DD_CMD_PORT
+            value: "0"
           - name: DD_AGENT_IPC_PORT
             value: "0"
           - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
