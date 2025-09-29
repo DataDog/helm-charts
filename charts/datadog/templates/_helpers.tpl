@@ -174,7 +174,7 @@ Return true if conatiner and pod logs volumes should be mounted in the OTel Agen
 {{- end -}}
 
 {{/*
-Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container in Gateway
+Return true if container and pod logs volumes should be mounted in the OTel Agent container in Gateway
 */}}
 {{- define "should-mount-logs-for-otel-agent-gateway" -}}
 {{- $return := false }}
