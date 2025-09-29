@@ -1639,7 +1639,7 @@ spec:
               readOnly: true
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: true
+              readOnly: false
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
