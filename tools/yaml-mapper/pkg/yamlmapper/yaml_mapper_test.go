@@ -32,7 +32,7 @@ const (
 
 // INTEGRATION TEST
 
-func YamlMapperTest(t *testing.T) {
+func Test(t *testing.T) {
 	// Prerequisites
 	context := common.CurrentContext(t)
 	t.Log("Checking current context:", context)
