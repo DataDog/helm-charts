@@ -349,7 +349,7 @@ func TestMergeMaps(t *testing.T) {
 func TestCustomMapFuncs(t *testing.T) {
 	// Test that all custom map functions are properly registered
 	t.Run("customMapFuncs_dict", func(t *testing.T) {
-		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey"}
+		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile"}
 
 		for _, funcName := range expectedFuncs {
 			t.Run(funcName+"_exists", func(t *testing.T) {
@@ -494,6 +494,38 @@ func TestCustomMapFuncs(t *testing.T) {
 			expectedMap: map[string]interface{}{
 				"spec.global.clusterAgentTokenSecret.secretName": "new-token-secret",
 				"spec.global.clusterAgentTokenSecret.keyName":    "token",
+			},
+		},
+		// mapSeccompProfile tests
+		{
+			name:     "mapSeccompProfile_localhost",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "localhost/system-probe",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type":             "Localhost",
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.localhostProfile": "system-probe",
+			},
+		},
+		{
+			name:     "mapSeccompProfile_runtime_default",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "runtime/default",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type": "RuntimeDefault",
+			},
+		},
+		{
+			name:     "mapSeccompProfile_unconfined",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type": "Unconfined",
 			},
 		},
 	}

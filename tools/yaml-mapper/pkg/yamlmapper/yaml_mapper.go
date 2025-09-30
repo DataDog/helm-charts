@@ -330,6 +330,7 @@ var customMapFuncs = map[string]customMapFunc{
 	"mapApiSecretKey":   mapApiSecretKey,
 	"mapAppSecretKey":   mapAppSecretKey,
 	"mapTokenSecretKey": mapTokenSecretKey,
+	"mapSeccompProfile": mapSeccompProfile,
 }
 
 type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{})
@@ -348,6 +349,26 @@ func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal int
 func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
 	interim[newPath] = pathVal
 	interim["spec.global.clusterAgentTokenSecret.keyName"] = "token"
+}
+
+func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	seccompValue, ok := pathVal.(string)
+	if !ok {
+		return
+	}
+
+	if strings.HasPrefix(seccompValue, "localhost/") {
+		profileName := strings.TrimPrefix(seccompValue, "localhost/")
+		interim[newPath+".type"] = "Localhost"
+		interim[newPath+".localhostProfile"] = profileName
+
+	} else if seccompValue == "runtime/default" {
+		interim[newPath+".type"] = "RuntimeDefault"
+
+	} else if seccompValue == "unconfined" {
+		interim[newPath+".type"] = "Unconfined"
+
+	}
 }
 
 func fetchUrl(ctx context.Context, url string) (*http.Response, error) {
