@@ -327,10 +327,12 @@ func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}
 }
 
 var customMapFuncs = map[string]customMapFunc{
-	"mapApiSecretKey":   mapApiSecretKey,
-	"mapAppSecretKey":   mapAppSecretKey,
-	"mapTokenSecretKey": mapTokenSecretKey,
-	"mapSeccompProfile": mapSeccompProfile,
+	"mapApiSecretKey":        mapApiSecretKey,
+	"mapAppSecretKey":        mapAppSecretKey,
+	"mapTokenSecretKey":      mapTokenSecretKey,
+	"mapSeccompProfile":      mapSeccompProfile,
+	"mapSystemProbeAppArmor": mapSystemProbeAppArmor,
+	"mapLocalServiceName":    mapLocalServiceName,
 }
 
 type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{})
@@ -368,6 +370,58 @@ func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal i
 	} else if seccompValue == "unconfined" {
 		interim[newPath+".type"] = "Unconfined"
 
+	}
+}
+
+func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	appArmorValue, ok := pathVal.(string)
+	if !ok || appArmorValue == "" {
+		return
+	}
+
+	systemProbeFeatures := []string{
+		"spec.features.cws.enabled",            // datadog.securityAgent.runtime.enabled
+		"spec.features.npm.enabled",            // datadog.networkMonitoring.enabled
+		"spec.features.tcpQueueLength.enabled", // datadog.systemProbe.enableTCPQueueLength
+		"spec.features.oomKill.enabled",        // datadog.systemProbe.enableOOMKill
+		"spec.features.usm.enabled",            // datadog.serviceMonitoring.enabled
+	}
+
+	hasSystemProbeFeature := false
+	for _, feature := range systemProbeFeatures {
+		if val, exists := interim[feature]; exists {
+			if enabled, ok := val.(bool); ok && enabled {
+				hasSystemProbeFeature = true
+				break
+			}
+		}
+	}
+
+	if !hasSystemProbeFeature {
+		gpuEnabled, gpuExists := interim["spec.features.gpu.enabled"]
+		gpuPrivileged, privExists := interim["spec.features.gpu.privilegedMode"]
+		if gpuExists && privExists {
+			if gpuEnabledBool, ok := gpuEnabled.(bool); ok && gpuEnabledBool {
+				if gpuPrivilegedBool, ok := gpuPrivileged.(bool); ok && gpuPrivilegedBool {
+					hasSystemProbeFeature = true
+				}
+			}
+		}
+	}
+
+	if hasSystemProbeFeature {
+		interim[newPath] = appArmorValue
+	}
+}
+
+func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal interface{}) {
+	nameOverride, ok := pathVal.(string)
+	if !ok {
+		return
+	}
+
+	if nameOverride != "" {
+		interim[newPath] = nameOverride
 	}
 }
 

@@ -101,7 +101,9 @@ agents.image.repository: "" # TODO: add support
 agents.image.tag: spec.override.nodeAgent.image.tag
 agents.image.tagSuffix: ""
 agents.localService.forceLocalServiceEnabled: spec.global.localService.forceEnableLocalService
-agents.localService.overrideName: spec.global.localService.nameOverride
+agents.localService.overrideName: 
+  newPath: spec.global.localService.nameOverride
+  mapFunc: mapLocalServiceName
 agents.networkPolicy.create: spec.global.networkPolicy.create
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
@@ -543,7 +545,9 @@ datadog.serviceMonitoring.tls.istio.enabled: ""
 datadog.serviceMonitoring.tls.native.enabled: ""
 datadog.serviceMonitoring.tls.nodejs.enabled: ""
 datadog.site: spec.global.site
-datadog.systemProbe.apparmor: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
+datadog.systemProbe.apparmor:
+  newPath: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
+  mapFunc: mapSystemProbeAppArmor
 datadog.systemProbe.bpfDebug: ""
 datadog.systemProbe.btfPath: ""
 datadog.systemProbe.collectDNSStats: spec.features.npm.collectDNSStats
