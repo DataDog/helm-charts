@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.13.0](https://img.shields.io/badge/Version-1.13.0-informational?style=flat-square) ![AppVersion: v1.11.0](https://img.shields.io/badge/AppVersion-v1.11.0-informational?style=flat-square)
+![Version: 1.14.0](https://img.shields.io/badge/Version-1.14.0-informational?style=flat-square) ![AppVersion: v1.11.0](https://img.shields.io/badge/AppVersion-v1.11.0-informational?style=flat-square)
 
 ## Overview
 
@@ -302,3 +302,5 @@ If actions requiring credentials fail:
 | runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
 | runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
+| service | object | `{"annotations":{}}` | Service configuration |
+| service.annotations | object | `{}` | Annotations to add to the service |
