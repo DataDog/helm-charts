@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.14.0
+
+* Make runner http port configurable
+
 ## 1.13.0
 
 * Bump private runner version to 1.11.0

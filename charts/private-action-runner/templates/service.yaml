@@ -8,5 +8,5 @@ spec:
       {{- include "chart.selectorLabels" . | nindent 6 }}
   ports:
     - name: http
-      port: 9016
-      targetPort: 9016
+      port: {{ $.Values.runner.config.port | default 9016 }}
+      targetPort: {{ $.Values.runner.config.port | default 9016 }}
