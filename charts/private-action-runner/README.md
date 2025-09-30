@@ -302,3 +302,5 @@ If actions requiring credentials fail:
 | runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
 | runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
+| service | object | `{"annotations":{}}` | Service configuration |
+| service.annotations | object | `{}` | Annotations to add to the service |
