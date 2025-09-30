@@ -76,7 +76,7 @@ func Test(t *testing.T) {
 			//	Helm install
 			cleanUpDatadog := common.InstallChart(t, kubectlOptions, tt.command)
 			defer cleanUpDatadog()
-			time.Sleep(120 * time.Second)
+			time.Sleep(60 * time.Second)
 
 			cleanUpOperator := common.InstallChart(t, kubectlOptions, common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -94,14 +94,6 @@ func Test(t *testing.T) {
 
 func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) {
 	// Run mapper against values.yaml
-	//os.Args = []string{
-	//	"yaml-mapper",
-	//	"-sourceFile=" + valuesPath,
-	//	fmt.Sprintf("-mappingFile=%s", mappingPath),
-	//	fmt.Sprintf("-destFile=%s", ddaDestPath),
-	//	"-printOutput=true",
-	//}
-
 	destFile, err := os.CreateTemp(".", ddaDestPath)
 	require.NoError(t, err)
 	defer os.Remove(destFile.Name())
@@ -129,7 +121,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	require.NoError(t, err)
 	defer k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", destFile.Name()}...)
 
-	time.Sleep(120 * time.Second)
+	time.Sleep(60 * time.Second)
 
 	// Get agent conf from operator install
 	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{})
@@ -146,7 +138,13 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	assert.EqualValues(t, helmAgentConf, operatorAgentConf)
 }
 
-// filterLogLines removes log lines that start with timestamps in the format "2006-01-02 15:04:05 UTC"
+var skipFields = map[string]interface{}{
+	"install_id":   nil,
+	"install_time": nil,
+	"install_type": nil,
+}
+
+// normalizeAgentConf removes log lines that start with timestamps in the format "2006-01-02 15:04:05 UTC"
 func normalizeAgentConf(input string) string {
 	if input == "" {
 		return input
@@ -160,6 +158,11 @@ func normalizeAgentConf(input string) string {
 		if isTimestampLine(line) {
 			continue
 		}
+		// Skip lines that contain fields that should be skipped
+		if shouldSkipField(line) {
+			continue
+		}
+
 		if result.Len() > 0 {
 			result.WriteByte('\n')
 		}
@@ -171,23 +174,22 @@ func normalizeAgentConf(input string) string {
 
 // isTimestampLine checks if a line starts with a timestamp in the format "2006-01-02 15:04:05 UTC"
 func isTimestampLine(line string) bool {
-	if len(line) < 20 { // Minimum length for "2006-01-02 15:04:05"
+	if len(line) < 23 { // Minimum length for "2006-01-02 15:04:05"
 		return false
 	}
+	_, err := time.Parse("2006-01-02 15:04:05 MST", line[:23])
+	if err == nil {
+		return true
+	}
+	return false
+}
 
-	// Check the prefix format: "2006-01-02 15:04:05 UTC"
-	if len(line) >= 20 &&
-		line[4] == '-' &&
-		line[7] == '-' &&
-		line[10] == ' ' &&
-		line[13] == ':' &&
-		line[16] == ':' {
-		// Check if it's followed by " UTC"
-		if len(line) > 20 && strings.HasPrefix(line[19:], " UTC") {
+func shouldSkipField(line string) bool {
+	for field, _ := range skipFields {
+		if strings.Contains(line, field) {
 			return true
 		}
 	}
-
 	return false
 }
 
