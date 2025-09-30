@@ -558,7 +558,9 @@ datadog.systemProbe.enableTCPQueueLength: spec.features.tcpQueueLength.enabled
 datadog.systemProbe.maxTrackedConnections: ""
 datadog.systemProbe.mountPackageManagementDirs: ""
 datadog.systemProbe.runtimeCompilationAssetDir: ""
-datadog.systemProbe.seccomp: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.localhostProfile
+datadog.systemProbe.seccomp:
+  newPath: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile
+  mapFunc: mapSeccompProfile
 datadog.systemProbe.seccompRoot: spec.override.nodeAgent.containers.system-probe.seccompConfig.customRootPath
 datadog.tags: spec.global.tags
 datadog.traceroute.enabled: ""
