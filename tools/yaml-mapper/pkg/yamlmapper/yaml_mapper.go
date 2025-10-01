@@ -354,8 +354,8 @@ func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal i
 }
 
 func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal interface{}) {
-	seccompValue, ok := pathVal.(string)
-	if !ok {
+	seccompValue, err := pathVal.(string)
+	if !err {
 		return
 	}
 
@@ -374,8 +374,9 @@ func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal i
 }
 
 func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, pathVal interface{}) {
-	appArmorValue, ok := pathVal.(string)
-	if !ok || appArmorValue == "" {
+	appArmorValue, err := pathVal.(string)
+	if !err || appArmorValue == "" {
+		// must be set to non-empty string
 		return
 	}
 
@@ -410,19 +411,17 @@ func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, path
 	}
 
 	if hasSystemProbeFeature {
+		// must be set to non-empty string
 		interim[newPath] = appArmorValue
 	}
 }
 
 func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal interface{}) {
 	nameOverride, ok := pathVal.(string)
-	if !ok {
+	if !ok || nameOverride == "" {
 		return
 	}
-
-	if nameOverride != "" {
-		interim[newPath] = nameOverride
-	}
+	interim[newPath] = nameOverride
 }
 
 func fetchUrl(ctx context.Context, url string) (*http.Response, error) {

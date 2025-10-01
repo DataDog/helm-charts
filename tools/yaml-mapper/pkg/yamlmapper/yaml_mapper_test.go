@@ -565,6 +565,120 @@ func TestCustomMapFuncs(t *testing.T) {
 				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type": "Unconfined",
 			},
 		},
+		// mapSystemProbeAppArmor tests
+		{
+			name:     "mapSystemProbeAppArmor_no_features_enabled",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": false,
+				"spec.features.npm.enabled": false,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": false,
+				"spec.features.npm.enabled": false,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_multiple_features_enabled",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled":            true,
+				"spec.features.npm.enabled":            false,
+				"spec.features.tcpQueueLength.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled":                                       true,
+				"spec.features.npm.enabled":                                       false,
+				"spec.features.tcpQueueLength.enabled":                            true,
+				"spec.override.nodeAgent.containers.system-probe.appArmorProfile": "unconfined",
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_gpu_enabled_privileged",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.gpu.enabled":                                       true,
+				"spec.features.gpu.privilegedMode":                                true,
+				"spec.override.nodeAgent.containers.system-probe.appArmorProfile": "unconfined",
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_gpu_enabled_not_privileged",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": false,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": false,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_empty_apparmor_value",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_invalid_apparmor_type",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: 123,
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+		},
+		// mapLocalServiceName tests
+		{
+			name:        "mapLocalServiceName_empty_name",
+			funcName:    "mapLocalServiceName",
+			interim:     map[string]interface{}{},
+			newPath:     "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal:     "",
+			expectedMap: map[string]interface{}{},
+		},
+		{
+			name:        "mapLocalServiceName_invalid_type",
+			funcName:    "mapLocalServiceName",
+			interim:     map[string]interface{}{},
+			newPath:     "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal:     123,
+			expectedMap: map[string]interface{}{},
+		},
+		{
+			name:     "mapLocalServiceName_overwrite_existing",
+			funcName: "mapLocalServiceName",
+			interim: map[string]interface{}{
+				"spec.override.clusterAgent.config.external_metrics.local_service_name": "old-service",
+			},
+			newPath: "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal: "new-service",
+			expectedMap: map[string]interface{}{
+				"spec.override.clusterAgent.config.external_metrics.local_service_name": "new-service",
+			},
+		},
 	}
 
 	for _, tt := range tests {
