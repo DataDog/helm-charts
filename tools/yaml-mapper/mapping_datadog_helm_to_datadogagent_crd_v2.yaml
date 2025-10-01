@@ -57,20 +57,20 @@ agents.containers.otelAgent.ports: spec.features.otelCollector.ports
 agents.containers.otelAgent.volumeMounts: ""
 agents.containers.processAgent.env: spec.override.nodeAgent.containers.process-agent.env
 agents.containers.processAgent.envDict: "" # TODO: env dict support?
-agents.containers.processAgent.envFrom: spec.override.nodeAgent.containers.process-agent.envFrom
+agents.containers.processAgent.envFrom: "" # TODO: add support
 agents.containers.processAgent.logLevel: spec.override.nodeAgent.containers.process-agent.logLevel
 agents.containers.processAgent.ports: spec.override.nodeAgent.containers.process-agent.ports
 agents.containers.processAgent.resources: spec.override.nodeAgent.containers.process-agent.resources
 agents.containers.processAgent.securityContext: spec.override.nodeAgent.containers.process-agent.securityContext
 agents.containers.securityAgent.env: spec.override.nodeAgent.containers.security-agent.env
 agents.containers.securityAgent.envDict: ""
-agents.containers.securityAgent.envFrom: spec.override.nodeAgent.containers.security-agent.envFrom
+agents.containers.securityAgent.envFrom: "" # TODO: add support
 agents.containers.securityAgent.logLevel: spec.override.nodeAgent.containers.security-agent.logLevel
 agents.containers.securityAgent.ports: spec.override.nodeAgent.containers.security-agent.ports
 agents.containers.securityAgent.resources: spec.override.nodeAgent.containers.security-agent.resources
 agents.containers.systemProbe.env: spec.override.nodeAgent.containers.system-probe.env
 agents.containers.systemProbe.envDict: ""
-agents.containers.systemProbe.envFrom: spec.override.nodeAgent.containers.system-probe.envFrom
+agents.containers.systemProbe.envFrom: "" # TODO: add support
 agents.containers.systemProbe.logLevel: spec.override.nodeAgent.containers.system-probe.logLevel
 agents.containers.systemProbe.ports: spec.override.nodeAgent.containers.system-probe.ports
 agents.containers.systemProbe.resources: spec.override.nodeAgent.containers.system-probe.resources
@@ -79,7 +79,7 @@ agents.containers.systemProbe.securityContext.capabilities.add: spec.override.no
 agents.containers.systemProbe.securityContext.privileged: spec.override.nodeAgent.containers.system-probe.securityContext.privileged
 agents.containers.traceAgent.env: spec.override.nodeAgent.containers.trace-agent.env
 agents.containers.traceAgent.envDict: ""
-agents.containers.traceAgent.envFrom: spec.override.nodeAgent.containers.trace-agent.envFrom
+agents.containers.traceAgent.envFrom: "" # TODO: add support
 agents.containers.traceAgent.livenessProbe: spec.override.nodeAgent.containers.trace-agent.livenessProbe
 agents.containers.traceAgent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.initialDelaySeconds
 agents.containers.traceAgent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.periodSeconds
@@ -101,7 +101,9 @@ agents.image.repository: "" # TODO: add support
 agents.image.tag: spec.override.nodeAgent.image.tag
 agents.image.tagSuffix: ""
 agents.localService.forceLocalServiceEnabled: spec.global.localService.forceEnableLocalService
-agents.localService.overrideName: spec.global.localService.nameOverride
+agents.localService.overrideName: 
+  newPath: spec.global.localService.nameOverride
+  mapFunc: mapLocalServiceName
 agents.networkPolicy.create: spec.global.networkPolicy.create
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
@@ -483,10 +485,10 @@ datadog.otlp.receiver.protocols.http.useHostPort: ""
 datadog.podAnnotationsAsTags: spec.global.podAnnotationsAsTags
 datadog.podLabelsAsTags: spec.global.podLabelsAsTags
 datadog.processAgent.containerCollection: spec.features.liveContainerCollection.enabled
-datadog.processAgent.enabled: spec.features.liveProcessCollection.enabled
+datadog.processAgent.enabled: "" # TODO FIX 
 datadog.processAgent.processCollection: spec.features.liveProcessCollection.enabled
 datadog.processAgent.processDiscovery: spec.features.processDiscovery.enabled
-datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent
+datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent # TODO: will be removed in operator v1.21
 datadog.processAgent.stripProcessArguments: spec.features.liveProcessCollection.stripProcessArguments
 datadog.profiling.enabled: ""
 datadog.prometheusScrape.additionalConfigs:
@@ -543,7 +545,9 @@ datadog.serviceMonitoring.tls.istio.enabled: ""
 datadog.serviceMonitoring.tls.native.enabled: ""
 datadog.serviceMonitoring.tls.nodejs.enabled: ""
 datadog.site: spec.global.site
-datadog.systemProbe.apparmor: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
+datadog.systemProbe.apparmor:
+  newPath: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
+  mapFunc: mapSystemProbeAppArmor
 datadog.systemProbe.bpfDebug: ""
 datadog.systemProbe.btfPath: ""
 datadog.systemProbe.collectDNSStats: spec.features.npm.collectDNSStats
@@ -558,7 +562,9 @@ datadog.systemProbe.enableTCPQueueLength: spec.features.tcpQueueLength.enabled
 datadog.systemProbe.maxTrackedConnections: ""
 datadog.systemProbe.mountPackageManagementDirs: ""
 datadog.systemProbe.runtimeCompilationAssetDir: ""
-datadog.systemProbe.seccomp: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.localhostProfile
+datadog.systemProbe.seccomp:
+  newPath: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile
+  mapFunc: mapSeccompProfile
 datadog.systemProbe.seccompRoot: spec.override.nodeAgent.containers.system-probe.seccompConfig.customRootPath
 datadog.tags: spec.global.tags
 datadog.traceroute.enabled: ""
