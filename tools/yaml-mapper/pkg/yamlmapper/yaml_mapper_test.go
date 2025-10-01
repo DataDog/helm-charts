@@ -98,7 +98,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	require.NoError(t, err)
 	defer os.Remove(destFile.Name())
 
-	MapYaml(mappingPath, valuesPath, destFile.Name(), "", namespace, false, false)
+	MapYaml(mappingPath, valuesPath, destFile.Name(), "", "", namespace, false, false)
 
 	outputBytes, err := os.ReadFile(destFile.Name())
 	require.NoError(t, err)
