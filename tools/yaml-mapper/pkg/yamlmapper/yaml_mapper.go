@@ -15,12 +15,13 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/pkg/chartutil"
 )
 
-const defaultDDAMappingPath = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+const defaultDDAMappingPath = "mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
 
 func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName string, namespace string, updateMap bool, printPtr bool) {
 
@@ -52,12 +53,10 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 	mapping, err := os.ReadFile(mappingFile)
 	if err != nil {
 		log.Println(err)
-		return
 	}
 	mappingValues, err := chartutil.ReadValues(mapping)
 	if err != nil {
 		log.Println(err)
-		return
 	}
 
 	// Read source yaml file
@@ -69,12 +68,10 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 	}
 	if err != nil {
 		log.Println(err)
-		return
 	}
 	sourceValues, err := chartutil.ReadValues(source)
 	if err != nil {
 		log.Println(err)
-		return
 	}
 
 	// Create an interim map that that has period-delimited destination key as the key, and the value from the source.yaml for the value
@@ -111,7 +108,6 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 		newMapYaml, e := chartutil.Values(interim).YAML()
 		if e != nil {
 			log.Println(e)
-			return
 		}
 		if mappingFile == defaultDDAMappingPath || tmpSourceFile != "" {
 			newMapYaml = `# This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
@@ -126,11 +122,9 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 		e = os.WriteFile(mappingFile, []byte(newMapYaml), 0660)
 		if e != nil {
 			log.Printf("Error updating mapping yaml. %v", e)
-			return
 		}
 
 		log.Printf("Mapping file, %s, successfully updated", mappingFile)
-		return
 	}
 	// Map values.yaml => DDA
 	for sourceKey := range mappingValues {
@@ -172,7 +166,6 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 						newPathVal, err = yaml.Marshal(pathVal)
 						if err != nil {
 							log.Println(err)
-							return
 						}
 						interim[newPath] = string(newPathVal)
 					}
@@ -182,7 +175,6 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 						interim[newPath], err = strconv.Atoi(pathVal.(string))
 						if err != nil {
 							log.Println(err)
-							return
 						}
 					}
 				}
@@ -211,12 +203,20 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, ddaName str
 	out, err := chartutil.Values(result).YAML()
 	if err != nil {
 		log.Println(err)
-		return
 	}
 
 	if printPtr {
 		log.Println("")
 		log.Println(out)
+	}
+
+	_, err = os.Open(destFile)
+	if err != nil {
+		file, err := os.Create(fmt.Sprintf("dda.yaml.%s", time.Now().Format("20060102-150405")))
+		if err != nil {
+			log.Println(err)
+		}
+		destFile = file.Name()
 	}
 
 	err = os.WriteFile(destFile, []byte(out), 0660)
