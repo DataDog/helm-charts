@@ -485,10 +485,10 @@ datadog.otlp.receiver.protocols.http.useHostPort: ""
 datadog.podAnnotationsAsTags: spec.global.podAnnotationsAsTags
 datadog.podLabelsAsTags: spec.global.podLabelsAsTags
 datadog.processAgent.containerCollection: spec.features.liveContainerCollection.enabled
-datadog.processAgent.enabled: spec.features.liveProcessCollection.enabled
+datadog.processAgent.enabled: "" # TODO FIX 
 datadog.processAgent.processCollection: spec.features.liveProcessCollection.enabled
 datadog.processAgent.processDiscovery: spec.features.processDiscovery.enabled
-datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent
+datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent # TODO: will be removed in operator v1.21
 datadog.processAgent.stripProcessArguments: spec.features.liveProcessCollection.stripProcessArguments
 datadog.profiling.enabled: ""
 datadog.prometheusScrape.additionalConfigs:
