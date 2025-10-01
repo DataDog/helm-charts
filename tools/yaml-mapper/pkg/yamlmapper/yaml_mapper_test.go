@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/assert"
@@ -78,6 +79,30 @@ func Test(t *testing.T) {
 			defer cleanUpDatadog()
 			time.Sleep(60 * time.Second)
 
+			t.Log("Finding datadog release name...")
+			helmListOutput, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{KubectlOptions: kubectlOptions}, "list", "-n", namespaceName, "--short")
+			require.NoError(t, err, "failed to list helm releases")
+
+			var datadogReleaseName string
+			releaseNames := strings.Split(strings.TrimSpace(helmListOutput), "\n")
+			for _, releaseName := range releaseNames {
+				releaseName = strings.TrimSpace(releaseName)
+				if strings.HasPrefix(releaseName, tt.command.ReleaseName+"-") {
+					datadogReleaseName = releaseName
+					break
+				}
+			}
+			require.NotEmpty(t, datadogReleaseName, "could not find datadog release")
+			t.Log("Found datadog release name:", datadogReleaseName)
+
+			valuesCmd := common.HelmCommand{
+				ReleaseName: datadogReleaseName,
+			}
+			actualValuesFilePath := common.GetFullValues(t, valuesCmd, namespaceName)
+			defer os.Remove(actualValuesFilePath)
+
+			t.Log("GetFullValues created temp file:", actualValuesFilePath)
+
 			cleanUpOperator := common.InstallChart(t, kubectlOptions, common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../../../charts/datadog-operator",
@@ -85,7 +110,7 @@ func Test(t *testing.T) {
 			defer cleanUpOperator()
 
 			for _, assertion := range tt.assertions {
-				assertion(t, kubectlOptions, tt.valuesPath, namespaceName)
+				assertion(t, kubectlOptions, actualValuesFilePath, namespaceName)
 			}
 
 		})
@@ -111,6 +136,13 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
 	require.NoError(t, err)
 	assert.NotEmpty(t, helmAgentPods)
+
+	t.Logf("HELM PODS: Found %d pods with Helm labels", len(helmAgentPods))
+	for i, pod := range helmAgentPods {
+		t.Logf("  Helm Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
+	}
+
+	t.Logf("HELM EXEC: Running 'agent config' on pod: %s", helmAgentPods[0].Name)
 	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
 	helmAgentConf = normalizeAgentConf(helmAgentConf)
@@ -124,9 +156,14 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	time.Sleep(60 * time.Second)
 
 	// Get agent conf from operator install
-	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{})
-
+	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
 	require.NoError(t, err)
+
+	t.Logf("OPERATOR PODS: Found %d pods with operator labels", len(operatorAgentPods))
+	for i, pod := range operatorAgentPods {
+		t.Logf("  Operator Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
+	}
+
 	assert.NotEmpty(t, operatorAgentPods)
 	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
@@ -349,7 +386,7 @@ func TestMergeMaps(t *testing.T) {
 func TestCustomMapFuncs(t *testing.T) {
 	// Test that all custom map functions are properly registered
 	t.Run("customMapFuncs_dict", func(t *testing.T) {
-		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey"}
+		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile", "mapSystemProbeAppArmor", "mapLocalServiceName"}
 
 		for _, funcName := range expectedFuncs {
 			t.Run(funcName+"_exists", func(t *testing.T) {
@@ -494,6 +531,152 @@ func TestCustomMapFuncs(t *testing.T) {
 			expectedMap: map[string]interface{}{
 				"spec.global.clusterAgentTokenSecret.secretName": "new-token-secret",
 				"spec.global.clusterAgentTokenSecret.keyName":    "token",
+			},
+		},
+		// mapSeccompProfile tests
+		{
+			name:     "mapSeccompProfile_localhost",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "localhost/system-probe",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type":             "Localhost",
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.localhostProfile": "system-probe",
+			},
+		},
+		{
+			name:     "mapSeccompProfile_runtime_default",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "runtime/default",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type": "RuntimeDefault",
+			},
+		},
+		{
+			name:     "mapSeccompProfile_unconfined",
+			funcName: "mapSeccompProfile",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile",
+			pathVal:  "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile.type": "Unconfined",
+			},
+		},
+		// mapSystemProbeAppArmor tests
+		{
+			name:     "mapSystemProbeAppArmor_no_features_enabled",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": false,
+				"spec.features.npm.enabled": false,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": false,
+				"spec.features.npm.enabled": false,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_multiple_features_enabled",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled":            true,
+				"spec.features.npm.enabled":            false,
+				"spec.features.tcpQueueLength.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled":                                       true,
+				"spec.features.npm.enabled":                                       false,
+				"spec.features.tcpQueueLength.enabled":                            true,
+				"spec.override.nodeAgent.containers.system-probe.appArmorProfile": "unconfined",
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_gpu_enabled_privileged",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.gpu.enabled":                                       true,
+				"spec.features.gpu.privilegedMode":                                true,
+				"spec.override.nodeAgent.containers.system-probe.appArmorProfile": "unconfined",
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_gpu_enabled_not_privileged",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": false,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "unconfined",
+			expectedMap: map[string]interface{}{
+				"spec.features.gpu.enabled":        true,
+				"spec.features.gpu.privilegedMode": false,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_empty_apparmor_value",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: "",
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+		},
+		{
+			name:     "mapSystemProbeAppArmor_invalid_apparmor_type",
+			funcName: "mapSystemProbeAppArmor",
+			interim: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+			newPath: "spec.override.nodeAgent.containers.system-probe.appArmorProfile",
+			pathVal: 123,
+			expectedMap: map[string]interface{}{
+				"spec.features.cws.enabled": true,
+			},
+		},
+		// mapLocalServiceName tests
+		{
+			name:        "mapLocalServiceName_empty_name",
+			funcName:    "mapLocalServiceName",
+			interim:     map[string]interface{}{},
+			newPath:     "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal:     "",
+			expectedMap: map[string]interface{}{},
+		},
+		{
+			name:        "mapLocalServiceName_invalid_type",
+			funcName:    "mapLocalServiceName",
+			interim:     map[string]interface{}{},
+			newPath:     "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal:     123,
+			expectedMap: map[string]interface{}{},
+		},
+		{
+			name:     "mapLocalServiceName_overwrite_existing",
+			funcName: "mapLocalServiceName",
+			interim: map[string]interface{}{
+				"spec.override.clusterAgent.config.external_metrics.local_service_name": "old-service",
+			},
+			newPath: "spec.override.clusterAgent.config.external_metrics.local_service_name",
+			pathVal: "new-service",
+			expectedMap: map[string]interface{}{
+				"spec.override.clusterAgent.config.external_metrics.local_service_name": "new-service",
 			},
 		},
 	}
