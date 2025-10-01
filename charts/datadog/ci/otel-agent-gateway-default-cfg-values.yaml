@@ -21,3 +21,4 @@ otelAgentGateway:
     - containerPort: "5318"
       hostPort: "5318"
       name: "otel-http"
+  replicas: 1

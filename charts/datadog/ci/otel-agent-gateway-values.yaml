@@ -62,6 +62,4 @@ otelAgentGateway:
           receivers: [otlp]
           exporters: [datadog]
   featureGates: "-datadog.EnableOperationAndResourceNameV2"
-  replicas: 3
-  nodeSelector:
-    gateway: "true"
+  replicas: 1
