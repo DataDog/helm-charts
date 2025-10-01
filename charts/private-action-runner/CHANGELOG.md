@@ -1,5 +1,29 @@
 # Datadog changelog
 
+## 1.14.0
+
+* Make runner http port configurable
+
+* Ability to annotate the kube service created for the runner
+
+## 1.13.0
+
+* Bump private runner version to 1.11.0
+
+## 1.12.0
+
+* Bump private runner version to 1.10.0
+
+## 1.11.0
+
+* Bump private runner version to 1.9.0
+* Introduce to new modes `pull` and `push` to replace respectively `workflowAutomation`and `appBuilder` modes.
+
+## 1.10.0
+
+* Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
+* Bump private runner version to 1.8.0
+
 ## 1.9.0
 
 * Add support for custom scripts via `runner.scriptFiles`

@@ -76,7 +76,7 @@
               "description": "Modes that the runner can run in",
               "items": {
                 "type": "string",
-                "enum": ["appBuilder", "workflowAutomation"]
+                "enum": ["appBuilder", "workflowAutomation", "push", "pull"]
               }
             },
             "port": {
@@ -411,6 +411,17 @@
         }
       },
       "required": ["config"],
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "description": "Service configuration for the Datadog Private Action Runner",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the service"
+        }
+      },
       "additionalProperties": false
     },
     "global": {

@@ -1,5 +1,39 @@
 # Datadog changelog
 
+## 3.135.4
+
+* Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
+
+## 3.135.3
+
+* Fix AppArmor profile for agent and system-probe containers on GKE.
+
+## 3.135.2
+
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
+## 3.135.1
+
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
+
+# 3.135.0
+
+* Upgrade default Agent version to `7.70.2`.
+
+# 3.134.0
+
+* Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners. Using solely `<component>.pdb.create` without specifying `minAvailable`/`maxUnavailable` will create the same PodDisruptionBudget as the previous option.
+
+
+## 3.133.0
+
+* Revert changes in 3.131.4 because the configuration is going to be deprecated.
+
+## 3.132.1
+
+* Support lifecycle handlers for the agent via `agents.lifecycle` in GKE Autopilot.
+
 ## 3.132.0
 
 * Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.

@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.13.0-dev.5
+    helm.sh/chart: datadog-operator-2.14.0-dev.2
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.18.0-rc.4"
+    app.kubernetes.io/version: "1.19.0-rc.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
-          image: "gcr.io/datadoghq/operator:1.18.0-rc.4"
+          image: "gcr.io/datadoghq/operator:1.19.0-rc.2"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
@@ -74,6 +74,7 @@ spec:
             httpGet:
               path: /healthz/
               port: 8081
+            initialDelaySeconds: 15
             periodSeconds: 10
           resources:
             {}

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.9.1
+
+- Official image `2.9.1`
+
+## 2.9.0
+
+- Official image `2.9.0`
+
+## 2.8.1
+
+- Official image `2.8.1`
+
 ## 2.8.0
 
 - Official image `2.8.0`

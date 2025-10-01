@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -21,7 +21,6 @@ stringData:
       - workflowAutomation
       - appBuilder
     port: 9016
-    allowIMDSEndpoint: true
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
@@ -31,7 +30,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -45,27 +44,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: custom-full-name
+    name: deprecated-modes-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: override-test
+      app.kubernetes.io/instance: deprecated-modes-test
   ports:
     - name: http
       port: 9016
@@ -75,12 +74,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: custom-full-name
+  name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.14.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: override-test
+    app.kubernetes.io/instance: deprecated-modes-test
     app.kubernetes.io/version: "v1.11.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -89,23 +88,23 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: override-test
+      app.kubernetes.io/instance: deprecated-modes-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.14.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: override-test
+        app.kubernetes.io/instance: deprecated-modes-test
         app.kubernetes.io/version: "v1.11.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 787771019e41c24928c8baa79b164c2e5e8b076d6f3fe1817e76baa6d2213c74
+        checksum/values: 1dff21023926b12fd059de6c562ed88bc0baa53709fff28c5aaf0bff8cec4c0d
     spec:
-      serviceAccountName: custom-full-name
+      serviceAccountName: deprecated-modes-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.11.0"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 9016
@@ -122,11 +121,7 @@ spec:
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
-            - name: FOO
-              value: foo
-            - name: BAR
-              value: bar
       volumes:
         - name: secrets
           secret:
-            secretName: custom-full-name
+            secretName: deprecated-modes-test-private-action-runner
