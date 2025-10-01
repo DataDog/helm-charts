@@ -4,6 +4,10 @@
 
 * Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
 
+## 3.135.4
+
+* Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
+
 ## 3.135.3
 
 * Fix AppArmor profile for agent and system-probe containers on GKE.
