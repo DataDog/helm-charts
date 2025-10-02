@@ -127,7 +127,7 @@ datadog:
   dd_url:  # https://app.datadoghq.com
 
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
-  logLevel: INFO
+  logLevel: info
 
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
@@ -349,7 +349,7 @@ datadog:
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
-  expvarPort: 6000
+  expvarPort: "6000"
 
   ## dogstatsd configuration
 

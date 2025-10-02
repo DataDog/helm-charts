@@ -395,7 +395,7 @@ datadog.env: spec.override.nodeAgent.env
 datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
-datadog.expqvarPort:
+datadog.expvarPort:
   newPath: spec.override.nodeAgent.containers.agent.env
   mapFunc: mapAppendEnvVar
   args:
