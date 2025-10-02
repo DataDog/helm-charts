@@ -6,9 +6,9 @@ datadog:
     # FLIP TO TRUE TO MIGRATE
     createDDAManifest:
       templateEnabled: false
-      migratorJobEnabled: true
+      migratorJobEnabled: false
     # datadog.operator.migration.enabled -- Enable migration to the operator
-    deployDDAManifest: true
+    deployDDAManifest: false
     migrationEnabled: true
   ## If set, this parameter takes precedence over "apiKey".
   apiKeyExistingSecret:  datadog-secret
