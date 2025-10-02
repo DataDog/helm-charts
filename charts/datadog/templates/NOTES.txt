@@ -752,6 +752,6 @@ Otherwise, `socket` config mode will be used.
 You have set `datadog.processAgent.runInCoreAgent` to `false`.
 Support for this configuration will be deprecated in a future version.
 This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
-Now, the behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
+This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
 
 {{- end }}
