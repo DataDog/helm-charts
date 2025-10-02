@@ -73,10 +73,10 @@ datadog:
         protocol: TCP
 
 datadog-operator:
-  image:
-    repository: fannyatdd/operator
-    tag: migration-69
-    doNotCheckTag: true
+  #  image:
+  #    repository:
+  #    tag:
+  #    doNotCheckTag: true
   logLevel: debug
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
