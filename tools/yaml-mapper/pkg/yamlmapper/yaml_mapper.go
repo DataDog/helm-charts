@@ -22,7 +22,8 @@ import (
 )
 
 const (
-	defaultDDAMappingPath = "mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+	//defaultDDAMappingPath = "mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+	defaultDDAMappingPath = "/Users/fanny.jiang/go/src/github.com/DataDog/helm-charts/tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
 )
 
 var defaultFilePrefix = map[string]interface{}{
@@ -52,9 +53,15 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 			tmpSourceFile = getLatestValuesFile()
 			sourceFile = tmpSourceFile
 		}
-		if mappingFile == "" {
-			mappingFile = defaultDDAMappingPath
-		}
+	}
+
+	if mappingFile == "" {
+		mappingFile = defaultDDAMappingPath
+	}
+
+	_, err := os.Open(mappingFile)
+	if err != nil {
+		mappingFile, err = getDatadogMapping()
 	}
 
 	// Read mapping file
@@ -150,7 +157,7 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 		destKey, ok := mappingValues[sourceKey]
 		rt := reflect.TypeOf(destKey)
 		if !ok || destKey == "" || destKey == nil {
-			log.Printf("Warning: key not found: %s\n", sourceKey)
+			//log.Printf("Warning: key not found: %s\n", sourceKey)
 			// Continue through loop
 		} else if rt.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys
@@ -188,7 +195,11 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 
 			//	Use custom map func
 			if mapFunc, ok := destKey.(map[string]interface{})["mapFunc"].(string); ok {
-				customMapFuncs[mapFunc](interim, newPath, pathVal)
+				var mapFuncArgs []interface{}
+				if args, ok := destKey.(map[string]interface{})["args"].([]interface{}); ok {
+					mapFuncArgs = args
+				}
+				customMapFuncs[mapFunc](interim, newPath, pathVal, mapFuncArgs)
 			}
 
 		} else if destKey.(string) == "metadata.name" {
@@ -357,6 +368,14 @@ func parseValues(sourceValues chartutil.Values, valuesMap map[string]interface{}
 	return valuesMap
 }
 
+func fetchUrl(ctx context.Context, url string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return http.DefaultClient.Do(req)
+}
+
 var customMapFuncs = map[string]customMapFunc{
 	"mapApiSecretKey":        mapApiSecretKey,
 	"mapAppSecretKey":        mapAppSecretKey,
@@ -364,27 +383,29 @@ var customMapFuncs = map[string]customMapFunc{
 	"mapSeccompProfile":      mapSeccompProfile,
 	"mapSystemProbeAppArmor": mapSystemProbeAppArmor,
 	"mapLocalServiceName":    mapLocalServiceName,
+	"mapAppendEnvVar":        mapAppendEnvVar,
+	"mapMergeEnvs":           mapMergeEnvs,
 }
 
-type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{})
+type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{}, args []interface{})
 
-func mapApiSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapApiSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	//	if existing apikey secret, need to add key-name
 	interim[newPath] = pathVal
 	interim["spec.global.credentials.apiSecret.keyName"] = "api-key"
 }
 
-func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	interim[newPath] = pathVal
 	interim["spec.global.credentials.appSecret.keyName"] = "app-key"
 }
 
-func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	interim[newPath] = pathVal
 	interim["spec.global.clusterAgentTokenSecret.keyName"] = "token"
 }
 
-func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	seccompValue, err := pathVal.(string)
 	if !err {
 		return
@@ -404,7 +425,7 @@ func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal i
 	}
 }
 
-func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	appArmorValue, err := pathVal.(string)
 	if !err || appArmorValue == "" {
 		// must be set to non-empty string
@@ -447,7 +468,7 @@ func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, path
 	}
 }
 
-func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal interface{}) {
+func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	nameOverride, ok := pathVal.(string)
 	if !ok || nameOverride == "" {
 		return
@@ -455,10 +476,139 @@ func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal
 	interim[newPath] = nameOverride
 }
 
-func fetchUrl(ctx context.Context, url string) (*http.Response, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
+// mapAppendEnvVar appends environment variables to a specified path in the interim configuration.
+// It takes a list of environment variable definitions in the format []map[string]interface{}{{"name": "VAR_NAME"}}
+// and creates new environment variable entries with the provided pathVal as the value.
+// The new variables are added to the interim map at the specified newPath.
+// Example:
+//   - mapFuncArgs: []interface{}{map[string]interface{}{"name": "DD_LOG_LEVEL"}}
+//   - pathVal: "debug"
+//   - Result: Appends {"name": "DD_LOG_LEVEL", "value": "debug"} to newPath in interim
+func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
+	if len(args) != 1 {
+		return
 	}
-	return http.DefaultClient.Do(req)
+
+	envMap, ok := args[0].(map[string]interface{})
+	if !ok {
+		//log.Printf("expected map[string]interface{} for env var map definition, got %T", args[0])
+		return
+	}
+
+	newEnvVar := map[string]interface{}{
+		"name":  envMap["name"],
+		"value": pathVal,
+	}
+
+	// Create the interim[newPath] if it doesn't exist yet
+	if _, exists := interim[newPath]; !exists {
+		interim[newPath] = []interface{}{newEnvVar}
+		return
+	}
+
+	existing, ok := interim[newPath].([]interface{})
+	if !ok {
+		//log.Printf("Error: expected []interface{} at path %s, got %T", newPath, interim[newPath])
+		return
+	}
+
+	interim[newPath] = append(existing, newEnvVar)
+}
+
+// mapMergeEnvs merges lists of environment variables at the specified path.
+// It takes a slice of environment variable maps and merges them with any existing
+// environment variables at the target path.
+// Example:
+//   - pathVal: []map[string]interface{}{{"name": "VAR1", "value": "val1"}}
+//   - Result: Merges the new env vars with any existing ones at newPath
+func mapMergeEnvs(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
+	newEnvs, ok := pathVal.([]interface{})
+	if !ok {
+		//log.Printf("Warning: expected []interface{} for pathVal, got %T", pathVal)
+		return
+	}
+
+	// If the interim[newPath] doesn't exist yet, just set the new environment variables
+	existingEnvs, exists := interim[newPath]
+	if !exists {
+		interim[newPath] = newEnvs
+		return
+	}
+
+	existingEnvsSlice, ok := existingEnvs.([]interface{})
+	if !ok {
+		//log.Printf("Warning: expected []interface{} at path %s, got %T", newPath, existingEnvs)
+		return
+	}
+
+	// Merge the slices, avoiding duplicates
+	mergedEnvs := make([]interface{}, len(existingEnvsSlice))
+	copy(mergedEnvs, existingEnvsSlice)
+
+	// Add new envs that don't already exist
+	for _, newEnv := range newEnvs {
+		newEnvMap, ok := newEnv.(map[string]interface{})
+		if !ok {
+			//log.Printf("Warning: expected map[string]interface{} in newEnvs, got %T", newEnv)
+			continue
+		}
+
+		exists := false
+		newName, hasName := newEnvMap["name"].(string)
+		if !hasName {
+			continue
+		}
+
+		for _, existingEnv := range mergedEnvs {
+			if existingMap, ok := existingEnv.(map[string]interface{}); ok {
+				if existingName, ok := existingMap["name"].(string); ok && existingName == newName {
+					exists = true
+					break
+				}
+			}
+		}
+
+		if !exists {
+			mergedEnvs = append(mergedEnvs, newEnv)
+		}
+	}
+
+	interim[newPath] = mergedEnvs
+}
+
+func getDatadogMapping() (string, error) {
+	//url := "https://raw.githubusercontent.com/DataDog/helm-charts/main/tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+	url := "https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/fanny/AGENTONB-2450/migration-mapper/tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+
+	req, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, url, nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		log.Printf("Error fetching Datadog mapping yaml file: %v\n", err)
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Failed to fetch yaml file %s: %v\n", url, resp.Status)
+	}
+
+	tmpFile, err := os.CreateTemp("", defaultDDAMappingPath)
+	if err != nil {
+		log.Printf("Error creating temporary file: %v\n", err)
+		return "", err
+	}
+	defer tmpFile.Close()
+
+	_, err = io.Copy(tmpFile, resp.Body)
+	if err != nil {
+		log.Printf("Error saving file: %v\n", err)
+		return "", err
+	}
+
+	// log.Printf("File downloaded and saved to temporary file: %s\n", tmpFile.Name())
+	return tmpFile.Name(), nil
 }

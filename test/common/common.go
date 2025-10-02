@@ -84,6 +84,7 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 
 	// Setup Datadog Agent
 	t.Log("Creating secret")
+	kubectlOptions.Logger = logger.Discard
 	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
 		"--from-literal",
 		"api-key="+apiKey,
@@ -132,7 +133,7 @@ func Contains(str string, list []string) bool {
 	return false
 }
 
-// Takes multi-document YAML and filter out keys from each document.
+// FilterYamlKeysMultiManifest Takes multi-document YAML and filter out keys from each document.
 func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interface{}) (string, error) {
 	reader := strings.NewReader(manifest)
 	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)

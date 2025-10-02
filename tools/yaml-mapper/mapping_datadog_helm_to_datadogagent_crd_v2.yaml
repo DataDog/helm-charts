@@ -1,5 +1,7 @@
 # This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-agents.containers.agent.env: "" # TODO: add env var support
+agents.containers.agent.env:
+  newPath: spec.override.nodeAgent.containers.agent.env
+  mapFunc: mapMergeEnvs
 agents.containers.agent.envFrom: spec.override.nodeAgent.envFrom
 agents.containers.agent.healthPort: spec.override.nodeAgent.containers.agent.healthPort
 agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold
@@ -176,7 +178,7 @@ clusterAgent.admissionController.port: ""
 clusterAgent.admissionController.remoteInstrumentation.enabled: spec.features.admissionController.cwsInstrumentation.enabled
 clusterAgent.admissionController.validation.enabled: spec.features.admissionController.validation.enabled
 clusterAgent.admissionController.webhookName: spec.features.admissionController.webhookName
-clusterAgent.advancedConfd: spec.override.clusterAgent.extraConfd.configDataMap
+clusterAgent.advancedConfd: spec.override.clusterAgent.extraConfd.configData
 clusterAgent.affinity: spec.override.clusterAgent.affinity
 clusterAgent.command: spec.override.clusterAgent.containers.cluster-agent.command
 clusterAgent.confd: spec.override.clusterAgent.extraConfd
@@ -393,7 +395,11 @@ datadog.env: spec.override.nodeAgent.env
 datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
-datadog.expvarPort: ""
+datadog.expqvarPort:
+  newPath: spec.override.nodeAgent.containers.agent.env
+  mapFunc: mapAppendEnvVar
+  args:
+    - name: DD_EXPVAR_PORT
 datadog.gpuMonitoring.configureCgroupPerms: ""
 datadog.gpuMonitoring.enabled: spec.features.gpu.enabled
 datadog.gpuMonitoring.privilegedMode: spec.features.gpu.privilegedMode

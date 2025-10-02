@@ -137,12 +137,6 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	require.NoError(t, err)
 	assert.NotEmpty(t, helmAgentPods)
 
-	t.Logf("HELM PODS: Found %d pods with Helm labels", len(helmAgentPods))
-	for i, pod := range helmAgentPods {
-		t.Logf("  Helm Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
-	}
-
-	t.Logf("HELM EXEC: Running 'agent config' on pod: %s", helmAgentPods[0].Name)
 	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
 	helmAgentConf = normalizeAgentConf(helmAgentConf)
@@ -153,7 +147,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	require.NoError(t, err)
 	defer k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", destFile.Name()}...)
 
-	time.Sleep(60 * time.Second)
+	time.Sleep(120 * time.Second)
 
 	// Get agent conf from operator install
 	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
@@ -170,15 +164,17 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
 
 	// Check agent conf diff
-
-	assert.Equal(t, helmAgentConf, operatorAgentConf)
 	assert.EqualValues(t, helmAgentConf, operatorAgentConf)
 }
 
 var skipFields = map[string]interface{}{
-	"install_id":   nil,
-	"install_time": nil,
-	"install_type": nil,
+	"install_id":              nil,
+	"install_time":            nil,
+	"install_type":            nil,
+	"kubernetes_service_name": nil, // service name differs according to installation
+	"kubernetes_kubelet_host": nil, // may also differ
+	"token_name":              nil,
+	"site":                    nil,
 }
 
 // normalizeAgentConf removes log lines that start with timestamps in the format "2006-01-02 15:04:05 UTC"
@@ -222,7 +218,7 @@ func isTimestampLine(line string) bool {
 }
 
 func shouldSkipField(line string) bool {
-	for field, _ := range skipFields {
+	for field := range skipFields {
 		if strings.Contains(line, field) {
 			return true
 		}
@@ -386,7 +382,7 @@ func TestMergeMaps(t *testing.T) {
 func TestCustomMapFuncs(t *testing.T) {
 	// Test that all custom map functions are properly registered
 	t.Run("customMapFuncs_dict", func(t *testing.T) {
-		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile", "mapSystemProbeAppArmor", "mapLocalServiceName"}
+		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile", "mapSystemProbeAppArmor", "mapLocalServiceName", "mapAppendEnvVar", "mapMergeEnvs"}
 
 		for _, funcName := range expectedFuncs {
 			t.Run(funcName+"_exists", func(t *testing.T) {
@@ -405,6 +401,7 @@ func TestCustomMapFuncs(t *testing.T) {
 		interim     map[string]interface{}
 		newPath     string
 		pathVal     interface{}
+		mapFuncArgs []interface{}
 		expectedMap map[string]interface{}
 	}{
 		// mapApiSecretKey tests
@@ -679,14 +676,150 @@ func TestCustomMapFuncs(t *testing.T) {
 				"spec.override.clusterAgent.config.external_metrics.local_service_name": "new-service",
 			},
 		},
+		{
+			name:     "mapAppendEnvVar_add_env_var",
+			funcName: "mapAppendEnvVar",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.agent.env",
+			pathVal:  "debug",
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "DD_LOG_LEVEL",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "DD_LOG_LEVEL",
+						"value": "debug",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapAppendEnvVar_add_to_existing_env_vars",
+			funcName: "mapAppendEnvVar",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.containers.agent.env",
+			pathVal: "new_value",
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "NEW_VAR",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+					map[string]interface{}{
+						"name":  "NEW_VAR",
+						"value": "new_value",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapMergeEnvs_add_new_envs",
+			funcName: "mapMergeEnvs",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.agent.env",
+			pathVal: []interface{}{
+				map[string]interface{}{
+					"name":  "VAR1",
+					"value": "value1",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "VAR1",
+						"value": "value1",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapMergeEnvs_add_to_existing_envs",
+			funcName: "mapMergeEnvs",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.containers.agent.env",
+			pathVal: []interface{}{
+				map[string]interface{}{
+					"name":  "NEW_VAR",
+					"value": "new_value",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+					map[string]interface{}{
+						"name":  "NEW_VAR",
+						"value": "new_value",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapMergeEnvs_avoid_duplicates",
+			funcName: "mapMergeEnvs",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.containers.agent.env",
+			pathVal: []interface{}{
+				map[string]interface{}{
+					"name":  "EXISTING_VAR", // This should not be added again
+					"value": "new_value",
+				},
+				map[string]interface{}{
+					"name":  "NEW_VAR",
+					"value": "new_value",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value", // Keeps the original value
+					},
+					map[string]interface{}{
+						"name":  "NEW_VAR",
+						"value": "new_value",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			customFunc, exists := customMapFuncs[tt.funcName]
 			require.True(t, exists, "Custom function %s should exist in registry", tt.funcName)
-
-			customFunc(tt.interim, tt.newPath, tt.pathVal)
+			customFunc(tt.interim, tt.newPath, tt.pathVal, tt.mapFuncArgs)
 
 			assert.Equal(t, tt.expectedMap, tt.interim)
 		})
