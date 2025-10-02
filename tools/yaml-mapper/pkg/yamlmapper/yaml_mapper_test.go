@@ -386,7 +386,7 @@ func TestMergeMaps(t *testing.T) {
 func TestCustomMapFuncs(t *testing.T) {
 	// Test that all custom map functions are properly registered
 	t.Run("customMapFuncs_dict", func(t *testing.T) {
-		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile", "mapSystemProbeAppArmor", "mapLocalServiceName"}
+		expectedFuncs := []string{"mapApiSecretKey", "mapAppSecretKey", "mapTokenSecretKey", "mapSeccompProfile", "mapSystemProbeAppArmor", "mapLocalServiceName", "mapAppendEnvVar"}
 
 		for _, funcName := range expectedFuncs {
 			t.Run(funcName+"_exists", func(t *testing.T) {
@@ -405,6 +405,7 @@ func TestCustomMapFuncs(t *testing.T) {
 		interim     map[string]interface{}
 		newPath     string
 		pathVal     interface{}
+		mapFuncArgs []interface{}
 		expectedMap map[string]interface{}
 	}{
 		// mapApiSecretKey tests
@@ -679,14 +680,64 @@ func TestCustomMapFuncs(t *testing.T) {
 				"spec.override.clusterAgent.config.external_metrics.local_service_name": "new-service",
 			},
 		},
+		{
+			name:     "mapAppendEnvVar_add_env_var",
+			funcName: "mapAppendEnvVar",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.containers.agent.env",
+			pathVal:  "debug",
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "DD_LOG_LEVEL",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []map[string]interface{}{
+					{
+						"name":  "DD_LOG_LEVEL",
+						"value": "debug",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapAppendEnvVar_add_to_existing_env_vars",
+			funcName: "mapAppendEnvVar",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []map[string]interface{}{
+					{
+						"name":  "DD_LOG_LEVEL",
+						"value": "debug",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.containers.agent.env",
+			pathVal: "6000",
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "DD_EXPVAR_PORT",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []map[string]interface{}{
+					{
+						"name":  "DD_LOG_LEVEL",
+						"value": "debug",
+					},
+					{
+						"name":  "DD_EXPVAR_PORT",
+						"value": "6000",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			customFunc, exists := customMapFuncs[tt.funcName]
 			require.True(t, exists, "Custom function %s should exist in registry", tt.funcName)
-
-			customFunc(tt.interim, tt.newPath, tt.pathVal)
+			customFunc(tt.interim, tt.newPath, tt.pathVal, tt.mapFuncArgs)
 
 			assert.Equal(t, tt.expectedMap, tt.interim)
 		})

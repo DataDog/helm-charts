@@ -2,6 +2,7 @@ registry: "docker.io/datadog"
 datadog:
   apiKey: "testapikey"
   appKey: "testappkey"
+  expvarPort: "6000"
 
   logLevel: "debug"
 
@@ -59,6 +60,13 @@ datadog:
         protocol: TCP
 
 agents:
+  containers:
+    agent:
+      env:
+        - name: DD_LOG_LEVEL
+          value: "warn"
+        - name: DD_USE_DOGSTATSD
+          value: "true"
   volumeMounts:
     - name: example
       mountPath: "this/is/a/volume/mount"
