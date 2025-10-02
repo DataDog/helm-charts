@@ -36,7 +36,11 @@ datadog:
     # datadog.operator.enabled -- Enable the Datadog Operator
     enabled: false
     # datadog.operator.createDDAManifest -- Enable the creation of the DatadogAgent manifest
-    createDDAManifest: false
+    createDDAManifest:
+      templateEnabled: false
+      migratorJobEnabled: false
+    # datadog.operator.deployDDAManifest -- Deploy the DatadogAgent manifest
+    deployDDAManifest: false
     # datadog.operator.migration.enabled -- Enable migration to the operator
     migrationEnabled: false
 

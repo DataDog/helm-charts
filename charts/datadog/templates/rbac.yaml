@@ -145,6 +145,16 @@ rules:
   - ksh/metrics
   verbs:
   - get
+{{- if and .Values.datadog.operator.createDDAManifest.migratorJobEnabled .Values.datadog.operator.deployDDAManifest }}
+- apiGroups:
+    - datadoghq.com
+  resources:
+    - datadogagents
+  verbs:
+    - get
+    - patch
+    - create
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

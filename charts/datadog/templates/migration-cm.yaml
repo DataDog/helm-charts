@@ -1,0 +1,14 @@
+{{- if .Values.datadog.operator.createDDAManifest.migratorJobEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  annotations:
+    checksum/migration-config: {{ tpl (toYaml .Values) . | sha256sum }}
+data:
+  values.yaml: |-
+{{ toYaml .Values | indent 4 }}
+{{- end }}

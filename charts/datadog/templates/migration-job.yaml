@@ -1,0 +1,55 @@
+{{- if and (include "datadogagents-crd-ready" .) (or .Values.datadog.operator.createDDAManifest.migratorJobEnabled .Values.datadog.operator.deployDDAManifest) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: agent
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
+      restartPolicy: OnFailure
+      containers:
+        - name: helm-migrator
+          image: fannyatdd/operator:migration-69
+          command:
+            - /helm-mapper
+            - -sourceFile=/tmp/values.yaml
+            - -mappingFile=mapping_datadog_helm_to_datadogagent_crd_v2.yaml
+            - -ddaName={{ template "datadog.fullname" . }}
+            - -namespace={{ .Release.Namespace }}
+            - -destFile=/tmp/{{ template "datadog.fullname" . }}.yaml
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: migration-values
+              mountPath: /tmp/values.yaml
+              subPath: values.yaml
+              readOnly: true
+  {{- if .Values.datadog.operator.deployDDAManifest }}
+        - name: k8s
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
+              kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml
+              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+  {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: migration-values
+          configMap:
+            name: {{ template "datadog.fullname" . }}-migration-config
+            items:
+              - key: values.yaml
+                path: values.yaml
+  {{- end }}
