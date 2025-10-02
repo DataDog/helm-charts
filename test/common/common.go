@@ -132,7 +132,7 @@ func Contains(str string, list []string) bool {
 	return false
 }
 
-// Takes multi-document YAML and filter out keys from each document.
+// FilterYamlKeysMultiManifest Takes multi-document YAML and filter out keys from each document.
 func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interface{}) (string, error) {
 	reader := strings.NewReader(manifest)
 	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
