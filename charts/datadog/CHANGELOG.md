@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.0
+
+* Upgrade default Agent version to `7.71.0`.
+
 ## 3.135.4
 
 * Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
