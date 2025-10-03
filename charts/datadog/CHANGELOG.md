@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.135.5
+
+* [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
 ## 3.135.4
 
 * Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
