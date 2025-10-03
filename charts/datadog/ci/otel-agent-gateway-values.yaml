@@ -1,4 +1,5 @@
 targetSystem: "linux"
+fullnameOverride: "my-gw"
 agents:
   image:
     tagSuffix: full
@@ -20,7 +21,7 @@ datadog:
               endpoint: "localhost:4317"
       exporters:
         otlp:
-          endpoint: http://otel-agent-gateway:4317
+          endpoint: http://my-gw-otel-agent-gateway:4317
           tls:
             insecure: true
       service:
