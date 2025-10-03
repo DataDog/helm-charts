@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.135.5
+
+* Add controllerrevisions to default resource collection and rbac.
+
 ## 3.135.4
 
 * Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
