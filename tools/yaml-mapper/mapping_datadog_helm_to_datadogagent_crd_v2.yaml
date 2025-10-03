@@ -1,5 +1,7 @@
 # This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-agents.containers.agent.env: spec.override.nodeAgent.containers.agent.env
+agents.containers.agent.env:
+  newPath: spec.override.nodeAgent.containers.agent.env
+  mapFunc: mapMergeEnvs
 agents.containers.agent.envFrom: spec.override.nodeAgent.envFrom
 agents.containers.agent.healthPort: spec.override.nodeAgent.containers.agent.healthPort
 agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold

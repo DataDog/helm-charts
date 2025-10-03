@@ -384,6 +384,7 @@ var customMapFuncs = map[string]customMapFunc{
 	"mapSystemProbeAppArmor": mapSystemProbeAppArmor,
 	"mapLocalServiceName":    mapLocalServiceName,
 	"mapAppendEnvVar":        mapAppendEnvVar,
+	"mapMergeEnvs":           mapMergeEnvs,
 }
 
 type customMapFunc func(values map[string]interface{}, newPath string, pathVal interface{}, args []interface{})
@@ -475,27 +476,104 @@ func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal
 	interim[newPath] = nameOverride
 }
 
-// mapAppendEnvVars maps pathVal to an envVar using the arg envVarsMap in the
-// syntax []map[string]interface{}{name: <ENV_VAR_NAME} and appends the new envVar
-// to the value at newPath
-func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal interface{}, envVarsMap []interface{}) {
-	var newEnvVars []map[string]interface{}
-
-	for _, envMap := range envVarsMap {
-		envVar := map[string]interface{}{
-			"name":  envMap.(map[string]interface{})["name"],
-			"value": pathVal,
-		}
-		newEnvVars = append(newEnvVars, envVar)
+// mapAppendEnvVar appends environment variables to a specified path in the interim configuration.
+// It takes a list of environment variable definitions in the format []map[string]interface{}{{"name": "VAR_NAME"}}
+// and creates new environment variable entries with the provided pathVal as the value.
+// The new variables are added to the interim map at the specified newPath.
+// Example:
+//   - mapFuncArgs: []interface{}{map[string]interface{}{"name": "DD_LOG_LEVEL"}}
+//   - pathVal: "debug"
+//   - Result: Appends {"name": "DD_LOG_LEVEL", "value": "debug"} to newPath in interim
+func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
+	if len(args) != 1 {
+		return
 	}
 
-	if _, ok := interim[newPath]; !ok {
-		interim[newPath] = newEnvVars
-	} else {
-		for _, env := range newEnvVars {
-			interim[newPath] = append(interim[newPath].([]map[string]interface{}), env)
+	envMap, ok := args[0].(map[string]interface{})
+	if !ok {
+		//log.Printf("expected map[string]interface{} for env var map definition, got %T", args[0])
+		return
+	}
+
+	newEnvVar := map[string]interface{}{
+		"name":  envMap["name"],
+		"value": pathVal,
+	}
+
+	// Create the interim[newPath] if it doesn't exist yet
+	if _, exists := interim[newPath]; !exists {
+		interim[newPath] = []interface{}{newEnvVar}
+		return
+	}
+
+	existing, ok := interim[newPath].([]interface{})
+	if !ok {
+		//log.Printf("Error: expected []interface{} at path %s, got %T", newPath, interim[newPath])
+		return
+	}
+
+	interim[newPath] = append(existing, newEnvVar)
+}
+
+// mapMergeEnvs merges lists of environment variables at the specified path.
+// It takes a slice of environment variable maps and merges them with any existing
+// environment variables at the target path.
+// Example:
+//   - pathVal: []map[string]interface{}{{"name": "VAR1", "value": "val1"}}
+//   - Result: Merges the new env vars with any existing ones at newPath
+func mapMergeEnvs(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
+	newEnvs, ok := pathVal.([]interface{})
+	if !ok {
+		//log.Printf("Warning: expected []interface{} for pathVal, got %T", pathVal)
+		return
+	}
+
+	// If the interim[newPath] doesn't exist yet, just set the new environment variables
+	existingEnvs, exists := interim[newPath]
+	if !exists {
+		interim[newPath] = newEnvs
+		return
+	}
+
+	existingEnvsSlice, ok := existingEnvs.([]interface{})
+	if !ok {
+		//log.Printf("Warning: expected []interface{} at path %s, got %T", newPath, existingEnvs)
+		return
+	}
+
+	// Merge the slices, avoiding duplicates
+	mergedEnvs := make([]interface{}, len(existingEnvsSlice))
+	copy(mergedEnvs, existingEnvsSlice)
+
+	// Add new envs that don't already exist
+	for _, newEnv := range newEnvs {
+		newEnvMap, ok := newEnv.(map[string]interface{})
+		if !ok {
+			//log.Printf("Warning: expected map[string]interface{} in newEnvs, got %T", newEnv)
+			continue
+		}
+
+		exists := false
+		newName, hasName := newEnvMap["name"].(string)
+		if !hasName {
+			continue
+		}
+
+		for _, existingEnv := range mergedEnvs {
+			if existingMap, ok := existingEnv.(map[string]interface{}); ok {
+				if existingName, ok := existingMap["name"].(string); ok && existingName == newName {
+					exists = true
+					break
+				}
+			}
+		}
+
+		if !exists {
+			mergedEnvs = append(mergedEnvs, newEnv)
 		}
 	}
+
+	interim[newPath] = mergedEnvs
 }
 
 func getDatadogMapping() (string, error) {

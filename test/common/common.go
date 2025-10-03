@@ -84,6 +84,7 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 
 	// Setup Datadog Agent
 	t.Log("Creating secret")
+	kubectlOptions.Logger = logger.Discard
 	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
 		"--from-literal",
 		"api-key="+apiKey,
