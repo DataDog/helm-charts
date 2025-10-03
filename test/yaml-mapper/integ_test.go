@@ -1,0 +1,169 @@
+// Unless explicitly stated otherwise all files in this repository are licensed
+// under the Apache License Version 2.0.
+// This product includes software developed at Datadog (https://www.datadoghq.com/).
+// Copyright 2024-present Datadog, Inc.
+
+//go:build integration
+
+package yaml_mapper
+
+import (
+	"fmt"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/helm-charts/tools/yaml-mapper/pkg/yamlmapper"
+	"github.com/gruntwork-io/terratest/modules/helm"
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"gopkg.in/yaml.v3"
+)
+
+const (
+	mappingPath   = "../../tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+	ddaDestPath   = "tempDDADest.yaml"
+	apiKeyEnv     = "API_KEY"
+	appKeyEnv     = "APP_KEY"
+	k8sVersionEnv = "K8S_VERSION"
+)
+
+func Test(t *testing.T) {
+	// Prerequisites
+	context := common.CurrentContext(t)
+	t.Log("Checking current context:", context)
+	if strings.Contains(strings.ToLower(context), "staging") ||
+		strings.Contains(strings.ToLower(context), "prod") {
+		t.Fatal("Make sure context is pointing to local cluster")
+	}
+
+	require.NotEmpty(t, os.Getenv(apiKeyEnv), "API key can't be empty")
+	require.NotEmpty(t, os.Getenv(appKeyEnv), "APP key can't be empty")
+
+	tests := []struct {
+		name       string
+		command    common.HelmCommand
+		valuesPath string
+		assertions []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string)
+	}{
+		{
+			name: "Agent confd configmap",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"./values/confd-values.yaml"},
+			},
+			valuesPath: "./values/confd-values.yaml",
+			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string){verifyAgentConf},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Setup
+			namespaceName := fmt.Sprintf("datadog-agent-%s", strings.ToLower(random.UniqueId()))
+			kubectlOptions := k8s.NewKubectlOptions("", "", namespaceName)
+			k8s.CreateNamespace(t, kubectlOptions, namespaceName)
+			defer k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
+
+			cleanupSecrets := common.CreateSecretFromEnv(t, kubectlOptions, apiKeyEnv, appKeyEnv)
+			defer cleanupSecrets()
+
+			//	Helm install
+			cleanUpDatadog := common.InstallChart(t, kubectlOptions, tt.command)
+			defer cleanUpDatadog()
+			time.Sleep(60 * time.Second)
+
+			t.Log("Finding datadog release name...")
+			helmListOutput, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{KubectlOptions: kubectlOptions}, "list", "-n", namespaceName, "--short")
+			require.NoError(t, err, "failed to list helm releases")
+
+			var datadogReleaseName string
+			releaseNames := strings.Split(strings.TrimSpace(helmListOutput), "\n")
+			for _, releaseName := range releaseNames {
+				releaseName = strings.TrimSpace(releaseName)
+				if strings.HasPrefix(releaseName, tt.command.ReleaseName+"-") {
+					datadogReleaseName = releaseName
+					break
+				}
+			}
+			require.NotEmpty(t, datadogReleaseName, "could not find datadog release")
+			t.Log("Found datadog release name:", datadogReleaseName)
+
+			valuesCmd := common.HelmCommand{
+				ReleaseName: datadogReleaseName,
+			}
+			actualValuesFilePath := common.GetFullValues(t, valuesCmd, namespaceName)
+			defer os.Remove(actualValuesFilePath)
+
+			t.Log("GetFullValues created temp file:", actualValuesFilePath)
+
+			cleanUpOperator := common.InstallChart(t, kubectlOptions, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+			})
+			defer cleanUpOperator()
+
+			for _, assertion := range tt.assertions {
+				assertion(t, kubectlOptions, actualValuesFilePath, namespaceName)
+			}
+
+		})
+	}
+}
+
+func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) {
+	// Run mapper against values.yaml
+	destFile, err := os.CreateTemp(".", ddaDestPath)
+	require.NoError(t, err)
+	defer os.Remove(destFile.Name())
+
+	yamlmapper.MapYaml(mappingPath, valuesPath, destFile.Name(), "", "", namespace, false, false)
+
+	outputBytes, err := os.ReadFile(destFile.Name())
+	require.NoError(t, err)
+
+	var ddaResult map[string]interface{}
+	err = yaml.Unmarshal(outputBytes, &ddaResult)
+	require.NoError(t, err)
+
+	// Get agent conf from helm install
+	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
+	require.NoError(t, err)
+	assert.NotEmpty(t, helmAgentPods)
+
+	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
+	require.NoError(t, err)
+	helmAgentConf = normalizeAgentConf(helmAgentConf)
+
+	// Apply DDA from mapper
+
+	err = k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFile.Name()}...)
+	require.NoError(t, err)
+	defer k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", destFile.Name()}...)
+
+	time.Sleep(120 * time.Second)
+
+	// Get agent conf from operator install
+	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
+	require.NoError(t, err)
+
+	//t.Logf("OPERATOR PODS: Found %d pods with operator labels", len(operatorAgentPods))
+	for i, pod := range operatorAgentPods {
+		t.Logf("  Operator Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
+	}
+
+	assert.NotEmpty(t, operatorAgentPods)
+	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
+	require.NoError(t, err)
+	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
+
+	// Check agent conf diff
+	assert.EqualValues(t, helmAgentConf, operatorAgentConf)
+}
