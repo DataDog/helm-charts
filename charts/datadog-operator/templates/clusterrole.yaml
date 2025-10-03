@@ -121,6 +121,7 @@ rules:
   verbs:
   - list
   - watch
+  - patch
 - apiGroups:
   - authentication.k8s.io
   resources:

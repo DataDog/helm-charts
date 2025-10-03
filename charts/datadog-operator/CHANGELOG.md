@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.1
+
+* [CASCL-610] Add require RBAC for ArgoRollout support in datadog-operator chart ([#2076](https://github.com/DataDog/helm-charts/pull/2076)).
+
 ## 2.14.0-dev.2
 
 * Update Datadog Operator image tag to 1.18.0-rc.2.
