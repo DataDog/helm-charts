@@ -45,6 +45,7 @@ rules:
   - daemonsets
   - deployments
   - replicasets
+  - controllerrevisions
   verbs:
   - list
   - watch
