@@ -35,6 +35,7 @@ kubernetes_state_core.yaml.default: |-
       - deployments
       - replicasets
       - statefulsets
+      - controllerrevisions
       - cronjobs
       - jobs
       - horizontalpodautoscalers
