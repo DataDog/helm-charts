@@ -77,7 +77,6 @@ rules:
   - '*'
 - apiGroups:
   - apiextensions.k8s.io
-  - extensions
   resources:
   - customresourcedefinitions
   verbs:
@@ -89,6 +88,7 @@ rules:
   - apiservices
   verbs:
   - '*'
+  - deletecollection
   - list
   - watch
 - apiGroups:
@@ -99,6 +99,7 @@ rules:
   verbs:
   - create
   - delete
+  - deletecollection
   - get
   - list
   - patch
@@ -114,19 +115,9 @@ rules:
   - list
   - watch
 - apiGroups:
-  - apps
+  - argoproj.io
   resources:
-  - replicationcontrollers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
+  - rollouts
   verbs:
   - list
   - watch
@@ -147,21 +138,13 @@ rules:
   - create
   - get
 - apiGroups:
-  - authorization.k8s.io
-  - rbac.authorization.k8s.io
-  - roles.rbac.authorization.k8s.io
+  - auto.gke.io
   resources:
-  - clusterrolebindings
-  - clusterroles
-  - rolebindings
-  - roles
+  - allowlistsynchronizers
   verbs:
   - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - autoscaling
@@ -282,6 +265,23 @@ rules:
   - list
   - watch
 - apiGroups:
+  - datadoghq.com
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - external.metrics.k8s.io
   resources:
   - '*'
@@ -335,6 +335,33 @@ rules:
   - get
   - list
 - apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - security.openshift.io
   resourceNames:
   - restricted
@@ -368,6 +395,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals
   - datadogagentprofiles
   verbs:
   - create
@@ -380,6 +408,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/finalizers
   - datadogagentprofiles/finalizers
   verbs:
   - create
@@ -392,6 +421,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/status
   - datadogagentprofiles/status
   verbs:
   - get

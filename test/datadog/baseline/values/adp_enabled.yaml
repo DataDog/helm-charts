@@ -1,6 +1,6 @@
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
-providers:
-  gke:
-    autopilot: true
+
+  agentDataPlane:
+    enabled: true

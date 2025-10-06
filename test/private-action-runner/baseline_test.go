@@ -1,8 +1,9 @@
 package private_action_runner
 
 import (
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/helm"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Private Action Runner default",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "default-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				Overrides:   map[string]string{},
@@ -27,19 +28,44 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:   verifyPrivateActionRunner,
 		},
 		{
-			name: "Enable kubernetes actions",
+			name: "Private Action Runner deprecated mode values",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "deprecated-modes-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"runners[0].kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
-					"runners[0].kubernetesActions.customObjects":       `["deleteMultiple"]`,
-					"runners[0].kubernetesActions.deployments":         `["restart"]`,
-					"runners[0].kubernetesActions.endpoints":           `["patch"]`,
-					"runners[0].kubernetesPermissions[0].apiGroups":    `["example.com"]`,
-					"runners[0].kubernetesPermissions[0].resources":    `["tests"]`,
-					"runners[0].kubernetesPermissions[0].verbs":        `["list","get","create","patch","update","delete"]`,
+					"runner.config.modes": `["workflowAutomation", "appBuilder"]`,
+				},
+			},
+			snapshotName: "deprecated-modes",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Private Action Runner example file",
+			command: common.HelmCommand{
+				ReleaseName: "example-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/examples/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			snapshotName: "example",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Enable kubernetes actions",
+			command: common.HelmCommand{
+				ReleaseName: "kubernetes-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.roleType": `"ClusterRole"`,
+					"runner.kubernetesActions.controllerRevisions": `["get","list","create","update","patch","delete","deleteMultiple"]`,
+					"runner.kubernetesActions.customObjects":       `["deleteMultiple"]`,
+					"runner.kubernetesActions.deployments":         `["restart", "rollback", "scale"]`,
+					"runner.kubernetesActions.endpoints":           `["patch"]`,
+					"runner.kubernetesPermissions[0].apiGroups":    `["example.com"]`,
+					"runner.kubernetesPermissions[0].resources":    `["tests"]`,
+					"runner.kubernetesPermissions[0].verbs":        `["list","get","create","patch","update","delete"]`,
 				},
 			},
 			snapshotName: "enable-kubernetes-actions",
@@ -48,14 +74,92 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			name: "Specify certain config overrides",
 			command: common.HelmCommand{
-				ReleaseName: "private-action-runner",
+				ReleaseName: "override-test",
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"runners[0].env": `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"fullnameOverride":                `"custom-full-name"`,
+					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runner.config.allowIMDSEndpoint": `true`,
+					"image.pullPolicy":                `"Always"`,
 				},
 			},
 			snapshotName: "config-overrides",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Specify secrets externally",
+			command: common.HelmCommand{
+				ReleaseName: "secrets-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.runnerIdentitySecret": `"the-name-of-the-secret"`,
+					"runner.config.urn":           ``,
+					"runner.config.privateKey":    ``,
+					"runner.env":                  `[{"name": "FOO", "value": "foo"}]`,
+					"runner.credentialSecrets":    `[{"secretName": "first-secret"}, {"secretName": "second-secret", "directoryName": "second-secret-directory"}]`,
+				},
+			},
+			snapshotName: "external-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom resource requirements",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.resources.limits.cpu":      `"500m"`,
+					"runner.resources.limits.memory":   `"2Gi"`,
+					"runner.resources.requests.cpu":    `"100m"`,
+					"runner.resources.requests.memory": `"512Mi"`,
+				},
+			},
+			snapshotName: "custom-resources",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Custom pod scheduling",
+			command: common.HelmCommand{
+				ReleaseName: "resources-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.nodeSelector": `{"kubernetes.io/os": "linux"}`,
+					"runner.tolerations":  `[{"key": "taint.custom.com/key", "effect": "NoSchedule", "operator": "Exists"}]`,
+					"runner.affinity":     `{"nodeAffinity": {"requiredDuringSchedulingIgnoredDuringExecution": {"nodeSelectorTerms": [{"matchExpressions": [{"key": "kubernetes.io/arch", "operator": "In", "values": ["amd64"]}]}]}}}`,
+				},
+			},
+			snapshotName: "custom-pod-scheduling",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Scripts configuration",
+			command: common.HelmCommand{
+				ReleaseName: "scripts-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.credentialFiles": `[{"fileName": "script.yaml", "data": "echoInBash:\n  command: [\"bash\", \"/home/scriptuser/hello-from-bash.sh\"]"}]`,
+					"runner.scriptFiles":     `[{"fileName": "hello-from-bash.sh", "data": "#!/bin/bash\necho \"Hello World from bash!\""}]`,
+				},
+			},
+			snapshotName: "scripts-configuration",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Service annotations",
+			command: common.HelmCommand{
+				ReleaseName: "scripts-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"service.annotations": `{"example.com/custom-annotation": "custom-value", "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"}`,
+				},
+			},
+			snapshotName: "service-annotations",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

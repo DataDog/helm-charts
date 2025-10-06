@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'charts/**'
+      - '!charts/datadog-operator/**'
+      - '!charts/datadog-crds/**'
 
 permissions: {}
 

@@ -1,0 +1,28 @@
+{{- if and (or .Values.seed.sources .Values.seed.indexes) .Values.bootstrap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quickwit.fullname" . }}-bootstrap
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+data:
+  {{- range .Values.seed.indexes }}
+  {{- $config := $.Files.Get . | fromYaml }}
+  {{ . }}: |-
+    {{- toYaml $config | nindent 4 }}
+    {{- if $.Values.seed.retention }}
+    retention:
+      period: {{ $.Values.seed.retention }}
+      schedule: daily
+    {{- end }}
+    {{- if $.Values.seed.min_num_shards }}
+    ingest_settings:
+      min_shards: {{ $.Values.seed.min_num_shards }}
+    {{- end }}
+  {{- end }}
+  {{- range .Values.seed.sources }}
+  {{- $config := $.Files.Get . | fromYaml }}
+  {{ . }}: |-
+    {{- toYaml $config | nindent 4 }}
+  {{- end }}
+{{- end }}

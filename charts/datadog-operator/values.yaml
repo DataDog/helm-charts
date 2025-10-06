@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.13.0
+  tag: 1.19.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -113,6 +113,8 @@ serviceAccount:
   name:
   # serviceAccount.annotations -- Allows setting additional annotations for service account
   annotations: {}
+  # serviceAccount.automountServiceAccountToken -- Specifies whether the service account token should be automatically mounted
+  automountServiceAccountToken: true
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
@@ -152,6 +154,8 @@ datadogCRDs:
     datadogDashboards: false
     # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
     datadogGenericResources: false
+    # datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
+    datadogAgentProfiles: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
@@ -239,8 +243,8 @@ volumeMounts: []
 # livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
 livenessProbe:
   periodSeconds: 10
+  initialDelaySeconds: 15
   # Example fields of livenessProbe that are also configurable:
-  # initialDelaySeconds: 15
   # timeoutSeconds: 1
   # successThreshold: 1
   # failureThreshold: 3

@@ -1,0 +1,51 @@
+# Default values for datadog-csi-driver.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# nameOverride -- Allows overriding the name of the chart.
+# If set, this value replaces the default chart name.
+nameOverride: ""
+
+# fullnameOverride -- Allows overriding the full name of resources created by the chart.
+# If set, this value completely replaces the generated name, ignoring the standard naming convention.
+fullnameOverride: ""
+
+## Define the Datadog CSI Driver image to work with
+image:
+  # image.tag -- CSI driver image tag to use
+  tag: 1.0.0
+
+  # image.repository -- Override default registry + image.name for CSI driver
+  repository: gcr.io/datadoghq/csi-driver
+
+  # image.pullPolicy -- CSI driver image pullPolicy
+  pullPolicy: IfNotPresent
+
+  # image.pullSecrets -- CSI driver repository pullSecret (for example: specify Docker registry credentials)
+
+  ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  pullSecrets: []
+  #   - name: "<REG_SECRET>"
+
+## Configure the CSI registrar to use as a sidecar container
+registrar:
+
+  # Define the CSI registrar image to work with
+  image:
+    # registrar.image.tag -- CSI registrar image tag to use
+    tag: v2.0.1
+
+    # registrar.image.repository -- Override default registry + image.name for the registrar
+    repository: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+
+    # registrar.image.pullPolicy -- CSI registrar image pullPolicy
+    pullPolicy: IfNotPresent
+
+sockets:
+  # apmHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.apm.hostSocketPath`
+  apmHostSocketPath: /var/run/datadog/apm.socket
+
+  # dsdHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.dsd.hostSocketPath`
+  dsdHostSocketPath: /var/run/datadog/dsd.socket

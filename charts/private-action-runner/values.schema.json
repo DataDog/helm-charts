@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Values",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema definition for the values file"
+    },
+    "image": {
+      "type": "object",
+      "description": "Configuration for the Datadog Private Action Runner image",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "description": "Repository for the Datadog Private Action Runner image"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Tag for the Datadog Private Action Runner image"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "description": "Image pull policy for the Datadog Private Action Runner"
+        }
+      },
+      "required": ["repository", "tag"]
+    },
+    "nameOverride": {
+      "type": "string",
+      "description": "Override the name of the chart"
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "description": "Override the full name of the chart"
+    },
+    "runner": {
+      "type": "object",
+      "description": "Configuration for the Datadog Private Action Runner",
+      "properties": {
+        "roleType": {
+          "type": "string",
+          "enum": ["Role", "ClusterRole"],
+          "description": "Type of role to create. Role for namespace-scoped permissions, ClusterRole for cluster-wide permissions"
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of pod instances for the Datadog Private Action Runner"
+        },
+        "configDirectory": {
+          "type": "string",
+          "description": "The directory containing the Datadog Private Action Runner configuration"
+        },
+        "useSeparateSecretForCredentials": {
+          "type": "boolean",
+          "description": "Configure whether to use a separate kubernetes secret for the credentials and the config"
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration for the Datadog Private Action Runner",
+          "properties": {
+            "ddBaseURL": {
+              "type": "string",
+              "description": "Base URL of the Datadog app"
+            },
+            "urn": {
+              "type": "string",
+              "description": "The runner's URN from the enrollment page"
+            },
+            "privateKey": {
+              "type": "string",
+              "description": "The runner's privateKey from the enrollment page"
+            },
+            "modes": {
+              "type": "array",
+              "description": "Modes that the runner can run in",
+              "items": {
+                "type": "string",
+                "enum": ["appBuilder", "workflowAutomation", "push", "pull"]
+              }
+            },
+            "port": {
+              "type": "integer",
+              "description": "Port for HTTP server liveness checks and App Builder mode"
+            },
+            "allowIMDSEndpoint": {
+              "type": "boolean",
+              "description": "Allow the runner to access IMDS endpoint"
+            },
+            "actionsAllowlist": {
+              "type": "array",
+              "description": "List of actions that the Datadog Private Action Runner is allowed to execute",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["ddBaseURL", "modes"],
+          "additionalProperties": false
+        },
+        "env": {
+          "type": "array",
+          "description": "Environment variables to be passed to the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the environment variable"
+              },
+              "value": {
+                "type": "string",
+                "description": "Value of the environment variable"
+              }
+            }
+          }
+        },
+        "nodeSelector": {
+          "type": "object",
+          "description": "Key Value pairs of node labels used to select nodes for scheduling the runner pods"
+        },
+        "affinity": {
+          "type": "object",
+          "description": "Kubernetes affinity settings for the runner pods"
+        },
+        "tolerations": {
+          "type": "array",
+          "description": "Tolerations to allow scheduling runner pods on nodes with taints",
+          "items": {
+            "type": "object"
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "description": "Liveness Probe configuration"
+        },
+        "readinessProbe": {
+          "type": "object",
+          "description": "Readiness Probe configuration"
+        },
+        "runnerIdentitySecret": {
+          "type": "string",
+          "description": "Name of the secret containing the runner's identity"
+        },
+        "kubernetesActions": {
+          "type": "object",
+          "description": "Kubernetes actions configuration for the runner",
+          "properties": {
+            "controllerRevisions": {
+              "type": "array",
+              "description": "Actions related to controllerRevisions (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "daemonSets": {
+              "type": "array",
+              "description": "Actions related to daemonSets (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "deployments": {
+              "type": "array",
+              "description": "Actions related to deployments (options: get, list, create, update, patch, delete, deleteMultiple, restart, rollback, scale)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replicaSets": {
+              "type": "array",
+              "description": "Actions related to replicaSets (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "statefulSets": {
+              "type": "array",
+              "description": "Actions related to statefulSets (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cronJobs": {
+              "type": "array",
+              "description": "Actions related to cronJobs (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "configMaps": {
+              "type": "array",
+              "description": "Actions related to configMaps (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "description": "Actions related to endpoints (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "events": {
+              "type": "array",
+              "description": "Actions related to events (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "limitRanges": {
+              "type": "array",
+              "description": "Actions related to limitRanges (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "namespaces": {
+              "type": "array",
+              "description": "Actions related to namespaces (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nodes": {
+              "type": "array",
+              "description": "Actions related to nodes (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "persistentVolumes": {
+              "type": "array",
+              "description": "Actions related to persistentVolumes (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "persistentVolumeClaims": {
+              "type": "array",
+              "description": "Actions related to persistentVolumeClaims (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pods": {
+              "type": "array",
+              "description": "Actions related to pods (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "podTemplates": {
+              "type": "array",
+              "description": "Actions related to podTemplates (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replicationControllers": {
+              "type": "array",
+              "description": "Actions related to replicationControllers (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "resourceQuotas": {
+              "type": "array",
+              "description": "Actions related to resourceQuotas (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "services": {
+              "type": "array",
+              "description": "Actions related to services (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "serviceAccounts": {
+              "type": "array",
+              "description": "Actions related to serviceAccounts (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "customResourceDefinitions": {
+              "type": "array",
+              "description": "Actions related to customResourceDefinitions (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "jobs": {
+              "type": "array",
+              "description": "Actions related to jobs (options: get, list, create, update, patch, delete, deleteMultiple)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "customObjects": {
+              "type": "array",
+              "description": "Actions related to customObjects (options: get, list, create, update, patch, delete, deleteMultiple). You also need to add appropriate kubernetesPermissions.",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "kubernetesPermissions": {
+          "type": "array",
+          "description": "Kubernetes permissions to provide in addition to the ones that will be inferred from kubernetesActions (useful for customObjects)",
+          "items": {
+            "type": "object"
+          }
+        },
+        "resources": {
+          "type": "object",
+          "description": "Resource requirements for the Datadog Private Action Runner container",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "description": "Resource limits for the runner container",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "CPU limit for the runner container"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Memory limit for the runner container"
+                }
+              },
+              "additionalProperties": false
+            },
+            "requests": {
+              "type": "object",
+              "description": "Resource requests for the runner container",
+              "properties": {
+                "cpu": {
+                  "type": "string",
+                  "description": "CPU request for the runner container"
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Memory request for the runner container"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "credentialFiles": {
+          "type": "array",
+          "description": "List of credential files to be used by the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "Name of the credential file"
+              },
+              "data": {
+                "type": "string",
+                "description": "Content of the credential file"
+              }
+            },
+            "required": ["fileName", "data"],
+            "additionalProperties": false
+          }
+        },
+        "credentialSecrets": {
+          "type": "array",
+          "description": "List of secrets containing credentials to be used by the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "secretName": {
+                "type": "string",
+                "description": "Name of the secret containing the credentials"
+              },
+              "directoryName": {
+                "type": "string",
+                "description": "Name of the directory where the credentials will be mounted"
+              }
+            },
+            "required": ["secretName"],
+            "additionalProperties": false
+          }
+        },
+        "scriptFiles": {
+          "type": "array",
+          "description": "List of script files to be used by the Datadog Private Action Runner",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "description": "Name of the script file"
+              },
+              "data": {
+                "type": "string",
+                "description": "Content of the script file"
+              }
+            },
+            "required": ["fileName", "data"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["config"],
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "description": "Service configuration for the Datadog Private Action Runner",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the service"
+        }
+      },
+      "additionalProperties": false
+    },
+    "global": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": ["runner"],
+  "additionalProperties": false
+}

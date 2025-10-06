@@ -1,5 +1,136 @@
 # Datadog changelog
 
+## 1.14.0
+
+* Make runner http port configurable
+
+* Ability to annotate the kube service created for the runner
+
+## 1.13.0
+
+* Bump private runner version to 1.11.0
+
+## 1.12.0
+
+* Bump private runner version to 1.10.0
+
+## 1.11.0
+
+* Bump private runner version to 1.9.0
+* Introduce to new modes `pull` and `push` to replace respectively `workflowAutomation`and `appBuilder` modes.
+
+## 1.10.0
+
+* Fix http client denying private endpoints on enrolment. This is an issue when there is an egress proxy.
+* Bump private runner version to 1.8.0
+
+## 1.9.0
+
+* Add support for custom scripts via `runner.scriptFiles`
+* Scripts are mounted in `/home/scriptuser/` directory
+* Support for inline script files
+
+## 1.8.0
+
+* Add support for `runner.useSeparateSecretForCredentials` to match with the default expected file layout.
+
+## 1.7.0
+
+* Bump runner version to `v1.7.0`
+* Add example for script action credentials file
+
+## 1.6.0
+
+* Add support for long-running actions.
+* Add support for new Gitlab actions.
+
+## 1.5.1
+
+* Ensure that the `DD_PRIVATE_RUNNER_CONFIG_DIR` environment variable is set even when custom env variables are passed. 
+
+## 1.5.0
+
+* Bump runner version to `v1.5.1`
+* Make it possible to configure the runner to allow IMDS endpoints
+
+## 1.4.0
+
+* Image pull policy can now be overriden.
+
+## 1.3.0
+
+* Change the configuration directory to be `/etc/dd-action-runner/config`.
+
+## 1.2.3
+
+* Add ability to include livenessProbe and readinessProbe configurations.
+
+## 1.2.2
+
+* Add customizable nodeSelector, tolerations, affinity for the private action runner deployment.
+
+## 1.2.1
+
+* Bump runner version to `v1.4.0`
+
+## 1.2.0
+
+* Add support for kubernetes scaleDeployment and rollbackDeployment actions
+
+## 1.1.2
+
+* Add customizable resource limits and requests for the private action runner container
+
+## 1.1.1
+
+* Bump runner version to `v1.3.0`
+
+## 1.1.0
+
+* Add the `$schema` key to the `values.yaml` file to enable schema validation in IDEs.
+
+## 1.0.3
+
+* Allow a `global` object in values so this chart can be used in a subchart.
+
+## 1.0.2
+
+* Update private action runner version to `v1.2.0`
+  * Bugfix: `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` are now honored for all http requests from the runner
+  * Feat: more flexible credentials loading.
+
+## 1.0.1
+
+* Improve Readme
+
+## 1.0.0
+
+* BREAKING CHANGES: Updates the chart for simplification and better following of Helm best practices. See [UPGRADING.md](UPGRADING.md) for more details.
+
+## 0.20.1
+
+* Various cleanup for the chart.
+
+## 0.20.0
+
+* Add the ability to specify kubernetes secrets to store credential files.
+
+## 0.19.0
+
+* Use a role instead of a cluster role for the runner's service account by default.
+
+## 0.18.0
+
+* Add the ability to specify a kubernetes secret to store the runner's identity.
+
+## 0.17.2
+
+* Update postgresql credentials file example
+
+## 0.17.1
+
+* Update private action image version to `v1.1.1`
+
 ## 0.17.0
 
 * Update private action image version to `v1.0.0`

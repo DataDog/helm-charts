@@ -1,13 +1,24 @@
 {{- define "container-otel-agent" -}}
 - name: otel-agent
-  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  image: "{{ include "ddot-collector-image" . }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command:
     - "otel-agent"
-    - "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
     - "--sync-delay=30s"
+  args:
+    {{- if .Values.datadog.otelCollector.configMap.items }}
+    {{- range .Values.datadog.otelCollector.configMap.items }}
+    - "--config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
+    - "--config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+    {{- end }}
     {{- if .Values.datadog.otelCollector.featureGates }}
     - "--feature-gates={{ .Values.datadog.otelCollector.featureGates }}"
     {{- end }}
@@ -16,7 +27,13 @@
   command:
     - "otel-agent"
     - "-foreground"
+    {{- if .Values.datadog.otelCollector.configMap.items }}
+    {{- range .Values.datadog.otelCollector.configMap.items }}
+    - "-config={{ template "datadog.otelconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
     - "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
+    {{- end }}
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
     - "--sync-delay=30s"
     {{- if .Values.datadog.otelCollector.featureGates }}
@@ -32,9 +49,12 @@
         {{- if .hostPort }}
         hostPort: {{ .hostPort }}
         {{- end }}
-        protocol: TCP
+        protocol: {{ .protocol | default "TCP" }}
         name: {{ .name }}
     {{- end }}
+{{- if .Values.agents.containers.otelAgent.ports }}
+{{ toYaml .Values.agents.containers.otelAgent.ports | indent 6 }}
+{{- end }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.otelAgent.envFrom }}
   envFrom:
 {{- if .Values.datadog.envFrom }}
@@ -51,6 +71,10 @@
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
+    {{- if .Values.datadog.otelCollector.enabled }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
+    {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
