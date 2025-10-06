@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.136.0](https://img.shields.io/badge/Version-3.136.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.136.1](https://img.shields.io/badge/Version-3.136.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -1001,6 +1001,8 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
 | otelAgentGateway.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods. |
 | otelAgentGateway.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
+| otelAgentGateway.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
+| otelAgentGateway.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
 | otelAgentGateway.replicas | int | `2` | Number of otel-agent instances in the Gateway Deployment |
 | otelAgentGateway.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | otelAgentGateway.service.type | string | `"ClusterIP"` | Set type of otel-agent-gateway service |
