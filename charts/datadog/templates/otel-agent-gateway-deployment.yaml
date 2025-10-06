@@ -79,6 +79,9 @@ spec:
       dnsConfig:
 {{ toYaml .Values.otelAgentGateway.dnsConfig | indent 8 }}
       {{- end }}
+      {{- if .Values.otelAgentGateway.rbac.create  }}
+      serviceAccountName: {{ include "agents.serviceAccountName" . }}
+      {{- end }}
       initContainers:
       - name: init-volume
         image: "{{ include "ddot-collector-image" . }}"

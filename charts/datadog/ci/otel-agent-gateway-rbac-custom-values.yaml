@@ -1,5 +1,4 @@
 targetSystem: "linux"
-fullnameOverride: "gw-only"
 agents:
   enabled: false
   image:
@@ -14,7 +13,7 @@ otelAgentGateway:
     create: true
     rules:
       - apiGroups: [""]
-        resources: ["nodes"]
+        resources: ["endpoints"]
         verbs: ["get", "watch", "list"]
   ports:
     - containerPort: "4317"
@@ -27,16 +26,22 @@ otelAgentGateway:
             endpoint: "0.0.0.0:4317"
     exporters:
       debug:
-      otlphttp:
-        endpoint: otlp.datadoghq.com
+      loadbalancing:
+        routing_key: "service"
+        protocol:
+          otlp:
+            tls:
+              insecure: true
+        resolver:
+          k8s:
+            service: my-k8s-svc
+            ports:
+              - 4317
     service:
       pipelines:
         traces:
           receivers: [otlp]
-          exporters: [otlphttp, debug]
+          exporters: [loadbalancing, debug]
         metrics:
           receivers: [otlp]
-          exporters: [otlphttp, debug]
-        logs:
-          receivers: [otlp]
-          exporters: [otlphttp, debug]
+          exporters: [loadbalancing, debug]

@@ -2900,6 +2900,7 @@ otelAgentGateway:
     # otelAgentGateway.rbac.create -- If true, check OTel Collector config for k8sattributes processor
     # and create required ClusterRole to access Kubernetes API
     create: true
+
     # otelAgentGateway.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
     rules: []
     #   - apiGroups: [""]

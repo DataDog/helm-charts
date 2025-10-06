@@ -1,5 +1,4 @@
 targetSystem: "linux"
-fullnameOverride: "gw-only"
 agents:
   enabled: false
   image:
@@ -10,6 +9,8 @@ clusterAgent:
   enabled: false
 otelAgentGateway:
   enabled: true
+  rbac:
+    create: true
   ports:
     - containerPort: "4317"
       name: "otel-grpc"
