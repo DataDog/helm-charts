@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.1
+
+* Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.
+
 ## 3.136.0
 
 * Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
