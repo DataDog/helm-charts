@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.2
+
+* Add deprecation notice for `datadog.processAgent.runInCoreAgent`
+
 ## 3.136.1
 
 * Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.

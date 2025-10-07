@@ -612,7 +612,7 @@ However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `da
 Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
 However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
 
-It is not possible to mount two different host paths at the same mount path. 
+It is not possible to mount two different host paths at the same mount path.
 
 To resolve this:
 - use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
@@ -737,10 +737,21 @@ https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
 {{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
-################################################################                                                             
-###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
+################################################################
+###    WARNING: Admission Controller CSI Misconfiguration    ###
 ################################################################
 Enabling csi via `datadog.csi.enabled` is required to benefit from `csi` admission controller config mode.
 
 Otherwise, `socket` config mode will be used.
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (not (.Values.datadog.processAgent.runInCoreAgent)) }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+You have set `datadog.processAgent.runInCoreAgent` to `false`.
+Support for this configuration will be deprecated in a future version.
+This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
+This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
+
 {{- end }}
