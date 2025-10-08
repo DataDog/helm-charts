@@ -955,18 +955,28 @@ securityContext:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
-{{- if or .securityContext .sysAdmin (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+{{- if or .securityContext .sysAdmin .mknod (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+  {{- /* Define default values for the added capabilities and securityContext */ -}}
+  {{- $addedCapabilities := list -}}
+  {{- $securityContext := dict -}}
+  {{- if .securityContext -}}
+    {{- $securityContext = .securityContext -}}
+    {{- $addedCapabilities = (.securityContext.capabilities | default dict).add | default list -}}
+  {{- end -}}
+  {{- /* Add conditional capabilities */ -}}
+  {{ if .sysAdmin -}}
+    {{- $addedCapabilities = append $addedCapabilities "SYS_ADMIN" -}}
+  {{- end -}}
+  {{- if .mknod -}}
+    {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
+  {{- end -}}
+  {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
+  {{- if $addedCapabilities -}}
+    {{- $capabilities := dict "capabilities" (dict "add" $addedCapabilities) -}}
+    {{- $securityContext = merge $capabilities $securityContext -}}
+  {{- end -}}
 securityContext:
-{{- if .securityContext -}}
-{{- if .sysAdmin }}
-{{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
-{{ toYaml (merge $capabilities .securityContext) | indent 2 }}
-{{- else }}
-{{ toYaml .securityContext | indent 2 }}
-{{- end -}}
-{{- else if .sysAdmin }}
-{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
-{{- end -}}
+{{ toYamlPretty $securityContext | indent 2 }}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
