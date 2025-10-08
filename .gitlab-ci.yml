@@ -3,8 +3,6 @@ stages:
   - test
 
 variables:
-  RUN_E2E_TEST:
-    description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
 
 noop:
@@ -25,7 +23,7 @@ e2e:
         compare_to: "refs/heads/main"
       when: always
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
-      when: never
+      allow_failure: true
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
@@ -33,8 +31,6 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: $RUN_E2E_TEST == "true"
-      when: manual
     - when: never
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
@@ -44,7 +40,6 @@ e2e:
     E2E_KEY_PAIR_NAME: ci.helm-charts
     KUBERNETES_MEMORY_REQUEST: 12Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
-    RUN_E2E_TEST: "true"
   parallel:
     matrix:
       - E2E_BUILD_TAGS:
