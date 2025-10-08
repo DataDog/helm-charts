@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.3
+
+* Add tpl to `additional-env-entries` and `additional-env-dict-entries`.
+
 ## 3.136.2
 
 * Add deprecation notice for `datadog.processAgent.runInCoreAgent`

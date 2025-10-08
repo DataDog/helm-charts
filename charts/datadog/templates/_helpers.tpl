@@ -906,14 +906,15 @@ false
 Returns env vars correctly quoted and valueFrom respected
 */}}
 {{- define "additional-env-entries" -}}
-{{- if . -}}
-{{- range . }}
+{{- $context := .context}}
+{{- if .envs -}}
+{{- range .envs }}
 - name: {{ .name }}
 {{- if .value }}
-  value: {{ .value | quote }}
+  value: {{ tpl .value $context | quote }}
 {{- else }}
   valueFrom:
-{{ toYaml .valueFrom | indent 4 }}
+{{ tpl (toYaml .valueFrom) $context | indent 4 }}
 {{- end }}
 {{- end -}}
 {{- end -}}
@@ -923,12 +924,13 @@ Returns env vars correctly quoted and valueFrom respected
 Returns env vars correctly quoted and valueFrom respected, defined in a dict
 */}}
 {{- define "additional-env-dict-entries" -}}
-{{- range $key, $value := . }}
+{{- $context := .context}}
+{{- range $key, $value := .envs }}
 - name: {{ $key }}
 {{- if kindIs "map" $value }}
-{{ toYaml $value | indent 2 }}
+{{ tpl (toYaml $value) $context | indent 2 }}
 {{- else }}
-  value: {{ $value | quote }}
+  value: {{ tpl $value $context | quote }}
 {{- end }}
 {{- end }}
 {{- end -}}
