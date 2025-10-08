@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.3
+
+* Fix indentations in DDOT Gateway templates.
+
 ## 3.136.2
 
 * Add deprecation notice for `datadog.processAgent.runInCoreAgent`
