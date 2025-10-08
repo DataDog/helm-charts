@@ -2888,9 +2888,6 @@ otelAgentGateway:
       # otelAgentGateway.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
       securityContext: {}
 
-      # otelAgentGateway.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
-      ports: []
-
       # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO

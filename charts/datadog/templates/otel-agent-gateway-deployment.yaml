@@ -101,7 +101,7 @@ spec:
         imagePullPolicy: {{ .Values.otelAgentGateway.image.pullPolicy }}
         {{- if .Values.otelAgentGateway.lifecycle }}
         lifecycle:
-      {{ toYaml .Values.otelAgentGateway.lifecycle | indent 10 }}
+{{ toYaml .Values.otelAgentGateway.lifecycle | indent 10 }}
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
         command:
@@ -139,9 +139,14 @@ spec:
           - "--feature-gates={{ .Values.otelAgentGateway.featureGates }}"
           {{- end }}
         {{- end -}}
-      {{ include "generate-security-context" (dict "securityContext" .Values.otelAgentGateway.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+        {{- if .Values.otelAgentGateway.containers.otelAgent.securityContext }}
+        securityContext:
+{{ toYaml .Values.otelAgentGateway.containers.otelAgent.securityContext | indent 10 }}
+        {{- else }}
+{{ include "generate-security-context" (dict "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 8 }}
+        {{- end }}
         resources:
-      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.resources | indent 10 }}
+{{ toYaml .Values.otelAgentGateway.containers.otelAgent.resources | indent 10 }}
         ports:
           {{- range .Values.otelAgentGateway.ports }}
             - containerPort: {{ .containerPort }}
@@ -151,12 +156,9 @@ spec:
               protocol: {{ .protocol | default "TCP" }}
               name: {{ .name }}
           {{- end }}
-      {{- if .Values.otelAgentGateway.containers.otelAgent.ports }}
-      {{ toYaml .Values.otelAgentGateway.containers.otelAgent.ports | indent 10 }}
-      {{- end }}
       {{- if .Values.otelAgentGateway.containers.otelAgent.envFrom }}
         envFrom:
-      {{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 10 }}
+{{ .Values.otelAgentGateway.containers.otelAgent.envFrom | toYaml | indent 10 }}
       {{- end }}
         env:
           # It is fine for Gateway Deployment to not have an API key, e.g. in multi-layer Gateway setup.
@@ -196,8 +198,8 @@ spec:
             value: "0"
           - name: DD_LOG_LEVEL
             value: {{ .Values.otelAgentGateway.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
-          {{- include "additional-env-entries" .Values.otelAgentGateway.containers.otelAgent.env | indent 10 }}
-          {{- include "additional-env-dict-entries" .Values.otelAgentGateway.containers.otelAgent.envDict | indent 10 }}
+{{- include "additional-env-entries" .Values.otelAgentGateway.containers.otelAgent.env | indent 10 }}
+{{- include "additional-env-dict-entries" .Values.otelAgentGateway.containers.otelAgent.envDict | indent 10 }}
         volumeMounts:
           - name: otelgatewayconfig
             mountPath: {{ template "datadog.otelconfPath" . }}
@@ -218,7 +220,7 @@ spec:
             readOnly: true
           {{- end }}
       {{- if .Values.otelAgentGateway.volumeMounts }}
-      {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
+{{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
       {{- end }}
       volumes:
       - name: varlog
@@ -249,7 +251,7 @@ spec:
               path: otel-gateway-config.yaml
           {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
-{{ toYaml .Values.otelAgentGateway.volumes | indent 8 }}
+{{ toYaml .Values.otelAgentGateway.volumes | indent 6 }}
 {{- end }}
       {{- if .Values.otelAgentGateway.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.otelAgentGateway.terminationGracePeriodSeconds }}

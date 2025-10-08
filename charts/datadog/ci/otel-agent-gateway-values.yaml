@@ -37,10 +37,34 @@ datadog:
             exporters: [otlp]
 otelAgentGateway:
   enabled: true
+  deploymentAnnotations:
+    key1: "value1"
   ports:
     - containerPort: "4317"
       hostPort: "4317"
       name: "otel-grpc"
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
+  containers:
+    otelAgent:
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "2"
+          memory: "256Mi"
+      envFrom:
+        - secretRef:
+            name: db-credentials
+      securityContext: 
+        runAsUser: 3000
+      env:
+        - name: OTEL_SERVICE_NAME
+          value: "my-svc"
+      envDict: {ENV1: "ENV_VAL1"}
   config: |
     receivers:
       otlp:
@@ -64,3 +88,27 @@ otelAgentGateway:
           exporters: [datadog]
   featureGates: "-datadog.EnableOperationAndResourceNameV2"
   replicas: 1
+  revisionHistoryLimit: 1
+  podAnnotations:
+    key2: "value2"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podLabels:
+    label1: value1
+  additionalLabels:
+    label2: value2
+  volumeMounts:
+    - name: logscustompath
+      mountPath: /var/log/custom
+      readOnly: true
+  volumes:
+    - hostPath:
+        path: /var/log/custom
+      name: logscustompath
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: ScheduleAnyway
