@@ -59,7 +59,7 @@ otelAgentGateway:
       envFrom:
         - secretRef:
             name: db-credentials
-      securityContext: 
+      securityContext:
         runAsUser: 3000
       env:
         - name: OTEL_SERVICE_NAME
