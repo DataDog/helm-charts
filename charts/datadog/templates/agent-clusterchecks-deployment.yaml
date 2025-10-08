@@ -43,6 +43,9 @@ spec:
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
         {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
+        {{- end }}
       {{- if .Values.clusterChecksRunner.podAnnotations }}
 {{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
       {{- end }}

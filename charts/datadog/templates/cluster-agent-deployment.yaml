@@ -64,6 +64,9 @@ spec:
         {{- if .Values.clusterAgent.confd }}
         checksum/confd-config: {{ tpl (toYaml .Values.clusterAgent.confd) . | sha256sum }}
         {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
+        {{- end }}
       {{- if .Values.clusterAgent.podAnnotations }}
 {{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
       {{- end }}

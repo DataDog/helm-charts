@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.136.3
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
 ## 3.136.2
 
 * Add deprecation notice for `datadog.processAgent.runInCoreAgent`

@@ -189,6 +189,8 @@ kind: Role
 metadata:
   name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
   namespace: {{ $role.namespace }}
+  annotations:
+    checksum/secret-backend-roles: {{ tpl (toYaml $.Values.datadog.secretBackend.roles) . | sha256sum }}
   labels:
 {{ include "datadog.labels" $ | indent 4 }}
 rules:
@@ -207,6 +209,8 @@ kind: RoleBinding
 metadata:
   name: {{ template "datadog.fullname" $ }}-read-secrets-{{ $role.namespace }}
   namespace: {{ $role.namespace }}
+  annotations:
+    checksum/secret-backend-roles: {{ tpl (toYaml $.Values.datadog.secretBackend.roles) . | sha256sum }}
   labels:
 {{ include "datadog.labels" $ | indent 4 }}
 subjects:
