@@ -56,9 +56,6 @@ otelAgentGateway:
         limits:
           cpu: "2"
           memory: "256Mi"
-      envFrom:
-        - secretRef:
-            name: db-credentials
       securityContext:
         runAsUser: 3000
       env:
