@@ -5,10 +5,11 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"github.com/DataDog/helm-charts/test/common"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/DataDog/helm-charts/test/common"
 
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
@@ -84,5 +85,5 @@ func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
 		}
 		assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
 		assert.Equal(v.T(), corev1.PodPhase("Running"), clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
-	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
+	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out ")
 }
