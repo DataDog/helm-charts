@@ -75,6 +75,12 @@
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.otelAgentGateway.enabled }}
+    - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
+      # Exclude infra attribute or prometheus in Daemonset in Gateway setup.
+      # Users must explicitly add infra attribute and prometheus if they need in Gateway, to avoid potential duplications
+      value: "health_check,zpages,pprof,ddflare"
+    {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.otelAgent.logLevel | default .Values.datadog.logLevel | quote }}
