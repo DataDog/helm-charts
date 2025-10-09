@@ -1887,6 +1887,7 @@ agents:
       - AUDIT_CONTROL
       - AUDIT_READ
       - DAC_READ_SEARCH
+      - MKNOD
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
