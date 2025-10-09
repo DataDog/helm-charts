@@ -2,8 +2,6 @@ targetSystem: "linux"
 fullnameOverride: "gw-only"
 agents:
   enabled: false
-  image:
-    tagSuffix: full
   kubelet:
     tlsVerify: false
 clusterAgent:
