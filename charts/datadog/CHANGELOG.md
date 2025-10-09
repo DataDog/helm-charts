@@ -1,10 +1,10 @@
 # Datadog changelog
 
-# 3.136.3
+## 3.136.3
 
 * Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
 
-## 3.136.3
+## 3.136.2
 
 * Add deprecation notice for `datadog.processAgent.runInCoreAgent`
 
