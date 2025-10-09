@@ -159,6 +159,23 @@ Return true if k8sattributes RBAC rules should be added to the OTel Agent Cluste
 {{- $return }}
 {{- end -}}
 
+
+{{/*
+Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole in Gateway
+*/}}
+{{- define "should-add-otel-agent-gateway-k8sattributes-rules" -}}
+{{- $return := false }}
+{{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
+{{- range $key, $val := $config.processors }}
+  {{- if hasPrefix "k8sattributes" $key }}
+    {{- if or (empty $val) (empty $val.passthrough) }}
+      {{- $return = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
 {{/*
 Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container
 */}}
@@ -172,6 +189,21 @@ Return true if conatiner and pod logs volumes should be mounted in the OTel Agen
 {{- end }}
 {{- $return }}
 {{- end -}}
+
+{{/*
+Return true if container and pod logs volumes should be mounted in the OTel Agent container in Gateway
+*/}}
+{{- define "should-mount-logs-for-otel-agent-gateway" -}}
+{{- $return := false }}
+{{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
+{{- range $key, $val := $config.receivers }}
+  {{- if hasPrefix "filelog" $key }}
+    {{- $return = true }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
 
 {{/*
 Return secret name to be used based on provided values.
@@ -725,6 +757,10 @@ datadog-agent-fips-config
 
 {{- define "agents-install-otel-configmap-name" -}}
 {{ template "datadog.fullname" . }}-otel-config
+{{- end -}}
+
+{{- define "agents-install-otel-gateway-configmap-name" -}}
+{{ template "datadog.fullname" . }}-otel-gateway-config
 {{- end -}}
 
 {{/*

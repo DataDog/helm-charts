@@ -1,0 +1,75 @@
+targetSystem: "linux"
+fullnameOverride: "my-gw"
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  env:
+    - name: DD_HOSTNAME
+      value: ci-test-host
+  otelCollector:
+    enabled: true
+    # RBAC is required for loadbalancing exporter k8s resolver to list endpoints
+    rbac:
+      create: true
+      rules:
+        - apiGroups: [""]
+          resources: ["endpoints"]
+          verbs: ["get", "watch", "list"]
+    config: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:4317"
+      exporters:
+        loadbalancing:
+          routing_key: "traceID"
+          protocol:
+            otlp:
+              tls:
+                insecure: true
+          resolver:
+            k8s:
+              service: my-gw-otel-agent-gateway
+              ports:
+                - 4317
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [loadbalancing]
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    processors:
+      tail_sampling:
+        decision_wait: 10s
+        policies: [
+            {
+              name: sample_flag,
+              type: boolean_attribute,
+              boolean_attribute: { key: sampled, value: true },
+            }
+          ]
+    exporters:
+      debug:
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [tail_sampling]
+          exporters: [datadog, debug]
+  replicas: 3

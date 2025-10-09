@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 3.135.5
+## 3.137.2
 
 * [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
+## 3.137.1
+
+* Fix indentations in DDOT Gateway templates.
+
+## 3.137.0
+
+* Upgrade default Agent version to `7.71.1`.
+
+## 3.136.2
+
+* Add deprecation notice for `datadog.processAgent.runInCoreAgent`
+
+## 3.136.1
+
+* Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.
+
+## 3.136.0
+
+* Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
 
 ## 3.135.4
 
