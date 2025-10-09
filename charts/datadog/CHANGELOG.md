@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.137.1
+
+* Fix indentations in DDOT Gateway templates.
+
 ## 3.137.0
 
 * Upgrade default Agent version to `7.71.1`.
