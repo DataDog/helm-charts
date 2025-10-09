@@ -53,8 +53,6 @@ otelAgentGateway:
         limits:
           cpu: "2"
           memory: "256Mi"
-      securityContext:
-        runAsUser: 3000
       env:
         - name: OTEL_SERVICE_NAME
           value: "my-svc"
