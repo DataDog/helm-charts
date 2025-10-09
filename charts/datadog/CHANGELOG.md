@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.137.2
+
+* [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
 ## 3.137.1
 
 * Fix indentations in DDOT Gateway templates.
