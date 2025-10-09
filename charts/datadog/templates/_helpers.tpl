@@ -976,7 +976,7 @@ securityContext:
     {{- $securityContext = merge $capabilities $securityContext -}}
   {{- end -}}
 securityContext:
-{{ toYamlPretty $securityContext | indent 2 }}
+{{ toYaml $securityContext | indent 2 }}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
