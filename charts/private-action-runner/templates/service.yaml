@@ -3,10 +3,14 @@ kind: Service
 metadata:
   name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   selector:
       {{- include "chart.selectorLabels" . | nindent 6 }}
   ports:
     - name: http
-      port: 9016
-      targetPort: 9016
+      port: {{ $.Values.runner.config.port | default 9016 }}
+      targetPort: {{ $.Values.runner.config.port | default 9016 }}

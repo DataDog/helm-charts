@@ -2818,6 +2818,7 @@ spec:
                             If no other checks are running, the Process Agent container will not initialize.
                             (Requires Agent 7.60.0+)
                             Default: 'true'
+                            Deprecated: Functionality now handled automatically. Use env var `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` to override.
                           type: boolean
                         secretBackend:
                           description: |-

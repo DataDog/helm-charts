@@ -1,0 +1,15 @@
+---
+issuer: https://token.actions.githubusercontent.com
+
+subject: repo:DataDog/helm-charts:ref:refs/heads/main
+
+claim_pattern:
+  event_name: (workflow_dispatch|schedule)
+  ref: refs/heads/main
+  ref_protected: "true"
+  job_workflow_ref: DataDog/helm-charts/\.github/workflows/stale\.yaml@refs/heads/main
+
+permissions:
+  actions: write
+  issues: write
+  pull_requests: write
