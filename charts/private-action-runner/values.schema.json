@@ -413,6 +413,17 @@
       "required": ["config"],
       "additionalProperties": false
     },
+    "service": {
+      "type": "object",
+      "description": "Service configuration for the Datadog Private Action Runner",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the service"
+        }
+      },
+      "additionalProperties": false
+    },
     "global": {
       "type": "object",
       "additionalProperties": true

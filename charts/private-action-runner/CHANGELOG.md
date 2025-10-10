@@ -1,5 +1,19 @@
 # Datadog changelog
 
+## 1.14.0
+
+* Make runner http port configurable
+
+* Ability to annotate the kube service created for the runner
+
+## 1.13.0
+
+* Bump private runner version to 1.11.0
+
+## 1.12.0
+
+* Bump private runner version to 1.10.0
+
 ## 1.11.0
 
 * Bump private runner version to 1.9.0

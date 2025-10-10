@@ -851,7 +851,7 @@ spec:
               value: /var/lib/kubelet/pod-resources/kubelet.sock
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -956,7 +956,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -982,7 +982,7 @@ spec:
           command:
             - pwsh
             - -Command
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1024,7 +1024,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.69.3
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1141,6 +1141,14 @@ spec:
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
+            - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
               value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
@@ -1219,7 +1227,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.69.3
+          image: gcr.io/datadoghq/cluster-agent:7.71.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1292,7 +1300,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.69.3
+          image: gcr.io/datadoghq/cluster-agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

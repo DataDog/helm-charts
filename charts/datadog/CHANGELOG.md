@@ -1,8 +1,54 @@
 # Datadog changelog
 
-## 3.133.1
+## 3.137.2
 
-* Bump Datadog CSI Driver chart dependency version to allow installing datadog agent in gke autopilot with CSI driver activated.
+* [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
+## 3.137.1
+
+* Fix indentations in DDOT Gateway templates.
+
+## 3.137.0
+
+* Upgrade default Agent version to `7.71.1`.
+
+## 3.136.2
+
+* Add deprecation notice for `datadog.processAgent.runInCoreAgent`
+
+## 3.136.1
+
+* Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.
+
+## 3.136.0
+
+* Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
+
+## 3.135.4
+
+* Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
+
+## 3.135.3
+
+* Fix AppArmor profile for agent and system-probe containers on GKE.
+
+## 3.135.2
+
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
+## 3.135.1
+
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
+
+# 3.135.0
+
+* Upgrade default Agent version to `7.70.2`.
+
+# 3.134.0
+
+* Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners. Using solely `<component>.pdb.create` without specifying `minAvailable`/`maxUnavailable` will create the same PodDisruptionBudget as the previous option.
+
 
 ## 3.133.0
 

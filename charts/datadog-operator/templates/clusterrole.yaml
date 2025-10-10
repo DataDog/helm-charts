@@ -115,6 +115,14 @@ rules:
   - list
   - watch
 - apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - list
+  - watch
+  - patch
+- apiGroups:
   - authentication.k8s.io
   resources:
   - tokenreviews
@@ -255,6 +263,16 @@ rules:
   - watermarkpodautoscalers
   verbs:
   - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
   - list
   - watch
 - apiGroups:

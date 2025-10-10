@@ -344,6 +344,8 @@ datadog:
     # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+)
     # @default -- false
     useApiServer: false
+    # datadog.kubelet.fineGrainedAuthorization -- Enable fine-grained authentication for kubelet (requires: Kubernetes 1.32+)
+    fineGrainedAuthorization: false
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
@@ -385,7 +387,7 @@ datadog:
     socketPath: /var/run/datadog/dsd.socket
 
     # datadog.dogstatsd.hostSocketPath -- Host path to the DogStatsD socket
-    hostSocketPath: /var/run/datadog/
+    hostSocketPath: /var/run/datadog
 
     # datadog.dogstatsd.useHostPort -- Sets the hostPort to the same value of the container port
 
@@ -541,7 +543,7 @@ datadog:
     socketPath: /var/run/datadog/apm.socket
 
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
-    hostSocketPath: /var/run/datadog/
+    hostSocketPath: /var/run/datadog
 
     # Error Tracking backend
     errorTrackingStandalone:
@@ -641,9 +643,8 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
-  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
-  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
-  ## OTel collector related configuration
+
+  ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
     enabled: false
@@ -1199,6 +1200,9 @@ datadog:
   csi:
     # datadog.csi.enabled -- Enable datadog csi driver
     # Requires version 7.67 or later of the cluster agent
+    # Note:
+    #   - When set to true, the CSI driver subchart will be installed automatically.
+    #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
   ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
@@ -1239,7 +1243,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.69.3
+    tag: 7.71.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1655,7 +1659,18 @@ clusterAgent:
   datadog_cluster_yaml: {}
 
   # clusterAgent.createPodDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
+  # DEPRECATED. Use clusterAgent.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterAgent.pdb.create -- Enable pod disruption budget for Cluster Agent deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, minAvailable is set to 1 for cluster agent.
+    create: false
+    # clusterAgent.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption -- default to 1
+    minAvailable:
+    # clusterAgent.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
@@ -1783,7 +1798,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.69.3
+    tag: 7.71.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2377,7 +2392,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.69.3
+    tag: 7.71.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2402,7 +2417,18 @@ clusterChecksRunner:
     #   - name: "<REG_SECRET>"
 
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
+  # DEPRECATED. Use clusterChecksRunner.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterChecksRunner.pdb.create -- Enable pod disruption budget for Cluster Checks Runner deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, maxUnavailable is set to 1 for cluster checks runners.
+    create: false
+    # clusterChecksRunner.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption
+    minAvailable:
+    # clusterChecksRunner.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:
@@ -2678,3 +2704,209 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+## OTel collector related configuration for otel-agent in Gateway Deployment
+## Note this is different from the otel-agent in Daemonset (datadog.otelCollector)
+otelAgentGateway:
+  # otelAgentGateway.enabled -- Enable otel-agent Gateway
+  enabled: false
+  # otelAgentGateway.ports -- Ports that OTel Collector is listening on
+  ports:
+      # Default GRPC port of OTLP receiver
+    - containerPort: "4317"
+      name: otel-grpc
+      protocol: TCP
+      # Default HTTP port of OTLP receiver
+    - containerPort: "4318"
+      name: otel-http
+      protocol: TCP
+  # otelAgentGateway.config -- Gateway OTel Agent configuration
+  config: null
+  # otelAgentGateway.configMap -- Use an existing ConfigMap for Gateway OTel Agent configuration
+  configMap:
+    # otelAgentGateway.configMap.name -- Name of the existing ConfigMap that contains the Gateway OTel Agent configuration
+    name: null
+    # otelAgentGateway.configMap.items -- Items within the ConfigMap that contain Gateway OTel Agent configuration
+    items:
+    #   - key: otel-gateway-config.yaml
+    #     path: otel-gateway-config.yaml
+    #   - key: otel-gateway-config-two.yaml
+    #     path: otel-gateway-config-two.yaml
+    # otelAgentGateway.configMap.key -- Key within the ConfigMap that contains the Gateway OTel Agent configuration
+    key: otel-gateway-config.yaml
+  # otelAgentGateway.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+  featureGates: null
+
+  # otelAgentGateway.replicas -- Number of otel-agent instances in the Gateway Deployment
+  replicas: 2
+
+  # otelAgentGateway.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
+  revisionHistoryLimit: 10
+
+  # otelAgentGateway.deploymentAnnotations -- Annotations to add to the otel-agent Gateway Deployment
+  deploymentAnnotations: {}
+  #   key: "value"
+
+  # otelAgentGateway.podAnnotations -- Annotations to add to the Gateway Deployment's Pods
+  podAnnotations: {}
+  #   key: "value"
+
+  # otelAgentGateway.tolerations -- Allow the Gateway Deployment to schedule on tainted nodes (requires Kubernetes >= 1.6)
+  tolerations: []
+
+  # otelAgentGateway.useHostNetwork -- Bind ports on the hostNetwork
+
+  ## Useful for CNI networking where hostPort might
+  ## not be supported. The ports need to be available on all hosts. It can be
+  ## used for custom metrics instead of a service endpoint.
+  ##
+  ## WARNING: Make sure that hosts using this are properly firewalled otherwise
+  ## metrics and traces are accepted from any host able to connect to this host.
+  #
+  useHostNetwork: false
+
+  # otelAgentGateway.dnsConfig -- Specify dns configuration options for otel agent containers e.g ndots
+
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+  dnsConfig: {}
+  #  options:
+  #  - name: ndots
+  #    value: "1"
+
+  # otelAgentGateway.volumes -- Specify additional volumes to mount in the otel-agent container
+  volumes: []
+  #   - hostPath:
+  #       path: <HOST_PATH>
+  #     name: <VOLUME_NAME>
+
+  # otelAgentGateway.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+  volumeMounts: []
+  #   - name: <VOLUME_NAME>
+  #     mountPath: <CONTAINER_PATH>
+  #     readOnly: true
+
+  # otelAgentGateway.nodeSelector -- Allow the Gateway Deployment to schedule on selected nodes
+
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  # otelAgentGateway.affinity -- Allow the Gateway Deployment to schedule using affinity rules
+
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  # otelAgentGateway.strategy -- Allow the otel-agent Gateway Deployment to perform a rolling update on helm update
+
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  # otelAgentGateway.priorityClassCreate -- Creates a priorityClass for the otel-agent Gateway Deployment pods.
+  priorityClassCreate: false
+
+  # otelAgentGateway.priorityClassName -- Sets PriorityClassName if defined
+  priorityClassName: null
+
+  # otelAgentGateway.priorityPreemptionPolicyValue -- Set to "Never" to change the PriorityClass to non-preempting
+  priorityPreemptionPolicyValue: PreemptLowerPriority
+
+  # otelAgentGateway.priorityClassValue -- Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods.
+
+  ## The PriorityClass uses PreemptLowerPriority.
+  priorityClassValue: 1000000000
+
+  # otelAgentGateway.podLabels -- Sets podLabels if defined
+
+  ## Note: These labels are also used as label selectors so they are immutable.
+  podLabels: {}
+
+  # otelAgentGateway.additionalLabels -- Adds labels to the Agent Gateway Deployment and pods
+  additionalLabels: {}
+
+  # otelAgentGateway.shareProcessNamespace -- Set the process namespace sharing on the otel-agent
+  shareProcessNamespace: false
+
+  # otelAgentGateway.lifecycle -- Configure the lifecycle of the otel-agent
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+
+  # otelAgentGateway.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the otel-agent
+  terminationGracePeriodSeconds:  # 70
+
+  # otelAgentGateway.topologySpreadConstraints -- Allow the otel-agent Gateway Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
+
+  ## Configuration for the service for the OTel Agent Gateway
+  service:
+    # otelAgentGateway.service.type -- Set type of otel-agent-gateway service
+    type: ClusterIP
+
+  ## Define the Datadog otel-agent image to work with
+  image:
+    # otelAgentGateway.image.pullPolicy -- otel Agent image pullPolicy
+    pullPolicy: IfNotPresent
+
+    # otelAgentGateway.image.pullSecrets -- otel Agent repository pullSecret (ex: specify docker registry credentials)
+
+    ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+    pullSecrets: []
+    #   - name: "<REG_SECRET>"
+
+  containers:
+    otelAgent:
+      # otelAgentGateway.containers.otelAgent.env -- Additional environment variables for the otel-agent container
+      env: []
+
+      # otelAgentGateway.containers.otelAgent.envFrom -- Set environment variables specific to otel-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # otelAgentGateway.containers.otelAgent.envDict -- Set environment variables specific to otel-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # otelAgentGateway.containers.otelAgent.resources -- Resource requests and limits for the otel-agent container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # otelAgentGateway.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
+      securityContext: {}
+
+      # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # If not set, fall back to the value of datadog.logLevel.
+      logLevel:  # INFO
+
+  ## Provide OTel Collector RBAC configuration in Gateway
+  rbac:
+    # otelAgentGateway.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+    # and create required ClusterRole to access Kubernetes API
+    create: true
+
+    # otelAgentGateway.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+    rules: []
+    #   - apiGroups: [""]
+    #     resources: ["pods", "nodes"]
+    #     verbs: ["get", "list", "watch"]
+
+  ## Provide OTel Collector logs configuration
+  logs:
+    # otelAgentGateway.logs.enabled -- Enable logs support in the OTel Collector.
+    # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+    # and pods logs.
+    enabled: false

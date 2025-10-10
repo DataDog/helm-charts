@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.11.0](https://img.shields.io/badge/Version-1.11.0-informational?style=flat-square) ![AppVersion: v1.9.0](https://img.shields.io/badge/AppVersion-v1.9.0-informational?style=flat-square)
+![Version: 1.14.0](https://img.shields.io/badge/Version-1.14.0-informational?style=flat-square) ![AppVersion: v1.11.0](https://img.shields.io/badge/AppVersion-v1.11.0-informational?style=flat-square)
 
 ## Overview
 
@@ -250,7 +250,7 @@ If actions requiring credentials fail:
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.9.0"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.11.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
 | runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
@@ -302,3 +302,5 @@ If actions requiring credentials fail:
 | runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
 | runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
+| service | object | `{"annotations":{}}` | Service configuration |
+| service.annotations | object | `{}` | Annotations to add to the service |

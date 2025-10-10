@@ -90,11 +90,9 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false # Need RW for UDS DSD socket
-    {{- end }}
+      readOnly: true
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW to write to tmp directory

@@ -229,6 +229,17 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `<component>.createPodDisruptionBudget` has been deprecated, please use `<component>.pdb.create` instead.
+You can further configure the PodDisruptionBudget using `<component>.pdb.minAvailable` or `<component>.pdb.maxUnavailable`.
+
+{{- end }}
+
 {{- if .Values.datadog.apm.enabled }}
 
 #################################################################
@@ -398,17 +409,17 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- if and .Values.datadog.dogstatsd.useSocketVolume (not .Values.datadog.csi.enabled)}}
 
-###################################################################################
-####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
-###################################################################################
+##############################################################################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot if Datadog CSI Driver is inactive. See datadog.csi.enabled   ####
+##############################################################################################################################################
 
 {{- end }}
 
 {{- if and .Values.datadog.apm.socketEnabled (not .Values.datadog.csi.enabled) }}
 
-##############################################################################
-####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
-##############################################################################
+########################################################################################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot if Datadog CSI Driver is inactive. See datadog.csi.enabled   ####
+########################################################################################################################################
 
 {{- end }}
 
@@ -601,7 +612,7 @@ However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `da
 Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
 However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
 
-It is not possible to mount two different host paths at the same mount path. 
+It is not possible to mount two different host paths at the same mount path.
 
 To resolve this:
 - use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
@@ -726,10 +737,21 @@ https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
 {{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
-################################################################                                                             
-###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
+################################################################
+###    WARNING: Admission Controller CSI Misconfiguration    ###
 ################################################################
 Enabling csi via `datadog.csi.enabled` is required to benefit from `csi` admission controller config mode.
 
 Otherwise, `socket` config mode will be used.
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (not (.Values.datadog.processAgent.runInCoreAgent)) }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+You have set `datadog.processAgent.runInCoreAgent` to `false`.
+Support for this configuration will be deprecated in a future version.
+This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
+This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
+
 {{- end }}

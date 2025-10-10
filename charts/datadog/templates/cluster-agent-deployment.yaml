@@ -218,6 +218,22 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.validation.enabled | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
             value: {{ .Values.clusterAgent.admissionController.mutation.enabled | quote }}
+          {{- if .Values.datadog.apm.hostSocketPath }}
+          - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+            value: {{ .Values.datadog.apm.hostSocketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.dogstatsd.hostSocketPath }}
+          - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+            value: {{ .Values.datadog.dogstatsd.hostSocketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.dogstatsd.socketPath }}
+          - name: DD_DOGSTATSD_SOCKET
+            value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.socketPath }}
+          - name: DD_APM_RECEIVER_SOCKET
+            value: {{ .Values.datadog.apm.socketPath | quote }}
+          {{- end }}
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
             value: {{ .Values.clusterAgent.admissionController.webhookName | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
