@@ -1,6 +1,12 @@
 package yamlmapper
 
-import "strings"
+import (
+	"log"
+	"reflect"
+	"strings"
+
+	"helm.sh/helm/v3/pkg/chartutil"
+)
 
 var CustomMapFuncs = map[string]customMapFunc{
 	"mapApiSecretKey":        mapApiSecretKey,
@@ -117,13 +123,35 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 
 	envMap, ok := args[0].(map[string]interface{})
 	if !ok {
-		//log.Printf("expected map[string]interface{} for env var map definition, got %T", args[0])
+		log.Printf("expected map[string]interface{} for env var map definition, got %T", args[0])
 		return
 	}
-
+	newEnvName := envMap["name"].(string)
 	newEnvVar := map[string]interface{}{
-		"name":  envMap["name"],
+		"name":  newEnvName,
 		"value": pathVal,
+	}
+
+	// Handle valueFrom
+	pathValType := reflect.TypeOf(pathVal).Kind().String()
+	if pathValType == "map" {
+		var valFrom interface{}
+		var ok bool
+		_, valOk := pathVal.(chartutil.Values)
+		_, mapOk := pathVal.(map[string]interface{})
+
+		if valOk {
+			valFrom, ok = pathVal.(chartutil.Values)["valueFrom"]
+		} else if mapOk {
+			valFrom, ok = pathVal.(map[string]interface{})["valueFrom"]
+		}
+
+		if ok {
+			newEnvVar = map[string]interface{}{
+				"name":      envMap["name"],
+				"valueFrom": valFrom,
+			}
+		}
 	}
 
 	// Create the interim[newPath] if it doesn't exist yet
@@ -132,13 +160,17 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 		return
 	}
 
-	existing, ok := interim[newPath].([]interface{})
+	existingEnvs, ok := interim[newPath].([]interface{})
 	if !ok {
-		//log.Printf("Error: expected []interface{} at path %s, got %T", newPath, interim[newPath])
+		log.Printf("Error: expected []interface{} at path %s, got %T", newPath, interim[newPath])
 		return
 	}
 
-	interim[newPath] = append(existing, newEnvVar)
+	envExists := hasDuplicateEnv(existingEnvs, newEnvName)
+
+	if !envExists {
+		interim[newPath] = append(existingEnvs, newEnvVar)
+	}
 }
 
 // mapMergeEnvs merges lists of environment variables at the specified path.
@@ -150,54 +182,62 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 func mapMergeEnvs(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	newEnvs, ok := pathVal.([]interface{})
 	if !ok {
-		//log.Printf("Warning: expected []interface{} for pathVal, got %T", pathVal)
+		log.Printf("Warning: expected []interface{} for pathVal, got %T", pathVal)
 		return
 	}
 
-	// If the interim[newPath] doesn't exist yet, just set the new environment variables
-	existingEnvs, exists := interim[newPath]
-	if !exists {
-		interim[newPath] = newEnvs
-		return
+	//Initialize mergedEnvs with existing environments or an empty slice
+	var mergedEnvs []interface{}
+	if existingEnvs, exists := interim[newPath]; exists {
+		if existingEnvsSlice, ok := existingEnvs.([]interface{}); ok {
+			// Make a copy of existing environments
+			mergedEnvs = make([]interface{}, len(existingEnvsSlice))
+			copy(mergedEnvs, existingEnvsSlice)
+		}
 	}
-
-	existingEnvsSlice, ok := existingEnvs.([]interface{})
-	if !ok {
-		//log.Printf("Warning: expected []interface{} at path %s, got %T", newPath, existingEnvs)
-		return
-	}
-
-	// Merge the slices, avoiding duplicates
-	mergedEnvs := make([]interface{}, len(existingEnvsSlice))
-	copy(mergedEnvs, existingEnvsSlice)
 
 	// Add new envs that don't already exist
 	for _, newEnv := range newEnvs {
 		newEnvMap, ok := newEnv.(map[string]interface{})
 		if !ok {
-			//log.Printf("Warning: expected map[string]interface{} in newEnvs, got %T", newEnv)
+			log.Printf("Warning: expected map[string]interface{} in newEnvs, got %T", newEnv)
 			continue
 		}
 
-		exists := false
-		newName, hasName := newEnvMap["name"].(string)
-		if !hasName {
+		newName, ok := newEnvMap["name"].(string)
+		if !ok || newName == "" {
+			log.Printf("Warning: missing or invalid 'name' field in environment variable: %v", newEnvMap)
 			continue
 		}
 
-		for _, existingEnv := range mergedEnvs {
-			if existingMap, ok := existingEnv.(map[string]interface{}); ok {
-				if existingName, ok := existingMap["name"].(string); ok && existingName == newName {
-					exists = true
-					break
+		if !hasDuplicateEnv(mergedEnvs, newName) {
+			mergedEnvs = append(mergedEnvs, newEnv)
+		} else {
+			// Override existing env with new env
+			for i, existingEnv := range mergedEnvs {
+				if existingMap, ok := existingEnv.(map[string]interface{}); ok {
+					if existingName, ok := existingMap["name"].(string); ok && existingName == newName {
+						mergedEnvs[i] = newEnv
+					}
 				}
 			}
 		}
-
-		if !exists {
-			mergedEnvs = append(mergedEnvs, newEnv)
-		}
 	}
 
-	interim[newPath] = mergedEnvs
+	if len(mergedEnvs) > 0 {
+		interim[newPath] = mergedEnvs
+	}
+}
+
+func hasDuplicateEnv(existingEnvs []interface{}, newEnvName interface{}) bool {
+	envExists := false
+	for _, existingEnv := range existingEnvs {
+		if existingMap, ok := existingEnv.(map[string]interface{}); ok {
+			if existingName, ok := existingMap["name"].(string); ok && existingName == newEnvName {
+				envExists = true
+				break
+			}
+		}
+	}
+	return envExists
 }

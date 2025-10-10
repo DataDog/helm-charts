@@ -86,7 +86,7 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 	}
 
 	// Create an interim map that that has period-delimited destination key as the key, and the value from the source.yaml for the value
-	var pathVal interface{}
+	//var pathVal interface{}
 	var interim = map[string]interface{}{}
 
 	if prefixFile == "" {
@@ -137,23 +137,31 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 	}
 	// Map values.yaml => DDA
 	for sourceKey := range mappingValues {
-		pathVal, _ = sourceValues.PathValue(sourceKey)
+		pathVal, _ := sourceValues.PathValue(sourceKey)
 		mapVal := sourceValues[sourceKey]
+		tableVal, tableValErr := sourceValues.Table(sourceKey)
 
-		// Source val might be a value at the end of path or a map
+		// Source val might be a value at the end of path, a map, or a yaml subsection
 		if pathVal == nil {
-			if mapVal == nil {
-				continue
-			}
-			if m, ok := mapVal.(map[string]interface{}); ok && m != nil {
-				pathVal = mapVal
+			if mapVal != nil {
+				if m, ok := mapVal.(map[string]interface{}); ok && m != nil {
+					pathVal = mapVal
+				}
+			} else {
+				if len(tableVal) == 1 && tableValErr == nil {
+					pathVal = tableVal
+				}
+				if tableVal == nil && tableValErr != nil || len(tableVal) == 0 || len(tableVal) > 1 {
+					continue
+				}
 			}
 		}
 
 		destKey, ok := mappingValues[sourceKey]
 		rt := reflect.TypeOf(destKey)
 		if !ok || destKey == "" || destKey == nil {
-			//log.Printf("Warning: key not found: %s\n", sourceKey)
+			log.Printf("Warning: DDA destination key not found: %s\n", sourceKey)
+			continue
 			// Continue through loop
 		} else if rt.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys

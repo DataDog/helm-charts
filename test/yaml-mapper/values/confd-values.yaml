@@ -5,6 +5,7 @@ datadog:
   appKeyExistingSecret: datadog-secret
   kubelet:
     tlsVerify: false
+  clusterName: test-confd
   confd:
    http_check.yaml: |-
      init_config:

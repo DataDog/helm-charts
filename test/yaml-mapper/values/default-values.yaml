@@ -3,6 +3,7 @@
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
+  clusterName: test-default
   kubelet:
     tlsVerify: false
 agent:

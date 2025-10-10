@@ -3,6 +3,7 @@ datadog:
   apiKey: "testapikey"
   appKey: "testappkey"
   expvarPort: "6000"
+  clusterName: test
 
   logLevel: "debug"
 
@@ -58,6 +59,13 @@ datadog:
       - containerPort: 4318
         name: otel-http
         protocol: TCP
+
+  confd:
+    http_check.yaml: |-
+      init_config:
+      instances:
+        - name: "test"
+          url: "https://google.com"
 
 agents:
   containers:

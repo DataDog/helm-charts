@@ -514,6 +514,85 @@ func TestCustomMapFuncs(t *testing.T) {
 			},
 		},
 		{
+			name:     "mapAppendEnvVar_valueFrom",
+			funcName: "mapAppendEnvVar",
+			interim:  map[string]interface{}{},
+			newPath:  "spec.override.nodeAgent.env",
+			pathVal: map[string]interface{}{
+				"valueFrom": map[string]interface{}{
+					"fieldRef": map[string]interface{}{
+						"fieldPath": "status.hostIP",
+					},
+				},
+			},
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "DD_KUBERNETES_KUBELET_HOST",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.env": []interface{}{
+					map[string]interface{}{
+						"name": "DD_KUBERNETES_KUBELET_HOST",
+						"valueFrom": map[string]interface{}{
+							"fieldRef": map[string]interface{}{
+								"fieldPath": "status.hostIP",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name:     "mapAppendEnvVar_valueFrom_existing_envVars",
+			funcName: "mapAppendEnvVar",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+					map[string]interface{}{
+						"name":  "EXISTING_VAR_2",
+						"value": "existing_value_2",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.env",
+			pathVal: map[string]interface{}{
+				"valueFrom": map[string]interface{}{
+					"fieldRef": map[string]interface{}{
+						"fieldPath": "status.hostIP",
+					},
+				},
+			},
+			mapFuncArgs: []interface{}{
+				map[string]interface{}{
+					"name": "DD_KUBERNETES_KUBELET_HOST",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+					map[string]interface{}{
+						"name":  "EXISTING_VAR_2",
+						"value": "existing_value_2",
+					},
+					map[string]interface{}{
+						"name": "DD_KUBERNETES_KUBELET_HOST",
+						"valueFrom": map[string]interface{}{
+							"fieldRef": map[string]interface{}{
+								"fieldPath": "status.hostIP",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name:     "mapMergeEnvs_add_new_envs",
 			funcName: "mapMergeEnvs",
 			interim:  map[string]interface{}{},
@@ -579,7 +658,7 @@ func TestCustomMapFuncs(t *testing.T) {
 			pathVal: []interface{}{
 				map[string]interface{}{
 					"name":  "EXISTING_VAR", // This should not be added again
-					"value": "new_value",
+					"value": "existing_value",
 				},
 				map[string]interface{}{
 					"name":  "NEW_VAR",
@@ -591,6 +670,41 @@ func TestCustomMapFuncs(t *testing.T) {
 					map[string]interface{}{
 						"name":  "EXISTING_VAR",
 						"value": "existing_value", // Keeps the original value
+					},
+					map[string]interface{}{
+						"name":  "NEW_VAR",
+						"value": "new_value",
+					},
+				},
+			},
+		},
+		{
+			name:     "mapMergeEnvs_override_duplicates",
+			funcName: "mapMergeEnvs",
+			interim: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "existing_value",
+					},
+				},
+			},
+			newPath: "spec.override.nodeAgent.containers.agent.env",
+			pathVal: []interface{}{
+				map[string]interface{}{
+					"name":  "EXISTING_VAR", // This should override existing value
+					"value": "new_value",
+				},
+				map[string]interface{}{
+					"name":  "NEW_VAR",
+					"value": "new_value",
+				},
+			},
+			expectedMap: map[string]interface{}{
+				"spec.override.nodeAgent.containers.agent.env": []interface{}{
+					map[string]interface{}{
+						"name":  "EXISTING_VAR",
+						"value": "new_value", // New value overrides previous value
 					},
 					map[string]interface{}{
 						"name":  "NEW_VAR",

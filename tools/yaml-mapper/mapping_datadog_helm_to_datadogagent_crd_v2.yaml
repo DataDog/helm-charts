@@ -363,7 +363,7 @@ datadog.clusterChecks.shareProcessNamespace: "" # TODO: crd
 datadog.clusterName: spec.global.clusterName
 datadog.clusterTagger.collectKubernetesTags: "" # TODO: how to merge env vars?
 datadog.collectEvents: spec.features.eventCollection.collectKubernetesEvents
-datadog.confd: spec.override.nodeAgent.extraConfd
+datadog.confd: spec.override.nodeAgent.extraConfd.configDataMap
 datadog.containerExclude: ""
 datadog.containerExcludeLogs: ""
 datadog.containerExcludeMetrics: ""
@@ -426,8 +426,11 @@ datadog.kubeStateMetricsEnabled: ""
 datadog.kubeStateMetricsNetworkPolicy.create: ""
 datadog.kubelet.agentCAPath: spec.global.kubelet.agentCAPath
 datadog.kubelet.coreCheckEnabled: ""
-datadog.kubelet.host: spec.global.kubelet.host
-datadog.kubelet.host.valueFrom.fieldRef.fieldPath: ""
+datadog.kubelet.host:
+  newPath: spec.override.nodeAgent.env
+  mapFunc: mapAppendEnvVar
+  args:
+    - name: DD_KUBERNETES_KUBELET_HOST
 datadog.kubelet.hostCAPath: spec.global.kubelet.hostCAPath
 datadog.kubelet.podLogsPath: ""
 datadog.kubelet.podResourcesSocketDir: spec.global.kubelet.podResourcesSocketPath
@@ -457,8 +460,7 @@ datadog.networkPath.collector.pathtestMaxPerMinute: ""
 datadog.networkPath.collector.pathtestTTL: ""
 datadog.networkPath.collector.workers: ""
 datadog.networkPath.connectionsMonitoring.enabled: ""
-datadog.networkPolicy.cilium.dnsSelector: spec.global.networkPolicy.dnsSelectorEndpoints
-datadog.networkPolicy.cilium.dnsSelector.toEndpoints: ""
+datadog.networkPolicy.cilium.dnsSelector.toEndpoints: spec.global.networkPolicy.dnsSelectorEndpoints
 datadog.networkPolicy.create: spec.global.networkPolicy.create
 datadog.networkPolicy.flavor: spec.global.networkPolicy.flavor
 datadog.nodeLabelsAsTags: spec.global.nodeLabelsAsTags

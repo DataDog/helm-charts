@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -35,17 +34,40 @@ func MakeTable(path string, val interface{}, mapName map[string]interface{}) map
 	return mapName
 }
 
+// MergeMaps recursively merges two maps, with values from map2 taking precedence over map1.
+// It handles nil maps and type assertions safely.
 // Inspired by: https://stackoverflow.com/a/60420264
 func MergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	if map1 == nil {
+		map1 = make(map[string]interface{})
+	}
+	if map2 == nil {
+		return map1
+	}
+
 	for key, rightVal := range map2 {
-		if leftVal, found := map1[key]; found && reflect.TypeOf(leftVal).Kind().String() == "map" {
-			// Recurse on the found key
-			map1[key] = MergeMaps(leftVal.(map[string]interface{}), rightVal.(map[string]interface{}))
+		if rightVal == nil {
+			continue
+		}
+
+		leftVal, exists := map1[key]
+		if !exists {
+			// Key doesn't exist in map1, add it
+			map1[key] = rightVal
+			continue
+		}
+
+		// Both values are maps, merge them recursively
+		leftMap, leftIsMap := leftVal.(map[string]interface{})
+		rightMap, rightIsMap := rightVal.(map[string]interface{})
+
+		if leftIsMap && rightIsMap {
+			map1[key] = MergeMaps(leftMap, rightMap)
 		} else {
-			// Key is not in map1, add it
 			map1[key] = rightVal
 		}
 	}
+
 	return map1
 }
 
