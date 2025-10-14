@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.137.3
+
+* Mount `/var/run/nvidia-container-devices/all` on the agent container when GPU monitoring is enabled, support environments where `NVIDIA_VISIBLE_DEVICES` is not accepted by the NVIDIA container runtime.
+
 ## 3.137.2
 
 * [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
