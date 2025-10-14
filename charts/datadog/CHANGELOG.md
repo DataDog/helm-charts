@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.137.3
+
+* [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
+
 ## 3.137.2
 
 * [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
