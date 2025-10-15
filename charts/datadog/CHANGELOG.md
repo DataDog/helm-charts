@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.138.0
+## 3.137.4
 
 * [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
 
