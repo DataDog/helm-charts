@@ -1327,11 +1327,11 @@ spec:
             path: /etc/os-release
           name: os-release-file
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsdsocket
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
         - hostPath:
@@ -1428,9 +1428,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
             - name: DD_APM_RECEIVER_SOCKET

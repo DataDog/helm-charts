@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.138.0
+
+* [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
+
 ## 3.137.3
 
 * Mount `/var/run/nvidia-container-devices/all` on the agent container when GPU monitoring is enabled, support environments where `NVIDIA_VISIBLE_DEVICES` is not accepted by the NVIDIA container runtime.
