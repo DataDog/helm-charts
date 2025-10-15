@@ -1270,9 +1270,6 @@ spec:
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
-            - mountPath: /var/run/datadog
-              name: dsdsocket
-              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
