@@ -235,18 +235,6 @@ runner:
 helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 ```
 
-### Alternative: Using ConfigMaps
-
-You can also use ConfigMaps instead of Secrets for CA certificates:
-
-```yaml
-runner:
-  extraVolumes:
-    - name: ca-certificates
-      configMap:
-        name: custom-ca-certificates
-```
-
 ### Multiple CA Certificates
 
 To trust multiple CA certificates, add multiple volumes:
