@@ -136,7 +136,7 @@ runner:
   # see examples/values.yaml for examples on how to specify scripts
   # -- Optionally specify extra list of additional volumes to mount into the pod
   # This can be used for custom CA certificates, additional configuration files, etc.
-  extraVolumes: []
+  #
   # Example for custom CA certificate:
   # extraVolumes:
   # - name: custom-ca-cert
@@ -145,11 +145,13 @@ runner:
   #     items:
   #     - key: ca-bundle.crt
   #       path: ca-bundle.crt
+  extraVolumes: []
   # -- Optionally specify extra list of additional volumeMounts for the runner container
-  extraVolumeMounts: []
+  #
   # Example for custom CA certificate:
   # extraVolumeMounts:
   # - name: custom-ca-cert
   #   mountPath: /etc/ssl/certs/custom-ca.crt
   #   subPath: ca-bundle.crt
   #   readOnly: true
+  extraVolumeMounts: []

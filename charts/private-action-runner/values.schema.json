@@ -411,16 +411,36 @@
         },
         "extraVolumes": {
           "type": "array",
-          "description": "Optionally specify extra list of additional volumes to mount into the pod",
+          "description": "Optionally specify extra list of additional volumes to mount into the pod (follows Kubernetes Volume specification)",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the volume"
+              }
+            },
+            "required": ["name"],
+            "additionalProperties": true
           }
         },
         "extraVolumeMounts": {
           "type": "array",
-          "description": "Optionally specify extra list of additional volumeMounts for the runner container",
+          "description": "Optionally specify extra list of additional volumeMounts for the runner container (follows Kubernetes VolumeMount specification)",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the volume to mount"
+              },
+              "mountPath": {
+                "type": "string",
+                "description": "Path within the container at which the volume should be mounted"
+              }
+            },
+            "required": ["name", "mountPath"],
+            "additionalProperties": true
           }
         }
       },
