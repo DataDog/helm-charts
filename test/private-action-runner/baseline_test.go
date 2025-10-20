@@ -162,6 +162,21 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "service-annotations",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "Custom CA certificates",
+			command: common.HelmCommand{
+				ReleaseName: "custom-ca-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.extraVolumes":      `[{"name": "gitlab-ca-cert", "secret": {"secretName": "gitlab-ca-cert", "items": [{"key": "ca-bundle.crt", "path": "gitlab-ca.crt"}]}}]`,
+					"runner.extraVolumeMounts": `[{"name": "gitlab-ca-cert", "mountPath": "/etc/ssl/certs/gitlab-ca.crt", "subPath": "gitlab-ca.crt", "readOnly": true}]`,
+					"runner.env":               `[{"name": "GIT_SSL_CAINFO", "value": "/etc/ssl/certs/gitlab-ca.crt"}, {"name": "SSL_CERT_FILE", "value": "/etc/ssl/certs/gitlab-ca.crt"}]`,
+				},
+			},
+			snapshotName: "custom-ca-certificates",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {

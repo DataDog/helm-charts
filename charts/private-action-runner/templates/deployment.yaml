@@ -51,6 +51,9 @@ spec:
             - name: scripts
               mountPath: /home/scriptuser
             {{- end }}
+            {{- if $.Values.runner.extraVolumeMounts }}
+            {{- toYaml $.Values.runner.extraVolumeMounts | nindent 12 }}
+            {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: {{ $.Values.runner.configDirectory }}
@@ -90,4 +93,7 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "chart.fullname" . }}-scripts
+        {{- end }}
+        {{- if $.Values.runner.extraVolumes }}
+        {{- toYaml $.Values.runner.extraVolumes | nindent 8 }}
         {{- end }}

@@ -408,6 +408,20 @@
             "required": ["fileName", "data"],
             "additionalProperties": false
           }
+        },
+        "extraVolumes": {
+          "type": "array",
+          "description": "Optionally specify extra list of additional volumes to mount into the pod",
+          "items": {
+            "type": "object"
+          }
+        },
+        "extraVolumeMounts": {
+          "type": "array",
+          "description": "Optionally specify extra list of additional volumeMounts for the runner container",
+          "items": {
+            "type": "object"
+          }
         }
       },
       "required": ["config"],

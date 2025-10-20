@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.16.0
+
+* Allow mounting additional volumes into the PAR pod for custom configurations via `runner.extraVolumes` and `runner.extraVolumeMounts`
+
 ## 1.15.0
 
 * Bump private runner version to 1.12.0

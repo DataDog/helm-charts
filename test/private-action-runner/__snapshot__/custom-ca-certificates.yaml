@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -30,7 +30,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -44,27 +44,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: resources-test-private-action-runner
+    name: custom-ca-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: custom-ca-test
   ports:
     - name: http
       port: 9016
@@ -74,12 +74,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: resources-test-private-action-runner
+  name: custom-ca-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.16.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: resources-test
+    app.kubernetes.io/instance: custom-ca-test
     app.kubernetes.io/version: "v1.12.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -88,19 +88,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: custom-ca-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.16.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: resources-test
+        app.kubernetes.io/instance: custom-ca-test
         app.kubernetes.io/version: "v1.12.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 158223620a0c3014632c632e06d7f1908ad4c1bcd34061e496f7b8a2329bb89a
+        checksum/values: 3d536dd5692e946149ea7a7128be893869b452e416d05b26df2a042018818488
     spec:
-      serviceAccountName: resources-test-private-action-runner
+      serviceAccountName: custom-ca-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.12.0"
@@ -110,18 +110,32 @@ spec:
               containerPort: 9016
           resources:
             limits:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 250m
+              memory: 1Gi
             requests:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 250m
+              memory: 1Gi
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
+            - mountPath: /etc/ssl/certs/gitlab-ca.crt
+              name: gitlab-ca-cert
+              readOnly: true
+              subPath: gitlab-ca.crt
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
+            - name: GIT_SSL_CAINFO
+              value: /etc/ssl/certs/gitlab-ca.crt
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/gitlab-ca.crt
       volumes:
         - name: secrets
           secret:
-            secretName: resources-test-private-action-runner
+            secretName: custom-ca-test-private-action-runner
+        - name: gitlab-ca-cert
+          secret:
+            items:
+            - key: ca-bundle.crt
+              path: gitlab-ca.crt
+            secretName: gitlab-ca-cert

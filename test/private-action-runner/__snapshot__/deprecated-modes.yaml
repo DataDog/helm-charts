@@ -77,7 +77,7 @@ metadata:
   name: deprecated-modes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.15.0
+    helm.sh/chart: private-action-runner-1.16.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deprecated-modes-test
     app.kubernetes.io/version: "v1.12.0"
@@ -92,13 +92,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.15.0
+        helm.sh/chart: private-action-runner-1.16.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deprecated-modes-test
         app.kubernetes.io/version: "v1.12.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 37718ac6b8f9344d763bea53ad607349ecfc6654eef0ed32fca58f3af478e258
+        checksum/values: 2ec0666b38f43ed7bb620eb23dec473d4d10ee4fe9a086f21bda1cd6a64c4d3b
     spec:
       serviceAccountName: deprecated-modes-test-private-action-runner
       containers:
