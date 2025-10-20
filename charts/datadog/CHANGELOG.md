@@ -2,7 +2,8 @@
 
 ## 3.138.1
 
-* Fix Cluster-Agent high availability warning when the proper PDB syntax is used ([#2099](https://github.com/DataDog/helm-charts/pull/2099)).
+* Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
+
 
 ## 3.138.0
 
