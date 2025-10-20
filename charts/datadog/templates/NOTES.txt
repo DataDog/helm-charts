@@ -488,7 +488,7 @@ https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
 {{- end }}
 
 
-{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) }}
+{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not (or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterAgent.pdb.create))) }}
 
 ###################################################################################
 ####   WARNING: Cluster-Agent should be deployed in high availability mode     ####
@@ -509,7 +509,7 @@ are enabled:
 To run in high availability mode, our recommendation is to update the chart
 configuration with:
 * set `clusterAgent.replicas` value to `2` replicas .
-* set `clusterAgent.createPodDisruptionBudget` to `true`.
+* set `clusterAgent.pdb.create` to `true`.
 
 {{- end }}
 
