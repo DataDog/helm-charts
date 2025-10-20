@@ -183,81 +183,6 @@ runner:
       directoryName: "jenkins"
 ```
 
-## Using Custom CA Certificates
-
-If your Private Action Runner needs to connect to internal services (like GitLab, Jenkins, etc.) that use self-signed or internally-issued certificates, you can mount custom CA certificates using the `extraVolumes` and `extraVolumeMounts` parameters.
-
-### Example: Adding a GitLab CA Certificate
-
-1. Create a Kubernetes secret containing your CA certificate:
-
-```bash
-kubectl create secret generic gitlab-ca-cert \
-  --from-file=ca-bundle.crt=/path/to/your/ca-certificate.pem \
-  -n <your-namespace>
-```
-
-2. Configure your values.yaml to mount the certificate:
-
-```yaml
-runner:
-  # Mount the CA certificate volume
-  extraVolumes:
-    - name: gitlab-ca-cert
-      secret:
-        secretName: gitlab-ca-cert
-        items:
-          - key: ca-bundle.crt
-            path: gitlab-ca.crt
-  
-  # Mount the certificate in the container
-  extraVolumeMounts:
-    - name: gitlab-ca-cert
-      mountPath: /etc/ssl/certs/gitlab-ca.crt
-      subPath: gitlab-ca.crt
-      readOnly: true
-  
-  # Configure environment variables to use the certificate
-  env:
-    - name: GIT_SSL_CAINFO
-      value: "/etc/ssl/certs/gitlab-ca.crt"
-    - name: SSL_CERT_FILE
-      value: "/etc/ssl/certs/gitlab-ca.crt"
-    - name: NODE_EXTRA_CA_CERTS
-      value: "/etc/ssl/certs/gitlab-ca.crt"
-    - name: REQUESTS_CA_BUNDLE
-      value: "/etc/ssl/certs/gitlab-ca.crt"
-```
-
-3. Deploy or upgrade your Private Action Runner:
-
-```bash
-helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
-```
-
-### Multiple CA Certificates
-
-To trust multiple CA certificates, add multiple volumes:
-
-```yaml
-runner:
-  extraVolumes:
-    - name: gitlab-ca
-      secret:
-        secretName: gitlab-ca-cert
-    - name: internal-ca
-      secret:
-        secretName: internal-ca-cert
-  
-  extraVolumeMounts:
-    - name: gitlab-ca
-      mountPath: /etc/ssl/certs/gitlab-ca.crt
-      subPath: ca-bundle.crt
-    - name: internal-ca
-      mountPath: /etc/ssl/certs/internal-ca.crt
-      subPath: ca-bundle.crt
-```
-
 ## Using Custom Scripts
 
 The Run Predefined Script Action can run inline commands by creating a script configuration file, but it can also run more advanced custom scripts. The Private Action Runner supports custom scripts via the `runner.scriptFiles` parameter. Scripts are mounted in `/home/scriptuser/` directory.
@@ -340,8 +265,8 @@ If actions requiring credentials fail:
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
 | runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
-| runner.extraVolumes | list | `[]` | Optionally specify extra list of additional volumes to mount into the pod (for custom CA certificates, additional configuration files, etc.) |
-| runner.extraVolumeMounts | list | `[]` | Optionally specify extra list of additional volumeMounts for the runner container |
+| runner.extraVolumeMounts | list | `[]` | Optionally specify extra list of additional volumeMounts for the runner container  Example for custom CA certificate: extraVolumeMounts: - name: custom-ca-cert   mountPath: /etc/ssl/certs/custom-ca.crt   subPath: ca-bundle.crt   readOnly: true |
+| runner.extraVolumes | list | `[]` | Optionally specify extra list of additional volumes to mount into the pod This can be used for custom CA certificates, additional configuration files, etc.  Example for custom CA certificate: extraVolumes: - name: custom-ca-cert   secret:     secretName: custom-ca-cert-secret     items:     - key: ca-bundle.crt       path: ca-bundle.crt |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.controllerRevisions | list | `[]` | Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
