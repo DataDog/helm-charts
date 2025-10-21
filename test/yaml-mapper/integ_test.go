@@ -88,7 +88,6 @@ func Test(t *testing.T) {
 			//	Install Datadog chart
 			cleanUpDatadog := common.InstallChart(t, kubectlOptions, tt.command)
 			defer cleanUpDatadog()
-			time.Sleep(60 * time.Second)
 
 			datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespaceName, tt.command.ReleaseName)
 
@@ -142,6 +141,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
 	require.NoError(t, err)
 	assert.NotEmpty(t, helmAgentPods)
+	k8s.WaitUntilPodAvailable(t, kubectlOptions, helmAgentPods[0].Name, 5, 5*time.Second)
 
 	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
@@ -156,13 +156,9 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	// Get agent conf from operator install
 	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
 	require.NoError(t, err)
-
-	//t.Logf("OPERATOR PODS: Found %d pods with operator labels", len(operatorAgentPods))
-	for i, pod := range operatorAgentPods {
-		t.Logf("  Operator Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
-	}
-
 	assert.NotEmpty(t, operatorAgentPods)
+	k8s.WaitUntilPodAvailable(t, kubectlOptions, operatorAgentPods[0].Name, 10, 20*time.Second)
+
 	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
 	operatorAgentConf = normalizeAgentConf(operatorAgentConf)

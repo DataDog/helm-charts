@@ -12,7 +12,7 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 )
 
-func MakeTable(path string, val interface{}, mapName map[string]interface{}) map[string]interface{} {
+func MakeTable(path string, val interface{}, destMap map[string]interface{}) map[string]interface{} {
 	parts := parsePath(path)
 	res := make(map[string]interface{})
 	if len(parts) > 0 {
@@ -29,9 +29,9 @@ func MakeTable(path string, val interface{}, mapName map[string]interface{}) map
 		}
 	}
 
-	MergeMaps(mapName, res)
+	MergeMaps(destMap, res)
 
-	return mapName
+	return destMap
 }
 
 // MergeMaps recursively merges two maps, with values from map2 taking precedence over map1.
@@ -206,4 +206,134 @@ func getDatadogMapping() (string, error) {
 
 	// log.Printf("File downloaded and saved to temporary file: %s\n", tmpFile.Name())
 	return tmpFile.Name(), nil
+}
+
+// DepOp Operation to perform on deprecated keys
+type DepOp int
+
+const (
+	DepBoolOr  DepOp = iota // boolean OR operation
+	DepBoolNeg              // boolean ! operation
+)
+
+// DepRule describes how to fold deprecated keys into a standard key.
+type DepRule struct {
+	Deprecated []string
+	Op         DepOp
+}
+
+// depRules describes how to fold deprecated keys into a standard key.
+var depRules = map[string]DepRule{
+	"datadog.apm.portEnabled": {
+		[]string{"datadog.apm.enabled"},
+		DepBoolOr,
+	},
+	"datadog.apm.socketEnabled": {
+		[]string{"datadog.apm.useSocketVolume"},
+		DepBoolOr,
+	},
+	"datadog.disableDefaultOsReleasePaths": {
+		[]string{"datadog.systemProbe.enableDefaultOsReleasePaths"},
+		DepBoolNeg,
+	},
+	"remoteConfiguration.enabled": {
+		[]string{"datadog.remoteConfiguration.enabled"},
+		DepBoolOr,
+	},
+	"datadog.useHostPID": {
+		[]string{"datadog.dogstatsd.useHostPID"},
+		DepBoolOr,
+	},
+	"datadog.securityAgent.compliance.host_benchmarks.enabled": {
+		[]string{"datadog.securityAgent.compliance.xccdf"},
+		DepBoolOr,
+	},
+	"datadog.networkPolicy.create": {
+		[]string{
+			"agents.networkPolicy.create",
+			"clusterAgent.networkPolicy.create",
+			"clusterChecksRunner.networkPolicy.create",
+		},
+		DepBoolOr,
+	},
+	"clusterAgent.pdb.create": {
+		[]string{"clusterAgent.createPodDisruptionBudget"},
+		DepBoolOr,
+	},
+	"clusterChecksRunner.pdb.create": {
+		[]string{"clusterChecksRunner.createPodDisruptionBudget"},
+		DepBoolOr,
+	},
+}
+
+// FoldDeprecated maps “standard” key values by looking at their
+// deprecated aliases according to depRules. It writes the effective
+// value to sourceValues under the standard key.
+func FoldDeprecated(sourceValues chartutil.Values) chartutil.Values {
+	// chartutil.Values is a map[string]interface{}
+	root := map[string]interface{}(sourceValues)
+
+	for stdKey, depRule := range depRules {
+		candidates := depRule.Deprecated
+		// If the standard key is present in the source values, add it to the candidates
+		if stdVal, err := sourceValues.PathValue(stdKey); stdVal != nil && err == nil {
+			candidates = append(candidates, stdKey)
+		}
+
+		if len(candidates) == 0 {
+			continue // nothing to do
+		}
+
+		val := false
+		seen := false
+		for _, c := range candidates {
+			cVal, err := sourceValues.PathValue(c)
+			if err != nil {
+				continue
+			}
+
+			switch depRule.Op {
+			case DepBoolOr:
+				val = val || cVal.(bool)
+
+			case DepBoolNeg:
+				stdVal, err := sourceValues.PathValue(stdKey)
+				if err != nil {
+					val = !cVal.(bool)
+				} else {
+					val = stdVal.(bool)
+				}
+			default:
+				continue
+			}
+
+			if c != stdKey {
+				deletePath(root, c)
+			}
+			seen = true
+		}
+		if seen {
+			root = MakeTable(stdKey, val, root)
+		}
+	}
+	return root
+}
+
+func deletePath(root map[string]interface{}, dotted string) {
+	parts := strings.Split(dotted, ".")
+	if len(parts) == 0 {
+		return
+	}
+
+	m := root
+	for i := 0; i < len(parts)-1; i++ {
+		next, ok := m[parts[i]].(map[string]interface{})
+		if !ok {
+			// Path doesn’t exist — nothing to delete
+			return
+		}
+		m = next
+	}
+
+	delete(m, parts[len(parts)-1])
 }

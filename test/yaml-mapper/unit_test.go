@@ -12,6 +12,7 @@ import (
 	"github.com/DataDog/helm-charts/tools/yaml-mapper/pkg/yamlmapper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"helm.sh/helm/v3/pkg/chartutil"
 )
 
 func TestMergeMaps(t *testing.T) {
@@ -998,4 +999,333 @@ func TestMakeTableEdgeCases(t *testing.T) {
 		}
 		assert.Equal(t, expected, result)
 	})
+}
+
+func TestFoldDeprecated(t *testing.T) {
+	tests := []struct {
+		name       string
+		sourceVals chartutil.Values
+		wantVals   chartutil.Values
+	}{
+		{
+			name: "bool OR: default - deprecated present",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"enabled": true,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"portEnabled": true,
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: both standard and deprecated present",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"enabled":     true,
+						"portEnabled": true,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"portEnabled": true,
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: both standard and deprecated present, standard takes precedence",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"enabled":     false,
+						"portEnabled": true,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"portEnabled": true,
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: standard false and deprecated true, truthy takes precedence",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"enabled":     true,
+						"portEnabled": false,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"apm": map[string]interface{}{
+						"portEnabled": true,
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: multiple deprecated candidates - simple",
+			sourceVals: chartutil.Values{
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{},
+				},
+			},
+		},
+		{
+			name: "bool OR: multiple deprecated candidates - complex",
+			sourceVals: chartutil.Values{
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{},
+				},
+			},
+		},
+		{
+			name: "bool OR: multiple deprecated candidates - complex w/extra keys",
+			sourceVals: chartutil.Values{
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: multiple deprecated candidates + standard - complex",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "bool OR: multiple deprecated candidates + standard - truthy takes precedence",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": false,
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"create": true,
+					},
+				},
+				"agents": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+					},
+				},
+				"clusterAgent": map[string]interface{}{
+					"networkPolicy": map[string]interface{}{
+						"flavor": "cilium",
+						"cilium": map[string]interface{}{
+							"dnsSelector": map[string]interface{}{
+								"foo": "bar",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "bool negation: default",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe": map[string]interface{}{
+						"enableDefaultOsReleasePaths": true,
+					},
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe":                  map[string]interface{}{},
+					"disableDefaultOsReleasePaths": false,
+				},
+			},
+		},
+		{
+			name: "bool negation: standard false and deprecated false - standard should take precedence",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe": map[string]interface{}{
+						"enableDefaultOsReleasePaths": false,
+					},
+					"disableDefaultOsReleasePaths": false,
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe":                  map[string]interface{}{},
+					"disableDefaultOsReleasePaths": false,
+				},
+			},
+		},
+		{
+			name: "bool negation: standard true and deprecated true - standard takes precedence",
+			sourceVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe": map[string]interface{}{
+						"enableDefaultOsReleasePaths": true,
+					},
+					"disableDefaultOsReleasePaths": true,
+				},
+			},
+			wantVals: chartutil.Values{
+				"datadog": map[string]interface{}{
+					"systemProbe":                  map[string]interface{}{},
+					"disableDefaultOsReleasePaths": true,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actualMap := yamlmapper.FoldDeprecated(tt.sourceVals)
+			valStr, _ := actualMap.YAML()
+			t.Log(valStr)
+			assert.Equal(t, tt.wantVals, actualMap)
+		})
+	}
 }

@@ -91,6 +91,9 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 		return
 	}
 
+	// Handle deprecated helm keys
+	sourceValues = FoldDeprecated(sourceValues)
+
 	// Create an interim map that that has period-delimited destination key as the key, and the value from the source.yaml for the value
 	//var pathVal interface{}
 	var interim = map[string]interface{}{}
