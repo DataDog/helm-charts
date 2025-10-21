@@ -297,6 +297,8 @@
     - name: pod-resources-socket
       mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
     {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
     - name: hostrun
       mountPath: /host/run
