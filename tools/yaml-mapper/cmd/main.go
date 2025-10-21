@@ -24,7 +24,7 @@ var (
 	printPtr    bool
 )
 
-const defaultDDAMappingPath = "/Users/fanny.jiang/go/src/github.com/DataDog/helm-charts/tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+const defaultDDAMappingPath = "../mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
 
 func main() {
 

@@ -38,8 +38,8 @@ agents:
 
 datadog-operator:
   image:
-    repository: fannyatdd/operator
-    tag: migration-68
+#    repository:
+#    tag:
     doNotCheckTag: true
   logLevel: debug
   apiKeyExistingSecret: datadog-secret
