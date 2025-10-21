@@ -145,6 +145,7 @@ data:
             "capset",
             "chdir",
             "chmod",
+            "chown",
             "clock_gettime",
             "clone",
             "clone3",
@@ -1131,7 +1132,7 @@ spec:
               value: "true"
             - name: DD_GPU_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1200,6 +1201,8 @@ spec:
             - mountPath: /var/lib/kubelet/pod-resources
               name: pod-resources-socket
               readOnly: false
+            - mountPath: /var/run/nvidia-container-devices/all
+              name: gpu-devices
             - mountPath: /host/run
               name: hostrun
               readOnly: false
@@ -1289,7 +1292,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1366,7 +1369,7 @@ spec:
               value: /host/root
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -1446,7 +1449,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1485,7 +1488,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1512,7 +1515,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -1573,11 +1576,11 @@ spec:
             path: /etc/system-release
           name: etc-system-release
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsdsocket
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
         - configMap:
@@ -1688,9 +1691,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
             - name: DD_APM_RECEIVER_SOCKET
@@ -1773,7 +1776,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.71.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1846,7 +1849,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.71.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
