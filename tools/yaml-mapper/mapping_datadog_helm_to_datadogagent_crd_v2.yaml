@@ -144,9 +144,6 @@ agents.shareProcessNamespace: ""
 agents.terminationGracePeriodSeconds: ""
 agents.tolerations: spec.override.nodeAgent.tolerations
 agents.updateStrategy: spec.override.nodeAgent.updateStrategy
-agents.updateStrategy.rollingUpdate: spec.override.nodeAgent.updateStrategy.rollingUpdate
-agents.updateStrategy.rollingUpdate.maxUnavailable: spec.override.nodeAgent.updateStrategy.rollingUpdate.maxUnavailable
-agents.updateStrategy.type: spec.override.nodeAgent.updateStrategy.type
 agents.useConfigMap: ""
 agents.useHostNetwork: spec.override.nodeAgent.hostNetwork
 agents.volumeMounts:
@@ -493,7 +490,7 @@ datadog.otlp.receiver.protocols.http.useHostPort: ""
 datadog.podAnnotationsAsTags: spec.global.podAnnotationsAsTags
 datadog.podLabelsAsTags: spec.global.podLabelsAsTags
 datadog.processAgent.containerCollection: spec.features.liveContainerCollection.enabled
-datadog.processAgent.enabled: "" # TODO FIX 
+datadog.processAgent.enabled: "" # TODO deprecated and no longer used
 datadog.processAgent.processCollection: spec.features.liveProcessCollection.enabled
 datadog.processAgent.processDiscovery: spec.features.processDiscovery.enabled
 datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent # TODO: will be removed in operator v1.21
@@ -537,7 +534,6 @@ datadog.securityAgent.runtime.fimEnabled: ""
 datadog.securityAgent.runtime.network.enabled: spec.features.cws.network.enabled
 datadog.securityAgent.runtime.policies.configMap: spec.features.cws.customPolicies.configMap.name
 datadog.securityAgent.runtime.securityProfile: ""
-datadog.securityAgent.runtime.securityProfile.anomalyDetection: ""
 datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled: ""
 datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled: ""
 datadog.securityAgent.runtime.securityProfile.enabled: spec.features.cws.securityProfiles.enabled
@@ -597,7 +593,7 @@ fips.use_https: spec.global.fips.useHTTPS
 fullnameOverride: metadata.name
 kube-state-metrics.image: ""
 kube-state-metrics.image.repository: ""
-kube-state-metrics.nodeSelector.kubernetes.io/os: ""
+kube-state-metrics.nodeSelector: ""
 kube-state-metrics.rbac.create: ""
 kube-state-metrics.serviceAccount.create: ""
 kube-state-metrics.serviceAccount.name: ""

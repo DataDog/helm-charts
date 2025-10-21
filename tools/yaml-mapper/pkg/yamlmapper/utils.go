@@ -71,6 +71,35 @@ func MergeMaps(map1, map2 map[string]interface{}) map[string]interface{} {
 	return map1
 }
 
+// setInterim sets a key in the interim map. If both the existing and new values are maps,
+// it deep-merges them instead of overwriting. Otherwise it overwrites.
+func setInterim(interim map[string]interface{}, key string, val interface{}) {
+	if val == nil {
+		return
+	}
+	if existing, exists := interim[key]; exists {
+		if left, lok := toMap(existing); lok {
+			if right, rok := toMap(val); rok {
+				interim[key] = MergeMaps(left, right)
+				return
+			}
+		}
+	}
+	interim[key] = val
+}
+
+// toMap tries to coerce supported map-like types into map[string]interface{}.
+func toMap(v interface{}) (map[string]interface{}, bool) {
+	switch t := v.(type) {
+	case map[string]interface{}:
+		return t, true
+	case chartutil.Values:
+		return map[string]interface{}(t), true
+	default:
+		return nil, false
+	}
+}
+
 func parsePath(key string) []string { return strings.Split(key, ".") }
 
 func getLatestValuesFile() string {

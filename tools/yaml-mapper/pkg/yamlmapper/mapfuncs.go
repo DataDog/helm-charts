@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"helm.sh/helm/v3/pkg/chartutil"
+	"sigs.k8s.io/yaml"
 )
 
 var CustomMapFuncs = map[string]customMapFunc{
@@ -23,17 +24,17 @@ type customMapFunc func(values map[string]interface{}, newPath string, pathVal i
 
 func mapApiSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
 	//	if existing apikey secret, need to add key-name
-	interim[newPath] = pathVal
+	setInterim(interim, newPath, pathVal)
 	interim["spec.global.credentials.apiSecret.keyName"] = "api-key"
 }
 
 func mapAppSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
-	interim[newPath] = pathVal
+	setInterim(interim, newPath, pathVal)
 	interim["spec.global.credentials.appSecret.keyName"] = "app-key"
 }
 
 func mapTokenSecretKey(interim map[string]interface{}, newPath string, pathVal interface{}, args []interface{}) {
-	interim[newPath] = pathVal
+	setInterim(interim, newPath, pathVal)
 	interim["spec.global.clusterAgentTokenSecret.keyName"] = "token"
 }
 
@@ -45,14 +46,14 @@ func mapSeccompProfile(interim map[string]interface{}, newPath string, pathVal i
 
 	if strings.HasPrefix(seccompValue, "localhost/") {
 		profileName := strings.TrimPrefix(seccompValue, "localhost/")
-		interim[newPath+".type"] = "Localhost"
-		interim[newPath+".localhostProfile"] = profileName
+		setInterim(interim, newPath+".type", "Localhost")
+		setInterim(interim, newPath+".localhostProfile", profileName)
 
 	} else if seccompValue == "runtime/default" {
-		interim[newPath+".type"] = "RuntimeDefault"
+		setInterim(interim, newPath+".type", "RuntimeDefault")
 
 	} else if seccompValue == "unconfined" {
-		interim[newPath+".type"] = "Unconfined"
+		setInterim(interim, newPath+".type", "Unconfined")
 
 	}
 }
@@ -96,7 +97,7 @@ func mapSystemProbeAppArmor(interim map[string]interface{}, newPath string, path
 
 	if hasSystemProbeFeature {
 		// must be set to non-empty string
-		interim[newPath] = appArmorValue
+		setInterim(interim, newPath, appArmorValue)
 	}
 }
 
@@ -105,7 +106,7 @@ func mapLocalServiceName(interim map[string]interface{}, newPath string, pathVal
 	if !ok || nameOverride == "" {
 		return
 	}
-	interim[newPath] = nameOverride
+	setInterim(interim, newPath, nameOverride)
 }
 
 // mapAppendEnvVar appends environment variables to a specified path in the interim configuration.
@@ -134,16 +135,32 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 
 	// Handle valueFrom
 	pathValType := reflect.TypeOf(pathVal).Kind().String()
-	if pathValType == "map" {
+
+	if pathValType == "map" || pathValType == "string" {
 		var valFrom interface{}
 		var ok bool
+		var strOk bool
+		var pathValStr string
+
 		_, valOk := pathVal.(chartutil.Values)
 		_, mapOk := pathVal.(map[string]interface{})
+
+		if pathValType == "string" {
+			pathValStr, _ = pathVal.(string)
+			strOk = strings.Contains(pathValStr, "valueFrom")
+		}
 
 		if valOk {
 			valFrom, ok = pathVal.(chartutil.Values)["valueFrom"]
 		} else if mapOk {
 			valFrom, ok = pathVal.(map[string]interface{})["valueFrom"]
+		} else if strOk {
+			var data map[string]interface{}
+			err := yaml.Unmarshal([]byte(pathValStr), &data)
+			if err == nil {
+				valFrom = data["valueFrom"]
+				ok = true
+			}
 		}
 
 		if ok {
@@ -156,7 +173,7 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 
 	// Create the interim[newPath] if it doesn't exist yet
 	if _, exists := interim[newPath]; !exists {
-		interim[newPath] = []interface{}{newEnvVar}
+		setInterim(interim, newPath, []interface{}{newEnvVar})
 		return
 	}
 
@@ -169,7 +186,7 @@ func mapAppendEnvVar(interim map[string]interface{}, newPath string, pathVal int
 	envExists := hasDuplicateEnv(existingEnvs, newEnvName)
 
 	if !envExists {
-		interim[newPath] = append(existingEnvs, newEnvVar)
+		setInterim(interim, newPath, append(existingEnvs, newEnvVar))
 	}
 }
 
@@ -225,7 +242,7 @@ func mapMergeEnvs(interim map[string]interface{}, newPath string, pathVal interf
 	}
 
 	if len(mergedEnvs) > 0 {
-		interim[newPath] = mergedEnvs
+		setInterim(interim, newPath, mergedEnvs)
 	}
 }
 

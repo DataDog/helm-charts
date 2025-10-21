@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"sort"
 	"strconv"
 	"time"
 
@@ -64,25 +65,30 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 	mapping, err := os.ReadFile(mappingFile)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 	mappingValues, err := chartutil.ReadValues(mapping)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	// Read source yaml file
 	source, err := os.ReadFile(sourceFile)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	// Cleanup tmpSourceFile after it's been read
 	if tmpSourceFile != "" {
 		defer os.Remove(tmpSourceFile)
 	}
-	if err != nil {
-		log.Println(err)
-	}
+
 	sourceValues, err := chartutil.ReadValues(source)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	// Create an interim map that that has period-delimited destination key as the key, and the value from the source.yaml for the value
@@ -135,8 +141,15 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 
 		log.Printf("Mapping file, %s, successfully updated", mappingFile)
 	}
+	// Collect and sort mapping keys for deterministic processing order
+	mappingKeys := make([]string, 0, len(mappingValues))
+	for k := range mappingValues {
+		mappingKeys = append(mappingKeys, k)
+	}
+	sort.Strings(mappingKeys)
+
 	// Map values.yaml => DDA
-	for sourceKey := range mappingValues {
+	for _, sourceKey := range mappingKeys {
 		pathVal, _ := sourceValues.PathValue(sourceKey)
 		mapVal := sourceValues[sourceKey]
 		tableVal, tableValErr := sourceValues.Table(sourceKey)
@@ -146,29 +159,39 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 			if mapVal != nil {
 				if m, ok := mapVal.(map[string]interface{}); ok && m != nil {
 					pathVal = mapVal
+					tableVal = nil
 				}
 			} else {
 				if len(tableVal) == 1 && tableValErr == nil {
 					pathVal = tableVal
+					tableVal = nil
 				}
-				if tableVal == nil && tableValErr != nil || len(tableVal) == 0 || len(tableVal) > 1 {
+				if tableVal != nil && tableValErr == nil && len(tableVal) == 1 {
+					tableYaml, tableYamlErr := tableVal.YAML()
+					if tableYamlErr != nil {
+						continue
+					}
+					pathVal = tableYaml
+				}
+				if pathVal == nil {
 					continue
 				}
 			}
 		}
 
 		destKey, ok := mappingValues[sourceKey]
-		rt := reflect.TypeOf(destKey)
+		destKeyType := reflect.TypeOf(destKey)
+
 		if !ok || destKey == "" || destKey == nil {
 			log.Printf("Warning: DDA destination key not found: %s\n", sourceKey)
 			continue
 			// Continue through loop
-		} else if rt.Kind() == reflect.Slice {
+		} else if destKeyType.Kind() == reflect.Slice {
 			// Provide support for the case where one source key may map to multiple destination keys
 			for _, v := range destKey.([]interface{}) {
-				interim[v.(string)] = pathVal
+				setInterim(interim, v.(string), pathVal)
 			}
-		} else if rt.Kind() == reflect.Map {
+		} else if destKeyType.Kind() == reflect.Map {
 			// Perform type remapping
 			newPath := destKey.(map[string]interface{})["newPath"].(string)
 			newType, newTypeOk := destKey.(map[string]interface{})["newType"].(string)
@@ -184,14 +207,16 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 						if err != nil {
 							log.Println(err)
 						}
-						interim[newPath] = string(newPathVal)
+						setInterim(interim, newPath, string(newPathVal))
 					}
 				case newType == "integer":
 					switch {
 					case pathValType == "string":
-						interim[newPath], err = strconv.Atoi(pathVal.(string))
-						if err != nil {
-							log.Println(err)
+						convertedInt, convErr := strconv.Atoi(pathVal.(string))
+						if convErr != nil {
+							log.Println(convErr)
+						} else {
+							setInterim(interim, newPath, convertedInt)
 						}
 					}
 				}
@@ -220,13 +245,23 @@ func MapYaml(mappingFile string, sourceFile string, destFile string, prefixFile 
 				metadata["name"] = name
 			}
 		} else {
-			interim[destKey.(string)] = pathVal
+			if interim != nil {
+				setInterim(interim, destKey.(string), pathVal)
+			}
 		}
 	}
 
+	// Sort interim keys to ensure deterministic nesting/merge order
+	interimKeys := make([]string, 0, len(interim))
+	for k := range interim {
+		interimKeys = append(interimKeys, k)
+	}
+	sort.Strings(interimKeys)
+
 	// Create final mapping with properly nested map keys (converted from period-delimited keys)
 	result := make(map[string]interface{})
-	for k, v := range interim {
+	for _, k := range interimKeys {
+		v := interim[k]
 		result = MakeTable(k, v, result)
 	}
 
