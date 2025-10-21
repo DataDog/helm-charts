@@ -45,13 +45,13 @@ appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
-  repository: fannyatdd/operator
+  repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: harmonize-9
+  tag: 1.19.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
-  pullPolicy: Never
+  pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
-  doNotCheckTag: true
+  doNotCheckTag: false
 # imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
 imagePullSecrets: []
 # nameOverride -- Override name of app

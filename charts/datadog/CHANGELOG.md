@@ -1,5 +1,30 @@
 # Datadog changelog
 
+## 3.139.0
+
+* Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
+
+## 3.138.3
+
+* Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
+
+## 3.138.2
+
+* [AGENTONB-2589] Fix Cluster-Agent high availability warning when the proper PDB syntax is used ([#2099](https://github.com/DataDog/helm-charts/pull/2099)).
+
+## 3.138.1
+
+* Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
+
+
+## 3.138.0
+
+* [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
+
+## 3.137.3
+
+* Mount `/var/run/nvidia-container-devices/all` on the agent container when GPU monitoring is enabled, support environments where `NVIDIA_VISIBLE_DEVICES` is not accepted by the NVIDIA container runtime.
+
 ## 3.137.2
 
 * [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).

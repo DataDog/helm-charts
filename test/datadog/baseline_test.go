@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -44,12 +46,17 @@ func Test_baseline_inputs(t *testing.T) {
 	assert.Nil(t, err, "couldn't read baseline values directory")
 	for _, file := range files {
 		t.Run(file.Name(), func(t *testing.T) {
+			valuesFile := "./baseline/values/" + file.Name()
 			manifest, err := common.RenderChart(t, common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
-				Values:      []string{"./baseline/values/" + file.Name()},
+				Values:      []string{valuesFile},
 			})
-			assert.Nil(t, err, "couldn't render template")
+			assert.NoError(t, err, "couldn't render template")
+
+			if err != nil && strings.Contains(err.Error(), "Use --debug flag to render out invalid YAML") {
+				getInvalidYamlLocation(t, valuesFile)
+			}
 
 			manifest, err = common.FilterYamlKeysMultiManifest(manifest, FilterKeys)
 
@@ -90,5 +97,76 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 		yaml.Unmarshal(actualResource, &actual)
 
 		assert.True(t, cmp.Equal(expected, actual), cmp.Diff(expected, actual))
+	}
+}
+
+func getInvalidYamlLocation(t *testing.T, valuesFile string) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		Values:      []string{valuesFile},
+		ExtraArgs:   []string{"--debug"},
+	})
+
+	manifestFiles := make(map[string][]string)
+	currentFile := ""
+	sourceRegex := regexp.MustCompile(`^# Source: ([^ ]+)$`)
+	for _, line := range strings.Split(manifest, "\n") {
+		matches := sourceRegex.FindStringSubmatch(line)
+		if len(matches) > 1 {
+			currentFile = matches[1]
+			continue
+		}
+
+		manifestFiles[currentFile] = append(manifestFiles[currentFile], line)
+	}
+
+	// sample parse error: Error: YAML parse error on datadog/templates/daemonset.yaml
+	targetFileRegexp := regexp.MustCompile(`Error: YAML parse error on ([^:]+):`)
+	lineRegexp := regexp.MustCompile(`line (\d+):`)
+	targetFileMatches := targetFileRegexp.FindStringSubmatch(err.Error())
+	lineMatches := lineRegexp.FindStringSubmatch(err.Error())
+
+	var fileToShow []string
+	var targetFile string
+	var minLine, targetLine int
+	if len(targetFileMatches) > 1 {
+		targetFile = targetFileMatches[1]
+		fileToShow = manifestFiles[targetFile]
+	}
+
+
+	linesAroundError := 5
+	if os.Getenv("LINES_AROUND_ERROR") != "" {
+		linesAroundError, err = strconv.Atoi(os.Getenv("LINES_AROUND_ERROR"))
+		assert.NoError(t, err, "couldn't convert lines around error env var to int")
+	}
+
+	if len(lineMatches) > 1 {
+		var err error
+		targetLine, err = strconv.Atoi(lineMatches[1])
+		assert.NoError(t, err, "couldn't convert line to int")
+
+		// indexes from helm are 1-based, we work in 0-based
+		targetLine = targetLine - 1
+
+		minLine = max(0, targetLine - linesAroundError)
+		maxLine := min(len(fileToShow), targetLine + linesAroundError)
+
+		fileToShow = fileToShow[minLine:maxLine]
+	}
+
+	if len(fileToShow) == 0 {
+		return
+	}
+
+	if targetLine > 0 {
+		t.Logf("Invalid YAML reported on line %d of rendered file %s, showing rendered content around the error (lines around error: %d, change with env var LINES_AROUND_ERROR)", targetLine, targetFile, linesAroundError)
+	} else {
+		t.Logf("Invalid YAML reported on rendered file %s, showing rendered content", targetFile)
+	}
+
+	for lineIdx, line := range fileToShow {
+		t.Logf("%d: %s", lineIdx + minLine + 1, line)
 	}
 }

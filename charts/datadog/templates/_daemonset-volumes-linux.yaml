@@ -70,7 +70,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if eq (include "trace-agent-use-uds" .) "true" }}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "trace-agent-use-uds" .) "true") }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
