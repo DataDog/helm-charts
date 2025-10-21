@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.139.0
+
+* Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
+
 ## 3.138.3
 
 * Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
