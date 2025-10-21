@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.138.3
+
+* Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
+
 ## 3.138.2
 
 * [AGENTONB-2589] Fix Cluster-Agent high availability warning when the proper PDB syntax is used ([#2099](https://github.com/DataDog/helm-charts/pull/2099)).
