@@ -2,7 +2,7 @@
 
 ## 3.139.1
 
-* Tbavelier/fix system probe talos ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
+* Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
 
 ## 3.139.0
 
