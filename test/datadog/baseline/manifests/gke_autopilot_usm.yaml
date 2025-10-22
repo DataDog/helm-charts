@@ -1282,38 +1282,6 @@ spec:
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
-            - mountPath: /lib/modules
-              mountPropagation: None
-              name: modules
-              readOnly: true
-            - mountPath: /var/tmp/datadog-agent/system-probe/build
-              mountPropagation: None
-              name: runtime-compiler-output-dir
-              readOnly: false
-            - mountPath: /var/tmp/datadog-agent/system-probe/kernel-headers
-              name: kernel-headers-download-dir
-              readOnly: false
-            - mountPath: /host/etc/apt
-              name: apt-config-dir
-              readOnly: true
-            - mountPath: /host/etc/yum.repos.d
-              name: yum-repos-dir
-              readOnly: true
-            - mountPath: /host/etc/zypp
-              name: opensuse-repos-dir
-              readOnly: true
-            - mountPath: /host/etc/pki
-              name: public-key-dir
-              readOnly: true
-            - mountPath: /host/etc/yum/vars
-              name: yum-vars-dir
-              readOnly: true
-            - mountPath: /host/etc/dnf/vars
-              name: dnf-vars-dir
-              readOnly: true
-            - mountPath: /host/etc/rhsm
-              name: rhel-subscription-dir
-              readOnly: true
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt
@@ -1459,38 +1427,6 @@ spec:
           name: debugfs
         - emptyDir: {}
           name: sysprobe-socket-dir
-        - hostPath:
-            path: /lib/modules
-          name: modules
-        - hostPath:
-            path: /var/tmp/datadog-agent/system-probe/build
-            type: DirectoryOrCreate
-          name: runtime-compiler-output-dir
-        - hostPath:
-            path: /var/tmp/datadog-agent/system-probe/kernel-headers
-            type: DirectoryOrCreate
-          name: kernel-headers-download-dir
-        - hostPath:
-            path: /etc/apt
-          name: apt-config-dir
-        - hostPath:
-            path: /etc/yum.repos.d
-          name: yum-repos-dir
-        - hostPath:
-            path: /etc/zypp
-          name: opensuse-repos-dir
-        - hostPath:
-            path: /etc/pki
-          name: public-key-dir
-        - hostPath:
-            path: /etc/yum/vars
-          name: yum-vars-dir
-        - hostPath:
-            path: /etc/dnf/vars
-          name: dnf-vars-dir
-        - hostPath:
-            path: /etc/rhsm
-          name: rhel-subscription-dir
         - hostPath:
             path: /etc/passwd
           name: passwd
