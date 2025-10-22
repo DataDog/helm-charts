@@ -764,6 +764,52 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Common cluster agent labels
+*/}}
+{{- define "datadog.cluster-agent-labels" }}
+helm.sh/chart: '{{ include "datadog.chart" . }}'
+{{ include "cluster-agent-template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
+{{- end }}
+{{- end }}
+
+{{/*
+Common cluster checks runner labels
+*/}}
+{{- define "datadog.cluster-checks-labels" }}
+helm.sh/chart: '{{ include "datadog.chart" . }}'
+{{ include "cluster-checks-template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
+{{- end }}
+{{- end }}
+
+{{/*
+Cluster agent template labels
+*/}}
+{{- define "cluster-agent-template-labels" }}
+app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+app.kubernetes.io/instance: {{ template "datadog.fullname" . }}-cluster-agent
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Cluster check runner template labels
+*/}}
+{{- define "cluster-checks-template-labels" }}
+app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+app.kubernetes.io/instance: {{ template "datadog.fullname" . }}-cluster-checks-runner
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Common template labels
 */}}
 {{- define "datadog.template-labels" -}}
