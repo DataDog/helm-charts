@@ -1527,6 +1527,163 @@ spec:
                     kubeStateMetricsCore:
                       description: KubeStateMetricsCore check configuration.
                       properties:
+                        collectCrMetrics:
+                          description: |-
+                            `CollectCrMetrics` defines custom resources for the kube-state-metrics core check to collect.
+
+                            The datadog agent uses the same logic as upstream `kube-state-metrics`. So is its configuration.
+                            The exact structure and existing fields of each item in this list can be found in:
+                            https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md
+                          items:
+                            description: Resource configures a custom resource for metric generation.
+                            properties:
+                              commonLabels:
+                                additionalProperties:
+                                  type: string
+                                description: CommonLabels are added to all metrics.
+                                type: object
+                              groupVersionKind:
+                                description: GroupVersionKind of the custom resource to be monitored.
+                                properties:
+                                  group:
+                                    type: string
+                                  kind:
+                                    type: string
+                                  version:
+                                    type: string
+                                type: object
+                              labelsFromPath:
+                                additionalProperties:
+                                  items:
+                                    type: string
+                                  type: array
+                                description: LabelsFromPath adds additional labels where the value is taken from a field in the resource.
+                                type: object
+                              metricNamePrefix:
+                                description: |-
+                                  MetricNamePrefix defines a prefix for all metrics of the resource.
+                                  If set to "", no prefix will be added.
+                                  Example: If set to "foo", MetricNamePrefix will be "foo_<metric>".
+                                type: string
+                              metrics:
+                                description: Metrics are the custom resource fields to be collected.
+                                items:
+                                  description: Generator describes a unique metric name.
+                                  properties:
+                                    commonLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: CommonLabels are added to all metrics.
+                                      type: object
+                                    each:
+                                      description: Each targets a value or values from the resource.
+                                      properties:
+                                        gauge:
+                                          description: Gauge defines a gauge metric.
+                                          properties:
+                                            labelFromKey:
+                                              description: LabelFromKey adds a label with the given name if Path is an object. The label value will be the object key.
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                              type: object
+                                            nilIsZero:
+                                              description: NilIsZero indicates that if a value is nil it will be treated as zero value.
+                                              type: boolean
+                                            path:
+                                              description: Path is the path to to generate metric(s) for.
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              description: ValueFrom is the path to a numeric field under Path that will be the metric value.
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        info:
+                                          description: Info defines an info metric.
+                                          properties:
+                                            labelFromKey:
+                                              description: LabelFromKey adds a label with the given name if Path is an object. The label value will be the object key.
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                              type: object
+                                            path:
+                                              description: Path is the path to to generate metric(s) for.
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        stateSet:
+                                          description: StateSet defines a state set metric.
+                                          properties:
+                                            labelName:
+                                              description: LabelName is the key of the label which is used for each entry in List to expose the value.
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                              type: object
+                                            list:
+                                              description: List is the list of values to expose a value for.
+                                              items:
+                                                type: string
+                                              type: array
+                                            path:
+                                              description: Path is the path to to generate metric(s) for.
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              description: ValueFrom is the subpath to compare the list to.
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        type:
+                                          description: Type defines the type of the metric.
+                                          type: string
+                                      type: object
+                                    help:
+                                      description: Help text for the metric.
+                                      type: string
+                                    labelsFromPath:
+                                      additionalProperties:
+                                        items:
+                                          type: string
+                                        type: array
+                                      description: LabelsFromPath adds additional labels where the value is taken from a field in the resource.
+                                      type: object
+                                    name:
+                                      description: Name of the metric. Subject to prefixing based on the configuration of the Resource.
+                                      type: string
+                                  type: object
+                                type: array
+                              resourcePlural:
+                                description: ResourcePlural sets the plural name of the resource. Defaults to the plural version of the Kind according to flect.Pluralize.
+                                type: string
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                         conf:
                           description: |-
                             Conf overrides the configuration for the default Kubernetes State Metrics Core check.
@@ -9154,6 +9311,163 @@ spec:
                         kubeStateMetricsCore:
                           description: KubeStateMetricsCore check configuration.
                           properties:
+                            collectCrMetrics:
+                              description: |-
+                                `CollectCrMetrics` defines custom resources for the kube-state-metrics core check to collect.
+
+                                The datadog agent uses the same logic as upstream `kube-state-metrics`. So is its configuration.
+                                The exact structure and existing fields of each item in this list can be found in:
+                                https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md
+                              items:
+                                description: Resource configures a custom resource for metric generation.
+                                properties:
+                                  commonLabels:
+                                    additionalProperties:
+                                      type: string
+                                    description: CommonLabels are added to all metrics.
+                                    type: object
+                                  groupVersionKind:
+                                    description: GroupVersionKind of the custom resource to be monitored.
+                                    properties:
+                                      group:
+                                        type: string
+                                      kind:
+                                        type: string
+                                      version:
+                                        type: string
+                                    type: object
+                                  labelsFromPath:
+                                    additionalProperties:
+                                      items:
+                                        type: string
+                                      type: array
+                                    description: LabelsFromPath adds additional labels where the value is taken from a field in the resource.
+                                    type: object
+                                  metricNamePrefix:
+                                    description: |-
+                                      MetricNamePrefix defines a prefix for all metrics of the resource.
+                                      If set to "", no prefix will be added.
+                                      Example: If set to "foo", MetricNamePrefix will be "foo_<metric>".
+                                    type: string
+                                  metrics:
+                                    description: Metrics are the custom resource fields to be collected.
+                                    items:
+                                      description: Generator describes a unique metric name.
+                                      properties:
+                                        commonLabels:
+                                          additionalProperties:
+                                            type: string
+                                          description: CommonLabels are added to all metrics.
+                                          type: object
+                                        each:
+                                          description: Each targets a value or values from the resource.
+                                          properties:
+                                            gauge:
+                                              description: Gauge defines a gauge metric.
+                                              properties:
+                                                labelFromKey:
+                                                  description: LabelFromKey adds a label with the given name if Path is an object. The label value will be the object key.
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                                  type: object
+                                                nilIsZero:
+                                                  description: NilIsZero indicates that if a value is nil it will be treated as zero value.
+                                                  type: boolean
+                                                path:
+                                                  description: Path is the path to to generate metric(s) for.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  description: ValueFrom is the path to a numeric field under Path that will be the metric value.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            info:
+                                              description: Info defines an info metric.
+                                              properties:
+                                                labelFromKey:
+                                                  description: LabelFromKey adds a label with the given name if Path is an object. The label value will be the object key.
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                                  type: object
+                                                path:
+                                                  description: Path is the path to to generate metric(s) for.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            stateSet:
+                                              description: StateSet defines a state set metric.
+                                              properties:
+                                                labelName:
+                                                  description: LabelName is the key of the label which is used for each entry in List to expose the value.
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  description: LabelsFromPath adds additional labels where the value of the label is taken from a field under Path.
+                                                  type: object
+                                                list:
+                                                  description: List is the list of values to expose a value for.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                path:
+                                                  description: Path is the path to to generate metric(s) for.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  description: ValueFrom is the subpath to compare the list to.
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            type:
+                                              description: Type defines the type of the metric.
+                                              type: string
+                                          type: object
+                                        help:
+                                          description: Help text for the metric.
+                                          type: string
+                                        labelsFromPath:
+                                          additionalProperties:
+                                            items:
+                                              type: string
+                                            type: array
+                                          description: LabelsFromPath adds additional labels where the value is taken from a field in the resource.
+                                          type: object
+                                        name:
+                                          description: Name of the metric. Subject to prefixing based on the configuration of the Resource.
+                                          type: string
+                                      type: object
+                                    type: array
+                                  resourcePlural:
+                                    description: ResourcePlural sets the plural name of the resource. Defaults to the plural version of the Kind according to flect.Pluralize.
+                                    type: string
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                             conf:
                               description: |-
                                 Conf overrides the configuration for the default Kubernetes State Metrics Core check.
