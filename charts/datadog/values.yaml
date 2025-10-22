@@ -1228,7 +1228,7 @@ datadog:
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
-  ## * Includes support for the DatadogMonitor and DatadogDashboard CRDs (requires setting API key and APP key).
+  ## * Includes support for the DatadogMonitors and DatadogDashboards CRDs (requires setting API key and APP key).
   ## * Configure the Datadog Operator using the values config, `datadog-operator`.
   ## For all available Operator options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
   operator:
@@ -2650,6 +2650,12 @@ datadog-operator:
       datadogPodAutoscalers: true
       # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: true
+      # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      datadogSLOs: false
+      # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: true
+      # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      datadogGenericResources: false
 
 datadog-crds:
   crds:
