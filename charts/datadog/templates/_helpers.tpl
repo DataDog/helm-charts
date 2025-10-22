@@ -882,8 +882,8 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-# Talos does not support runtime compilation
 {{- if .Values.providers.talos.enabled -}}
+{{- /* Talos does not support runtime compilation */ -}}
 false
 {{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
 true
