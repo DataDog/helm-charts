@@ -9,6 +9,8 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     app.kubernetes.io/component: agent
+    agent.datadoghq.com/component: agent
+    agent.datadoghq.com/instance: {{ template "datadog.fullname" . }}-agent
     {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
@@ -31,6 +33,8 @@ spec:
         app.kubernetes.io/component: agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}
+        agent.datadoghq.com/component: agent
+        agent.datadoghq.com/instance: {{ template "datadog.fullname" . }}-agent
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
