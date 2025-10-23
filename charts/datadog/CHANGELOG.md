@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.140.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
 ## 3.139.0
 
 * Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
