@@ -1,3 +1,7 @@
+cloudprem:
+  reverseConnection:
+    enabled: false
+
 aws:
   accountId: "012345678901"
 
