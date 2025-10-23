@@ -2,7 +2,7 @@
 
 ## 3.135.5
 
-* Add controllerrevisions to default resource collection and rbac.
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
 
 ## 3.135.4
 
