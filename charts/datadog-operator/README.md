@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.14.3](https://img.shields.io/badge/Version-2.14.3-informational?style=flat-square) ![AppVersion: 1.19.1](https://img.shields.io/badge/AppVersion-1.19.1-informational?style=flat-square)
+![Version: 2.15.0-dev.1](https://img.shields.io/badge/Version-2.15.0--dev.1-informational?style=flat-square) ![AppVersion: 1.20.0-rc.1](https://img.shields.io/badge/AppVersion-1.20.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -16,6 +16,7 @@
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
+| datadogAgentInternal.enabled | bool | `false` | Enables the Datadog Agent Internal controller |
 | datadogAgentProfile.enabled | bool | `false` | If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+ |
 | datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
@@ -36,7 +37,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.19.1"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.20.0-rc.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
