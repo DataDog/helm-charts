@@ -4,6 +4,10 @@
 
 * Update Datadog Operator image tag to 1.20.0-rc.1.
 
+## 2.14.3
+
+* Update Datadog Operator image tag to 1.19.1.
+
 ## 2.14.2
 
 * Update Datadog Operator image tag to 1.19.0.
