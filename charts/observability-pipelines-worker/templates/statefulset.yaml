@@ -25,6 +25,11 @@ spec:
         {{- if .Values.podAnnotations }}
 {{ tpl (toYaml .Values.podAnnotations) . | indent 8 }}
         {{- end }}
+        checksum/env: {{ toYaml .Values.env | sha256sum | quote }}
+        checksum/envFrom: {{ toYaml .Values.envFrom | sha256sum | quote }}
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/dd-api-key: {{ .Values.datadog.apiKey | toString | sha256sum | quote }}
+        {{- end }}
     spec: {{ include "opw.pod" . | nindent 6 }}
   volumeClaimTemplates:
 {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
