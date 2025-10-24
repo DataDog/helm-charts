@@ -747,7 +747,6 @@ kind: DaemonSet
 metadata:
   labels:
     agent.datadoghq.com/component: agent
-    agent.datadoghq.com/instance: datadog-agent
     app.kubernetes.io/component: agent
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
@@ -766,7 +765,6 @@ spec:
       labels:
         admission.datadoghq.com/enabled: "false"
         agent.datadoghq.com/component: agent
-        agent.datadoghq.com/instance: datadog-agent
         app: datadog
         app.kubernetes.io/component: agent
         app.kubernetes.io/instance: datadog-agent
