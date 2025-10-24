@@ -3,8 +3,8 @@ name: private-action-runner
 description: A Helm chart to deploy the private action runner
 
 type: application
-version: 1.15.0
-appVersion: "v1.12.0"
+version: 1.15.1
+appVersion: "v1.12.1"
 keywords:
 - app builder
 - workflow automation
