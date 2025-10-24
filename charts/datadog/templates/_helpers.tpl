@@ -764,6 +764,33 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Common agent, cluster-agent, and cluster-checks-runner workload template labels
+*/}}
+{{- define "datadog.pod-template-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
+app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
+app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+{{- end }}
+
+{{/*
+Common agent, cluster-agent, and cluster-checks-runner workload labels
+*/}}
+{{- define "datadog.workload-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
+{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- if $ctx.Chart.AppVersion }}
+app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
+{{- end }}
+{{- if $ctx.Values.commonLabels}}
+{{ toYaml $ctx.Values.commonLabels }}
+{{- end }}
+{{- end }}
+
+{{/*
 Common template labels
 */}}
 {{- define "datadog.template-labels" -}}

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.140.0
+
+* Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
+
 ## 3.139.1
 
 * Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).

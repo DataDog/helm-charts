@@ -6,8 +6,9 @@ metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "cluster-agent") | indent 4 }}
     app.kubernetes.io/component: cluster-agent
+    agent.datadoghq.com/component: cluster-agent
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
@@ -36,10 +37,11 @@ spec:
   template:
     metadata:
       labels:
-{{ include "datadog.template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "cluster-agent") | indent 8 }}
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-cluster-agent
+        agent.datadoghq.com/component: cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
