@@ -4,6 +4,10 @@
 
 * Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
 
+## 3.139.1
+
+* Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
+
 ## 3.139.0
 
 * Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
