@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.1.9](https://img.shields.io/badge/Version-0.1.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.10](https://img.shields.io/badge/AppVersion-v0.1.10-informational?style=flat-square)
+![Version: 0.1.10](https://img.shields.io/badge/Version-0.1.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.13](https://img.shields.io/badge/AppVersion-v0.1.13-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -39,6 +39,17 @@ Create a `datadog-values.yaml` file to override the default values with your cus
 Any parameters not explicitly overridden in `datadog-values.yaml` will fall back to the defaults defined in the chart’s `values.yaml`. Here is an example of a `datadog-values.yaml` file with such overrides:
 
 ```yaml
+datadog:
+  # The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to. Defaults to `datadoghq.com`.
+  site: datadoghq.eu
+  # The name of the existing Secret containing the Datadog API key. The secret key name must be `api-key`.
+  apiKeyExistingSecret: datadog-api-key
+
+cloudprem:
+  index:
+    # The retention period for the index specified as a human-readable duration such as `30d`, `6m`, or `1y`. Defaults to 30 days.
+    retention: 90d
+
 aws:
   accountId: "123456789012"
   # AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
@@ -69,32 +80,14 @@ config:
   default_index_root_uri: s3://<bucket name>/indexes
 
 # Ingress configuration
-# The chart supports two ingress configurations:
-# 1. A public ingress for external access via the internet that will be used exclusively by Datadog's controle plane and query service.
-# 2. An internal ingress for access within the VPC
-#
-# Both ingresses will provision Application Load Balancers (ALBs) in AWS.
-# The public ingress ALB will be created in public subnets.
-# The internal ingress ALB will be created in private subnets.
-#
-# Additional annotations can be added to customize the ALB behavior.
 ingress:
-  # The public ingress is configured to only accept TLS traffic and requires mutual TLS (mTLS) authentication.
-  # Datadog's control plane and query service authenticate themselves using client certificates,
-  # ensuring that only authorized Datadog services can access CloudPrem nodes through the public ingress.
-  public:
-    enabled: true
-    name: cloudprem-public
-    host: cloudprem.acme.corp
-    extraAnnotations:
-      alb.ingress.kubernetes.io/load-balancer-name: cloudprem-public
-
   # The internal ingress is used by Datadog agents and other collectors running outside
   # the Kubernetes cluster to send their logs to CloudPrem.
   internal:
     enabled: true
     name: cloudprem-internal
     host: cloudprem.acme.internal
+    # Additional annotations can be added to customize the ALB behavior.
     extraAnnotations:
       alb.ingress.kubernetes.io/load-balancer-name: cloudprem-internal
 
