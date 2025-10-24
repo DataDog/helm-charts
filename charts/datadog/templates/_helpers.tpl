@@ -764,49 +764,30 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
-Common cluster agent labels
+Common agent, cluster-agent, and cluster-checks-runner workload labels
 */}}
-{{- define "datadog.cluster-agent-labels" }}
-helm.sh/chart: '{{ include "datadog.chart" . }}'
-{{ include "cluster-agent-template-labels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- define "datadog.workload-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
+{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- if $ctx.Chart.AppVersion }}
+app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
 {{- end }}
-{{- if .Values.commonLabels}}
-{{ toYaml .Values.commonLabels }}
+{{- if $ctx.Values.commonLabels}}
+{{ toYaml $ctx.Values.commonLabels }}
 {{- end }}
 {{- end }}
 
 {{/*
-Common cluster checks runner labels
+Common agent, cluster-agent, and cluster-checks-runner workload template labels
 */}}
-{{- define "datadog.cluster-checks-labels" }}
-helm.sh/chart: '{{ include "datadog.chart" . }}'
-{{ include "cluster-checks-template-labels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-{{- if .Values.commonLabels}}
-{{ toYaml .Values.commonLabels }}
-{{- end }}
-{{- end }}
-
-{{/*
-Cluster agent template labels
-*/}}
-{{- define "cluster-agent-template-labels" }}
-app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-app.kubernetes.io/instance: {{ template "datadog.fullname" . }}-cluster-agent
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
-Cluster check runner template labels
-*/}}
-{{- define "cluster-checks-template-labels" }}
-app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-app.kubernetes.io/instance: {{ template "datadog.fullname" . }}-cluster-checks-runner
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- define "datadog.pod-template-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
+app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
+app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 {{- end }}
 
 {{/*

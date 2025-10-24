@@ -5,7 +5,7 @@ metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.cluster-checks-labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "cluster-checks-runner") | indent 4 }}
     app.kubernetes.io/component: clusterchecks-agent
     agent.datadoghq.com/component: cluster-checks-runner
     {{- if .Values.clusterChecksRunner.additionalLabels }}
@@ -26,7 +26,7 @@ spec:
   template:
     metadata:
       labels:
-{{ include "cluster-checks-template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "cluster-checks-runner") | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-clusterchecks

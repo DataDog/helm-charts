@@ -741,7 +741,7 @@ metadata:
     agent.datadoghq.com/component: agent
     agent.datadoghq.com/instance: datadog-agent
     app.kubernetes.io/component: agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
@@ -762,7 +762,7 @@ spec:
         agent.datadoghq.com/instance: datadog-agent
         app: datadog
         app.kubernetes.io/component: agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
         env.datadoghq.com/kind: gke-gdc
