@@ -184,11 +184,11 @@ Quickwit environment
   value: http://{{ include "quickwit.fullname" $ }}-metastore.{{ $.Release.Namespace }}.svc.{{ .Values.clusterDomain }}:7280
 {{- if .Values.azure.tenantId }}
 - name: AZURE_TENANT_ID
-  value: {{ .Values.azure.tenantId }}
+  value: {{ .Values.azure.tenantId | quote }}
 {{- end }}
 {{- if .Values.azure.clientId }}
 - name: AZURE_CLIENT_ID
-  value: {{ .Values.azure.clientId }}
+  value: {{ .Values.azure.clientId | quote }}
 {{- end }}
 {{- if .Values.azure.clientSecretRef }}
 - name: AZURE_CLIENT_SECRET
@@ -199,7 +199,7 @@ Quickwit environment
 {{- end }}
 {{- if .Values.azure.storageAccount.name }}
 - name: QW_AZURE_STORAGE_ACCOUNT
-  value: {{ .Values.azure.storageAccount.name }}
+  value: {{ .Values.azure.storageAccount.name | quote }}
 {{- end }}
 {{- if .Values.azure.storageAccount.accessKeySecretRef }}
 - name: QW_AZURE_STORAGE_ACCESS_KEY
@@ -208,15 +208,34 @@ Quickwit environment
       name: {{ .Values.azure.storageAccount.accessKeySecretRef.name }}
       key: {{ .Values.azure.storageAccount.accessKeySecretRef.key }}
 {{- end}}
-- name: CLOUDPREM_DOGSTATSD_SERVER_HOST
+- name: CP_DOGSTATSD_SERVER_HOST
 {{- if .Values.dogstatsdServer.host.value }}
   value: {{ .Values.dogstatsdServer.host.value | quote }}
 {{- else if .Values.dogstatsdServer.host.valueFrom }}
   valueFrom:
       {{- toYaml .Values.dogstatsdServer.host.valueFrom | nindent 4 }}
 {{- end }}
-- name: CLOUDPREM_DOGSTATSD_SERVER_PORT
+- name: CP_DOGSTATSD_SERVER_PORT
   value: {{ .Values.dogstatsdServer.port | quote }}
+- name: CP_ENABLE_REVERSE_CONNECTION
+  value: {{ .Values.cloudprem.reverseConnection.enabled | quote }}
+- name: CP_MIN_SHARDS
+  value: {{ .Values.cloudprem.index.minShards | quote }}
+- name: CP_RETENTION_PERIOD
+  value: {{ .Values.cloudprem.index.retention | quote }}
+- name: DD_SITE
+  value: {{ .Values.datadog.site | quote }}
+{{- if or .Values.datadog.apiKey .Values.datadog.apiKeyExistingSecret }}
+- name: DD_API_KEY
+  valuesFrom:
+    secretKeyRef:
+      {{- if .Values.datadog.apiKeyExistingSecret }}
+      name: {{ .Values.datadog.apiKeyExistingSecret }}
+      {{- else }}
+      name: {{ include "quickwit.fullname" . }}-api-key-secret
+      {{- end }}
+      key: api-key
+{{- end }}
 {{- if .Values.tracingEnabled }}
 - name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
   value: "true"
