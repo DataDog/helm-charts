@@ -62,7 +62,7 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.13
+  tag: v0.1.14
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
