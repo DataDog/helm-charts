@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.10
+
+* Enable reverse connection by default
+* Parse syslog-formatted events natively
+
 ## 0.1.9
 
 * Add support for reverse connection

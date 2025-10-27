@@ -825,9 +825,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
             - name: DD_APM_RECEIVER_SOCKET
@@ -924,7 +924,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.71.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -997,7 +997,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.71.2
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
