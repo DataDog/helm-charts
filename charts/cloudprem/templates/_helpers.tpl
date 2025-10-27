@@ -227,7 +227,7 @@ Quickwit environment
   value: {{ .Values.datadog.site | quote }}
 {{- if or .Values.datadog.apiKey .Values.datadog.apiKeyExistingSecret }}
 - name: DD_API_KEY
-  valuesFrom:
+  valueFrom:
     secretKeyRef:
       {{- if .Values.datadog.apiKeyExistingSecret }}
       name: {{ .Values.datadog.apiKeyExistingSecret }}
