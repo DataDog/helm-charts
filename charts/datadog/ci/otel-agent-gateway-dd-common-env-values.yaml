@@ -2,13 +2,10 @@ targetSystem: "linux"
 fullnameOverride: "gw-only"
 agents:
   enabled: false
-  kubelet:
-    tlsVerify: false
 clusterAgent:
   enabled: false
 datadog:
   apiKey: "f0000000000000000000000000000000"
-  appKey: "f000000000000000000000000000000000000000"
   site: "datadog.eu"
   dd_url: "api.datadog.eu"
   clusterName: "my-cluster"
