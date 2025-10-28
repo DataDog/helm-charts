@@ -2739,6 +2739,7 @@ otelAgentGateway:
   featureGates: null
 
   # otelAgentGateway.replicas -- Number of otel-agent instances in the Gateway Deployment
+  # If otelAgentGateway.autoscaling is enabled, HPA may override the number of replicas based on your rules.
   replicas: 2
 
   # otelAgentGateway.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
@@ -2911,3 +2912,23 @@ otelAgentGateway:
     # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
     # and pods logs.
     enabled: false
+
+  ## Provide Horizontal Pod Autoscaler (HPA) configuration in OTel Agent Gateway, requires k8s 1.23.0 and above
+  autoscaling:
+    # otelAgentGateway.autoscaling.enabled -- enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above.
+    # Will override otelAgentGateway.replicas.
+    enabled: false
+    # otelAgentGateway.autoscaling.annotations -- annotations for OTel Agent Gateway HPA
+    annotations: {}
+    # otelAgentGateway.autoscaling.minReplicas -- min number of replicas for OTel Agent Gateway HPA
+    minReplicas: 0
+    # otelAgentGateway.autoscaling.maxReplicas -- max number of replicas for OTel Agent Gateway HPA
+    maxReplicas: 0
+    # otelAgentGateway.autoscaling.metrics -- the metrics used for OTel Agent Gateway HPA
+    metrics: []
+    # otelAgentGateway.autoscaling.behavior -- defines the scaling behavior in OTel Agent Gateway HPA
+    behavior:
+      # otelAgentGateway.autoscaling.behavior.scaleUp -- defines the scaling up behavior in OTel Agent Gateway HPA
+      scaleUp: {}
+      # otelAgentGateway.autoscaling.behavior.scaleDown -- defines the scaling down behavior in OTel Agent Gateway HPA
+      scaleDown: {}

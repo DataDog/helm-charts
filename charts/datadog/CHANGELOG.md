@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.140.2
+
+* Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
+
 ## 3.140.1
 
 * Revert addition of `timer_create` syscall to system-probe seccomp profile.
