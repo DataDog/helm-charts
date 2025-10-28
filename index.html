@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datadog Helm Charts</title>
+</head>
+<body>
+    <h1>Datadog Helm Charts</h1>
+    
+    <p>
+        <a href="https://artifacthub.io/packages/search?repo=datadog">
+            <img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/datadog" alt="Artifact HUB">
+        </a>
+    </p>
+
+    <p>Official Helm charts for Datadog products. Currently supported:</p>
+    <ul>
+        <li><a href="charts/datadog/README.md">Datadog Agents</a> (<code>datadog/datadog</code>)</li>
+        <li><a href="charts/datadog-operator/README.md">Datadog Operator</a> (<code>datadog/datadog-operator</code>)</li>
+        <li><a href="charts/extended-daemon-set/README.md">Extended DaemonSet</a> (<code>datadog/extendeddaemonset</code>)</li>
+        <li><a href="charts/observability-pipelines-worker/README.md">Observability Pipelines Worker</a> (<code>datadog/observability-pipelines-worker</code>)</li>
+        <li><a href="charts/private-action-runner/README.md">Private Action Runner</a> (<code>datadog/private-action-runner</code>)</li>
+        <li><a href="charts/synthetics-private-location/README.md">Synthetics Private Location</a> (<code>datadog/synthetics-private-location</code>)</li>
+    </ul>
+
+    <h2>How to use Datadog Helm repository</h2>
+    
+    <p>You need to add this repository to your Helm repositories:</p>
+    
+    <pre><code>helm repo add datadog https://helm.datadoghq.com
+helm repo update</code></pre>
+</body>
+</html>
+
