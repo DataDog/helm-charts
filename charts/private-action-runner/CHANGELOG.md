@@ -2,7 +2,7 @@
 
 ## 1.15.2
 
-* Bump private runenr version to 1.12.1
+* Bump private runner version to 1.12.2
   * Temporal `Run workflow` can accept any number of unknown args
 
 ## 1.15.1
