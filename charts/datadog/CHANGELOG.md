@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.140.0
+
+* Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
+
 ## 3.139.4
 
 * Add `timer_create` syscall to system-probe seccomp profile.
