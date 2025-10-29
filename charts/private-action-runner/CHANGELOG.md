@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.15.2
+
+* Add your changelog here!
+
 ## 1.15.1
 
 * Bump private runenr version to 1.12.1
