@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.139.4
+
+* Add `timer_create` syscall to system-probe seccomp profile.
+
 ## 3.139.3
 
 * Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
