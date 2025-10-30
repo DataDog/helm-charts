@@ -1226,6 +1226,15 @@ datadog:
       # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
+  ## Datadog Operator
+  ## * Enable the Datadog Operator chart dependency.
+  ## * Includes support for the DatadogMonitors and DatadogDashboards CRDs (requires setting API key and APP key).
+  ## * Configure the Datadog Operator using the values config, `datadog-operator`.
+  ## For all available Operator options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
+  operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator.
+    enabled: true
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -2629,6 +2638,23 @@ clusterChecksRunner:
 
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
+
+datadog-operator:
+  datadogCRDs:
+    crds:
+      # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      datadogAgents: false
+      # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      datadogMonitors: true
+      # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      datadogSLOs: false
+      # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: true
+      # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      datadogGenericResources: false
+      # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
+      datadogMetrics: false
 
 datadog-crds:
   crds:

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
 ## 3.140.0
 
 * Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
