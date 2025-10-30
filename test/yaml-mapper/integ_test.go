@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-operator/cmd/yaml-mapper/mapper"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/helm-charts/tools/yaml-mapper/pkg/yamlmapper"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	mappingPath   = "../../tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd_v2.yaml"
+	mappingPath   = "../../tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd.yaml"
 	ddaDestPath   = "tempDDADest.yaml"
 	apiKeyEnv     = "API_KEY"
 	appKeyEnv     = "APP_KEY"
@@ -50,8 +50,18 @@ func Test(t *testing.T) {
 		name       string
 		command    common.HelmCommand
 		valuesPath string
-		assertions []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string)
+		assertions []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string)
 	}{
+		{
+			name: "Minimal mapping",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"./values/default-values.yaml"},
+			},
+			valuesPath: "./values/default-values.yaml",
+			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string){verifyAgentConf},
+		},
 		{
 			name: "Agent confd configmap",
 			command: common.HelmCommand{
@@ -60,7 +70,7 @@ func Test(t *testing.T) {
 				Values:      []string{"./values/confd-values.yaml"},
 			},
 			valuesPath: "./values/confd-values.yaml",
-			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string){verifyAgentConf},
+			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string){verifyConfigData},
 		},
 	}
 
@@ -75,26 +85,11 @@ func Test(t *testing.T) {
 			cleanupSecrets := common.CreateSecretFromEnv(t, kubectlOptions, apiKeyEnv, appKeyEnv)
 			defer cleanupSecrets()
 
-			//	Helm install
+			//	Install Datadog chart
 			cleanUpDatadog := common.InstallChart(t, kubectlOptions, tt.command)
 			defer cleanUpDatadog()
-			time.Sleep(60 * time.Second)
 
-			t.Log("Finding datadog release name...")
-			helmListOutput, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{KubectlOptions: kubectlOptions}, "list", "-n", namespaceName, "--short")
-			require.NoError(t, err, "failed to list helm releases")
-
-			var datadogReleaseName string
-			releaseNames := strings.Split(strings.TrimSpace(helmListOutput), "\n")
-			for _, releaseName := range releaseNames {
-				releaseName = strings.TrimSpace(releaseName)
-				if strings.HasPrefix(releaseName, tt.command.ReleaseName+"-") {
-					datadogReleaseName = releaseName
-					break
-				}
-			}
-			require.NotEmpty(t, datadogReleaseName, "could not find datadog release")
-			t.Log("Found datadog release name:", datadogReleaseName)
+			datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespaceName, tt.command.ReleaseName)
 
 			valuesCmd := common.HelmCommand{
 				ReleaseName: datadogReleaseName,
@@ -104,27 +99,47 @@ func Test(t *testing.T) {
 
 			t.Log("GetFullValues created temp file:", actualValuesFilePath)
 
+			// Install Operator chart
 			cleanUpOperator := common.InstallChart(t, kubectlOptions, common.HelmCommand{
-				ReleaseName: "datadog-operator",
+				ReleaseName: "operator",
 				ChartPath:   "../../charts/datadog-operator",
 			})
 			defer cleanUpOperator()
 
+			var ddasToCleanup []string
 			for _, assertion := range tt.assertions {
-				assertion(t, kubectlOptions, actualValuesFilePath, namespaceName)
+				ddaName := assertion(t, kubectlOptions, actualValuesFilePath, namespaceName)
+				if ddaName != "" {
+					ddasToCleanup = append(ddasToCleanup, ddaName)
+				}
 			}
-
+			if len(ddasToCleanup) > 0 {
+				for _, ddaName := range ddasToCleanup {
+					k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", ddaName}...)
+					os.Remove(ddaName)
+				}
+			}
 		})
 	}
 }
 
-func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) {
+func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) (ddaName string) {
 	// Run mapper against values.yaml
-	destFile, err := os.CreateTemp(".", ddaDestPath)
+	destFile, err := os.Create(ddaDestPath)
 	require.NoError(t, err)
-	defer os.Remove(destFile.Name())
 
-	yamlmapper.MapYaml(mappingPath, valuesPath, destFile.Name(), "", "", namespace, false, false)
+	mapConfig := mapper.MapConfig{
+		MappingPath: mappingPath,
+		SourcePath:  valuesPath,
+		DestPath:    destFile.Name(),
+		Namespace:   namespace,
+		UpdateMap:   false,
+		PrintOutput: false,
+	}
+
+	helmMapper := mapper.NewMapper(mapConfig)
+	err = helmMapper.Run()
+	require.NoError(t, err)
 
 	outputBytes, err := os.ReadFile(destFile.Name())
 	require.NoError(t, err)
@@ -137,33 +152,65 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
 	require.NoError(t, err)
 	assert.NotEmpty(t, helmAgentPods)
+	k8s.WaitUntilPodAvailable(t, kubectlOptions, helmAgentPods[0].Name, 5, 15*time.Second)
 
 	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
 	helmAgentConf = normalizeAgentConf(helmAgentConf)
 
 	// Apply DDA from mapper
-
 	err = k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFile.Name()}...)
 	require.NoError(t, err)
-	defer k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", destFile.Name()}...)
 
 	time.Sleep(120 * time.Second)
 
 	// Get agent conf from operator install
 	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
 	require.NoError(t, err)
-
-	//t.Logf("OPERATOR PODS: Found %d pods with operator labels", len(operatorAgentPods))
-	for i, pod := range operatorAgentPods {
-		t.Logf("  Operator Pod %d: %s (Labels: %v)", i, pod.Name, pod.Labels)
-	}
-
 	assert.NotEmpty(t, operatorAgentPods)
+	k8s.WaitUntilPodAvailable(t, kubectlOptions, operatorAgentPods[0].Name, 10, 20*time.Second)
+
 	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
 	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
 
 	// Check agent conf diff
 	assert.EqualValues(t, helmAgentConf, operatorAgentConf)
+
+	return destFile.Name()
+}
+
+func verifyConfigData(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) (ddaManifestName string) {
+	dda := verifyAgentConf(t, kubectlOptions, valuesPath, namespace)
+
+	datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespace, "datadog")
+	helmConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, fmt.Sprintf("%s-confd", datadogReleaseName))
+	require.NoError(t, err)
+
+	operatorConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, "nodeagent-extra-confd")
+
+	require.NoError(t, err)
+	assert.EqualValues(t, helmConfdCm.Data, operatorConfdCm.Data)
+
+	return dda
+
+}
+
+func getHelmReleaseName(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace string, shortReleaseName string) string {
+	t.Log("Finding Helm release name...")
+	helmListOutput, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{KubectlOptions: kubectlOptions}, "list", "-n", namespace, "--short")
+	require.NoError(t, err, "failed to list helm releases")
+
+	var releaseName string
+	releaseNames := strings.Split(strings.TrimSpace(helmListOutput), "\n")
+	for _, release := range releaseNames {
+		release = strings.TrimSpace(release)
+		if strings.HasPrefix(release, shortReleaseName+"-") {
+			releaseName = release
+			break
+		}
+	}
+	require.NotEmpty(t, releaseName, fmt.Sprintf("could not find release %v", releaseName))
+	t.Logf("Found %s release name: %s", shortReleaseName, releaseName)
+	return releaseName
 }
