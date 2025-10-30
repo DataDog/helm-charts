@@ -1,6 +1,39 @@
 # Default values for CloudPrem.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+datadog:
+  # datadog.site -- The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to when using the reverse connection.
+
+  ## Set to 'datadoghq.com' to connect to the US1 site (default).
+  ## Set to 'datadoghq.eu' to connect to the EU site.
+  ## Set to 'us3.datadoghq.com' to connect to the US3 site.
+  ## Set to 'us5.datadoghq.com' to connect to the US5 site.
+  ## Set to 'ddog-gov.com' to connect to the US1-FED site.
+  ## Set to 'ap1.datadoghq.com' to connect to the AP1 site.
+  site: datadoghq.com
+
+  # datadog.apiKey -- Your Datadog API key. Required when using the reverse connection.
+  ## If set, it will be stored in a new Secret.
+  apiKey:
+
+  # datadog.apiKeyExistingSecret -- Use a pre-existing Secret containing your API key instead of creating a new one.
+  # The secret key name must be `api-key`.
+  ## If set, this parameter takes precedence over `datadog.apiKey`.
+  apiKeyExistingSecret:
+
+# CloudPrem configuration
+cloudprem:
+  # # Index configuration
+  index:
+    # cloudprem.index.minShards -- The minimum number of ingestion shards to use for the index. Defaults to 12.
+    minShards: 12
+    # cloudprem.index.retention -- The retention period for the index specified as a human-readable duration such as `30d`, `6m` or `1y`. Defaults to 30 days.
+    retention: 30d
+  # Reverse connection configuration
+  reverseConnection:
+    # cloudprem.reverseConnection.enabled -- Whether to enable the reverse connection. Defaults to true.
+    enabled: true
+
 aws:
   # -- AWS account ID
   accountId: ""
@@ -29,7 +62,7 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.10
+  tag: v0.1.14
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -79,8 +112,9 @@ dogstatsdServer:
 
 # Additional global env
 environment:
-  QW_DISABLE_TELEMETRY: true
   NO_COLOR: true
+  QW_DISABLE_TELEMETRY: true
+  QW_LOG_FORMAT: json
 
 environmentFrom: []
   # - secretRef:
@@ -678,10 +712,7 @@ config:
 
 # Seed configuration
 seed:
-  indexes:
-    - datadog.yaml
-  retention: 30 days
-  # min_num_shards: 12
+  indexes: []
 
   sources: []
     # - index: my-index
@@ -737,10 +768,22 @@ service:
 
   annotations: {}
 
+# Ingress configuration
+# The chart supports two ingress configurations:
+#   1. A public ingress for external access via the internet that will be used exclusively by Datadog's controle plane and query service. This ingress is disabled by default and should be enabled only when the reverse connection cannot be used.
+#   2. An internal ingress for access within the VPC
+#
+# Both ingresses will provision Application Load Balancers (ALBs) in AWS.
+# The public ingress ALB will be created in public subnets.
+# The internal ingress ALB will be created in private subnets.
+#
+# Additional annotations can be added to customize the ALB behavior.
 ingress:
-  # Route inbound traffic from Datadog via the public internet to searchers using gRPC + mTLS.
+  # The public ingress is configured to only accept TLS traffic and requires mutual TLS (mTLS) authentication.
+  # Datadog's control plane and query service authenticate themselves using client certificates,
+  # ensuring that only authorized Datadog services can access CloudPrem nodes through the public ingress.
   public:
-    enabled: true
+    enabled: false
     # The ingress controller to use.
     # - `alb` for AWS ALB
     # - `nginx` or any string that contains `nginx` for Ingress NGINX Controller.
@@ -789,7 +832,8 @@ ingress:
       Dn8SYLNTdzyEDglFposs32DKuLQi
       -----END CERTIFICATE-----
 
-  # Route inbound internal traffic to the right services over HTTP.
+  # The internal ingress is used by Datadog agents and other collectors running outside
+  # the Kubernetes cluster to send their logs to CloudPrem.
   internal:
     enabled: true
     # The ingress controller to use.
@@ -805,7 +849,6 @@ ingress:
       #     - "cloudprem.acme.internal"
       #   secretName: cloudprem-acme-internal-tls
 
-
 # List of pipeline of processors in JSON format.
 # If unset, no pipeline will be created.
-pipelinesConfig: null
+pipelinesConfig:

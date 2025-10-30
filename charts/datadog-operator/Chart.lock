@@ -1,6 +1,6 @@
 dependencies:
 - name: datadog-crds
   repository: https://helm.datadoghq.com
-  version: 2.12.0
-digest: sha256:1c71d52b266e05b798d028c25de8937df5679caff98a5e5b9e80fd68d294e5f5
-generated: "2025-10-10T16:30:43.192671-04:00"
+  version: 2.13.0-dev.1
+digest: sha256:052e6941a7c544dee2143a4f262ccdefbca4fda40bddcb5dea9d161e0b084bb4
+generated: "2025-10-22T13:15:09.093514-04:00"

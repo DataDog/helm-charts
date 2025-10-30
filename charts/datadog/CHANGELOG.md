@@ -2,7 +2,23 @@
 
 ## 3.140.0
 
-* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+* Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
+
+## 3.139.4
+
+* Add `timer_create` syscall to system-probe seccomp profile.
+
+## 3.139.3
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
+## 3.139.2
+
+* Respect a few config to env var mappings in OTel Agent Gateway: datadog.site -> DD_SITE, datadog.dd_url -> DD_DD_URL, datadog.clusterName -> DD_CLUSTER_NAME, datadog.tags -> DD_TAGS.
+
+## 3.139.1
+
+* Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
 
 ## 3.139.0
 
