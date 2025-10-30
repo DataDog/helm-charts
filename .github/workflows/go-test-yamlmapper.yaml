@@ -46,4 +46,4 @@ jobs:
         run: |
           helm dependency build ./charts/datadog
           helm dependency build ./charts/datadog-operator
-          make unit-test-mapper
+          make test-mapper
