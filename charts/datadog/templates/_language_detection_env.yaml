@@ -4,5 +4,5 @@
 - name: DD_LANGUAGE_DETECTION_ENABLED
   value: {{ include "language-detection-enabled" .  | quote }}
 - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
-  value: {{ include "language-detection-enabled" .  | quote }}
+  value: "true"
 {{- end -}}

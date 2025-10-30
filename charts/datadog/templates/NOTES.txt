@@ -768,7 +768,7 @@ Skipping migration.
 
 {{- end }}
 
-{{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( include "migration-supported" . ) }}
+{{- if and ( include "migration-supported" . ) ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) }}
 #################################################################
 ####               INFO: Helm-DDA Migration                  ####
 #################################################################
@@ -777,8 +777,7 @@ View and save your migrated DatadogAgent manifest with this command:
 
 kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oyaml
 
-{{- end }}
-
+{{ end }}
 View migration mapper status:
 
 kubectl -n <namespace> get logs datadog-migration-job

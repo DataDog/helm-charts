@@ -1333,7 +1333,7 @@ false
   Returns true if Helm->DDA migration is supported.
 */}}
 {{- define "migration-supported" }}
-{{- if and ( include "datadogagents-crd-ready" . ) ( semverCompare ">=1.21.0" .Values.operator.image.tag ) }}
+{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) ( semverCompare ">=1.21.0" .Values.operator.image.tag ) }}
 true
 {{- else }}
 false
