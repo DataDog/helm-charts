@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.142.0
+
+* Add Helm-DDA migration pathway.
+
 ## 3.141.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).

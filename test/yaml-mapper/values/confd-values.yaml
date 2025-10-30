@@ -1,0 +1,17 @@
+# Empty values file for testing default parameters.
+# Exception for kubelet.tlsVerify, which is set to true by default. We set it to false here to avoid TLS verification on kind clusters used by CI.
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  kubelet:
+    tlsVerify: false
+  clusterName: test-confd
+  confd:
+   http_check.yaml: |-
+     init_config:
+     instances:
+       - name: "test"
+         url: "https://google.com"
+agent:
+  image:
+    tag: latest
