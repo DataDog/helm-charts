@@ -2662,6 +2662,9 @@ datadog-operator:
       datadogDashboards: true
       # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
       datadogGenericResources: false
+      # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
+      datadogMetrics: false
 
 datadog-crds:
   crds:
