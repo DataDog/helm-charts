@@ -7,8 +7,9 @@ metadata:
   name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "agent") | indent 4 }}
     app.kubernetes.io/component: agent
+    agent.datadoghq.com/component: agent
     {{- if .Values.agents.additionalLabels }}
 {{ toYaml .Values.agents.additionalLabels | indent 4 }}
     {{- end }}
@@ -27,10 +28,11 @@ spec:
   template:
     metadata:
       labels:
-{{ include "datadog.template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "agent") | indent 8 }}
         app.kubernetes.io/component: agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}
+        agent.datadoghq.com/component: agent
         {{- if .Values.agents.podLabels }}
 {{ toYaml .Values.agents.podLabels | indent 8 }}
         {{- end }}
@@ -53,6 +55,9 @@ spec:
         {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
         {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
