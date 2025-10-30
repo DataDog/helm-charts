@@ -718,6 +718,7 @@ helm install <RELEASE_NAME> \
 | datadog-operator.datadogCRDs.crds.datadogAgents | bool | `false` |  |
 | datadog-operator.datadogCRDs.crds.datadogDashboards | bool | `true` |  |
 | datadog-operator.datadogCRDs.crds.datadogGenericResources | bool | `false` |  |
+| datadog-operator.datadogCRDs.crds.datadogMetrics | bool | `false` |  |
 | datadog-operator.datadogCRDs.crds.datadogMonitors | bool | `true` |  |
 | datadog-operator.datadogCRDs.crds.datadogSLOs | bool | `false` |  |
 | datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
