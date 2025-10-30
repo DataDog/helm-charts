@@ -330,6 +330,11 @@ commonLabels:
   - spec.override.clusterChecksRunner.labels
 datadog-crds.crds.datadogMetrics: ""
 datadog-crds.crds.datadogPodAutoscalers: ""
+datadog-operator.datadogCRDs.crds.datadogAgents: ""
+datadog-operator.datadogCRDs.crds.datadogDashboards: ""
+datadog-operator.datadogCRDs.crds.datadogGenericResources: ""
+datadog-operator.datadogCRDs.crds.datadogMonitors: ""
+datadog-operator.datadogCRDs.crds.datadogSLOs: ""
 datadog.agentDataPlane.enabled: ""
 datadog.agentDataPlane.image.digest: ""
 datadog.agentDataPlane.image.name: ""
@@ -480,6 +485,9 @@ datadog.networkPolicy.cilium.dnsSelector.toEndpoints: spec.global.networkPolicy.
 datadog.networkPolicy.create: spec.global.networkPolicy.create
 datadog.networkPolicy.flavor: spec.global.networkPolicy.flavor
 datadog.nodeLabelsAsTags: spec.global.nodeLabelsAsTags
+datadog.operator.enabled: ""
+datadog.operator.migration.enabled: ""
+datadog.operator.migration.preview: ""
 datadog.orchestratorExplorer.container_scrubbing.enabled: spec.features.orchestratorExplorer.scrubContainers
 datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer.customResources
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
