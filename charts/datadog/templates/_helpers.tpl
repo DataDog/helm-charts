@@ -1314,6 +1314,10 @@ false
   {{- end -}}
 {{- end -}}
 
+
+{{/*
+  Returns true if the DatadogAgent CRD is installed.
+*/}}
 {{- define "datadogagents-crd-ready" }}
 {{- $crdsReady := false }}
 {{- range $i := until 10 }}
@@ -1323,3 +1327,15 @@ false
 {{- end }}
 {{ $crdsReady }}
 {{- end -}}
+
+
+{{/*
+  Returns true if Helm->DDA migration is supported.
+*/}}
+{{- define "migration-supported" }}
+{{- if and ( include "datadogagents-crd-ready" . ) ( semverCompare ">=1.21.0" .Values.operator.image.tag ) }}
+true
+{{- else }}
+false
+{{- end }}
+{{- end }}

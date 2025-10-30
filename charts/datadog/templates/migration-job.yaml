@@ -1,4 +1,4 @@
-{{- if or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview }}
+{{- if and ( include "migration-supported" . ) ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,7 +15,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: helm-dda-migrator
-          image: {{ .Values.operator.image.repository }}:{{ .Values. operator.image.tag }}
+          image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}
           command:
             - /yaml-mapper
             - map
@@ -43,7 +43,7 @@ spec:
             - -c
             - |
               while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
-              kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml
+              kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml --namespace {{ .Release.Namespace }}
               kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
           volumeMounts:
             - name: tmp
@@ -64,5 +64,4 @@ spec:
             items:
               - key: mapping_datadog_helm_to_datadogagent_crd.yaml
                 path: mapping_datadog_helm_to_datadogagent_crd.yaml
-
   {{- end }}

@@ -1243,7 +1243,7 @@ datadog:
       # datadog.operator.migration.preview -- Set to true to preview the DatadogAgent manifest mapped from the
       # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `helm-dda-migrator`
       # Kubernetes job logs.
-      preview: true
+      preview: false
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements

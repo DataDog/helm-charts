@@ -755,3 +755,32 @@ This configuration controlled whether the Process Agent or Core Agent runs the f
 This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
 
 {{- end }}
+
+{{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( not ( include "migration-supported" . ) ) }}
+#################################################################
+####     WARNING: Unsupported Datadog Operator version       ####
+#################################################################
+You have set `datadog.operator.migration.enabled` or `datadog.operator.migration.preview` to `true`.
+Support for this configuration is supported in Datadog Operator version 1.21.0+.
+Update your chart or set `datadog-operator.image.tag` to a supported version.
+
+Skipping migration.
+
+{{- end }}
+
+{{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( include "migration-supported" . ) }}
+#################################################################
+####               INFO: Helm-DDA Migration                  ####
+#################################################################
+{{ if .Values.datadog.operator.migration.enabled -}}
+View and save your migrated DatadogAgent manifest with this command:
+
+kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oyaml
+
+{{- end }}
+
+View migration mapper status:
+
+kubectl -n <namespace> get logs datadog-migration-job
+
+{{- end }}
