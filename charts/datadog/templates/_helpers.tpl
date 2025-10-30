@@ -1313,3 +1313,13 @@ false
     true
   {{- end -}}
 {{- end -}}
+
+{{- define "datadogagents-crd-ready" }}
+{{- $crdsReady := false }}
+{{- range $i := until 10 }}
+  {{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+    {{- $crdsReady = true }}
+  {{- end }}
+{{- end }}
+{{ $crdsReady }}
+{{- end -}}

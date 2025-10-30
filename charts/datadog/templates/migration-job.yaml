@@ -1,0 +1,68 @@
+{{- if or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-job
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "post-install,post-upgrade"
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
+      restartPolicy: OnFailure
+      containers:
+        - name: helm-dda-migrator
+          image: {{ .Values.operator.image.repository }}:{{ .Values. operator.image.tag }}
+          command:
+            - /yaml-mapper
+            - map
+            - --ddaName={{ template "datadog.fullname" . }}
+            - --sourcePath=/tmp/values.yaml
+            - --mappingPath=/tmp/mapping_datadog_helm_to_datadogagent_crd.yaml
+            - --destPath=/tmp/{{ template "datadog.fullname" . }}.yaml
+            - --namespace={{ .Release.Namespace }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: values-config
+              mountPath: /tmp/values.yaml
+              subPath: values.yaml
+              readOnly: true
+            - name: migration-mapper-config
+              mountPath: /tmp/mapping_datadog_helm_to_datadogagent_crd.yaml
+              subPath: mapping_datadog_helm_to_datadogagent_crd.yaml
+              readOnly: true
+  {{- if and .Values.datadog.operator.migration.enabled ( include "datadogagents-crd-ready" . ) }}
+        - name: k8s
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
+              kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml
+              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+  {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: values-config
+          configMap:
+            name: {{ template "datadog.fullname" . }}-values-config
+            items:
+              - key: values.yaml
+                path: values.yaml
+        - name: migration-mapper-config
+          configMap:
+            name: {{ template "datadog.fullname" . }}-migration-mapper-config
+            items:
+              - key: mapping_datadog_helm_to_datadogagent_crd.yaml
+                path: mapping_datadog_helm_to_datadogagent_crd.yaml
+
+  {{- end }}
