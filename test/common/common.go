@@ -149,6 +149,10 @@ func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interfac
 			return "", fmt.Errorf("couldn't decode manifest for filtering dynamic keys: %s", err)
 		}
 
+		if obj["kind"] == "CustomResourceDefinition" {
+			continue
+		}
+
 		filterKeysRecursive(&obj, filterKeys)
 
 		var buf bytes.Buffer
