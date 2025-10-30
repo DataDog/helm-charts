@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.141.0
+## 3.142.0
 
 * Add Helm-DDA migration pathway.
 
