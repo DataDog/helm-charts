@@ -2,7 +2,7 @@
 
 ## 3.142.0
 
-* Add 
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
 
 ## 3.141.0
 
