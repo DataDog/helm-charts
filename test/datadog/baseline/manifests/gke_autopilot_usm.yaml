@@ -302,7 +302,6 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
-            "timer_create",
             "tkill",
             "umask",
             "uname",
