@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.0
+
+* Bump Datadog CSI Driver chart dependency version.
+
 ## 3.140.1
 
 * Revert addition of `timer_create` syscall to system-probe seccomp profile.
