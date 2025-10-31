@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.142.0
+
+* Add 
+
 ## 3.141.0
 
 * Bump Datadog CSI Driver chart dependency version.
