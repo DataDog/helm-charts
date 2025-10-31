@@ -777,16 +777,16 @@ app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 {{/*
 Common agent, cluster-agent, and cluster-checks-runner workload labels
 */}}
-{{- define "datadog.workload-labels" }}
-{{- $ctx := index . 0 }}
-{{- $name := index . 1 }}
-helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
-{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- define "datadog.workload-labels" -}}
+{{- $ctx := index . 0 -}}
+{{- $name := index . 1 -}}
+helm.sh/chart: '{{ include "datadog.chart" $ctx -}}'
+{{- include "datadog.pod-template-labels" (list $ctx $name) }}
 {{- if $ctx.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
-{{- end }}
-{{- if $ctx.Values.commonLabels}}
-{{ toYaml $ctx.Values.commonLabels }}
+{{- end -}}
+{{- if $ctx.Values.commonLabels -}}
+{{- toYaml $ctx.Values.commonLabels -}}
 {{- end }}
 {{- end }}
 
@@ -797,6 +797,7 @@ Common template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
 {{- end -}}
 
 {{/*

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.142.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
+
 ## 3.141.0
 
 * Bump Datadog CSI Driver chart dependency version.
