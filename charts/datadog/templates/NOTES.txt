@@ -187,16 +187,6 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
-{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
-
-###################################################################################
-####               ERROR: OTel Agent Gateway misconfiguration               ####
-###################################################################################
-
-{{- fail "OTel Agent Gateway autoscaling can only be enabled in Kubernetes version 1.23.0 and above" }}
-
-{{- end }}
-
 {{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
@@ -763,5 +753,14 @@ You have set `datadog.processAgent.runInCoreAgent` to `false`.
 Support for this configuration will be deprecated in a future version.
 This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
 This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
+
+{{- end }}
+
+{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+
+###################################################################################
+####               WARNING: OTel Agent Gateway misconfiguration               ####
+###################################################################################
+OTel Agent Gateway autoscaling has no effect in Kubernetes version 1.22.x and below
 
 {{- end }}
