@@ -44,7 +44,9 @@ spec:
             - |
               while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
               kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml --namespace {{ .Release.Namespace }}
-              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} agent.datadoghq.com/helm-migration=true
+              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} \
+                  agent.datadoghq.com/helm-migration=true \
+                  agent.datadoghq.com/update-metadata=true
           volumeMounts:
             - name: tmp
               mountPath: /tmp
