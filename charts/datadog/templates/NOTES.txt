@@ -187,6 +187,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
+{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+
+###################################################################################
+####               ERROR: OTel Agent Gateway misconfiguration               ####
+###################################################################################
+
+{{- fail "OTel Agent Gateway autoscaling can only be enabled in Kubernetes version 1.23.0 and above" }}
+
+{{- end }}
+
 {{- if and .Values.datadog.apm.instrumentation.enabled (eq (include "cluster-agent-enabled" .) "false")}}
 
 #################################################################
