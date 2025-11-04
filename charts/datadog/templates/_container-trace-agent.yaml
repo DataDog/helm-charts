@@ -44,10 +44,10 @@
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
-    - name: DD_APM_ENABLED
-      value: "true"
+    {{- if (eq  (include "trace-agent-use-tcp-port" .) "true") }}
     - name: DD_APM_NON_LOCAL_TRAFFIC
       value: "true"
+    {{- end }}
     - name: DD_APM_RECEIVER_PORT
       value: {{ .Values.datadog.apm.port | quote }}
     {{- if eq (include "trace-agent-use-uds" .) "true" }}
