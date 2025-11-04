@@ -49,3 +49,6 @@ sockets:
   # dsdHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
+
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
