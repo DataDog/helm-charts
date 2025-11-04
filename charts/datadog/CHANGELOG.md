@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.1
+
+* Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
+
 ## 3.141.0
 
 * Bump Datadog CSI Driver chart dependency version.
