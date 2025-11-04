@@ -755,3 +755,12 @@ This configuration controlled whether the Process Agent or Core Agent runs the f
 This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
 
 {{- end }}
+
+{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+
+###################################################################################
+####               WARNING: OTel Agent Gateway misconfiguration               ####
+###################################################################################
+OTel Agent Gateway autoscaling has no effect in Kubernetes version 1.22.x and below
+
+{{- end }}
