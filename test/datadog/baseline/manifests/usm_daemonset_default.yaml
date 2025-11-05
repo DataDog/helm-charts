@@ -1258,8 +1258,8 @@ spec:
                   name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
               value: info
-            - name: DD_APM_RECEIVER_PORT
-              value: "8126"
+            - name: DD_APM_ENABLED
+              value: "true"
             - name: DD_APM_RECEIVER_SOCKET
               value: /var/run/datadog/apm.socket
             - name: DD_DOGSTATSD_SOCKET
