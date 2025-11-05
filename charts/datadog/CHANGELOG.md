@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.2
+
+* Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
+
 ## 3.141.1
 
 * Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
