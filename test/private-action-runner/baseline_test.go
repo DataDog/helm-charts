@@ -81,6 +81,7 @@ func Test_baseline_manifests(t *testing.T) {
 					"fullnameOverride":                `"custom-full-name"`,
 					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
 					"runner.config.allowIMDSEndpoint": `true`,
+					"runner.config.tags":              `["foo:bar", "bar:baz"]`,
 					"image.pullPolicy":                `"Always"`,
 				},
 			},

@@ -21,6 +21,7 @@ stringData:
       - workflowAutomation
       - appBuilder
     port: 9016
+    tags: []
     actionsAllowlist:
       - com.datadoghq.kubernetes.apps.getControllerRevision
       - com.datadoghq.kubernetes.apps.listControllerRevision

@@ -22,6 +22,7 @@ stringData:
       - appBuilder
     port: 9016
     allowIMDSEndpoint: true
+    tags: ["foo:bar","bar:baz"]
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
@@ -99,7 +100,7 @@ spec:
         app.kubernetes.io/version: "v1.13.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 10e3d191a152e91fa991fb561eb32330d781fe233e48b0862dfa68c9fd1349c4
+        checksum/values: 70ed1860aa58726b7eeddaac6d924f5d42a7ccbf9ef57afc6b7911588381310b
     spec:
       serviceAccountName: custom-full-name
       containers:

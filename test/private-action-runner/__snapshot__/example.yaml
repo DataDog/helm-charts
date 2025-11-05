@@ -20,6 +20,7 @@ stringData:
     modes:
       - pull
     port: 9016
+    tags: []
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
