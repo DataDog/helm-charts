@@ -96,7 +96,7 @@
             },
             "tags": {
               "type": "array",
-              "description": "List of tags to be added to the metrics published by the runner. The tags must be specified in a 'key:value' format.",
+              "description": "List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.",
               "items": {
                 "type": "string"
               }

@@ -260,7 +260,7 @@ If actions requiring credentials fail:
 | runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
-| runner.config.tags | list | `[]` | List of tags to be added to the metrics published by the runner. The tags must be specified in a 'key:value' format. |
+| runner.config.tags | list | `[]` | List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format. |
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
 | runner.configDirectory | string | `"/etc/dd-action-runner/config"` | The directory containing the Datadog Private Action Runner configuration |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |

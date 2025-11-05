@@ -48,7 +48,7 @@ runner:
     allowIMDSEndpoint: false
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
-    # -- List of tags to be added to the metrics published by the runner. The tags must be specified in a 'key:value' format.
+    # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
     tags: []
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env: []
