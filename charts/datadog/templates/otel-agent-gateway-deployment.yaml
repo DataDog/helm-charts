@@ -179,6 +179,25 @@ spec:
             # TODO(songy23): add datadog extension once it is included in otel-agent
             value: "health_check,zpages,pprof" # exclude infra attribute, prometheus and DD flare
 
+          # A subset of components-common-env that makes sense to otel agent in gateway
+          {{- if .Values.datadog.site }}
+          - name: DD_SITE
+            value: {{ .Values.datadog.site | quote }}
+          {{- end }}
+          {{- if .Values.datadog.dd_url }}
+          - name: DD_DD_URL
+            value: {{ .Values.datadog.dd_url | quote }}
+          {{- end }}
+          {{- if .Values.datadog.clusterName }}
+          {{- template "check-cluster-name" . }}
+          - name: DD_CLUSTER_NAME
+            value: {{ tpl .Values.datadog.clusterName . | quote }}
+          {{- end }}
+          {{- if .Values.datadog.tags }}
+          - name: DD_TAGS
+            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
+          {{- end }}
+          
           # Disable features that are not needed / won't work in standalone ddot-collector
           - name: DD_ENABLE_METADATA_COLLECTION
             value: "false"

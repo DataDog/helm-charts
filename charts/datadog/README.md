@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.139.0](https://img.shields.io/badge/Version-3.139.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.141.1](https://img.shields.io/badge/Version-3.141.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -29,7 +29,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.8.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.4.2 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -973,6 +973,14 @@ helm install <RELEASE_NAME> \
 | nameOverride | string | `nil` | Override name of app |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
+| otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior | object | `{"scaleDown":{},"scaleUp":{}}` | defines the scaling behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior.scaleDown | object | `{}` | defines the scaling down behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior.scaleUp | object | `{}` | defines the scaling up behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.enabled | bool | `false` | enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above. Will override otelAgentGateway.replicas. |
+| otelAgentGateway.autoscaling.maxReplicas | int | `0` | max number of replicas for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.metrics | list | `[]` | the metrics used for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.minReplicas | int | `0` | min number of replicas for OTel Agent Gateway HPA |
 | otelAgentGateway.config | string | `nil` | Gateway OTel Agent configuration |
 | otelAgentGateway.configMap | object | `{"items":null,"key":"otel-gateway-config.yaml","name":null}` | Use an existing ConfigMap for Gateway OTel Agent configuration |
 | otelAgentGateway.configMap.items | string | `nil` | Items within the ConfigMap that contain Gateway OTel Agent configuration |
@@ -1002,7 +1010,7 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
 | otelAgentGateway.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | otelAgentGateway.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
-| otelAgentGateway.replicas | int | `2` | Number of otel-agent instances in the Gateway Deployment |
+| otelAgentGateway.replicas | int | `2` | Number of otel-agent instances in the Gateway Deployment If otelAgentGateway.autoscaling is enabled, HPA may override the number of replicas based on your rules. |
 | otelAgentGateway.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | otelAgentGateway.service.type | string | `"ClusterIP"` | Set type of otel-agent-gateway service |
 | otelAgentGateway.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the otel-agent |

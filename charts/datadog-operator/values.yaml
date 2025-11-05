@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.19.0
+  tag: 1.20.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -84,6 +84,9 @@ secretBackend:
 datadogAgent:
   # datadogAgent.enabled -- Enables Datadog Agent controller
   enabled: true
+datadogAgentInternal:
+  # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+  enabled: false
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
   enabled: false
