@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.11
+
+* Fix typo in `valueFrom` defining API key environment variable
+* Use latest Docker image including new ingest latency metric and minor bugfixes
+
+## 0.1.10
+
+* Enable reverse connection by default
+* Parse syslog-formatted events natively
+
 ## 0.1.9
 
 * Add support for reverse connection

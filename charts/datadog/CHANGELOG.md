@@ -1,6 +1,101 @@
 # Datadog changelog
 
+## 3.141.1
+
+* Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
+
+## 3.141.0
+
+* Bump Datadog CSI Driver chart dependency version.
+
+## 3.140.1
+
+* Revert addition of `timer_create` syscall to system-probe seccomp profile.
+
+## 3.140.0
+
+* Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
+
+## 3.139.4
+
+* Add `timer_create` syscall to system-probe seccomp profile.
+
+## 3.139.3
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
+## 3.139.2
+
+* Respect a few config to env var mappings in OTel Agent Gateway: datadog.site -> DD_SITE, datadog.dd_url -> DD_DD_URL, datadog.clusterName -> DD_CLUSTER_NAME, datadog.tags -> DD_TAGS.
+
+## 3.139.1
+
+* Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
+
+## 3.139.0
+
+* Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
+
+## 3.138.3
+
+* Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
+
+## 3.138.2
+
+* [AGENTONB-2589] Fix Cluster-Agent high availability warning when the proper PDB syntax is used ([#2099](https://github.com/DataDog/helm-charts/pull/2099)).
+
+## 3.138.1
+
+* Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
+
+
+## 3.138.0
+
+* [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
+
+## 3.137.3
+
+* Mount `/var/run/nvidia-container-devices/all` on the agent container when GPU monitoring is enabled, support environments where `NVIDIA_VISIBLE_DEVICES` is not accepted by the NVIDIA container runtime.
+
+## 3.137.2
+
+* [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
+## 3.137.1
+
+* Fix indentations in DDOT Gateway templates.
+
+## 3.137.0
+
+* Upgrade default Agent version to `7.71.1`.
+
+## 3.136.2
+
+* Add deprecation notice for `datadog.processAgent.runInCoreAgent`
+
+## 3.136.1
+
+* Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.
+
+## 3.136.0
+
+* Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
+
+## 3.135.4
+
+* Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
+
+## 3.135.3
+
+* Fix AppArmor profile for agent and system-probe containers on GKE.
+
+## 3.135.2
+
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
 ## 3.135.1
+
 * Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
 
 # 3.135.0

@@ -1,0 +1,106 @@
+targetSystem: "linux"
+fullnameOverride: "my-gw"
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  env:
+    - name: DD_HOSTNAME
+      value: ci-test-host
+  otelCollector:
+    enabled: true
+    config: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:4317"
+      exporters:
+        otlp:
+          endpoint: http://my-gw-otel-agent-gateway:4317
+          tls:
+            insecure: true
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            exporters: [otlp]
+          metrics:
+            receivers: [otlp]
+            exporters: [otlp]
+          logs:
+            receivers: [otlp]
+            exporters: [otlp]
+otelAgentGateway:
+  enabled: true
+  deploymentAnnotations:
+    key1: "value1"
+  ports:
+    - containerPort: "4317"
+      hostPort: "4317"
+      name: "otel-grpc"
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 10"]
+  containers:
+    otelAgent:
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "2"
+          memory: "256Mi"
+      env:
+        - name: OTEL_SERVICE_NAME
+          value: "my-svc"
+      envDict: {ENV1: "ENV_VAL1"}
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    exporters:
+      datadog:
+        api:
+          key: "f0000000000000000000000000000000"
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [datadog]
+        metrics:
+          receivers: [otlp]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          exporters: [datadog]
+  featureGates: "-datadog.EnableOperationAndResourceNameV2"
+  replicas: 1
+  revisionHistoryLimit: 1
+  podAnnotations:
+    key2: "value2"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podLabels:
+    label1: value1
+  additionalLabels:
+    label2: value2
+  volumeMounts:
+    - name: logscustompath
+      mountPath: /var/log/custom
+      readOnly: true
+  volumes:
+    - hostPath:
+        path: /var/log/custom
+      name: logscustompath
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: ScheduleAnyway

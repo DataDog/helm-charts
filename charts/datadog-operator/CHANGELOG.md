@@ -1,5 +1,37 @@
 # Changelog
 
+## 2.15.0-dev.2
+
+* Update Datadog Operator image tag to 1.20.0-rc.2.
+
+## 2.15.0-dev.1
+
+* Update Datadog Operator image tag to 1.20.0-rc.1.
+
+## 2.14.3
+
+* Update Datadog Operator image tag to 1.19.1.
+
+## 2.14.2
+
+* Update Datadog Operator image tag to 1.19.0.
+
+## 2.14.1
+
+* [CASCL-610] Add require RBAC for ArgoRollout support in datadog-operator chart ([#2076](https://github.com/DataDog/helm-charts/pull/2076)).
+
+## 2.14.0-dev.3
+
+* Update Datadog Operator image tag to 1.19.0-rc.3.
+
+## 2.14.0-dev.2
+
+* Update Datadog Operator image tag to 1.19.0-rc.2.
+
+## 2.14.0-dev.1
+
+* Update Datadog Operator image tag to 1.19.0-rc.1.
+
 ## 2.13.1
 
 * Add default `initialDelaySeconds: 15` to the Liveness Probe

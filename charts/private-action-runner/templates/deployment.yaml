@@ -25,7 +25,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 9016
+              containerPort: {{ $.Values.runner.config.port | default 9016 }}
           {{- if .Values.runner.livenessProbe }}
           livenessProbe:
             {{- toYaml $.Values.runner.livenessProbe | nindent 12 }}

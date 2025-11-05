@@ -57,7 +57,7 @@ Note: HELM_FORCE_RENDER is used for the CI as a workaround to force helm templat
 since the helm built-in .Capabilities.APIVersions.Has function requires connecting to the Kubernetes API Server in order to return correct values.
 */}}
 {{- define "gke-autopilot-workloadallowlists-enabled" -}}
-{{- if and .Values.providers.gke.autopilot (or (and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist") (semverCompare ">=v1.32.1-gke.1729000" .Capabilities.KubeVersion.Version)) .Values.datadog.envDict.HELM_FORCE_RENDER) -}}
+{{- if and (and .Values.providers .Values.providers.gke.autopilot) (or (and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist") (semverCompare ">=v1.32.1-gke.1729000" .Capabilities.KubeVersion.Version)) .Values.datadog.envDict.HELM_FORCE_RENDER) -}}
 true
 {{- else -}}
 false
@@ -159,6 +159,23 @@ Return true if k8sattributes RBAC rules should be added to the OTel Agent Cluste
 {{- $return }}
 {{- end -}}
 
+
+{{/*
+Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole in Gateway
+*/}}
+{{- define "should-add-otel-agent-gateway-k8sattributes-rules" -}}
+{{- $return := false }}
+{{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
+{{- range $key, $val := $config.processors }}
+  {{- if hasPrefix "k8sattributes" $key }}
+    {{- if or (empty $val) (empty $val.passthrough) }}
+      {{- $return = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
 {{/*
 Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container
 */}}
@@ -172,6 +189,21 @@ Return true if conatiner and pod logs volumes should be mounted in the OTel Agen
 {{- end }}
 {{- $return }}
 {{- end -}}
+
+{{/*
+Return true if container and pod logs volumes should be mounted in the OTel Agent container in Gateway
+*/}}
+{{- define "should-mount-logs-for-otel-agent-gateway" -}}
+{{- $return := false }}
+{{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
+{{- range $key, $val := $config.receivers }}
+  {{- if hasPrefix "filelog" $key }}
+    {{- $return = true }}
+  {{- end }}
+{{- end }}
+{{- $return }}
+{{- end -}}
+
 
 {{/*
 Return secret name to be used based on provided values.
@@ -579,10 +611,10 @@ false
 {{- end -}}
 
 {{/*
-Return true hostPath should be use for DSD socket. Return always false on GKE autopilot or GDC.
+Return true hostPath should be use for DSD socket. Return always false on GKE Autopilot in case CSI driver is not enabled, and on GDC.
 */}}
 {{- define "should-mount-hostPath-for-dsd-socket" -}}
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
+{{- if or (and .Values.providers.gke.autopilot (not .Values.datadog.csi.enabled)) .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
 false
 {{- end -}}
 {{- if .Values.datadog.dogstatsd.useSocketVolume -}}
@@ -596,7 +628,7 @@ false
 Return true if a APM over UDS is configured. Return always false on GKE Autopilot or Google Distributed Cloud.
 */}}
 {{- define "trace-agent-use-uds" -}}
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
+{{- if or (and .Values.providers.gke.autopilot (not .Values.datadog.csi.enabled)) .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
 false
 {{- end -}}
 {{- if and (or .Values.datadog.apm.socketEnabled .Values.datadog.apm.useSocketVolume) (not .Values.providers.gke.gdc) -}}
@@ -727,6 +759,37 @@ datadog-agent-fips-config
 {{ template "datadog.fullname" . }}-otel-config
 {{- end -}}
 
+{{- define "agents-install-otel-gateway-configmap-name" -}}
+{{ template "datadog.fullname" . }}-otel-gateway-config
+{{- end -}}
+
+{{/*
+Common agent, cluster-agent, and cluster-checks-runner workload template labels
+*/}}
+{{- define "datadog.pod-template-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
+app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
+app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+{{- end }}
+
+{{/*
+Common agent, cluster-agent, and cluster-checks-runner workload labels
+*/}}
+{{- define "datadog.workload-labels" }}
+{{- $ctx := index . 0 }}
+{{- $name := index . 1 }}
+helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
+{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- if $ctx.Chart.AppVersion }}
+app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
+{{- end }}
+{{- if $ctx.Values.commonLabels}}
+{{ toYaml $ctx.Values.commonLabels }}
+{{- end }}
+{{- end }}
+
 {{/*
 Common template labels
 */}}
@@ -846,7 +909,10 @@ Return the local service name
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
-{{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
+{{- if .Values.providers.talos.enabled -}}
+{{- /* Talos does not support runtime compilation */ -}}
+false
+{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
@@ -919,18 +985,28 @@ securityContext:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
-{{- if or .securityContext .sysAdmin (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+{{- if or .securityContext .sysAdmin .mknod (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+  {{- /* Define default values for the added capabilities and securityContext */ -}}
+  {{- $addedCapabilities := list -}}
+  {{- $securityContext := dict -}}
+  {{- if .securityContext -}}
+    {{- $securityContext = .securityContext -}}
+    {{- $addedCapabilities = (.securityContext.capabilities | default dict).add | default list -}}
+  {{- end -}}
+  {{- /* Add conditional capabilities */ -}}
+  {{ if .sysAdmin -}}
+    {{- $addedCapabilities = append $addedCapabilities "SYS_ADMIN" -}}
+  {{- end -}}
+  {{- if .mknod -}}
+    {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
+  {{- end -}}
+  {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
+  {{- if $addedCapabilities -}}
+    {{- $capabilities := dict "capabilities" (dict "add" $addedCapabilities) -}}
+    {{- $securityContext = merge $capabilities $securityContext -}}
+  {{- end -}}
 securityContext:
-{{- if .securityContext -}}
-{{- if .sysAdmin }}
-{{- $capabilities := dict "capabilities" (dict "add" (list "SYS_ADMIN")) }}
-{{ toYaml (merge $capabilities .securityContext) | indent 2 }}
-{{- else }}
-{{ toYaml .securityContext | indent 2 }}
-{{- end -}}
-{{- else if .sysAdmin }}
-{{ toYaml (dict "capabilities" (dict "add" (list "SYS_ADMIN"))) | indent 2 }}
-{{- end -}}
+{{ toYaml $securityContext | indent 2 }}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
@@ -944,7 +1020,7 @@ securityContext:
     localhostProfile: {{ trimPrefix "localhost/" .seccomp }}
     {{- end }}
 {{- end -}}
-{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion) }}
+{{- if and .apparmor .kubeversion (semverCompare ">=1.30.0-0" .kubeversion) }}
   appArmorProfile:
     {{- if hasPrefix "localhost/" .apparmor }}
     type: Localhost

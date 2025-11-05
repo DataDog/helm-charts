@@ -3,7 +3,7 @@ kind: DaemonSet
 metadata:
   name: {{ include "datadog-csi-driver.daemonsetName" . }}
   namespace: {{ .Release.Namespace }}
-  {{- if (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") }}
+  {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
   labels:
     cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
   {{- end }}

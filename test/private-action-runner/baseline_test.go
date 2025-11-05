@@ -149,6 +149,19 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "scripts-configuration",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "Service annotations",
+			command: common.HelmCommand{
+				ReleaseName: "scripts-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"service.annotations": `{"example.com/custom-annotation": "custom-value", "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"}`,
+				},
+			},
+			snapshotName: "service-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {
