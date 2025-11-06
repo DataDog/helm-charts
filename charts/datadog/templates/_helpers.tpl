@@ -447,6 +447,22 @@ Return a remote otel-agent based on `.Values` (passed as .)
 {{- end -}}
 
 {{/*
+Return the image for the otel-agent in gateway based on `.Values` (passed as .)
+*/}}
+{{- define "ddot-collector-gateway-image" -}}
+  {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
+    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
+      {{- fail "`-full` image is not supported in otel agent gateway" -}}
+    {{- end -}}
+    {{- if semverCompare "<7.67.0" $imageTag -}}
+      {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
+    {{- end -}}
+  {{- end -}}
+  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+{{- end -}}
+
+{{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
