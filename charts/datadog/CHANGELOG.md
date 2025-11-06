@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 3.143.0
+
+* Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
+* The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
+* Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
+* Update the OTel Agent Gateyway Deployment checksum annotation to use the full content of `otel-gateway-configmap.yaml`. Also allow to pass in the checksum of an existing ConfigMap with `otelAgentGateway.configMap.checksum`.
+
 ## 3.142.0
 
 * Update Agent to 7.72.1 ([#2142](https://github.com/DataDog/helm-charts/pull/2142)).
