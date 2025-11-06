@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.141.2
+## 3.142.1
 
 * Harmonize agent configs with the Datadog Operator.
+
+## 3.142.0
+
+* Update Agent to 7.72.1 ([#2142](https://github.com/DataDog/helm-charts/pull/2142)).
+
+## 3.141.2
+
+* Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
 
 ## 3.141.1
 
