@@ -1,14 +1,16 @@
 # This file maps keys from the Datadog Helm chart (YAML) to the DatadogAgent CustomResource spec (YAML).
-agents.containers.agent.env: spec.override.nodeAgent.containers.agent.env
-agents.containers.agent.envFrom: ""
-agents.containers.agent.healthPort: ""
-agents.containers.agent.livenessProbe.failureThreshold: ""
-agents.containers.agent.livenessProbe.initialDelaySeconds: ""
-agents.containers.agent.livenessProbe.periodSeconds: ""
-agents.containers.agent.livenessProbe.successThreshold: ""
-agents.containers.agent.livenessProbe.timeoutSeconds: ""
-agents.containers.agent.logLevel: ""
-agents.containers.agent.ports: ""
+agents.containers.agent.env:
+  mapFunc: mapMergeEnvs
+  newPath: spec.override.nodeAgent.containers.agent.env
+agents.containers.agent.envFrom: spec.override.nodeAgent.envFrom
+agents.containers.agent.healthPort: spec.override.nodeAgent.containers.agent.healthPort
+agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold
+agents.containers.agent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.livenessProbe.initialDelaySeconds
+agents.containers.agent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.periodSeconds
+agents.containers.agent.livenessProbe.successThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.successThreshold
+agents.containers.agent.livenessProbe.timeoutSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.timeoutSeconds
+agents.containers.agent.logLevel: spec.override.nodeAgent.containers.agent.logLevel
+agents.containers.agent.ports: spec.override.nodeAgent.containers.agent.ports
 agents.containers.agent.readinessProbe: spec.override.nodeAgent.containers.agent.readinessProbe
 agents.containers.agent.readinessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.readinessProbe.failureThreshold
 agents.containers.agent.readinessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.readinessProbe.initialDelaySeconds
@@ -17,11 +19,11 @@ agents.containers.agent.readinessProbe.successThreshold: spec.override.nodeAgent
 agents.containers.agent.readinessProbe.timeoutSeconds: spec.override.nodeAgent.containers.agent.readinessProbe.timeoutSeconds
 agents.containers.agent.resources: spec.override.nodeAgent.containers.agent.resources
 agents.containers.agent.securityContext: spec.override.nodeAgent.containers.agent.securityContext
-agents.containers.agent.startupProbe.failureThreshold: ""
-agents.containers.agent.startupProbe.initialDelaySeconds: ""
-agents.containers.agent.startupProbe.periodSeconds: ""
-agents.containers.agent.startupProbe.successThreshold: ""
-agents.containers.agent.startupProbe.timeoutSeconds: ""
+agents.containers.agent.startupProbe.failureThreshold: spec.override.nodeAgent.containers.agent.startupProbe.failureThreshold
+agents.containers.agent.startupProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.startupProbe.initialDelaySeconds
+agents.containers.agent.startupProbe.periodSeconds: spec.override.nodeAgent.containers.agent.startupProbe.periodSeconds
+agents.containers.agent.startupProbe.successThreshold: spec.override.nodeAgent.containers.agent.startupProbe.successThreshold
+agents.containers.agent.startupProbe.timeoutSeconds: spec.override.nodeAgent.containers.agent.startupProbe.timeoutSeconds
 agents.containers.agentDataPlane.env: ""
 agents.containers.agentDataPlane.envFrom: ""
 agents.containers.agentDataPlane.livenessProbe.failureThreshold: ""
@@ -40,39 +42,39 @@ agents.containers.agentDataPlane.readinessProbe.timeoutSeconds: ""
 agents.containers.agentDataPlane.telemetryApiPort: ""
 agents.containers.agentDataPlane.unprivilegedApiPort: ""
 agents.containers.initContainers.resources:
-- spec.override.nodeAgent.containers.init-config.resources
-- spec.override.nodeAgent.containers.init-volume.resources
-- spec.override.clusterChecksRunner.containers.init-config.resources
+  - spec.override.nodeAgent.containers.init-config.resources
+  - spec.override.nodeAgent.containers.init-volume.resources
+  - spec.override.clusterChecksRunner.containers.init-config.resources
 agents.containers.initContainers.securityContext:
-- spec.override.nodeAgent.containers.init-config.securityContext
-- spec.override.nodeAgent.containers.init-volume.securityContext
-- spec.override.clusterChecksRunner.containers.init-config.securityContext
+  - spec.override.nodeAgent.containers.init-config.securityContext
+  - spec.override.nodeAgent.containers.init-volume.securityContext
+  - spec.override.clusterChecksRunner.containers.init-config.securityContext
 agents.containers.initContainers.volumeMounts:
-- spec.override.nodeAgent.containers.init-config.volumeMounts
-- spec.override.nodeAgent.containers.init-volume.volumeMounts
-- spec.override.clusterChecksRunner.containers.init-config.volumeMounts
+  - spec.override.nodeAgent.containers.init-config.volumeMounts
+  - spec.override.nodeAgent.containers.init-volume.volumeMounts
+  - spec.override.clusterChecksRunner.containers.init-config.volumeMounts
 agents.containers.otelAgent.env: ""
 agents.containers.otelAgent.envFrom: ""
-agents.containers.otelAgent.ports: ""
+agents.containers.otelAgent.ports: spec.features.otelCollector.ports
 agents.containers.otelAgent.volumeMounts: ""
 agents.containers.processAgent.env: spec.override.nodeAgent.containers.process-agent.env
 agents.containers.processAgent.envDict: ""
 agents.containers.processAgent.envFrom: ""
 agents.containers.processAgent.logLevel: spec.override.nodeAgent.containers.process-agent.logLevel
-agents.containers.processAgent.ports: ""
+agents.containers.processAgent.ports: spec.override.nodeAgent.containers.process-agent.ports
 agents.containers.processAgent.resources: spec.override.nodeAgent.containers.process-agent.resources
 agents.containers.processAgent.securityContext: spec.override.nodeAgent.containers.process-agent.securityContext
 agents.containers.securityAgent.env: spec.override.nodeAgent.containers.security-agent.env
 agents.containers.securityAgent.envDict: ""
 agents.containers.securityAgent.envFrom: ""
 agents.containers.securityAgent.logLevel: spec.override.nodeAgent.containers.security-agent.logLevel
-agents.containers.securityAgent.ports: ""
+agents.containers.securityAgent.ports: spec.override.nodeAgent.containers.security-agent.ports
 agents.containers.securityAgent.resources: spec.override.nodeAgent.containers.security-agent.resources
 agents.containers.systemProbe.env: spec.override.nodeAgent.containers.system-probe.env
 agents.containers.systemProbe.envDict: ""
 agents.containers.systemProbe.envFrom: ""
 agents.containers.systemProbe.logLevel: spec.override.nodeAgent.containers.system-probe.logLevel
-agents.containers.systemProbe.ports: ""
+agents.containers.systemProbe.ports: spec.override.nodeAgent.containers.system-probe.ports
 agents.containers.systemProbe.resources: spec.override.nodeAgent.containers.system-probe.resources
 agents.containers.systemProbe.securityContext: spec.override.nodeAgent.containers.system-probe.securityContext
 agents.containers.systemProbe.securityContext.capabilities.add: spec.override.nodeAgent.containers.system-probe.securityContext.capabilities.add
@@ -85,11 +87,11 @@ agents.containers.traceAgent.livenessProbe.initialDelaySeconds: spec.override.no
 agents.containers.traceAgent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.periodSeconds
 agents.containers.traceAgent.livenessProbe.timeoutSeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.timeoutSeconds
 agents.containers.traceAgent.logLevel: spec.override.nodeAgent.containers.trace-agent.logLevel
-agents.containers.traceAgent.ports: ""
+agents.containers.traceAgent.ports: spec.override.nodeAgent.containers.trace-agent.ports
 agents.containers.traceAgent.resources: spec.override.nodeAgent.containers.trace-agent.resources
 agents.containers.traceAgent.securityContext: spec.override.nodeAgent.containers.trace-agent.securityContext
 agents.customAgentConfig: spec.override.nodeAgent.customConfigurations.datadog.yaml.configData
-agents.daemonsetAnnotations: ""
+agents.daemonsetAnnotations: spec.override.nodeAgent.annotations
 agents.dnsConfig: spec.override.nodeAgent.dnsConfig
 agents.enabled: ""
 agents.image.digest: ""
@@ -101,15 +103,22 @@ agents.image.repository: ""
 agents.image.tag: spec.override.nodeAgent.image.tag
 agents.image.tagSuffix: ""
 agents.localService.forceLocalServiceEnabled: spec.global.localService.forceEnableLocalService
-agents.localService.overrideName: spec.global.localService.nameOverride
-agents.networkPolicy.create: ""
+agents.localService.overrideName:
+  mapFunc: mapLocalServiceName
+  newPath: spec.global.localService.nameOverride
+agents.networkPolicy.create: spec.global.networkPolicy.create
 agents.nodeSelector: spec.override.nodeAgent.nodeSelector
 agents.podAnnotations: spec.override.nodeAgent.annotations
 agents.podLabels: spec.override.nodeAgent.labels
 agents.podSecurity.allowedUnsafeSysctls: ""
 agents.podSecurity.apparmor.enabled: ""
 agents.podSecurity.apparmorProfiles: ""
-agents.podSecurity.capabilities: spec.override.nodeAgent.containers.agent.securityContext.capabilities.add
+agents.podSecurity.capabilities:
+  - spec.override.nodeAgent.containers.agent.securityContext.capabilities.add
+  - spec.override.nodeAgent.containers.process-agent.securityContext.capabilities.add
+  - spec.override.nodeAgent.containers.trace-agent.securityContext.capabilities.add
+  - spec.override.nodeAgent.containers.system-probe.securityContext.capabilities.add
+  - spec.override.nodeAgent.containers.security-agent.securityContext.capabilities.add
 agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
@@ -135,17 +144,16 @@ agents.shareProcessNamespace: ""
 agents.terminationGracePeriodSeconds: ""
 agents.tolerations: spec.override.nodeAgent.tolerations
 agents.updateStrategy: spec.override.nodeAgent.updateStrategy
-agents.updateStrategy.rollingUpdate: spec.override.nodeAgent.updateStrategy.rollingUpdate
-agents.updateStrategy.rollingUpdate.maxUnavailable: spec.override.nodeAgent.updateStrategy.rollingUpdate.maxUnavailable
-agents.updateStrategy.type: spec.override.nodeAgent.updateStrategy.type
+agents.updateStrategy.rollingUpdate.maxUnavailable: ""
+agents.updateStrategy.type: ""
 agents.useConfigMap: ""
 agents.useHostNetwork: spec.override.nodeAgent.hostNetwork
 agents.volumeMounts:
-- spec.override.nodeAgent.containers.node-agent.volumeMounts
-- spec.override.nodeAgent.containers.process-agent.volumeMounts
-- spec.override.nodeAgent.containers.trace-agent.volumeMounts
-- spec.override.nodeAgent.containers.system-probe.volumeMounts
-- spec.override.nodeAgent.containers.security-agent.volumeMounts
+  - spec.override.nodeAgent.containers.agent.volumeMounts
+  - spec.override.nodeAgent.containers.process-agent.volumeMounts
+  - spec.override.nodeAgent.containers.trace-agent.volumeMounts
+  - spec.override.nodeAgent.containers.system-probe.volumeMounts
+  - spec.override.nodeAgent.containers.security-agent.volumeMounts
 agents.volumes: spec.override.nodeAgent.volumes
 clusterAgent.additionalLabels: spec.override.clusterAgent.labels
 clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled: spec.features.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled
@@ -169,7 +177,7 @@ clusterAgent.admissionController.port: ""
 clusterAgent.admissionController.remoteInstrumentation.enabled: spec.features.admissionController.cwsInstrumentation.enabled
 clusterAgent.admissionController.validation.enabled: spec.features.admissionController.validation.enabled
 clusterAgent.admissionController.webhookName: spec.features.admissionController.webhookName
-clusterAgent.advancedConfd: ""
+clusterAgent.advancedConfd: spec.override.clusterAgent.extraConfd.configData
 clusterAgent.affinity: spec.override.clusterAgent.affinity
 clusterAgent.command: spec.override.clusterAgent.containers.cluster-agent.command
 clusterAgent.confd: spec.override.clusterAgent.extraConfd
@@ -181,7 +189,7 @@ clusterAgent.containers.clusterAgent.securityContext.readOnlyRootFilesystem: spe
 clusterAgent.containers.initContainer.securityContext: spec.override.clusterAgent.containers.init-config.securityContext
 clusterAgent.createPodDisruptionBudget: ""
 clusterAgent.datadog_cluster_yaml: spec.override.clusterAgent.customConfigurations.datadog-cluster.yaml.configData
-clusterAgent.deploymentAnnotations: ""
+clusterAgent.deploymentAnnotations: spec.override.clusterAgent.annotations
 clusterAgent.dnsConfig: spec.override.clusterAgent.dnsConfig
 clusterAgent.enabled: ""
 clusterAgent.env: spec.override.clusterAgent.env
@@ -211,8 +219,11 @@ clusterAgent.metricsProvider.service.port: spec.features.externalMetricsServer.p
 clusterAgent.metricsProvider.service.type: ""
 clusterAgent.metricsProvider.useDatadogMetrics: spec.features.externalMetricsServer.useDatadogMetrics
 clusterAgent.metricsProvider.wpaController: spec.features.externalMetricsServer.wpaController
-clusterAgent.networkPolicy.create: ""
+clusterAgent.networkPolicy.create: spec.global.networkPolicy.create
 clusterAgent.nodeSelector: spec.override.clusterAgent.nodeSelector
+clusterAgent.pdb.create: ""
+clusterAgent.pdb.maxUnavailable: ""
+clusterAgent.pdb.minAvailable: ""
 clusterAgent.podAnnotations: spec.override.clusterAgent.annotations
 clusterAgent.podSecurity.podSecurityPolicy.create: ""
 clusterAgent.podSecurity.securityContextConstraints.create: ""
@@ -233,26 +244,31 @@ clusterAgent.resources: spec.override.clusterAgent.containers.cluster-agent.reso
 clusterAgent.revisionHistoryLimit: ""
 clusterAgent.securityContext: spec.override.clusterAgent.securityContext
 clusterAgent.shareProcessNamespace: ""
-clusterAgent.startupProbe.failureThreshold: ""
-clusterAgent.startupProbe.initialDelaySeconds: ""
-clusterAgent.startupProbe.periodSeconds: ""
-clusterAgent.startupProbe.successThreshold: ""
-clusterAgent.startupProbe.timeoutSeconds: ""
+clusterAgent.startupProbe.failureThreshold: spec.override.clusterAgent.containers.cluster-agent.startupProbe.failureThreshold
+clusterAgent.startupProbe.initialDelaySeconds: spec.override.clusterAgent.containers.cluster-agent.startupProbe.initialDelaySeconds
+clusterAgent.startupProbe.periodSeconds: spec.override.clusterAgent.containers.cluster-agent.startupProbe.periodSeconds
+clusterAgent.startupProbe.successThreshold: spec.override.clusterAgent.containers.cluster-agent.startupProbe.successThreshold
+clusterAgent.startupProbe.timeoutSeconds: spec.override.clusterAgent.containers.cluster-agent.startupProbe.timeoutSeconds
 clusterAgent.strategy: spec.override.clusterAgent.updateStrategy
 clusterAgent.strategy.rollingUpdate.maxSurge: spec.override.clusterAgent.updateStrategy.rollingUpdate.maxSurge
 clusterAgent.strategy.rollingUpdate.maxUnavailable: spec.override.clusterAgent.updateStrategy.rollingUpdate.maxUnavailable
 clusterAgent.strategy.type: spec.override.clusterAgent.updateStrategy.type
 clusterAgent.token: spec.global.clusterAgentToken
-clusterAgent.tokenExistingSecret: spec.global.clusterAgentTokenSecret.secretName
+clusterAgent.tokenExistingSecret:
+  args:
+    - keyName: token
+      keyNamePath: spec.global.clusterAgentTokenSecret.keyName
+  mapFunc: mapSecretKeyName
+  newPath: spec.global.clusterAgentTokenSecret.secretName
 clusterAgent.tolerations: spec.override.clusterAgent.tolerations
-clusterAgent.topologySpreadConstraints: ""
+clusterAgent.topologySpreadConstraints: spec.override.clusterAgent.topologySpreadConstraints
 clusterAgent.useHostNetwork: spec.override.clusterAgent.hostNetwork
 clusterAgent.volumeMounts: spec.override.clusterAgent.containers.cluster-agent.volumeMounts
 clusterAgent.volumes: spec.override.clusterAgent.volumes
 clusterChecksRunner.additionalLabels: spec.override.clusterChecksRunner.labels
 clusterChecksRunner.affinity: spec.override.clusterChecksRunner.affinity
-clusterChecksRunner.createPodDisruptionBudget: ""
-clusterChecksRunner.deploymentAnnotations: ""
+clusterChecksRunner.createPodDisruptionBudget: spec.override.clusterChecksRunner.createPodDisruptionBudget
+clusterChecksRunner.deploymentAnnotations: spec.override.clusterChecksRunner.annotations
 clusterChecksRunner.dnsConfig: spec.override.clusterChecksRunner.dnsConfig
 clusterChecksRunner.enabled: spec.features.clusterChecks.useClusterChecksRunners
 clusterChecksRunner.env: spec.override.clusterChecksRunner.env
@@ -272,10 +288,13 @@ clusterChecksRunner.livenessProbe.initialDelaySeconds: spec.override.clusterChec
 clusterChecksRunner.livenessProbe.periodSeconds: spec.override.clusterChecksRunner.containers.agent.livenessProbe.periodSeconds
 clusterChecksRunner.livenessProbe.successThreshold: spec.override.clusterChecksRunner.containers.agent.livenessProbe.successThreshold
 clusterChecksRunner.livenessProbe.timeoutSeconds: spec.override.clusterChecksRunner.containers.agent.livenessProbe.timeoutSeconds
-clusterChecksRunner.networkPolicy.create: ""
+clusterChecksRunner.networkPolicy.create: spec.global.networkPolicy.create
 clusterChecksRunner.nodeSelector: spec.override.clusterChecksRunner.nodeSelector
+clusterChecksRunner.pdb.create: ""
+clusterChecksRunner.pdb.maxUnavailable: ""
+clusterChecksRunner.pdb.minAvailable: ""
 clusterChecksRunner.podAnnotations: spec.override.clusterChecksRunner.annotations
-clusterChecksRunner.ports: ""
+clusterChecksRunner.ports: spec.override.clusterChecksRunner.containers.agent.ports
 clusterChecksRunner.priorityClassName: spec.override.clusterChecksRunner.priorityClassName
 clusterChecksRunner.rbac.automountServiceAccountToken: ""
 clusterChecksRunner.rbac.create: spec.override.clusterChecksRunner.createRbac
@@ -292,22 +311,30 @@ clusterChecksRunner.replicas: spec.override.clusterChecksRunner.replicas
 clusterChecksRunner.resources: spec.override.clusterChecksRunner.containers.agent.resources
 clusterChecksRunner.revisionHistoryLimit: ""
 clusterChecksRunner.securityContext: spec.override.clusterChecksRunner.securityContext
-clusterChecksRunner.startupProbe.failureThreshold: ""
-clusterChecksRunner.startupProbe.initialDelaySeconds: ""
-clusterChecksRunner.startupProbe.periodSeconds: ""
-clusterChecksRunner.startupProbe.successThreshold: ""
-clusterChecksRunner.startupProbe.timeoutSeconds: ""
+clusterChecksRunner.startupProbe.failureThreshold: spec.override.clusterChecksRunner.containers.agent.startupProbe.failureThreshold
+clusterChecksRunner.startupProbe.initialDelaySeconds: spec.override.clusterChecksRunner.containers.agent.startupProbe.initialDelaySeconds
+clusterChecksRunner.startupProbe.periodSeconds: spec.override.clusterChecksRunner.containers.agent.startupProbe.periodSeconds
+clusterChecksRunner.startupProbe.successThreshold: spec.override.clusterChecksRunner.containers.agent.startupProbe.successThreshold
+clusterChecksRunner.startupProbe.timeoutSeconds: spec.override.clusterChecksRunner.containers.agent.startupProbe.timeoutSeconds
 clusterChecksRunner.strategy: spec.override.clusterChecksRunner.updateStrategy
 clusterChecksRunner.strategy.rollingUpdate.maxSurge: spec.override.clusterChecksRunner.updateStrategy.rollingUpdate.maxSurge
 clusterChecksRunner.strategy.rollingUpdate.maxUnavailable: spec.override.clusterChecksRunner.updateStrategy.rollingUpdate.maxUnavailable
 clusterChecksRunner.strategy.type: spec.override.clusterChecksRunner.updateStrategy.type
 clusterChecksRunner.tolerations: spec.override.clusterChecksRunner.tolerations
-clusterChecksRunner.topologySpreadConstraints: ""
+clusterChecksRunner.topologySpreadConstraints: spec.override.clusterChecksRunner.topologySpreadConstraints
 clusterChecksRunner.volumeMounts: spec.override.clusterChecksRunner.containers.agent.volumeMounts
 clusterChecksRunner.volumes: spec.override.clusterChecksRunner.volumes
-commonLabels: ""
+commonLabels:
+  - spec.override.nodeAgent.labels
+  - spec.override.clusterAgent.labels
+  - spec.override.clusterChecksRunner.labels
 datadog-crds.crds.datadogMetrics: ""
 datadog-crds.crds.datadogPodAutoscalers: ""
+datadog-operator.datadogCRDs.crds.datadogAgents: ""
+datadog-operator.datadogCRDs.crds.datadogDashboards: ""
+datadog-operator.datadogCRDs.crds.datadogGenericResources: ""
+datadog-operator.datadogCRDs.crds.datadogMonitors: ""
+datadog-operator.datadogCRDs.crds.datadogSLOs: ""
 datadog.agentDataPlane.enabled: ""
 datadog.agentDataPlane.image.digest: ""
 datadog.agentDataPlane.image.name: ""
@@ -315,37 +342,47 @@ datadog.agentDataPlane.image.pullPolicy: ""
 datadog.agentDataPlane.image.repository: ""
 datadog.agentDataPlane.image.tag: ""
 datadog.apiKey: spec.global.credentials.apiKey
-datadog.apiKeyExistingSecret: spec.global.credentials.apiSecret.secretName
-datadog.apm.enabled: ""
+datadog.apiKeyExistingSecret:
+  args:
+    - keyName: api-key
+      keyNamePath: spec.global.credentials.apiSecret.keyName
+  mapFunc: mapSecretKeyName
+  newPath: spec.global.credentials.apiSecret.secretName
+datadog.apm.enabled: spec.features.apm.hostPortConfig.enabled
 datadog.apm.errorTrackingStandalone.enabled: spec.features.apm.errorTrackingStandalone.enabled
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
-datadog.apm.instrumentation.disabledNamespaces: ""
-datadog.apm.instrumentation.enabled: ""
-datadog.apm.instrumentation.enabledNamespaces: ""
+datadog.apm.instrumentation.disabledNamespaces: spec.features.apm.instrumentation.disabledNamespaces
+datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
+datadog.apm.instrumentation.enabledNamespaces: spec.features.apm.instrumentation.enabledNamespaces
 datadog.apm.instrumentation.injector.imageTag: spec.features.apm.instrumentation.injector.imageTag
-datadog.apm.instrumentation.language_detection.enabled: ""
-datadog.apm.instrumentation.libVersions: ""
+datadog.apm.instrumentation.language_detection.enabled: spec.features.apm.instrumentation.languageDetection.enabled
+datadog.apm.instrumentation.libVersions: spec.features.apm.instrumentation.libVersions
 datadog.apm.instrumentation.skipKPITelemetry: ""
 datadog.apm.instrumentation.targets: spec.features.apm.instrumentation.targets
 datadog.apm.port: spec.features.apm.hostPortConfig.hostPort
 datadog.apm.portEnabled: spec.features.apm.hostPortConfig.enabled
-datadog.apm.socketEnabled: spec.features.apm.enabled
-datadog.apm.socketPath: ""
+datadog.apm.socketEnabled: spec.features.apm.unixDomainSocketConfig.enabled
+datadog.apm.socketPath: spec.features.apm.unixDomainSocketConfig.path
 datadog.apm.useLocalService: ""
-datadog.apm.useSocketVolume: ""
+datadog.apm.useSocketVolume: spec.features.apm.unixDomainSocketConfig.enabled
 datadog.appKey: spec.global.credentials.appKey
-datadog.appKeyExistingSecret: spec.global.credentials.appSecret.secretName
-datadog.asm.iast.enabled: ""
-datadog.asm.sca.enabled: ""
-datadog.asm.threats.enabled: ""
-datadog.checksCardinality: ""
+datadog.appKeyExistingSecret:
+  args:
+    - keyName: app-key
+      keyNamePath: spec.global.credentials.appSecret.keyName
+  mapFunc: mapSecretKeyName
+  newPath: spec.global.credentials.appSecret.secretName
+datadog.asm.iast.enabled: spec.features.asm.iast.enabled
+datadog.asm.sca.enabled: spec.features.asm.sca.enabled
+datadog.asm.threats.enabled: spec.features.asm.threats.enabled
+datadog.checksCardinality: spec.global.checksTagCardinality
 datadog.checksd: spec.override.nodeAgent.extraChecksd
 datadog.clusterChecks.enabled: spec.features.clusterChecks.enabled
 datadog.clusterChecks.shareProcessNamespace: ""
 datadog.clusterName: spec.global.clusterName
 datadog.clusterTagger.collectKubernetesTags: ""
 datadog.collectEvents: spec.features.eventCollection.collectKubernetesEvents
-datadog.confd: spec.override.nodeAgent.extraConfd
+datadog.confd: spec.override.nodeAgent.extraConfd.configDataMap
 datadog.containerExclude: ""
 datadog.containerExcludeLogs: ""
 datadog.containerExcludeMetrics: ""
@@ -356,7 +393,7 @@ datadog.containerIncludeMetrics: ""
 datadog.containerLifecycle.enabled: ""
 datadog.containerRuntimeSupport.enabled: ""
 datadog.criSocketPath: spec.global.criSocketPath
-datadog.csi.enabled: ""
+datadog.csi.enabled: spec.global.csi.enabled
 datadog.dd_url: spec.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""
@@ -377,10 +414,14 @@ datadog.env: spec.override.nodeAgent.env
 datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
-datadog.expvarPort: ""
+datadog.expvarPort:
+  args:
+    - name: DD_EXPVAR_PORT
+  mapFunc: mapAppendEnvVar
+  newPath: spec.override.nodeAgent.containers.agent.env
 datadog.gpuMonitoring.configureCgroupPerms: ""
 datadog.gpuMonitoring.enabled: spec.features.gpu.enabled
-datadog.gpuMonitoring.privilegedMode: ""
+datadog.gpuMonitoring.privilegedMode: spec.features.gpu.privilegedMode
 datadog.gpuMonitoring.runtimeClassName: spec.features.gpu.requiredRuntimeClassName
 datadog.helmCheck.collectEvents: spec.features.helmCheck.collectEvents
 datadog.helmCheck.enabled: spec.features.helmCheck.enabled
@@ -404,7 +445,12 @@ datadog.kubeStateMetricsEnabled: ""
 datadog.kubeStateMetricsNetworkPolicy.create: ""
 datadog.kubelet.agentCAPath: spec.global.kubelet.agentCAPath
 datadog.kubelet.coreCheckEnabled: ""
-datadog.kubelet.host: spec.global.kubelet.host
+datadog.kubelet.fineGrainedAuthorization: ""
+datadog.kubelet.host:
+  args:
+    - name: DD_KUBERNETES_KUBELET_HOST
+  mapFunc: mapAppendEnvVar
+  newPath: spec.override.nodeAgent.env
 datadog.kubelet.host.valueFrom.fieldRef.fieldPath: ""
 datadog.kubelet.hostCAPath: spec.global.kubelet.hostCAPath
 datadog.kubelet.podLogsPath: ""
@@ -422,13 +468,12 @@ datadog.leaderElection: ""
 datadog.leaderElectionResource: ""
 datadog.leaderLeaseDuration: ""
 datadog.logLevel: spec.global.logLevel
-datadog.logs.autoMultiLineDetection: ""
+datadog.logs.autoMultiLineDetection: spec.features.logCollection.autoMultiLineDetection
 datadog.logs.containerCollectAll: spec.features.logCollection.containerCollectAll
 datadog.logs.containerCollectUsingFiles: spec.features.logCollection.containerCollectUsingFiles
 datadog.logs.enabled: spec.features.logCollection.enabled
 datadog.namespaceAnnotationsAsTags: spec.global.namespaceAnnotationsAsTags
 datadog.namespaceLabelsAsTags: spec.global.namespaceLabelsAsTags
-datadog.namespaceLabelsAsTags.env: ""
 datadog.networkMonitoring.enabled: spec.features.npm.enabled
 datadog.networkPath.collector.pathtestContextsLimit: ""
 datadog.networkPath.collector.pathtestInterval: ""
@@ -436,24 +481,25 @@ datadog.networkPath.collector.pathtestMaxPerMinute: ""
 datadog.networkPath.collector.pathtestTTL: ""
 datadog.networkPath.collector.workers: ""
 datadog.networkPath.connectionsMonitoring.enabled: ""
-datadog.networkPolicy.cilium.dnsSelector: spec.global.networkPolicy.dnsSelectorEndpoints
-datadog.networkPolicy.cilium.dnsSelector.toEndpoints: ""
+datadog.networkPolicy.cilium.dnsSelector.toEndpoints: spec.global.networkPolicy.dnsSelectorEndpoints
 datadog.networkPolicy.create: spec.global.networkPolicy.create
 datadog.networkPolicy.flavor: spec.global.networkPolicy.flavor
 datadog.nodeLabelsAsTags: spec.global.nodeLabelsAsTags
-datadog.nodeLabelsAsTags.beta.kubernetes.io/instance-type: ""
+datadog.operator.enabled: ""
+datadog.operator.migration.enabled: ""
+datadog.operator.migration.preview: ""
 datadog.orchestratorExplorer.container_scrubbing.enabled: spec.features.orchestratorExplorer.scrubContainers
 datadog.orchestratorExplorer.customResources: spec.features.orchestratorExplorer.customResources
 datadog.orchestratorExplorer.enabled: spec.features.orchestratorExplorer.enabled
 datadog.originDetectionUnified.enabled: spec.global.originDetectionUnified.enabled
 datadog.osReleasePath: ""
 datadog.otelCollector.config:
-- spec.features.otelCollector.conf.configMap.items
-- spec.features.otelCollector.conf.configMap.name
-- spec.features.otelCollector.conf.configData
-datadog.otelCollector.configMap.items: ""
+  - spec.features.otelCollector.conf.configMap.items
+  - spec.features.otelCollector.conf.configMap.name
+  - spec.features.otelCollector.conf.configData
+datadog.otelCollector.configMap.items: spec.features.otelCollector.conf.configMap.items
 datadog.otelCollector.configMap.key: ""
-datadog.otelCollector.configMap.name: ""
+datadog.otelCollector.configMap.name: spec.features.otelCollector.conf.configMap.name
 datadog.otelCollector.enabled: spec.features.otelCollector.enabled
 datadog.otelCollector.featureGates: ""
 datadog.otelCollector.logs.enabled: ""
@@ -469,17 +515,19 @@ datadog.otlp.receiver.protocols.http.enabled: spec.features.otlp.receiver.protoc
 datadog.otlp.receiver.protocols.http.endpoint: spec.features.otlp.receiver.protocols.http.endpoint
 datadog.otlp.receiver.protocols.http.useHostPort: ""
 datadog.podAnnotationsAsTags: spec.global.podAnnotationsAsTags
-datadog.podAnnotationsAsTags.iam.amazonaws.com/role: ""
 datadog.podLabelsAsTags: spec.global.podLabelsAsTags
-datadog.podLabelsAsTags.app: ""
-datadog.processAgent.containerCollection: ""
+datadog.processAgent.containerCollection: spec.features.liveContainerCollection.enabled
 datadog.processAgent.enabled: ""
-datadog.processAgent.processCollection: ""
+datadog.processAgent.processCollection: spec.features.liveProcessCollection.enabled
 datadog.processAgent.processDiscovery: spec.features.processDiscovery.enabled
-datadog.processAgent.runInCoreAgent: ""
+datadog.processAgent.runInCoreAgent: spec.global.runProcessChecksInCoreAgent
 datadog.processAgent.stripProcessArguments: spec.features.liveProcessCollection.stripProcessArguments
 datadog.profiling.enabled: ""
-datadog.prometheusScrape.additionalConfigs: spec.features.prometheusScrape.additionalConfigs
+datadog.prometheusScrape.additionalConfigs:
+  args:
+    - newType: string
+  mapFunc: mapOverrideType
+  newPath: spec.features.prometheusScrape.additionalConfigs
 datadog.prometheusScrape.enabled: spec.features.prometheusScrape.enabled
 datadog.prometheusScrape.serviceEndpoints: spec.features.prometheusScrape.enableServiceEndpoints
 datadog.prometheusScrape.version: spec.features.prometheusScrape.version
@@ -515,7 +563,6 @@ datadog.securityAgent.runtime.fimEnabled: ""
 datadog.securityAgent.runtime.network.enabled: spec.features.cws.network.enabled
 datadog.securityAgent.runtime.policies.configMap: spec.features.cws.customPolicies.configMap.name
 datadog.securityAgent.runtime.securityProfile: ""
-datadog.securityAgent.runtime.securityProfile.anomalyDetection: ""
 datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled: ""
 datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled: ""
 datadog.securityAgent.runtime.securityProfile.enabled: spec.features.cws.securityProfiles.enabled
@@ -531,7 +578,9 @@ datadog.serviceMonitoring.tls.istio.enabled: ""
 datadog.serviceMonitoring.tls.native.enabled: ""
 datadog.serviceMonitoring.tls.nodejs.enabled: ""
 datadog.site: spec.global.site
-datadog.systemProbe.apparmor: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
+datadog.systemProbe.apparmor:
+  mapFunc: mapSystemProbeAppArmor
+  newPath: spec.override.nodeAgent.containers.system-probe.appArmorProfileName
 datadog.systemProbe.bpfDebug: ""
 datadog.systemProbe.btfPath: ""
 datadog.systemProbe.collectDNSStats: spec.features.npm.collectDNSStats
@@ -546,7 +595,9 @@ datadog.systemProbe.enableTCPQueueLength: spec.features.tcpQueueLength.enabled
 datadog.systemProbe.maxTrackedConnections: ""
 datadog.systemProbe.mountPackageManagementDirs: ""
 datadog.systemProbe.runtimeCompilationAssetDir: ""
-datadog.systemProbe.seccomp: ""
+datadog.systemProbe.seccomp:
+  mapFunc: mapSeccompProfile
+  newPath: spec.override.nodeAgent.containers.system-probe.securityContext.seccompProfile
 datadog.systemProbe.seccompRoot: spec.override.nodeAgent.containers.system-probe.seccompConfig.customRootPath
 datadog.tags: spec.global.tags
 datadog.traceroute.enabled: ""
@@ -555,7 +606,7 @@ existingClusterAgent.clusterchecksEnabled: ""
 existingClusterAgent.join: ""
 existingClusterAgent.serviceName: ""
 existingClusterAgent.tokenSecretName: ""
-fips.customFipsConfig: ""
+fips.customFipsConfig: spec.global.fips.customFIPSConfig.configData
 fips.enabled: spec.global.fips.enabled
 fips.image.digest: ""
 fips.image.name: spec.global.fips.image.name
@@ -565,16 +616,50 @@ fips.image.tag: spec.global.fips.image.tag
 fips.local_address: spec.global.fips.localAddress
 fips.port: spec.global.fips.port
 fips.portRange: spec.global.fips.portRange
-fips.resources: ""
+fips.resources.limits: spec.global.fips.resources.limits
+fips.resources.requests: spec.global.fips.resources.requests
 fips.use_https: spec.global.fips.useHTTPS
-fullnameOverride: ""
+fullnameOverride: metadata.name
 kube-state-metrics.image: ""
 kube-state-metrics.image.repository: ""
+kube-state-metrics.nodeSelector: ""
 kube-state-metrics.nodeSelector.kubernetes.io/os: ""
 kube-state-metrics.rbac.create: ""
 kube-state-metrics.serviceAccount.create: ""
 kube-state-metrics.serviceAccount.name: ""
-nameOverride: spec.global.localservice.nameOverride
+nameOverride: metadata.name
+otelAgentGateway.config: ""
+otelAgentGateway.configMap.items: ""
+otelAgentGateway.configMap.key: ""
+otelAgentGateway.configMap.name: ""
+otelAgentGateway.containers.otelAgent.env: ""
+otelAgentGateway.containers.otelAgent.envFrom: ""
+otelAgentGateway.containers.otelAgent.logLevel: ""
+otelAgentGateway.enabled: ""
+otelAgentGateway.featureGates: ""
+otelAgentGateway.image.pullPolicy: ""
+otelAgentGateway.image.pullSecrets: ""
+otelAgentGateway.logs.enabled: ""
+otelAgentGateway.ports: ""
+otelAgentGateway.priorityClassCreate: ""
+otelAgentGateway.priorityClassName: ""
+otelAgentGateway.priorityClassValue: ""
+otelAgentGateway.priorityPreemptionPolicyValue: ""
+otelAgentGateway.rbac.create: ""
+otelAgentGateway.rbac.rules: ""
+otelAgentGateway.replicas: ""
+otelAgentGateway.revisionHistoryLimit: ""
+otelAgentGateway.service.type: ""
+otelAgentGateway.shareProcessNamespace: ""
+otelAgentGateway.strategy.rollingUpdate.maxSurge: ""
+otelAgentGateway.strategy.rollingUpdate.maxUnavailable: ""
+otelAgentGateway.strategy.type: ""
+otelAgentGateway.terminationGracePeriodSeconds: ""
+otelAgentGateway.tolerations: ""
+otelAgentGateway.topologySpreadConstraints: ""
+otelAgentGateway.useHostNetwork: ""
+otelAgentGateway.volumeMounts: ""
+otelAgentGateway.volumes: ""
 providers.aks.enabled: ""
 providers.eks.ec2.useHostnameFromFile: ""
 providers.gke.autopilot: ""
@@ -584,4 +669,4 @@ providers.talos.enabled: ""
 registry: spec.global.registry
 remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 targetSystem: ""
-useFIPSAgent: ""
+useFIPSAgent: spec.global.fips.enabled

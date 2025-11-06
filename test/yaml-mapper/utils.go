@@ -1,8 +1,13 @@
+//go:build integration
+
 package yaml_mapper
 
 import (
+	"fmt"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 // normalizeAgentConf removes log lines that start with timestamps in the format "2006-01-02 15:04:05 UTC"
@@ -23,14 +28,39 @@ func normalizeAgentConf(input string) string {
 		if shouldSkipField(line) {
 			continue
 		}
-
-		if result.Len() > 0 {
-			result.WriteByte('\n')
-		}
 		result.WriteString(line)
+		result.WriteByte('\n')
 	}
 
-	return result.String()
+	// Normalize bool values to string
+	// Unmarshal the string to map[string]interface{} first
+	confData := []byte(result.String())
+	var confOut map[string]interface{}
+	err := yaml.Unmarshal(confData, &confOut)
+	if err != nil {
+		return result.String()
+	}
+	convertBoolsToStrings(confOut)
+
+	resultData, err := yaml.Marshal(confOut)
+	if err != nil {
+		return result.String()
+	}
+
+	return string(resultData)
+}
+
+// convertBoolsToStrings walks through a map[string]interface{} recursively
+// and replaces any bool value with its string equivalent ("true"/"false").
+func convertBoolsToStrings(m map[string]interface{}) {
+	for k, v := range m {
+		switch val := v.(type) {
+		case bool:
+			m[k] = fmt.Sprintf("%v", val)
+		case map[string]interface{}:
+			convertBoolsToStrings(val)
+		}
+	}
 }
 
 // isTimestampLine checks if a line starts with a timestamp in the format "2006-01-02 15:04:05 UTC"

@@ -7,7 +7,7 @@
   value: {{ .Values.datadog.processAgent.containerCollection | quote }}
 - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
   value: {{ .Values.datadog.processAgent.processDiscovery | quote }}
-{{- if .Values.datadog.processAgent.processCollection }}
+{{- if eq .Values.datadog.processAgent.processCollection true }}
 - name: DD_STRIP_PROCESS_ARGS
   value: {{ .Values.datadog.processAgent.stripProcessArguments | quote }}
 {{- end }}

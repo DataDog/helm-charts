@@ -6,7 +6,7 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
-{{- if .Values.datadog.appKeyExistingSecret }}
+{{- if or .Values.datadog.appKeyExistingSecret .Values.datadog.appKey }}
 - name: DD_APP_KEY
   valueFrom:
     secretKeyRef:

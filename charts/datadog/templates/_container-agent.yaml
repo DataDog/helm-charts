@@ -109,8 +109,10 @@
     - name: DD_APM_ENABLED
       value: {{ include "should-enable-trace-agent" . | quote }}
     {{- if eq (include "should-enable-trace-agent" .) "true" }}
+    {{- if (eq  (include "trace-agent-use-tcp-port" .) "true") }}
     - name: DD_APM_NON_LOCAL_TRAFFIC
       value: "true"
+    {{- end }}
     - name: DD_APM_RECEIVER_PORT
       value: {{ .Values.datadog.apm.port | quote }}
     {{- if eq (include "trace-agent-use-uds" .) "true" }}

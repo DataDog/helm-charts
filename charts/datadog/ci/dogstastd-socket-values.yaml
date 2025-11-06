@@ -9,5 +9,4 @@ datadog:
     useSocketVolume: true
 
   apm:
-    enabled: true
-    useSocketVolume: true
+    socketEnabled: true

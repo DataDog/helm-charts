@@ -11,122 +11,207 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/DataDog/datadog-operator/cmd/yaml-mapper/mapper"
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/google/go-cmp/cmp"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"gopkg.in/yaml.v3"
 )
 
 const (
-	mappingPath   = "../../tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd.yaml"
-	ddaDestPath   = "tempDDADest.yaml"
-	apiKeyEnv     = "API_KEY"
-	appKeyEnv     = "APP_KEY"
-	k8sVersionEnv = "K8S_VERSION"
+	mappingPath = "../../tools/yaml-mapper/mapping_datadog_helm_to_datadogagent_crd.yaml"
+	ddaDestPath = "tempDDADest.yaml"
+	apiKeyEnv   = "API_KEY"
+	appKeyEnv   = "APP_KEY"
 )
+
+type AssertionFunc func(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string, cleanup *CleanupRegistry)
 
 func Test(t *testing.T) {
 	// Prerequisites
-	context := common.CurrentContext(t)
-	t.Log("Checking current context:", context)
-	if strings.Contains(strings.ToLower(context), "staging") ||
-		strings.Contains(strings.ToLower(context), "prod") {
-		t.Fatal("Make sure context is pointing to local cluster")
-	}
-
-	require.NotEmpty(t, os.Getenv(apiKeyEnv), "API key can't be empty")
-	require.NotEmpty(t, os.Getenv(appKeyEnv), "APP key can't be empty")
+	validateEnv(t)
 
 	tests := []struct {
 		name       string
-		command    common.HelmCommand
 		valuesPath string
-		assertions []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string)
+		assertion  AssertionFunc
 	}{
 		{
-			name: "Minimal mapping",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				Values:      []string{"./values/default-values.yaml"},
-			},
+			name:       "Minimal default values",
 			valuesPath: "./values/default-values.yaml",
-			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string){verifyAgentConf},
+			assertion:  verifyAgentConf,
 		},
 		{
-			name: "Agent confd configmap",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				Values:      []string{"./values/confd-values.yaml"},
-			},
+			name:       "Agent confd - equal agent config",
 			valuesPath: "./values/confd-values.yaml",
-			assertions: []func(t *testing.T, kubectlOptions *k8s.KubectlOptions, values string, namespace string) (ddaName string){verifyConfigData},
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "Agent confd - equal confd configMap",
+			valuesPath: "./values/confd-values.yaml",
+			assertion:  verifyConfigData,
+		},
+		{
+			name:       "Dogstatsd with UDS",
+			valuesPath: "../../charts/datadog/ci/dogstastd-socket-values.yaml",
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "APM with local service",
+			valuesPath: "../../charts/datadog/ci/agent-apm-use-local-service-values.yaml",
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "Admission controller w/apm disabled",
+			valuesPath: "../../charts/datadog/ci/apm-disabled-admission-controller-values.yaml",
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "Admission controller w/apm portEnabled",
+			valuesPath: "../../charts/datadog/ci/apm-port-enabled-admission-controller-values.yaml",
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "Admission controller w/apm socket and port enabled",
+			valuesPath: "../../charts/datadog/ci/apm-socket-and-port-admission-controller-values.yaml",
+			assertion:  verifyAgentConf,
+		},
+		{
+			name:       "Admission controller w/apm socket enabled",
+			valuesPath: "../../charts/datadog/ci/apm-socket-enabled-admission-controller-values.yaml",
+			assertion:  verifyAgentConf,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
+			cleanupRegistry := &CleanupRegistry{}
+
 			namespaceName := fmt.Sprintf("datadog-agent-%s", strings.ToLower(random.UniqueId()))
 			kubectlOptions := k8s.NewKubectlOptions("", "", namespaceName)
 			k8s.CreateNamespace(t, kubectlOptions, namespaceName)
-			defer k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
 
-			cleanupSecrets := common.CreateSecretFromEnv(t, kubectlOptions, apiKeyEnv, appKeyEnv)
-			defer cleanupSecrets()
+			if os.Getenv(apiKeyEnv) != "" && os.Getenv(appKeyEnv) != "" {
+				cleanupSecrets := common.CreateSecretFromEnv(t, kubectlOptions, apiKeyEnv, appKeyEnv)
+				defer cleanupSecrets()
+			}
 
 			//	Install Datadog chart
-			cleanUpDatadog := common.InstallChart(t, kubectlOptions, tt.command)
-			defer cleanUpDatadog()
+			agentInstallCmd := common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{tt.valuesPath},
+			}
 
-			datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespaceName, tt.command.ReleaseName)
+			cleanUpDatadog := common.InstallChart(t, kubectlOptions, agentInstallCmd)
+			cleanupRegistry.AddDatadog(cleanUpDatadog)
+
+			datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespaceName, agentInstallCmd.ReleaseName)
 
 			valuesCmd := common.HelmCommand{
 				ReleaseName: datadogReleaseName,
 			}
 			actualValuesFilePath := common.GetFullValues(t, valuesCmd, namespaceName)
-			defer os.Remove(actualValuesFilePath)
 
 			t.Log("GetFullValues created temp file:", actualValuesFilePath)
 
 			// Install Operator chart
-			cleanUpOperator := common.InstallChart(t, kubectlOptions, common.HelmCommand{
+			operatorInstallCmd := common.HelmCommand{
 				ReleaseName: "operator",
 				ChartPath:   "../../charts/datadog-operator",
-			})
-			defer cleanUpOperator()
+			}
+			cleanUpOperator := common.InstallChart(t, kubectlOptions, operatorInstallCmd)
+			cleanupRegistry.AddOperator(cleanUpOperator)
 
-			var ddasToCleanup []string
-			for _, assertion := range tt.assertions {
-				ddaName := assertion(t, kubectlOptions, actualValuesFilePath, namespaceName)
-				if ddaName != "" {
-					ddasToCleanup = append(ddasToCleanup, ddaName)
+			tt.assertion(t, kubectlOptions, actualValuesFilePath, namespaceName, cleanupRegistry)
+
+			t.Cleanup(func() {
+				for _, dda := range cleanupRegistry.GetFiles() {
+					k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", dda}...)
+					os.Remove(dda)
 				}
-			}
-			if len(ddasToCleanup) > 0 {
-				for _, ddaName := range ddasToCleanup {
-					k8s.RunKubectl(t, kubectlOptions, []string{"delete", "-f", ddaName}...)
-					os.Remove(ddaName)
+				if cleanupRegistry.operator != nil {
+					cleanupRegistry.operator()
 				}
-			}
+				if cleanupRegistry.datadog != nil {
+					cleanupRegistry.datadog()
+				}
+				os.Remove(actualValuesFilePath)
+				k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
+			})
 		})
 	}
 }
 
-func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) (ddaName string) {
+func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string, cleanup *CleanupRegistry) {
 	// Run mapper against values.yaml
-	destFile, err := os.Create(ddaDestPath)
+	destFilePath := runMapper(t, valuesPath, namespace, cleanup)
+
+	helmAgentPods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
+	require.NotEmpty(t, helmAgentPods)
+	require.NoError(t, k8s.WaitUntilPodAvailableE(t, kubectlOptions, helmAgentPods[0].Name, 10, 15*time.Second))
+
+	// Get agent conf from helm install
+	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
 	require.NoError(t, err)
+	helmAgentConf = normalizeAgentConf(helmAgentConf)
+	cleanup.datadog()
+	cleanup.UnsetDatadog()
+
+	// Apply mapped DDA
+	err = k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFilePath}...)
+	require.NoError(t, err)
+
+	expectedPods := expectedDsCount(t, kubectlOptions)
+	require.NoError(t, k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator", FieldSelector: "status.phase=Running"}, expectedPods, 10, 15*time.Second))
+
+	operatorAgentPods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator", FieldSelector: "status.phase=Running"})
+	require.NotEmpty(t, operatorAgentPods)
+
+	require.NoError(t, k8s.WaitUntilPodAvailableE(t, kubectlOptions, operatorAgentPods[0].Name, 5, 15*time.Second))
+
+	// Get agent conf from operator install
+	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
+	require.NoError(t, err)
+	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
+
+	// Check agent conf diff
+	require.True(t, cmp.Equal(helmAgentConf, operatorAgentConf), cmp.Diff(helmAgentConf, operatorAgentConf))
+}
+
+func verifyConfigData(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string, cleanup *CleanupRegistry) {
+	destFilePath := runMapper(t, valuesPath, namespace, cleanup)
+	err := k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFilePath}...)
+	require.NoError(t, err)
+
+	datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespace, "datadog")
+	helmConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, fmt.Sprintf("%s-confd", datadogReleaseName))
+	require.NoError(t, err)
+
+	operatorConfdName := "nodeagent-extra-confd"
+	k8s.WaitUntilConfigMapAvailable(t, kubectlOptions, operatorConfdName, 5, 15*time.Second)
+	operatorConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, operatorConfdName)
+
+	require.NoError(t, err)
+	require.EqualValues(t, helmConfdCm.Data, operatorConfdCm.Data)
+}
+
+func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *CleanupRegistry) string {
+	destFile, err := os.CreateTemp("", ddaDestPath)
+	require.NoError(t, err)
+	defer func() {
+		if destFile != nil && destFile.Name() != "" {
+			cleanup.AddDDA(destFile.Name())
+		}
+	}()
 
 	mapConfig := mapper.MapConfig{
 		MappingPath: mappingPath,
@@ -141,59 +226,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 	err = helmMapper.Run()
 	require.NoError(t, err)
 
-	outputBytes, err := os.ReadFile(destFile.Name())
-	require.NoError(t, err)
-
-	var ddaResult map[string]interface{}
-	err = yaml.Unmarshal(outputBytes, &ddaResult)
-	require.NoError(t, err)
-
-	// Get agent conf from helm install
-	helmAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
-	require.NoError(t, err)
-	assert.NotEmpty(t, helmAgentPods)
-	k8s.WaitUntilPodAvailable(t, kubectlOptions, helmAgentPods[0].Name, 5, 15*time.Second)
-
-	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
-	require.NoError(t, err)
-	helmAgentConf = normalizeAgentConf(helmAgentConf)
-
-	// Apply DDA from mapper
-	err = k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFile.Name()}...)
-	require.NoError(t, err)
-
-	time.Sleep(120 * time.Second)
-
-	// Get agent conf from operator install
-	operatorAgentPods, err := k8s.ListPodsE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator"})
-	require.NoError(t, err)
-	assert.NotEmpty(t, operatorAgentPods)
-	k8s.WaitUntilPodAvailable(t, kubectlOptions, operatorAgentPods[0].Name, 10, 20*time.Second)
-
-	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
-	require.NoError(t, err)
-	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
-
-	// Check agent conf diff
-	assert.EqualValues(t, helmAgentConf, operatorAgentConf)
-
 	return destFile.Name()
-}
-
-func verifyConfigData(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string) (ddaManifestName string) {
-	dda := verifyAgentConf(t, kubectlOptions, valuesPath, namespace)
-
-	datadogReleaseName := getHelmReleaseName(t, kubectlOptions, namespace, "datadog")
-	helmConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, fmt.Sprintf("%s-confd", datadogReleaseName))
-	require.NoError(t, err)
-
-	operatorConfdCm, err := k8s.GetConfigMapE(t, kubectlOptions, "nodeagent-extra-confd")
-
-	require.NoError(t, err)
-	assert.EqualValues(t, helmConfdCm.Data, operatorConfdCm.Data)
-
-	return dda
-
 }
 
 func getHelmReleaseName(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace string, shortReleaseName string) string {
@@ -213,4 +246,65 @@ func getHelmReleaseName(t *testing.T, kubectlOptions *k8s.KubectlOptions, namesp
 	require.NotEmpty(t, releaseName, fmt.Sprintf("could not find release %v", releaseName))
 	t.Logf("Found %s release name: %s", shortReleaseName, releaseName)
 	return releaseName
+}
+
+func validateEnv(t *testing.T) {
+	context := common.CurrentContext(t)
+	t.Log("Checking current context:", context)
+	if strings.Contains(strings.ToLower(context), "staging") ||
+		strings.Contains(strings.ToLower(context), "prod") {
+		t.Fatal("Make sure context is pointing to local cluster")
+	}
+}
+
+func expectedDsCount(t *testing.T, kubectlOptions *k8s.KubectlOptions) int {
+	nodes := k8s.GetNodes(t, kubectlOptions)
+	cpNodes, _ := k8s.GetNodesByFilterE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "node-role.kubernetes.io/control-plane"})
+
+	return len(nodes) - len(cpNodes)
+}
+
+type CleanupRegistry struct {
+	mu       sync.Mutex
+	files    []string
+	datadog  func()
+	operator func()
+}
+
+func (d *CleanupRegistry) AddDDA(files ...string) {
+	d.mu.Lock()
+	d.files = append(d.files, files...)
+	d.mu.Unlock()
+}
+
+func (d *CleanupRegistry) AddDatadog(cleanup func()) {
+	d.mu.Lock()
+	d.datadog = cleanup
+	d.mu.Unlock()
+}
+
+func (d *CleanupRegistry) UnsetDatadog() {
+	d.mu.Lock()
+	d.datadog = nil
+	d.mu.Unlock()
+}
+
+func (d *CleanupRegistry) AddOperator(cleanup func()) {
+	d.mu.Lock()
+	d.operator = cleanup
+	d.mu.Unlock()
+}
+
+func (d *CleanupRegistry) UnsetOperator() {
+	d.mu.Lock()
+	d.operator = nil
+	d.mu.Unlock()
+}
+
+func (d *CleanupRegistry) GetFiles() []string {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	cp := make([]string, len(d.files))
+	copy(cp, d.files)
+	return cp
 }
