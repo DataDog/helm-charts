@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.2
+
+* Harmonize agent configs with the Datadog Operator.
+
 ## 3.141.1
 
 * Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
