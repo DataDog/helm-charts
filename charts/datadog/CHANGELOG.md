@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.141.3
+
+* Add an option to enable the kubelet orchestrator check
+
 ## 3.141.2
 
 * Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
