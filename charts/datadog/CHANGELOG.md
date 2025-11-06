@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.143.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.

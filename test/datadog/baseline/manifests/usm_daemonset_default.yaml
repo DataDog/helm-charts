@@ -1453,6 +1453,8 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: HOST_ROOT
+              value: "/host/root"
           image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -1511,6 +1513,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1522,6 +1530,10 @@ spec:
               readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/root
+              name: hostroot
+              mountPropagation: None
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
@@ -1835,6 +1847,12 @@ spec:
         - hostPath:
             path: /etc/passwd
           name: passwd
+        - hostPath:
+            path: /
+          name: hostroot
+        - hostPath:
+            path: /etc/group
+          name: group
         - hostPath:
             path: /var/run
           name: runtimesocketdir

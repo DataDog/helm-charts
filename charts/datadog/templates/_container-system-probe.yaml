@@ -21,7 +21,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if or .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
@@ -81,10 +81,18 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    - name: group
+      mountPath: /etc/group
       readOnly: true
 {{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
@@ -105,7 +113,7 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if or .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
