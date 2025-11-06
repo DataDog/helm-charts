@@ -11,14 +11,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 	"testing"
 	"time"
 
 	"github.com/DataDog/datadog-operator/cmd/yaml-mapper/mapper"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/google/go-cmp/cmp"
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
@@ -45,17 +43,17 @@ func Test(t *testing.T) {
 	}{
 		{
 			name:       "Minimal default values",
-			valuesPath: "./values/default-values.yaml",
+			valuesPath: "../../charts/datadog/ci/default-values.yaml",
 			assertion:  verifyAgentConf,
 		},
 		{
 			name:       "Agent confd - equal agent config",
-			valuesPath: "./values/confd-values.yaml",
+			valuesPath: "../../charts/datadog/ci/agent-confd-values.yaml",
 			assertion:  verifyAgentConf,
 		},
 		{
 			name:       "Agent confd - equal confd configMap",
-			valuesPath: "./values/confd-values.yaml",
+			valuesPath: "../../charts/datadog/ci/agent-confd-values.yaml",
 			assertion:  verifyConfigData,
 		},
 		{
@@ -227,84 +225,4 @@ func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *Clean
 	require.NoError(t, err)
 
 	return destFile.Name()
-}
-
-func getHelmReleaseName(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace string, shortReleaseName string) string {
-	t.Log("Finding Helm release name...")
-	helmListOutput, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{KubectlOptions: kubectlOptions}, "list", "-n", namespace, "--short")
-	require.NoError(t, err, "failed to list helm releases")
-
-	var releaseName string
-	releaseNames := strings.Split(strings.TrimSpace(helmListOutput), "\n")
-	for _, release := range releaseNames {
-		release = strings.TrimSpace(release)
-		if strings.HasPrefix(release, shortReleaseName+"-") {
-			releaseName = release
-			break
-		}
-	}
-	require.NotEmpty(t, releaseName, fmt.Sprintf("could not find release %v", releaseName))
-	t.Logf("Found %s release name: %s", shortReleaseName, releaseName)
-	return releaseName
-}
-
-func validateEnv(t *testing.T) {
-	context := common.CurrentContext(t)
-	t.Log("Checking current context:", context)
-	if strings.Contains(strings.ToLower(context), "staging") ||
-		strings.Contains(strings.ToLower(context), "prod") {
-		t.Fatal("Make sure context is pointing to local cluster")
-	}
-}
-
-func expectedDsCount(t *testing.T, kubectlOptions *k8s.KubectlOptions) int {
-	nodes := k8s.GetNodes(t, kubectlOptions)
-	cpNodes, _ := k8s.GetNodesByFilterE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "node-role.kubernetes.io/control-plane"})
-
-	return len(nodes) - len(cpNodes)
-}
-
-type CleanupRegistry struct {
-	mu       sync.Mutex
-	files    []string
-	datadog  func()
-	operator func()
-}
-
-func (d *CleanupRegistry) AddDDA(files ...string) {
-	d.mu.Lock()
-	d.files = append(d.files, files...)
-	d.mu.Unlock()
-}
-
-func (d *CleanupRegistry) AddDatadog(cleanup func()) {
-	d.mu.Lock()
-	d.datadog = cleanup
-	d.mu.Unlock()
-}
-
-func (d *CleanupRegistry) UnsetDatadog() {
-	d.mu.Lock()
-	d.datadog = nil
-	d.mu.Unlock()
-}
-
-func (d *CleanupRegistry) AddOperator(cleanup func()) {
-	d.mu.Lock()
-	d.operator = cleanup
-	d.mu.Unlock()
-}
-
-func (d *CleanupRegistry) UnsetOperator() {
-	d.mu.Lock()
-	d.operator = nil
-	d.mu.Unlock()
-}
-
-func (d *CleanupRegistry) GetFiles() []string {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	cp := make([]string, len(d.files))
-	copy(cp, d.files)
-	return cp
 }
