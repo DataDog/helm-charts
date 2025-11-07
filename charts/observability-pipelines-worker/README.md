@@ -122,6 +122,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
+| persistence.annotations | object | `{}` | Specify the annotations for PersistentVolumeClaimsTemplates. |
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |
