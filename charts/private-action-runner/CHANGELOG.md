@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.16.0
+
+* Bump private runner version to 1.13.0
+* Support specifying custom tags when publishing observability metrics
+
 ## 1.15.2
 
 * Bump private runner version to 1.12.2

@@ -4,9 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.19.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.19.1
+  name: datadog-datadog-operator
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -313,7 +313,6 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
-            "timer_create",
             "tkill",
             "umask",
             "uname",
@@ -381,9 +380,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.19.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.19.1
+  name: datadog-datadog-operator
 rules:
   - nonResourceURLs:
       - /metrics
@@ -1187,14 +1186,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: datadog-operator
+  name: datadog-datadog-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: datadog-operator
+  name: datadog-datadog-operator
 subjects:
   - kind: ServiceAccount
-    name: datadog-operator
+    name: datadog-datadog-operator
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1441,11 +1440,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1477,7 +1471,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1523,7 +1517,7 @@ spec:
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
             - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
-              value: "false"
+              value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
               value: "false"
             - name: DD_HEALTH_PORT
@@ -1550,7 +1544,7 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1642,11 +1636,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1677,7 +1666,7 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_APM_ENABLED
               value: "true"
             - name: DD_APM_NON_LOCAL_TRAFFIC
@@ -1703,7 +1692,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1754,11 +1743,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1799,7 +1783,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
@@ -1808,7 +1792,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1862,11 +1846,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1888,8 +1867,8 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
-              value: info
-          image: gcr.io/datadoghq/agent:7.71.2
+              value: INFO
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -1966,7 +1945,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1984,11 +1963,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: api-key
-                  name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
                   name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
@@ -2010,7 +1984,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2037,7 +2011,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.71.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2132,22 +2106,22 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.19.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.19.1
+  name: datadog-datadog-operator
   namespace: datadog-agent
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/instance: datadog
-      app.kubernetes.io/name: operator
+      app.kubernetes.io/name: datadog-operator
   template:
     metadata:
       annotations:
-        ad.datadoghq.com/operator.check_names: '["openmetrics"]'
-        ad.datadoghq.com/operator.init_configs: '[{}]'
-        ad.datadoghq.com/operator.instances: |
+        ad.datadoghq.com/datadog-operator.check_names: '["openmetrics"]'
+        ad.datadoghq.com/datadog-operator.init_configs: '[{}]'
+        ad.datadoghq.com/datadog-operator.instances: |
           [{
             "prometheus_url": "http://%%host%%:8383/metrics",
             "namespace": "datadog.operator",
@@ -2155,7 +2129,7 @@ spec:
           }]
       labels:
         app.kubernetes.io/instance: datadog
-        app.kubernetes.io/name: operator
+        app.kubernetes.io/name: datadog-operator
     spec:
       containers:
         - args:
@@ -2187,7 +2161,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.19.0
+          image: gcr.io/datadoghq/operator:1.19.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2195,14 +2169,14 @@ spec:
               port: 8081
             initialDelaySeconds: 15
             periodSeconds: 10
-          name: operator
+          name: datadog-operator
           ports:
             - containerPort: 8383
               name: metrics
               protocol: TCP
           resources: {}
           volumeMounts: null
-      serviceAccountName: datadog-operator
+      serviceAccountName: datadog-datadog-operator
       volumes: null
 ---
 apiVersion: apps/v1
@@ -2316,7 +2290,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
@@ -2369,7 +2343,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.71.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2442,7 +2416,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.71.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

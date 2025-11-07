@@ -10,11 +10,11 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
     condition: datadog.kubeStateMetricsEnabled
   - name: datadog-csi-driver
-    version: 0.4.2
+    version: 0.4.3
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
   - name: datadog-operator
-    version: 2.14.2
+    version: 2.14.3
     repository: https://helm.datadoghq.com
     condition: datadog.operator.enabled
     alias: operator
