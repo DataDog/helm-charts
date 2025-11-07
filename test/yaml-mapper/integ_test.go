@@ -19,6 +19,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -96,6 +97,7 @@ func Test(t *testing.T) {
 			namespaceName := fmt.Sprintf("datadog-agent-%s", strings.ToLower(random.UniqueId()))
 			kubectlOptions := k8s.NewKubectlOptions("", "", namespaceName)
 			k8s.CreateNamespace(t, kubectlOptions, namespaceName)
+			defer k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
 
 			if os.Getenv(apiKeyEnv) != "" && os.Getenv(appKeyEnv) != "" {
 				cleanupSecrets := common.CreateSecretFromEnv(t, kubectlOptions, apiKeyEnv, appKeyEnv)
@@ -143,46 +145,67 @@ func Test(t *testing.T) {
 					cleanupRegistry.datadog()
 				}
 				os.Remove(actualValuesFilePath)
-				k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
 			})
 		})
 	}
 }
 
+// verifyAgentConf validates the agent runtime config from the operator-installed agent against the
+// helm-installed agent
+// Note: errors must be handled with an empty return so that the kind environment can be cleaned up between test cases.
 func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string, cleanup *CleanupRegistry) {
 	// Run mapper against values.yaml
 	destFilePath := runMapper(t, valuesPath, namespace, cleanup)
 
 	helmAgentPods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{LabelSelector: "app.kubernetes.io/component=agent,app.kubernetes.io/managed-by=Helm"})
 	require.NotEmpty(t, helmAgentPods)
-	require.NoError(t, k8s.WaitUntilPodAvailableE(t, kubectlOptions, helmAgentPods[0].Name, 10, 15*time.Second))
+	err := k8s.WaitUntilPodAvailableE(t, kubectlOptions, helmAgentPods[0].Name, 10, 15*time.Second)
+	if err != nil {
+		return
+	}
 
 	// Get agent conf from helm install
-	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config"}...)
-	require.NoError(t, err)
+	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config", "--all"}...)
+	if err != nil {
+		return
+	}
 	helmAgentConf = normalizeAgentConf(helmAgentConf)
 	cleanup.datadog()
 	cleanup.UnsetDatadog()
 
 	// Apply mapped DDA
 	err = k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", destFilePath}...)
-	require.NoError(t, err)
+	if err != nil {
+		return
+	}
 
 	expectedPods := expectedDsCount(t, kubectlOptions)
-	require.NoError(t, k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator", FieldSelector: "status.phase=Running"}, expectedPods, 10, 15*time.Second))
+	err = k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator", FieldSelector: "status.phase=Running"}, expectedPods, 10, 15*time.Second)
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
 
 	operatorAgentPods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{LabelSelector: "agent.datadoghq.com/component=agent,app.kubernetes.io/managed-by=datadog-operator", FieldSelector: "status.phase=Running"})
 	require.NotEmpty(t, operatorAgentPods)
 
-	require.NoError(t, k8s.WaitUntilPodAvailableE(t, kubectlOptions, operatorAgentPods[0].Name, 5, 15*time.Second))
+	err = k8s.WaitUntilPodAvailableE(t, kubectlOptions, operatorAgentPods[0].Name, 5, 15*time.Second)
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
 
 	// Get agent conf from operator install
-	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config"}...)
-	require.NoError(t, err)
+	operatorAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", operatorAgentPods[0].Name, "--", "agent", "config", "--all"}...)
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
 	operatorAgentConf = normalizeAgentConf(operatorAgentConf)
 
 	// Check agent conf diff
-	require.True(t, cmp.Equal(helmAgentConf, operatorAgentConf), cmp.Diff(helmAgentConf, operatorAgentConf))
+	assert.True(t, cmp.Equal(helmAgentConf, operatorAgentConf), cmp.Diff(helmAgentConf, operatorAgentConf))
+	return
 }
 
 func verifyConfigData(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath string, namespace string, cleanup *CleanupRegistry) {

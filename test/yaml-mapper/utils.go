@@ -4,6 +4,7 @@ package yaml_mapper
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 	"testing"
@@ -109,49 +110,52 @@ func normalizeAgentConf(input string) string {
 	lines := strings.Split(input, "\n")
 
 	for _, line := range lines {
-		// Skip lines that start with a timestamp
-		if isTimestampLine(line) {
+		if strings.HasPrefix(line, "Defaulted container") {
 			continue
 		}
 
-		// Skip lines that contain fields that should be skipped
-		for field := range skipFields {
-			if strings.Contains(line, field) {
-				continue
-			}
+		// Skip lines that start with a timestamp
+		if isTimestampLine(line) {
+			continue
 		}
 
 		result.WriteString(line)
 		result.WriteByte('\n')
 	}
 
-	// Normalize bool values to string
+	// Normalize data by converting bools to strings and skipping unnecessary fields
 	// Unmarshal the string to map[string]interface{} first
 	confData := []byte(result.String())
 	var confOut map[string]interface{}
 	err := yaml.Unmarshal(confData, &confOut)
 	if err != nil {
+		log.Printf("could not unmarshal agent config: %v", err)
 		return result.String()
 	}
-	convertBoolsToStrings(confOut)
+	normalizeData(confOut)
 
 	resultData, err := yaml.Marshal(confOut)
 	if err != nil {
+		log.Printf("could not marshal agent config: %v", err)
 		return result.String()
 	}
 
 	return string(resultData)
 }
 
-// convertBoolsToStrings walks through a map[string]interface{} recursively
+// normalizeData walks through a map[string]interface{} recursively
 // and replaces any bool value with its string equivalent ("true"/"false").
-func convertBoolsToStrings(m map[string]interface{}) {
+// It also filters out fields that should be skipped
+func normalizeData(m map[string]interface{}) {
 	for k, v := range m {
+		if _, ok := skipFields[k]; ok {
+			delete(m, k)
+		}
 		switch val := v.(type) {
 		case bool:
 			m[k] = fmt.Sprintf("%v", val)
 		case map[string]interface{}:
-			convertBoolsToStrings(val)
+			normalizeData(val)
 		}
 	}
 }
