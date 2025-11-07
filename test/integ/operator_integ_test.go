@@ -26,7 +26,7 @@ const (
 
 func Test(t *testing.T) {
 	// Prerequisites
-	context := common.CurrentContext(t)
+	context := currentContext(t)
 	t.Log("Checking current context:", context)
 	if strings.Contains(strings.ToLower(context), "staging") ||
 		strings.Contains(strings.ToLower(context), "prod") {
@@ -128,6 +128,12 @@ func verifyNumPodsForSelector(t *testing.T, kubectlOptions *k8s.KubectlOptions, 
 	k8s.WaitUntilNumPodsCreated(t, kubectlOptions, v1.ListOptions{
 		LabelSelector: selector,
 	}, numPods, 9, 10*time.Second)
+}
+
+func currentContext(t *testing.T) string {
+	val, err := k8s.RunKubectlAndGetOutputE(t, k8s.NewKubectlOptions("", "", ""), "config", "current-context")
+	require.Nil(t, err)
+	return val
 }
 
 func setupCertManager(t *testing.T, kubectlOptions *k8s.KubectlOptions, installCertManager bool) func() {

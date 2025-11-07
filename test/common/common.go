@@ -84,7 +84,6 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 
 	// Setup Datadog Agent
 	t.Log("Creating secret")
-	kubectlOptions.Logger = logger.Discard
 	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
 		"--from-literal",
 		"api-key="+apiKey,
@@ -188,35 +187,4 @@ func filterKeysRecursive(yamlMap *map[string]interface{}, keys map[string]interf
 			filterKeysRecursive(&nested, keys)
 		}
 	}
-}
-
-func CurrentContext(t *testing.T) string {
-	val, err := k8s.RunKubectlAndGetOutputE(t, k8s.NewKubectlOptions("", "", ""), "config", "current-context")
-	require.Nil(t, err)
-	return val
-}
-
-func GetFullValues(t *testing.T, cmd HelmCommand, namespace string) string {
-	tempFile, err := os.CreateTemp("", "helm-values-*.yaml")
-	require.NoError(t, err, "failed to create temporary file")
-	defer tempFile.Close()
-
-	tempFilePath := tempFile.Name()
-
-	// Default namespace is datadog-agent
-	if namespace == "" {
-		namespace = "datadog-agent"
-	}
-	kubectlOptions := k8s.NewKubectlOptions("", "", namespace)
-	helmOptions := &helm.Options{
-		KubectlOptions: kubectlOptions,
-	}
-
-	output, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "get", "values", cmd.ReleaseName, "--all")
-	require.NoError(t, err, "failed to get helm values")
-
-	err = os.WriteFile(tempFilePath, []byte(output), 0644)
-	require.NoError(t, err, "failed to write values to temporary file")
-
-	return tempFilePath
 }
