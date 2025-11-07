@@ -30,4 +30,22 @@ otelAgentGateway:
         logs:
           receivers: [otlp]
           exporters: [otlphttp, debug]
-  replicas: 2
+  replicas: 4
+  autoscaling:
+    enabled: true
+    annotations: {}
+    minReplicas: 2
+    maxReplicas: 10
+    metrics:
+      # Aim for high CPU utilization for higher throughput
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 30
+      scaleDown:
+        stabilizationWindowSeconds: 60
