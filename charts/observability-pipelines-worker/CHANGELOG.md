@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.12.0
+
+- Add support for custom annotations on PersistentVolumeClaims (PVCs) via `persistence.annotations` in `values.yaml`.
+- This enables integration with tools like [pvc-autoresizer](https://github.com/topolvm/pvc-autoresizer) for automatic PVC resizing based on storage usage.
+- Example usage:
+
+ ```yaml
+ persistence:
+  enabled: true
+  annotations:
+   resize.topolvm.io/threshold: "10%"
+   resize.topolvm.io/increase: "2Gi"
+   resize.topolvm.io/storage_limit: "20Gi"
+ ```
+
 ## 2.11.0
 
 - Official image `2.11.0`
