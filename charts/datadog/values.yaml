@@ -2255,8 +2255,7 @@ agents:
       #    cpu: 100m
       #    memory: 200Mi
       # agents.containers.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for the init containers.
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
       # agents.containers.initContainers.volumeMounts -- Specify additional volumes to mount for the init containers
       volumeMounts: []
 
