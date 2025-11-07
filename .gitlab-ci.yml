@@ -22,7 +22,6 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       allow_failure: true
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
@@ -31,7 +30,7 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - when: on_success
+    - when: manual
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:
@@ -47,7 +46,6 @@ e2e:
           - e2e_autopilot
           - e2e_autopilot_systemprobe
         E2E_AGENT_VERSION:
-          - "latest"
           - "7-rc"
   before_script:
     # Initial credentials setup with default build-stable AWS profile
