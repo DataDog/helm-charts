@@ -36,6 +36,7 @@ func parseE2EConfigParams() []string {
 	return configKVs
 }
 
+// SetupConfig test
 func SetupConfig() (runner.ConfigMap, error) {
 	res := runner.ConfigMap{}
 	configs := parseE2EConfigParams()
