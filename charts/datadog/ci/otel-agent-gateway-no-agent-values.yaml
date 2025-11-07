@@ -2,8 +2,6 @@ targetSystem: "linux"
 fullnameOverride: "gw-only"
 agents:
   enabled: false
-  kubelet:
-    tlsVerify: false
 clusterAgent:
   enabled: false
 otelAgentGateway:

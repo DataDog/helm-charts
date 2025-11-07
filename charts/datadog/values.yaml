@@ -2723,10 +2723,12 @@ otelAgentGateway:
       protocol: TCP
   # otelAgentGateway.config -- Gateway OTel Agent configuration
   config: null
-  # otelAgentGateway.configMap -- Use an existing ConfigMap for Gateway OTel Agent configuration
+  ## otelAgentGateway.configMap -- Use an existing ConfigMap for Gateway OTel Agent configuration
   configMap:
     # otelAgentGateway.configMap.name -- Name of the existing ConfigMap that contains the Gateway OTel Agent configuration
     name: null
+    # otelAgentGateway.configMap.checksum -- Checksum of the existing ConfigMap that contains the Gateway OTel Agent configuration
+    checksum: null
     # otelAgentGateway.configMap.items -- Items within the ConfigMap that contain Gateway OTel Agent configuration
     items:
     #   - key: otel-gateway-config.yaml
@@ -2739,8 +2741,7 @@ otelAgentGateway:
   featureGates: null
 
   # otelAgentGateway.replicas -- Number of otel-agent instances in the Gateway Deployment
-  # If otelAgentGateway.autoscaling is enabled, HPA may override the number of replicas based on your rules.
-  replicas: 2
+  replicas: 1
 
   # otelAgentGateway.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
   revisionHistoryLimit: 10
@@ -2851,8 +2852,32 @@ otelAgentGateway:
     # otelAgentGateway.service.type -- Set type of otel-agent-gateway service
     type: ClusterIP
 
-  ## Define the Datadog otel-agent image to work with
+  ## Allow to override the Datadog otel-agent image
   image:
+    # otelAgentGateway.image.name -- otel agent image name to use (relative to `registry`)
+    name: ddot-collector
+
+    # otelAgentGateway.image.tag -- Override the image tag of otel agent
+    tag: 7.71.2
+
+    # otelAgentGateway.image.tagSuffix -- Suffix to append to image tag of otel agent
+    tagSuffix: ""
+
+    # otelAgentGateway.image.digest -- Override the image digest of otel agent, takes precedence over tag if specified
+    digest: ""
+
+    # otelAgentGateway.image.repository -- Override the image repository to override default registry
+    repository:
+
+    # otelAgentGateway.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version passed in otelAgentGateway.image.tag is checked
+    ## for compatibility with the version of the chart.
+    ## This boolean permits completely skipping this check.
+    ## This is useful, for example, for custom tags that are not
+    ## respecting semantic versioning.
+    doNotCheckTag:  # false
+
     # otelAgentGateway.image.pullPolicy -- otel Agent image pullPolicy
     pullPolicy: IfNotPresent
 
@@ -2861,6 +2886,18 @@ otelAgentGateway:
     ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
     pullSecrets: []
     #   - name: "<REG_SECRET>"
+
+  initContainers:
+    # otelAgentGateway.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for init containers
+    securityContext:
+    # otelAgentGateway.initContainers.resources -- Resource requests and limits for init containers
+    resources:
+    #  requests:
+    #    cpu: 100m
+    #    memory: 200Mi
+    #  limits:
+    #    cpu: 100m
+    #    memory: 200Mi
 
   containers:
     otelAgent:
