@@ -166,6 +166,7 @@ func verifyAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPat
 
 	// Get agent conf from helm install
 	helmAgentConf, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, []string{"exec", helmAgentPods[0].Name, "--", "agent", "config", "--all"}...)
+	assert.NoError(t, err)
 	if err != nil {
 		return
 	}
