@@ -5,7 +5,7 @@ stages:
 variables:
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
   RUN_E2E:
-    description: "set RUN_E2E to 'true' if you want to trigger the e2e test on your pipeline."
+    description: "Set RUN_E2E to 'true' if you want to trigger the e2e test on your pipeline."
 
 noop:
   stage: test
