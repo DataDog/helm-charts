@@ -1,8 +1,27 @@
 # Datadog changelog
 
-## 3.142.0
+## 3.144.0
 
 * Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
+
+## 3.143.0
+
+* Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
+* The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
+* Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
+* Update the OTel Agent Gateyway Deployment checksum annotation to use the full content of `otel-gateway-configmap.yaml`. Also allow to pass in the checksum of an existing ConfigMap with `otelAgentGateway.configMap.checksum`.
+
+## 3.142.0
+
+* Update Agent to 7.72.1 ([#2142](https://github.com/DataDog/helm-charts/pull/2142)).
+
+## 3.141.2
+
+* Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
+
+## 3.141.1
+
+* Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
 
 ## 3.141.0
 

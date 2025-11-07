@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.142.0](https://img.shields.io/badge/Version-3.142.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.144.0](https://img.shields.io/badge/Version-3.144.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -538,7 +538,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.71.2"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.72.1"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
@@ -624,7 +624,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.71.2"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.72.1"` | Cluster Agent image tag to use |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
@@ -683,7 +683,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.71.2"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.72.1"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -973,8 +973,16 @@ helm install <RELEASE_NAME> \
 | nameOverride | string | `nil` | Override name of app |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
+| otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior | object | `{"scaleDown":{},"scaleUp":{}}` | defines the scaling behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior.scaleDown | object | `{}` | defines the scaling down behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.behavior.scaleUp | object | `{}` | defines the scaling up behavior in OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.enabled | bool | `false` | enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above. Will override otelAgentGateway.replicas. |
+| otelAgentGateway.autoscaling.maxReplicas | int | `0` | max number of replicas for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.metrics | list | `[]` | the metrics used for OTel Agent Gateway HPA |
+| otelAgentGateway.autoscaling.minReplicas | int | `0` | min number of replicas for OTel Agent Gateway HPA |
 | otelAgentGateway.config | string | `nil` | Gateway OTel Agent configuration |
-| otelAgentGateway.configMap | object | `{"items":null,"key":"otel-gateway-config.yaml","name":null}` | Use an existing ConfigMap for Gateway OTel Agent configuration |
+| otelAgentGateway.configMap.checksum | string | `nil` | Checksum of the existing ConfigMap that contains the Gateway OTel Agent configuration |
 | otelAgentGateway.configMap.items | string | `nil` | Items within the ConfigMap that contain Gateway OTel Agent configuration |
 | otelAgentGateway.configMap.key | string | `"otel-gateway-config.yaml"` | Key within the ConfigMap that contains the Gateway OTel Agent configuration |
 | otelAgentGateway.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Gateway OTel Agent configuration |
@@ -988,8 +996,16 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.dnsConfig | object | `{}` | Specify dns configuration options for otel agent containers e.g ndots |
 | otelAgentGateway.enabled | bool | `false` | Enable otel-agent Gateway |
 | otelAgentGateway.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
+| otelAgentGateway.image.digest | string | `""` | Override the image digest of otel agent, takes precedence over tag if specified |
+| otelAgentGateway.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
+| otelAgentGateway.image.name | string | `"ddot-collector"` | otel agent image name to use (relative to `registry`) |
 | otelAgentGateway.image.pullPolicy | string | `"IfNotPresent"` | otel Agent image pullPolicy |
 | otelAgentGateway.image.pullSecrets | list | `[]` | otel Agent repository pullSecret (ex: specify docker registry credentials) |
+| otelAgentGateway.image.repository | string | `nil` | Override the image repository to override default registry |
+| otelAgentGateway.image.tag | string | `"7.71.2"` | Override the image tag of otel agent |
+| otelAgentGateway.image.tagSuffix | string | `""` | Suffix to append to image tag of otel agent |
+| otelAgentGateway.initContainers.resources | string | `nil` | Resource requests and limits for init containers |
+| otelAgentGateway.initContainers.securityContext | string | `nil` | Allows you to overwrite the default container SecurityContext for init containers |
 | otelAgentGateway.lifecycle | object | `{}` | Configure the lifecycle of the otel-agent |
 | otelAgentGateway.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
 | otelAgentGateway.nodeSelector | object | `{}` | Allow the Gateway Deployment to schedule on selected nodes |
@@ -1002,7 +1018,7 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
 | otelAgentGateway.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | otelAgentGateway.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
-| otelAgentGateway.replicas | int | `2` | Number of otel-agent instances in the Gateway Deployment |
+| otelAgentGateway.replicas | int | `1` | Number of otel-agent instances in the Gateway Deployment |
 | otelAgentGateway.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
 | otelAgentGateway.service.type | string | `"ClusterIP"` | Set type of otel-agent-gateway service |
 | otelAgentGateway.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the otel-agent |

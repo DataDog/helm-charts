@@ -44,6 +44,14 @@ otelAgentGateway:
     preStop:
       exec:
         command: ["/bin/sh", "-c", "sleep 10"]
+  initContainers:
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "16Mi"
+      limits:
+        cpu: "1"
+        memory: "16Mi"
   containers:
     otelAgent:
       resources:
