@@ -1162,6 +1162,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1296,6 +1298,8 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1386,6 +1390,8 @@ spec:
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1477,6 +1483,7 @@ spec:
                 - CHOWN
                 - DAC_READ_SEARCH
             privileged: false
+            readOnlyRootFilesystem: true
             seccompProfile:
               localhostProfile: system-probe
               type: Localhost
@@ -1501,6 +1508,8 @@ spec:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: eventsocket
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
@@ -1662,6 +1671,8 @@ spec:
             path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
+        - emptyDir: {}
+          name: eventsocket
         - configMap:
             name: datadog-system-probe-config
           name: sysprobe-config

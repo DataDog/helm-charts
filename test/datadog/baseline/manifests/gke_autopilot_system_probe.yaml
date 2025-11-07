@@ -1154,6 +1154,8 @@ spec:
             requests:
               cpu: 200m
               memory: 256Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
@@ -1270,6 +1272,8 @@ spec:
             requests:
               cpu: 100m
               memory: 200Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1367,6 +1371,7 @@ spec:
                 - CHOWN
                 - DAC_READ_SEARCH
             privileged: false
+            readOnlyRootFilesystem: true
             seccompProfile:
               localhostProfile: system-probe
               type: Localhost
@@ -1388,6 +1393,8 @@ spec:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: eventsocket
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
@@ -1569,6 +1576,8 @@ spec:
           name: os-release-file
         - emptyDir: {}
           name: dsdsocket
+        - emptyDir: {}
+          name: eventsocket
         - configMap:
             name: datadog-system-probe-config
           name: sysprobe-config

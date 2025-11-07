@@ -70,6 +70,10 @@
       subPath: datadog.yaml
       readOnly: true
     {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: eventsocket
+      mountPath: /opt/datadog-agent/run
+    {{- end }}
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml
