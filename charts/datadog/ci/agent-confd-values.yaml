@@ -4,8 +4,8 @@ datadog:
   kubelet:
     tlsVerify: false
   confd:
-   http_check.yaml: |-
-     init_config:
-     instances:
-       - name: "test"
-         url: "https://google.com"
+    http_check.yaml: |-
+      init_config:
+      instances:
+        - name: "test"
+          url: "https://google.com"
