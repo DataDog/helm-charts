@@ -1231,7 +1231,7 @@ spec:
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: info
           image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe

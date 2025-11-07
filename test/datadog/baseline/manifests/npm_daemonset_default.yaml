@@ -1464,7 +1464,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: info
           image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe

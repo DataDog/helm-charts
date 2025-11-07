@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.142.1
+## 3.143.1
 
-* Harmonize agent configs with the Datadog Operator.
+* Harmonize datadog chart configs with the Datadog Operator.
+* Add yaml-mapper integration tests.
+
+## 3.143.0
+
+* Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
+* The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
+* Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
+* Update the OTel Agent Gateyway Deployment checksum annotation to use the full content of `otel-gateway-configmap.yaml`. Also allow to pass in the checksum of an existing ConfigMap with `otelAgentGateway.configMap.checksum`.
 
 ## 3.142.0
 

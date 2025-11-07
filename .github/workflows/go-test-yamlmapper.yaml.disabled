@@ -71,4 +71,4 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
           helm dependency build ./charts/datadog
-          make test-mapper
+          make integ-test-mapper

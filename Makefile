@@ -85,9 +85,6 @@ update-test-baselines-datadog-agent:
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
 
-.PHONY: test-mapper
-test-mapper: integ-test-mapper
-
 .PHONY: integ-test-mapper
 integ-test-mapper:
 	go test -C test/yaml-mapper --tags=integration -count=1 -v -timeout 1h
