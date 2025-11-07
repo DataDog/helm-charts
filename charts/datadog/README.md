@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.144.0](https://img.shields.io/badge/Version-3.144.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.145.0](https://img.shields.io/badge/Version-3.145.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -30,7 +30,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.8.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
-| https://helm.datadoghq.com | datadog-operator | 2.14.3 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.14.3 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -715,12 +715,6 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
-| datadog-operator.datadogCRDs.crds.datadogAgents | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogDashboards | bool | `true` |  |
-| datadog-operator.datadogCRDs.crds.datadogGenericResources | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogMetrics | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogMonitors | bool | `true` |  |
-| datadog-operator.datadogCRDs.crds.datadogSLOs | bool | `false` |  |
 | datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
 | datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
 | datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
@@ -790,7 +784,7 @@ helm install <RELEASE_NAME> \
 | datadog.envDict | object | `{}` | Set environment variables for all Agents defined in a dict |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
-| datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
+| datadog.expvarPort | string | `"6000"` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
 | datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
 | datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
@@ -853,6 +847,8 @@ helm install <RELEASE_NAME> \
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
+| datadog.operator.migration.enabled | bool | `false` | Enable migration of Agent workloads to be managed by the Datadog Operator. Creates a DatadogAgent manifest based on current release's values.yaml. |
+| datadog.operator.migration.preview | bool | `false` | Set to true to preview the DatadogAgent manifest mapped from the Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `helm-dda-migrator` Kubernetes job logs. |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
@@ -866,7 +862,7 @@ helm install <RELEASE_NAME> \
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
 | datadog.otelCollector.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
 | datadog.otelCollector.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
-| datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
+| datadog.otelCollector.ports | list | `[{"containerPort":4317,"name":"otel-grpc","protocol":"TCP"},{"containerPort":4318,"name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
 | datadog.otelCollector.useStandaloneImage | bool | `true` | If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image The tag is retrieved from the `agents.image.tag` value. This is only supported for agent versions 7.67.0+ If set to false, you will need to set `agents.image.tagSuffix` to `full` |
@@ -979,6 +975,14 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | nameOverride | string | `nil` | Override name of app |
+| operator.datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
+| operator.datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
+| operator.datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
+| operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead. |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
@@ -1019,7 +1023,7 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.nodeSelector | object | `{}` | Allow the Gateway Deployment to schedule on selected nodes |
 | otelAgentGateway.podAnnotations | object | `{}` | Annotations to add to the Gateway Deployment's Pods |
 | otelAgentGateway.podLabels | object | `{}` | Sets podLabels if defined |
-| otelAgentGateway.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
+| otelAgentGateway.ports | list | `[{"containerPort":4317,"name":"otel-grpc","protocol":"TCP"},{"containerPort":4318,"name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | otelAgentGateway.priorityClassCreate | bool | `false` | Creates a priorityClass for the otel-agent Gateway Deployment pods. |
 | otelAgentGateway.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
 | otelAgentGateway.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods. |
