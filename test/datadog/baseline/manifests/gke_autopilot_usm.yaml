@@ -1271,6 +1271,9 @@ spec:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
+            - mountPath: /opt/datadog-agent/run/event-monitor.sock
+              name: eventsocket
+              readOnly: false
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
@@ -1452,6 +1455,8 @@ spec:
           name: os-release-file
         - emptyDir: {}
           name: dsdsocket
+        - emptyDir: {}
+          name: eventsocket
         - configMap:
             name: datadog-system-probe-config
           name: sysprobe-config
