@@ -1,5 +1,23 @@
 # Datadog changelog
 
+## 1.16.0
+
+* Bump private runner version to 1.13.0
+* Support specifying custom tags when publishing observability metrics
+
+## 1.15.2
+
+* Bump private runner version to 1.12.2
+  * Temporal `Run workflow` can accept any number of unknown args
+
+## 1.15.1
+
+* Bump private runenr version to 1.12.1
+
+## 1.15.0
+
+* Bump private runner version to 1.12.0
+
 ## 1.14.0
 
 * Make runner http port configurable

@@ -21,6 +21,7 @@ stringData:
       - workflowAutomation
       - appBuilder
     port: 9016
+    tags: []
     actionsAllowlist:
       - com.datadoghq.kubernetes.apps.getControllerRevision
       - com.datadoghq.kubernetes.apps.listControllerRevision
@@ -130,10 +131,10 @@ metadata:
   name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.14.0
+    helm.sh/chart: private-action-runner-1.16.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: kubernetes-test
-    app.kubernetes.io/version: "v1.11.0"
+    app.kubernetes.io/version: "v1.13.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -145,18 +146,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.14.0
+        helm.sh/chart: private-action-runner-1.16.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: kubernetes-test
-        app.kubernetes.io/version: "v1.11.0"
+        app.kubernetes.io/version: "v1.13.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 8198a275180a60755ec3336fcda58ea58c4429c03db70608c738c714a076b8f2
+        checksum/values: bcf9f09a5e0b6e85e90698f6d1d7069a5cf3e17412d7cd37ad2791228aa4f6fb
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.11.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.13.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

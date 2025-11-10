@@ -148,6 +148,9 @@ data:
             "capset",
             "chdir",
             "chmod",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+            "chown",
+            {{- end }}
             "clock_gettime",
             "clone",
             "clone3",
@@ -228,6 +231,10 @@ data:
             "memfd_create",
             "mkdir",
             "mkdirat",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+            "mknod",
+            "mknodat",
+            {{- end }}
             "mmap",
             "mmap2",
             "mprotect",

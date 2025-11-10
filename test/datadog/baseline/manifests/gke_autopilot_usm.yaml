@@ -987,8 +987,9 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
+    agent.datadoghq.com/component: agent
     app.kubernetes.io/component: agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
@@ -1006,9 +1007,10 @@ spec:
         autopilot.gke.io/no-connect: "true"
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: agent
         app: datadog
         app.kubernetes.io/component: agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
         env.datadoghq.com/kind: gke-autopilot
@@ -1109,7 +1111,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1222,7 +1224,7 @@ spec:
               value: gke-autopilot
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources:
@@ -1320,7 +1322,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1371,7 +1373,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1404,7 +1406,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -1506,8 +1508,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    agent.datadoghq.com/component: cluster-agent
     app.kubernetes.io/component: cluster-agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
@@ -1530,9 +1533,10 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: cluster-agent
         app: datadog-cluster-agent
         app.kubernetes.io/component: cluster-agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
         env.datadoghq.com/kind: gke-autopilot
@@ -1583,9 +1587,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
             - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_HOST_SOCKET_PATH
-              value: /var/run/datadog/
+              value: /var/run/datadog
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
             - name: DD_APM_RECEIVER_SOCKET
@@ -1668,7 +1672,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1747,7 +1751,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

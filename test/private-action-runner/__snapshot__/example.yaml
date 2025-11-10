@@ -20,6 +20,7 @@ stringData:
     modes:
       - pull
     port: 9016
+    tags: []
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
@@ -193,10 +194,10 @@ metadata:
   name: example-test-private-action-runner-scripts
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.14.0
+    helm.sh/chart: private-action-runner-1.16.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.11.0"
+    app.kubernetes.io/version: "v1.13.0"
     app.kubernetes.io/managed-by: Helm
   annotations:
     checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
@@ -257,10 +258,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.14.0
+    helm.sh/chart: private-action-runner-1.16.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.11.0"
+    app.kubernetes.io/version: "v1.13.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -272,18 +273,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.14.0
+        helm.sh/chart: private-action-runner-1.16.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.11.0"
+        app.kubernetes.io/version: "v1.13.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 67eeff74fb32c3390f55bd3b93d54ebbb6113e286997ee22e95a0ea7beca4d4a
+        checksum/values: d62c0ad47ff196c583b3dd412ed7f03d8b6533a8e045976dc4748581016a60df
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.11.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.13.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

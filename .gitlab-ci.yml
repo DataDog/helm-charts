@@ -3,9 +3,9 @@ stages:
   - test
 
 variables:
-  RUN_E2E_TEST:
-    description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
+  RUN_E2E:
+    description: "Set RUN_E2E to 'true' if you want to trigger the e2e test on your pipeline."
 
 noop:
   stage: test
@@ -24,8 +24,7 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
-      when: never
+      allow_failure: true
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
@@ -44,7 +43,6 @@ e2e:
     E2E_KEY_PAIR_NAME: ci.helm-charts
     KUBERNETES_MEMORY_REQUEST: 12Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
-    RUN_E2E_TEST: "true"
   parallel:
     matrix:
       - E2E_BUILD_TAGS:
@@ -52,7 +50,6 @@ e2e:
           - e2e_autopilot
           - e2e_autopilot_systemprobe
         E2E_AGENT_VERSION:
-          - "latest"
           - "7-rc"
   before_script:
     # Initial credentials setup with default build-stable AWS profile

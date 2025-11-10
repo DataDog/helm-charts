@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
+    controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
     helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
@@ -823,6 +823,124 @@ spec:
                       type: object
                     kubeStateMetricsCore:
                       properties:
+                        collectCrMetrics:
+                          items:
+                            properties:
+                              commonLabels:
+                                additionalProperties:
+                                  type: string
+                                type: object
+                              groupVersionKind:
+                                properties:
+                                  group:
+                                    type: string
+                                  kind:
+                                    type: string
+                                  version:
+                                    type: string
+                                type: object
+                              labelsFromPath:
+                                additionalProperties:
+                                  items:
+                                    type: string
+                                  type: array
+                                type: object
+                              metricNamePrefix:
+                                type: string
+                              metrics:
+                                items:
+                                  properties:
+                                    commonLabels:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                    each:
+                                      properties:
+                                        gauge:
+                                          properties:
+                                            labelFromKey:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            nilIsZero:
+                                              type: boolean
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        info:
+                                          properties:
+                                            labelFromKey:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        stateSet:
+                                          properties:
+                                            labelName:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            list:
+                                              items:
+                                                type: string
+                                              type: array
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        type:
+                                          type: string
+                                      type: object
+                                    help:
+                                      type: string
+                                    labelsFromPath:
+                                      additionalProperties:
+                                        items:
+                                          type: string
+                                        type: array
+                                      type: object
+                                    name:
+                                      type: string
+                                  type: object
+                                type: array
+                              resourcePlural:
+                                type: string
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                         conf:
                           properties:
                             configData:
@@ -4710,6 +4828,124 @@ spec:
                           type: object
                         kubeStateMetricsCore:
                           properties:
+                            collectCrMetrics:
+                              items:
+                                properties:
+                                  commonLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                  groupVersionKind:
+                                    properties:
+                                      group:
+                                        type: string
+                                      kind:
+                                        type: string
+                                      version:
+                                        type: string
+                                    type: object
+                                  labelsFromPath:
+                                    additionalProperties:
+                                      items:
+                                        type: string
+                                      type: array
+                                    type: object
+                                  metricNamePrefix:
+                                    type: string
+                                  metrics:
+                                    items:
+                                      properties:
+                                        commonLabels:
+                                          additionalProperties:
+                                            type: string
+                                          type: object
+                                        each:
+                                          properties:
+                                            gauge:
+                                              properties:
+                                                labelFromKey:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                nilIsZero:
+                                                  type: boolean
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            info:
+                                              properties:
+                                                labelFromKey:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            stateSet:
+                                              properties:
+                                                labelName:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                list:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            type:
+                                              type: string
+                                          type: object
+                                        help:
+                                          type: string
+                                        labelsFromPath:
+                                          additionalProperties:
+                                            items:
+                                              type: string
+                                            type: array
+                                          type: object
+                                        name:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  resourcePlural:
+                                    type: string
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                             conf:
                               properties:
                                 configData:
