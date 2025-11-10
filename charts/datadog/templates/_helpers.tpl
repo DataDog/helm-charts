@@ -780,6 +780,15 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Build part-of label
+*/}}
+{{- define "part-of-label" -}}
+{{- $ns := .Release.Namespace | replace "-" "--" -}}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{ printf "%s-%s" $ns $name }}
+{{- end }}
+
+{{/*
 Common agent, cluster-agent, and cluster-checks-runner workload template labels
 */}}
 {{- define "datadog.pod-template-labels" }}
@@ -788,6 +797,7 @@ Common agent, cluster-agent, and cluster-checks-runner workload template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
 app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
 
 {{/*
@@ -813,7 +823,6 @@ Common template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: {{ .Release.Namespace }}-{{ template "datadog.fullname" . }}
 {{- end -}}
 
 {{/*

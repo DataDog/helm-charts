@@ -7,7 +7,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
     heritage: Helm
     release: datadog
@@ -22,7 +21,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -36,7 +34,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -50,7 +47,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -102,7 +98,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
   namespace: datadog-agent
@@ -116,7 +111,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-installinfo
   namespace: datadog-agent
@@ -130,7 +124,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
@@ -142,7 +135,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
 rules:
@@ -414,7 +406,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-ksm-core
 rules:
@@ -508,7 +499,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
 rules:
@@ -563,7 +553,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
 roleRef:
@@ -582,7 +571,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-ksm-core
 roleRef:
@@ -601,7 +589,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
 roleRef:
@@ -620,7 +607,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-main
   namespace: datadog-agent
@@ -643,7 +629,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-dca-flare
   namespace: datadog-agent
@@ -664,7 +649,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-main
   namespace: datadog-agent
@@ -684,7 +668,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-dca-flare
   namespace: datadog-agent
@@ -704,7 +687,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -725,7 +707,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
     heritage: Helm
     release: datadog
@@ -748,7 +729,6 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
-    app.kubernetes.io/part-of: datadog-agent-datadog
     app.kubernetes.io/version: "7"
     heritage: Helm
     release: datadog
@@ -777,6 +757,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -802,6 +783,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
