@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.143.0
+## 3.144.0
 
 * Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
