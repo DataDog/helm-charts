@@ -899,7 +899,7 @@ datadog:
     container_scrubbing:
       enabled: true
 
-    # datadog.orchestratorExplorer.kubelet_configuration_check -- Enable the orchestrator kubelet configuration check
+    # datadog.orchestratorExplorer.kubelet_configuration_check.enabled -- Enable the orchestrator kubelet configuration check
 
     ## this enables the collection of the kubelet configuration for viewing in the orchestrator
     kubelet_configuration_check:
