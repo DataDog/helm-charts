@@ -670,7 +670,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.volumes | list | `[]` | Specify additional volumes to mount in the cluster-agent container |
 | clusterChecksRunner.additionalLabels | object | `{}` | Adds labels to the cluster checks runner deployment and pods |
 | clusterChecksRunner.affinity | object | `{}` | Allow the ClusterChecks Deployment to schedule using affinity rules. |
-| clusterChecksRunner.containers.agent.securityContext | object | `{}` | Specify securityContext on the agent container |
+| clusterChecksRunner.containers.agent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Specify securityContext on the agent container |
 | clusterChecksRunner.containers.initContainers.securityContext | object | `{}` | Specify securityContext on the init containers |
 | clusterChecksRunner.createPodDisruptionBudget | bool | `false` | Create the pod disruption budget to apply to the cluster checks agents DEPRECATED. Use clusterChecksRunner.pdb.create instead |
 | clusterChecksRunner.deploymentAnnotations | object | `{}` | Annotations to add to the cluster-checks-runner's Deployment |

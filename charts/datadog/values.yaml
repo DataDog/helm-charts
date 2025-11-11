@@ -2643,7 +2643,8 @@ clusterChecksRunner:
   containers:
     agent:
       # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
     initContainers:
       # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
       securityContext: {}
