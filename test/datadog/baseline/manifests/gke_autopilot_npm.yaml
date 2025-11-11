@@ -1390,7 +1390,7 @@ spec:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
-            - mountPath: /opt/datadog-agent/run/event-monitor.sock
+            - mountPath: /opt/datadog-agent/run
               name: eventsocket
               readOnly: false
             - mountPath: /etc/datadog-agent/system-probe.yaml

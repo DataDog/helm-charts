@@ -72,7 +72,7 @@
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: eventsocket
-      mountPath: /opt/datadog-agent/run/event-monitor.sock
+      mountPath: /opt/datadog-agent/run
       readOnly: false
     {{- end }}
     - name: sysprobe-config
