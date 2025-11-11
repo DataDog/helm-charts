@@ -1,11 +1,9 @@
 stages:
-  - e2e
   - test
+  - e2e
 
 variables:
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
-  RUN_E2E:
-    description: "Set RUN_E2E to 'true' if you want to trigger the e2e test on your pipeline."
 
 noop:
   stage: test
@@ -32,9 +30,7 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: $RUN_E2E_TEST == "true"
-      when: manual
-    - when: never
+    - when: manual
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:

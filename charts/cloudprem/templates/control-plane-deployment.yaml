@@ -95,7 +95,7 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
-            {{- toYaml .Values.control_plane.resources | nindent 14 }}
+            {{- toYaml .Values.control_plane.resources | nindent 12 }}
       volumes:
         - name: config
           configMap:
