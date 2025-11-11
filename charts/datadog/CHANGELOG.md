@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.144.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
