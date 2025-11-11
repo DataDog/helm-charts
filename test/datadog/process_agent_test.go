@@ -482,14 +482,12 @@ func assertDefaultCommonProcessEnvs(t *testing.T, envs map[string]string) {
 	assert.Equal(t, "true", envs[DDContainerCollectionEnabled])
 	assert.Equal(t, "false", envs[DDProcessCollectionEnabled])
 	assert.Equal(t, "true", envs[DDProcessDiscoveryEnabled])
-	assert.Equal(t, "false", envs[DDStripProcessArgs])
 }
 
 func assertFalseCommonProcessEnvs(t *testing.T, envs map[string]string) {
 	assert.Equal(t, "false", envs[DDContainerCollectionEnabled])
 	assert.Equal(t, "false", envs[DDProcessCollectionEnabled])
 	assert.Equal(t, "false", envs[DDProcessDiscoveryEnabled])
-	assert.Equal(t, "false", envs[DDStripProcessArgs])
 }
 
 func getPasswdMount(t *testing.T, volumeMounts []corev1.VolumeMount) bool {

@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.143.1
+
+* Harmonize datadog chart configs with the Datadog Operator.
+* Add yaml-mapper integration tests.
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
