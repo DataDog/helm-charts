@@ -1,6 +1,6 @@
 stages:
-  - e2e
   - test
+  - e2e
 
 variables:
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
