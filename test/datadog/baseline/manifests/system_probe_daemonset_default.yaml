@@ -1515,6 +1515,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1846,6 +1852,9 @@ spec:
         - hostPath:
             path: /
           name: hostroot
+        - hostPath:
+            path: /etc/group
+          name: group
         - hostPath:
             path: /var/run
           name: runtimesocketdir
