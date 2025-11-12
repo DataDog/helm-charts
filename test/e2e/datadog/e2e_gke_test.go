@@ -4,14 +4,15 @@ package datadog
 
 import (
 	"context"
-	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
-	"github.com/stretchr/testify/require"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
+	"github.com/stretchr/testify/require"
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
