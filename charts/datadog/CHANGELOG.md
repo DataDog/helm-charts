@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.143.1
+
+* Add a field to enable the kubelet orchestrator check
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
