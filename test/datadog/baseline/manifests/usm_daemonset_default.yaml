@@ -1456,7 +1456,7 @@ spec:
             - name: DD_LOG_LEVEL
               value: INFO
             - name: HOST_ROOT
-              value: "/host/root"
+              value: /host/root
           image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -1534,8 +1534,8 @@ spec:
               name: etc-lsb-release
               readOnly: true
             - mountPath: /host/root
-              name: hostroot
               mountPropagation: None
+              name: hostroot
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
