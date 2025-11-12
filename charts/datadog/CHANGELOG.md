@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.144.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
