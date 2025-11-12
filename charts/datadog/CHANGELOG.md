@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.144.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
 ## 3.144.0
 
 * Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
