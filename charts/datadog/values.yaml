@@ -1020,9 +1020,17 @@ datadog:
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
       containerInclude:
 
+      # datadog.sbom.containerImage.analyzers -- List of analyzers to use for container image SBOM generation
+      analyzers:
+        - "os"
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
+
+      # datadog.sbom.host.analyzers -- List of analyzers to use for host SBOM generation
+      analyzers:
+        - "os"
 
   ## Enable security agent and provide custom configs
   securityAgent:
