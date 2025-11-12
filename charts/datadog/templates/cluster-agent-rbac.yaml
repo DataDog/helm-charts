@@ -365,6 +365,43 @@ rules:
   - list
   - watch
 {{- include "orchestratorExplorer-config-crs" . }}
+{{- if .Values.datadog.appsec.injector.enabled }}
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - gateways
+    - gatewayclasses
+  verbs:
+    - get
+    - list
+    - watch
+    - patch
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - referencegrants
+  verbs:
+    - get
+    - delete
+    - create
+    - patch
+- apiGroups:
+    - "gateway.envoyproxy.io"
+  resources:
+    - envoyextensionpolicies
+  verbs:
+    - get
+    - delete
+    - create
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - envoyfilters
+  verbs:
+    - get
+    - create
+    - delete
+{{- end }}
 {{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}

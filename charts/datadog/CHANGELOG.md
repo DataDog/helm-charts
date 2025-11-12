@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.144.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
 ## 3.143.0
 
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.

@@ -644,6 +644,45 @@ datadog:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
 
+  ## App & API Protection configuration
+  ##
+  ## App & API Protection is disabled by default and can be enabled by setting the `enabled` field to `true` under the `datadog.appsec.injector` section.
+  ## The Datadog Helm Chart offer the option to auto-instrument supported proxies in the cluster to forward traffic to a custom security processor delegating
+  ## traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product that has to be deployed separately. Please follow the documentation to deploy the processor:
+  ## https://docs.datadoghq.com/security/application_security/setup/#proxies
+  ## It requires Datadog Cluster Agent 7.73.0+.
+  appsec:
+    # App & API Protection Injector is used to automatically configure your proxy to forward traffic to a custom security processor delegating
+    # traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product.
+    injector:
+      # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
+      enabled: false
+
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      autoDetect: true
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      ## When autoDetect is true, detected proxies are added to this list
+      ## When autoDetect is false, only proxies in this list are enabled
+      proxies: [ ]
+      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
+      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+
+      processor:
+        # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
+        # Defaults to `{service.name}.{service.namespace}.svc`
+        address: ""
+
+        # datadog.appsec.injector.processor.port -- Port of the AppSec processor service (defaults to 443)
+        port: 443
+
+        # datadog.appsec.injector.service -- Required service information to connect to the AppSec processor
+        # This service should point to a deployment of the image `ghcr.io/DataDog/dd-trace-go/service-extensions-callout:latest`
+        # This deployment is not managed by the Datadog Helm chart.
+        service:
+          name: ""
+          namespace: ""
+
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
