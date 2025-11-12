@@ -98,7 +98,7 @@
     path: /sys/fs/bpf
   name: bpffs
 {{- end }}
-- name: sysprobe-socket-dir
+- name: sysprobe-run-dir
   emptyDir: {}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
 - hostPath:
