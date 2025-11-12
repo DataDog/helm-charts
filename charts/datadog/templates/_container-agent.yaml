@@ -202,6 +202,10 @@
     - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
       value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.analyzers }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+      value: {{ join "," .Values.datadog.sbom.containerImage.analyzers | quote }}
+    {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
@@ -218,6 +222,10 @@
       value: "true"
     - name: HOST_ROOT
       value: /host
+    {{- if .Values.datadog.sbom.host.analyzers }}
+    - name: DD_SBOM_HOST_ANALYZERS
+      value: {{ join "," .Values.datadog.sbom.host.analyzers | quote }}
+    {{- end }}
     {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED

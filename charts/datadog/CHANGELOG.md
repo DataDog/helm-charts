@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.145.0
+
+* Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
+
 ## 3.144.1
 
 * Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup

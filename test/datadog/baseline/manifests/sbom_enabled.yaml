@@ -878,6 +878,8 @@ spec:
               value: "true"
             - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
               value: "true"
+            - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+              value: os
             - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
