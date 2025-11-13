@@ -680,7 +680,9 @@ datadog:
         # This service should point to a deployment of the image `ghcr.io/DataDog/dd-trace-go/service-extensions-callout:latest`
         # This deployment is not managed by the Datadog Helm chart.
         service:
+          # datadog.appsec.injector.processor.service.name -- Name of the AppSec processor service
           name: ""
+          # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
           namespace: ""
 
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
