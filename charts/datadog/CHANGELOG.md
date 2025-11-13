@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.145.1
+
+* Test E2E
+
 ## 3.145.0
 
 * Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
