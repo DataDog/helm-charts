@@ -24,7 +24,7 @@ data:
     system_probe_config:
       enabled: true
       debug_port:  {{ $.Values.datadog.systemProbe.debugPort }}
-      sysprobe_socket: /opt/datadog-agent/run/sysprobe/sysprobe.sock
+      sysprobe_socket: /var/run/sysprobe/sysprobe.sock
       enable_conntrack: {{ $.Values.datadog.systemProbe.enableConntrack }}
       bpf_debug: {{ $.Values.datadog.systemProbe.bpfDebug }}
       enable_tcp_queue_length: {{ $.Values.datadog.systemProbe.enableTCPQueueLength }}
@@ -93,7 +93,7 @@ data:
 {{- end }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
-      socket: /opt/datadog-agent/run/sysprobe/runtime-security.sock
+      socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
       syscall_monitor:

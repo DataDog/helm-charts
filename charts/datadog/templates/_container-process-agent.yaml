@@ -123,9 +123,8 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- if eq (include "should-enable-system-probe" .) "true" }}
-    - name: sysprobe-run-dir
-      mountPath: /opt/datadog-agent/run/sysprobe
-      subPath: sysprobe
+    - name: sysprobe-socket-dir
+      mountPath: /var/run/sysprobe
       readOnly: true
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
