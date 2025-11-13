@@ -282,6 +282,11 @@ persistence:
     - kubernetes.io/pvc-protection
   # persistence.selector -- Specify the selectors for PersistentVolumeClaims.
   selector: {}
+  # persistence.annotations -- Specify the annotations for PersistentVolumeClaimsTemplates.
+  annotations: {}
+  # resize.topolvm.io/threshold: "10%"
+  # resize.topolvm.io/increase: "2Gi"
+  # resize.topolvm.io/storage_limit: "20Gi"
 
 # dnsPolicy -- Specify the
 # [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy).
