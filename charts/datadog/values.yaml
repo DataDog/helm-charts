@@ -2676,13 +2676,6 @@ kube-state-metrics:
   nodeSelector:
     kubernetes.io/os: linux
 
-datadog-csi-driver:
-  # datadog-csi-driver.tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
-  tolerations: []
-  #   - key: "k"
-  #     operator: "Exists"
-  #     effect: "NoSchedule"
-
 providers:
   gke:
     # providers.gke.autopilot -- Enables Datadog Agent deployment on GKE Autopilot
