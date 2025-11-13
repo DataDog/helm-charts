@@ -6,10 +6,15 @@
   lifecycle:
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
-  {{- if eq  (include "should-enable-compliance" .) "true" }}
+  {{- if or .Values.agents.containers.securityAgent.securityContext (eq  (include "should-enable-compliance" .) "true") }}
   securityContext:
+    {{- if eq  (include "should-enable-compliance" .) "true" }}
     capabilities:
       add: ["AUDIT_CONTROL", "AUDIT_READ"]
+    {{- end }}
+    {{- if .Values.agents.containers.securityAgent.securityContext }}
+{{ toYaml .Values.agents.containers.securityAgent.securityContext | indent 4 }}
+    {{- end }}
   {{- end }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:

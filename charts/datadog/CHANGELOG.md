@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
 ## 3.145.0
 
 * Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
