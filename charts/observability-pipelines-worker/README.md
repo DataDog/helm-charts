@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.11.0](https://img.shields.io/badge/Version-2.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.11.0](https://img.shields.io/badge/AppVersion-2.11.0-informational?style=flat-square)
+![Version: 2.11.1](https://img.shields.io/badge/Version-2.11.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.11.0](https://img.shields.io/badge/AppVersion-2.11.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -122,6 +122,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
+| persistence.annotations | object | `{}` | Specify the annotations for PersistentVolumeClaimsTemplates. |
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |
