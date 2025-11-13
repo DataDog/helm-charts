@@ -365,7 +365,6 @@ rules:
   - list
   - watch
 {{- include "orchestratorExplorer-config-crs" . }}
-{{- if .Values.datadog.appsec.injector.enabled }}
 - apiGroups:
     - "gateway.networking.k8s.io"
   resources:
@@ -401,7 +400,6 @@ rules:
     - get
     - create
     - delete
-{{- end }}
 {{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
