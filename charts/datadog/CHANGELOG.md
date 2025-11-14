@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
 ## 3.145.1
 
 * [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
