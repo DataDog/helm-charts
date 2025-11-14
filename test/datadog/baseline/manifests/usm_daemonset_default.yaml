@@ -634,6 +634,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -994,6 +995,7 @@ metadata:
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -1013,6 +1015,7 @@ spec:
         app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -1455,6 +1458,8 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: HOST_ROOT
+              value: /host/root
           image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -1513,6 +1518,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1524,6 +1535,10 @@ spec:
               readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/root
+              mountPropagation: None
+              name: hostroot
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
@@ -1838,6 +1853,12 @@ spec:
             path: /etc/passwd
           name: passwd
         - hostPath:
+            path: /
+          name: hostroot
+        - hostPath:
+            path: /etc/group
+          name: group
+        - hostPath:
             path: /var/run
           name: runtimesocketdir
   updateStrategy:
@@ -1854,6 +1875,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1879,6 +1901,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
