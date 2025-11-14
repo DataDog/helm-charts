@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.2
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
 ## 3.146.1
 
 * Fix templating error when upgrading to version 3.144.0
