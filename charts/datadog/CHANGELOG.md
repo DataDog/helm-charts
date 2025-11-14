@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
+
+## 3.145.1
+
+* [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
+
 ## 3.145.0
 
 * Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
@@ -75,7 +84,6 @@
 ## 3.138.1
 
 * Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
-
 
 ## 3.138.0
 
