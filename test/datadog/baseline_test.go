@@ -135,7 +135,6 @@ func getInvalidYamlLocation(t *testing.T, valuesFile string) {
 		fileToShow = manifestFiles[targetFile]
 	}
 
-
 	linesAroundError := 5
 	if os.Getenv("LINES_AROUND_ERROR") != "" {
 		linesAroundError, err = strconv.Atoi(os.Getenv("LINES_AROUND_ERROR"))
@@ -150,8 +149,8 @@ func getInvalidYamlLocation(t *testing.T, valuesFile string) {
 		// indexes from helm are 1-based, we work in 0-based
 		targetLine = targetLine - 1
 
-		minLine = max(0, targetLine - linesAroundError)
-		maxLine := min(len(fileToShow), targetLine + linesAroundError)
+		minLine = max(0, targetLine-linesAroundError)
+		maxLine := min(len(fileToShow), targetLine+linesAroundError)
 
 		fileToShow = fileToShow[minLine:maxLine]
 	}
@@ -167,6 +166,6 @@ func getInvalidYamlLocation(t *testing.T, valuesFile string) {
 	}
 
 	for lineIdx, line := range fileToShow {
-		t.Logf("%d: %s", lineIdx + minLine + 1, line)
+		t.Logf("%d: %s", lineIdx+minLine+1, line)
 	}
 }
