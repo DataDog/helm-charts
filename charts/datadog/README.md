@@ -745,8 +745,8 @@ helm install <RELEASE_NAME> \
 | datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
 | datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
 | datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
-| datadog.appsec.injector.processor.service.name | string | `""` |  |
-| datadog.appsec.injector.processor.service.namespace | string | `""` |  |
+| datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |
+| datadog.appsec.injector.processor.service.namespace | string | `""` | Namespace where the AppSec processor service is deployed |
 | datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio" # When autoDetect is true, detected proxies are added to this list # When autoDetect is false, only proxies in this list are enabled |
 | datadog.asm.iast.enabled | bool | `false` | Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
@@ -763,7 +763,7 @@ helm install <RELEASE_NAME> \
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from Agent Autodiscovery, as a space-separated list |
 | datadog.containerImageCollection.enabled | bool | `true` | Enable collection of container image metadata |
-| datadog.containerInclude | string | `nil` | Include containers in Agent Autodiscovery, as a space-separated list. If a container matches an include rule, it’s always included in Autodiscovery |
+| datadog.containerInclude | string | `nil` | Include containers in Agent Autodiscovery, as a space-separated list. |
 | datadog.containerIncludeLogs | string | `nil` | Include logs in Agent Autodiscovery, as a space-separated list |
 | datadog.containerIncludeMetrics | string | `nil` | Include metrics in Agent Autodiscovery, as a space-separated list |
 | datadog.containerLifecycle.enabled | bool | `true` | Enable container lifecycle events collection |
@@ -832,7 +832,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
 | datadog.kubernetesUseEndpointSlices | bool | `false` | Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+). |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
-| datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. Can be: * "lease" / "leases". Only supported in agent 7.47+ * "configmap" / "configmaps". "" to automatically detect which one to use. |
+| datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
 | datadog.logs.autoMultiLineDetection | bool | `false` | Allows the Agent to detect common multi-line patterns automatically. |
@@ -935,7 +935,7 @@ helm install <RELEASE_NAME> \
 | datadog.serviceMonitoring.tls.istio.enabled | bool | `nil` | Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the default setting in the datadog agent. |
 | datadog.serviceMonitoring.tls.native.enabled | bool | `nil` | Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent. |
 | datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
-| datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
+| datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
 | datadog.systemProbe.btfPath | string | `""` | Specify the path to a BTF file for your kernel |
