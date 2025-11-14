@@ -364,6 +364,7 @@ rules:
   verbs:
   - list
   - watch
+  - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
@@ -516,6 +517,12 @@ rules:
   - apps
   resources:
   - deployments
+  verbs:
+  - patch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
   verbs:
   - patch
 ---

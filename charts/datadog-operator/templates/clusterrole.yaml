@@ -55,7 +55,11 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - nodes/configz
+  - nodes/healthz
+  - nodes/logs
   - nodes/metrics
+  - nodes/pods
   - nodes/proxy
   - nodes/spec
   - nodes/stats
@@ -88,9 +92,6 @@ rules:
   - apiservices
   verbs:
   - '*'
-  - deletecollection
-  - list
-  - watch
 - apiGroups:
   - apps
   resources:
@@ -114,6 +115,14 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - list
+  - watch
+  - patch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -255,6 +264,16 @@ rules:
   - watermarkpodautoscalers
   verbs:
   - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
   - list
   - watch
 - apiGroups:

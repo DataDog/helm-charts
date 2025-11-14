@@ -1,4 +1,4 @@
-{{- if (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") }}
+{{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
 apiVersion: auto.gke.io/v1
 kind: AllowlistSynchronizer
 metadata:

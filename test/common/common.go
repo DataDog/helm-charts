@@ -21,6 +21,7 @@ import (
 
 type HelmCommand struct {
 	ReleaseName   string
+	Namespace     string
 	ChartPath     string
 	ShowOnly      []string          // helm template `-s, --show-only` flag
 	Values        []string          // helm template `-f, --values` flag
@@ -39,7 +40,12 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 	require.NoError(t, err, "can't resolve absolute path", "path", cmd.ChartPath)
 	require.NoError(t, err)
 
-	kubectlOptions := k8s.NewKubectlOptions("", "", "datadog-agent")
+	namespace := "datadog-agent"
+	if cmd.Namespace != "" {
+		namespace = cmd.Namespace
+	}
+
+	kubectlOptions := k8s.NewKubectlOptions("", "", namespace)
 
 	options := &helm.Options{
 		KubectlOptions: kubectlOptions,

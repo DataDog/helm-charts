@@ -1,0 +1,33 @@
+targetSystem: "linux"
+fullnameOverride: "gw-only"
+agents:
+  enabled: false
+clusterAgent:
+  enabled: false
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    exporters:
+      debug:
+      otlphttp:
+        endpoint: otlp.datadoghq.com
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlphttp, debug]
+        metrics:
+          receivers: [otlp]
+          exporters: [otlphttp, debug]
+        logs:
+          receivers: [otlp]
+          exporters: [otlphttp, debug]
+  replicas: 2

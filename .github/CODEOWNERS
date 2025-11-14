@@ -15,6 +15,8 @@ charts/datadog                                         @DataDog/container-helm-c
 charts/datadog/templates/_container-process-agent.yaml @DataDog/container-experiences @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/_container-system-probe.yaml  @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/_container-trace-agent.yaml   @DataDog/agent-apm @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_otel*                        @DataDog/opentelemetry-agent @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/otel*                         @DataDog/opentelemetry-agent @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/_system-probe-init.yaml       @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/system-probe-configmap.yaml   @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/synthetics-private-location/                    @Datadog/synthetics

@@ -407,19 +407,19 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if .Values.datadog.dogstatsd.useSocketVolume }}
+{{- if and .Values.datadog.dogstatsd.useSocketVolume (not .Values.datadog.csi.enabled)}}
 
-###################################################################################
-####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot   ####
-###################################################################################
+##############################################################################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot if Datadog CSI Driver is inactive. See datadog.csi.enabled   ####
+##############################################################################################################################################
 
 {{- end }}
 
-{{- if .Values.datadog.apm.socketEnabled }}
+{{- if and .Values.datadog.apm.socketEnabled (not .Values.datadog.csi.enabled) }}
 
-##############################################################################
-####   WARNING: APM with Unix socket is not supported on GKE Autopilot   ####
-##############################################################################
+########################################################################################################################################
+####   WARNING: APM with Unix socket is not supported on GKE Autopilot if Datadog CSI Driver is inactive. See datadog.csi.enabled   ####
+########################################################################################################################################
 
 {{- end }}
 
@@ -488,7 +488,7 @@ https://github.com/DataDog/helm-charts/tree/master/charts/datadog#dsd-config
 {{- end }}
 
 
-{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not .Values.clusterAgent.createPodDisruptionBudget)) }}
+{{- if and (or .Values.clusterAgent.admissionController.enabled .Values.clusterAgent.metricsProvider.enabled) (or (le (int .Values.clusterAgent.replicas) 1) (not (or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterAgent.pdb.create))) }}
 
 ###################################################################################
 ####   WARNING: Cluster-Agent should be deployed in high availability mode     ####
@@ -509,7 +509,7 @@ are enabled:
 To run in high availability mode, our recommendation is to update the chart
 configuration with:
 * set `clusterAgent.replicas` value to `2` replicas .
-* set `clusterAgent.createPodDisruptionBudget` to `true`.
+* set `clusterAgent.pdb.create` to `true`.
 
 {{- end }}
 
@@ -612,7 +612,7 @@ However, the `datadog.disableDefaultOsReleasePaths` option set to `true` and `da
 Dogstatsd and APM sockets are configured with different paths on the host (datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath).
 However, they have the same parent directory in the mount (datadog.dogstatsd.socketPath and datadog.apm.socketPath).
 
-It is not possible to mount two different host paths at the same mount path. 
+It is not possible to mount two different host paths at the same mount path.
 
 To resolve this:
 - use the same value for datadog.dogstatsd.hostSocketPath and datadog.apm.hostSocketPath
@@ -737,10 +737,30 @@ https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
 {{- if (and (not .Values.datadog.csi.enabled ) (eq .Values.clusterAgent.admissionController.configMode "csi"))  }}
-################################################################                                                             
-###    WARNING: Admission Controller CSI Misconfiguration    ###                                                             
+################################################################
+###    WARNING: Admission Controller CSI Misconfiguration    ###
 ################################################################
 Enabling csi via `datadog.csi.enabled` is required to benefit from `csi` admission controller config mode.
 
 Otherwise, `socket` config mode will be used.
+{{- end }}
+
+{{- if and (eq .Values.targetSystem "linux") (not (.Values.datadog.processAgent.runInCoreAgent)) }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+You have set `datadog.processAgent.runInCoreAgent` to `false`.
+Support for this configuration will be deprecated in a future version.
+This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
+This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
+
+{{- end }}
+
+{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+
+###################################################################################
+####               WARNING: OTel Agent Gateway misconfiguration               ####
+###################################################################################
+OTel Agent Gateway autoscaling has no effect in Kubernetes version 1.22.x and below
+
 {{- end }}

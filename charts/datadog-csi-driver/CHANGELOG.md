@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+* Fix AllowlistSynchronizer helper
+
 ## 0.4.2
 
 * Add gke AllowlistSynchronizer

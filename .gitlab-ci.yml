@@ -1,11 +1,9 @@
 stages:
-  - e2e
   - test
+  - e2e
 
 variables:
-  RUN_E2E_TEST:
-    description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
-  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
+  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
 
 noop:
   stage: test
@@ -24,8 +22,7 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
-      when: never
+      allow_failure: true
     - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
@@ -33,9 +30,7 @@ e2e:
           - test/**/*
         compare_to: "refs/heads/main"
       when: always
-    - if: $RUN_E2E_TEST == "true"
-      when: manual
-    - when: never
+    - when: manual
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
   variables:
@@ -52,7 +47,6 @@ e2e:
           - e2e_autopilot_systemprobe
           - e2e_autopilot_csi
         E2E_AGENT_VERSION:
-          - "latest"
           - "7-rc"
   before_script:
     # Initial credentials setup with default build-stable AWS profile

@@ -4,11 +4,15 @@ package datadog
 
 import (
 	"context"
-	"github.com/DataDog/helm-charts/test/common"
-	"github.com/stretchr/testify/require"
+	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
+	"github.com/stretchr/testify/require"
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
@@ -17,11 +21,10 @@ import (
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/environments"
 )
 
 type gkeSuite struct {
-	e2e.BaseSuite[environments.Kubernetes]
+	k8sSuite
 }
 
 func TestGKESuite(t *testing.T) {
@@ -30,7 +33,28 @@ func TestGKESuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithExtraConfigParams(runnerConfig))))
+	assert.NoError(t, err)
+	currentDir, err := os.Getwd()
+	assert.NoError(t, err)
+
+	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
+		gcpkubernetes.WithWorkloadApp(
+			k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{currentDir, "manifests", "autodiscovery-annotation.yaml"}, "/")})),
+		gcpkubernetes.WithExtraConfigParams(runnerConfig),
+		gcpkubernetes.WithAgentOptions(
+			kubernetesagentparams.WithHelmRepoURL(""),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			kubernetesagentparams.WithHelmValues(`
+datadog:
+  kubelet:
+    useApiServer: true
+    tlsVerify: false
+  logs:
+    enabled: true
+    containerCollectAll: true
+clusterChecksRunner:
+  enabled: false
+`)))))
 }
 
 func (v *gkeSuite) TestGKE() {
@@ -71,5 +95,9 @@ func (v *gkeSuite) TestGKE() {
 		require.NoError(v.T(), err)
 		assert.Empty(v.T(), stderr)
 		assert.NotEmpty(v.T(), stdout)
-	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
+	}, 5*time.Minute, 30*time.Second, "GKE readiness timed out")
+}
+
+func (v *gkeSuite) TestGenericK8s() {
+	v.testGenericK8s()
 }

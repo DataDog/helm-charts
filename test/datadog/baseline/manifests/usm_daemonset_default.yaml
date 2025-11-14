@@ -633,6 +633,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -987,10 +988,12 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
+    agent.datadoghq.com/component: agent
     app.kubernetes.io/component: agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -1004,11 +1007,13 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: agent
         app: datadog
         app.kubernetes.io/component: agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -1127,7 +1132,7 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1275,7 +1280,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1375,7 +1380,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1391,7 +1396,7 @@ spec:
               readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
+              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
@@ -1451,7 +1456,9 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.70.2
+            - name: HOST_ROOT
+              value: /host/root
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -1509,6 +1516,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1520,6 +1533,10 @@ spec:
               readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/root
+              mountPropagation: None
+              name: hostroot
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
@@ -1610,7 +1627,7 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: security-agent
           resources: {}
@@ -1639,7 +1656,7 @@ spec:
               readOnly: true
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: true
+              readOnly: false
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
@@ -1651,7 +1668,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1690,7 +1707,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1717,7 +1734,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.70.2
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -1771,11 +1788,11 @@ spec:
             path: /etc/system-release
           name: etc-system-release
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsdsocket
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
         - configMap:
@@ -1834,6 +1851,12 @@ spec:
             path: /etc/passwd
           name: passwd
         - hostPath:
+            path: /
+          name: hostroot
+        - hostPath:
+            path: /etc/group
+          name: group
+        - hostPath:
             path: /var/run
           name: runtimesocketdir
   updateStrategy:
@@ -1845,10 +1868,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    agent.datadoghq.com/component: cluster-agent
     app.kubernetes.io/component: cluster-agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1868,11 +1893,13 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: cluster-agent
         app: datadog-cluster-agent
         app.kubernetes.io/component: cluster-agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
@@ -1917,6 +1944,14 @@ spec:
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
+            - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
               value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
@@ -1997,7 +2032,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2070,7 +2105,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.70.2
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

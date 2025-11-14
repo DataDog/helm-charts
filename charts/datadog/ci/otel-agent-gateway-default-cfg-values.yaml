@@ -1,0 +1,21 @@
+targetSystem: "linux"
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  env:
+    - name: DD_HOSTNAME
+      value: ci-test-host
+  otelCollector:
+    enabled: true
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "5317"
+      hostPort: "5317"
+      name: "otel-grpc"
+    - containerPort: "5318"
+      hostPort: "5318"
+      name: "otel-http"
+  replicas: 1

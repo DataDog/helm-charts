@@ -81,6 +81,7 @@ func Test_baseline_manifests(t *testing.T) {
 					"fullnameOverride":                `"custom-full-name"`,
 					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
 					"runner.config.allowIMDSEndpoint": `true`,
+					"runner.config.tags":              `["foo:bar", "bar:baz"]`,
 					"image.pullPolicy":                `"Always"`,
 				},
 			},
@@ -147,6 +148,19 @@ func Test_baseline_manifests(t *testing.T) {
 				},
 			},
 			snapshotName: "scripts-configuration",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Service annotations",
+			command: common.HelmCommand{
+				ReleaseName: "scripts-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"service.annotations": `{"example.com/custom-annotation": "custom-value", "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"}`,
+				},
+			},
+			snapshotName: "service-annotations",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

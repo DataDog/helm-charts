@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
+    controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogpodautoscalers.datadoghq.com
 spec:
   group: datadoghq.com
@@ -323,10 +323,21 @@ spec:
                           value:
                             description: Value is the value of the objective
                             properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
                               type:
-                                description: 'Type specifies how the value is expressed (possible values: Utilization).'
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
                                 enum:
                                   - Utilization
+                                  - AbsoluteValue
                                 type: string
                               utilization:
                                 description: Utilization defines a percentage of the target compared to requested workload
@@ -342,6 +353,130 @@ spec:
                           - name
                           - value
                         type: object
+                      customQueryObjective:
+                        description: CustomQueryObjective allows to set a controller-level objective.
+                        properties:
+                          query:
+                            description: Query is the timeseries query to use for the objective.
+                            properties:
+                              formulas:
+                                description: Formulas to compute (optional).
+                                items:
+                                  properties:
+                                    formula:
+                                      minLength: 1
+                                      type: string
+                                  required:
+                                    - formula
+                                  type: object
+                                type: array
+                              queries:
+                                items:
+                                  description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
+                                  properties:
+                                    apm_metrics:
+                                      properties:
+                                        group_by:
+                                          items:
+                                            type: string
+                                          type: array
+                                        operation_name:
+                                          type: string
+                                        query_filter:
+                                          type: string
+                                        resource_hash:
+                                          description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
+                                          type: string
+                                        resource_name:
+                                          type: string
+                                        service:
+                                          type: string
+                                        span_kind:
+                                          type: string
+                                        stat:
+                                          description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                          enum:
+                                            - error_rate
+                                            - errors
+                                            - errors_per_second
+                                            - hits
+                                            - hits_per_second
+                                            - apdex
+                                            - latency_avg
+                                            - latency_max
+                                            - latency_p50
+                                            - latency_p75
+                                            - latency_p90
+                                            - latency_p95
+                                            - latency_p99
+                                            - latency_p999
+                                            - latency_distribution
+                                            - total_time
+                                          type: string
+                                      required:
+                                        - stat
+                                      type: object
+                                    metrics:
+                                      properties:
+                                        query:
+                                          description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
+                                          minLength: 1
+                                          type: string
+                                      required:
+                                        - query
+                                      type: object
+                                    name:
+                                      description: Optional variable name ("a", "b", etc.) to reference in formulas.
+                                      type: string
+                                    source:
+                                      enum:
+                                        - metrics
+                                        - apm_metrics
+                                      type: string
+                                  required:
+                                    - source
+                                  type: object
+                                minItems: 1
+                                type: array
+                            required:
+                              - queries
+                            type: object
+                          value:
+                            description: Value is the value of the objective
+                            properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type:
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
+                                enum:
+                                  - Utilization
+                                  - AbsoluteValue
+                                type: string
+                              utilization:
+                                description: Utilization defines a percentage of the target compared to requested workload
+                                format: int32
+                                maximum: 100
+                                minimum: 0
+                                type: integer
+                            required:
+                              - type
+                            type: object
+                          window:
+                            description: Window is the time duration over which the query is computed. It should contain at least one full sample.
+                            type: string
+                        required:
+                          - query
+                          - value
+                          - window
+                        type: object
                       podResource:
                         description: PodResource allows to set a pod-level resource objective.
                         properties:
@@ -353,10 +488,21 @@ spec:
                           value:
                             description: Value is the value of the objective.
                             properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
                               type:
-                                description: 'Type specifies how the value is expressed (possible values: Utilization).'
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
                                 enum:
                                   - Utilization
+                                  - AbsoluteValue
                                 type: string
                               utilization:
                                 description: Utilization defines a percentage of the target compared to requested workload
@@ -376,6 +522,7 @@ spec:
                         enum:
                           - PodResource
                           - ContainerResource
+                          - CustomQuery
                         type: string
                     required:
                       - type
@@ -862,6 +1009,233 @@ spec:
                           default: true
                           description: 'Enabled determines whether recommendations should be applied by the controller:'
                           type: boolean
+                        objectives:
+                          description: |-
+                            Objectives are the objectives to reach and maintain for the target resource in fallback mode.
+                            If not set, the regular objectives will be used.
+                          items:
+                            description: DatadogPodAutoscalerObjective defines the objectives to reach and maintain for the target workload.
+                            properties:
+                              containerResource:
+                                description: ContainerResource allows to set a container-level resource objective.
+                                properties:
+                                  container:
+                                    description: Container is the name of the container.
+                                    type: string
+                                  name:
+                                    description: Name is the name of the resource.
+                                    enum:
+                                      - cpu
+                                    type: string
+                                  value:
+                                    description: Value is the value of the objective
+                                    properties:
+                                      absoluteValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        description: |-
+                                          AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                          Use a plain number (e.g., "11" or "11.5").
+                                          Represented as a resource.Quantity to avoid floating point in CRDs.
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
+                                        enum:
+                                          - Utilization
+                                          - AbsoluteValue
+                                        type: string
+                                      utilization:
+                                        description: Utilization defines a percentage of the target compared to requested workload
+                                        format: int32
+                                        maximum: 100
+                                        minimum: 0
+                                        type: integer
+                                    required:
+                                      - type
+                                    type: object
+                                required:
+                                  - container
+                                  - name
+                                  - value
+                                type: object
+                              customQueryObjective:
+                                description: CustomQueryObjective allows to set a controller-level objective.
+                                properties:
+                                  query:
+                                    description: Query is the timeseries query to use for the objective.
+                                    properties:
+                                      formulas:
+                                        description: Formulas to compute (optional).
+                                        items:
+                                          properties:
+                                            formula:
+                                              minLength: 1
+                                              type: string
+                                          required:
+                                            - formula
+                                          type: object
+                                        type: array
+                                      queries:
+                                        items:
+                                          description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
+                                          properties:
+                                            apm_metrics:
+                                              properties:
+                                                group_by:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                operation_name:
+                                                  type: string
+                                                query_filter:
+                                                  type: string
+                                                resource_hash:
+                                                  description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
+                                                  type: string
+                                                resource_name:
+                                                  type: string
+                                                service:
+                                                  type: string
+                                                span_kind:
+                                                  type: string
+                                                stat:
+                                                  description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                                  enum:
+                                                    - error_rate
+                                                    - errors
+                                                    - errors_per_second
+                                                    - hits
+                                                    - hits_per_second
+                                                    - apdex
+                                                    - latency_avg
+                                                    - latency_max
+                                                    - latency_p50
+                                                    - latency_p75
+                                                    - latency_p90
+                                                    - latency_p95
+                                                    - latency_p99
+                                                    - latency_p999
+                                                    - latency_distribution
+                                                    - total_time
+                                                  type: string
+                                              required:
+                                                - stat
+                                              type: object
+                                            metrics:
+                                              properties:
+                                                query:
+                                                  description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
+                                                  minLength: 1
+                                                  type: string
+                                              required:
+                                                - query
+                                              type: object
+                                            name:
+                                              description: Optional variable name ("a", "b", etc.) to reference in formulas.
+                                              type: string
+                                            source:
+                                              enum:
+                                                - metrics
+                                                - apm_metrics
+                                              type: string
+                                          required:
+                                            - source
+                                          type: object
+                                        minItems: 1
+                                        type: array
+                                    required:
+                                      - queries
+                                    type: object
+                                  value:
+                                    description: Value is the value of the objective
+                                    properties:
+                                      absoluteValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        description: |-
+                                          AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                          Use a plain number (e.g., "11" or "11.5").
+                                          Represented as a resource.Quantity to avoid floating point in CRDs.
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
+                                        enum:
+                                          - Utilization
+                                          - AbsoluteValue
+                                        type: string
+                                      utilization:
+                                        description: Utilization defines a percentage of the target compared to requested workload
+                                        format: int32
+                                        maximum: 100
+                                        minimum: 0
+                                        type: integer
+                                    required:
+                                      - type
+                                    type: object
+                                  window:
+                                    description: Window is the time duration over which the query is computed. It should contain at least one full sample.
+                                    type: string
+                                required:
+                                  - query
+                                  - value
+                                  - window
+                                type: object
+                              podResource:
+                                description: PodResource allows to set a pod-level resource objective.
+                                properties:
+                                  name:
+                                    description: Name is the name of the resource.
+                                    enum:
+                                      - cpu
+                                    type: string
+                                  value:
+                                    description: Value is the value of the objective.
+                                    properties:
+                                      absoluteValue:
+                                        anyOf:
+                                          - type: integer
+                                          - type: string
+                                        description: |-
+                                          AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                          Use a plain number (e.g., "11" or "11.5").
+                                          Represented as a resource.Quantity to avoid floating point in CRDs.
+                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        x-kubernetes-int-or-string: true
+                                      type:
+                                        description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
+                                        enum:
+                                          - Utilization
+                                          - AbsoluteValue
+                                        type: string
+                                      utilization:
+                                        description: Utilization defines a percentage of the target compared to requested workload
+                                        format: int32
+                                        maximum: 100
+                                        minimum: 0
+                                        type: integer
+                                    required:
+                                      - type
+                                    type: object
+                                required:
+                                  - name
+                                  - value
+                                type: object
+                              type:
+                                description: Type sets the type of the objective.
+                                enum:
+                                  - PodResource
+                                  - ContainerResource
+                                  - CustomQuery
+                                type: string
+                            required:
+                              - type
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                         triggers:
                           default: {}
                           description: Triggers defines the triggers that will generate recommendations.
@@ -897,10 +1271,21 @@ spec:
                           value:
                             description: Value is the value of the objective
                             properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
                               type:
-                                description: 'Type specifies how the value is expressed (possible values: Utilization).'
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
                                 enum:
                                   - Utilization
+                                  - AbsoluteValue
                                 type: string
                               utilization:
                                 description: Utilization defines a percentage of the target compared to requested workload
@@ -916,6 +1301,130 @@ spec:
                           - name
                           - value
                         type: object
+                      customQueryObjective:
+                        description: CustomQueryObjective allows to set a controller-level objective.
+                        properties:
+                          query:
+                            description: Query is the timeseries query to use for the objective.
+                            properties:
+                              formulas:
+                                description: Formulas to compute (optional).
+                                items:
+                                  properties:
+                                    formula:
+                                      minLength: 1
+                                      type: string
+                                  required:
+                                    - formula
+                                  type: object
+                                type: array
+                              queries:
+                                items:
+                                  description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
+                                  properties:
+                                    apm_metrics:
+                                      properties:
+                                        group_by:
+                                          items:
+                                            type: string
+                                          type: array
+                                        operation_name:
+                                          type: string
+                                        query_filter:
+                                          type: string
+                                        resource_hash:
+                                          description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
+                                          type: string
+                                        resource_name:
+                                          type: string
+                                        service:
+                                          type: string
+                                        span_kind:
+                                          type: string
+                                        stat:
+                                          description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                          enum:
+                                            - error_rate
+                                            - errors
+                                            - errors_per_second
+                                            - hits
+                                            - hits_per_second
+                                            - apdex
+                                            - latency_avg
+                                            - latency_max
+                                            - latency_p50
+                                            - latency_p75
+                                            - latency_p90
+                                            - latency_p95
+                                            - latency_p99
+                                            - latency_p999
+                                            - latency_distribution
+                                            - total_time
+                                          type: string
+                                      required:
+                                        - stat
+                                      type: object
+                                    metrics:
+                                      properties:
+                                        query:
+                                          description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
+                                          minLength: 1
+                                          type: string
+                                      required:
+                                        - query
+                                      type: object
+                                    name:
+                                      description: Optional variable name ("a", "b", etc.) to reference in formulas.
+                                      type: string
+                                    source:
+                                      enum:
+                                        - metrics
+                                        - apm_metrics
+                                      type: string
+                                  required:
+                                    - source
+                                  type: object
+                                minItems: 1
+                                type: array
+                            required:
+                              - queries
+                            type: object
+                          value:
+                            description: Value is the value of the objective
+                            properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              type:
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
+                                enum:
+                                  - Utilization
+                                  - AbsoluteValue
+                                type: string
+                              utilization:
+                                description: Utilization defines a percentage of the target compared to requested workload
+                                format: int32
+                                maximum: 100
+                                minimum: 0
+                                type: integer
+                            required:
+                              - type
+                            type: object
+                          window:
+                            description: Window is the time duration over which the query is computed. It should contain at least one full sample.
+                            type: string
+                        required:
+                          - query
+                          - value
+                          - window
+                        type: object
                       podResource:
                         description: PodResource allows to set a pod-level resource objective.
                         properties:
@@ -927,10 +1436,21 @@ spec:
                           value:
                             description: Value is the value of the objective.
                             properties:
+                              absoluteValue:
+                                anyOf:
+                                  - type: integer
+                                  - type: string
+                                description: |-
+                                  AbsoluteValue defines a target as an absolute value divided by the number of running pods.
+                                  Use a plain number (e.g., "11" or "11.5").
+                                  Represented as a resource.Quantity to avoid floating point in CRDs.
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
                               type:
-                                description: 'Type specifies how the value is expressed (possible values: Utilization).'
+                                description: 'Type specifies how the value is expressed (possible values: Utilization, AbsoluteValue).'
                                 enum:
                                   - Utilization
+                                  - AbsoluteValue
                                 type: string
                               utilization:
                                 description: Utilization defines a percentage of the target compared to requested workload
@@ -950,6 +1470,7 @@ spec:
                         enum:
                           - PodResource
                           - ContainerResource
+                          - CustomQuery
                         type: string
                     required:
                       - type

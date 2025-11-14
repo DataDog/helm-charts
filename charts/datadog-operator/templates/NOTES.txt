@@ -41,3 +41,13 @@ The maximumGoroutines parameter isn't supported by the Operator 1.0.0-rc.12 and 
 Setting a value will not change the default defined in the Operator.
     {{- end }}
 {{- end }}
+
+{{- if (semverCompare ">=1.18.0-rc.1" $version) }}
+##############################################################################
+####               WARNING: Upcoming metadata change in Operator 1.21.    ####
+##############################################################################
+
+We are changing Datadog Agent daemonset and pod metadata handling in upcoming releases.
+Please check Operator README for more details https://github.com/DataDog/datadog-operator/blob/main/README.md
+
+{{- end }}

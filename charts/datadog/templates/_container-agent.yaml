@@ -7,7 +7,7 @@
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined")) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined") "mknod" .Values.datadog.gpuMonitoring.enabled) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-agent-container-resources" . | indent 4 }}
@@ -202,6 +202,10 @@
     - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
       value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.analyzers }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+      value: {{ join "," .Values.datadog.sbom.containerImage.analyzers | quote }}
+    {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
@@ -218,6 +222,10 @@
       value: "true"
     - name: HOST_ROOT
       value: /host
+    {{- if .Values.datadog.sbom.host.analyzers }}
+    - name: DD_SBOM_HOST_ANALYZERS
+      value: {{ join "," .Values.datadog.sbom.host.analyzers | quote }}
+    {{- end }}
     {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -297,6 +305,8 @@
     - name: pod-resources-socket
       mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
     {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
     - name: hostrun
       mountPath: /host/run

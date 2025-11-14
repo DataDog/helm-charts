@@ -5,8 +5,9 @@ metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "cluster-checks-runner") | indent 4 }}
     app.kubernetes.io/component: clusterchecks-agent
+    agent.datadoghq.com/component: cluster-checks-runner
     {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
     {{- end }}
@@ -25,10 +26,11 @@ spec:
   template:
     metadata:
       labels:
-{{ include "datadog.template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "cluster-checks-runner") | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-clusterchecks
+        agent.datadoghq.com/component: cluster-checks-runner
         {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
         {{- end }}
@@ -42,6 +44,9 @@ spec:
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
         {{- end }}
       {{- if .Values.clusterChecksRunner.podAnnotations }}
 {{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}

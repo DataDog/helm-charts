@@ -158,6 +158,9 @@ spec:
           {{- if (semverCompare ">=1.7.0-0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
+          {{- if (semverCompare ">=1.18.0-0" $version) }}
+            - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
+          {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.11.1
+
+- Add support for custom annotations on PersistentVolumeClaims (PVCs) via `persistence.annotations` in `values.yaml`
+
+## 2.11.0
+
+- Official image `2.11.0`
+
+## 2.10.0
+
+- Official image `2.10.0`
+
+## 2.9.1
+
+- Official image `2.9.1`
+
 ## 2.9.0
 
 - Official image `2.9.0`
