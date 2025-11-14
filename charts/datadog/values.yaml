@@ -698,6 +698,9 @@ datadog:
       # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
       # and pods logs.
       enabled: false
+    # datadog.otelCollector.enableConfigSync controls configSync mechanism
+    # between otel-agent container and agent container.
+    enableConfigSync: true
 
   ## Continuous Profiler configuration
   ##

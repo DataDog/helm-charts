@@ -67,8 +67,13 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- if .Values.datadog.otelCollector.enableConfigSync }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
+    {{- else }}
+    - name: DD_AGENT_IPC_PORT
+      value: "0"
+    {{- end }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- if .Values.datadog.otelCollector.enabled }}
