@@ -77,6 +77,10 @@ spec:
             # it needs to be writeable
             - name: registration-dir
               mountPath: /registration # This is where the registrar writes the registration information
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: plugin-dir
           hostPath:

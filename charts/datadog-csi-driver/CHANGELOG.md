@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4
+
+* Support the definition of tolerations
+
 ## 0.4.3
 
 * Fix AllowlistSynchronizer helper
