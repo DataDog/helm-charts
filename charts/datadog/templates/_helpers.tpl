@@ -466,7 +466,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
