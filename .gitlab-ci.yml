@@ -9,7 +9,7 @@ variables:
 
 noop:
   stage: test
-  script: 
+  script:
     - echo "No op job to get merge queue working"
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
   tags: ["arch:amd64"]
@@ -50,6 +50,7 @@ e2e:
           - e2e
           - e2e_autopilot
           - e2e_autopilot_systemprobe
+          - e2e_autopilot_csi
         E2E_AGENT_VERSION:
           - "latest"
           - "7-rc"

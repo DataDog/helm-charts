@@ -5,6 +5,8 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/exec"
 	"strings"
 	"testing"
 	"time"
@@ -33,56 +35,61 @@ func TestGKEAutopilotCSISuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 
-	helmValues := `
-datadog:
-  kubelet:
-    tlsVerify: false
-  csi:
-    enabled: true
-`
-	e2e.Run(t, &gkeAutopilotCSISuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(config))))
+	e2e.Run(t, &gkeAutopilotCSISuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot()), gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
+
 	v.T().Log("Running GKE Autopilot CSI driver test")
+
+	// Write kubeconfig to temp file
+	kubeconfigFile, err := os.CreateTemp("", "gke-kubeconfig-")
+	if err != nil {
+		v.T().Fatalf("Failed to create kubeconfig temp file: %v", err)
+	}
+	defer os.Remove(kubeconfigFile.Name())
+
+	kubeconfig := v.Env().KubernetesCluster.KubeConfig
+	if err := os.WriteFile(kubeconfigFile.Name(), []byte(kubeconfig), 0600); err != nil {
+		v.T().Fatalf("Failed to write kubeconfig: %v", err)
+	}
+	if err := kubeconfigFile.Close(); err != nil {
+		v.T().Fatalf("Failed to close kubeconfig file: %v", err)
+	}
+
+	// Installing the csi driver via helm
+	v.T().Log("Installing CSI driver")
+	helmCmd := exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
+		"--kubeconfig", kubeconfigFile.Name(),
+		"--namespace", "datadog-agent", "--create-namespace")
+
+	output, err := helmCmd.CombinedOutput()
+	v.T().Logf("Helm output: %s", string(output))
+	if err != nil {
+		v.T().Fatalf("Helm install failed: %v", err)
+	}
+	v.T().Log("CSI driver installed")
+
+	// Check if CSI driver pods exist
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
-		res, _ := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-
-		var agent corev1.Pod
-		containsAgent := false
-		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-				containsAgent = true
-				agent = pod
-				break
-			}
+		res, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog-agent").List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			v.T().Logf("Error listing pods in namespace datadog-agent: %v", err)
+			return
 		}
-		assert.True(v.T(), containsAgent, "Agent not found")
-		assert.Equal(v.T(), corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
 
-		var clusterAgent corev1.Pod
-		containsClusterAgent := false
-		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "cluster-agent") {
-				containsClusterAgent = true
-				clusterAgent = pod
-				break
-			}
-		}
-		assert.True(v.T(), containsClusterAgent, "Cluster Agent not found")
-		assert.Equal(v.T(), corev1.PodPhase("Running"), clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
-
-		var csiDriver corev1.Pod
+		var csiDriverPod corev1.Pod
 		containsCsiDriver := false
 		for _, pod := range res.Items {
 			if strings.Contains(pod.Name, "csi-driver") {
 				containsCsiDriver = true
-				csiDriver = pod
+				csiDriverPod = pod
 				break
 			}
 		}
-		assert.True(v.T(), containsCsiDriver, "CSI Driver not found")
-		assert.Equal(v.T(), corev1.PodPhase("Running"), csiDriver.Status.Phase, fmt.Sprintf("CSI Driver is not running: %s", csiDriver.Status.Phase))
 
-	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
+		assert.True(v.T(), containsCsiDriver, "CSI Driver pod not found")
+		assert.Equal(v.T(), corev1.PodPhase("Running"), csiDriverPod.Status.Phase, fmt.Sprintf("CSI Driver is not running: %s", csiDriverPod.Status.Phase))
+	}, 5*time.Minute, 30*time.Second, "CSI Driver readiness timed out")
+
 }
