@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.145.2
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
 ## 3.145.1
 
 * [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
