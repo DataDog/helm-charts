@@ -3,6 +3,9 @@
 ## 3.144.0
 
 * Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+
+## 3.143.0
+
 * Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
 * The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
 * Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
