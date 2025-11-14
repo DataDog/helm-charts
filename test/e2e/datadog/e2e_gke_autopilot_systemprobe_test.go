@@ -5,10 +5,11 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"github.com/DataDog/helm-charts/test/common"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/DataDog/helm-charts/test/common"
 
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
@@ -39,7 +40,15 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(gcpkubernetes.WithGKEOptions(gke.WithAutopilot()), gcpkubernetes.WithAgentOptions(kubernetesagentparams.WithGKEAutopilot(), kubernetesagentparams.WithHelmValues(helmValues)), gcpkubernetes.WithExtraConfigParams(config))))
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
+		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+		gcpkubernetes.WithAgentOptions(
+			kubernetesagentparams.WithGKEAutopilot(),
+			kubernetesagentparams.WithHelmRepoURL(""),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			kubernetesagentparams.WithHelmValues(helmValues),
+		),
+		gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
