@@ -1,8 +1,25 @@
 # Datadog changelog
 
-## 3.144.0
+## 3.146.0
 
 * Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
+## 3.145.1
+
+* [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
+
+## 3.145.0
+
+* Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
+
+## 3.144.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
+## 3.144.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
 
 ## 3.143.0
 
@@ -66,7 +83,6 @@
 ## 3.138.1
 
 * Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
-
 
 ## 3.138.0
 

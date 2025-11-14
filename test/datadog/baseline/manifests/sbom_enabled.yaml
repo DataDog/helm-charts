@@ -384,6 +384,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -743,6 +744,7 @@ metadata:
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -762,6 +764,7 @@ spec:
         app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -876,6 +879,8 @@ spec:
               value: "true"
             - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
               value: "true"
+            - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+              value: os
             - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1208,6 +1213,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1233,6 +1239,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
