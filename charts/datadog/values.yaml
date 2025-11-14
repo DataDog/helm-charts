@@ -639,8 +639,8 @@ datadog:
       autoDetect: true
 
       # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
-      ## When autoDetect is true, detected proxies are added to this list
-      ## When autoDetect is false, only proxies in this list are enabled
+      # When autoDetect is true, detected proxies are added to this list
+      # When autoDetect is false, only proxies in this list are enabled
       proxies: []
       # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
       # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
