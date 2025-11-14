@@ -119,23 +119,26 @@ github.com/DataDog/datadog-agent/pkg/tagger/types v0.72.2 h1:8Od7a07Xn5rlIHzug0e
 github.com/DataDog/datadog-agent/pkg/tagger/types v0.72.2/go.mod h1:+Gi1B31ezJZFXyrQL0UddIv7qgskjrUB6KgYBkjeugI=
 github.com/DataDog/datadog-agent/pkg/util/option v0.72.2 h1:2gZO80ZID20xOhV8FT6GcJGCPSH5vyzhhhJsRNX5lhI=
 github.com/DataDog/datadog-agent/pkg/util/option v0.72.2/go.mod h1:7R41hwEcmi/IUC4p68c88SZ762/AvFNwfmk+9lX4b2A=
-github.com/DataDog/datadog-agent/pkg/util/pointer v0.72.2 h1:cKyWMOdnrBJJwQ3pS6c0dZmwyhn52Xu87myYIbOnuWI=
-github.com/DataDog/datadog-agent/pkg/util/pointer v0.72.2/go.mod h1:SEBomDOo5/fjCBdRy1fdnSdBnv7g0keyRiQgoqFFESw=
 github.com/DataDog/datadog-agent/pkg/util/scrubber v0.72.2 h1:KsQ1g0tdXtBBiV2Zwwhvhf69AC/OvGk/oaZ89pEkB4A=
 github.com/DataDog/datadog-agent/pkg/util/scrubber v0.72.2/go.mod h1:O8h2B/0JYdAEjHw20gbBcL+rAYWHanUbYFDiCH2m7Jk=
 github.com/DataDog/datadog-agent/pkg/version v0.72.2 h1:+xyUOMKlt+AwSVGn9kN/bYEUIbc/7v+phYnYCqWGhpc=
 github.com/DataDog/datadog-agent/pkg/version v0.72.2/go.mod h1:MgBQaeV9WBYPRePAccfBtBexhqOIQiRl4VJYpgfV+go=
 github.com/DataDog/datadog-agent/test/fakeintake v0.72.2 h1:nnIdPVOgjzmccYuy34ftPV1qBcMf2kkP1LMswMaiFE0=
 github.com/DataDog/datadog-agent/test/fakeintake v0.72.2/go.mod h1:XNZc/fQ/lYjAGRzPKauZcJkAAdlUgGG5uwMtF8ZfeSA=
-github.com/DataDog/datadog-agent/test/new-e2e v0.72.2 h1:WF6guxV+NZnNvSOq3toCgdZxY500aSjH/lA66nzcI1Q=
-github.com/DataDog/datadog-agent/test/new-e2e v0.72.2/go.mod h1:6Ro1MrKveVms7BXbvaiGr719wY1HUH5RJRiBwScbUi8=
+github.com/DataDog/datadog-agent/test/new-e2e v0.72.0-devel h1:xN0fy1R3gzqR2+OFXNn+dHwvoi0sGvukdhfJ/I0xzZc=
+github.com/DataDog/datadog-agent/test/new-e2e v0.72.0-devel/go.mod h1:HWiUEaZgp6r3acziJcCLdi1cXqa2Wlb2NVVxwCJPFl0=
 github.com/DataDog/datadog-api-client-go/v2 v2.46.0 h1:sq5GXX//FVtbgd4oNU3NSJX2F1vmhqONHUPrQ8HWwNc=
 github.com/DataDog/datadog-api-client-go/v2 v2.46.0/go.mod h1:d3tOEgUd2kfsr9uuHQdY+nXrWp4uikgTgVCPdKNK30U=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYxD74QmMw0/3CqSKhEr6teh0ncQ=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49/go.mod h1:SvsjzyJlSg0rKsqYgdcFxeEVflx3ZNAyFfkUHP0TxXg=
+<<<<<<< HEAD
 github.com/DataDog/test-infra-definitions v0.0.6-0.20250930140537-2a6d59a9b3f3 h1:9J/9C8z08MYM9Jsyidl/aYfAQF8mQVMjUIyLOQNe2lA=
 github.com/DataDog/test-infra-definitions v0.0.6-0.20250930140537-2a6d59a9b3f3/go.mod h1:OuceITbReRYk6VgKwO02OxxwQLA/86Ym3Ej7llLBMiM=
 >>>>>>> 9f2ef8e6 (updated go.mod and sum file)
+=======
+github.com/DataDog/test-infra-definitions v0.0.5 h1:XeFR7qVN98Xo7TatihvTRiPP2B4RRE1TiF5TY3r2im4=
+github.com/DataDog/test-infra-definitions v0.0.5/go.mod h1:OuceITbReRYk6VgKwO02OxxwQLA/86Ym3Ej7llLBMiM=
+>>>>>>> 0b53c7a8 (update the dependecies)
 github.com/DataDog/zstd v1.5.6 h1:LbEglqepa/ipmmQJUDnSsfvA8e8IStVcGaFWDuxvGOY=
 github.com/DataDog/zstd v1.5.6/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
 github.com/DataDog/zstd_0 v0.0.0-20210310093942-586c1286621f h1:5Vuo4niPKFkfwW55jV4vY0ih3VQ9RaQqeqY67fvRn8A=
@@ -588,10 +591,10 @@ github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
 github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
 github.com/onsi/ginkgo v1.16.5 h1:8xi0RTUf59SOSfEtZMvwTvXYMzG4gV23XVHOZiXNtnE=
 github.com/onsi/ginkgo v1.16.5/go.mod h1:+E8gABHa3K6zRBolWtd+ROzc/U5bkGt0FwiG042wbpU=
-github.com/onsi/ginkgo/v2 v2.23.3 h1:edHxnszytJ4lD9D5Jjc4tiDkPBZ3siDeJJkUZJJVkp0=
-github.com/onsi/ginkgo/v2 v2.23.3/go.mod h1:zXTP6xIp3U8aVuXN8ENK9IXRaTjFnpVB9mGmaSRvxnM=
-github.com/onsi/gomega v1.36.3 h1:hID7cr8t3Wp26+cYnfcjR6HpJ00fdogN6dqZ1t6IylU=
-github.com/onsi/gomega v1.36.3/go.mod h1:8D9+Txp43QWKhM24yyOBEdpkzN8FvJyAwecBgsU4KU0=
+github.com/onsi/ginkgo/v2 v2.22.0 h1:Yed107/8DjTr0lKCNt7Dn8yQ6ybuDRQoMGrNFKzMfHg=
+github.com/onsi/ginkgo/v2 v2.22.0/go.mod h1:7Du3c42kxCUegi0IImZ1wUQzMBVecgIHjR1C+NkhLQo=
+github.com/onsi/gomega v1.36.1 h1:bJDPBO7ibjxcbHMgSCoo4Yj18UWbKDlLwX1x9sybDcw=
+github.com/onsi/gomega v1.36.1/go.mod h1:PvZbdDc8J6XJEpDK4HCuRBm8a6Fzp9/DmhC9C7yFlog=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
@@ -634,6 +637,7 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 github.com/pulumi/esc v0.17.0 h1:oaVOIyFTENlYDuqc3pW75lQT9jb2cd6ie/4/Twxn66w=
 github.com/pulumi/esc v0.17.0/go.mod h1:XnSxlt5NkmuAj304l/gK4pRErFbtqq6XpfX1tYT9Jbc=
 =======
@@ -644,6 +648,10 @@ github.com/pulumi/esc v0.14.3/go.mod h1:XnSxlt5NkmuAj304l/gK4pRErFbtqq6XpfX1tYT9
 github.com/pulumi/esc v0.14.3 h1:Zli+9LiSDT/W+Fsfr8tITxCo+5wn969tLrE4KLv44G8=
 github.com/pulumi/esc v0.14.3/go.mod h1:XnSxlt5NkmuAj304l/gK4pRErFbtqq6XpfX1tYT9Jbc=
 >>>>>>> 9f2ef8e6 (updated go.mod and sum file)
+=======
+github.com/pulumi/esc v0.17.0 h1:oaVOIyFTENlYDuqc3pW75lQT9jb2cd6ie/4/Twxn66w=
+github.com/pulumi/esc v0.17.0/go.mod h1:XnSxlt5NkmuAj304l/gK4pRErFbtqq6XpfX1tYT9Jbc=
+>>>>>>> 0b53c7a8 (update the dependecies)
 github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2 h1:mHiPVwdSQp5VjpvCdPy52FeMiNcscKvJP+len/mfqdU=
 github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2/go.mod h1:C+L8LtajPSwGsZiGgknkCwClUzXk+ZXzSGkOZTQMp3U=
 github.com/pulumi/pulumi-awsx/sdk/v2 v2.19.0 h1:jil2EBzZnKsRDrLfvx2gnAaq17HQLrTbpPsIb3h+98U=
@@ -652,18 +660,22 @@ github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0 h1:kGzTe5+RY9/i8dqzV5OyUUxk
 github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0/go.mod h1:UtcE2JL42940vODuX0oAYmBqWIMRIaRhEDBaQGyr+vA=
 github.com/pulumi/pulumi-command/sdk v1.0.1 h1:ZuBSFT57nxg/fs8yBymUhKLkjJ6qmyN3gNvlY/idiN0=
 github.com/pulumi/pulumi-command/sdk v1.0.1/go.mod h1:C7sfdFbUIoXKoIASfXUbP/U9xnwPfxvz8dBpFodohlA=
-github.com/pulumi/pulumi-docker/sdk/v4 v4.5.8 h1:rik9L2SIpsoDenY51MkogR6GWgu/0Sy/XmyQmKWNUqU=
-github.com/pulumi/pulumi-docker/sdk/v4 v4.5.8/go.mod h1:eph7BPNPkEIIK882/Ll4dbeHl5wZEc/UvTcUW0CK1UY=
+github.com/pulumi/pulumi-docker/sdk/v4 v4.9.0 h1:Uyx3Sq/WwBqLmQ17rAjLFYW8IzTBJzMePTolQf1tCv8=
+github.com/pulumi/pulumi-docker/sdk/v4 v4.9.0/go.mod h1:iNOVp0nr1rRLTwH+pWZqbKaagjoVgYpqGibsmHmk6u4=
 github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0 h1:aDLyVV93p1g9nswSaH78mPiRZEXF6441eJRO5NLA1B4=
 github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0/go.mod h1:QbAamxfUpDJC81BGtyEuV0P88RrdbOjQEhbgY+OOPpg=
 github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0 h1:21oSj+TKlKTzQcxN9Hik7iSNNHPUQXN4s3itOnahy/w=
 github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0/go.mod h1:YaEZms1NgXFqGhObKVofcAeWXu2V+3t/BAXdHQZq7fU=
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0b53c7a8 (update the dependecies)
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0 h1:TZ/XhzF+3/jRiGsjlJHCWhXcU5E5tbXU8O0DKnPmFic=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0/go.mod h1:jOdpeNeRvY4iN+W8aDP5+HyqrM7hXsxa9paPsmjQFfY=
 github.com/pulumi/pulumi-random/sdk/v4 v4.18.4 h1:mkZ3nB3xLTFZ8Fbh50bXTxiroGpjSyonTFcKovLxWME=
 github.com/pulumi/pulumi-random/sdk/v4 v4.18.4/go.mod h1:BBVUyqFkhCbwvUSnDjubH5b+SeJeoMQH4COGNKaaoUI=
+<<<<<<< HEAD
 github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1 h1:tXemWrzeVTqG8zq6hBdv1TdPFXjgZ+dob63a/6GlF1o=
 github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1/go.mod h1:hODo3iEmmXDFOXqPK+V+vwI0a3Ww7BLjs5Tgamp86Ng=
 github.com/pulumi/pulumi/sdk/v3 v3.190.0 h1:sRY8xsQLqxJGTPpd0lrVienoEU+4ZKntisV32+82Czc=
@@ -690,6 +702,12 @@ github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1/go.mod h1:hODo3iEmmXDFOXqPK+V+vwI0a3
 github.com/pulumi/pulumi/sdk/v3 v3.181.0 h1:6XeYlG/mymtutRXlggcCLtxqBJPGCHNUGgoj4mapZQw=
 github.com/pulumi/pulumi/sdk/v3 v3.181.0/go.mod h1:YS7uQ+eoIV/Fco804Upv3jmz5pwo/MkLYmbGH3VgA9c=
 >>>>>>> 9f2ef8e6 (updated go.mod and sum file)
+=======
+github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1 h1:tXemWrzeVTqG8zq6hBdv1TdPFXjgZ+dob63a/6GlF1o=
+github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1/go.mod h1:hODo3iEmmXDFOXqPK+V+vwI0a3Ww7BLjs5Tgamp86Ng=
+github.com/pulumi/pulumi/sdk/v3 v3.190.0 h1:sRY8xsQLqxJGTPpd0lrVienoEU+4ZKntisV32+82Czc=
+github.com/pulumi/pulumi/sdk/v3 v3.190.0/go.mod h1:aV0+c5xpSYccWKmOjTZS9liYCqh7+peu3cQgSXu7CJw=
+>>>>>>> 0b53c7a8 (update the dependecies)
 github.com/pulumiverse/pulumi-time/sdk v0.1.0 h1:xfi9HKDgV+GgDxQ23oSv9KxC3DQqViGTcMrJICRgJv0=
 github.com/pulumiverse/pulumi-time/sdk v0.1.0/go.mod h1:NUa1zA74DF002WrM6iF111A6UjX9knPpXufVRvBwNyg=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
