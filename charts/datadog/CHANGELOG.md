@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
 ## 3.146.0
 
 * Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
