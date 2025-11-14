@@ -811,8 +811,8 @@ helm.sh/chart: '{{ include "datadog.chart" $ctx -}}'
 {{- if $ctx.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
 {{- end -}}
-{{- if $ctx.Values.commonLabels -}}
-{{- toYaml $ctx.Values.commonLabels -}}
+{{- if $ctx.Values.commonLabels }}
+{{ toYaml $ctx.Values.commonLabels -}}
 {{- end }}
 {{- end }}
 
