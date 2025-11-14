@@ -3,7 +3,7 @@
 ## 3.146.0
 
 * [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
-* * Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
 
 ## 3.145.0
 
