@@ -199,13 +199,6 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
     collectApiServicesMetrics: false
 
-    # datadog.kubeStateMetricsCore.collectControllerRevisions -- Enable watching controllerrevisions objects and collecting their corresponding metrics kubernetes_state.controllerrevision.* (Requires Agent 7.72.0+)
-
-    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
-    ## If not set (commented out), controllerrevisions collection is automatically enabled for agent versions 7.72.0+.
-    ## Set to true to force enable regardless of agent version, or false to force disable.
-    # collectControllerRevisions:
-
     # datadog.kubeStateMetricsCore.useClusterCheckRunners -- For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers.
 
     ## Configuring this field will create a separate deployment which will run Cluster Checks, including Kubernetes State Metrics Core.

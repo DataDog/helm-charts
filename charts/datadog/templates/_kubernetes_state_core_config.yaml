@@ -35,7 +35,7 @@ kubernetes_state_core.yaml.default: |-
       - deployments
       - replicasets
       - statefulsets
-{{- if or .Values.datadog.kubeStateMetricsCore.collectControllerRevisions (and (not (hasKey .Values.datadog.kubeStateMetricsCore "collectControllerRevisions")) (semverCompare ">=7.72.0" (ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners))) }}
+{{- if semverCompare ">=7.72.0" (ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) }}
       - controllerrevisions
 {{- end }}
       - cronjobs
