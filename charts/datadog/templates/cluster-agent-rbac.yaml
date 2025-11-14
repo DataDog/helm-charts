@@ -364,6 +364,7 @@ rules:
   verbs:
   - list
   - watch
+  - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
