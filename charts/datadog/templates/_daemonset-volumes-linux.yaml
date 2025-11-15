@@ -108,6 +108,10 @@
   name: src
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
+- name: dynamic-instrumentation-cache-dir
+  emptyDir: {}
+{{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build

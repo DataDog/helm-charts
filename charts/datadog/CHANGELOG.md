@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
+
 ## 3.145.1
 
 * [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.

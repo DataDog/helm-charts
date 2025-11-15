@@ -121,6 +121,8 @@ data:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled }}
         auto_suppression:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
+    dynamic_instrumentation:
+      enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
