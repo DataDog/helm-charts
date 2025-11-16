@@ -67,11 +67,11 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 
 	// Installing the csi driver via helm
 	v.T().Log("Installing CSI driver")
-	helmCmd := exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
+	helmCmd = exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
 		"--kubeconfig", kubeconfigFile.Name(),
 		"--namespace", "datadog-agent", "--create-namespace")
 
-	output, err := helmCmd.CombinedOutput()
+	output, err = helmCmd.CombinedOutput()
 	v.T().Logf("Helm output: %s", string(output))
 	if err != nil {
 		v.T().Fatalf("Helm install failed: %v", err)
