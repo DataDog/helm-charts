@@ -24,7 +24,7 @@ go 1.24.9
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/DataDog/datadog-agent/test/new-e2e v0.72.0-devel
-	github.com/DataDog/test-infra-definitions v0.0.5
+	github.com/DataDog/test-infra-definitions v0.0.6-0.20251114113621-929e070e7069
 	github.com/google/go-cmp v0.7.0
 <<<<<<< HEAD
 	github.com/gruntwork-io/terratest v0.46.16
@@ -246,6 +246,7 @@ require (
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/gruntwork-io/go-commons v0.17.2 // indirect
@@ -428,6 +429,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/zorkian/go-datadog-api.v2 v2.30.0 // indirect
+	gotest.tools/v3 v3.5.2 // indirect
 	k8s.io/client-go v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
