@@ -23,7 +23,7 @@ go 1.24.9
 
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
-	github.com/DataDog/datadog-agent/test/new-e2e v0.72.0-devel
+	github.com/DataDog/datadog-agent/test/new-e2e v0.72.2
 	github.com/DataDog/test-infra-definitions v0.0.6-0.20251114113621-929e070e7069
 	github.com/google/go-cmp v0.7.0
 <<<<<<< HEAD
@@ -107,6 +107,7 @@ require (
 	github.com/DataDog/datadog-agent/pkg/proto v0.72.2 // indirect
 	github.com/DataDog/datadog-agent/pkg/tagger/types v0.72.2 // indirect
 	github.com/DataDog/datadog-agent/pkg/util/option v0.72.2 // indirect
+	github.com/DataDog/datadog-agent/pkg/util/pointer v0.72.2 // indirect
 	github.com/DataDog/datadog-agent/pkg/util/scrubber v0.72.2 // indirect
 	github.com/DataDog/datadog-agent/pkg/version v0.72.2 // indirect
 	github.com/DataDog/datadog-api-client-go/v2 v2.46.0 // indirect
@@ -193,6 +194,7 @@ require (
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
+	github.com/containerd/log v0.1.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -246,7 +248,6 @@ require (
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/gruntwork-io/go-commons v0.17.2 // indirect
@@ -278,6 +279,7 @@ require (
 	github.com/moby/sys/sequential v0.6.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
@@ -429,7 +431,6 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/zorkian/go-datadog-api.v2 v2.30.0 // indirect
-	gotest.tools/v3 v3.5.2 // indirect
 	k8s.io/client-go v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
