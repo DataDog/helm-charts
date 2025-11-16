@@ -7,10 +7,10 @@ toolchain go1.24.4
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/DataDog/datadog-agent/test/new-e2e v0.72.2
-	github.com/DataDog/test-infra-definitions v0.0.6-0.20250930140537-2a6d59a9b3f3
+	github.com/DataDog/test-infra-definitions v0.0.6-0.20251114113621-929e070e7069
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
-	github.com/pulumi/pulumi/sdk/v3 v3.181.0
+	github.com/pulumi/pulumi/sdk/v3 v3.190.0
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.32.3
@@ -186,8 +186,8 @@ require (
 	github.com/pulumi/pulumi-docker/sdk/v4 v4.5.8 // indirect
 	github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0 // indirect
 	github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0 // indirect
-	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.19.0 // indirect
-	github.com/pulumi/pulumi-random/sdk/v4 v4.16.8 // indirect
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0 // indirect
+	github.com/pulumi/pulumi-random/sdk/v4 v4.18.4 // indirect
 	github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1 // indirect
 	github.com/pulumiverse/pulumi-time/sdk v0.1.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
