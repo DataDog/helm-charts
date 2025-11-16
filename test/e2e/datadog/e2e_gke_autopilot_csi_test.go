@@ -56,14 +56,22 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 	if err := kubeconfigFile.Close(); err != nil {
 		v.T().Fatalf("Failed to close kubeconfig file: %v", err)
 	}
+	// Installing the datadog repository
+	helmCmd := exec.Command("helm", "repo", "add", "datadog", "https://helm.datadoghq.com")
+	output, err := helmCmd.CombinedOutput()
+	v.T().Logf("Helm output: %s", string(output))
+	if err != nil {
+		v.T().Fatalf("Helm repo add failed: %v", err)
+	}
+	v.T().Log("Datadog repository added")
 
 	// Installing the csi driver via helm
 	v.T().Log("Installing CSI driver")
-	helmCmd := exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
+	helmCmd = exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
 		"--kubeconfig", kubeconfigFile.Name(),
 		"--namespace", "datadog-agent", "--create-namespace")
 
-	output, err := helmCmd.CombinedOutput()
+	output, err = helmCmd.CombinedOutput()
 	v.T().Logf("Helm output: %s", string(output))
 	if err != nil {
 		v.T().Fatalf("Helm install failed: %v", err)
