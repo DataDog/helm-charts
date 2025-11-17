@@ -2653,6 +2653,10 @@ clusterChecksRunner:
   ports: []
 
 datadog-operator:
+  datadogAgent:
+    # datadog-operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    enabled: false
+
   datadogCRDs:
     crds:
       # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
