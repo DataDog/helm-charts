@@ -61,7 +61,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
-  name: secret-creds-meta
+  name: datadog-meta-secret
   namespace: datadog-agent
 type: Opaque
 ---
