@@ -53,18 +53,38 @@ Create the name of the service account to use
 
 {{/*
 Return secret name to be used based on provided values.
+Priority:
+1. Local apiKeyExistingSecret (if set)
+2. Local apiKey (creates own secret)
+3. Fallback to parent's default secret name
+Note: If parent uses apiKeyExistingSecret, user must also set it in subchart values
 */}}
 {{- define "datadog-operator.apiKeySecretName" -}}
-{{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName .Values.apiKeyExistingSecret | quote -}}
+{{- if .Values.apiKeyExistingSecret -}}
+{{- .Values.apiKeyExistingSecret | quote -}}
+{{- else if .Values.apiKey -}}
+{{- printf "%s-apikey" (include "datadog-operator.fullname" .) | quote -}}
+{{- else -}}
+{{- include "datadog-operator.parentApiSecretName" . | quote -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
 Return secret name to be used based on provided values.
+Priority:
+1. Local appKeyExistingSecret (if set)
+2. Local appKey (creates own secret)
+3. Fallback to parent's default secret name
+Note: If parent uses appKeyExistingSecret, user must also set it in subchart values
 */}}
 {{- define "datadog-operator.appKeySecretName" -}}
-{{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName .Values.appKeyExistingSecret | quote -}}
+{{- if .Values.appKeyExistingSecret -}}
+{{- .Values.appKeyExistingSecret | quote -}}
+{{- else if .Values.appKey -}}
+{{- printf "%s-appkey" (include "datadog-operator.fullname" .) | quote -}}
+{{- else -}}
+{{- include "datadog-operator.parentAppKeySecretName" . | quote -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -89,4 +109,27 @@ Check operator image tag version.
 {{- else -}}
 {{ "1.20.0-rc.4" }}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return the parent datadog chart's fullname (when this is installed as a subchart)
+*/}}
+{{- define "datadog-operator.parentFullname" -}}
+{{- .Release.Name }}-datadog
+{{- end -}}
+
+{{/*
+Return the parent datadog chart's API secret name
+This mimics the parent chart's datadog.apiSecretName template
+*/}}
+{{- define "datadog-operator.parentApiSecretName" -}}
+{{- include "datadog-operator.parentFullname" . -}}
+{{- end -}}
+
+{{/*
+Return the parent datadog chart's APP key secret name
+This mimics the parent chart's datadog.appKeySecretName template
+*/}}
+{{- define "datadog-operator.parentAppKeySecretName" -}}
+{{- printf "%s-appkey" (include "datadog-operator.parentFullname" .) -}}
 {{- end -}}

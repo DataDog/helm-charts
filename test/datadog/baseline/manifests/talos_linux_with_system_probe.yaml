@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.20.0-rc.4
   name: datadog-datadog-operator
   namespace: datadog-agent
 ---
@@ -381,7 +381,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.20.0-rc.4
   name: datadog-datadog-operator
 rules:
   - nonResourceURLs:
@@ -433,7 +433,11 @@ rules:
   - apiGroups:
       - ""
     resources:
+      - nodes/configz
+      - nodes/healthz
+      - nodes/logs
       - nodes/metrics
+      - nodes/pods
       - nodes/proxy
       - nodes/spec
       - nodes/stats
@@ -466,9 +470,6 @@ rules:
       - apiservices
     verbs:
       - '*'
-      - deletecollection
-      - list
-      - watch
   - apiGroups:
       - apps
     resources:
@@ -2130,7 +2131,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.20.0-rc.4
   name: datadog-datadog-operator
   namespace: datadog-agent
 spec:
@@ -2169,6 +2170,7 @@ spec:
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
+            - -datadogAgentInternalEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2184,7 +2186,19 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.19.1
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-datadog
+                  optional: true
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-datadog-appkey
+                  optional: true
+          image: gcr.io/datadoghq/operator:1.20.0-rc.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

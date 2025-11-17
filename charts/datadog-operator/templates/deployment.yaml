@@ -24,10 +24,10 @@ spec:
 {{ toYaml .Values.podLabels | indent 8 }}
         {{- end }}
       annotations:
-        {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
+        {{- if .Values.apiKey }}
         checksum/api_key: {{ include (print $.Template.BasePath "/secret_api_key.yaml") . | sha256sum }}
         {{- end }}
-        {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+        {{- if .Values.appKey }}
         checksum/application_key: {{ include (print $.Template.BasePath "/secret_application_key.yaml") . | sha256sum }}
         {{- end }}
         {{- if .Values.collectOperatorMetrics }}
@@ -95,20 +95,8 @@ spec:
             - name: DD_CLUSTER_NAME
               value: {{ .Values.clusterName }}
             {{- end }}
-            {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
-            - name: DD_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "datadog-operator.apiKeySecretName" . }}
-                  key: api-key
-            {{- end }}
-            {{- if or .Values.appKey .Values.appKeyExistingSecret }}
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "datadog-operator.appKeySecretName" . }}
-                  key: app-key
-            {{- end }}
+            {{ include "datadog.common.apiKeyEnv" (dict "secretNameTemplate" "datadog-operator.apiKeySecretName" "context" . "optional" true) | nindent 12 }}
+            {{ include "datadog.common.appKeyEnv" (dict "secretNameTemplate" "datadog-operator.appKeySecretName" "context" . "optional" true) | nindent 12 }}
             {{- if .Values.site }}
             - name: DD_SITE
               value: {{ .Values.site }}

@@ -1,11 +1,7 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
-- name: DD_API_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ template "datadog.apiSecretName" . }}
-      key: api-key
+{{ include "datadog.common.apiKeyEnv" (dict "secretNameTemplate" "datadog.apiSecretName" "context" .) }}
 - name: DD_REMOTE_CONFIGURATION_ENABLED
   value: {{ include "datadog-remoteConfiguration-enabled" . | quote }}
 {{- if (not .Values.providers.gke.autopilot) }}

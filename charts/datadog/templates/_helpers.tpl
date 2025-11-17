@@ -222,6 +222,50 @@ Return secret name to be used based on provided values.
 {{- end -}}
 
 {{/*
+Shared template for DD_API_KEY environment variable.
+Usage: {{ include "datadog.common.apiKeyEnv" (dict "secretNameTemplate" "datadog.apiSecretName" "context" . "optional" false) }}
+Parameters:
+  - secretNameTemplate: Name of the template to call for secret name resolution
+  - context: The context to pass to templates (usually .)
+  - optional: Whether the secret reference should be optional (default: false)
+*/}}
+{{- define "datadog.common.apiKeyEnv" -}}
+{{- $secretNameTemplate := .secretNameTemplate -}}
+{{- $ctx := .context -}}
+{{- $optional := .optional | default false -}}
+- name: DD_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include $secretNameTemplate $ctx }}
+      key: api-key
+{{- if $optional }}
+      optional: true
+{{- end }}
+{{- end -}}
+
+{{/*
+Shared template for DD_APP_KEY environment variable.
+Usage: {{ include "datadog.common.appKeyEnv" (dict "secretNameTemplate" "datadog.appKeySecretName" "context" . "optional" false) }}
+Parameters:
+  - secretNameTemplate: Name of the template to call for secret name resolution
+  - context: The context to pass to templates (usually .)
+  - optional: Whether the secret reference should be optional (default: false)
+*/}}
+{{- define "datadog.common.appKeyEnv" -}}
+{{- $secretNameTemplate := .secretNameTemplate -}}
+{{- $ctx := .context -}}
+{{- $optional := .optional | default false -}}
+- name: DD_APP_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ include $secretNameTemplate $ctx }}
+      key: app-key
+{{- if $optional }}
+      optional: true
+{{- end }}
+{{- end -}}
+
+{{/*
 Return secret name to be used based on provided values.
 */}}
 {{- define "clusterAgent.tokenSecretName" -}}
