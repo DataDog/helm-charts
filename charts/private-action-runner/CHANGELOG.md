@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.17.0
+
+* Bump private runner version to 1.14.0
+* Gitlab Create pipeline action now supports the `inputs` field in the request
+
 ## 1.16.0
 
 * Bump private runner version to 1.13.0
