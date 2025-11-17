@@ -54,9 +54,7 @@ metadata:
 type: Opaque
 ---
 apiVersion: v1
-data:
-  api-key-secret-name: ImRhdGFkb2ctc2VjcmV0Ig==
-  app-key-secret-name: ImRhdGFkb2ctc2VjcmV0Ig==
+data: {}
 kind: Secret
 metadata:
   labels:

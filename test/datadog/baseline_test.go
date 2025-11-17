@@ -35,7 +35,9 @@ var FilterKeys = map[string]interface{}{
 	"install_id":   nil,
 	"install_time": nil,
 	// Secret
-	"token": nil,
+	"token":               nil,
+	"api-key-secret-name": nil,
+	"app-key-secret-name": nil,
 	// install info CM, it contains chart version
 	// TODO: we are dropping everything; instead could we have a mapper/function for these keys or separate for coverage.
 	"install_info": nil,
