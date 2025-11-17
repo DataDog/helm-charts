@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.144.0](https://img.shields.io/badge/Version-3.144.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.147.0](https://img.shields.io/badge/Version-3.147.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -786,6 +786,7 @@ helm install <RELEASE_NAME> \
 | datadog.dogstatsd.useHostPID | bool | `false` | Run the agent in the host's PID namespace # DEPRECATED: use datadog.useHostPID instead. |
 | datadog.dogstatsd.useHostPort | bool | `false` | Sets the hostPort to the same value of the container port |
 | datadog.dogstatsd.useSocketVolume | bool | `true` | Enable dogstatsd over Unix Domain Socket with an HostVolume |
+| datadog.dynamicInstrumentationGo.enabled | bool | `false` | Enable Dynamic Instrumentation and Live Debugger for Go services. |
 | datadog.env | list | `[]` | Set environment variables for all Agents |
 | datadog.envDict | object | `{}` | Set environment variables for all Agents defined in a dict |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
@@ -891,11 +892,13 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. DEPRECATED: Consider using remoteConfiguration.enabled instead |
+| datadog.sbom.containerImage.analyzers | list | `["os"]` | List of analyzers to use for container image SBOM generation |
 | datadog.sbom.containerImage.containerExclude | string | `nil` | Exclude containers from SBOM generation, as a space-separated list |
 | datadog.sbom.containerImage.containerInclude | string | `nil` | Include containers in SBOM generation, as a space-separated list. If a container matches an include rule, it’s always included in SBOM generation |
 | datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
 | datadog.sbom.containerImage.overlayFSDirectScan | bool | `false` | Use experimental overlayFS direct scan |
 | datadog.sbom.containerImage.uncompressedLayersSupport | bool | `true` | Use container runtime snapshotter This should be set to true when using EKS, GKE or if containerd is configured to discard uncompressed layers. This feature will cause the SYS_ADMIN capability to be added to the Agent container. Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer. See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers |
+| datadog.sbom.host.analyzers | list | `["os"]` | List of analyzers to use for host SBOM generation |
 | datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |

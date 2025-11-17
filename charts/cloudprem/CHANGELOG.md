@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.12
+
+* Use Docker image version `v0.1.15` 
+* Fix indentation under control plane resources section
+
 ## 0.1.11
 
 * Fix typo in `valueFrom` defining API key environment variable

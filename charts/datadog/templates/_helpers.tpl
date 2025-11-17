@@ -466,7 +466,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
@@ -780,6 +780,15 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Build part-of label
+*/}}
+{{- define "part-of-label" -}}
+{{- $ns := .Release.Namespace | replace "-" "--" -}}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{ printf "%s-%s" $ns $name }}
+{{- end }}
+
+{{/*
 Common agent, cluster-agent, and cluster-checks-runner workload template labels
 */}}
 {{- define "datadog.pod-template-labels" }}
@@ -788,21 +797,22 @@ Common agent, cluster-agent, and cluster-checks-runner workload template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
 app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
 
 {{/*
 Common agent, cluster-agent, and cluster-checks-runner workload labels
 */}}
-{{- define "datadog.workload-labels" }}
-{{- $ctx := index . 0 }}
-{{- $name := index . 1 }}
-helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
-{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- define "datadog.workload-labels" -}}
+{{- $ctx := index . 0 -}}
+{{- $name := index . 1 -}}
+helm.sh/chart: '{{ include "datadog.chart" $ctx -}}'
+{{- include "datadog.pod-template-labels" (list $ctx $name) }}
 {{- if $ctx.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
-{{- end }}
-{{- if $ctx.Values.commonLabels}}
-{{ toYaml $ctx.Values.commonLabels }}
+{{- end -}}
+{{- if $ctx.Values.commonLabels }}
+{{ toYaml $ctx.Values.commonLabels -}}
 {{- end }}
 {{- end }}
 

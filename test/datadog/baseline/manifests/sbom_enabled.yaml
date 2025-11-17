@@ -786,6 +786,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1158,6 +1159,7 @@ metadata:
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -1177,6 +1179,7 @@ spec:
         app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -1291,8 +1294,16 @@ spec:
               value: "true"
             - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
               value: "true"
+            - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+              value: os
             - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
               value: "true"
+            - name: DD_SBOM_HOST_ENABLED
+              value: "true"
+            - name: HOST_ROOT
+              value: /host
+            - name: DD_SBOM_HOST_ANALYZERS
+              value: os languages
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
@@ -1384,6 +1395,27 @@ spec:
               readOnly: true
             - mountPath: /host/var/lib/containers
               name: host-crio-dir
+              readOnly: true
+            - mountPath: /host/var/lib/apk
+              name: host-apk-dir
+              readOnly: true
+            - mountPath: /host/var/lib/dpkg
+              name: host-dpkg-dir
+              readOnly: true
+            - mountPath: /host/var/lib/rpm
+              name: host-rpm-dir
+              readOnly: true
+            - mountPath: /host/etc/redhat-release
+              name: etc-redhat-release
+              readOnly: true
+            - mountPath: /host/etc/fedora-release
+              name: etc-fedora-release
+              readOnly: true
+            - mountPath: /host/etc/lsb-release
+              name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/etc/system-release
+              name: etc-system-release
               readOnly: true
         - command:
             - trace-agent
@@ -1587,6 +1619,18 @@ spec:
             path: /etc/os-release
           name: os-release-file
         - hostPath:
+            path: /etc/redhat-release
+          name: etc-redhat-release
+        - hostPath:
+            path: /etc/fedora-release
+          name: etc-fedora-release
+        - hostPath:
+            path: /etc/lsb-release
+          name: etc-lsb-release
+        - hostPath:
+            path: /etc/system-release
+          name: etc-system-release
+        - hostPath:
             path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsdsocket
@@ -1606,6 +1650,15 @@ spec:
         - hostPath:
             path: /var/lib/containers
           name: host-crio-dir
+        - hostPath:
+            path: /var/lib/apk
+          name: host-apk-dir
+        - hostPath:
+            path: /var/lib/dpkg
+          name: host-dpkg-dir
+        - hostPath:
+            path: /var/lib/rpm
+          name: host-rpm-dir
         - hostPath:
             path: /var/run
           name: runtimesocketdir
@@ -1702,6 +1755,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1727,6 +1781,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:

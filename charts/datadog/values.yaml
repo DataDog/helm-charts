@@ -1020,9 +1020,17 @@ datadog:
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
       containerInclude:
 
+      # datadog.sbom.containerImage.analyzers -- List of analyzers to use for container image SBOM generation
+      analyzers:
+        - "os"
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
+
+      # datadog.sbom.host.analyzers -- List of analyzers to use for host SBOM generation
+      analyzers:
+        - "os"
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1234,6 +1242,11 @@ datadog:
   operator:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
+
+# Configuration related to Dynamic Instrumentation for Go services.
+  dynamicInstrumentationGo:
+    # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
+    enabled: false
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
