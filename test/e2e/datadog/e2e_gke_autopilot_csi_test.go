@@ -56,6 +56,7 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 	if err := kubeconfigFile.Close(); err != nil {
 		v.T().Fatalf("Failed to close kubeconfig file: %v", err)
 	}
+
 	// Installing the datadog repository
 	helmCmd := exec.Command("helm", "repo", "add", "datadog", "https://helm.datadoghq.com")
 	output, err := helmCmd.CombinedOutput()
@@ -101,6 +102,9 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 
 		assert.True(v.T(), containsCsiDriver, "CSI Driver pod not found")
 		assert.Equal(v.T(), corev1.PodPhase("Running"), csiDriverPod.Status.Phase, fmt.Sprintf("CSI Driver is not running: %s", csiDriverPod.Status.Phase))
+
+		time.Sleep(60 * time.Minute)
+
 	}, 5*time.Minute, 30*time.Second, "CSI Driver readiness timed out")
 
 }
