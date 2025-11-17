@@ -2,7 +2,7 @@
 
 ## 3.146.4
 
-* Add datadog metadata configMap.
+* Add datadog endpoint configMap.
 
 ## 3.146.3
 

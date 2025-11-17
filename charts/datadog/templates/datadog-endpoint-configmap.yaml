@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: datadog-meta-config
+  name: datadog-endpoint-config
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
