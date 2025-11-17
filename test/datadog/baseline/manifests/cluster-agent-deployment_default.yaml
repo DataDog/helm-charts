@@ -53,19 +53,6 @@ metadata:
 type: Opaque
 ---
 apiVersion: v1
-data: {}
-kind: Secret
-metadata:
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-meta-secret
-  namespace: datadog-agent
-type: Opaque
----
-apiVersion: v1
 data:
   kubernetes_apiserver.yaml: |-
     init_config:
@@ -113,6 +100,19 @@ metadata:
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
+  namespace: datadog-agent
+---
+apiVersion: v1
+data:
+  api-key-secret-name: datadog
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-meta-config
   namespace: datadog-agent
 ---
 apiVersion: v1
