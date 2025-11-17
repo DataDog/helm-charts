@@ -2,7 +2,7 @@
 
 ## 3.146.4
 
-* Set secrets metadata.
+* Add datadog metadata configMap.
 
 ## 3.146.3
 
