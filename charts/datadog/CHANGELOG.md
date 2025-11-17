@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.147.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
 ## 3.146.2
 
 * Fix templating error when creating sbom analyzers config with multiple values.
