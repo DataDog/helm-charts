@@ -40,6 +40,21 @@ type: Opaque
 ---
 apiVersion: v1
 data:
+  api-key-secret-name: ImRhdGFkb2ctc2VjcmV0Ig==
+  app-key-secret-name: ImRhdGFkb2ctc2VjcmV0Ig==
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: secret-creds-meta
+  namespace: datadog-agent
+type: Opaque
+---
+apiVersion: v1
+data:
   kubernetes_apiserver.yaml: |-
     init_config:
     instances:
