@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
+
 ## 3.146.1
 
 * Fix templating error when upgrading to version 3.144.0
