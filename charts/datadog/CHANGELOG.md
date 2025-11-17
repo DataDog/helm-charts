@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.146.2
+## 3.146.3
 
 * Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
+
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
 
 ## 3.146.1
 

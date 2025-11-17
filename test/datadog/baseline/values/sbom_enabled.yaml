@@ -5,3 +5,10 @@ datadog:
     containerImage:
       enabled: true
       overlayFSDirectScan: true
+      analyzers:
+      - "os"
+    host:
+      enabled: true
+      analyzers:
+      - "os"
+      - "languages"
