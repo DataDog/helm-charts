@@ -2,7 +2,7 @@
 
 ## 3.146.4
 
-* Truncate part-of workload label to be under 63 characters.
+* Truncate workload label values to be under 63 characters.
 
 ## 3.146.3
 
