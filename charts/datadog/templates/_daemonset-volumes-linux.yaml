@@ -238,7 +238,7 @@
   hostPath:
     path: /dev/null
 {{- end }}
-{{- if .Values.datadog.useVSock }}
+{{- if .Values.agents.useVSock }}
 - hostPath:
     path: /dev/vsock
   name: vsock
