@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.4
+
+* Truncate part-of workload label to be under 63 characters.
+
 ## 3.146.3
 
 * Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation

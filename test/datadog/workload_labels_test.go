@@ -146,6 +146,46 @@ func Test_workload_labels(t *testing.T) {
 			expectedPartOf: "ns-superdog",
 			expectedName:   "superdog",
 		},
+		{
+			name: "labels not longer than 63 chars",
+			command: common.HelmCommand{
+				ReleaseName: "supersuperdupercalifragilisticexpialidocious",
+				Namespace:   "datadog-agent",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "datadog--agent-supersuperdupercalifragilisticexpialidoc",
+			expectedName:   "supersuperdupercalifragilisticexpialidoc",
+		},
+		{
+			name: "labels not longer than 63 chars with hyphens",
+			command: common.HelmCommand{
+				ReleaseName: "super-superdupercalifragilisticexpialidocious",
+				Namespace:   "datadog-agent",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "datadog--agent-super--superdupercalifragilisticexpialido",
+			expectedName:   "super-superdupercalifragilisticexpialido",
+		},
 	}
 
 	for _, tt := range tests {
