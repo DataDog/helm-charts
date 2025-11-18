@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.146.4
+
+* Add datadog endpoint configMap.
+
 ## 3.146.3
 
 * Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
