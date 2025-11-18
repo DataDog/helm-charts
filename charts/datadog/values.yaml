@@ -2982,3 +2982,5 @@ otelAgentGateway:
       scaleUp: {}
       # otelAgentGateway.autoscaling.behavior.scaleDown -- defines the scaling down behavior in OTel Agent Gateway HPA
       scaleDown: {}
+
+useVSock: false

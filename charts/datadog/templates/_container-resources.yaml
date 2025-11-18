@@ -5,6 +5,9 @@ requests:
 limits:
   cpu: 200m
   memory: 256Mi
+  {{- if .Values.datadog.useVSock }}
+  squat.ai/vsock: 1
+  {{- end }}
 {{- end }}
 
 {{- define "default-system-probe-container-resources" }}
@@ -14,6 +17,9 @@ requests:
 limits:
   cpu: 100m
   memory: 400Mi
+  {{- if .Values.datadog.useVSock }}
+  squat.ai/vsock: 1
+  {{- end }}
 {{- end }}
 
 {{- define "default-container-resources" }}
@@ -23,6 +29,9 @@ requests:
 limits:
   cpu: 100m
   memory: 200Mi
+  {{- if .Values.datadog.useVSock }}
+  squat.ai/vsock: 1
+  {{- end }}
 {{- end }}
 
 {{- define "default-cluster-check-runner-resources" }}
@@ -32,4 +41,7 @@ requests:
 limits:
   cpu: 200m
   memory: 500Mi
+  {{- if .Values.datadog.useVSock }}
+  squat.ai/vsock: 1
+  {{- end }}
 {{- end }}

@@ -204,4 +204,8 @@ Return a list of env-vars if the cluster-agent is enabled
 - name: DD_DOGSTATSD_SOCKET
   value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
 {{- end }}
+{{- if .Values.datadog.useVSock }}
+- name: DD_VSOCK_ADDR
+  value: "local"
+{{- end }}
 {{- end -}}
