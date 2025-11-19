@@ -151,7 +151,7 @@ spec:
           {{ include "system-probe-init" . | nindent 6 }}
         {{- end }}
       volumes:
-      - name: agent-cluster-ca
+      - name: certificates
         secret:
           secretName: datadog-agent-cluster-ca-secret
       {{- if (not .Values.providers.gke.autopilot) }}

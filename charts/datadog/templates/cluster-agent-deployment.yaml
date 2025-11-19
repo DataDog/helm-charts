@@ -439,8 +439,8 @@ spec:
           - name: tmpdir
             mountPath: /tmp
             readOnly: false
-          - name: agent-cluster-ca
-            mountPath: /etc/datadog-agent/agent-cluster-ca
+          - name: certificates
+            mountPath: /etc/datadog-agent/certificates
             readOnly: true
           - name: installinfo
             subPath: install_info
@@ -474,7 +474,7 @@ spec:
           - name: config
             mountPath: /etc/datadog-agent
       volumes:
-        - name: agent-cluster-ca
+        - name: certificates
           secret:
             secretName: datadog-agent-cluster-ca-secret
         - name: datadogrun

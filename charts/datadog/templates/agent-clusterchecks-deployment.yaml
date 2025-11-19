@@ -213,8 +213,8 @@ spec:
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
             readOnly: false # Need RW for config path
-          - name: agent-cluster-ca
-            mountPath: /etc/datadog-agent/agent-cluster-ca
+          - name: certificates
+            mountPath: /etc/datadog-agent/certificates
             readOnly: true
 {{- if eq (include "should-mount-fips-configmap" .) "true" }}
 {{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
@@ -232,7 +232,7 @@ spec:
 {{- $startup := .Values.clusterChecksRunner.startupProbe }}
 {{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
-        - name: agent-cluster-ca
+        - name: certificates
           secret:
             secretName: datadog-agent-cluster-ca-secret
         - name: installinfo
