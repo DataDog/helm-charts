@@ -795,7 +795,7 @@ Common agent, cluster-agent, and cluster-checks-runner workload template labels
 {{- $ctx := index . 0 }}
 {{- $name := index . 1 }}
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
-app.kubernetes.io/instance: {{ printf "%s-%s" ( include "datadog.fullname" $ctx ) $name }}
+app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
