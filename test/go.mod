@@ -1,8 +1,6 @@
 module github.com/DataDog/helm-charts/test
 
-go 1.24.0
-
-toolchain go1.24.4
+go 1.24.9
 
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
@@ -178,12 +176,12 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/pquerna/otp v1.2.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
-	github.com/pulumi/esc v0.14.3 // indirect
+	github.com/pulumi/esc v0.17.0 // indirect
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2 // indirect
 	github.com/pulumi/pulumi-awsx/sdk/v2 v2.19.0 // indirect
 	github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0 // indirect
 	github.com/pulumi/pulumi-command/sdk v1.0.1 // indirect
-	github.com/pulumi/pulumi-docker/sdk/v4 v4.5.8 // indirect
+	github.com/pulumi/pulumi-docker/sdk/v4 v4.9.0 // indirect
 	github.com/pulumi/pulumi-eks/sdk/v3 v3.7.0 // indirect
 	github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0 // indirect
 	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0 // indirect
