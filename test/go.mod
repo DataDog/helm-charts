@@ -2,12 +2,15 @@ module github.com/DataDog/helm-charts/test
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 go 1.24.9
 =======
 go 1.24.0
 >>>>>>> e760684d (changed the go version)
+=======
+go 1.24.9
+>>>>>>> 7844aff2 (updated the dependecies)
 
-toolchain go1.24.4
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.67.0
 	github.com/DataDog/datadog-agent/test/new-e2e v0.64.3
@@ -40,6 +43,7 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 <<<<<<< HEAD
+<<<<<<< HEAD
 	github.com/DataDog/agent-payload/v5 v5.0.145 // indirect
 	github.com/DataDog/datadog-agent/comp/core/tagger/origindetection v0.65.1 // indirect
 	github.com/DataDog/datadog-agent/comp/netflow/payload v0.65.1 // indirect
@@ -48,10 +52,19 @@ require (
 	github.com/DataDog/datadog-agent/pkg/networkpath/payload v0.65.1 // indirect
 	github.com/DataDog/datadog-agent/pkg/proto v0.65.1 // indirect
 	github.com/DataDog/datadog-agent/pkg/tagger/types v0.65.1 // indirect
+=======
+	github.com/DataDog/agent-payload/v5 v5.0.150 // indirect
+	github.com/DataDog/datadog-agent/comp/core/tagger/origindetection v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/comp/netflow/payload v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/metrics v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/network/payload v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/networkpath/payload v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/proto v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/tagger/types v0.67.0 // indirect
+>>>>>>> 7844aff2 (updated the dependecies)
 	github.com/DataDog/datadog-agent/pkg/util/option v0.67.0 // indirect
-	github.com/DataDog/datadog-agent/pkg/util/scrubber v0.65.1 // indirect
-	github.com/DataDog/datadog-agent/pkg/version v0.65.1 // indirect
-	github.com/DataDog/datadog-agent/test/fakeintake v0.65.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/util/scrubber v0.67.0 // indirect
+	github.com/DataDog/datadog-agent/pkg/version v0.67.0 // indirect
 	github.com/DataDog/datadog-api-client-go/v2 v2.35.0 // indirect
 =======
 	github.com/DataDog/agent-payload/v5 v5.0.158 // indirect
@@ -113,7 +126,6 @@ require (
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/charmbracelet/bubbles v0.20.0 // indirect
 	github.com/charmbracelet/bubbletea v1.2.4 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
@@ -143,12 +155,16 @@ require (
 <<<<<<< HEAD
 	github.com/go-git/go-billy/v5 v5.6.1 // indirect
 	github.com/go-git/go-git/v5 v5.13.1 // indirect
+<<<<<<< HEAD
 	github.com/go-logr/logr v1.4.2 // indirect
 =======
 	github.com/go-git/go-billy/v5 v5.6.2 // indirect
 	github.com/go-git/go-git/v5 v5.13.2 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 >>>>>>> 2461b46e (Add generic QA E2E tests (#1970))
+=======
+	github.com/go-logr/logr v1.4.3 // indirect
+>>>>>>> 7844aff2 (updated the dependecies)
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
@@ -196,7 +212,7 @@ require (
 	github.com/mitchellh/hashstructure v1.1.0 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/spdystream v0.5.0 // indirect
-	github.com/moby/sys/sequential v0.6.0 // indirect
+	github.com/moby/sys/atomicwriter v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
@@ -226,11 +242,6 @@ require (
 >>>>>>> 2461b46e (Add generic QA E2E tests (#1970))
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2 // indirect
 	github.com/pulumi/pulumi-awsx/sdk/v2 v2.19.0 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/authorization/v2 v2.81.0 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.81.0 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/containerservice/v2 v2.81.0 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/managedidentity/v2 v2.81.0 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.81.0 // indirect
 	github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0 // indirect
 	github.com/pulumi/pulumi-command/sdk v1.0.1 // indirect
 	github.com/pulumi/pulumi-docker/sdk/v4 v4.9.0 // indirect
@@ -278,7 +289,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 <<<<<<< HEAD
 	golang.org/x/crypto v0.39.0 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.28.0 // indirect
@@ -288,6 +299,7 @@ require (
 	golang.org/x/text v0.26.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
+<<<<<<< HEAD
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250224174004-546df14abb99 // indirect
 	google.golang.org/grpc v1.71.1 // indirect
@@ -306,6 +318,10 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/grpc v1.73.0 // indirect
 >>>>>>> 2461b46e (Add generic QA E2E tests (#1970))
+=======
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250425173222-7b384671a197 // indirect
+	google.golang.org/grpc v1.72.0 // indirect
+>>>>>>> 7844aff2 (updated the dependecies)
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
