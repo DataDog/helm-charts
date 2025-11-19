@@ -77,8 +77,6 @@
   name: apmsocket
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
-- name: eventsocket
-  emptyDir: {}
 - name: sysprobe-config
   configMap:
     name: {{ template "datadog.fullname" . }}-system-probe-config
