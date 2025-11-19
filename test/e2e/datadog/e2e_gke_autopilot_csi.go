@@ -99,12 +99,10 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 				break
 			}
 		}
-		v.T().Log("sleeping for 60 minutes")
-		time.Sleep(60 * time.Minute)
 
 		assert.True(v.T(), containsCsiDriver, "CSI Driver pod not found")
 		assert.Equal(v.T(), corev1.PodPhase("Running"), csiDriverPod.Status.Phase, fmt.Sprintf("CSI Driver is not running: %s", csiDriverPod.Status.Phase))
 
-	}, 60*time.Minute, 30*time.Second, "CSI Driver readiness timed out")
+	}, 5*time.Minute, 30*time.Second, "CSI Driver readiness timed out")
 
 }
