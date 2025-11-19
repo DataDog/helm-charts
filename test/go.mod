@@ -1,11 +1,15 @@
 module github.com/DataDog/helm-charts/test
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 go 1.24.9
+=======
+go 1.24.0
+>>>>>>> e760684d (changed the go version)
 
-toolchain go1.24.9
+toolchain go1.24.4
 require (
-github.com/DataDog/datadog-agent/test/fakeintake v0.67.0
+	github.com/DataDog/datadog-agent/test/fakeintake v0.67.0
 	github.com/DataDog/datadog-agent/test/new-e2e v0.64.3
 	github.com/DataDog/test-infra-definitions v0.0.0-20251114113621-929e070e7069
 	github.com/google/go-cmp v0.7.0
