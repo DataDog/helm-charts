@@ -72,6 +72,9 @@ datadog:
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
     timeout:  # 30
 
+    # datadog.secretBackend.refreshInterval -- [PREVIEW] Configure the secret backend command refresh interval in seconds.
+    refreshInterval:  # 0
+
     # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
     enableGlobalPermissions: true
 
@@ -172,6 +175,25 @@ datadog:
     ## Configuring this field will change the default kubernetes_state_core check configuration to run the kubernetes_state_core check.
     collectCrdMetrics: false
 
+    # datadog.kubeStateMetricsCore.collectCrMetrics -- Enable watching CustomResource objects and collecting their corresponding metrics kubernetes_state_customresource.* (Requires Cluster Agent 7.63.0+)
+
+    ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
+    ##
+    ## See https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md for a full description of each field.
+    collectCrMetrics: []
+    # - groupVersionKind:
+    #     group: myteam.io
+    #     kind: "Foo"
+    #     version: "v1"
+    #     resource: "foos" # optional, if not set, the resource will be pluralized from the kind by adding "s" to the end
+    #   metrics:
+    #     - name: "uptime"
+    #       help: "Foo uptime"
+    #       each:
+    #         type: Gauge
+    #         gauge:
+    #           path: [status, uptime]
+
     # datadog.kubeStateMetricsCore.collectApiServicesMetrics -- Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+)
 
     ## Configuring this field will change the default kubernetes_state_core check configuration and the RBACs granted to Datadog Cluster Agent to run the kubernetes_state_core check.
@@ -219,6 +241,9 @@ datadog:
     #  node:
     #    zone: zone
     #    team: team
+
+    # datadog.kubeStateMetricsCore.tags -- List of static tags to attach to all KSM metrics
+    tags: []
 
   ## Manage Cluster checks feature
 
@@ -316,6 +341,11 @@ datadog:
     # datadog.kubelet.podResourcesSocketDir -- Path (on host) where the kubelet.sock socket for the PodResources API is located
     # @default -- /var/lib/kubelet/pod-resources
     podResourcesSocketDir: /var/lib/kubelet/pod-resources
+    # datadog.kubelet.useApiServer -- Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+)
+    # @default -- false
+    useApiServer: false
+    # datadog.kubelet.fineGrainedAuthorization -- Enable fine-grained authentication for kubelet (requires: Kubernetes 1.32+)
+    fineGrainedAuthorization: false
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
@@ -357,7 +387,7 @@ datadog:
     socketPath: /var/run/datadog/dsd.socket
 
     # datadog.dogstatsd.hostSocketPath -- Host path to the DogStatsD socket
-    hostSocketPath: /var/run/datadog/
+    hostSocketPath: /var/run/datadog
 
     # datadog.dogstatsd.useHostPort -- Sets the hostPort to the same value of the container port
 
@@ -513,7 +543,7 @@ datadog:
     socketPath: /var/run/datadog/apm.socket
 
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
-    hostSocketPath: /var/run/datadog/
+    hostSocketPath: /var/run/datadog
 
     # Error Tracking backend
     errorTrackingStandalone:
@@ -536,7 +566,9 @@ datadog:
       libVersions: {}
 
       # datadog.apm.instrumentation.targets -- Enable target based workload selection.
-      # Requires Cluster Agent 7.64.0+
+      # Requires Cluster Agent 7.64.0+.
+      #
+      # ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+.
       targets: []
       #  - name: "example"
       #    podSelector:
@@ -550,6 +582,10 @@ datadog:
       #    ddTraceConfigs:
       #      - name: "DD_PROFILING_ENABLED"
       #        value: "true"
+      #      - name: "DD_SERVICE"
+      #        valueFrom:
+      #          fieldRef:
+      #            fieldPath: metadata.labels[my-label]
 
       # datadog.apm.instrumentation.skipKPITelemetry -- Disable generating Configmap for APM Instrumentation KPIs
       skipKPITelemetry: false
@@ -607,25 +643,43 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
-  ## OTel collector is currently in preview. Please reach out to your Datadog representative for more information.
-  ## OTLP Ingest is the GA feature for sending OTLP data to Datadog Agent.
-  ## OTel collector related configuration
+
+  ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
     enabled: false
-    # datadog.otelCollector.ports -- Ports that OTel Collector is listening
+    # datadog.otelCollector.ports -- Ports that OTel Collector is listening on
     ports:
 
         # Default GRPC port of OTLP receiver
       - containerPort: "4317"
         name: otel-grpc
+        protocol: TCP
         # Default HTTP port of OTLP receiver
       - containerPort: "4318"
         name: otel-http
+        protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
     config: null
+    # datadog.otelCollector.configMap -- Use an existing ConfigMap for DDOT Collector configuration
+    configMap:
+      # datadog.otelCollector.configMap.name -- Name of the existing ConfigMap that contains the DDOT Collector configuration
+      name: null
+      # datadog.otelCollector.configMap.items -- Items within the ConfigMap that contain DDOT Collector configuration
+      items:
+      #   - key: otel-config.yaml
+      #     path: otel-config.yaml
+      #   - key: otel-config-two.yaml
+      #     path: otel-config-two.yaml
+      # datadog.otelCollector.configMap.key -- Key within the ConfigMap that contains the DDOT Collector configuration
+      key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
+    # datadog.otelCollector.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
+    # The tag is retrieved from the `agents.image.tag` value.
+    # This is only supported for agent versions 7.67.0+
+    # If set to false, you will need to set `agents.image.tagSuffix` to `full`
+    useStandaloneImage: true
 
     ## Provide OTel Collector RBAC configuration
     rbac:
@@ -872,6 +926,22 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
+  networkPath:
+    connectionsMonitoring:
+      # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
+      enabled: false
+    collector:
+      # datadog.networkPath.collector.workers -- Override the number of workers
+      workers:
+      # datadog.networkPath.collector.pathtestTTL -- Override TTL in minutes for pathtests
+      pathtestTTL:
+      # datadog.networkPath.collector.pathtestInterval -- Override time interval between pathtest runs
+      pathtestInterval:
+      # datadog.networkPath.collector.pathtestContextsLimit -- Override maximum number of pathtests stored to run
+      pathtestContextsLimit:
+      # datadog.networkPath.collector.pathtestMaxPerMinute -- Override limit for total pathtests run, per minute
+      pathtestMaxPerMinute:
+
   serviceMonitoring:
     # datadog.serviceMonitoring.enabled -- Enable Universal Service Monitoring
     enabled: false
@@ -909,15 +979,18 @@ datadog:
       enabled: true
 
   gpuMonitoring:
-    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
+
+    # datadog.gpuMonitoring.privilegedMode -- Enable advanced GPU metrics and monitoring via system-probe
+    # Note: system-probe component of the agent runs with elevated privileges
+    privilegedMode: false
 
     # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
     configureCgroupPerms: false
 
     # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
-
 
   # Software Bill of Materials configuration
   sbom:
@@ -936,9 +1009,28 @@ datadog:
       # datadog.sbom.containerImage.overlayFSDirectScan -- Use experimental overlayFS direct scan
       overlayFSDirectScan: false
 
+      # datadog.sbom.containerImage.containerExclude -- Exclude containers from SBOM generation, as a space-separated list
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+      containerExclude:  # "image:datadog/agent"
+
+      # datadog.sbom.containerImage.containerInclude -- Include containers in SBOM generation, as a space-separated list.
+      # If a container matches an include rule, it’s always included in SBOM generation
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
+
+      # datadog.sbom.containerImage.analyzers -- List of analyzers to use for container image SBOM generation
+      analyzers:
+        - "os"
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
+
+      # datadog.sbom.host.analyzers -- List of analyzers to use for host SBOM generation
+      analyzers:
+        - "os"
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -951,6 +1043,12 @@ datadog:
 
       # datadog.securityAgent.compliance.checkInterval -- Compliance check run interval
       checkInterval: 20m
+
+      # datadog.securityAgent.compliance.containerInclude -- Include containers in CSPM monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
 
       # DEPRECATED. Use datadog.securityAgent.compliance.host_benchmarks.enabled instead.
       xccdf:
@@ -969,6 +1067,15 @@ datadog:
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
       useSecruntimeTrack: true
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+      containerExclude:  # "image:datadog/agent"
+
+      # datadog.securityAgent.runtime.containerInclude -- Include containers in runtime security monitoring, as a space-separated list.
+      # If a container matches an include rule, it’s always included
+
+      ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+      containerInclude:
 
       policies:
         # datadog.securityAgent.runtime.policies.configMap -- Contains CWS policies that will be used
@@ -1098,6 +1205,40 @@ datadog:
     # datadog.containerLifecycle.enabled -- Enable container lifecycle events collection
     enabled: true
 
+  csi:
+    # datadog.csi.enabled -- Enable datadog csi driver
+    # Requires version 7.67 or later of the cluster agent
+    # Note:
+    #   - When set to true, the CSI driver subchart will be installed automatically.
+    #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
+    enabled: false
+
+  ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
+  agentDataPlane:
+    # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
+    enabled: false
+
+    image:
+      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      name: agent-data-plane
+
+      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
+      tag: 0.1.11
+
+      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      digest: ""
+
+      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      repository:
+
+      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      pullPolicy: IfNotPresent
+
+  # Configuration related to Dynamic Instrumentation for Go services.
+  dynamicInstrumentationGo:
+    # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
+    enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1115,7 +1256,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.64.1
+    tag: 7.72.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1281,7 +1422,7 @@ clusterAgent:
     # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
 
-    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", "socket" or "csi".
 
     ## If clusterAgent.admissionController.configMode is not set:
     ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
@@ -1289,8 +1430,10 @@ clusterAgent:
     ##   * and datadog.apm.useLocalService is true and the aformentioned two are false, the Admission Controller uses service.
     ##   * Otherwise, the Admission Controller defaults to hostip.
     ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## Note: "csi" mode requires enabling csi with `datadog.csi.enabled`. If not set, the admission controller will fallback to "socket" mode.
+    ## Note: "csi" mode requires version 7.65 or later of the cluster agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
-    configMode:  # "hostip", "socket" or "service"
+    configMode:  # "hostip", "socket", "csi" or "service"
 
     # clusterAgent.admissionController.failurePolicy -- Set the failure policy for dynamic admission control.'
 
@@ -1529,7 +1672,18 @@ clusterAgent:
   datadog_cluster_yaml: {}
 
   # clusterAgent.createPodDisruptionBudget -- Create pod disruption budget for Cluster Agent deployments
+  # DEPRECATED. Use clusterAgent.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterAgent.pdb.create -- Enable pod disruption budget for Cluster Agent deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, minAvailable is set to 1 for cluster agent.
+    create: false
+    # clusterAgent.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption -- default to 1
+    minAvailable:
+    # clusterAgent.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   networkPolicy:
     # clusterAgent.networkPolicy.create -- If true, create a NetworkPolicy for the cluster agent.
@@ -1569,24 +1723,33 @@ existingClusterAgent:
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
 
-# fips is used to enable the fips sidecar container for GOVCLOUD environments.
+# useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments.
+# Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance.
+useFIPSAgent: false
+
+## fips is used to enable and configure the fips-proxy sidecar.
 fips:
-  # fips.enabled -- Enable fips sidecar
+  # fips.enabled -- Enable fips proxy sidecar.
+  # The fips-proxy method is getting phased out in favor of FIPS-compliant images (refer to the `useFIPSAgent` setting).
   enabled: false
 
   # TODO: Option to override config of the FIPS side car: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
   # customConfig: false
 
   # fips.port -- Specifies which port is used by the containers to communicate to the FIPS sidecar.
+  # This setting is only used for the fips-proxy sidecar.
   port: 9803
 
-  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577
+  # fips.portRange -- Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577.
+  # This setting is only used for the fips-proxy sidecar.
   portRange: 15
 
-  # fips.use_https -- Option to enable https
+  # fips.use_https -- Option to enable https.
+  # This setting is only used for the fips-proxy sidecar.
   use_https: false
 
   # fips.resources -- Resource requests and limits for the FIPS sidecar container.
+  # This setting is only used for the fips-proxy sidecar.
   resources: {}
     # limits:
     #   cpu: 100m
@@ -1595,7 +1758,8 @@ fips:
     #   cpu: 20m
     #   memory: 64Mi
 
-  # fips.local_address -- Set local IP address
+  # fips.local_address -- Set local IP address.
+  # This setting is only used for the fips-proxy sidecar.
   local_address: "127.0.0.1"
 
   ## Define the Datadog image to work with
@@ -1604,7 +1768,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.9
+    tag: 1.1.17
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1647,7 +1811,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.72.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1657,6 +1821,7 @@ agents:
     ## Ex:
     ##  jmx        to enable jmx fetch collection
     ##  servercore to get Windows images based on servercore
+    ##  full       to get as many features as possible, currently ddot-collector and jmx (e.g. 7.67.0-full)
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
@@ -1735,6 +1900,7 @@ agents:
       - AUDIT_CONTROL
       - AUDIT_READ
       - DAC_READ_SEARCH
+      - MKNOD
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -1963,11 +2129,11 @@ agents:
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
       resources: {}
       #  requests:
-      #    cpu: 100m
+      #    cpu: 150m
       #    memory: 200Mi
       #  limits:
-      #    cpu: 100m
-      #    memory: 200Mi
+      #    cpu: 300m
+      #    memory: 400Mi
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
@@ -2009,6 +2175,66 @@ agents:
       #    memory: 300Mi
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
+      ports: []
+
+    agentDataPlane:
+      # agents.containers.agentDataPlane.env -- Additional environment variables for the agent-data-plane container
+      env: []
+
+      # agents.containers.agentDataPlane.envFrom -- Set environment variables specific to agent-data-plane container from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # agents.containers.agentDataPlane.envDict -- Set environment variables specific to agent-data-plane container defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # agents.containers.agentDataPlane.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # If not set, fall back to the value of datadog.logLevel.
+      logLevel:  # INFO
+
+      # agents.containers.agentDataPlane.resources -- Resource requests and limits for the agent-data-plane container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # agents.containers.agentDataPlane.unprivilegedApiPort -- Port for unprivileged API server, used primarily for health checks
+      unprivilegedApiPort: 5100
+
+      # agents.containers.agentDataPlane.privilegedApiPort -- Port for privileged API server, used for lower-level operations that
+      # can alter the state of the ADP process or expose internal information
+      privilegedApiPort: 5101
+
+      # agents.containers.agentDataPlane.telemetryApiPort -- Port for telemetry API server, used for exposing internal
+      # telemetry to be scraped by the Agent
+      telemetryApiPort: 5102
+
+      # agents.containers.agentDataPlane.livenessProbe -- Override default agent-data-plane liveness probe settings
+      # @default -- Every 5s / 12 KO / 1 OK
+      livenessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 12
+
+      # agents.containers.agentDataPlane.readinessProbe -- Override default agent-data-plane readiness probe settings
+      # @default -- Every 5s / 12 KO / 1 OK
+      readinessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 12
+
+      # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
     initContainers:
@@ -2149,6 +2375,23 @@ agents:
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
     forceLocalServiceEnabled: false
 
+  # agents.lifecycle -- Configure the lifecycle of the Agent.
+  # Note: The `exec` lifecycle handler is not supported in GKE Autopilot.
+  lifecycle: {}
+    # preStop:
+    #   sleep:
+    #     seconds: 5
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+    # postStart:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+    #   sleep:
+    #     seconds: 5
+
+  # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
+  terminationGracePeriodSeconds:  # 70
+
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
 
@@ -2163,7 +2406,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.64.1
+    tag: 7.72.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2188,7 +2431,18 @@ clusterChecksRunner:
     #   - name: "<REG_SECRET>"
 
   # clusterChecksRunner.createPodDisruptionBudget -- Create the pod disruption budget to apply to the cluster checks agents
+  # DEPRECATED. Use clusterChecksRunner.pdb.create instead
   createPodDisruptionBudget: false
+  pdb:
+    # clusterChecksRunner.pdb.create -- Enable pod disruption budget for Cluster Checks Runner deployments.
+
+    ## Only one of `minAvailable` or `maxUnavailable` can be set. More information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+    ## By default, maxUnavailable is set to 1 for cluster checks runners.
+    create: false
+    # clusterChecksRunner.pdb.minAvailable -- Minimum number of pods that must remain available during a disruption
+    minAvailable:
+    # clusterChecksRunner.pdb.maxUnavailable -- Maximum number of pods that can be unavailable during a disruption
+    maxUnavailable:
 
   # Provide Cluster Checks Deployment pods RBAC configuration
   rbac:
@@ -2464,3 +2718,267 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled`
   # Preferred way to enable Remote Configuration.
   enabled: true
+
+## OTel collector related configuration for otel-agent in Gateway Deployment
+## Note this is different from the otel-agent in Daemonset (datadog.otelCollector)
+otelAgentGateway:
+  # otelAgentGateway.enabled -- Enable otel-agent Gateway
+  enabled: false
+  # otelAgentGateway.ports -- Ports that OTel Collector is listening on
+  ports:
+      # Default GRPC port of OTLP receiver
+    - containerPort: "4317"
+      name: otel-grpc
+      protocol: TCP
+      # Default HTTP port of OTLP receiver
+    - containerPort: "4318"
+      name: otel-http
+      protocol: TCP
+  # otelAgentGateway.config -- Gateway OTel Agent configuration
+  config: null
+  ## otelAgentGateway.configMap -- Use an existing ConfigMap for Gateway OTel Agent configuration
+  configMap:
+    # otelAgentGateway.configMap.name -- Name of the existing ConfigMap that contains the Gateway OTel Agent configuration
+    name: null
+    # otelAgentGateway.configMap.checksum -- Checksum of the existing ConfigMap that contains the Gateway OTel Agent configuration
+    checksum: null
+    # otelAgentGateway.configMap.items -- Items within the ConfigMap that contain Gateway OTel Agent configuration
+    items:
+    #   - key: otel-gateway-config.yaml
+    #     path: otel-gateway-config.yaml
+    #   - key: otel-gateway-config-two.yaml
+    #     path: otel-gateway-config-two.yaml
+    # otelAgentGateway.configMap.key -- Key within the ConfigMap that contains the Gateway OTel Agent configuration
+    key: otel-gateway-config.yaml
+  # otelAgentGateway.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
+  featureGates: null
+
+  # otelAgentGateway.replicas -- Number of otel-agent instances in the Gateway Deployment
+  replicas: 1
+
+  # otelAgentGateway.revisionHistoryLimit -- The number of old ReplicaSets to keep in this Deployment.
+  revisionHistoryLimit: 10
+
+  # otelAgentGateway.deploymentAnnotations -- Annotations to add to the otel-agent Gateway Deployment
+  deploymentAnnotations: {}
+  #   key: "value"
+
+  # otelAgentGateway.podAnnotations -- Annotations to add to the Gateway Deployment's Pods
+  podAnnotations: {}
+  #   key: "value"
+
+  # otelAgentGateway.tolerations -- Allow the Gateway Deployment to schedule on tainted nodes (requires Kubernetes >= 1.6)
+  tolerations: []
+
+  # otelAgentGateway.useHostNetwork -- Bind ports on the hostNetwork
+
+  ## Useful for CNI networking where hostPort might
+  ## not be supported. The ports need to be available on all hosts. It can be
+  ## used for custom metrics instead of a service endpoint.
+  ##
+  ## WARNING: Make sure that hosts using this are properly firewalled otherwise
+  ## metrics and traces are accepted from any host able to connect to this host.
+  #
+  useHostNetwork: false
+
+  # otelAgentGateway.dnsConfig -- Specify dns configuration options for otel agent containers e.g ndots
+
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+  dnsConfig: {}
+  #  options:
+  #  - name: ndots
+  #    value: "1"
+
+  # otelAgentGateway.volumes -- Specify additional volumes to mount in the otel-agent container
+  volumes: []
+  #   - hostPath:
+  #       path: <HOST_PATH>
+  #     name: <VOLUME_NAME>
+
+  # otelAgentGateway.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+  volumeMounts: []
+  #   - name: <VOLUME_NAME>
+  #     mountPath: <CONTAINER_PATH>
+  #     readOnly: true
+
+  # otelAgentGateway.nodeSelector -- Allow the Gateway Deployment to schedule on selected nodes
+
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  # otelAgentGateway.affinity -- Allow the Gateway Deployment to schedule using affinity rules
+
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  # otelAgentGateway.strategy -- Allow the otel-agent Gateway Deployment to perform a rolling update on helm update
+
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  # otelAgentGateway.priorityClassCreate -- Creates a priorityClass for the otel-agent Gateway Deployment pods.
+  priorityClassCreate: false
+
+  # otelAgentGateway.priorityClassName -- Sets PriorityClassName if defined
+  priorityClassName: null
+
+  # otelAgentGateway.priorityPreemptionPolicyValue -- Set to "Never" to change the PriorityClass to non-preempting
+  priorityPreemptionPolicyValue: PreemptLowerPriority
+
+  # otelAgentGateway.priorityClassValue -- Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods.
+
+  ## The PriorityClass uses PreemptLowerPriority.
+  priorityClassValue: 1000000000
+
+  # otelAgentGateway.podLabels -- Sets podLabels if defined
+
+  ## Note: These labels are also used as label selectors so they are immutable.
+  podLabels: {}
+
+  # otelAgentGateway.additionalLabels -- Adds labels to the Agent Gateway Deployment and pods
+  additionalLabels: {}
+
+  # otelAgentGateway.shareProcessNamespace -- Set the process namespace sharing on the otel-agent
+  shareProcessNamespace: false
+
+  # otelAgentGateway.lifecycle -- Configure the lifecycle of the otel-agent
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "sleep 70"]
+
+  # otelAgentGateway.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the otel-agent
+  terminationGracePeriodSeconds:  # 70
+
+  # otelAgentGateway.topologySpreadConstraints -- Allow the otel-agent Gateway Deployment to schedule using pod topology spreading
+
+  ## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
+
+  ## Configuration for the service for the OTel Agent Gateway
+  service:
+    # otelAgentGateway.service.type -- Set type of otel-agent-gateway service
+    type: ClusterIP
+
+  ## Allow to override the Datadog otel-agent image
+  image:
+    # otelAgentGateway.image.name -- otel agent image name to use (relative to `registry`)
+    name: ddot-collector
+
+    # otelAgentGateway.image.tag -- Override the image tag of otel agent
+    tag: 7.71.2
+
+    # otelAgentGateway.image.tagSuffix -- Suffix to append to image tag of otel agent
+    tagSuffix: ""
+
+    # otelAgentGateway.image.digest -- Override the image digest of otel agent, takes precedence over tag if specified
+    digest: ""
+
+    # otelAgentGateway.image.repository -- Override the image repository to override default registry
+    repository:
+
+    # otelAgentGateway.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version passed in otelAgentGateway.image.tag is checked
+    ## for compatibility with the version of the chart.
+    ## This boolean permits completely skipping this check.
+    ## This is useful, for example, for custom tags that are not
+    ## respecting semantic versioning.
+    doNotCheckTag:  # false
+
+    # otelAgentGateway.image.pullPolicy -- otel Agent image pullPolicy
+    pullPolicy: IfNotPresent
+
+    # otelAgentGateway.image.pullSecrets -- otel Agent repository pullSecret (ex: specify docker registry credentials)
+
+    ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+    pullSecrets: []
+    #   - name: "<REG_SECRET>"
+
+  initContainers:
+    # otelAgentGateway.initContainers.securityContext -- Allows you to overwrite the default container SecurityContext for init containers
+    securityContext:
+    # otelAgentGateway.initContainers.resources -- Resource requests and limits for init containers
+    resources:
+    #  requests:
+    #    cpu: 100m
+    #    memory: 200Mi
+    #  limits:
+    #    cpu: 100m
+    #    memory: 200Mi
+
+  containers:
+    otelAgent:
+      # otelAgentGateway.containers.otelAgent.env -- Additional environment variables for the otel-agent container
+      env: []
+
+      # otelAgentGateway.containers.otelAgent.envFrom -- Set environment variables specific to otel-agent from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # otelAgentGateway.containers.otelAgent.envDict -- Set environment variables specific to otel-agent defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # otelAgentGateway.containers.otelAgent.resources -- Resource requests and limits for the otel-agent container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # otelAgentGateway.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
+      securityContext: {}
+
+      # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # If not set, fall back to the value of datadog.logLevel.
+      logLevel:  # INFO
+
+  ## Provide OTel Collector RBAC configuration in Gateway
+  rbac:
+    # otelAgentGateway.rbac.create -- If true, check OTel Collector config for k8sattributes processor
+    # and create required ClusterRole to access Kubernetes API
+    create: true
+
+    # otelAgentGateway.rbac.rules -- A set of additional RBAC rules to apply to OTel Collector's ClusterRole
+    rules: []
+    #   - apiGroups: [""]
+    #     resources: ["pods", "nodes"]
+    #     verbs: ["get", "list", "watch"]
+
+  ## Provide OTel Collector logs configuration
+  logs:
+    # otelAgentGateway.logs.enabled -- Enable logs support in the OTel Collector.
+    # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+    # and pods logs.
+    enabled: false
+
+  ## Provide Horizontal Pod Autoscaler (HPA) configuration in OTel Agent Gateway, requires k8s 1.23.0 and above
+  autoscaling:
+    # otelAgentGateway.autoscaling.enabled -- enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above.
+    # Will override otelAgentGateway.replicas.
+    enabled: false
+    # otelAgentGateway.autoscaling.annotations -- annotations for OTel Agent Gateway HPA
+    annotations: {}
+    # otelAgentGateway.autoscaling.minReplicas -- min number of replicas for OTel Agent Gateway HPA
+    minReplicas: 0
+    # otelAgentGateway.autoscaling.maxReplicas -- max number of replicas for OTel Agent Gateway HPA
+    maxReplicas: 0
+    # otelAgentGateway.autoscaling.metrics -- the metrics used for OTel Agent Gateway HPA
+    metrics: []
+    # otelAgentGateway.autoscaling.behavior -- defines the scaling behavior in OTel Agent Gateway HPA
+    behavior:
+      # otelAgentGateway.autoscaling.behavior.scaleUp -- defines the scaling up behavior in OTel Agent Gateway HPA
+      scaleUp: {}
+      # otelAgentGateway.autoscaling.behavior.scaleDown -- defines the scaling down behavior in OTel Agent Gateway HPA
+      scaleDown: {}

@@ -101,6 +101,29 @@ func Test_operator_chart(t *testing.T) {
 			assertions: verifyWatchNamespaces,
 			skipTest:   SkipTest,
 		},
+		{
+			name: "Operator image tag with digest",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"image.tag":   "1.18.0@sha256:0000",
+					"toolVersion": "unknown",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Equal(t, "gcr.io/datadoghq/operator:1.18.0@sha256:0000", operatorContainer.Image)
+				installToolEnv := FindEnvVarByName(operatorContainer.Env, "DD_TOOL_VERSION")
+				assert.Equal(t, "unknown", installToolEnv.Value)
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -121,7 +144,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "gcr.io/datadoghq/operator:1.14.0", operatorContainer.Image)
+	assert.Equal(t, "gcr.io/datadoghq/operator:1.20.0", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }

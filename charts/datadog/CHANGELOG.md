@@ -1,10 +1,430 @@
 # Datadog changelog
 
+## 3.146.4
+
+* Add datadog endpoint configMap.
+
+## 3.146.3
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
+
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
+
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
+
+## 3.145.1
+
+* [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
+
+## 3.145.0
+
+* Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
+
+## 3.144.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
+## 3.144.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
+
+## 3.143.0
+
+* Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
+* The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
+* Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
+* Update the OTel Agent Gateyway Deployment checksum annotation to use the full content of `otel-gateway-configmap.yaml`. Also allow to pass in the checksum of an existing ConfigMap with `otelAgentGateway.configMap.checksum`.
+
+## 3.142.0
+
+* Update Agent to 7.72.1 ([#2142](https://github.com/DataDog/helm-charts/pull/2142)).
+
+## 3.141.2
+
+* Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
+
+## 3.141.1
+
+* Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
+
+## 3.141.0
+
+* Bump Datadog CSI Driver chart dependency version.
+
+## 3.140.1
+
+* Revert addition of `timer_create` syscall to system-probe seccomp profile.
+
+## 3.140.0
+
+* Update agent, cluster-agent, and cluster-checks-runner pod labels ([#2111](https://github.com/DataDog/helm-charts/pull/2111)).
+
+## 3.139.4
+
+* Add `timer_create` syscall to system-probe seccomp profile.
+
+## 3.139.3
+
+* Restart Datadog pods after a change has been made to `datadog.secretBackend.roles`.
+
+## 3.139.2
+
+* Respect a few config to env var mappings in OTel Agent Gateway: datadog.site -> DD_SITE, datadog.dd_url -> DD_DD_URL, datadog.clusterName -> DD_CLUSTER_NAME, datadog.tags -> DD_TAGS.
+
+## 3.139.1
+
+* Fix system-probe volumes on Talos Linux ([#2105](https://github.com/DataDog/helm-charts/pull/2105)).
+
+## 3.139.0
+
+* Update default Agent version to `7.71.2` ([#2103](https://github.com/DataDog/helm-charts/pull/2103)).
+
+## 3.138.3
+
+* Add `mknod` related capabilities to system-probe and agent containers when GPU monitoring is enabled.
+
+## 3.138.2
+
+* [AGENTONB-2589] Fix Cluster-Agent high availability warning when the proper PDB syntax is used ([#2099](https://github.com/DataDog/helm-charts/pull/2099)).
+
+## 3.138.1
+
+* Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
+
+## 3.138.0
+
+* [CONTP-977] Bump Datadog CSI Driver chart dependency version. ([#2042](https://github.com/DataDog/helm-charts/pull/2042)).
+
+## 3.137.3
+
+* Mount `/var/run/nvidia-container-devices/all` on the agent container when GPU monitoring is enabled, support environments where `NVIDIA_VISIBLE_DEVICES` is not accepted by the NVIDIA container runtime.
+
+## 3.137.2
+
+* [CASCL-610] Add require RBAC ArgoRollout support ([#2074](https://github.com/DataDog/helm-charts/pull/2074)).
+
+## 3.137.1
+
+* Fix indentations in DDOT Gateway templates.
+
+## 3.137.0
+
+* Upgrade default Agent version to `7.71.1`.
+
+## 3.136.2
+
+* Add deprecation notice for `datadog.processAgent.runInCoreAgent`
+
+## 3.136.1
+
+* Support RBAC in OTel Agent Gateway. RBAC is required by OTel k8s attributes processor and load balancing exporter.
+
+## 3.136.0
+
+* Add Deployment, Service and ConfigMap for OTel Agent Gateway, configured by `otelAgentGateway`.
+
+## 3.135.4
+
+* Allow security-agent to create unix socket in the sysprobe shared folder used to forward security events.
+
+## 3.135.3
+
+* Fix AppArmor profile for agent and system-probe containers on GKE.
+
+## 3.135.2
+
+* Pass APM and DSD hostSocketPath to Cluster Agent deployment.
+* Clarify seting `csi.enabled` to `true` will install the CSI driver subchart automatically and warn users not to install the CSI driver separately when enabled to avoid conflicts.
+
+## 3.135.1
+
+* Added `datadog.kubelet.fineGrainedAuthorization` flag, allowing for finer grained kubelet API authorization.
+
+# 3.135.0
+
+* Upgrade default Agent version to `7.70.2`.
+
+# 3.134.0
+
+* Deprecates `createPodDisruptionBudget` setting in favour of `pdb` block, allowing you to configure `minAvailable` or `maxUnavailable` for the Cluster Agent and Cluster Checks Runners. Using solely `<component>.pdb.create` without specifying `minAvailable`/`maxUnavailable` will create the same PodDisruptionBudget as the previous option.
+
+
+## 3.133.0
+
+* Revert changes in 3.131.4 because the configuration is going to be deprecated.
+
+## 3.132.1
+
+* Support lifecycle handlers for the agent via `agents.lifecycle` in GKE Autopilot.
+
+## 3.132.0
+
+* Add `datadog-csi-driver` as a dependency of the `datadog-agent` chart to allow installing Datadog CSI Driver automatically when csi is enabled.
+
+## 3.131.4
+* Enable the orchestrator check to collect the following custom resources if autoscaling is enabled: `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*`, and `argoproj.io/rollouts`.
+
+## 3.131.3
+* Update Cluster Agent RBAC to allow list/watch on `karpenter.azure.com/*`, `karpenter.k8s.aws/*`, `karpenter.sh/*` and `argoproj.io/rollouts` if the orchestrator check is enabled.
+
+## 3.131.2
+
+* Add support for otel agent in GKE autopilot.
+
+## 3.131.1
+
+* Update `fips.image.tag` to `1.1.16` fixing CVEs and updating packages.
+
+
+## 3.131.0
+
+* Upgrade default Agent version to `7.69.3`.
+
+## 3.130.1
+
+* Mount `/host/run` when `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
+## 3.130.0
+
+* Update Cluster Agent RBAC to allow list/watch on all Datadog custom resources if the orchestrator check is enabled.
+
+## 3.129.0
+
+* Add:
+  - `datadog.networkPath.collector.pathtestContextsLimit`
+  - `datadog.networkPath.collector.pathtestInterval`
+  - `datadog.networkPath.collector.pathtestMaxPerMinute`
+  - `datadog.networkPath.collector.pathtestTTL`
+  - `datadog.networkPath.collector.workers`
+
+## 3.128.0
+
+* Update:
+  - `datadog.gpuMonitoring.enabled` enables only the gpum core-check
+* Add:
+  - `datadog.gpuMonitoring.privilegedMode` enables system-probe GPU Probe for advanced metrics
+
+## 3.127.2
+
+* Clean up GKE provider references for enabling process checks in core agent.
+
+## 3.127.1
+
+* Update `fips.image.tag` to `1.1.15` fixing CVEs and updating packages.
+
+## 3.127.0
+
+* Add:
+  - `datadog.securityAgent.runtime.containerInclude`
+  - `datadog.securityAgent.runtime.containerExclude`
+  - `datadog.securityAgent.compliance.containerInclude`
+  - `datadog.securityAgent.compliance.containerExclude`
+
+## 3.126.1
+
+* Update `fips.image.tag` to `1.1.14` fixing CVEs and updating packages.
+
+## 3.126.0
+
+* Upgrade default Agent version to `7.68.3`.
+
+## 3.125.0
+
+* Add `datadog.sbom.containerImage.containerInclude` and
+`datadog.sbom.containerImage.containerExclude` to allow targeting specific
+container images for SBOM generation.
+
+## 3.124.0
+
+* Add `datadog.networkPath.connectionsMonitoring.enabled`, which enables Network Path's "Network traffic paths" feature.
+
+## 3.123.3
+
+* Add otel config to args rather than command
+
+## 3.123.2
+
+* add support for enabling csi driver globally and as admission controller config mode.
+
+## 3.123.1
+
+* Fix a breaking change introduced in `3.121.0`. If users set `-full` suffix directly in `agents.image.tag` when using OpenTelemetry Collector. The chart now gracefully handles this scenario:
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version < 7.67.0: Falls back to using the agent image (legacy behavior).
+  - When `datadog.otelCollector.useStandaloneImage=true` (default) and agent version >= 7.67.0: Fails with a clear error message and actionable solutions .
+* Fix documentation of `datadog.otelCollector.useStandaloneImage` to clarify that `agents.image.tagSuffix` must be set to `full` (not `-full`).
+* Mention `full` in the `tagSuffix` documentation.
+
+## 3.123.0
+
+* Update RBAC for CRDs metric collection ([#1949](https://github.com/DataDog/helm-charts/pull/1949)).
+
+## 3.122.1
+
+* Fix bug from 3.118.2 where Daemonset templates render with errors when container-level securityContexts are configured.
+
+## 3.122.0
+
+* Support a lifecycle handler for the agent via `agents.lifecycle`.
+* Support a termination grace period for the agent via `agents.terminationGracePeriodSeconds`.
+
+## 3.121.0
+
+* Add `datadog.otelCollector.useStandaloneImage` to configure the `otel-agent` container to use the new `ddot-collector` image, defaulted to `true`.
+/!\ If `datadog.otelCollector.enabled` is set to `true`, please ensure you can pull the image `{{- agents.image.registry -}}/ddot-collector:{{- agents.image.tag}}` (i.e. `gcr.io/datadoghq/ddot-collector:7.67.0`).
+
+## 3.120.2
+
+* Add support for passing multiple collector configs for Otel agent (`otelCollector.configMap.items`)
+
+## 3.120.1
+
+* Added ports for gRPC and HTTP OTLP ingest in NetworkPolicy and CiliumNetworkPolicy when `datadog.networkPolicy.create` and `datadog.networkPolicy.flavor` are configured respectively as `"kubernetes"` or `"cilium"`.
+
+## 3.120.0
+
+* `apm.instrumentation.targets` supports `valueFrom`.
+
+## 3.118.7
+
+* Upgrade default Agent version to `7.67.0`.
+
+## 3.118.6
+
+* Update `fips.image.tag` to `1.1.13` fixing CVEs and updating packages.
+
+## 3.118.5
+* Enable `DD_USE_DOGSTATSD` when JMX image is used for the cluster check runners.
+
+## 3.118.4
+
+* Update `fips.image.tag` to `1.1.12` fixing CVEs and updating packages.
+
+## 3.118.3
+
+* Update `process_config.run_in_core_agent.enabled` to `false` on the cluster check worker.
+
+## 3.118.2
+
+* fix seccomp/apparmor for agent container ([#1901](https://github.com/DataDog/helm-charts/pull/1901)).
+
+## 3.118.1
+
+* Update `datadog-crds` dependency to `2.8.0`
+
+## 3.118.0
+
+* Enable local fallback by default when workload autoscaling is enabled.
+
+## 3.117.4
+
+* Upgrade default Agent version to `7.66.1` (compatible with Kubernetes 1.33+).
+
+## 3.117.3
+
+* Update `fips.image.tag` to `1.1.11` fixing CVEs and updating packages.
+
+## 3.117.2
+
+* Do not mount `/etc/passwd` from host on `agent` container if running unprivileged to prevent incorrect user running the Agent.
+
+## 3.117.1
+
+* Add default resource limits for system-probe container on GKE Autopilot
+
+## 3.117.0
+
+* Add support for Agent Data Plane.
+
+## 3.116.3
+
+* Add an option to configure KSM static tags.
+
+## 3.116.2
+
+* Add an option to configure KSM custom resource metrics collection
+
+## 3.116.1
+
+* (chore) Clean up CI values files for datadog chart ([#1878](https://github.com/DataDog/helm-charts/pull/1878)).
+
+## 3.116.0
+
+* Add support for OTel Agent port protocols. The `datadog.otelCollector.ports` now allows to specify the protocol (`TCP`/`UDP`) for each port. This enables support for UDP receivers such as StatsD.
+* The `agents.containers.otelAgent.ports` allows to expose additional ports (e.g., for zPages, debugging, or custom extensions) on the `otel-agent` container.
+
+## 3.115.0
+
+* Add support for `secretBackend.refreshInterval` in chart/datadog.
+
+## 3.114.6
+
+* Upgrade default Agent version to `7.65.2`.
+
+## 3.114.5
+
+* Update default system-probe memory and CPU requests and limits.
+
+## 3.114.4
+
+* use securityContext for AppArmor on k8s 1.30+ ([#1865](https://github.com/DataDog/helm-charts/pull/1865)).
+
+## 3.114.3
+
+* Show ERROR log if the chart is installed with different values for `datadog.dogstatsd.hostSocketPath` and `datadog.apm.hostSocketPath` while having same parent directories for `datadog.dogstatsd.socketPath` and `datadog.apm.socketPath`.
+
+## 3.114.2
+
+* Upgrade default Agent version to `7.65.1`.
+
+## 3.114.1
+
+* Fix default cluster checks runner container resources for GKE Autopilot.
+
+## 3.114.0
+
+* Add a new parameter `useFIPSAgent` to use FIPS-compliant images for the Agent and DCA.
+
+## 3.113.0
+
+* Add configuration option for `datadog.kubelet.useApiServer` to get the pod list from the API Server instead of the Kubelet. Disabled by default. This option requires Agent **7.65.0+**.
+
+## 3.112.0
+
+* Upgrade default Agent version to `7.65.0`.
+
+## 3.111.1
+
+* Update `fips.image.tag` to `1.1.10` fixing CVEs and updating packages.
+
+## 3.111.0
+
+* Add support for using an existing/external ConfigMap to configure the DDOT Collector.
+
+## 3.110.16
+
+* Fix otel-agent container template to respect config `otelCollector.enabled` in values.yaml
+
+## 3.110.15
+
+* Upgrade default Agent anf Cluster-Agent versions to `7.64.3`.
+
 ## 3.110.14
 
 * Fix `replicationcontrollers` apiGroup ([#1821](https://github.com/DataDog/helm-charts/pull/1821)).
 
 ## 3.110.13
+
 * Defaults `DD_CLOUD_PROVIDER_METADATA` to `["gcp"]` when the GKE Autopilot provider is used, to avoid polling other cloud providers for metadata.
 
 ## 3.110.12

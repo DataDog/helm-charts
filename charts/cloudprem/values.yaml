@@ -1,14 +1,68 @@
 # Default values for CloudPrem.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+datadog:
+  # datadog.site -- The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to when using the reverse connection.
+
+  ## Set to 'datadoghq.com' to connect to the US1 site (default).
+  ## Set to 'datadoghq.eu' to connect to the EU site.
+  ## Set to 'us3.datadoghq.com' to connect to the US3 site.
+  ## Set to 'us5.datadoghq.com' to connect to the US5 site.
+  ## Set to 'ddog-gov.com' to connect to the US1-FED site.
+  ## Set to 'ap1.datadoghq.com' to connect to the AP1 site.
+  site: datadoghq.com
+
+  # datadog.apiKey -- Your Datadog API key. Required when using the reverse connection.
+  ## If set, it will be stored in a new Secret.
+  apiKey:
+
+  # datadog.apiKeyExistingSecret -- Use a pre-existing Secret containing your API key instead of creating a new one.
+  # The secret key name must be `api-key`.
+  ## If set, this parameter takes precedence over `datadog.apiKey`.
+  apiKeyExistingSecret:
+
+# CloudPrem configuration
+cloudprem:
+  # # Index configuration
+  index:
+    # cloudprem.index.minShards -- The minimum number of ingestion shards to use for the index. Defaults to 12.
+    minShards: 12
+    # cloudprem.index.retention -- The retention period for the index specified as a human-readable duration such as `30d`, `6m` or `1y`. Defaults to 30 days.
+    retention: 30d
+  # Reverse connection configuration
+  reverseConnection:
+    # cloudprem.reverseConnection.enabled -- Whether to enable the reverse connection. Defaults to true.
+    enabled: true
+
 aws:
+  # -- AWS account ID
   accountId: ""
+  # -- AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
+  partition: aws
+
+azure:
+  # -- Azure tenant ID
+  tenantId: ""
+  # -- Azure client ID
+  clientId: ""
+  # -- Azure client secret reference
+  clientSecretRef: {}
+    # name: azure-client-secret
+    # key: client-secret
+  # -- Azure storage account name and access key secret reference
+  storageAccount:
+    # -- Azure storage account name
+    name: ""
+    # -- Azure storage account access key secret reference
+    accessKeySecretRef: {}
+      # name: azure-storage-account-access-key
+      # key: access-key
 
 image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.1
+  tag: v0.1.15
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -28,26 +82,14 @@ serviceAccount:
   # The name of the service account to use.
   name: cloudprem
   # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
-  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/role-arn: arn:<aws.partition>:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
   # - eks.amazonaws.com/sts-regional-endpoints: "true"
   eksRoleName: cloudprem
   extraAnnotations: {}
 
 annotations: {}
 
-podAnnotations:
-  ad.datadoghq.com/cloudprem.checks: |
-      {
-        "openmetrics": {
-          "instances": [
-            {
-              "openmetrics_endpoint": "http://%%host%%:7280/metrics",
-              "namespace": "cloudprem",
-              "metrics": [".*"]
-            }
-          ]
-        }
-      }
+podAnnotations: {}
 
 podSecurityContext:
   fsGroup: 1005
@@ -56,14 +98,23 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1005
 
+# If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
+tracingEnabled: true
+
+dogstatsdServer:
+  host:
+    # if `value` is non-empty, then it takes precedence over `valueFrom`
+    value: ""
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  port: 8125
+
 # Additional global env
 environment:
-  QW_DISABLE_TELEMETRY: true
-  QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: true
   NO_COLOR: true
-  OTEL_EXPORTER_OTLP_ENDPOINT: http://$(HOST_IP):4317
-  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-  OTEL_EXPORTER_OTLP_TIMEOUT: 10
+  QW_DISABLE_TELEMETRY: true
+  QW_LOG_FORMAT: json
 
 environmentFrom: []
   # - secretRef:
@@ -75,6 +126,25 @@ configMaps: []
   # - name: configmap1
   #   mountPath: /quickwit/configmaps/
 
+# -- Additional ConfigMaps to create
+extraConfigMaps: []
+  # - name: custom-config
+  #   labels:
+  #     component: custom
+  #   annotations:
+  #     description: "Custom configuration"
+  #   data:
+  #     config.yaml: |
+  #       key1: value1
+  #       key2: value2
+  #     script.sh: |
+  #       #!/bin/bash
+  #       echo "Hello World"
+  # - name: another-config
+  #   data:
+  #     app.properties: |
+  #       database.url=jdbc:postgresql://localhost:5432/mydb
+
 # Global tolerations applied to all deployments
 tolerations: []
 
@@ -83,7 +153,8 @@ affinity: {}
 
 searcher:
   enabled: true
-  replicaCount: 3
+  # When autoscaling is enabled, replicaCount is ignored.
+  replicaCount: 2
 
   # Extra env for searcher
   extraEnv: {}
@@ -100,13 +171,13 @@ searcher:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -173,10 +244,46 @@ searcher:
 
   runtimeClassName: ""
 
+  # Enable and configure autoscaling using Horizontal Pod Autoscaler (HPA)
+  autoscaling:
+    enabled: false
+    annotations: {}
+    minReplicas: 2
+    maxReplicas: 10
+    metrics:
+      # Search is a "latency game", so we aim for low CPU utilization
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+    #     selectPolicy: Max
+    #     policies:
+    #     - type: Percent
+    #       value: 20
+    #       periodSeconds: 60
+    #     - type: Pods
+    #       value: 2
+    #       periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+    #     selectPolicy: Max
+    #     policies:
+    #     - type: Percent
+    #       value: 20
+    #       periodSeconds: 60
+    #     - type: Pods
+    #       value: 2
+    #       periodSeconds: 60
+
 indexer:
   enabled: true
-
-  replicaCount: 1
+  # When autoscaling is enabled, replicaCount is ignored.
+  replicaCount: 2
 
   # Extra env for indexer
   extraEnv: {}
@@ -193,13 +300,14 @@ indexer:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+    requests:
+      cpu: "4"
+      memory: "8Gi"
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -261,9 +369,45 @@ indexer:
 
   # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published
   # See https://quickwit.io/docs/configuration/index-config#indexing-settings
-  terminationGracePeriodSeconds: 120
+  terminationGracePeriodSeconds: 300
 
   runtimeClassName: ""
+
+  # Enable and configure autoscaling using Horizontal Pod Autoscaler (HPA)
+  autoscaling:
+    enabled: false
+    annotations: {}
+    minReplicas: 2
+    maxReplicas: 10
+    metrics:
+      # Indexing is a "throughput game", so we aim for high CPU utilization
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        # selectPolicy: Max
+        # policies:
+        # - type: Percent
+        #   value: 20
+        #   periodSeconds: 60
+        # - type: Pods
+        #   value: 2
+        #   periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        # selectPolicy: Max
+        # policies:
+        # - type: Percent
+        #   value: 20
+        #   periodSeconds: 60
+        # - type: Pods
+        #   value: 2
+        #   periodSeconds: 60
 
   persistentVolume:
     enabled: false
@@ -271,7 +415,7 @@ indexer:
     # storageClass: ""
 
 metastore:
-  replicaCount: 1
+  replicaCount: 2
 
   # Extra env for metastore
   extraEnv: {}
@@ -484,13 +628,10 @@ bootstrap:
     # - configMapRef:
     #     name: quickwit-bootstrap
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
   nodeSelector: {}
 
@@ -533,7 +674,12 @@ config:
   version: 0.8
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
+  cloudprem_listen_port: 7283
   data_dir: /quickwit/qwdata
+  grpc:
+    keep_alive:
+      interval: 30s
+      timeout: 10s
 
   # postgres:
   #   max_num_connections: 50
@@ -566,8 +712,7 @@ config:
 
 # Seed configuration
 seed:
-  indexes:
-    - datadog.yaml
+  indexes: []
 
   sources: []
     # - index: my-index
@@ -623,11 +768,27 @@ service:
 
   annotations: {}
 
+# Ingress configuration
+# The chart supports two ingress configurations:
+#   1. A public ingress for external access via the internet that will be used exclusively by Datadog's controle plane and query service. This ingress is disabled by default and should be enabled only when the reverse connection cannot be used.
+#   2. An internal ingress for access within the VPC
+#
+# Both ingresses will provision Application Load Balancers (ALBs) in AWS.
+# The public ingress ALB will be created in public subnets.
+# The internal ingress ALB will be created in private subnets.
+#
+# Additional annotations can be added to customize the ALB behavior.
 ingress:
-  # Route inbound traffic from Datadog via the public internet to searchers using gRPC + mTLS.
-  # This ingress configuration will provision an internet-facing ALB in the cluster's public subnets.
+  # The public ingress is configured to only accept TLS traffic and requires mutual TLS (mTLS) authentication.
+  # Datadog's control plane and query service authenticate themselves using client certificates,
+  # ensuring that only authorized Datadog services can access CloudPrem nodes through the public ingress.
   public:
-    enabled: true
+    enabled: false
+    # The ingress controller to use.
+    # - `alb` for AWS ALB
+    # - `nginx` or any string that contains `nginx` for Ingress NGINX Controller.
+    # When using `alb`, the ingress controller will provision an internet-facing ALB in the cluster's public subnets.
+    # When using `*nginx*`, the ingress controller will create a LoadBalancer service.
     ingressClassName: alb
     extraAnnotations: {}
     host: ""
@@ -636,10 +797,51 @@ ingress:
       #     - "cloudprem.acme.corp"
       #   secretName: cloudprem-acme-corp-tls
 
-  # Route inbound internal traffic to the right services over HTTP.
-  # This ingress configuration will provision an internal ALB in the cluster's private subnets.
+    # The client CA certificate used by Datadog to connect to the CloudPrem service.
+    clientCa: |
+      -----BEGIN CERTIFICATE-----
+      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
+      Dn8SYLNTdzyEDglFposs32DKuLQi
+      -----END CERTIFICATE-----
+
+  # The internal ingress is used by Datadog agents and other collectors running outside
+  # the Kubernetes cluster to send their logs to CloudPrem.
   internal:
     enabled: true
+    # The ingress controller to use.
+    # - `alb` for AWS ALB
+    # - `nginx` or any string that contains `nginx` for Ingress NGINX Controller.
+    # When using `alb`, the ingress controller will provision an internal ALB in the cluster's private subnets.
+    # When using `*nginx*`, the ingress controller will create a LoadBalancer service.
+    ingressClassName: alb
     extraAnnotations: {}
     host: ""
     tls: []
@@ -647,14 +849,6 @@ ingress:
       #     - "cloudprem.acme.internal"
       #   secretName: cloudprem-acme-internal-tls
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# List of pipeline of processors in JSON format.
+# If unset, no pipeline will be created.
+pipelinesConfig:

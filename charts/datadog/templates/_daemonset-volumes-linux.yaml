@@ -14,6 +14,11 @@
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+{{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+- name: hostrun
+  hostPath:
+    path: /run
+{{- end }}
 {{- end }}
 {{- if not .Values.providers.gke.gdc }}
 - hostPath:
@@ -41,7 +46,7 @@
     path: /etc/system-release
   name: etc-system-release
 {{- end -}}
-{{- if eq (include "should-enable-fips" . ) "true" }}
+{{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
@@ -65,7 +70,7 @@
     type: File
   name: kubelet-ca
 {{- end }}
-{{- if eq (include "trace-agent-use-uds" .) "true" }}
+{{- if and (not .Values.providers.gke.autopilot) (eq (include "trace-agent-use-uds" .) "true") }}
 - hostPath:
     path: {{ .Values.datadog.apm.hostSocketPath }}
     type: DirectoryOrCreate
@@ -102,6 +107,10 @@
     path: /usr/src
   name: src
 {{- end }}
+{{- end }}
+{{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
+- name: dynamic-instrumentation-cache-dir
+  emptyDir: {}
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
@@ -148,12 +157,12 @@
   name: btf-path
 {{- end }}
 {{- end }}
-{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
+{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -181,7 +190,7 @@
   name: host-rpm-dir
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if .Values.datadog.securityAgent.compliance.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
   name: group

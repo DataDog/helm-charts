@@ -13,12 +13,10 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  # TODO: change to a static stable version
-  tag: latest
+  tag: 1.0.0
 
   # image.repository -- Override default registry + image.name for CSI driver
-  # TODO: change to official repository when available
-  repository:
+  repository: gcr.io/datadoghq/csi-driver
 
   # image.pullPolicy -- CSI driver image pullPolicy
   pullPolicy: IfNotPresent
@@ -29,6 +27,20 @@ image:
   pullSecrets: []
   #   - name: "<REG_SECRET>"
 
+## Configure the CSI registrar to use as a sidecar container
+registrar:
+
+  # Define the CSI registrar image to work with
+  image:
+    # registrar.image.tag -- CSI registrar image tag to use
+    tag: v2.0.1
+
+    # registrar.image.repository -- Override default registry + image.name for the registrar
+    repository: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+
+    # registrar.image.pullPolicy -- CSI registrar image pullPolicy
+    pullPolicy: IfNotPresent
+
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.apm.hostSocketPath`
@@ -37,3 +49,8 @@ sockets:
   # dsdHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
+
+# tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
+
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []

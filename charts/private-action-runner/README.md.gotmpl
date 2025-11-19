@@ -106,7 +106,18 @@ runner:
     deployments: ["get", "list", "create", "update"]
 ```
 
-4. Update your Helm release
+4. Pick the appropriate role type for your runner. The `roleType` determines the permissions granted to the runner in your Kubernetes cluster.
+
+- **Role**: Grants permissions only in the namespace where the runner is deployed.
+- **ClusterRole**: Grants permissions across the entire cluster.
+
+Example configuration:
+```yaml
+runner:
+  roleType: "Role"
+```
+
+5. Update your Helm release
 ```bash
 helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 ```
@@ -165,12 +176,34 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/credentials/
-    - secretName: action-credentials
-      directoryName: ""
-    # Mount files in a subdirectory at /etc/dd-action-runner/credentials/jenkins/
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
+    # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"
+```
+
+## Using Custom Scripts
+
+The Run Predefined Script Action can run inline commands by creating a script configuration file, but it can also run more advanced custom scripts. The Private Action Runner supports custom scripts via the `runner.scriptFiles` parameter. Scripts are mounted in `/home/scriptuser/` directory.
+
+### Example
+
+```yaml
+runner:
+  credentialFiles:
+    - fileName: "script.yaml"
+      data: |
+        schemaId: script-credentials-v1
+        runPredefinedScript:
+          echoInBash:
+            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+  scriptFiles:
+    - fileName: "hello-from-bash.sh"
+      data: |
+        #!/bin/bash
+        echo "Hello World from bash!"
 ```
 
 ## Architecture
@@ -205,9 +238,9 @@ If actions requiring credentials fail:
 1. Verify that your credential files are properly formatted
 2. Check that the credentials are mounted correctly in the pod:
    ```bash
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/credentials/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config/credentials/
    ## Depending on how you pass the credentials they might appear in a different directory
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config
    ```
 
 3. Check the pod logs for credential-related errors

@@ -5,6 +5,9 @@ metadata:
   name: {{ include "quickwit.fullname" . }}-janitor
   labels:
     {{- include "quickwit.labels" . | nindent 4 }}
+    {{- if .Values.azure.clientId }}
+    azure.workload.identity/use: "true"
+    {{- end }}
   annotations:
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -118,7 +121,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append .Values.tolerations .Values.janitor.tolerations | compact | uniq }}
+      {{- $tolerations := concat .Values.tolerations .Values.janitor.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if .Values.janitor.runtimeClassName }}

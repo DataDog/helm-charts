@@ -4,6 +4,13 @@ datadog:
   appKeyExistingSecret: datadog-secret
   envDict:
     HELM_FORCE_RENDER: false  # disable helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
+
+clusterAgent:
+  enabled: true
+
+clusterChecksRunner:
+  enabled: true
+
 providers:
   gke:
     autopilot: true

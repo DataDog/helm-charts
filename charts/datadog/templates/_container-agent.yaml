@@ -2,8 +2,12 @@
 - name: agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   command: ["agent", "run"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan)))) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined") "mknod" .Values.datadog.gpuMonitoring.enabled) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-agent-container-resources" . | indent 4 }}
@@ -11,12 +15,14 @@
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
 {{- end }}
   ports:
+  {{- if eq (include "should-enable-agent-data-plane" .) "false" }}
   - containerPort: {{ .Values.datadog.dogstatsd.port }}
     {{- if .Values.datadog.dogstatsd.useHostPort }}
     hostPort: {{ .Values.datadog.dogstatsd.port }}
     {{- end }}
     name: dogstatsdport
     protocol: UDP
+  {{- end }}
   {{- if .Values.datadog.otlp }}
   {{- if .Values.datadog.otlp.receiver }}
   {{- if .Values.datadog.otlp.receiver.protocols }}
@@ -74,31 +80,13 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
-    {{- if .Values.datadog.dogstatsd.port }}
-    - name: DD_DOGSTATSD_PORT
-      value: {{ .Values.datadog.dogstatsd.port | quote }}
-    {{- end }}
-    {{- if .Values.datadog.dogstatsd.nonLocalTraffic }}
-    - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
-      value: {{ .Values.datadog.dogstatsd.nonLocalTraffic | quote }}
-    {{- end }}
-    {{- if .Values.datadog.dogstatsd.originDetection }}
-    - name: DD_DOGSTATSD_ORIGIN_DETECTION
-      value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
-    - name: DD_DOGSTATSD_ORIGIN_DETECTION_CLIENT
-      value: {{ .Values.datadog.dogstatsd.originDetection | quote }}
-    {{- end }}
-    {{- if .Values.datadog.originDetectionUnified.enabled }}
-    - name: DD_ORIGIN_DETECTION_UNIFIED
-      value: {{ .Values.datadog.originDetectionUnified.enabled | quote }}
-    {{- end }}
-    {{- if .Values.datadog.dogstatsd.tagCardinality }}
-    - name: DD_DOGSTATSD_TAG_CARDINALITY
-      value: {{ .Values.datadog.dogstatsd.tagCardinality | quote }}
-    {{- end }}
-    {{- if .Values.datadog.dogstatsd.tags }}
-    - name: DD_DOGSTATSD_TAGS
-      value: {{ tpl (.Values.datadog.dogstatsd.tags | join " " | quote) . }}
+    {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
+    - name: DD_USE_DOGSTATSD
+      value: "false"
+    - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+      value: "true"
+    {{- else }}
+    {{- include "containers-dogstatsd-env" . | nindent 4 }}
     {{- end }}
     {{- if eq (include "cluster-agent-enabled" .) "false" }}
     {{- if .Values.datadog.leaderElection }}
@@ -156,10 +144,6 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if and (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) }}
-    - name: DD_DOGSTATSD_SOCKET
-      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
-    {{- end }}
     {{- if and (eq (include "cluster-agent-enabled" .) "true") .Values.datadog.clusterChecks.enabled }}
     {{- if or (and (not .Values.existingClusterAgent.join) .Values.clusterChecksRunner.enabled) (and .Values.existingClusterAgent.join (not .Values.existingClusterAgent.clusterchecksEnabled)) }}
     - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -210,6 +194,18 @@
     - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerExclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerExclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerInclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.analyzers }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.containerImage.analyzers | quote }}
+    {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
@@ -226,6 +222,10 @@
       value: "true"
     - name: HOST_ROOT
       value: /host
+    {{- if .Values.datadog.sbom.host.analyzers }}
+    - name: DD_SBOM_HOST_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
+    {{- end }}
     {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -248,6 +248,8 @@
       value: all
     - name: DD_ENABLE_NVML_DETECTION
       value: "true"
+    - name: DD_GPU_ENABLED
+      value: "true"
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -256,6 +258,12 @@
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
+    {{- end }}
+    {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+    - name: DD_AUTOSCALING_FAILOVER_ENABLED
+      value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+    - name: DD_AUTOSCALING_FAILOVER_METRICS
+      value: "container.memory.usage container.cpu.usage"
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
@@ -297,6 +305,13 @@
     - name: pod-resources-socket
       mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
       readOnly: false
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
+    {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    - name: hostrun
+      mountPath: /host/run
+      readOnly: false
+    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket

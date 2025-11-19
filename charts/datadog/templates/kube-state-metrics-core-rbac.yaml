@@ -101,6 +101,19 @@ rules:
   verbs:
     - list
     - watch
+{{- range .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+- apiGroups:
+    - {{ .groupVersionKind.group }}
+  resources:
+    - {{ if .groupVersionKind.resource }}
+        {{ .groupVersionKind.resource | lower }}
+      {{ else }}
+        {{ .groupVersionKind.kind | lower }}s
+      {{ end }}
+  verbs:
+    - list
+    - watch
+{{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
 - apiGroups:
     - apiregistration.k8s.io

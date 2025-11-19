@@ -1,5 +1,65 @@
 # Changelog
 
+## 2.13.0
+
+* Update CRDs from Datadog Operator v1.20.0 tag.
+
+## 2.13.0-dev.2
+
+* Update CRDs from Datadog Operator v1.20.0-rc.4 release candidate tag.
+
+## 2.13.0-dev.1
+
+* Update CRDs from Datadog Operator v1.20.0-rc.1 release candidate tag.
+
+## 2.12.0
+
+* Update CRDs from Datadog Operator v1.19.0 release candidate tag.
+
+## 2.12.0-dev.2
+
+* Update CRDs from Datadog Operator v1.19.0-rc.2 release candidate tag.
+
+## 2.12.0-dev.1
+
+* Update CRDs from Datadog Operator v1.19.0-rc.1 release candidate tag.
+
+## 2.11.0
+
+* Update CRDs from Datadog Operator v1.18.0 tag.
+
+## 2.11.0-dev.1
+
+* Update CRDs from Datadog Operator v1.18.0-rc.1 release candidate tag.
+
+## 2.10.0
+
+* Update CRDs from Datadog Operator v1.17.0 tag.
+
+## 2.10.0-dev.1
+
+* Update CRDs from Datadog Operator v1.17.0-rc.1 release candidate tag.
+
+## 2.9.0
+
+* Update CRDs from Datadog Operator v1.16.0 tag.
+
+## 2.9.0-dev.1
+
+* Update CRDs from Datadog Operator v1.16.0-rc.1 release candidate tag.
+
+## 2.8.0
+
+* Update CRDs from Datadog Operator v1.15.0 tag.
+
+## 2.8.0-dev.1
+
+* Update CRDs from Datadog Operator v1.15.0-rc.2 release candidate tag.
+
+## 2.8.0-dev
+
+* Update CRDs from Datadog Operator v1.15.0-rc.1 release candidate tag.
+
 ## 2.7.0
 
 * Clean up `apiextensions.k8s.io/v1beta1` CRD versions. Kubernetes cluster v1.21 and earlier will be updated to `apiextensions.k8s.io/v1` CRD version.

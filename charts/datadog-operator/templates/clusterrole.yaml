@@ -55,7 +55,11 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - nodes/configz
+  - nodes/healthz
+  - nodes/logs
   - nodes/metrics
+  - nodes/pods
   - nodes/proxy
   - nodes/spec
   - nodes/stats
@@ -77,7 +81,6 @@ rules:
   - '*'
 - apiGroups:
   - apiextensions.k8s.io
-  - extensions
   resources:
   - customresourcedefinitions
   verbs:
@@ -89,8 +92,6 @@ rules:
   - apiservices
   verbs:
   - '*'
-  - list
-  - watch
 - apiGroups:
   - apps
   resources:
@@ -99,6 +100,7 @@ rules:
   verbs:
   - create
   - delete
+  - deletecollection
   - get
   - list
   - patch
@@ -114,22 +116,13 @@ rules:
   - list
   - watch
 - apiGroups:
-  - apps
+  - argoproj.io
   resources:
-  - replicationcontrollers
+  - rollouts
   verbs:
   - list
   - watch
-- apiGroups:
-  - apps
-  - extensions
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs:
-  - list
-  - watch
+  - patch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -147,21 +140,13 @@ rules:
   - create
   - get
 - apiGroups:
-  - authorization.k8s.io
-  - rbac.authorization.k8s.io
-  - roles.rbac.authorization.k8s.io
+  - auto.gke.io
   resources:
-  - clusterrolebindings
-  - clusterroles
-  - rolebindings
-  - roles
+  - allowlistsynchronizers
   verbs:
   - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - autoscaling
@@ -282,6 +267,23 @@ rules:
   - list
   - watch
 - apiGroups:
+  - datadoghq.com
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - external.metrics.k8s.io
   resources:
   - '*'
@@ -335,6 +337,33 @@ rules:
   - get
   - list
 - apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - security.openshift.io
   resourceNames:
   - restricted
@@ -368,6 +397,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals
   - datadogagentprofiles
   verbs:
   - create
@@ -380,6 +410,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/finalizers
   - datadogagentprofiles/finalizers
   verbs:
   - create
@@ -392,6 +423,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/status
   - datadogagentprofiles/status
   verbs:
   - get

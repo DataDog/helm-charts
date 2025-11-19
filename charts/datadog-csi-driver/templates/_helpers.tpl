@@ -68,3 +68,15 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Check if target cluster supports GKE Autopilot WorkloadAllowlists.
+GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.1729000.
+*/}}
+{{- define "csi.gke-autopilot-workloadallowlists-enabled" -}}
+{{- if and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist") (semverCompare ">=v1.32.1-gke.1729000" .Capabilities.KubeVersion.Version) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

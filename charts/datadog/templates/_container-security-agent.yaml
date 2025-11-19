@@ -2,6 +2,10 @@
 - name: security-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq  (include "should-enable-compliance" .) "true" }}
   securityContext:
     capabilities:
@@ -40,6 +44,14 @@
       value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
     - name: HOST_ROOT
       value: /host/root
+    {{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+    {{- end }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
@@ -122,7 +134,7 @@
     {{- end }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
-      readOnly: true
+      readOnly: false
     - name: sysprobe-config
       mountPath: /etc/datadog-agent/system-probe.yaml
       subPath: system-probe.yaml

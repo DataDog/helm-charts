@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: v0.1.1](https://img.shields.io/badge/Version-v0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.1](https://img.shields.io/badge/AppVersion-v0.1.1-informational?style=flat-square)
+![Version: 0.1.12](https://img.shields.io/badge/Version-0.1.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.15](https://img.shields.io/badge/AppVersion-v0.1.15-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -39,23 +39,36 @@ Create a `datadog-values.yaml` file to override the default values with your cus
 Any parameters not explicitly overridden in `datadog-values.yaml` will fall back to the defaults defined in the chart’s `values.yaml`. Here is an example of a `datadog-values.yaml` file with such overrides:
 
 ```yaml
+datadog:
+  # The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to. Defaults to `datadoghq.com`.
+  site: datadoghq.eu
+  # The name of the existing Secret containing the Datadog API key. The secret key name must be `api-key`.
+  apiKeyExistingSecret: datadog-api-key
+
+cloudprem:
+  index:
+    # The retention period for the index specified as a human-readable duration such as `30d`, `6m`, or `1y`. Defaults to 30 days.
+    retention: 90d
+
 aws:
   accountId: "123456789012"
+  # AWS partition, set to "aws" by default, but should be set to "aws-cn" for China regions
+  partition: aws-cn
 
 # Environment variables
 # Any environment variables defined here will be available to all pods in the deployment
 environment:
-  AWS_REGION: us-east-1
+  AWS_REGION: cn-north-1
 
 # Service account configuration
 # If `serviceAccount.create` is set to `true`, a service account will be created with the specified name.
-# The service account will be annotated with the IAM role ARN if `aws.accountId` and serviceAccount.eksRoleName` are set.
+# The service account will be annotated with the IAM role ARN if `aws.partition`, `aws.accountId`, and serviceAccount.eksRoleName` are set.
 # Additional annotations can be added using serviceAccount.extraAnnotations.
 serviceAccount:
   create: true
   name: cloudprem
   # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
-  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/role-arn: arn:<aws.partition>:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
   # - eks.amazonaws.com/sts-regional-endpoints: "true"
   eksRoleName: cloudprem
   extraAnnotations: {}
@@ -67,32 +80,14 @@ config:
   default_index_root_uri: s3://<bucket name>/indexes
 
 # Ingress configuration
-# The chart supports two ingress configurations:
-# 1. A public ingress for external access via the internet that will be used exclusively by Datadog's controle plane and query service.
-# 2. An internal ingress for access within the VPC
-#
-# Both ingresses will provision Application Load Balancers (ALBs) in AWS.
-# The public ingress ALB will be created in public subnets.
-# The internal ingress ALB will be created in private subnets.
-#
-# Additional annotations can be added to customize the ALB behavior.
 ingress:
-  # The public ingress is configured to only accept TLS traffic and requires mutual TLS (mTLS) authentication.
-  # Datadog's control plane and query service authenticate themselves using client certificates,
-  # ensuring that only authorized Datadog services can access CloudPrem nodes through the public ingress.
-  public:
-    enabled: true
-    name: cloudprem-public
-    host: cloudprem.acme.corp
-    extraAnnotations:
-      alb.ingress.kubernetes.io/load-balancer-name: cloudprem-public
-
   # The internal ingress is used by Datadog agents and other collectors running outside
   # the Kubernetes cluster to send their logs to CloudPrem.
   internal:
     enabled: true
     name: cloudprem-internal
     host: cloudprem.acme.internal
+    # Additional annotations can be added to customize the ALB behavior.
     extraAnnotations:
       alb.ingress.kubernetes.io/load-balancer-name: cloudprem-internal
 
@@ -112,7 +107,7 @@ metastore:
 # The indexer is responsible for processing and indexing incoming data it receives data from various sources (e.g., Datadog agents, log collectors)
 # and transforms it into searchable files called "splits" stored in S3.
 #
-# The indexer is horizontally scalable - you can increase `replicaCount` to handle higher indexing throughput.
+# The indexer is horizontally scalable - you can increase `replicaCount` or enable autoscaling to increase the cluster's indexing throughput.
 # Resource requests and limits should be tuned based on your indexing workload.
 #
 # The default values are suitable for moderate indexing loads of up to 20MB/s per indexer pod.
@@ -127,15 +122,18 @@ indexer:
       cpu: "4"
       memory: "8Gi"
 
+  autoscaling:
+    enabled: false
+
 # Searcher configuration
 # The searcher is responsible for executing search queries against the indexed data stored in S3.
 # It handles search requests from Datadog's query service and returns matching results.
 #
-# The searcher is horizontally scalable - you can increase `replicaCount` to handle more concurrent searches.
+# The searcher is horizontally scalable - you can increase `replicaCount` or enable autoscaling to handle more concurrent search requests.
 # Resource requirements for searchers are highly workload-dependent and should be determined empirically.
 # Key factors that impact searcher performance include:
 # - Query complexity (e.g., number of terms, use of wildcards or regex)
-# - Query concurrency (number of simultaneous searches)
+# - Query concurrency (number of simultaneous search requests)
 # - Amount of data scanned per query
 # - Data access patterns (cache hit rates)
 #
@@ -151,6 +149,25 @@ searcher:
     limits:
       cpu: "4"
       memory: "16Gi"
+
+  autoscaling:
+    enabled: false
+
+# Additional ConfigMaps
+# Create custom ConfigMaps for application configuration, scripts, or other data
+extraConfigMaps:
+  - name: custom-app-config
+    labels:
+      component: application
+    annotations:
+      description: "Custom application configuration"
+    data:
+      app.properties: |
+        database.pool.size=10
+        logging.level=INFO
+      init-script.sh: |
+        #!/bin/bash
+        echo "Initializing application..."
 ```
 
 ### Installing or upgrading the Helm chart
@@ -175,9 +192,11 @@ This command removes all the Kubernetes resources associated with the chart and 
 | Key | Type | Default | Description
 | :--------------- |:---------------:| -----:|--- |
 |aws.accountId | string | null | AWS account ID used for the EKS role ARN service account annotation|
+|aws.partition | string | aws | AWS partition used for the EKS role ARN service account annotation|
 |config.* | dict | config defaults | Config used by the CloudPrem prods|
 |environment | dict | {} | Key-value environment variables passed to CloudPrem pods|
 |environmentFrom | list | [] | List of sources to populate environment variables (e.g., Secrets or ConfigMaps)|
+|extraConfigMaps | list | [] | Additional ConfigMaps to create with custom data and configuration|
 |image.pullPolicy | string | IfNotPresent | Image pull policy for CloudPrem containers|
 |image.repository | string | public.ecr.aws/datadog/cloudprem | Repository of the CloudPrem image|
 |image.tag | string | devel | Tag of the CloudPrem image to deploy|

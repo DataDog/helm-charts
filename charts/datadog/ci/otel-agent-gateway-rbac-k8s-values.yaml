@@ -1,0 +1,40 @@
+targetSystem: "linux"
+agents:
+  enabled: false
+  kubelet:
+    tlsVerify: false
+clusterAgent:
+  enabled: false
+otelAgentGateway:
+  enabled: true
+  rbac:
+    create: true
+  ports:
+    - containerPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    processors:
+      k8sattributes:
+    exporters:
+      debug:
+      otlphttp:
+        endpoint: otlp.datadoghq.com
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [k8sattributes]
+          exporters: [otlphttp, debug]
+        metrics:
+          receivers: [otlp]
+          processors: [k8sattributes]
+          exporters: [otlphttp, debug]
+        logs:
+          receivers: [otlp]
+          processors: [k8sattributes]
+          exporters: [otlphttp, debug]

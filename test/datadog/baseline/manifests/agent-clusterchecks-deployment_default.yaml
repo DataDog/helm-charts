@@ -106,6 +106,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -384,6 +398,24 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - datadoghq.com
+      - karpenter.azure.com
+      - karpenter.k8s.aws
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+    verbs:
+      - list
+      - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -756,10 +788,12 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
+    agent.datadoghq.com/component: agent
     app.kubernetes.io/component: agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -773,11 +807,13 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: agent
         app: datadog
         app.kubernetes.io/component: agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -798,6 +834,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -806,6 +844,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -826,6 +866,8 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_TAG_CARDINALITY
               value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -868,8 +910,6 @@ spec:
               value: "false"
             - name: DD_HEALTH_PORT
               value: "5555"
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_EXTRA_CONFIG_PROVIDERS
               value: clusterchecks endpointschecks
             - name: DD_IGNORE_AUTOCONF
@@ -888,7 +928,7 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -979,6 +1019,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -987,6 +1029,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1025,7 +1069,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1074,7 +1118,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1099,6 +1143,8 @@ spec:
               value: /etc/datadog-agent/auth/token
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1107,9 +1153,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1158,11 +1206,11 @@ spec:
             path: /etc/os-release
           name: os-release-file
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsdsocket
         - hostPath:
-            path: /var/run/datadog/
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
         - hostPath:
@@ -1180,10 +1228,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    agent.datadoghq.com/component: cluster-checks-runner
     app.kubernetes.io/component: clusterchecks-agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-cluster-checks-runner
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-clusterchecks
   namespace: datadog-agent
@@ -1203,11 +1253,13 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: cluster-checks-runner
         app: datadog-clusterchecks
         app.kubernetes.io/component: clusterchecks-agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-cluster-checks-runner
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-clusterchecks
     spec:
       affinity:
@@ -1229,6 +1281,8 @@ spec:
           env:
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -1265,6 +1319,8 @@ spec:
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
               value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "false"
             - name: DD_LOGS_ENABLED
               value: "false"
             - name: DD_APM_ENABLED
@@ -1275,7 +1331,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1324,7 +1380,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1337,7 +1393,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.64.1
+          image: gcr.io/datadoghq/agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1359,10 +1415,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    agent.datadoghq.com/component: cluster-agent
     app.kubernetes.io/component: cluster-agent
-    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1382,11 +1440,13 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
+        agent.datadoghq.com/component: cluster-agent
         app: datadog-cluster-agent
         app.kubernetes.io/component: cluster-agent
-        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
@@ -1419,6 +1479,8 @@ spec:
                   optional: true
             - name: KUBERNETES
               value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
             - name: DD_LANGUAGE_DETECTION_ENABLED
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
@@ -1429,6 +1491,14 @@ spec:
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
               value: "true"
+            - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
             - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
               value: datadog-webhook
             - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
@@ -1509,7 +1579,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1582,7 +1652,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.64.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

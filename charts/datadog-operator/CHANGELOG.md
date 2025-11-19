@@ -1,5 +1,137 @@
 # Changelog
 
+## 2.15.0
+
+* Update Datadog Operator image tag to 1.20.0.
+
+## 2.15.0-dev.3
+
+* Update Datadog Operator image tag to 1.20.0-rc.4.
+
+## 2.15.0-dev.2
+
+* Update Datadog Operator image tag to 1.20.0-rc.2.
+
+## 2.15.0-dev.1
+
+* Update Datadog Operator image tag to 1.20.0-rc.1.
+
+## 2.14.3
+
+* Update Datadog Operator image tag to 1.19.1.
+
+## 2.14.2
+
+* Update Datadog Operator image tag to 1.19.0.
+
+## 2.14.1
+
+* [CASCL-610] Add require RBAC for ArgoRollout support in datadog-operator chart ([#2076](https://github.com/DataDog/helm-charts/pull/2076)).
+
+## 2.14.0-dev.3
+
+* Update Datadog Operator image tag to 1.19.0-rc.3.
+
+## 2.14.0-dev.2
+
+* Update Datadog Operator image tag to 1.19.0-rc.2.
+
+## 2.14.0-dev.1
+
+* Update Datadog Operator image tag to 1.19.0-rc.1.
+
+## 2.13.1
+
+* Add default `initialDelaySeconds: 15` to the Liveness Probe
+
+## 2.13.0
+
+* Update Datadog Operator chart for 1.18.0.
+
+## 2.13.0-dev.5
+
+* Update Datadog Operator image tag to 1.18.0-rc.4.
+
+## 2.13.0-dev.4
+
+* Update Datadog Operator image tag to 1.18.0-rc.3.
+
+## 2.13.0-dev.3
+
+* Update Datadog Operator image tag to 1.18.0-rc.2.
+
+## 2.13.0-dev.2
+
+* Update Datadog Operator image tag to 1.18.0-rc.1.
+
+## 2.13.0-dev.1
+
+* Update Datadog Operator chart for 1.18.0-rc.1.
+
+## 2.12.1
+
+* Update `datadog-crds` dependency to stable version (no-op change).
+
+## 2.12.0
+
+* Update Datadog Operator chart for 1.17.0.
+
+## 2.12.0-dev.4
+
+* Add option to disable service account automountServiceAccountToken. 
+
+## 2.12.0-dev.3
+
+* Update Datadog Operator chart for 1.17.0-rc.3.
+
+## 2.12.0-dev.2
+
+* Update Datadog Operator chart for 1.17.0-rc.2.
+
+## 2.12.0-dev.1
+
+* Update Datadog Operator chart for 1.17.0-rc.1.
+
+## 2.11.1
+
+* Handle Operator image tag with a digest gracefully.
+
+## 2.11.0
+
+* Update Datadog Operator chart for 1.16.0.
+
+## 2.11.0-dev.3
+
+* Document `datadogCRDs.crds.datadogAgentProfiles` option to install the DatadogAgentProfile CRD.
+
+## 2.11.0-dev.2
+
+* Update default image tag for Datadog Operator to `1.16.0-rc.1`.
+
+## 2.11.0-dev.1
+
+* Update Datadog Operator chart for 1.16.0-rc.1.
+
+## 2.10.0
+
+* Update Datadog Operator chart for 1.15.1
+
+## 2.10.0-dev.2
+
+* Update Datadog Operator chart for 1.15.0-rc.2.
+
+## 2.10.0-dev.1
+
+* Fix semverCompare to work with pre-release versions.
+
+## 2.10.0-dev
+
+* Update Datadog Operator chart for 1.15.0-rc.1.
+
+## 2.9.2
+
+* no-op chart bump to sync changlog with chart version.
+
 ## 2.9.0
 
 * Update Datadog Operator version to 1.14.0.

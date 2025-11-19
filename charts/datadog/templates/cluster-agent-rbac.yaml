@@ -347,6 +347,24 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - "datadoghq.com"
+  - karpenter.azure.com
+  - karpenter.k8s.aws
+  - karpenter.sh
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - list
+  - watch
+  - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 ---
@@ -499,6 +517,12 @@ rules:
   - apps
   resources:
   - deployments
+  verbs:
+  - patch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
   verbs:
   - patch
 ---

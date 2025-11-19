@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square)
+![Version: 1.17.0](https://img.shields.io/badge/Version-1.17.0-informational?style=flat-square) ![AppVersion: v1.14.0](https://img.shields.io/badge/AppVersion-v1.14.0-informational?style=flat-square)
 
 ## Overview
 
@@ -105,7 +105,18 @@ runner:
     deployments: ["get", "list", "create", "update"]
 ```
 
-4. Update your Helm release
+4. Pick the appropriate role type for your runner. The `roleType` determines the permissions granted to the runner in your Kubernetes cluster.
+
+- **Role**: Grants permissions only in the namespace where the runner is deployed.
+- **ClusterRole**: Grants permissions across the entire cluster.
+
+Example configuration:
+```yaml
+runner:
+  roleType: "Role"
+```
+
+5. Update your Helm release
 ```bash
 helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 ```
@@ -164,12 +175,34 @@ Reference these secrets in your values.yaml:
 ```yaml
 runner:
   credentialSecrets:
-    # Mount all files from the secret at /etc/dd-action-runner/credentials/
-    - secretName: action-credentials
-      directoryName: ""
-    # Mount files in a subdirectory at /etc/dd-action-runner/credentials/jenkins/
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
+    # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
     - secretName: jenkins-credentials
       directoryName: "jenkins"
+```
+
+## Using Custom Scripts
+
+The Run Predefined Script Action can run inline commands by creating a script configuration file, but it can also run more advanced custom scripts. The Private Action Runner supports custom scripts via the `runner.scriptFiles` parameter. Scripts are mounted in `/home/scriptuser/` directory.
+
+### Example
+
+```yaml
+runner:
+  credentialFiles:
+    - fileName: "script.yaml"
+      data: |
+        schemaId: script-credentials-v1
+        runPredefinedScript:
+          echoInBash:
+            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+  scriptFiles:
+    - fileName: "hello-from-bash.sh"
+      data: |
+        #!/bin/bash
+        echo "Hello World from bash!"
 ```
 
 ## Architecture
@@ -204,9 +237,9 @@ If actions requiring credentials fail:
 1. Verify that your credential files are properly formatted
 2. Check that the credentials are mounted correctly in the pod:
    ```bash
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/credentials/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config/credentials/
    ## Depending on how you pass the credentials they might appear in a different directory
-   kubectl exec <pod-name> -- ls /etc/dd-action-runner/
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config
    ```
 
 3. Check the pod logs for credential-related errors
@@ -217,15 +250,19 @@ If actions requiring credentials fail:
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.2.0"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.14.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
-| runner.config | object | `{"actionsAllowlist":[],"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
+| runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
+| runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","tags":[],"urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
+| runner.config.allowIMDSEndpoint | bool | `false` | Whether to allow the runner to access IDM services endpoint |
 | runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
 | runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
+| runner.config.tags | list | `[]` | List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format. |
 | runner.config.urn | string | `"CHANGE_ME_URN_FROM_CONFIG"` | The runner's URN from the enrollment page |
+| runner.configDirectory | string | `"/etc/dd-action-runner/config"` | The directory containing the Datadog Private Action Runner configuration |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
 | runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
@@ -236,7 +273,7 @@ If actions requiring credentials fail:
 | runner.kubernetesActions.customObjects | list | `[]` | Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`. |
 | runner.kubernetesActions.customResourceDefinitions | list | `[]` | Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.daemonSets | list | `[]` | Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
-| runner.kubernetesActions.deployments | list | `[]` | Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart") |
+| runner.kubernetesActions.deployments | list | `[]` | Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale") |
 | runner.kubernetesActions.endpoints | list | `[]` | Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.events | list | `[]` | Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.jobs | list | `[]` | Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
@@ -254,6 +291,17 @@ If actions requiring credentials fail:
 | runner.kubernetesActions.services | list | `[]` | Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesActions.statefulSets | list | `[]` | Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
 | runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
+| runner.livenessProbe | object | `{}` | LivenessProbe settings |
+| runner.nodeSelector | object | `{}` | Allow the private action runner pods to schedule on selected nodes |
+| runner.readinessProbe | object | `{}` | ReadinessProbe settings |
 | runner.replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
+| runner.resources | object | `{"limits":{"cpu":"250m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Resource requirements for the Datadog Private Action Runner container |
+| runner.resources.limits | object | `{"cpu":"250m","memory":"1Gi"}` | Resource limits for the runner container |
+| runner.resources.requests | object | `{"cpu":"250m","memory":"1Gi"}` | Resource requests for the runner container |
 | runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
 | runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
+| runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
+| runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
+| runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
+| service | object | `{"annotations":{}}` | Service configuration |
+| service.annotations | object | `{}` | Annotations to add to the service |

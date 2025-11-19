@@ -3,6 +3,10 @@ kind: DaemonSet
 metadata:
   name: {{ include "datadog-csi-driver.daemonsetName" . }}
   namespace: {{ .Release.Namespace }}
+  {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
+  labels:
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
+  {{- end }}
 spec:
   selector:
     matchLabels:
@@ -13,35 +17,37 @@ spec:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
     spec:
-      hostNetwork: true
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
       containers:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.image.pullSecrets }}
-          imagePullSecrets:
-    {{ toYaml .Values.image.pullSecrets | indent 8 }}
-          {{- end }}
           securityContext:
             privileged: true 
           ports:
             - containerPort: 5000
               protocol: TCP 
           args:
-            - /dd-csi-driver
-            - -apm-host-socket-path="{{ dir .Values.sockets.apmHostSocketPath }}"
-            - -dsd-host-socket-path="{{ dir .Values.sockets.dsdHostSocketPath }}"
+            - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
+            - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
           volumeMounts:
+            # plugin-dir stores the socket on which CSI node server service is exposed.
+            # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
             - name: apm-socket
               mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
-              readOnly: false
+              readOnly: true
             {{- if ne (dir .Values.sockets.dsdHostSocketPath) (dir .Values.sockets.apmHostSocketPath) }}
             - name: dsd-socket
               mountPath: {{ (dir .Values.sockets.dsdHostSocketPath) }}
-              readOnly: false
+              readOnly: true
             {{- end }}
+            # write mode is required to perform a volume mount
+            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount. 
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
@@ -51,7 +57,8 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
         - name: csi-node-driver-registrar
-          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1
+          image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
+          imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -61,10 +68,19 @@ spec:
             - name: DRIVER_REG_SOCK_PATH
               value: /var/lib/kubelet/plugins/datadog.csi/driver/csi.sock
           volumeMounts:
+            # plugin-dir stores the socket created by the CSI driver node server.
+            # it is needed by the registrar to fetch the driver name from the driver contain (via the CSI GetPluginInfo() call).
             - name: plugin-dir
               mountPath: /csi # Match this to ADDRESS
+              readOnly: true
+            # registration-dir is used to store the registration information and register the driver with kubelet.
+            # it needs to be writeable
             - name: registration-dir
               mountPath: /registration # This is where the registrar writes the registration information
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: plugin-dir
           hostPath:

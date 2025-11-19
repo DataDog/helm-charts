@@ -88,10 +88,26 @@ rules:
   resources:
   - nodes/metrics
   - nodes/spec
+  {{ if .Values.datadog.kubelet.fineGrainedAuthorization }}
+  - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
+  {{ else }}
   - nodes/proxy
+  {{ end }}
   - nodes/stats
   verbs:
   - get
+{{- if .Values.datadog.kubelet.useApiServer }}
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+{{- end }}
 - apiGroups:  # leader election check
   - ""
   resources:

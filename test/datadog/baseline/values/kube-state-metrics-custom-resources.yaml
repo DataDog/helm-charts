@@ -1,0 +1,47 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  kubeStateMetricsCore:
+    enabled: true
+    collectVpaMetrics: true
+    collectCrdMetrics: true
+    collectCrMetrics:
+      - groupVersionKind:
+          group: "crd.k8s.amazonaws.com"
+          kind: "ENIConfig"
+          version: "v1alpha1"
+        commonLabels:
+          crd_type: "eniconfig"
+        labelsFromPath:
+          crd_name:
+            - metadata
+            - name
+        metrics:
+          - name: "eniconfig"
+            help: "ENI Config"
+            each:
+              type: gauge
+              gauge:
+                path:
+                  - metadata
+                  - generation
+      - groupVersionKind:
+          group: "vpcresources.k8s.aws"
+          kind: "CNINode"
+          version: "v1alpha1"
+          resource: "cninode-pluralized"
+        commonLabels:
+          crd_type: "cninode"
+        labelsFromPath:
+          crd_name:
+            - metadata
+            - name
+        metrics:
+          - name: "cninode"
+            help: "CNI Node"
+            each:
+              type: gauge
+              gauge:
+                path:
+                  - metadata
+                  - generation

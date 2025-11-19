@@ -18,13 +18,21 @@ stringData:
     urn: CHANGE_ME_URN_FROM_CONFIG
     privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
     modes:
-      - appBuilder
-      - workflowAutomation
+      - pull
     port: 9016
+    tags: []
     actionsAllowlist:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
-      - com.datadoghq.kubernetes.core.listPod  
+      - com.datadoghq.kubernetes.core.listPod
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-test-private-action-runner-credentials
+  namespace: datadog-agent
+stringData:  
   http_basic.json: |
     {
       "auth_type": "Basic Auth",
@@ -158,6 +166,45 @@ stringData:
         }
       ]
     }
+    
+  script.yaml: |
+    schemaId: script-credentials-v1
+    runPredefinedScript:
+      echo:
+        # you have to use an array to specify the command
+        command: ["echo", "Hello world"]
+      echo-parametrized:
+        # you can use [workflow-like syntax](https://docs.datadoghq.com/actions/workflows/variables/) to retrieve values from the parameters object
+        command: [ "echo", "{{ parameters.echoValue }}" ]
+        # you can use [json schema](https://json-schema.org/) to validate the parameters
+        parameterSchema:
+          properties:
+            echoValue:
+              type: string
+              const: "world"
+          required:
+            - echoValue
+      echoInBash:
+        command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.17.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.14.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
+data:
+  hello-from-bash.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -211,10 +258,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.1.0
+    helm.sh/chart: private-action-runner-1.17.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.2.0"
+    app.kubernetes.io/version: "v1.14.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -226,22 +273,36 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.1.0
+        helm.sh/chart: private-action-runner-1.17.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.2.0"
+        app.kubernetes.io/version: "v1.14.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 0de9d1a8a01422fefd373d18fa4c8a558b3e2c486eaebf9087c420f92dc24ae8
+        checksum/values: 54ccabfd007ba62113a570f8166295e2987e329fafb141414fcae172aee6abd6
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.2.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.14.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 9016
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /liveness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
           resources:
             limits:
               cpu: 250m
@@ -251,24 +312,21 @@ spec:
               memory: 1Gi
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
-            - name: all-secrets-at-once
-              mountPath: /etc/dd-action-runner/credentials/
-            - name: jenkins-secret
-              mountPath: /etc/dd-action-runner/credentials/jenkins
-          env: 
-            - name: ENV_VAR_NAME
-              value: ENV_VAR_VALUE
-          envFrom:
-            - secretRef:
-                name: A-SECRET-WITH-THE-RUNNER-PRIVATE-KEY-AND-URN
+              mountPath: /etc/dd-action-runner/config
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            - name: scripts
+              mountPath: /home/scriptuser
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: /etc/dd-action-runner/config
       volumes:
         - name: secrets
           secret:
             secretName: example-test-private-action-runner
-        - name: all-secrets-at-once
+        - name: credentials
           secret:
-            secretName: all-secrets-at-once
-        - name: jenkins-secret
-          secret:
-            secretName: jenkins-secret
+            secretName: example-test-private-action-runner-credentials
+        - name: scripts
+          configMap:
+            name: example-test-private-action-runner-scripts

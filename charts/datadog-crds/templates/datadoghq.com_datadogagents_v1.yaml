@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
+    controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
     helm.sh/chart: '{{ include "datadog-crds.chart" . }}'
@@ -578,6 +578,11 @@ spec:
                         useClusterChecksRunners:
                           type: boolean
                       type: object
+                    controlPlaneMonitoring:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     cspm:
                       properties:
                         checkInterval:
@@ -648,6 +653,8 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        directSendFromSystemProbe:
+                          type: boolean
                         enabled:
                           type: boolean
                         network:
@@ -706,6 +713,8 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        nonLocalTraffic:
+                          type: boolean
                         originDetectionEnabled:
                           type: boolean
                         tagCardinality:
@@ -794,6 +803,10 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        patchCgroupPermissions:
+                          type: boolean
+                        privilegedMode:
+                          type: boolean
                         requiredRuntimeClassName:
                           type: string
                       type: object
@@ -810,6 +823,124 @@ spec:
                       type: object
                     kubeStateMetricsCore:
                       properties:
+                        collectCrMetrics:
+                          items:
+                            properties:
+                              commonLabels:
+                                additionalProperties:
+                                  type: string
+                                type: object
+                              groupVersionKind:
+                                properties:
+                                  group:
+                                    type: string
+                                  kind:
+                                    type: string
+                                  version:
+                                    type: string
+                                type: object
+                              labelsFromPath:
+                                additionalProperties:
+                                  items:
+                                    type: string
+                                  type: array
+                                type: object
+                              metricNamePrefix:
+                                type: string
+                              metrics:
+                                items:
+                                  properties:
+                                    commonLabels:
+                                      additionalProperties:
+                                        type: string
+                                      type: object
+                                    each:
+                                      properties:
+                                        gauge:
+                                          properties:
+                                            labelFromKey:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            nilIsZero:
+                                              type: boolean
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        info:
+                                          properties:
+                                            labelFromKey:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        stateSet:
+                                          properties:
+                                            labelName:
+                                              type: string
+                                            labelsFromPath:
+                                              additionalProperties:
+                                                items:
+                                                  type: string
+                                                type: array
+                                              type: object
+                                            list:
+                                              items:
+                                                type: string
+                                              type: array
+                                            path:
+                                              items:
+                                                type: string
+                                              type: array
+                                            valueFrom:
+                                              items:
+                                                type: string
+                                              type: array
+                                          required:
+                                            - path
+                                          type: object
+                                        type:
+                                          type: string
+                                      type: object
+                                    help:
+                                      type: string
+                                    labelsFromPath:
+                                      additionalProperties:
+                                        items:
+                                          type: string
+                                        type: array
+                                      type: object
+                                    name:
+                                      type: string
+                                  type: object
+                                type: array
+                              resourcePlural:
+                                type: string
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                         conf:
                           properties:
                             configData:
@@ -857,6 +988,8 @@ spec:
                       type: object
                     logCollection:
                       properties:
+                        autoMultiLineDetection:
+                          type: boolean
                         containerCollectAll:
                           type: boolean
                         containerCollectUsingFiles:
@@ -1155,6 +1288,11 @@ spec:
                       type: object
                     criSocketPath:
                       type: string
+                    csi:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     disableNonResourceRules:
                       type: boolean
                     dockerSocketPath:
@@ -1514,6 +1652,9 @@ spec:
                           type: string
                         enableGlobalPermissions:
                           type: boolean
+                        refreshInterval:
+                          format: int32
+                          type: integer
                         roles:
                           items:
                             properties:
@@ -1541,6 +1682,8 @@ spec:
                         type: string
                       type: array
                       x-kubernetes-list-type: set
+                    useFIPSAgent:
+                      type: boolean
                   type: object
                 override:
                   additionalProperties:
@@ -2160,6 +2303,27 @@ spec:
                               type: string
                             name:
                               type: string
+                            ports:
+                              items:
+                                properties:
+                                  containerPort:
+                                    format: int32
+                                    type: integer
+                                  hostIP:
+                                    type: string
+                                  hostPort:
+                                    format: int32
+                                    type: integer
+                                  name:
+                                    type: string
+                                  protocol:
+                                    default: TCP
+                                    type: string
+                                required:
+                                  - containerPort
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                             readinessProbe:
                               properties:
                                 exec:
@@ -2731,6 +2895,7 @@ spec:
                         additionalProperties:
                           type: string
                         type: object
+                        x-kubernetes-map-type: granular
                       name:
                         type: string
                       nodeSelector:
@@ -2768,6 +2933,8 @@ spec:
                           runAsUser:
                             format: int64
                             type: integer
+                          seLinuxChangePolicy:
+                            type: string
                           seLinuxOptions:
                             properties:
                               level:
@@ -2844,6 +3011,64 @@ spec:
                           type: object
                         type: array
                         x-kubernetes-list-type: atomic
+                      topologySpreadConstraints:
+                        items:
+                          properties:
+                            labelSelector:
+                              properties:
+                                matchExpressions:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      operator:
+                                        type: string
+                                      values:
+                                        items:
+                                          type: string
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                    required:
+                                      - key
+                                      - operator
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                                matchLabels:
+                                  additionalProperties:
+                                    type: string
+                                  type: object
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            matchLabelKeys:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: atomic
+                            maxSkew:
+                              format: int32
+                              type: integer
+                            minDomains:
+                              format: int32
+                              type: integer
+                            nodeAffinityPolicy:
+                              type: string
+                            nodeTaintsPolicy:
+                              type: string
+                            topologyKey:
+                              type: string
+                            whenUnsatisfiable:
+                              type: string
+                          required:
+                            - maxSkew
+                            - topologyKey
+                            - whenUnsatisfiable
+                          type: object
+                        type: array
+                        x-kubernetes-list-map-keys:
+                          - topologyKey
+                          - whenUnsatisfiable
+                        x-kubernetes-list-type: map
                       updateStrategy:
                         properties:
                           rollingUpdate:
@@ -4358,6 +4583,11 @@ spec:
                             useClusterChecksRunners:
                               type: boolean
                           type: object
+                        controlPlaneMonitoring:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         cspm:
                           properties:
                             checkInterval:
@@ -4428,6 +4658,8 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            directSendFromSystemProbe:
+                              type: boolean
                             enabled:
                               type: boolean
                             network:
@@ -4486,6 +4718,8 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            nonLocalTraffic:
+                              type: boolean
                             originDetectionEnabled:
                               type: boolean
                             tagCardinality:
@@ -4574,6 +4808,10 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            patchCgroupPermissions:
+                              type: boolean
+                            privilegedMode:
+                              type: boolean
                             requiredRuntimeClassName:
                               type: string
                           type: object
@@ -4590,6 +4828,124 @@ spec:
                           type: object
                         kubeStateMetricsCore:
                           properties:
+                            collectCrMetrics:
+                              items:
+                                properties:
+                                  commonLabels:
+                                    additionalProperties:
+                                      type: string
+                                    type: object
+                                  groupVersionKind:
+                                    properties:
+                                      group:
+                                        type: string
+                                      kind:
+                                        type: string
+                                      version:
+                                        type: string
+                                    type: object
+                                  labelsFromPath:
+                                    additionalProperties:
+                                      items:
+                                        type: string
+                                      type: array
+                                    type: object
+                                  metricNamePrefix:
+                                    type: string
+                                  metrics:
+                                    items:
+                                      properties:
+                                        commonLabels:
+                                          additionalProperties:
+                                            type: string
+                                          type: object
+                                        each:
+                                          properties:
+                                            gauge:
+                                              properties:
+                                                labelFromKey:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                nilIsZero:
+                                                  type: boolean
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            info:
+                                              properties:
+                                                labelFromKey:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            stateSet:
+                                              properties:
+                                                labelName:
+                                                  type: string
+                                                labelsFromPath:
+                                                  additionalProperties:
+                                                    items:
+                                                      type: string
+                                                    type: array
+                                                  type: object
+                                                list:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                path:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                                valueFrom:
+                                                  items:
+                                                    type: string
+                                                  type: array
+                                              required:
+                                                - path
+                                              type: object
+                                            type:
+                                              type: string
+                                          type: object
+                                        help:
+                                          type: string
+                                        labelsFromPath:
+                                          additionalProperties:
+                                            items:
+                                              type: string
+                                            type: array
+                                          type: object
+                                        name:
+                                          type: string
+                                      type: object
+                                    type: array
+                                  resourcePlural:
+                                    type: string
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                             conf:
                               properties:
                                 configData:
@@ -4637,6 +4993,8 @@ spec:
                           type: object
                         logCollection:
                           properties:
+                            autoMultiLineDetection:
+                              type: boolean
                             containerCollectAll:
                               type: boolean
                             containerCollectUsingFiles:

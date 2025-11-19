@@ -5,6 +5,9 @@ metadata:
   name: {{ include "quickwit.fullname" . }}-control-plane
   labels:
     {{- include "quickwit.labels" . | nindent 4 }}
+    {{- if .Values.azure.clientId }}
+    azure.workload.identity/use: "true"
+    {{- end }}
   annotations:
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
@@ -92,7 +95,7 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
-            {{- toYaml .Values.control_plane.resources | nindent 14 }}
+            {{- toYaml .Values.control_plane.resources | nindent 12 }}
       volumes:
         - name: config
           configMap:
@@ -118,7 +121,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := append .Values.tolerations .Values.control_plane.tolerations | compact | uniq }}
+      {{- $tolerations := concat .Values.tolerations .Values.control_plane.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if .Values.control_plane.runtimeClassName }}

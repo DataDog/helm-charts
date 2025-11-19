@@ -22,38 +22,72 @@ spec:
       containers:
         - name: runner
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 9016
+              containerPort: {{ $.Values.runner.config.port | default 9016 }}
+          {{- if .Values.runner.livenessProbe }}
+          livenessProbe:
+            {{- toYaml $.Values.runner.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.runner.readinessProbe }}
+          readinessProbe:
+            {{- toYaml $.Values.runner.readinessProbe | nindent 12 }}
+          {{- end }}
           resources:
-            limits:
-              cpu: 250m
-              memory: 1Gi
-            requests:
-              cpu: 250m
-              memory: 1Gi
+            {{- toYaml $.Values.runner.resources | nindent 12 }}
           volumeMounts:
             - name: secrets
-              mountPath: /etc/dd-action-runner
+              mountPath: /etc/dd-action-runner/config
+            {{- if $.Values.runner.useSeparateSecretForCredentials }}
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            {{- end}}
             {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
             - name: {{ $credentialSecret.secretName }}
-              mountPath: /etc/dd-action-runner/credentials/{{ $credentialSecret.directoryName }}
+              mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
             {{- end }}
-          {{- if $.Values.runner.env }}
-          env: {{ $.Values.runner.env | toYaml | nindent 12 }}
-          {{- end }}
+            {{- if $.Values.runner.scriptFiles }}
+            - name: scripts
+              mountPath: /home/scriptuser
+            {{- end }}
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: {{ $.Values.runner.configDirectory }}
+          {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
           {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
             - secretRef:
                 name: {{ $.Values.runner.runnerIdentitySecret }}
           {{- end }}
+      {{- with .Values.runner.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: secrets
           secret:
             secretName: {{ include "chart.fullname" . }}
+        {{- if $.Values.runner.useSeparateSecretForCredentials }}
+        - name: credentials
+          secret:
+            secretName: {{ include "chart.fullname" . }}-credentials
+        {{- end }}
         {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
         - name: {{ $credentialSecret.secretName }}
           secret:
             secretName: {{ $credentialSecret.secretName }}
+        {{- end }}
+        {{- if $.Values.runner.scriptFiles }}
+        - name: scripts
+          configMap:
+            name: {{ include "chart.fullname" . }}-scripts
         {{- end }}

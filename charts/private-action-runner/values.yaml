@@ -8,18 +8,28 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.2.0
+  tag: v1.14.0
+  pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
 nameOverride: ""
 # fullnameOverride -- Override the full qualified app name
 fullnameOverride: ""
 
+# -- Service configuration
+service:
+  # -- Annotations to add to the service
+  annotations: {}
+
 runner:
   # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
   roleType: "Role"
   # -- Number of pod instances for the Datadog Private Action Runner
   replicas: 1
+  # -- The directory containing the Datadog Private Action Runner configuration
+  configDirectory: "/etc/dd-action-runner/config"
+  # -- Configure whether to use a separate kubernetes secret for the credentials and the config
+  useSeparateSecretForCredentials: false
   # -- Configuration for the Datadog Private Action Runner
   config:
     # -- Base URL of the Datadog app
@@ -34,10 +44,24 @@ runner:
       - "appBuilder"
     # -- Port for HTTP server liveness checks and App Builder mode
     port: 9016
+    # -- Whether to allow the runner to access IDM services endpoint
+    allowIMDSEndpoint: false
     # -- List of actions that the Datadog Private Action Runner is allowed to execute
     actionsAllowlist: []
+    # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
+    tags: []
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env: []
+  # -- Allow the private action runner pods to schedule on selected nodes
+  nodeSelector: {}
+  # -- Kubernetes affinity settings for the runner pods
+  affinity: {}
+  # -- Tolerations to allow scheduling runner pods on nodes with taints
+  tolerations: []
+  # -- LivenessProbe settings
+  livenessProbe: {}
+  # -- ReadinessProbe settings
+  readinessProbe: {}
   # -- Reference to a kubernetes secrets that contains the runner identity
   runnerIdentitySecret: ""
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
@@ -46,7 +70,7 @@ runner:
     controllerRevisions: []
     # -- Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
     daemonSets: []
-    # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart")
+    # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale")
     deployments: []
     # -- Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
     replicaSets: []
@@ -90,12 +114,25 @@ runner:
     customObjects: []
   # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
   kubernetesPermissions: []
-
+  # -- Resource requirements for the Datadog Private Action Runner container
+  resources:
+    # -- Resource limits for the runner container
+    limits:
+      cpu: 250m
+      memory: 1Gi
+    # -- Resource requests for the runner container
+    requests:
+      cpu: 250m
+      memory: 1Gi
   # -- List of credential files to be used by the Datadog Private Action Runner
   credentialFiles: []
   # see examples/values.yaml for examples on how to specify secrets
-  # credential files provided here will be mounted in /etc/dd-action-runner/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
   # -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
   credentialSecrets: []
-  # credential files provided here will be mounted in /etc/dd-action-runner/credentials/
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
   # see examples/values.yaml for examples on how to specify secrets
+  # -- List of script files to be used by the Datadog Private Action Runner
+  scriptFiles: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify scripts

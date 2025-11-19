@@ -11,6 +11,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
@@ -20,11 +21,14 @@ import (
 
 type HelmCommand struct {
 	ReleaseName   string
+	Namespace     string
 	ChartPath     string
 	ShowOnly      []string          // helm template `-s, --show-only` flag
 	Values        []string          // helm template `-f, --values` flag
 	Overrides     map[string]string // helm template `--set` flag
 	OverridesJson map[string]string // helm template `--set-json` flag
+	Logger        *logger.Logger    // logger to use for helm output. Set to logger.Discard by default.
+	ExtraArgs     []string
 }
 
 func Unmarshal[T any](t *testing.T, manifest string, destObj *T) {
@@ -36,7 +40,12 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 	require.NoError(t, err, "can't resolve absolute path", "path", cmd.ChartPath)
 	require.NoError(t, err)
 
-	kubectlOptions := k8s.NewKubectlOptions("", "", "datadog-agent")
+	namespace := "datadog-agent"
+	if cmd.Namespace != "" {
+		namespace = cmd.Namespace
+	}
+
+	kubectlOptions := k8s.NewKubectlOptions("", "", namespace)
 
 	options := &helm.Options{
 		KubectlOptions: kubectlOptions,
@@ -45,7 +54,11 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 		ValuesFiles:    cmd.Values,
 	}
 
-	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly, "--debug")
+	if cmd.Logger == nil {
+		options.Logger = logger.Discard
+	}
+
+	output, err := helm.RenderTemplateE(t, options, chartPath, cmd.ReleaseName, cmd.ShowOnly, cmd.ExtraArgs...)
 
 	return output, err
 }
