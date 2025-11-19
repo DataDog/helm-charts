@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.146.4
+## 3.146.5
 
 * Truncate workload label values to be under 63 characters.
+
+## 3.146.4
+
+* Add datadog endpoint configMap.
 
 ## 3.146.3
 
