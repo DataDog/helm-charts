@@ -5,7 +5,7 @@ stages:
 variables:
   RUN_E2E_TEST:
     description: "set RUN_E2E_TEST to 'true' if you want to trigger the e2e test on your pipeline."
-  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 2e9af8ebdfcb
+  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
 
 noop:
   stage: test
@@ -44,6 +44,7 @@ e2e:
     E2E_KEY_PAIR_NAME: ci.helm-charts
     KUBERNETES_MEMORY_REQUEST: 12Gi
     KUBERNETES_MEMORY_LIMIT: 16Gi
+    RUN_E2E_TEST: "true"
   parallel:
     matrix:
       - E2E_BUILD_TAGS:
