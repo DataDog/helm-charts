@@ -80,7 +80,7 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 	v.T().Log("CSI driver installed")
 
 	// Wait for CSI driver pod to transition from Pending to Running state
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// Check if CSI driver pods exist
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
