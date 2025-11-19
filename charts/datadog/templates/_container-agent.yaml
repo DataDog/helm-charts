@@ -204,7 +204,7 @@
     {{- end }}
     {{- if .Values.datadog.sbom.containerImage.analyzers }}
     - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
-      value: {{ join "," .Values.datadog.sbom.containerImage.analyzers | quote }}
+      value: {{ join " " .Values.datadog.sbom.containerImage.analyzers | quote }}
     {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
@@ -224,7 +224,7 @@
       value: /host
     {{- if .Values.datadog.sbom.host.analyzers }}
     - name: DD_SBOM_HOST_ANALYZERS
-      value: {{ join "," .Values.datadog.sbom.host.analyzers | quote }}
+      value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
     {{- end }}
     {{- end }}
     {{- end }}
