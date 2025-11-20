@@ -82,6 +82,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -462,6 +463,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
