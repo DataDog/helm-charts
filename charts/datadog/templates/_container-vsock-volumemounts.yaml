@@ -1,5 +1,5 @@
 {{- define "container-vsock-volumemounts" -}}
-{{- if .Values.datadog.useTerrapin }}
+{{- if .Values.datadog.useVSock }}
 {{- if eq .Values.targetSystem "linux" }}
 - name: vsock
   mountPath: /dev/vsock

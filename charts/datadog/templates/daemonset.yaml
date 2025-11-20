@@ -67,7 +67,7 @@ spec:
         container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
         {{- end }}
         {{- end }}
-        {{- if or .Values.agents.useVSock (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         {{- end }}
         {{- if .Values.providers.gke.autopilot }}  # Workaround for GKE Autopilot bug in versions >= 1.32.2-gke.1182000 and < 1.32.2-gke.1652000.
