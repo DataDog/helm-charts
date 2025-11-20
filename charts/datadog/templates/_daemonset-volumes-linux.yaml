@@ -238,9 +238,4 @@
   hostPath:
     path: /dev/null
 {{- end }}
-{{- if .Values.agents.useVSock }}
-- hostPath:
-    path: /dev/vsock
-  name: vsock
-{{- end }}
 {{- end -}}
