@@ -77,13 +77,7 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 		v.T().Fatalf("Helm install failed: %v", err)
 	}
 	v.T().Log("CSI driver installed")
-
-<<<<<<< HEAD
-	// Wait for CSI driver pod to transition from Pending to Running state
-	time.Sleep(5 * time.Second)
-
-=======
->>>>>>> e87a7d9b (updated the test)
+	
 	// Check if CSI driver pods exist
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
 		listOptions := metav1.ListOptions{LabelSelector: "app=datadog-csi-driver-node-server"}
