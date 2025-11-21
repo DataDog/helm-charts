@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.147.3 
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
 ## 3.147.2
 
 * Truncate part-of label values to be under 63 characters.
