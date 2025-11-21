@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.148.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
 ## 3.147.2
 
 * Truncate part-of label values to be under 63 characters.
