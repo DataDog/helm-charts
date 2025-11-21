@@ -111,7 +111,11 @@ rules:
     - {{ if .groupVersionKind.resource }}
         {{ .groupVersionKind.resource | lower }}
       {{ else }}
-        {{ .groupVersionKind.kind | lower }}s
+        {{ if eq .groupVersionKind.kind "*" }}
+          "*"
+        {{ else }}
+          {{ .groupVersionKind.kind | lower }}s
+        {{ end }}
       {{ end }}
   verbs:
     - list
