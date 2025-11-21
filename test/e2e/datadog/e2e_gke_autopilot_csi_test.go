@@ -4,10 +4,8 @@ package datadog
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 	"time"
 
@@ -16,6 +14,7 @@ import (
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -79,29 +78,28 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 	}
 	v.T().Log("CSI driver installed")
 
+<<<<<<< HEAD
 	// Wait for CSI driver pod to transition from Pending to Running state
 	time.Sleep(5 * time.Second)
 
+=======
+>>>>>>> e87a7d9b (updated the test)
 	// Check if CSI driver pods exist
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
-		res, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog-agent").List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			v.T().Logf("Error listing pods in namespace datadog-agent: %v", err)
-			return
-		}
+		listOptions := metav1.ListOptions{LabelSelector: "app=datadog-csi-driver-node-server"}
+		res, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog-agent").List(context.TODO(), listOptions)
+		require.NoError(c, err)
 
-		var csiDriverPod corev1.Pod
-		containsCsiDriver := false
+		assert.True(c, len(res.Items) > 0, "No CSI driver pods found")
+
+		runningPods := 0
 		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "csi-driver") {
-				containsCsiDriver = true
-				csiDriverPod = pod
-				break
+			if pod.Status.Phase == corev1.PodPhase("Running") {
+				runningPods++
 			}
 		}
 
-		assert.True(v.T(), containsCsiDriver, "CSI Driver pod not found")
-		assert.Equal(v.T(), corev1.PodPhase("Running"), csiDriverPod.Status.Phase, fmt.Sprintf("CSI Driver is not running: %s", csiDriverPod.Status.Phase))
+		assert.Equal(c, len(res.Items), runningPods, "All CSI driver pods are not running")
 
 	}, 5*time.Minute, 30*time.Second, "CSI Driver readiness timed out")
 
