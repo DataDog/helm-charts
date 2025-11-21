@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.147.2
+
+* Truncate part-of label values to be under 63 characters.
+
 ## 3.147.1
 
 * Revert datadog endpoint configMap.
