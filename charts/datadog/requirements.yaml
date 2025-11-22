@@ -10,6 +10,6 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
     condition: datadog.kubeStateMetricsEnabled
   - name: datadog-csi-driver
-    version: 0.4.3
+    version: 0.4.4
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
