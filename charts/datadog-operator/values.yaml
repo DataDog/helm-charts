@@ -138,6 +138,12 @@ tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
 
+# dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
+dnsConfig: {}
+#  options:
+#    - name: ndots
+#      value: "1"
+
 # installCRDs -- Set to true to deploy the Datadog's CRDs
 installCRDs: true
 
