@@ -6,6 +6,7 @@ import (
 	"context"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -41,6 +42,12 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 
 	v.T().Log("Running GKE Autopilot CSI driver test")
 
+	chartPath, err := filepath.Abs("../../../charts/datadog-csi-driver")
+	if err != nil {
+		v.T().Fatalf("Failed to get chart path: %v", err)
+	}
+	v.T().Logf("Using CSI chart from: %s", chartPath)
+
 	// Write kubeconfig to temp file
 	kubeconfigFile, err := os.CreateTemp("", "gke-kubeconfig-")
 	if err != nil {
@@ -56,18 +63,9 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 		v.T().Fatalf("Failed to close kubeconfig file: %v", err)
 	}
 
-	// Installing the datadog repository
-	helmCmd := exec.Command("helm", "repo", "add", "datadog", "https://helm.datadoghq.com")
-	output, err := helmCmd.CombinedOutput()
-	v.T().Logf("Helm output: %s", string(output))
-	if err != nil {
-		v.T().Fatalf("Helm repo add failed: %v", err)
-	}
-	v.T().Log("Datadog repository added")
-
 	// Installing the csi driver via helm
 	v.T().Log("Installing CSI driver")
-	helmCmd = exec.Command("helm", "install", "datadog-csi-driver", "datadog/datadog-csi-driver",
+	helmCmd := exec.Command("helm", "install", "datadog-csi-driver", chartPath,
 		"--kubeconfig", kubeconfigFile.Name(),
 		"--namespace", "datadog-agent", "--create-namespace")
 
@@ -77,7 +75,7 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 		v.T().Fatalf("Helm install failed: %v", err)
 	}
 	v.T().Log("CSI driver installed")
-	
+
 	// Check if CSI driver pods exist
 	assert.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
 		listOptions := metav1.ListOptions{LabelSelector: "app=datadog-csi-driver-node-server"}
