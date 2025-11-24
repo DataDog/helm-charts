@@ -69,7 +69,7 @@ func (v *gkeAutopilotCSISuite) TestGKEAutopilotCSI() {
 		"--kubeconfig", kubeconfigFile.Name(),
 		"--namespace", "datadog-agent", "--create-namespace")
 
-	output, err = helmCmd.CombinedOutput()
+	output, err := helmCmd.CombinedOutput()
 	v.T().Logf("Helm output: %s", string(output))
 	if err != nil {
 		v.T().Fatalf("Helm install failed: %v", err)
