@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.148.1
+* Add new `datadog-csi-driver.podLabels` field.
+
 ## 3.148.0
 
 * Enable readOnlyRootFilesystem by default on all Datadog Agent containers.

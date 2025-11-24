@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.5
+* Support the definition of podLabels
+
 ## 0.4.4
 
 * Support the definition of tolerations

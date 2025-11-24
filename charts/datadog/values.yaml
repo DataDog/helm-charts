@@ -2996,3 +2996,10 @@ otelAgentGateway:
       scaleUp: {}
       # otelAgentGateway.autoscaling.behavior.scaleDown -- defines the scaling down behavior in OTel Agent Gateway HPA
       scaleDown: {}
+
+## Configuration for the datadog-csi-driver subchart. The values in this section will override the values.yaml
+## file of the datadog-csi-driver subchart. This is only meaningful if datadog.csi.enabled is set to true.
+datadog-csi-driver:
+  # datadog-csi-driver.podLabels -- additional labels to add to the csi driver daemonset pods.
+  podLabels: {}
+

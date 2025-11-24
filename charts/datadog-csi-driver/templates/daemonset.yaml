@@ -16,6 +16,9 @@ spec:
       labels:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
