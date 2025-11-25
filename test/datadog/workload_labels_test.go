@@ -32,7 +32,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -52,7 +53,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -72,7 +74,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -92,7 +95,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -112,7 +116,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -133,7 +138,8 @@ func Test_workload_labels(t *testing.T) {
 				ChartPath:   "../../charts/datadog",
 				ShowOnly: []string{
 					"templates/daemonset.yaml",
-					"templates/cluster-agent-deployment.yaml", "templates/agent-clusterchecks-deployment.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
 				},
 				Values: []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
@@ -145,6 +151,92 @@ func Test_workload_labels(t *testing.T) {
 			},
 			expectedPartOf: "ns-superdog",
 			expectedName:   "superdog",
+		},
+		{
+			name: "fullnameOverride has priority over nameOverride and release",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-agent",
+				Namespace:   "default",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"nameOverride":                 "ignored-name",
+					"fullnameOverride":             "expected-custom",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "default-expected--custom", // namespace with hyphens escaped; adjust via helm render if needed
+			expectedName:   "expected-custom",
+		},
+		{
+			name: "workload labels not longer than 63 chars",
+			command: common.HelmCommand{
+				ReleaseName: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--da",
+			expectedName:   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-datadog",
+		},
+		{
+			name: "workload labels not longer than 63 chars with hyphens",
+			command: common.HelmCommand{
+				ReleaseName: "aaaaaaaaaaaaaa-aaaaaaaaaaaaaaaaaa",
+				Namespace:   "datadog-agent",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "datadog--agent-aaaaaaaaaaaaaa--aaaaaaaaaaaaaaaaaa--datadog",
+			expectedName:   "aaaaaaaaaaaaaa-aaaaaaaaaaaaaaaaaa-datadog",
+		},
+		{
+			name: "workload labels not longer than 63 chars with long namespace and release",
+			command: common.HelmCommand{
+				ReleaseName: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaa",
+			expectedName:   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa-datadog",
 		},
 	}
 
@@ -176,12 +268,15 @@ func verifyDsLabels(t *testing.T, manifest string, expectedPartOf string, expect
 	for _, l := range []map[string]string{labels, templateLabels} {
 		assert.Contains(t, l, partOfLabelKey)
 		assert.Equal(t, expectedPartOf, l[partOfLabelKey])
+		assert.LessOrEqual(t, len(l[partOfLabelKey]), 63)
 
 		assert.Contains(t, l, instanceLabelKey)
 		assert.Equal(t, fmt.Sprintf("%s-agent", expectedName), l[instanceLabelKey])
+		assert.LessOrEqual(t, len(l[instanceLabelKey]), 63)
 
 		assert.Contains(t, l, agentComponentLabelKey)
 		assert.Equal(t, "agent", l[agentComponentLabelKey])
+		assert.LessOrEqual(t, len(l[agentComponentLabelKey]), 63)
 	}
 }
 
@@ -195,12 +290,16 @@ func verifyDcaLabels(t *testing.T, manifest string, expectedPartOf string, expec
 	for _, l := range []map[string]string{labels, templateLabels} {
 		assert.Contains(t, l, partOfLabelKey)
 		assert.Equal(t, expectedPartOf, l[partOfLabelKey])
+		assert.LessOrEqual(t, len(l[partOfLabelKey]), 63)
 
 		assert.Contains(t, l, instanceLabelKey)
 		assert.Equal(t, fmt.Sprintf("%s-cluster-agent", expectedName), l[instanceLabelKey])
+		assert.LessOrEqual(t, len(l[instanceLabelKey]), 63)
 
 		assert.Contains(t, l, agentComponentLabelKey)
 		assert.Equal(t, "cluster-agent", l[agentComponentLabelKey])
+		assert.LessOrEqual(t, len(l[agentComponentLabelKey]), 63)
+
 	}
 }
 
@@ -214,11 +313,14 @@ func verifyCcrLabels(t *testing.T, manifest string, expectedPartOf string, expec
 	for _, l := range []map[string]string{labels, templateLabels} {
 		assert.Contains(t, l, partOfLabelKey)
 		assert.Equal(t, expectedPartOf, l[partOfLabelKey])
+		assert.LessOrEqual(t, len(l[partOfLabelKey]), 63)
 
 		assert.Contains(t, l, instanceLabelKey)
 		assert.Equal(t, fmt.Sprintf("%s-cluster-checks-runner", expectedName), l[instanceLabelKey])
+		assert.LessOrEqual(t, len(l[instanceLabelKey]), 63)
 
 		assert.Contains(t, l, agentComponentLabelKey)
 		assert.Equal(t, "cluster-checks-runner", l[agentComponentLabelKey])
+		assert.LessOrEqual(t, len(l[agentComponentLabelKey]), 63)
 	}
 }

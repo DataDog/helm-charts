@@ -81,6 +81,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -101,20 +102,6 @@ metadata:
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
-  namespace: datadog-agent
----
-apiVersion: v1
-data:
-  api-key-secret-name: datadog-secret
-  app-key-secret-name: datadog-secret
-kind: ConfigMap
-metadata:
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-endpoint-config
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -460,6 +447,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
@@ -946,6 +934,8 @@ spec:
             requests:
               cpu: 200m
               memory: 256Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
@@ -1240,6 +1230,8 @@ spec:
             requests:
               cpu: 200m
               memory: 500Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1251,6 +1243,15 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
+            - mountPath: /var/log/datadog
+              name: varlog
+              readOnly: false
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
@@ -1302,6 +1303,12 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: datadog-cluster-checks
       volumes:
+        - emptyDir: {}
+          name: datadogrun
+        - emptyDir: {}
+          name: varlog
+        - emptyDir: {}
+          name: tmpdir
         - configMap:
             name: datadog-agent-installinfo
           name: installinfo

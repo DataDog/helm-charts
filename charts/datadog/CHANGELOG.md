@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 3.148.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
+## 3.147.2
+
+* Truncate part-of label values to be under 63 characters.
+
+## 3.147.1
+
+* Revert datadog endpoint configMap.
+
+## 3.147.0
+
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+
 ## 3.146.4
 
 * Add datadog endpoint configMap.
@@ -7,7 +23,6 @@
 ## 3.146.3
 
 * Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
-
 
 ## 3.146.2
 

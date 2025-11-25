@@ -784,8 +784,8 @@ Build part-of label
 */}}
 {{- define "part-of-label" -}}
 {{- $ns := .Release.Namespace | replace "-" "--" -}}
-{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
-{{ printf "%s-%s" $ns $name }}
+{{- $name := include "datadog.fullname" . | replace "-" "--" | trimSuffix "-" -}}
+{{ printf "%s-%s" $ns $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
