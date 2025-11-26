@@ -7,9 +7,9 @@ $schema: ./values.schema.json
 
 # -- Current Datadog Private Action Runner image
 image:
-    repository: gcr.io/datadoghq/private-action-runner
-    tag: v1.14.0
-    pullPolicy: IfNotPresent
+  repository: gcr.io/datadoghq/private-action-runner
+  tag: v1.14.0
+  pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
 nameOverride: ""
@@ -18,160 +18,160 @@ fullnameOverride: ""
 
 # -- Service configuration
 service:
-    # -- Annotations to add to the service
-    annotations: {}
+  # -- Annotations to add to the service
+  annotations: {}
 
 runner:
-    # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
-    roleType: "Role"
-    # -- Number of pod instances for the Datadog Private Action Runner
-    replicas: 1
-    # -- The directory containing the Datadog Private Action Runner configuration
-    configDirectory: "/etc/dd-action-runner/config"
-    # -- Configure whether to use a separate kubernetes secret for the credentials and the config
-    useSeparateSecretForCredentials: false
-    # -- Configuration for the Datadog Private Action Runner
-    config:
-        # -- Base URL of the Datadog app
-        ddBaseURL: "https://app.datadoghq.com"
-        # -- The runner's URN from the enrollment page
-        urn: "CHANGE_ME_URN_FROM_CONFIG"
-        # -- The runner's privateKey from the enrollment page
-        privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
-        # -- Modes that the runner can run in
-        modes:
-            - "workflowAutomation"
-            - "appBuilder"
-        # -- Port for HTTP server liveness checks and App Builder mode
-        port: 9016
-        # -- Whether to allow the runner to access IDM services endpoint
-        allowIMDSEndpoint: false
-        # -- List of actions that the Datadog Private Action Runner is allowed to execute
-        actionsAllowlist: []
-        # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
-        tags: []
-    # -- Environment variables to be passed to the Datadog Private Action Runner
-    env: []
-    # -- Allow the private action runner pods to schedule on selected nodes
-    nodeSelector: {}
-    # -- Kubernetes affinity settings for the runner pods
-    affinity: {}
-    # -- Tolerations to allow scheduling runner pods on nodes with taints
-    tolerations: []
-    # -- LivenessProbe settings
-    livenessProbe: {}
-    # -- ReadinessProbe settings
-    readinessProbe: {}
-    # -- Reference to a kubernetes secrets that contains the runner identity
-    runnerIdentitySecret: ""
-    # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
-    kubernetesActions:
-        # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        controllerRevisions: []
-        # -- Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        daemonSets: []
-        # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale")
-        deployments: []
-        # -- Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        replicaSets: []
-        # -- Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        statefulSets: []
-        # -- Actions related to cronJobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        cronJobs: []
-        # -- Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        configMaps: []
-        # -- Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        endpoints: []
-        # -- Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        events: []
-        # -- Actions related to limitRanges (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        limitRanges: []
-        # -- Actions related to namespaces (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        namespaces: []
-        # -- Actions related to nodes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        nodes: []
-        # -- Actions related to persistentVolumes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        persistentVolumes: []
-        # -- Actions related to persistentVolumeClaims (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        persistentVolumeClaims: []
-        # -- Actions related to pods (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        pods: ["get", "list"]
-        # -- Actions related to podTemplates (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        podTemplates: []
-        # -- Actions related to replicationControllers (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        replicationControllers: []
-        # -- Actions related to resourceQuotas (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        resourceQuotas: []
-        # -- Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        services: []
-        # -- Actions related to serviceAccounts (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        serviceAccounts: []
-        # -- Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        customResourceDefinitions: []
-        # -- Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
-        jobs: []
-        # -- Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`.
-        customObjects: []
-    # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
-    kubernetesPermissions: []
-    # -- Resource requirements for the Datadog Private Action Runner container
-    resources:
-        # -- Resource limits for the runner container
-        limits:
-            cpu: 250m
-            memory: 1Gi
-        # -- Resource requests for the runner container
-        requests:
-            cpu: 250m
-            memory: 1Gi
-    # -- List of credential files to be used by the Datadog Private Action Runner
-    credentialFiles: []
-    # see examples/values.yaml for examples on how to specify secrets
-    # credential files provided here will be mounted in /etc/dd-action-runner/config/
-    # -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
-    credentialSecrets: []
-    # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
-    # see examples/values.yaml for examples on how to specify secrets
-    # -- List of script files to be used by the Datadog Private Action Runner
-    scriptFiles: []
-    # script files provided here will be mounted in /home/scriptuser/
-    # see examples/values.yaml for examples on how to specify scripts
+  # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
+  roleType: "Role"
+  # -- Number of pod instances for the Datadog Private Action Runner
+  replicas: 1
+  # -- The directory containing the Datadog Private Action Runner configuration
+  configDirectory: "/etc/dd-action-runner/config"
+  # -- Configure whether to use a separate kubernetes secret for the credentials and the config
+  useSeparateSecretForCredentials: false
+  # -- Configuration for the Datadog Private Action Runner
+  config:
+    # -- Base URL of the Datadog app
+    ddBaseURL: "https://app.datadoghq.com"
+    # -- The runner's URN from the enrollment page
+    urn: "CHANGE_ME_URN_FROM_CONFIG"
+    # -- The runner's privateKey from the enrollment page
+    privateKey: "CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"
+    # -- Modes that the runner can run in
+    modes:
+      - "workflowAutomation"
+      - "appBuilder"
+    # -- Port for HTTP server liveness checks and App Builder mode
+    port: 9016
+    # -- Whether to allow the runner to access IDM services endpoint
+    allowIMDSEndpoint: false
+    # -- List of actions that the Datadog Private Action Runner is allowed to execute
+    actionsAllowlist: []
+    # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
+    tags: []
+  # -- Environment variables to be passed to the Datadog Private Action Runner
+  env: []
+  # -- Allow the private action runner pods to schedule on selected nodes
+  nodeSelector: {}
+  # -- Kubernetes affinity settings for the runner pods
+  affinity: {}
+  # -- Tolerations to allow scheduling runner pods on nodes with taints
+  tolerations: []
+  # -- LivenessProbe settings
+  livenessProbe: {}
+  # -- ReadinessProbe settings
+  readinessProbe: {}
+  # -- Reference to a kubernetes secrets that contains the runner identity
+  runnerIdentitySecret: ""
+  # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
+  kubernetesActions:
+    # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    controllerRevisions: []
+    # -- Actions related to daemonSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    daemonSets: []
+    # -- Actions related to deployments (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple", "restart", "rollback", "scale")
+    deployments: []
+    # -- Actions related to replicaSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    replicaSets: []
+    # -- Actions related to statefulSets (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    statefulSets: []
+    # -- Actions related to cronJobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    cronJobs: []
+    # -- Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    configMaps: []
+    # -- Actions related to endpoints (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    endpoints: []
+    # -- Actions related to events (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    events: []
+    # -- Actions related to limitRanges (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    limitRanges: []
+    # -- Actions related to namespaces (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    namespaces: []
+    # -- Actions related to nodes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    nodes: []
+    # -- Actions related to persistentVolumes (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    persistentVolumes: []
+    # -- Actions related to persistentVolumeClaims (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    persistentVolumeClaims: []
+    # -- Actions related to pods (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    pods: ["get", "list"]
+    # -- Actions related to podTemplates (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    podTemplates: []
+    # -- Actions related to replicationControllers (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    replicationControllers: []
+    # -- Actions related to resourceQuotas (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    resourceQuotas: []
+    # -- Actions related to services (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    services: []
+    # -- Actions related to serviceAccounts (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    serviceAccounts: []
+    # -- Actions related to customResourceDefinitions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    customResourceDefinitions: []
+    # -- Actions related to jobs (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
+    jobs: []
+    # -- Actions related to customObjects (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple"). You also need to add appropriate `kubernetesPermissions`.
+    customObjects: []
+  # -- Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects)
+  kubernetesPermissions: []
+  # -- Resource requirements for the Datadog Private Action Runner container
+  resources:
+    # -- Resource limits for the runner container
+    limits:
+      cpu: 250m
+      memory: 1Gi
+    # -- Resource requests for the runner container
+    requests:
+      cpu: 250m
+      memory: 1Gi
+  # -- List of credential files to be used by the Datadog Private Action Runner
+  credentialFiles: []
+  # see examples/values.yaml for examples on how to specify secrets
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/
+  # -- References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner
+  credentialSecrets: []
+  # credential files provided here will be mounted in /etc/dd-action-runner/config/credentials/
+  # see examples/values.yaml for examples on how to specify secrets
+  # -- List of script files to be used by the Datadog Private Action Runner
+  scriptFiles: []
+  # script files provided here will be mounted in /home/scriptuser/
+  # see examples/values.yaml for examples on how to specify scripts
 
-    # -- Pod Security configuration
-    podSecurity:
-        securityContextConstraints:
-            # -- If true, create a SecurityContextConstraints resource for Private Action Runner pods
-            create: false
+  # -- Pod Security configuration
+  podSecurity:
+    securityContextConstraints:
+      # -- If true, create a SecurityContextConstraints resource for Private Action Runner pods
+      create: false
 
-        # -- If true, Allow to run privileged containers
-        privileged: false
+    # -- If true, Allow to run privileged containers
+    privileged: false
 
-        # -- Allowed volumes types
-        volumes:
-            - configMap
-            - csi
-            - downwardAPI
-            - emptyDir
-            - ephemeral
-            - persistentVolumeClaim
-            - projected
-            - secret
+    # -- Allowed volumes types
+    volumes:
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
 
-        # -- Allowed seccomp profiles
-        seccompProfiles:
-            - runtime/default
+    # -- Allowed seccomp profiles
+    seccompProfiles:
+      - runtime/default
 
-        # -- Allowed capabilities
-        capabilities: []
+    # -- Allowed capabilities
+    capabilities: []
 
-        # -- Required dropped capabilities
-        # Notes: You can not list a capability in both capabilities and requiredDropCapabilities
-        requiredDropCapabilities:
-            - KILL
-            - MKNOD
-            - SETUID
-            - SETGID
+    # -- Required dropped capabilities
+    # Notes: You can not list a capability in both capabilities and requiredDropCapabilities
+    requiredDropCapabilities:
+      - KILL
+      - MKNOD
+      - SETUID
+      - SETGID
 
-        # -- Provide seLinuxContext configuration for SCC
-        seLinuxContext:
-            type: MustRunAs
+    # -- Provide seLinuxContext configuration for SCC
+    seLinuxContext:
+      type: MustRunAs
