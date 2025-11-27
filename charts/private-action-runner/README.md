@@ -129,7 +129,6 @@ helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 
 ## OpenShift Deployment
 
-
 ### Enabling Security Context Constraints
 
 When deploying on OpenShift, you need to configure [Security Context Constraints](https://docs.redhat.com/en/documentation/openshift_container_platform/3.11/html/cluster_administration/admin-guide-manage-scc) (SCC) to ensure the runner pods have the necessary permissions to function properly.
@@ -152,7 +151,7 @@ runner:
   config:
     urn: "YOUR_RUNNER_URN"
     privateKey: "YOUR_RUNNER_PRIVATE_KEY"
-  
+
   # Enable SCC creation for OpenShift
   podSecurity:
     securityContextConstraints:
