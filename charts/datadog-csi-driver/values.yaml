@@ -54,3 +54,8 @@ sockets:
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
+
+# podLabels -- Additional labels to add to the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
