@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.148.1
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
+
 ## 3.148.0
 
 * Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
