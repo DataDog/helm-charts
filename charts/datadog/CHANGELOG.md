@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.148.1
+
+* (Fix) Make security-agent helper template on a single line to avoid unclosed action errors on old Helm versions ([#2199](https://github.com/DataDog/helm-charts/pull/2199)).
+
 ## 3.148.0
 
 * Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
