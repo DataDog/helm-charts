@@ -2,7 +2,10 @@
 
 ## 3.148.1
 
-* (Fix) Make security-agent helper template on a single line to avoid unclosed action errors on old Helm versions ([#2199](https://github.com/DataDog/helm-charts/pull/2199)).
+* Make the chart compatible with older Helm versions such as `3.5.4`:
+    * Make security-agent helper template on a single line to avoid unclosed action errors.
+    * In the registry helper, defaults to `datadoghq.com` when `datadog.site` is undefined to not compare `nil` and `""`
+    * In `NOTES.txt`, check if `clusterAgent.admissionController.configMode` is defined before comparing with `"csi"`
 
 ## 3.148.0
 
