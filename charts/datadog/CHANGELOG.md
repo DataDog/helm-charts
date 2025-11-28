@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.148.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
 ## 3.148.1
 
 * Make the chart compatible with older Helm versions such as `3.5.4`:
