@@ -4,6 +4,10 @@
 
 * Update CRDs from Datadog Operator v1.21.0-rc.1 release candidate tag.
 
+## 2.13.1
+
+* Update DatadogPodAutoscaler CRD to version with correct names
+
 ## 2.13.0
 
 * Update CRDs from Datadog Operator v1.20.0 tag.

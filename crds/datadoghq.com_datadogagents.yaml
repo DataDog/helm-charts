@@ -1636,6 +1636,8 @@ spec:
                       type: object
                     registry:
                       type: string
+                    runProcessChecksInCoreAgent:
+                      type: boolean
                     secretBackend:
                       properties:
                         args:
