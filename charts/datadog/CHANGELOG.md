@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.148.2
+
+* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
+
 ## 3.148.1
 
 * Make the chart compatible with older Helm versions such as `3.5.4`:
