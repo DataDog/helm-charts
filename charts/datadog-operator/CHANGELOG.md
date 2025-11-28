@@ -4,6 +4,10 @@
 
 Update Datadog Operator image tag to 1.21.0-rc.1.
 
+## 2.15.2
+
+* Fix missing revert to 1.20.0 on stable branch.
+
 ## 2.15.1
 
 * Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
