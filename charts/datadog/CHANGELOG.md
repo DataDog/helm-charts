@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.149.0
+
+* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
+
 ## 3.148.2
 
 * Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
