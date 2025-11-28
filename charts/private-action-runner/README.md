@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.17.0](https://img.shields.io/badge/Version-1.17.0-informational?style=flat-square) ![AppVersion: v1.14.0](https://img.shields.io/badge/AppVersion-v1.14.0-informational?style=flat-square)
+![Version: 1.18.0](https://img.shields.io/badge/Version-1.18.0-informational?style=flat-square) ![AppVersion: v1.14.0](https://img.shields.io/badge/AppVersion-v1.14.0-informational?style=flat-square)
 
 ## Overview
 
@@ -126,6 +126,76 @@ helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 * Learn more about [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac)
 * Deploy several runners with different permissions for different teams or environments
 * Learn more about [Private actions](https://docs.datadoghq.com/actions/private_actions/)
+
+## OpenShift Deployment
+
+### Enabling Security Context Constraints
+
+When deploying on OpenShift, you need to configure [Security Context Constraints](https://docs.redhat.com/en/documentation/openshift_container_platform/3.11/html/cluster_administration/admin-guide-manage-scc) (SCC) to ensure the runner pods have the necessary permissions to function properly.
+
+Enable the creation of a custom SCC by setting the following in your `values.yaml`:
+
+```yaml
+runner:
+  podSecurity:
+    securityContextConstraints:
+      create: true
+```
+
+### Configuration Example
+
+Here's a complete example for deploying on OpenShift:
+
+```yaml
+runner:
+  config:
+    urn: "YOUR_RUNNER_URN"
+    privateKey: "YOUR_RUNNER_PRIVATE_KEY"
+
+  # Enable SCC creation for OpenShift
+  podSecurity:
+    securityContextConstraints:
+      create: true
+    # Configure security settings as needed
+    privileged: false
+    # Adjust capabilities if required by your use case
+    capabilities: []
+    # Required dropped capabilities (can be customized)
+    requiredDropCapabilities:
+      - KILL
+      - MKNOD
+      - SETUID
+      - SETGID
+    # SELinux context configuration
+    seLinuxContext:
+      type: MustRunAs
+    # Allowed volume types
+    volumes:
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
+```
+
+### Deploy on OpenShift
+
+Once you have configured your `values.yaml` file with the OpenShift-specific settings, install the chart:
+
+```bash
+helm install <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+The chart will automatically create a SecurityContextConstraints resource that allows the Private Action Runner pods to run with the necessary permissions while maintaining security best practices.
+
+You can access the SecurityContextConstraints resource by running:
+
+```bash
+kubectl get scc private-action-runner-scc -o yaml
+```
 
 ## Advanced Configuration
 
@@ -293,6 +363,14 @@ If actions requiring credentials fail:
 | runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
 | runner.livenessProbe | object | `{}` | LivenessProbe settings |
 | runner.nodeSelector | object | `{}` | Allow the private action runner pods to schedule on selected nodes |
+| runner.podSecurity | object | `{"capabilities":[],"privileged":false,"requiredDropCapabilities":["KILL","MKNOD","SETUID","SETGID"],"seLinuxContext":{"type":"MustRunAs"},"seccompProfiles":["runtime/default"],"securityContextConstraints":{"create":false},"volumes":["configMap","csi","downwardAPI","emptyDir","ephemeral","persistentVolumeClaim","projected","secret"]}` | Pod Security configuration |
+| runner.podSecurity.capabilities | list | `[]` | Allowed capabilities |
+| runner.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
+| runner.podSecurity.requiredDropCapabilities | list | `["KILL","MKNOD","SETUID","SETGID"]` | Required dropped capabilities Notes: You can not list a capability in both capabilities and requiredDropCapabilities |
+| runner.podSecurity.seLinuxContext | object | `{"type":"MustRunAs"}` | Provide seLinuxContext configuration for SCC |
+| runner.podSecurity.seccompProfiles | list | `["runtime/default"]` | Allowed seccomp profiles |
+| runner.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for Private Action Runner pods |
+| runner.podSecurity.volumes | list | `["configMap","csi","downwardAPI","emptyDir","ephemeral","persistentVolumeClaim","projected","secret"]` | Allowed volumes types |
 | runner.readinessProbe | object | `{}` | ReadinessProbe settings |
 | runner.replicas | int | `1` | Number of pod instances for the Datadog Private Action Runner |
 | runner.resources | object | `{"limits":{"cpu":"250m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Resource requirements for the Datadog Private Action Runner container |
