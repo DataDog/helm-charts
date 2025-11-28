@@ -2,7 +2,8 @@
 
 ## 2.16.0-dev.1
 
-Update Datadog Operator image tag to 1.21.0-rc.1.
+* Update Datadog Operator image tag to 1.21.0-rc.1.
+* Add dnsConfig option
 
 ## 2.15.2
 
