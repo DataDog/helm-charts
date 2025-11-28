@@ -4,6 +4,10 @@
 
 Update Datadog Operator image tag to 1.21.0-rc.1.
 
+## 2.15.1
+
+* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
+
 ## 2.15.0
 
 * Update Datadog Operator image tag to 1.20.0.
