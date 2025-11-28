@@ -2,7 +2,7 @@
 
 ## 3.148.2
 
-* Fix `kube-state-metrics-core-rbac` template to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
+* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
 
 ## 3.148.1
 
