@@ -1,8 +1,16 @@
 # Changelog
 
+## 2.14.0-dev.2
+
+* Same as 2.14.0-dev.1 + changes from 2.13.1 for DPA CRD.
+
 ## 2.14.0-dev.1
 
 * Update CRDs from Datadog Operator v1.21.0-rc.1 release candidate tag.
+
+## 2.13.1
+
+* Update DatadogPodAutoscaler CRD to version with correct names
 
 ## 2.13.0
 
