@@ -375,15 +375,16 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return the proper registry based on datadog.site (requires .Values to be passed as .)
 */}}
 {{- define "registry" -}}
+{{- $site := default "datadoghq.com" .datadog.site -}}
 {{- if .registry -}}
 {{- .registry -}}
-{{- else if eq .datadog.site "datadoghq.eu" -}}
+{{- else if eq $site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
-{{- else if eq .datadog.site "ddog-gov.com" -}}
+{{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
-{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+{{- else if eq $site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
-{{- else if and (eq .datadog.site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
@@ -537,8 +538,7 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
-.) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
 true
 {{- else -}}
 false
