@@ -174,7 +174,13 @@ spec:
       volumes:
       {{- if (not .Values.providers.gke.autopilot) }}
       - name: auth-token
+      {{- if .Values.agents.useVSock }}
+        hostPath:
+          path: /etc/datadog-agent/auth
+          type: DirectoryOrCreate
+      {{- else }}
         emptyDir: {}
+      {{- end }}
       {{- end }}
       - name: installinfo
         configMap:
