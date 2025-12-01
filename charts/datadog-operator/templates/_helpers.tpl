@@ -86,7 +86,7 @@ false
 Return true if DD_API_KEY env var should be set.
 */}}
 {{- define "should-set-dd-api-key" -}}
-{{- if or .Values.apiKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "api-key")) "true") -}}
+{{- if or .Values.apiKey .Values.apiKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "api-key-secret-name")) "true") -}}
 true
 {{- else -}}
 false
@@ -97,7 +97,7 @@ false
 Return true if DD_APP_KEY env var should be set.
 */}}
 {{- define "should-set-dd-app-key" -}}
-{{- if or .Values.appKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "app-key")) "true") -}}
+{{- if or .Values.appKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "app-key-secret-name")) "true") -}}
 true
 {{- else -}}
 false
