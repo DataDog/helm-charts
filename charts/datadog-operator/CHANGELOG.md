@@ -1,8 +1,12 @@
 # Changelog
 
+## 2.16.0-dev.2
+
+* Same as 2.16.0-dev.1 and update version of Datadog CRDs to 2.14.0-dev.2 to pick up changes to DatadogPodAutoscaler.
+
 ## 2.16.0-dev.1
 
-Update Datadog Operator image tag to 1.21.0-rc.1.
+* Update Datadog Operator image tag to 1.21.0-rc.1.
 
 ## 2.15.2
 
