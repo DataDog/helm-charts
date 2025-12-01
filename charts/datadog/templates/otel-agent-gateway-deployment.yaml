@@ -183,6 +183,8 @@ spec:
           {{- end }}
           - name: DD_OTELCOLLECTOR_ENABLED
             value: "true"
+          - name: DD_OTELCOLLECTOR_GATEWAY_MODE
+            value: "true"
           - name: DD_HOSTNAME
             valueFrom:
               fieldRef:

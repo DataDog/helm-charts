@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.149.1
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+
 ## 3.149.0
 
 * Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
