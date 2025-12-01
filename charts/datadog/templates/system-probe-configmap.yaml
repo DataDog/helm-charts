@@ -93,7 +93,11 @@ data:
 {{- end }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
+{{- if .Values.agents.useVSock }}
+      socket: vsock:5020
+{{- else }}
       socket: /var/run/sysprobe/runtime-security.sock
+{{- end }}
       policies:
         dir: /etc/datadog-agent/runtime-security.d
       syscall_monitor:
