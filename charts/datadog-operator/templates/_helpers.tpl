@@ -52,19 +52,80 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-Return secret name to be used based on provided values.
+Return the value for a given data key in the datadog endpoint-config ConfigMap.
 */}}
-{{- define "datadog-operator.apiKeySecretName" -}}
-{{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName .Values.apiKeyExistingSecret | quote -}}
+{{- define "get-endpoint-config-data-key" -}}
+{{- $ctx := index . 0 }}
+{{- $key := index . 1 }}
+{{- $ns := $ctx.Release.Namespace -}}
+{{- $list := lookup "v1" "ConfigMap" $ns "" -}}
+{{- if $list }}
+  {{- range $list.items }}
+    {{- if hasSuffix "endpoint-config" .metadata.name  }}
+      {{- get .data $key -}}
+    {{- end }}
+  {{- end }}
+{{- end }}
 {{- end -}}
 
 {{/*
-Return secret name to be used based on provided values.
+Return true if value for a given key in the datadog endpoint-config ConfigMap is valid.
+*/}}
+{{- define "is-valid-endpoint-config-data" -}}
+{{- $ctx := index . 0 }}
+{{- $key := index . 1 }}
+{{- $val := include "get-endpoint-config-data-key" (list $ctx $key) -}}
+{{- if gt (len $val) 0 -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if DD_API_KEY env var should be set.
+*/}}
+{{- define "should-set-dd-api-key" -}}
+{{- if or .Values.apiKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "api-key")) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if DD_APP_KEY env var should be set.
+*/}}
+{{- define "should-set-dd-app-key" -}}
+{{- if or .Values.appKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "app-key")) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return apiKey secret name to be used based on provided values.
+*/}}
+{{- define "datadog-operator.apiKeySecretName" -}}
+{{- if (include "is-valid-endpoint-config-data" ( list . "api-key-secret-name")) }}
+{{- (include "get-endpoint-config-data-key" (list . "api-key-secret-name")) }}
+{{- else }}
+{{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
+{{- default $fullName .Values.apiKeyExistingSecret | quote -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return appKey secret name to be used based on provided values.
 */}}
 {{- define "datadog-operator.appKeySecretName" -}}
+{{- if (include "is-valid-endpoint-config-data" ( list . "app-key-secret-name")) }}
+{{- (include "get-endpoint-config-data-key" (list . "app-key-secret-name")) }}
+{{- else }}
 {{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
 {{- default $fullName .Values.appKeyExistingSecret | quote -}}
+{{- end -}}
 {{- end -}}
 
 {{/*

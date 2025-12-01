@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.16.0-dev.3
+
+* Use values from Datadog chart's endpoint-config configMap,  if present. 
+
 ## 2.16.0-dev.2
 
 * Same as 2.16.0-dev.1 and update version of Datadog CRDs to 2.14.0-dev.2 to pick up changes to DatadogPodAutoscaler.
