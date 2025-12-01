@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.149.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
 ## 3.149.0
 
 * Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
