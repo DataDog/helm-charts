@@ -106,9 +106,13 @@ false
 
 {{/*
 Return apiKey secret name to be used based on provided values.
+Priority for determining secret name:
+1. .Values.apiKey
+2. .Values.apiKeyExistingSecret
+3. api-key-secret-name from endpoint-config configMap
 */}}
 {{- define "datadog-operator.apiKeySecretName" -}}
-{{- if (include "is-valid-endpoint-config-data" ( list . "api-key-secret-name")) }}
+{{- if and (eq (include "is-valid-endpoint-config-data" (list . "api-key-secret-name")) "true") (not .Values.apiKey) (not .Values.apiKeyExistingSecret) }}
 {{- (include "get-endpoint-config-data-key" (list . "api-key-secret-name")) }}
 {{- else }}
 {{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
@@ -118,9 +122,13 @@ Return apiKey secret name to be used based on provided values.
 
 {{/*
 Return appKey secret name to be used based on provided values.
+Priority for determining secret name:
+1. .Values.appKey
+2. .Values.appKeyExistingSecret
+3. app-key-secret-name from endpoint-config configMap
 */}}
 {{- define "datadog-operator.appKeySecretName" -}}
-{{- if (include "is-valid-endpoint-config-data" ( list . "app-key-secret-name")) }}
+{{- if and (eq (include "is-valid-endpoint-config-data" (list . "app-key-secret-name")) "true") (not .Values.appKey) (not .Values.appKeyExistingSecret) }}
 {{- (include "get-endpoint-config-data-key" (list . "app-key-secret-name")) }}
 {{- else }}
 {{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
