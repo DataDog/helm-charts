@@ -216,13 +216,10 @@ spec:
         volumeMounts:
           - name: datadogrun
             mountPath: /opt/datadog-agent/run
-            readOnly: false
           - name: varlog
             mountPath: /var/log/datadog
-            readOnly: false
           - name: tmpdir
             mountPath: /tmp
-            readOnly: false
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
