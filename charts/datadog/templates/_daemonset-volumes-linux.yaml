@@ -1,7 +1,9 @@
 {{- define "daemonset-volumes-linux" -}}
 
+{{- if not (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled) }}
 - name: datadogrun
   emptyDir: {}
+{{- end }}
 - name: logdatadog
   emptyDir: {}
 - name: tmpdir

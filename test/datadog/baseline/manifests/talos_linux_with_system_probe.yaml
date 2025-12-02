@@ -1182,9 +1182,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
-              readOnly: false
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
@@ -1660,8 +1657,6 @@ spec:
           name: installinfo
         - emptyDir: {}
           name: config
-        - emptyDir: {}
-          name: datadogrun
         - emptyDir: {}
           name: logdatadog
         - emptyDir: {}
