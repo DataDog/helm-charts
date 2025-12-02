@@ -976,36 +976,6 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
-            - mountPath: /host/var/lib/containerd
-              name: host-containerd-dir
-              readOnly: true
-            - mountPath: /host/var/lib/docker
-              name: host-docker-dir
-              readOnly: true
-            - mountPath: /host/var/lib/containers
-              name: host-crio-dir
-              readOnly: true
-            - mountPath: /host/var/lib/apk
-              name: host-apk-dir
-              readOnly: true
-            - mountPath: /host/var/lib/dpkg
-              name: host-dpkg-dir
-              readOnly: true
-            - mountPath: /host/var/lib/rpm
-              name: host-rpm-dir
-              readOnly: true
-            - mountPath: /host/etc/redhat-release
-              name: etc-redhat-release
-              readOnly: true
-            - mountPath: /host/etc/fedora-release
-              name: etc-fedora-release
-              readOnly: true
-            - mountPath: /host/etc/lsb-release
-              name: etc-lsb-release
-              readOnly: true
-            - mountPath: /host/etc/system-release
-              name: etc-system-release
-              readOnly: true
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1253,6 +1223,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

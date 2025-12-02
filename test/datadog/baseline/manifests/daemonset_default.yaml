@@ -1177,6 +1177,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

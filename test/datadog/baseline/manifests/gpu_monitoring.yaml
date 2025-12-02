@@ -1618,6 +1618,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
         - hostPath:
             path: /dev/null
           name: gpu-devices
