@@ -115,7 +115,7 @@ spec:
             {{- end }}
             {{- if or .Values.dd_url (eq (include "is-valid-endpoint-config-data" (list . "dd-url")) "true") }}
             - name: DD_URL
-              value: {{ default .Values.site (include "get-endpoint-config-data-key" (list . "dd-url")) }}
+              value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
             {{- range .Values.env }}
             - name: {{ .name }}
