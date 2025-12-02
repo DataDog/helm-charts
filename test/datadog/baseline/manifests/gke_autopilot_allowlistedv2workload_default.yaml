@@ -969,6 +969,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt

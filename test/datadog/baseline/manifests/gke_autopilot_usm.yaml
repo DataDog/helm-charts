@@ -1195,6 +1195,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - system-probe
             - --config=/etc/datadog-agent/system-probe.yaml

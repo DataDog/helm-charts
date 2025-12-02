@@ -1038,6 +1038,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml

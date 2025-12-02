@@ -1705,9 +1705,6 @@ spec:
             path: /var/run
           name: runtimesocketdir
         - hostPath:
-            path: /var/lib/datadog-agent/logs
-          name: pointerdir
-        - hostPath:
             path: /var/log/pods
           name: logpodpath
         - hostPath:
@@ -1716,6 +1713,9 @@ spec:
         - hostPath:
             path: /var/lib/docker/containers
           name: logdockercontainerpath
+        - hostPath:
+            path: /var/lib/datadog-agent/logs
+          name: pointerdir
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

@@ -1020,14 +1020,14 @@ spec:
         - emptyDir: {}
           name: s6-run
         - hostPath:
-            path: /var/datadog/logs
-          name: pointerdir
-        - hostPath:
             path: /var/log/pods
           name: logpodpath
         - hostPath:
             path: /var/log/containers
           name: logscontainerspath
+        - hostPath:
+            path: /var/datadog/logs
+          name: pointerdir
         - name: kubelet-cert-volume
           secret:
             secretName: datadog-kubelet-cert
