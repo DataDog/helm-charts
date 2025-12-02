@@ -910,8 +910,6 @@ spec:
               name: runtimesocket
             - mountPath: \\.\pipe\containerd-containerd
               name: containerdsocket
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
         - command:
             - process-agent
             - -foreground

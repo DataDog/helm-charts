@@ -996,6 +996,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1319,9 +1321,6 @@ spec:
             path: /var/run
           name: runtimesocketdir
         - hostPath:
-            path: /var/lib/datadog-agent/logs
-          name: pointerdir
-        - hostPath:
             path: /var/log/pods
           name: logpodpath
         - hostPath:
@@ -1330,6 +1329,8 @@ spec:
         - hostPath:
             path: /var/lib/docker/containers
           name: logdockercontainerpath
+        - emptyDir: {}
+          name: datadogrun
         - configMap:
             items:
               - key: otel-config.yaml
