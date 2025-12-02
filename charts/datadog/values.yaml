@@ -2337,7 +2337,7 @@ agents:
   useConfigMap:  # false
 
   # agents.useVSock -- Enable VSock communication between agents
-  agents.useVSock: false
+  useVSock: false
 
   # agents.customAgentConfig -- Specify custom contents for the datadog agent config (datadog.yaml)
 
