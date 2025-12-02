@@ -227,6 +227,9 @@
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
+{{- else }}
+- name: datadogrun
+  emptyDir: {}
 {{- end }}
 {{- if .Values.providers.gke.gdc }}
 - secret:

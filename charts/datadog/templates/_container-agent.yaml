@@ -360,6 +360,9 @@
       readOnly: true
     {{- end }}
     {{- end }}
+    {{- else }}
+    - name: datadogrun
+      mountPath: /opt/datadog-agent/run
     {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
     - name: host-containerd-dir
       mountPath: /host/var/lib/containerd
