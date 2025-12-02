@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.149.1
+
+* [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
+
 ## 3.149.0
 
 * Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
