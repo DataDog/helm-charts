@@ -1082,6 +1082,8 @@ spec:
         - hostPath:
             path: /var/run/containerd
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
@@ -1245,13 +1247,10 @@ spec:
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
-              readOnly: false
             - mountPath: /var/log/datadog
               name: varlog
-              readOnly: false
             - mountPath: /tmp
               name: tmpdir
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true

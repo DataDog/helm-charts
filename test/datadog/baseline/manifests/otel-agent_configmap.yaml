@@ -1283,6 +1283,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
         - configMap:
             items:
               - key: otel-config.yaml
