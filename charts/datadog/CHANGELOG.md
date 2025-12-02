@@ -2,7 +2,7 @@
 
 ## 3.149.2
 
-* Fix the agent’s run_path folder by setting it to read–write mode
+* Set the Datadog Agent `run_path` folder back to read–write mode: this fixes an issue with Remote Configuration not being available on versions `3.148.0` to `3.149.1` included. We therefore recommend updating to this version.
 
 ## 3.149.1
 
