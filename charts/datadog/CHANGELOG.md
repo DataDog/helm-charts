@@ -1,28 +1,5 @@
 # Datadog changelog
 
-## 3.149.1
-
-* [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
-
-## 3.149.0
-
-* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
-
-## 3.148.2
-
-* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
-
-## 3.148.1
-
-* Make the chart compatible with older Helm versions such as `3.5.4`:
-    * Make security-agent helper template on a single line to avoid unclosed action errors.
-    * In the registry helper, defaults to `datadoghq.com` when `datadog.site` is undefined to not compare `nil` and `""`
-    * In `NOTES.txt`, check if `clusterAgent.admissionController.configMode` is defined before comparing with `"csi"`
-
-## 3.148.0
-
-* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
-
 ## 3.147.2
 
 * Truncate part-of label values to be under 63 characters.
