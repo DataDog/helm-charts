@@ -1001,6 +1001,7 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
+              mountPropagation: None
               name: datadogrun
               readOnly: false
             - mountPath: /var/log/datadog

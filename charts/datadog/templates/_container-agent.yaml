@@ -270,6 +270,7 @@
   volumeMounts:
     - name: datadogrun
       mountPath: /opt/datadog-agent/run
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
@@ -344,10 +345,6 @@
     {{- end }}
     {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
-    - name: pointerdir
-      mountPath: /opt/datadog-agent/run
-      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
-      readOnly: false # Need RW for logs pointer
     - name: logpodpath
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

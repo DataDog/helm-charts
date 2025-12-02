@@ -1183,6 +1183,7 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - mountPath: /opt/datadog-agent/run
+              mountPropagation: None
               name: datadogrun
               readOnly: false
             - mountPath: /var/log/datadog
@@ -1226,10 +1227,6 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
-            - mountPath: /opt/datadog-agent/run
-              mountPropagation: None
-              name: pointerdir
-              readOnly: false
             - mountPath: /var/log/pods
               mountPropagation: None
               name: logpodpath
