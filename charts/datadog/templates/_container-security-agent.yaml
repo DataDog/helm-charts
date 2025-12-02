@@ -6,11 +6,11 @@
   lifecycle:
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
-  {{- $securityContext := .Values.agents.containers.securityAgent.securityContext -}}
-  {{- if eq (include "should-enable-compliance" .) "true" -}}
-    {{- $securityContext = merge $securityContext (dict "capabilities" (dict "add" (list "AUDIT_CONTROL" "AUDIT_READ"))) -}}
-  {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" $securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+  {{- if eq  (include "should-enable-compliance" .) "true" }}
+  securityContext:
+    capabilities:
+      add: ["AUDIT_CONTROL", "AUDIT_READ"]
+  {{- end }}
   command: ["security-agent", "start", "-c={{ template "datadog.confPath" . }}/datadog.yaml"]
   resources:
 {{ toYaml .Values.agents.containers.securityAgent.resources | indent 4 }}

@@ -40,7 +40,7 @@
     - "--feature-gates={{ .Values.datadog.otelCollector.featureGates }}"
     {{- end }}
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.otelAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.otelAgent.resources | indent 4 }}
   ports:
