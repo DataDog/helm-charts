@@ -897,6 +897,9 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: C:/ProgramData/Datadog/logs
               name: logdatadog
               readOnly: false

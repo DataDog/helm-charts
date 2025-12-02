@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.149.2
+
+* Fix the agent’s run_path folder by setting it to read–write mode
+
 ## 3.149.1
 
 * [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
