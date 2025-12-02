@@ -914,7 +914,7 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1059,7 +1059,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1078,7 +1078,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: true
             runAsNonRoot: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
@@ -1115,7 +1114,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1160,7 +1159,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1339,7 +1338,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1363,8 +1362,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
-          securityContext:
-            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1376,15 +1373,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
-              readOnly: false
-            - mountPath: /var/log/datadog
-              name: varlog
-              readOnly: false
-            - mountPath: /tmp
-              name: tmpdir
-              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
@@ -1399,7 +1387,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1418,7 +1406,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1440,12 +1428,6 @@ spec:
           type: RuntimeDefault
       serviceAccountName: datadog-cluster-checks
       volumes:
-        - emptyDir: {}
-          name: datadogrun
-        - emptyDir: {}
-          name: varlog
-        - emptyDir: {}
-          name: tmpdir
         - configMap:
             name: datadog-installinfo
           name: installinfo
@@ -1620,7 +1602,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1697,7 +1679,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           securityContext:
