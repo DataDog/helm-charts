@@ -945,6 +945,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1072,6 +1074,8 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1344,6 +1348,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1355,6 +1361,15 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
+            - mountPath: /var/log/datadog
+              name: varlog
+              readOnly: false
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
@@ -1394,6 +1409,12 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: datadog-cluster-checks
       volumes:
+        - emptyDir: {}
+          name: datadogrun
+        - emptyDir: {}
+          name: varlog
+        - emptyDir: {}
+          name: tmpdir
         - configMap:
             name: datadog-installinfo
           name: installinfo
