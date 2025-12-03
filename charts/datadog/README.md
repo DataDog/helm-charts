@@ -30,7 +30,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
-| https://helm.datadoghq.com | datadog-operator | 2.14.3 |
+| https://helm.datadoghq.com | datadog-operator | 2.16.0-dev.2 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -715,6 +715,7 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| datadog-operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller |
 | datadog-operator.datadogCRDs.crds.datadogAgents | bool | `false` |  |
 | datadog-operator.datadogCRDs.crds.datadogDashboards | bool | `true` |  |
 | datadog-operator.datadogCRDs.crds.datadogGenericResources | bool | `false` |  |
