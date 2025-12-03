@@ -2,7 +2,8 @@
 
 ## 3.150.0
 
-* Re-enable ROFS on all datadog agent containers ([#2218](https://github.com/DataDog/helm-charts/pull/2218)).
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+Remote Configuration from working.
 
 ## 3.149.2
 
