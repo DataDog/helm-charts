@@ -2,7 +2,7 @@
 
 ## 3.149.3
 
-* [CONTP-1059] Give cluster agent /metrics RBAC permissions ([#2219](https://github.com/DataDog/helm-charts/pull/2219)).
+* Add `/metrics` RBAC permission to DCA ClusterRole.
 
 ## 3.149.2
 
