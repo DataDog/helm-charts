@@ -77,6 +77,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -127,7 +128,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: true\n  tls:\ntraceroute:\n  enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nruntime_security_config:\n  enabled: false\n  fim_enabled: false\n  use_secruntime_track: true\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: true\n  tls:\ntraceroute:\n  enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nruntime_security_config:\n  enabled: false\n  fim_enabled: false\n  use_secruntime_track: true\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\ndynamic_instrumentation:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -1035,6 +1036,7 @@ rules:
     verbs:
       - list
       - watch
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1081,6 +1083,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
@@ -1407,6 +1410,7 @@ metadata:
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -1426,6 +1430,7 @@ spec:
         app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -1550,7 +1555,7 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1714,7 +1719,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1817,7 +1822,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1894,7 +1899,7 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -1966,7 +1971,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2007,7 +2012,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2034,7 +2039,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2211,6 +2216,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -2236,6 +2242,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
@@ -2366,7 +2373,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2439,7 +2446,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

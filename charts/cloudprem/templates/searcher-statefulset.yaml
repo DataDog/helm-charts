@@ -139,6 +139,10 @@ spec:
       {{- $tolerations := concat .Values.tolerations .Values.searcher.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
+      {{- with .Values.searcher.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.searcher.runtimeClassName }}
       runtimeClassName: {{ .Values.searcher.runtimeClassName | quote }}
       {{- end }}

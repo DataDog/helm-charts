@@ -62,7 +62,8 @@ image:
   # The CloudPrem image is also available on DockerHub:
   # https://hub.docker.com/r/datadog/cloudprem
   repository: public.ecr.aws/datadog/cloudprem
-  tag: v0.1.14
+  # Overrides the image tag whose default is the chart appVersion.
+  # tag: edge
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -174,10 +175,10 @@ searcher:
   resources:
     limits:
       cpu: 4
-      memory: 8Gi
+      memory: 16Gi
     requests:
       cpu: 4
-      memory: 8Gi
+      memory: 16Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -236,11 +237,21 @@ searcher:
 
   # serviceType: ClusterIP
 
+  # searcher.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
   nodeSelector: {}
 
+  # searcher.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
   tolerations: []
 
+  # searcher.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
   affinity: {}
+
+  # searcher.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
 
   runtimeClassName: ""
 
@@ -303,11 +314,11 @@ indexer:
   resources:
     # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
     limits:
-      cpu: "4"
-      memory: "8Gi"
+      cpu: 2
+      memory: 8Gi
     requests:
-      cpu: "4"
-      memory: "8Gi"
+      cpu: 2
+      memory: 8Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -353,11 +364,21 @@ indexer:
 
   # serviceType: ClusterIP
 
+  # indexer.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
   nodeSelector: {}
 
+  # indexer.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
   tolerations: []
 
+  # indexer.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
   affinity: {}
+
+  # indexer.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
 
   lifecycleHooks: {}
     # preStop:
@@ -435,11 +456,11 @@ metastore:
 
   resources:
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
     requests:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
 
   updateStrategy: {}
     # type: RollingUpdate
@@ -475,11 +496,21 @@ metastore:
 
   # serviceType: ClusterIP
 
+  # metastore.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
   nodeSelector: {}
 
+  # metastore.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
   tolerations: []
 
+  # metastore.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
   affinity: {}
+
+  # metastore.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
 
   runtimeClassName: ""
 
@@ -503,11 +534,11 @@ control_plane:
 
   resources:
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
     requests:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
 
   startupProbe:
     httpGet:
@@ -540,11 +571,21 @@ control_plane:
 
   # serviceType: ClusterIP
 
+  # control_plane.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
   nodeSelector: {}
 
+  # control_plane.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
   tolerations: []
 
+  # control_plane.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
   affinity: {}
+
+  # control_plane.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
 
   runtimeClassName: ""
 
@@ -569,11 +610,11 @@ janitor:
 
   resources:
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
     requests:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: 2
+      memory: 4Gi
 
   startupProbe:
     httpGet:
@@ -606,11 +647,21 @@ janitor:
 
   # serviceType: ClusterIP
 
+  # janitor.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
   nodeSelector: {}
 
+  # janitor.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
   tolerations: []
 
+  # janitor.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
   affinity: {}
+
+  # janitor.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
 
   runtimeClassName: ""
 
@@ -664,7 +715,7 @@ bootstrap:
     # extraVolumeMounts -- Additional volumes to mount into bootstrap containers (not the init containers).
     extraVolumeMounts: []
 
-# Quickwit configuration
+# Node configuration
 # Warning: This config is writed directly into a configMap
 # to avoid passing sensitive value you can pass environment variables.
 # https://quickwit.io/docs/configuration/node-config#using-environment-variables-in-the-configuration
@@ -672,6 +723,8 @@ configLocation: /quickwit/node.yaml
 
 config:
   version: 0.8
+  # Override the cluster ID generated by the chart here.
+  # cluster_id: my-cluster
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
   cloudprem_listen_port: 7283

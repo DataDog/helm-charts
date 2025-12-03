@@ -375,15 +375,16 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return the proper registry based on datadog.site (requires .Values to be passed as .)
 */}}
 {{- define "registry" -}}
+{{- $site := default "datadoghq.com" .datadog.site -}}
 {{- if .registry -}}
 {{- .registry -}}
-{{- else if eq .datadog.site "datadoghq.eu" -}}
+{{- else if eq $site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
-{{- else if eq .datadog.site "ddog-gov.com" -}}
+{{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
-{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+{{- else if eq $site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
-{{- else if and (eq .datadog.site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
@@ -466,7 +467,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
@@ -537,8 +538,7 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
-.) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
 true
 {{- else -}}
 false
@@ -780,6 +780,15 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Build part-of label
+*/}}
+{{- define "part-of-label" -}}
+{{- $ns := .Release.Namespace | replace "-" "--" -}}
+{{- $name := include "datadog.fullname" . | replace "-" "--" | trimSuffix "-" -}}
+{{ printf "%s-%s" $ns $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
 Common agent, cluster-agent, and cluster-checks-runner workload template labels
 */}}
 {{- define "datadog.pod-template-labels" }}
@@ -788,21 +797,22 @@ Common agent, cluster-agent, and cluster-checks-runner workload template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
 app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
 
 {{/*
 Common agent, cluster-agent, and cluster-checks-runner workload labels
 */}}
-{{- define "datadog.workload-labels" }}
-{{- $ctx := index . 0 }}
-{{- $name := index . 1 }}
-helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
-{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- define "datadog.workload-labels" -}}
+{{- $ctx := index . 0 -}}
+{{- $name := index . 1 -}}
+helm.sh/chart: '{{ include "datadog.chart" $ctx -}}'
+{{- include "datadog.pod-template-labels" (list $ctx $name) }}
 {{- if $ctx.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
-{{- end }}
-{{- if $ctx.Values.commonLabels}}
-{{ toYaml $ctx.Values.commonLabels }}
+{{- end -}}
+{{- if $ctx.Values.commonLabels }}
+{{ toYaml $ctx.Values.commonLabels -}}
 {{- end }}
 {{- end }}
 

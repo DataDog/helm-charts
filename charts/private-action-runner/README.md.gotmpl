@@ -128,6 +128,77 @@ helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 * Deploy several runners with different permissions for different teams or environments
 * Learn more about [Private actions](https://docs.datadoghq.com/actions/private_actions/)
 
+## OpenShift Deployment
+
+
+### Enabling Security Context Constraints
+
+When deploying on OpenShift, you need to configure [Security Context Constraints](https://docs.redhat.com/en/documentation/openshift_container_platform/3.11/html/cluster_administration/admin-guide-manage-scc) (SCC) to ensure the runner pods have the necessary permissions to function properly.
+
+Enable the creation of a custom SCC by setting the following in your `values.yaml`:
+
+```yaml
+runner:
+  podSecurity:
+    securityContextConstraints:
+      create: true
+```
+
+### Configuration Example
+
+Here's a complete example for deploying on OpenShift:
+
+```yaml
+runner:
+  config:
+    urn: "YOUR_RUNNER_URN"
+    privateKey: "YOUR_RUNNER_PRIVATE_KEY"
+
+  # Enable SCC creation for OpenShift
+  podSecurity:
+    securityContextConstraints:
+      create: true
+    # Configure security settings as needed
+    privileged: false
+    # Adjust capabilities if required by your use case
+    capabilities: []
+    # Required dropped capabilities (can be customized)
+    requiredDropCapabilities:
+      - KILL
+      - MKNOD
+      - SETUID
+      - SETGID
+    # SELinux context configuration
+    seLinuxContext:
+      type: MustRunAs
+    # Allowed volume types
+    volumes:
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
+```
+
+### Deploy on OpenShift
+
+Once you have configured your `values.yaml` file with the OpenShift-specific settings, install the chart:
+
+```bash
+helm install <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+The chart will automatically create a SecurityContextConstraints resource that allows the Private Action Runner pods to run with the necessary permissions while maintaining security best practices.
+
+You can access the SecurityContextConstraints resource by running:
+
+```bash
+kubectl get scc private-action-runner-scc -o yaml
+```
+
 ## Advanced Configuration
 
 ### Using Kubernetes Secrets for Runner Identity

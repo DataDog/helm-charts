@@ -1020,9 +1020,17 @@ datadog:
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
       containerInclude:
 
+      # datadog.sbom.containerImage.analyzers -- List of analyzers to use for container image SBOM generation
+      analyzers:
+        - "os"
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
+
+      # datadog.sbom.host.analyzers -- List of analyzers to use for host SBOM generation
+      analyzers:
+        - "os"
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1245,6 +1253,11 @@ datadog:
       # Kubernetes job logs.
       preview: false
 
+# Configuration related to Dynamic Instrumentation for Go services.
+  dynamicInstrumentationGo:
+    # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
+    enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1262,7 +1275,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.72.1
+    tag: 7.72.4
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1817,7 +1830,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.72.4
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2412,7 +2425,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.72.4
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2650,6 +2663,10 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  datadogAgent:
+    # datadog-operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    enabled: false
+
   datadogCRDs:
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD

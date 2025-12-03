@@ -1,12 +1,89 @@
 # Datadog changelog
 
-## 3.145.0
+## 3.151.0
 
 * Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
 
-## 3.144.0
+## 3.150.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+## 3.149.2
+
+* Reverts `readOnlyRootFilesystem` default on all Datadog Agent containers (https://github.com/DataDog/helm-charts/pull/2150) as it prevents Remote Configuration from working as expected. We recommend updating to this version if you are using `3.148.0` to `3.149.1` included.
+
+## 3.149.1
+
+* [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
+
+## 3.149.0
+
+* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
+
+## 3.148.2
+
+* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
+
+## 3.148.1
+
+* Make the chart compatible with older Helm versions such as `3.5.4`:
+    * Make security-agent helper template on a single line to avoid unclosed action errors.
+    * In the registry helper, defaults to `datadoghq.com` when `datadog.site` is undefined to not compare `nil` and `""`
+    * In `NOTES.txt`, check if `clusterAgent.admissionController.configMode` is defined before comparing with `"csi"`
+
+## 3.148.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
+## 3.147.2
+
+* Truncate part-of label values to be under 63 characters.
+
+## 3.147.1
+
+* Revert datadog endpoint configMap.
+
+## 3.147.0
+
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+
+## 3.146.4
+
+* Add datadog endpoint configMap.
+
+## 3.146.3
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
+
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
+
+## 3.145.1
+
+* [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
+
+## 3.145.0
+
+* Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
+
+## 3.144.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
+## 3.144.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
 
 ## 3.143.0
 
@@ -70,7 +147,6 @@
 ## 3.138.1
 
 * Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
-
 
 ## 3.138.0
 
