@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.18.0
+
+* Configurable Security Context Constraints for OpenShift
+
 ## 1.17.0
 
 * Bump private runner version to 1.14.0

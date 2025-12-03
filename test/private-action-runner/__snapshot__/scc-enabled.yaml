@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -31,7 +31,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -45,27 +45,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: resources-test-private-action-runner
+    name: scc-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
   namespace: datadog-agent
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: scc-test
   ports:
     - name: http
       port: 9016
@@ -75,12 +75,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: resources-test-private-action-runner
+  name: scc-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.18.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: resources-test
+    app.kubernetes.io/instance: scc-test
     app.kubernetes.io/version: "v1.14.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -89,19 +89,19 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: resources-test
+      app.kubernetes.io/instance: scc-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.18.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: resources-test
+        app.kubernetes.io/instance: scc-test
         app.kubernetes.io/version: "v1.14.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 9cd47f6936e49a154f102b7da12f6d29e1ce7f46689edbb08e601ca3144b77c4
+        checksum/values: 43810564d14b0487f82cab26e6ff7ae814d0c8eed10c17a7ca5535180e977cca
     spec:
-      serviceAccountName: resources-test-private-action-runner
+      serviceAccountName: scc-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.14.0"
@@ -122,22 +122,60 @@ spec:
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
-      nodeSelector:
-        kubernetes.io/os: linux
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-      tolerations:
-        - effect: NoSchedule
-          key: taint.custom.com/key
-          operator: Exists
       volumes:
         - name: secrets
           secret:
-            secretName: resources-test-private-action-runner
+            secretName: scc-test-private-action-runner
+---
+# Source: private-action-runner/templates/scc.yaml
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: scc-test-private-action-runner
+  labels:
+    helm.sh/chart: private-action-runner-1.18.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: scc-test
+    app.kubernetes.io/version: "v1.14.0"
+    app.kubernetes.io/managed-by: Helm
+users:
+- system:serviceaccount:datadog-agent:scc-test-private-action-runner
+priority: 10 # same priority as anyuid SCC
+allowHostPorts: false
+allowHostPID: false
+allowHostNetwork: false
+# Allow specific volume types needed by the runner
+volumes:
+  - configMap
+  - csi
+  - downwardAPI
+  - emptyDir
+  - ephemeral
+  - persistentVolumeClaim
+  - projected
+  - secret
+# SELinux context configuration
+seLinuxContext:
+  type: RunAsAny
+# Seccomp profiles
+seccompProfiles:
+  - runtime/default
+allowedCapabilities:
+  []
+#
+# The rest is based on restricted SCC
+#
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowPrivilegedContainer: false
+allowedFlexVolumes: []
+defaultAddCapabilities: []
+fsGroup:
+  type: RunAsAny
+readOnlyRootFilesystem: false
+runAsUser:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+requiredDropCapabilities:
+  - ALL

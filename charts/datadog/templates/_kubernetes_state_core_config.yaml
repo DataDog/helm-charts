@@ -35,6 +35,11 @@ kubernetes_state_core.yaml.default: |-
       - deployments
       - replicasets
       - statefulsets
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
+      - controllerrevisions
+{{- end }}
       - cronjobs
       - jobs
       - horizontalpodautoscalers

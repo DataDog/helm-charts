@@ -77,6 +77,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -833,6 +834,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
@@ -1308,7 +1310,7 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1449,7 +1451,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1540,7 +1542,7 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.72.1
+          image: gcr.io/datadoghq/ddot-collector:7.72.4
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1589,7 +1591,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1628,7 +1630,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1946,7 +1948,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2019,7 +2021,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

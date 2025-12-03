@@ -172,8 +172,10 @@ Quickwit environment
       resource: requests.memory
 - name: QW_CONFIG
   value: {{ .Values.configLocation }}
+{{- if not .Values.config.cluster_id }}
 - name: QW_CLUSTER_ID
   value: {{ .Release.Namespace }}-{{ include "quickwit.fullname" . }}
+{{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
 - name: QW_PEER_SEEDS

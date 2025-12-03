@@ -91,6 +91,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -847,6 +848,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
@@ -1356,7 +1358,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
               value: agent
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-              value: 7.72.1
+              value: 7.72.4
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
@@ -1419,7 +1421,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1492,7 +1494,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

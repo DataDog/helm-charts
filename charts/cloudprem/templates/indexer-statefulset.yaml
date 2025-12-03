@@ -137,6 +137,10 @@ spec:
       {{- $tolerations := concat .Values.tolerations .Values.indexer.tolerations | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
+      {{- with .Values.indexer.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.indexer.runtimeClassName }}
       runtimeClassName: {{ .Values.indexer.runtimeClassName | quote }}
       {{- end }}
