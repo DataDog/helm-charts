@@ -1992,8 +1992,7 @@ agents:
         failureThreshold: 6
 
       # agents.containers.agent.securityContext -- Allows you to overwrite the default container SecurityContext for the agent container.
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2027,8 +2026,7 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.processAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the process-agent container.
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
 
       # agents.containers.processAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2058,8 +2056,7 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2105,8 +2102,7 @@ agents:
         timeoutSeconds: 5
 
       # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
 
       # agents.containers.traceAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2143,7 +2139,6 @@ agents:
 
       ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
       securityContext:
-        readOnlyRootFilesystem: true
         privileged: false
         capabilities:
           add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
@@ -2178,10 +2173,6 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 300Mi
-
-      # agents.containers.securityAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the security-agent container.
-      securityContext:
-        readOnlyRootFilesystem: true
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2242,10 +2233,6 @@ agents:
         timeoutSeconds: 5
         successThreshold: 1
         failureThreshold: 12
-
-      # agents.containers.agentDataPlane.securityContext -- Allows you to overwrite the default container SecurityContext for the agent-data-plane container.
-      securityContext:
-        readOnlyRootFilesystem: true
 
       # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2648,8 +2635,7 @@ clusterChecksRunner:
   containers:
     agent:
       # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
-      securityContext:
-        readOnlyRootFilesystem: true
+      securityContext: {}
     initContainers:
       # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
       securityContext: {}

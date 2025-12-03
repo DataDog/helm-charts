@@ -926,7 +926,6 @@ spec:
           securityContext:
             appArmorProfile:
               type: Unconfined
-            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1084,8 +1083,6 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
-          securityContext:
-            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
