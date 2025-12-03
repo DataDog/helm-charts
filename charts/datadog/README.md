@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.149.1](https://img.shields.io/badge/Version-3.149.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.150.0](https://img.shields.io/badge/Version-3.150.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -1035,10 +1035,12 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | otelAgentGateway.volumes | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
+| providers.eks.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the EKS cluster. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
+| providers.openshift.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the OpenShift cluster. |
 | providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
