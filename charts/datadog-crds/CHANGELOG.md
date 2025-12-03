@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0-dev.3
+
+* Preserve DatadogAgent schema description.
+
 ## 2.14.0-dev.2
 
 * Same as 2.14.0-dev.1 + changes from 2.13.1 for DPA CRD.
@@ -98,7 +102,7 @@
 
 # 2.4.0
 
-* Update CRDs from Datadog Operator v1.12.0 tag. 
+* Update CRDs from Datadog Operator v1.12.0 tag.
 
 # 2.3.0
 
@@ -161,7 +165,7 @@
 
 ## 0.6.1
 
-* Add missing `nodeLabelsAsTags` and `namespaceLabelsAsTags` to the v2alpha1 spec. 
+* Add missing `nodeLabelsAsTags` and `namespaceLabelsAsTags` to the v2alpha1 spec.
 
 ## 0.6.0
 
