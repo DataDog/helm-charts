@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
 ## 3.149.3
 
 * Add `/metrics` RBAC permission to DCA ClusterRole.
