@@ -2665,11 +2665,11 @@ clusterChecksRunner:
 operator:
   datadogAgent:
     # datadog-operator.datadogAgent.enabled -- Enables Datadog Agent controller
-    enabled: false
+    enabled: true
 
   datadogCRDs:
     crds:
-      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      # operator.datadogCRDs.crds.datqadogAgents -- Set to true to deploy the DatadogAgents CRD
       datadogAgents: true
       # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
       # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
