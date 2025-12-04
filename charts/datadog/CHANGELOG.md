@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.151.0
+
+* Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
 ## 3.150.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
