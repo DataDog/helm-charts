@@ -780,9 +780,9 @@ To disable the Datadog Operator, set `datadog.operator.enabled` to `false`.
 {{- end }}
 
 {{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( not ( include "migration-supported" . ) ) }}
-#################################################################
-####     WARNING: Unsupported Datadog Operator version       ####
-#################################################################
+###################################################################################
+####               WARNING: Unsupported Datadog Operator version               ####
+###################################################################################
 You have set `datadog.operator.migration.enabled` or `datadog.operator.migration.preview` to `true`.
 Support for this configuration is supported in Datadog Operator version 1.21.0+.
 Update your chart or set `datadog-operator.image.tag` to a supported version.
@@ -792,20 +792,20 @@ Skipping migration.
 {{- end }}
 
 {{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.preview }}
-#################################################################
-####        INFO: Helm-DDA Migration Preview Enabled         ####
-#################################################################
+###################################################################################
+####                 INFO: Helm-DDA Migration Preview Enabled                  ####
+###################################################################################
 
 View migration mapper results:
 
-kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }}
+kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }} --all-containers
 
 {{- end }}
 
 {{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.enabled }}
-#################################################################
-####            INFO: Helm-DDA Migration Enabled             ####
-#################################################################
+###################################################################################
+####                     INFO: Helm-DDA Migration Enabled                      ####
+###################################################################################
 {{ if .Values.datadog.operator.migration.enabled -}}
 View and save your migrated DatadogAgent manifest with this command:
 
@@ -813,7 +813,7 @@ kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oya
 
 View migration mapper results:
 
-kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }}
+kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }} --all-containers
 
 {{- end }}
 {{- end }}

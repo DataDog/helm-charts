@@ -10,10 +10,11 @@ metadata:
 {{ include "datadog.labels" . | indent 4 }}
 spec:
   ttlSecondsAfterFinished: 3600
+  activeDeadlineSeconds: 30
   template:
     spec:
       serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
-      restartPolicy: OnFailure
+      restartPolicy: Never
       containers:
         - name: helm-dda-migrator
           image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}
@@ -43,10 +44,12 @@ spec:
             - sh
             - -c
             - |
+              set -euo pipefail
               while [ ! -s /tmp/{{ template "datadog.fullname" . }}.yaml ]; do sleep 1; done
               kubectl apply -f /tmp/{{ template "datadog.fullname" . }}.yaml --namespace {{ .Release.Namespace }}
-              kubectl get datadogagent {{ template "datadog.fullname" . }} --namespace {{ .Release.Namespace }} -o name | xargs -n1 -I{} kubectl annotate {} \
-                  agent.datadoghq.com/helm-migration=true
+              kubectl annotate datadogagent/{{ template "datadog.fullname" . }} \
+                agent.datadoghq.com/helm-migration=true \
+                --namespace {{ .Release.Namespace }}
           volumeMounts:
             - name: tmp
               mountPath: /tmp
