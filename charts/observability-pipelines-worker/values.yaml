@@ -39,6 +39,25 @@ datadog:
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
 
+bootstrapBackend:
+  filename: bootstrap.yaml
+
+  # exactly one of these should be true
+  secretFile:
+    enabled: false
+
+    # where to mount secrets.json inside the container
+    mountPath: /etc/observability-pipelines-secrets/secrets.json
+
+    # Build secrets.json from entries
+    entries: {}
+
+  custom:
+    enabled: false
+
+    backend_type: ""
+    backend_config: {}
+
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
