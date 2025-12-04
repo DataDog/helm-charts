@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.21.0-rc.1
   name: datadog-datadog-operator
   namespace: datadog-agent
 ---
@@ -133,7 +133,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.21.0-rc.1
   name: datadog-datadog-operator
 rules:
   - nonResourceURLs:
@@ -185,7 +185,11 @@ rules:
   - apiGroups:
       - ""
     resources:
+      - nodes/configz
+      - nodes/healthz
+      - nodes/logs
       - nodes/metrics
+      - nodes/pods
       - nodes/proxy
       - nodes/spec
       - nodes/stats
@@ -218,7 +222,11 @@ rules:
       - apiservices
     verbs:
       - '*'
-      - deletecollection
+  - apiGroups:
+      - apps
+    resources:
+      - controllerrevisions
+    verbs:
       - list
       - watch
   - apiGroups:
@@ -1455,7 +1463,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog-operator
-    app.kubernetes.io/version: 1.19.1
+    app.kubernetes.io/version: 1.21.0-rc.1
   name: datadog-datadog-operator
   namespace: datadog-agent
 spec:
@@ -1494,6 +1502,7 @@ spec:
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
+            - -datadogAgentInternalEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -1509,7 +1518,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.19.1
+          image: gcr.io/datadoghq/operator:1.21.0-rc.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

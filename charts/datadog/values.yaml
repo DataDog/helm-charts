@@ -2664,8 +2664,14 @@ clusterChecksRunner:
 
 operator:
   datadogAgent:
-    # datadog-operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     enabled: true
+  datadogDashboards:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
+    enabled: false
+  datadogMonitor:
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
+    enabled: false
 
   datadogCRDs:
     crds:
@@ -2677,6 +2683,7 @@ operator:
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
       datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
       datadogSLOs: false
