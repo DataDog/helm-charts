@@ -1,0 +1,21 @@
+{{- $mode := include "opw.bootstrapMode" . }}
+
+{{- if $mode }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opw.fullname" . }}-opworker-bootstrap-defaults
+data:
+  {{ .Values.bootstrapBackend.filename }}: |
+    secret:
+      {{- if eq $mode "secretFile" }}
+      sgc_path: "/opt/datadog/observability-pipelines-worker/bin/datadog-secret-backend"
+      backend_type: "json"
+      backend_config:
+        file_path: {{ .Values.bootstrapBackend.secretFile.mountPath | quote }}
+      {{- else if eq $mode "custom" }}
+      sgc_path: "/opt/datadog/observability-pipelines-worker/bin/datadog-secret-backend"
+      backend_type: {{ .Values.bootstrapBackend.custom.backend_type | quote }}
+      backend_config: {{ toYaml .Values.bootstrapBackend.custom.backend_config | nindent 8 }}
+      {{- end }}
+{{- end }}

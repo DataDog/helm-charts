@@ -1,0 +1,15 @@
+bootstrapBackend:
+  secretFile:
+    enabled: true
+    entries:
+      SOURCE_DATADOG_AGENT_ADDRESS: "0.0.0.0:8282"
+
+  # custom:
+  #   enabled: true
+  #   backend_type: "aws"
+  #   backend_config:
+  #     foo: bar
+  #
+datadog:
+  apiKey: "dummy" # or use apiKeyExistingSecret if you prefer
+  pipelineId: "pip-123"
