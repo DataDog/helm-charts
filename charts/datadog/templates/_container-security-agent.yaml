@@ -59,7 +59,11 @@
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+    {{- if .Values.agents.useVSock }}
+      value: vsock:5020
+    {{- else }}
       value: /var/run/sysprobe/runtime-security.sock
+    {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
       value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
     {{- end }}
