@@ -912,6 +912,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -960,6 +962,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1039,6 +1043,8 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1143,6 +1149,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /tmp
               name: tmpdir
@@ -1276,6 +1284,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

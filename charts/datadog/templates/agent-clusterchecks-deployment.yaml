@@ -214,6 +214,12 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+          - name: varlog
+            mountPath: /var/log/datadog
+          - name: tmpdir
+            mountPath: /tmp
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -241,6 +247,12 @@ spec:
 {{- $startup := .Values.clusterChecksRunner.startupProbe }}
 {{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
+        - name: datadogrun
+          emptyDir: {}
+        - name: varlog
+          emptyDir: {}
+        - name: tmpdir
+          emptyDir: {}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
