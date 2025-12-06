@@ -141,6 +141,9 @@
       readOnly: true
     {{- end }}
     {{- end }}
+    - name: certificates
+      mountPath: /etc/datadog-agent/certificates
+      readOnly: true
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
