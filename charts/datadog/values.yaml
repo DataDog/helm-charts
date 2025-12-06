@@ -2693,6 +2693,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2703,6 +2706,10 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,

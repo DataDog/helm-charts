@@ -238,4 +238,11 @@
   hostPath:
     path: /dev/null
 {{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+- name: etcd-certs
+  secret:
+    secretName: etcd-metric-client
+- name: disable-etcd-autoconf
+  emptyDir: {}
+{{- end }}
 {{- end -}}

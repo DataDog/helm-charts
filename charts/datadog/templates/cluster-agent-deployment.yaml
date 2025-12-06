@@ -123,6 +123,11 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+          - name: etcd-config
+            mountPath: /etc/datadog-agent/conf.d/etcd.d
+            readOnly: true
+{{- end }}
       containers:
         {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
@@ -500,6 +505,14 @@ spec:
           emptyDir: {}
         - name: tmpdir
           emptyDir: {}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+        - name: etcd-config
+          configMap:
+            name: {{ template "datadog.fullname" . }}-cluster-agent-confd
+            items:
+              - key: etcd.yaml
+                path: etcd.yaml
+{{- end }}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
@@ -507,35 +520,6 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-            items:
-{{- range $file, $configs := $.Values.clusterAgent.confd }}
-            - key: {{ $file | quote }}
-              path: {{ $file | quote }}
-{{- end }}
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
-            - key: kubernetes_state_core.yaml.default
-              path: kubernetes_state_core.yaml.default
-{{- end }}
-{{- if .Values.datadog.helmCheck.enabled }}
-            - key: helm.yaml
-              path: helm.yaml
-{{- end }}
-{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
-            - key: kubernetes_apiserver.yaml
-              path: kubernetes_apiserver.yaml
-{{- end }}
-{{- if .Values.datadog.orchestratorExplorer.enabled }}
-{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
-            - key: orchestrator.yaml
-              path: orchestrator.yaml
-{{- end }}
-{{- end }}
-{{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
-{{- range $name, $config := $configs }}
-            - key: {{ printf "%s--%s" $integration $name | quote }}
-              path: {{ printf "%s/%s" $integration $name | quote }}
-{{- end }}
-{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         - name: cluster-agent-yaml
