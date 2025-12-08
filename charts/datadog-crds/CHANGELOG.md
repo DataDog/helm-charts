@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0-dev.5
+
+* Add keepCrds option to add the `helm.sh/resource-policy: keep` annotation to enabled CRD resources.
+
 ## 2.14.0-dev.4
 
 * Update CRDs from Datadog Operator v1.21.0-rc.2 release candidate tag.
