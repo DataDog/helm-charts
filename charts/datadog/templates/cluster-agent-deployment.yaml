@@ -462,6 +462,9 @@ spec:
           - name: tmpdir
             mountPath: /tmp
             readOnly: false
+          - name: agent-cluster-ca
+            mountPath: /etc/datadog-agent/agent-cluster-ca
+            readOnly: true
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -494,6 +497,9 @@ spec:
           - name: config
             mountPath: /etc/datadog-agent
       volumes:
+        - name: agent-cluster-ca
+          secret:
+            secretName: datadog-agent-cluster-ca-secret
         - name: datadogrun
           emptyDir: {}
         - name: varlog
