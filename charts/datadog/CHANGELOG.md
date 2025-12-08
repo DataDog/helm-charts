@@ -1,6 +1,14 @@
 # Datadog changelog
 
-## 3.150.0
+## 3.150.0 
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+
+## 3.149.3
+
+* Add `/metrics` RBAC permission to DCA ClusterRole.
+
+## 3.149.2
 
 * Add flags to enable control plane monitoring in EKS/OpenShift clusters.
 

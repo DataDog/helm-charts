@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0-dev.4
+
+* Update CRDs from Datadog Operator v1.21.0-rc.2 release candidate tag.
+
 ## 2.14.0-dev.3
 
 * Preserve DatadogAgent schema description.
