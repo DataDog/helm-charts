@@ -2709,9 +2709,9 @@ providers:
 
   openshift:
     # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
-    # Certificates are needed to communicate with the Etcd service, which can be found in the secret etcd-metric-client in the openshift-etcd-operator namespace.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
     # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
-    # oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
     controlPlaneMonitoring: false
 
   talos:
