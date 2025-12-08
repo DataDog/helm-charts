@@ -123,11 +123,6 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
-{{- if .Values.providers.openshift.controlPlaneMonitoring }}
-          - name: etcd-config
-            mountPath: /etc/datadog-agent/conf.d/etcd.d
-            readOnly: true
-{{- end }}
       containers:
         {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
@@ -505,14 +500,6 @@ spec:
           emptyDir: {}
         - name: tmpdir
           emptyDir: {}
-{{- if .Values.providers.openshift.controlPlaneMonitoring }}
-        - name: etcd-config
-          configMap:
-            name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-            items:
-              - key: etcd.yaml
-                path: etcd.yaml
-{{- end }}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
