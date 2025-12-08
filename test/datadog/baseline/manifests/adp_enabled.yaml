@@ -4,9 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/name: operator
     app.kubernetes.io/version: 1.21.0-rc.1
-  name: datadog-datadog-operator
+  name: datadog-operator
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -132,9 +132,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/name: operator
     app.kubernetes.io/version: 1.21.0-rc.1
-  name: datadog-datadog-operator
+  name: datadog-operator
 rules:
   - nonResourceURLs:
       - /metrics
@@ -948,14 +948,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: datadog-datadog-operator
+  name: datadog-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: datadog-datadog-operator
+  name: datadog-operator
 subjects:
   - kind: ServiceAccount
-    name: datadog-datadog-operator
+    name: datadog-operator
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1710,22 +1710,22 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/name: operator
     app.kubernetes.io/version: 1.21.0-rc.1
-  name: datadog-datadog-operator
+  name: datadog-operator
   namespace: datadog-agent
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/instance: datadog
-      app.kubernetes.io/name: datadog-operator
+      app.kubernetes.io/name: operator
   template:
     metadata:
       annotations:
-        ad.datadoghq.com/datadog-operator.check_names: '["openmetrics"]'
-        ad.datadoghq.com/datadog-operator.init_configs: '[{}]'
-        ad.datadoghq.com/datadog-operator.instances: |
+        ad.datadoghq.com/operator.check_names: '["openmetrics"]'
+        ad.datadoghq.com/operator.init_configs: '[{}]'
+        ad.datadoghq.com/operator.instances: |
           [{
             "prometheus_url": "http://%%host%%:8383/metrics",
             "namespace": "datadog.operator",
@@ -1733,7 +1733,7 @@ spec:
           }]
       labels:
         app.kubernetes.io/instance: datadog
-        app.kubernetes.io/name: datadog-operator
+        app.kubernetes.io/name: operator
     spec:
       containers:
         - args:
@@ -1774,14 +1774,14 @@ spec:
               port: 8081
             initialDelaySeconds: 15
             periodSeconds: 10
-          name: datadog-operator
+          name: operator
           ports:
             - containerPort: 8383
               name: metrics
               protocol: TCP
           resources: {}
           volumeMounts: null
-      serviceAccountName: datadog-datadog-operator
+      serviceAccountName: datadog-operator
       volumes: null
 ---
 apiVersion: apps/v1
