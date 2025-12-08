@@ -6,7 +6,8 @@ stages:
 variables:
   CI_IMAGE_LINUX: v84348379-5989c48d
   CI_IMAGE_LINUX_SUFFIX: ""
-
+  FF_KUBERNETES_HONOR_ENTRYPOINT: true # Honor the entrypoint in the Docker image when running Kubernetes jobs
+  
 noop:
   stage: test
   script:
