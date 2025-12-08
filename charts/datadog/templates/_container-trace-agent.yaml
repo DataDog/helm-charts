@@ -121,6 +121,9 @@
       readOnly: false # Need RW for UDS APM socket
     {{- end }}
     {{- end }}
+    - name: certificates
+      mountPath: /etc/datadog-agent/certificates
+      readOnly: true
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
