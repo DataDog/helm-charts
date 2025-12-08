@@ -23,7 +23,7 @@ e2e_deps:
   variables:
     KUBERNETES_CPU_REQUEST: 16
   rules:
-    - if: $CI_COMMIT_BRANCH == main
+    - if: $CI_COMMIT_BRANCH == "main"
       changes:
         paths:
           - charts/datadog/*.yaml
