@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.150.0 
+## 3.150.0
 
 * Add flags to enable control plane monitoring in EKS/OpenShift clusters.
 
