@@ -980,12 +980,12 @@ helm install <RELEASE_NAME> \
 | nameOverride | string | `nil` | Override name of app |
 | operator.datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
 | operator.datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
-| operator.datadogCRDs.crds.datadogAgents | bool | `true` |  |
+| operator.datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | operator.datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | operator.datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead. |
-| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD |
-| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD use datadog.autoscaling.workload.enabled to enable instead. |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | operator.datadogDashboards.enabled | bool | `false` |  |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor |

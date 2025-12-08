@@ -2675,15 +2675,9 @@ operator:
 
   datadogCRDs:
     crds:
-      # operator.datadogCRDs.crds.datqadogAgents -- Set to true to deploy the DatadogAgents CRD
-      datadogAgents: true
-      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
-      # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
-      datadogMetrics: false
-      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
-      datadogPodAutoscalers: false
-      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      datadogAgents: true
+      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
       datadogSLOs: false
@@ -2693,6 +2687,12 @@ operator:
       datadogGenericResources: false
       # operator.datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
       datadogAgentProfiles: false
+      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
+      datadogMetrics: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      # use datadog.autoscaling.workload.enabled to enable instead.
+      datadogPodAutoscalers: false
 
 datadog-crds:
   crds:
