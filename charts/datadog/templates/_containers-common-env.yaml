@@ -85,7 +85,8 @@
 {{- end }}
 {{- if .Values.datadog.celWorkloadExclude }}
 - name: DD_CEL_WORKLOAD_EXCLUDE
-  value: {{ .Values.datadog.celWorkloadExclude | quote }}
+  value: {{ .Values.datadog.celWorkloadExclude | toJson | quote }}
+{{- end }}
 {{- if .Values.datadog.otlp }}
 
 {{- if .Values.datadog.otlp.receiver }}

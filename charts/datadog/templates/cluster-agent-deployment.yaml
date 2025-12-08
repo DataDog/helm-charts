@@ -213,13 +213,13 @@ spec:
           - name: DD_CONTAINER_EXCLUDE
             value: {{ .Values.clusterAgent.containerExclude | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.celWorkloadExclude }}
-          - name: CEL_WORKLOAD_EXCLUDE
-            value: {{ .Values.clusterAgent.celWorkloadExclude | quote }}
-          {{ end }}
           - name: DD_EXTERNAL_METRICS_AGGREGATOR
             value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.celWorkloadExclude }}
+          - name: DD_CEL_WORKLOAD_EXCLUDE
+            value: {{ .Values.clusterAgent.celWorkloadExclude | toJson | quote }}
+          {{ end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
