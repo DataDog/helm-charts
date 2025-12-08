@@ -46,11 +46,11 @@ e2e_deps:
     - when: manual
       variables:
         POLICY: pull
-  # id_tokens:
-  #   DDOCTOSTS_ID_TOKEN:
-  #     aud: dd-octo-sts
-  # before_script:
-  #   - export GITHUB_TOKEN=$(dd-octo-sts token --scope DataDog/<repo-name> --policy self.gitlab.deps-fetch)
+  id_tokens:
+    DDOCTOSTS_ID_TOKEN:
+      aud: dd-octo-sts
+  before_script:
+    - export GITHUB_TOKEN=$(dd-octo-sts token --scope DataDog/helm-charts --policy self.gitlab.read.sts)
   script:
     - |
       if [ ! -f pulumi_plugins.tar.xz ]; then
