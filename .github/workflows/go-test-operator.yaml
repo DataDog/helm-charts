@@ -4,10 +4,12 @@ on:
     paths:
       - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
+      - 'test/integ/**'
   pull_request:
     paths:
       - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
+      - 'test/integ/**'
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
