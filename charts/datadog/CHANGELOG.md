@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.149.4
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+
 ## 3.149.3
 
 * Add `/metrics` RBAC permission to DCA ClusterRole.
