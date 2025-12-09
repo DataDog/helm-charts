@@ -890,6 +890,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -917,6 +919,8 @@ spec:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: false
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:
@@ -1005,6 +1009,8 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - emptyDir: {}
+          name: datadogrun
         - name: kubelet-cert-volume
           secret:
             secretName: datadog-kubelet-cert

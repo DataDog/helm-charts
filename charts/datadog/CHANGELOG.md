@@ -1,9 +1,13 @@
 # Datadog changelog
 
-## 3.149.4
+## 3.150.1
 
 * Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
 
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
 
 ## 3.149.3
 
