@@ -95,27 +95,27 @@ spec:
             - name: DD_CLUSTER_NAME
               value: {{ .Values.clusterName }}
             {{- end }}
-            {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
+            {{- if eq (include "should-set-dd-api-key" .) "true" }}
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ template "datadog-operator.apiKeySecretName" . }}
                   key: api-key
             {{- end }}
-            {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+            {{- if eq (include "should-set-dd-app-key" .) "true" }}
             - name: DD_APP_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ template "datadog-operator.appKeySecretName" . }}
                   key: app-key
             {{- end }}
-            {{- if .Values.site }}
+            {{- if or .Values.site (eq (include "is-valid-endpoint-config-data" (list . "dd-site")) "true")}}
             - name: DD_SITE
-              value: {{ .Values.site }}
+              value: {{ default .Values.site (include "get-endpoint-config-data-key" (list . "dd-site"))  }}
             {{- end }}
-            {{- if .Values.dd_url }}
+            {{- if or .Values.dd_url (eq (include "is-valid-endpoint-config-data" (list . "dd-url")) "true") }}
             - name: DD_URL
-              value: {{ .Values.dd_url }}
+              value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
             {{- range .Values.env }}
             - name: {{ .name }}
