@@ -7,5 +7,5 @@ clusterAgent:
           - container.name == "redis"
     - products: ["logs", "metrics"]
       rules:
-        kube_service:
+        kube_services:
           - kube_service.name == "nginx"
