@@ -11,6 +11,12 @@ permissions:
   # packages: read
 
 jobs:
+  bump-chart-version:
+    uses: ./.github/workflows/bump-chart-version.yaml
+    permissions:
+      contents: write
+      pull-requests: write
+
   changed:
     runs-on: ubuntu-latest
     outputs:
@@ -159,14 +165,6 @@ jobs:
         uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
-
-  bump-chart-version:
-    uses: ./.github/workflows/bump-chart-version.yaml
-    needs:
-      - install-chart
-    permissions:
-      contents: write
-      pull-requests: write
 
   pr-validated:
     name: pr-validated
