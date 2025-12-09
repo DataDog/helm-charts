@@ -165,6 +165,14 @@ jobs:
       - name: Run chart-testing (install)
         run: ct install --config .github/ct.yaml
 
+  bump-chart-version:
+    uses: ./.github/workflows/bump-chart-version.yaml
+    needs:
+      - install-chart
+    permissions:
+      contents: write
+      pull-requests: write
+
   pr-validated:
     name: pr-validated
     runs-on: ubuntu-latest
