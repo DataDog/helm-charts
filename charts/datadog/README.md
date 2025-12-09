@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.150.0](https://img.shields.io/badge/Version-3.150.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.151.0](https://img.shields.io/badge/Version-3.151.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -604,6 +604,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.webhookName | string | `"datadog-webhook"` | Name of the validatingwebhookconfiguration and mutatingwebhookconfiguration created by the cluster-agent |
 | clusterAgent.advancedConfd | object | `{}` | Provide additional cluster check configurations. Each key is an integration containing several config files. |
 | clusterAgent.affinity | object | `{}` | Allow the Cluster Agent Deployment to schedule using affinity rules |
+| clusterAgent.celWorkloadExclude | string | `nil` | Exclude workloads using a CEL-based definition in the Cluster Agent. ref: https://cel.dev/ |
 | clusterAgent.command | list | `[]` | Command to run in the Cluster Agent container as entrypoint |
 | clusterAgent.confd | object | `{}` | Provide additional cluster check configurations. Each key will become a file in /conf.d. |
 | clusterAgent.containerExclude | string | `nil` | Exclude containers from the Cluster Agent Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+) |
@@ -746,6 +747,7 @@ helm install <RELEASE_NAME> \
 | datadog.asm.iast.enabled | bool | `false` | Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.threats.enabled | bool | `false` | Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster |
+| datadog.celWorkloadExclude | string | `nil` | Exclude workloads using a CEL-based definition in the Agent. ref: https://cel.dev/ |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
 | datadog.clusterChecks.enabled | bool | `true` | Enable the Cluster Checks feature on both the cluster-agents and the daemonset |
