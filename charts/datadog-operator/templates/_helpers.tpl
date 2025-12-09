@@ -116,7 +116,7 @@ Priority for determining secret name:
 {{- (include "get-endpoint-config-data-key" (list . "api-key-secret-name")) }}
 {{- else }}
 {{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName .Values.apiKeyExistingSecret | quote -}}
+{{- default $fullName .Values.apiKeyExistingSecret -}}
 {{- end -}}
 {{- end -}}
 
@@ -132,7 +132,7 @@ Priority for determining secret name:
 {{- (include "get-endpoint-config-data-key" (list . "app-key-secret-name")) }}
 {{- else }}
 {{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
-{{- default $fullName .Values.appKeyExistingSecret | quote -}}
+{{- default $fullName .Values.appKeyExistingSecret -}}
 {{- end -}}
 {{- end -}}
 
