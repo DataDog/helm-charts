@@ -11,12 +11,6 @@ permissions:
   # packages: read
 
 jobs:
-  bump-chart-version:
-    uses: ./.github/workflows/bump-chart-version.yaml
-    permissions:
-      contents: write
-      pull-requests: write
-
   changed:
     runs-on: ubuntu-latest
     outputs:
