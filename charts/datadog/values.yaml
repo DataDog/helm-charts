@@ -1196,6 +1196,10 @@ datadog:
   # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
+  # datadog.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
   # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
@@ -1706,6 +1710,10 @@ clusterAgent:
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
+
+  # clusterAgent.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Cluster Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
 
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently

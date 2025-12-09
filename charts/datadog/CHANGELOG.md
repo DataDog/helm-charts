@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
 ## 3.150.0
 
 * Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
