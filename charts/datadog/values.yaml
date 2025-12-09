@@ -1197,7 +1197,7 @@ datadog:
   containerIncludeMetrics:
 
   # datadog.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Agent.
-  # ref: https://cel.dev/
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
   celWorkloadExclude:
 
   # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
@@ -1712,7 +1712,7 @@ clusterAgent:
   containerInclude:
 
   # clusterAgent.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Cluster Agent.
-  # ref: https://cel.dev/
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
   celWorkloadExclude:
 
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
