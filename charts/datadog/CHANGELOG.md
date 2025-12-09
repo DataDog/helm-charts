@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.150.1
+## 3.151.1
 
 * Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
 
 ## 3.150.0
 
