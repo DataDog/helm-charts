@@ -33,6 +33,15 @@ func Test(t *testing.T) {
 		t.Fatal("Make sure context is pointing to local cluster")
 
 	}
+	if os.Getenv(apiKeyEnv) == "" {
+		err := os.Setenv(apiKeyEnv, "00000000000000000000000000000000")
+		require.NoError(t, err)
+	}
+
+	if os.Getenv(appKeyEnv) == "" {
+		err := os.Setenv(apiKeyEnv, "0000000000000000000000000000000000000000")
+		require.NoError(t, err)
+	}
 	require.NotEmpty(t, os.Getenv(apiKeyEnv), "API key can't be empty")
 	require.NotEmpty(t, os.Getenv(appKeyEnv), "APP key can't be empty")
 
