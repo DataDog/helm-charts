@@ -1,9 +1,13 @@
 # Datadog changelog
 
-## 3.150.1
+## 3.151.1
 
 * Reapply add datadog endpoint configMap.
 * Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
 
 ## 3.150.0
 
