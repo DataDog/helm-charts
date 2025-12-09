@@ -129,66 +129,6 @@ metadata:
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
 ---
-apiVersion: v1
-data:
-  otel-config.yaml: |
-    receivers:
-      prometheus:
-        config:
-          scrape_configs:
-            - job_name: "otelcol"
-              scrape_interval: 10s
-              static_configs:
-                - targets: ["0.0.0.0:8888"]
-      otlp:
-        protocols:
-          grpc:
-             endpoint: 0.0.0.0:4317
-          http:
-             endpoint: 0.0.0.0:4318
-    exporters:
-      debug:
-        verbosity: detailed
-      datadog:
-        api:
-          key: ${env:DD_API_KEY}
-          site: ""
-    processors:
-      infraattributes:
-        cardinality: 2
-      batch:
-        timeout: 10s
-    connectors:
-      datadog/connector:
-        traces:
-          compute_top_level_by_span_kind: true
-          peer_tags_aggregation: true
-          compute_stats_by_span_kind: true
-    service:
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [infraattributes, batch]
-          exporters: [datadog, datadog/connector]
-        metrics:
-          receivers: [otlp, datadog/connector, prometheus]
-          processors: [infraattributes, batch]
-          exporters: [datadog]
-        logs:
-          receivers: [otlp]
-          processors: [infraattributes, batch]
-          exporters: [datadog]
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-config
-  namespace: datadog-agent
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -809,14 +749,6 @@ spec:
       port: 8126
       protocol: TCP
       targetPort: 8126
-    - name: otel-grpc
-      port: 4317
-      protocol: TCP
-      targetPort: 4317
-    - name: otel-http
-      port: 4318
-      protocol: TCP
-      targetPort: 4318
   selector:
     app: datadog
 ---
@@ -882,6 +814,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -894,10 +828,6 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
-            - name: DD_AGENT_IPC_PORT
-              value: "5009"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -965,8 +895,6 @@ spec:
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
-              value: "true"
-            - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
@@ -1077,6 +1005,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1159,102 +1089,6 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
-        - args:
-            - --config=/etc/otel-agent/otel-config.yaml
-          command:
-            - otel-agent
-            - --core-config=/etc/datadog-agent/datadog.yaml
-            - --sync-delay=30s
-          env:
-            - name: DD_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: api-key
-                  name: datadog-secret
-            - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "true"
-            - name: DD_AUTH_TOKEN_FILE_PATH
-              value: /etc/datadog-agent/auth/token
-            - name: KUBERNETES
-              value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
-              value: "false"
-            - name: DD_KUBERNETES_KUBELET_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: DD_KUBELET_USE_API_SERVER
-              value: "false"
-            - name: DD_OTLP_CONFIG_LOGS_ENABLED
-              value: "false"
-            - name: DD_CLUSTER_AGENT_ENABLED
-              value: "true"
-            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
-              value: datadog-cluster-agent
-            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  key: token
-                  name: datadog-cluster-agent
-            - name: DD_AGENT_IPC_PORT
-              value: "5009"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "60"
-            - name: DD_OTELCOLLECTOR_ENABLED
-              value: "true"
-            - name: DD_LOG_LEVEL
-              value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.72.4
-          imagePullPolicy: IfNotPresent
-          name: otel-agent
-          ports:
-            - containerPort: 4317
-              name: otel-grpc
-              protocol: TCP
-            - containerPort: 4318
-              name: otel-http
-              protocol: TCP
-          resources: {}
-          securityContext:
-            readOnlyRootFilesystem: true
-          volumeMounts:
-            - mountPath: /etc/datadog-agent
-              name: config
-              readOnly: true
-            - mountPath: /var/log/datadog
-              name: logdatadog
-              readOnly: false
-            - mountPath: /etc/datadog-agent/auth
-              name: auth-token
-              readOnly: true
-            - mountPath: /etc/otel-agent
-              name: otelconfig
-              readOnly: true
-            - mountPath: /host/proc
-              mountPropagation: None
-              name: procdir
-              readOnly: true
-            - mountPath: /host/sys/fs/cgroup
-              mountPropagation: None
-              name: cgroups
-              readOnly: true
-            - mountPath: /tmp
-              name: tmpdir
-              readOnly: false
-            - mountPath: /var/run/datadog
-              name: dsdsocket
-              readOnly: true
-            - mountPath: /host/var/run
-              mountPropagation: None
-              name: runtimesocketdir
-              readOnly: true
-            - mountPath: /var/log/custom
-              name: logscustompath
-              readOnly: true
       hostPID: true
       initContainers:
         - args:
@@ -1299,6 +1133,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
           image: gcr.io/datadoghq/agent:7.72.4
@@ -1365,15 +1201,6 @@ spec:
           name: runtimesocketdir
         - emptyDir: {}
           name: datadogrun
-        - configMap:
-            items:
-              - key: otel-config.yaml
-                path: otel-config.yaml
-            name: datadog-otel-config
-          name: otelconfig
-        - hostPath:
-            path: /var/log/custom
-          name: logscustompath
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

@@ -90,6 +90,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -215,6 +229,7 @@ rules:
   - nonResourceURLs:
       - /version
       - /healthz
+      - /metrics
     verbs:
       - get
   - apiGroups:
@@ -889,6 +904,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -916,6 +933,8 @@ spec:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: false
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:
@@ -1004,6 +1023,8 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - emptyDir: {}
+          name: datadogrun
         - name: kubelet-cert-volume
           secret:
             secretName: datadog-kubelet-cert

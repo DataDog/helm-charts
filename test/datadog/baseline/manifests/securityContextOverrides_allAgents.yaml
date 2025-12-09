@@ -105,6 +105,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -230,6 +244,7 @@ rules:
   - nonResourceURLs:
       - /version
       - /healthz
+      - /metrics
     verbs:
       - get
   - apiGroups:
@@ -994,6 +1009,8 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1078,6 +1095,7 @@ spec:
             capabilities:
               drop:
                 - ALL
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
@@ -1226,6 +1244,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
@@ -1362,6 +1382,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1373,6 +1395,12 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           volumeMounts:
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+            - mountPath: /var/log/datadog
+              name: varlog
+            - mountPath: /tmp
+              name: tmpdir
             - mountPath: /etc/datadog-agent/install_info
               name: installinfo
               readOnly: true
@@ -1428,6 +1456,12 @@ spec:
           type: RuntimeDefault
       serviceAccountName: datadog-cluster-checks
       volumes:
+        - emptyDir: {}
+          name: datadogrun
+        - emptyDir: {}
+          name: varlog
+        - emptyDir: {}
+          name: tmpdir
         - configMap:
             name: datadog-installinfo
           name: installinfo

@@ -1,5 +1,23 @@
 # Datadog changelog
 
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
+## 3.149.3
+
+* Add `/metrics` RBAC permission to DCA ClusterRole.
+
 ## 3.149.2
 
 * Reverts `readOnlyRootFilesystem` default on all Datadog Agent containers (https://github.com/DataDog/helm-charts/pull/2150) as it prevents Remote Configuration from working as expected. We recommend updating to this version if you are using `3.148.0` to `3.149.1` included.
