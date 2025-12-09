@@ -4,7 +4,7 @@ stages:
   - e2e
 
 variables:
-  CI_IMAGE_LINUX: v84348379-5989c48d
+  CI_IMAGE_LINUX: v85347149-d27e3e3a
   CI_IMAGE_LINUX_SUFFIX: ""
   FF_KUBERNETES_HONOR_ENTRYPOINT: true # Honor the entrypoint in the Docker image when running Kubernetes jobs
   
