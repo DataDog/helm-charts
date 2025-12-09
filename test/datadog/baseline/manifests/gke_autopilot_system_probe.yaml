@@ -1071,7 +1071,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1256,7 +1256,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
@@ -1348,7 +1348,7 @@ spec:
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
           image: gcr.io/datadoghq/agent:7.72.4
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -1756,7 +1756,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE

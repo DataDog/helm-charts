@@ -815,7 +815,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1005,7 +1005,7 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_APM_ENABLED
               value: "true"
             - name: DD_APM_NON_LOCAL_TRAFFIC
@@ -1305,7 +1305,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE

@@ -885,7 +885,7 @@ spec:
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
               value: "60"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1075,7 +1075,7 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_APM_ENABLED
               value: "true"
             - name: DD_APM_NON_LOCAL_TRAFFIC
@@ -1193,7 +1193,7 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
           image: gcr.io/datadoghq/ddot-collector:7.72.4
           imagePullPolicy: IfNotPresent
           name: otel-agent
@@ -1478,7 +1478,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
