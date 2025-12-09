@@ -61,7 +61,7 @@ Return the value for a given data key in the datadog endpoint-config ConfigMap.
 {{- $list := lookup "v1" "ConfigMap" $ns "" -}}
 {{- if $list }}
   {{- range $list.items }}
-    {{- if hasSuffix "endpoint-config" .metadata.name  }}
+    {{- if hasSuffix "endpoint-config" .metadata.name }}
       {{- get .data $key -}}
     {{- end }}
   {{- end }}
