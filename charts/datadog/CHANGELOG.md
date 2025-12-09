@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.151.1
+
+* Refactor chart version bump worfklow ([#2231](https://github.com/DataDog/helm-charts/pull/2231)).
+
 ## 3.151.0
 
 * Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
