@@ -27,7 +27,7 @@ download_crd() {
 
     if [ "$name" = "datadogagents" ]; then
         yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
-        yq -i eval 'del(.. | select(has("description")).description)' "$path"
+        yq -i eval 'del(.. | select(has("description") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
     fi
 
     ifCondition="{{- if .Values.crds.$installOption }}"
