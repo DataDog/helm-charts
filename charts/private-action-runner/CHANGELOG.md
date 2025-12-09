@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.19.0
+
+* Add script connection testing
+* Add script name suggestions
+
 ## 1.18.0
 
 * Configurable Security Context Constraints for OpenShift
