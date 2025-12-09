@@ -6,6 +6,14 @@
     secretKeyRef:
       name: {{ template "datadog.apiSecretName" . }}
       key: api-key
+{{- if .Values.agents.useVSock }}
+- name: DD_VSOCK_ADDR
+  value: "host"
+- name: DD_RUNTIME_SECURITY_CONFIG_EVENT_GRPC_SERVER
+  value: "security-agent"
+- name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+  value: "false"
+{{- end }}
 - name: DD_REMOTE_CONFIGURATION_ENABLED
   value: {{ include "datadog-remoteConfiguration-enabled" . | quote }}
 {{- if (not .Values.providers.gke.autopilot) }}

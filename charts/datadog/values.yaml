@@ -2349,6 +2349,9 @@ agents:
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
   useConfigMap:  # false
 
+  # agents.useVSock -- Enable VSock communication between agents
+  useVSock: false
+
   # agents.customAgentConfig -- Specify custom contents for the datadog agent config (datadog.yaml)
 
   ## ref: https://docs.datadoghq.com/agent/guide/agent-configuration-files/?tab=agentv6
