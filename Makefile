@@ -7,7 +7,7 @@ E2E_CONFIG_PARAMS?=
 E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
-E2E_BUILD_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe"
+E2E_BUILD_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe e2e_autopilot_csi"
 
 ## Local profile
 E2E_PROFILE?=local
@@ -72,12 +72,12 @@ update-test-baselines-private-action-runner:
 	go test -C test ./private-action-runner -count=1 -args -updateBaselines=true
 
 .PHONY: update-test-baselines-operator
-update-test-baselines-operator: 
+update-test-baselines-operator:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
 .PHONY: update-test-baselines-datadog-agent
-update-test-baselines-datadog-agent: 
+update-test-baselines-datadog-agent:
 	helm dependency update ./charts/datadog 2>/dev/null
 	go test -C test ./datadog -count=1 -args -updateBaselines=true
 

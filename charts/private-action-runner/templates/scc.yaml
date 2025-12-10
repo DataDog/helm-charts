@@ -1,0 +1,42 @@
+{{- if .Values.runner.podSecurity.securityContextConstraints.create }}
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: {{ include "chart.fullname" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+users:
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "chart.fullname" . }}
+priority: 10 # same priority as anyuid SCC
+allowHostPorts: false
+allowHostPID: false
+allowHostNetwork: false
+# Allow specific volume types needed by the runner
+volumes:
+{{ toYaml .Values.runner.podSecurity.volumes | indent 2 }}
+# SELinux context configuration
+seLinuxContext:
+{{ toYaml .Values.runner.podSecurity.seLinuxContext | indent 2 }}
+# Seccomp profiles
+seccompProfiles:
+{{ toYaml .Values.runner.podSecurity.seccompProfiles | indent 2 }}
+allowedCapabilities:
+{{ toYaml .Values.runner.podSecurity.capabilities | indent 2 }}
+#
+# The rest is based on restricted SCC
+#
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowPrivilegedContainer: {{ .Values.runner.podSecurity.privileged | default false }}
+allowedFlexVolumes: []
+defaultAddCapabilities: []
+fsGroup:
+  type: RunAsAny
+readOnlyRootFilesystem: false
+runAsUser:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+requiredDropCapabilities:
+{{ toYaml .Values.runner.podSecurity.requiredDropCapabilities | indent 2 }}
+{{- end }}

@@ -1196,6 +1196,10 @@ datadog:
   # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
+  # datadog.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
   # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
@@ -1256,7 +1260,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1707,6 +1711,10 @@ clusterAgent:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
+  # clusterAgent.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Cluster Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
@@ -1811,7 +1819,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2419,7 +2427,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2707,6 +2715,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2717,6 +2728,13 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
+    # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,

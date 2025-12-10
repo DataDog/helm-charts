@@ -375,15 +375,16 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return the proper registry based on datadog.site (requires .Values to be passed as .)
 */}}
 {{- define "registry" -}}
+{{- $site := default "datadoghq.com" .datadog.site -}}
 {{- if .registry -}}
 {{- .registry -}}
-{{- else if eq .datadog.site "datadoghq.eu" -}}
+{{- else if eq $site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
-{{- else if eq .datadog.site "ddog-gov.com" -}}
+{{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
-{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+{{- else if eq $site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
-{{- else if and (eq .datadog.site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
@@ -537,8 +538,7 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
-.) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
 true
 {{- else -}}
 false
@@ -1370,4 +1370,105 @@ false
   {{- else -}}
     true
   {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the check config for the EKS control plane monitoring.
+*/}}
+{{- define "eks-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/kcm/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/ksh/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+{{- end -}}
+
+{{/*
+  Returns the configuration for the OpenShift control plane monitoring.
+*/}}
+{{- define "openshift-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+      resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kube-controller-manager"
+        namespace: "openshift-kube-controller-manager"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "scheduler"
+        namespace: "openshift-kube-scheduler"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+etcd.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "etcd"
+        namespace: "openshift-etcd"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      tls_cert: "/etc/etcd-certs/tls.crt"
+      tls_private_key: "/etc/etcd-certs/tls.key"
 {{- end -}}

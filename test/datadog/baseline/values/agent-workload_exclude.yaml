@@ -1,0 +1,15 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  celWorkloadExclude:
+    - products: ["global"]
+      rules:
+        containers:
+          - container.name == "redis"
+    - products:
+        - logs
+        - metrics
+      rules:
+        pods:
+          - pod.name.startsWith('nginx')
+

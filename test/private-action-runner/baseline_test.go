@@ -163,6 +163,22 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "service-annotations",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "SecurityContextConstraints enabled",
+			command: common.HelmCommand{
+				ReleaseName: "scc-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.podSecurity.securityContextConstraints.create": `true`,
+					"runner.podSecurity.privileged":                        `false`,
+					"runner.podSecurity.requiredDropCapabilities":          `["ALL"]`,
+					"runner.podSecurity.seLinuxContext.type":               `"RunAsAny"`,
+				},
+			},
+			snapshotName: "scc-enabled",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {

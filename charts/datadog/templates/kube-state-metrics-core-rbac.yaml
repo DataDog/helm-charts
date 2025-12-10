@@ -45,7 +45,9 @@ rules:
   - daemonsets
   - deployments
   - replicasets
-{{- if semverCompare ">=7.72.0" (ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) }}
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
   - controllerrevisions
 {{- end }}
   verbs:
