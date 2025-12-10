@@ -10,7 +10,7 @@
 
 ## 3.149.2
 
-* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+* Reverts `readOnlyRootFilesystem` default on all Datadog Agent containers (https://github.com/DataDog/helm-charts/pull/2150) as it prevents Remote Configuration from working as expected. We recommend updating to this version if you are using `3.148.0` to `3.149.1` included.
 
 ## 3.149.1
 
