@@ -30,7 +30,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
-| https://helm.datadoghq.com | datadog-operator | 2.16.0-dev.2 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.16.0-dev.4 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -718,13 +718,6 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
-| datadog-operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller |
-| datadog-operator.datadogCRDs.crds.datadogAgents | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogDashboards | bool | `true` |  |
-| datadog-operator.datadogCRDs.crds.datadogGenericResources | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogMetrics | bool | `false` |  |
-| datadog-operator.datadogCRDs.crds.datadogMonitors | bool | `true` |  |
-| datadog-operator.datadogCRDs.crds.datadogSLOs | bool | `false` |  |
 | datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
 | datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
 | datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
@@ -987,6 +980,16 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | nameOverride | string | `nil` | Override name of app |
+| operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller |
+| operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
+| operator.datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
+| operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead. |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
+| operator.datadogDashboards.enabled | bool | `false` |  |
+| operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |

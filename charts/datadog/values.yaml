@@ -1240,7 +1240,6 @@ datadog:
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
-  ## * Includes support for the DatadogMonitors and DatadogDashboards CRDs (requires setting API key and APP key).
   ## * Configure the Datadog Operator using the values config, `datadog-operator`.
   ## For all available Operator options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
   operator:
@@ -2674,26 +2673,34 @@ clusterChecksRunner:
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
 
-datadog-operator:
+operator:
   datadogAgent:
-    # datadog-operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    enabled: false
+  datadogDashboards:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
+    enabled: false
+  datadogMonitor:
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
     enabled: false
 
   datadogCRDs:
     crds:
-      # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
       datadogAgents: false
-      # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
-      datadogMonitors: true
-      # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      datadogMonitors: false
+      # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
       datadogSLOs: false
-      # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
-      datadogDashboards: true
-      # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: false
+      # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
       datadogGenericResources: false
-      # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
       # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
       datadogMetrics: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      datadogPodAutoscalers: false
 
 datadog-crds:
   crds:
