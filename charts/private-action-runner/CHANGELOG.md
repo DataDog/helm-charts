@@ -2,6 +2,7 @@
 
 ## 1.19.0
 
+* Bump private runner version to 1.15.0
 * Add script connection testing
 * Add script name suggestions
 
