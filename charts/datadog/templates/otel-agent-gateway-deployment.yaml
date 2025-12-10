@@ -177,7 +177,7 @@ spec:
           {{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
           - name: DD_API_KEY
             valueFrom:
-              secretKeyRef:``
+              secretKeyRef:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
           {{- end }}
