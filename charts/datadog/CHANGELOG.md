@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.152.0
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+
 ## 3.151.3
 
 * Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).

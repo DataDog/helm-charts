@@ -2715,6 +2715,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2725,6 +2728,13 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
+    # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,
