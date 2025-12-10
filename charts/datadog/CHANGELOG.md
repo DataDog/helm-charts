@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
 ## 3.151.1
 
 * Reapply add datadog endpoint configMap.
