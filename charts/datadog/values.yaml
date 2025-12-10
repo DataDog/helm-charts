@@ -1196,6 +1196,10 @@ datadog:
   # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
+  # datadog.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
   # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
@@ -1236,7 +1240,6 @@ datadog:
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
-  ## * Includes support for the DatadogMonitors and DatadogDashboards CRDs (requires setting API key and APP key).
   ## * Configure the Datadog Operator using the values config, `datadog-operator`.
   ## For all available Operator options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
   operator:
@@ -1275,7 +1278,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.72.4
+    tag: 7.73.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1726,6 +1729,10 @@ clusterAgent:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
+  # clusterAgent.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Cluster Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
@@ -1830,7 +1837,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.72.4
+    tag: 7.73.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2011,7 +2018,8 @@ agents:
         failureThreshold: 6
 
       # agents.containers.agent.securityContext -- Allows you to overwrite the default container SecurityContext for the agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2045,7 +2053,8 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.processAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the process-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.processAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2075,7 +2084,8 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2121,7 +2131,8 @@ agents:
         timeoutSeconds: 5
 
       # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.traceAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2158,6 +2169,7 @@ agents:
 
       ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
       securityContext:
+        readOnlyRootFilesystem: true
         privileged: false
         capabilities:
           add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
@@ -2192,6 +2204,10 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 300Mi
+
+      # agents.containers.securityAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the security-agent container.
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2252,6 +2268,10 @@ agents:
         timeoutSeconds: 5
         successThreshold: 1
         failureThreshold: 12
+
+      # agents.containers.agentDataPlane.securityContext -- Allows you to overwrite the default container SecurityContext for the agent-data-plane container.
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2425,7 +2445,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.72.4
+    tag: 7.73.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2654,7 +2674,8 @@ clusterChecksRunner:
   containers:
     agent:
       # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
     initContainers:
       # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
       securityContext: {}
@@ -2665,12 +2686,6 @@ clusterChecksRunner:
 operator:
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
-    enabled: true
-  datadogDashboards:
-    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
-    enabled: false
-  datadogMonitor:
-    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
     enabled: false
 
   datadogCRDs:
@@ -2678,7 +2693,7 @@ operator:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
       datadogAgents: true
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
-      datadogMonitors: true
+      datadogMonitors: false
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
       datadogSLOs: false
       # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
@@ -2744,6 +2759,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2754,6 +2772,13 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
+    # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,
