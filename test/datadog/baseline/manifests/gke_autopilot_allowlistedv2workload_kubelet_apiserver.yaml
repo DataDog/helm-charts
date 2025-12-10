@@ -90,6 +90,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -907,6 +921,8 @@ spec:
             requests:
               cpu: 200m
               memory: 256Mi
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /var/log/datadog
               name: logdatadog
@@ -939,6 +955,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt
@@ -1051,6 +1069,8 @@ spec:
         - hostPath:
             path: /var/run/containerd
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

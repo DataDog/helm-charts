@@ -90,6 +90,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -913,6 +927,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -961,6 +977,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1040,6 +1058,8 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1144,6 +1164,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /tmp
               name: tmpdir
@@ -1277,6 +1299,8 @@ spec:
         - hostPath:
             path: /var/run
           name: runtimesocketdir
+        - emptyDir: {}
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

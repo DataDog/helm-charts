@@ -1,5 +1,23 @@
 # Datadog changelog
 
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
 ## 3.149.3
 
 * Add `/metrics` RBAC permission to DCA ClusterRole.
