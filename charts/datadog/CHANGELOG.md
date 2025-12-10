@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.152.0
+## 3.153.0
 
 * Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
+## 3.152.0
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
 
 ## 3.151.3
 
