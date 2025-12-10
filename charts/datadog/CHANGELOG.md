@@ -1,8 +1,94 @@
 # Datadog changelog
 
-## 3.146.0
+## 3.152.0
 
 * Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
+## 3.151.3
+
+* Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).
+
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
+## 3.149.3
+
+* Add `/metrics` RBAC permission to DCA ClusterRole.
+
+## 3.149.2
+
+* Reverts `readOnlyRootFilesystem` default on all Datadog Agent containers (https://github.com/DataDog/helm-charts/pull/2150) as it prevents Remote Configuration from working as expected. We recommend updating to this version if you are using `3.148.0` to `3.149.1` included.
+
+## 3.149.1
+
+* [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
+
+## 3.149.0
+
+* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
+
+## 3.148.2
+
+* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
+
+## 3.148.1
+
+* Make the chart compatible with older Helm versions such as `3.5.4`:
+    * Make security-agent helper template on a single line to avoid unclosed action errors.
+    * In the registry helper, defaults to `datadoghq.com` when `datadog.site` is undefined to not compare `nil` and `""`
+    * In `NOTES.txt`, check if `clusterAgent.admissionController.configMode` is defined before comparing with `"csi"`
+
+## 3.148.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
+## 3.147.2
+
+* Truncate part-of label values to be under 63 characters.
+
+## 3.147.1
+
+* Revert datadog endpoint configMap.
+
+## 3.147.0
+
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+
+## 3.146.4
+
+* Add datadog endpoint configMap.
+
+## 3.146.3
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
+
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
 
 ## 3.145.1
 

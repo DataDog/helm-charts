@@ -108,6 +108,10 @@
   name: src
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
+- name: dynamic-instrumentation-cache-dir
+  emptyDir: {}
+{{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
@@ -210,9 +214,6 @@
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
-    path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
-- hostPath:
     path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
@@ -223,6 +224,14 @@
     path: /var/lib/docker/containers
   name: logdockercontainerpath
 {{- end }}
+{{- end }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+- hostPath:
+    path: {{ template "datadog.hostMountRoot" . }}/logs
+  name: pointerdir
+{{- else }}
+- name: datadogrun
+  emptyDir: {}
 {{- end }}
 {{- if .Values.providers.gke.gdc }}
 - secret:

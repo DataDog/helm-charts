@@ -353,48 +353,50 @@ spec:
                           - name
                           - value
                         type: object
-                      customQueryObjective:
-                        description: CustomQueryObjective allows to set a controller-level objective.
+                      customQuery:
+                        description: CustomQuery allows to set a controller-level objective.
                         properties:
-                          query:
-                            description: Query is the timeseries query to use for the objective.
+                          request:
+                            description: Request is the timeseries query to use for the objective.
                             properties:
-                              formulas:
-                                description: Formulas to compute (optional).
-                                items:
-                                  properties:
-                                    formula:
-                                      minLength: 1
-                                      type: string
-                                  required:
-                                    - formula
-                                  type: object
-                                type: array
+                              formula:
+                                description: Formula to compute (optional).
+                                type: string
                               queries:
+                                description: |-
+                                  Queries is a list of timeseries queries to use for the objective.
+                                  At least one query must be specified
                                 items:
                                   description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
                                   properties:
-                                    apm_metrics:
+                                    apmMetrics:
+                                      description: ApmMetrics is allows to query APM metrics.
                                       properties:
-                                        group_by:
+                                        groupBy:
+                                          description: GroupBy is the list of tags to group by.
                                           items:
                                             type: string
                                           type: array
-                                        operation_name:
+                                        operationName:
+                                          description: OperationName is the name of the operation to query.
                                           type: string
-                                        query_filter:
+                                        queryFilter:
+                                          description: QueryFilter is the filter to apply to the query.
                                           type: string
-                                        resource_hash:
+                                        resourceHash:
                                           description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
                                           type: string
-                                        resource_name:
+                                        resourceName:
+                                          description: ResourceName is the name of the resource to query.
                                           type: string
                                         service:
+                                          description: Service is the name of the service to query.
                                           type: string
-                                        span_kind:
+                                        spanKind:
+                                          description: SpanKind is the kind of span to query.
                                           type: string
                                         stat:
-                                          description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                          description: Stat defines the statistic to compute for the APM metrics query.
                                           enum:
                                             - error_rate
                                             - errors
@@ -417,6 +419,7 @@ spec:
                                         - stat
                                       type: object
                                     metrics:
+                                      description: Metrics is a standard Datadog metrics query.
                                       properties:
                                         query:
                                           description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
@@ -429,15 +432,17 @@ spec:
                                       description: Optional variable name ("a", "b", etc.) to reference in formulas.
                                       type: string
                                     source:
+                                      description: Source defines the source of the timeseries query.
                                       enum:
-                                        - metrics
-                                        - apm_metrics
+                                        - Metrics
+                                        - ApmMetrics
                                       type: string
                                   required:
                                     - source
                                   type: object
                                 minItems: 1
                                 type: array
+                                x-kubernetes-list-type: atomic
                             required:
                               - queries
                             type: object
@@ -473,7 +478,7 @@ spec:
                             description: Window is the time duration over which the query is computed. It should contain at least one full sample.
                             type: string
                         required:
-                          - query
+                          - request
                           - value
                           - window
                         type: object
@@ -1060,48 +1065,50 @@ spec:
                                   - name
                                   - value
                                 type: object
-                              customQueryObjective:
-                                description: CustomQueryObjective allows to set a controller-level objective.
+                              customQuery:
+                                description: CustomQuery allows to set a controller-level objective.
                                 properties:
-                                  query:
-                                    description: Query is the timeseries query to use for the objective.
+                                  request:
+                                    description: Request is the timeseries query to use for the objective.
                                     properties:
-                                      formulas:
-                                        description: Formulas to compute (optional).
-                                        items:
-                                          properties:
-                                            formula:
-                                              minLength: 1
-                                              type: string
-                                          required:
-                                            - formula
-                                          type: object
-                                        type: array
+                                      formula:
+                                        description: Formula to compute (optional).
+                                        type: string
                                       queries:
+                                        description: |-
+                                          Queries is a list of timeseries queries to use for the objective.
+                                          At least one query must be specified
                                         items:
                                           description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
                                           properties:
-                                            apm_metrics:
+                                            apmMetrics:
+                                              description: ApmMetrics is allows to query APM metrics.
                                               properties:
-                                                group_by:
+                                                groupBy:
+                                                  description: GroupBy is the list of tags to group by.
                                                   items:
                                                     type: string
                                                   type: array
-                                                operation_name:
+                                                operationName:
+                                                  description: OperationName is the name of the operation to query.
                                                   type: string
-                                                query_filter:
+                                                queryFilter:
+                                                  description: QueryFilter is the filter to apply to the query.
                                                   type: string
-                                                resource_hash:
+                                                resourceHash:
                                                   description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
                                                   type: string
-                                                resource_name:
+                                                resourceName:
+                                                  description: ResourceName is the name of the resource to query.
                                                   type: string
                                                 service:
+                                                  description: Service is the name of the service to query.
                                                   type: string
-                                                span_kind:
+                                                spanKind:
+                                                  description: SpanKind is the kind of span to query.
                                                   type: string
                                                 stat:
-                                                  description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                                  description: Stat defines the statistic to compute for the APM metrics query.
                                                   enum:
                                                     - error_rate
                                                     - errors
@@ -1124,6 +1131,7 @@ spec:
                                                 - stat
                                               type: object
                                             metrics:
+                                              description: Metrics is a standard Datadog metrics query.
                                               properties:
                                                 query:
                                                   description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
@@ -1136,15 +1144,17 @@ spec:
                                               description: Optional variable name ("a", "b", etc.) to reference in formulas.
                                               type: string
                                             source:
+                                              description: Source defines the source of the timeseries query.
                                               enum:
-                                                - metrics
-                                                - apm_metrics
+                                                - Metrics
+                                                - ApmMetrics
                                               type: string
                                           required:
                                             - source
                                           type: object
                                         minItems: 1
                                         type: array
+                                        x-kubernetes-list-type: atomic
                                     required:
                                       - queries
                                     type: object
@@ -1180,7 +1190,7 @@ spec:
                                     description: Window is the time duration over which the query is computed. It should contain at least one full sample.
                                     type: string
                                 required:
-                                  - query
+                                  - request
                                   - value
                                   - window
                                 type: object
@@ -1301,48 +1311,50 @@ spec:
                           - name
                           - value
                         type: object
-                      customQueryObjective:
-                        description: CustomQueryObjective allows to set a controller-level objective.
+                      customQuery:
+                        description: CustomQuery allows to set a controller-level objective.
                         properties:
-                          query:
-                            description: Query is the timeseries query to use for the objective.
+                          request:
+                            description: Request is the timeseries query to use for the objective.
                             properties:
-                              formulas:
-                                description: Formulas to compute (optional).
-                                items:
-                                  properties:
-                                    formula:
-                                      minLength: 1
-                                      type: string
-                                  required:
-                                    - formula
-                                  type: object
-                                type: array
+                              formula:
+                                description: Formula to compute (optional).
+                                type: string
                               queries:
+                                description: |-
+                                  Queries is a list of timeseries queries to use for the objective.
+                                  At least one query must be specified
                                 items:
                                   description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
                                   properties:
-                                    apm_metrics:
+                                    apmMetrics:
+                                      description: ApmMetrics is allows to query APM metrics.
                                       properties:
-                                        group_by:
+                                        groupBy:
+                                          description: GroupBy is the list of tags to group by.
                                           items:
                                             type: string
                                           type: array
-                                        operation_name:
+                                        operationName:
+                                          description: OperationName is the name of the operation to query.
                                           type: string
-                                        query_filter:
+                                        queryFilter:
+                                          description: QueryFilter is the filter to apply to the query.
                                           type: string
-                                        resource_hash:
+                                        resourceHash:
                                           description: ResourceHash is a fingerprint of the resource name that can be used to identify the resource instead of the resource name.
                                           type: string
-                                        resource_name:
+                                        resourceName:
+                                          description: ResourceName is the name of the resource to query.
                                           type: string
                                         service:
+                                          description: Service is the name of the service to query.
                                           type: string
-                                        span_kind:
+                                        spanKind:
+                                          description: SpanKind is the kind of span to query.
                                           type: string
                                         stat:
-                                          description: DatadogPodAutoscalerApmMetricsStat represents the statistic to compute for an APM metrics query.
+                                          description: Stat defines the statistic to compute for the APM metrics query.
                                           enum:
                                             - error_rate
                                             - errors
@@ -1365,6 +1377,7 @@ spec:
                                         - stat
                                       type: object
                                     metrics:
+                                      description: Metrics is a standard Datadog metrics query.
                                       properties:
                                         query:
                                           description: Classic Datadog metrics query, e.g. "avg:system.cpu.user{*} by {env}".
@@ -1377,15 +1390,17 @@ spec:
                                       description: Optional variable name ("a", "b", etc.) to reference in formulas.
                                       type: string
                                     source:
+                                      description: Source defines the source of the timeseries query.
                                       enum:
-                                        - metrics
-                                        - apm_metrics
+                                        - Metrics
+                                        - ApmMetrics
                                       type: string
                                   required:
                                     - source
                                   type: object
                                 minItems: 1
                                 type: array
+                                x-kubernetes-list-type: atomic
                             required:
                               - queries
                             type: object
@@ -1421,7 +1436,7 @@ spec:
                             description: Window is the time duration over which the query is computed. It should contain at least one full sample.
                             type: string
                         required:
-                          - query
+                          - request
                           - value
                           - window
                         type: object

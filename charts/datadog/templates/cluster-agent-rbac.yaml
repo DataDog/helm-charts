@@ -112,6 +112,7 @@ rules:
 - nonResourceURLs:
   - "/version"
   - "/healthz"
+  - "/metrics"
   verbs:
   - get
 {{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.wpaController }}

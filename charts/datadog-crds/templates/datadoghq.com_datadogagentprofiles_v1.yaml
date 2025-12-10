@@ -4,6 +4,9 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
+    {{- if .Values.keepCrds }}
+    helm.sh/resource-policy: keep
+    {{- end }}
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagentprofiles.datadoghq.com
   labels:
@@ -2975,14 +2978,6 @@ spec:
                             Use 'docker.io/datadog' for DockerHub.
                             Default: 'gcr.io/datadoghq'
                           type: string
-                        runProcessChecksInCoreAgent:
-                          description: |-
-                            Configure whether the Process Agent or core Agent collects process and/or container information (Linux only).
-                            If no other checks are running, the Process Agent container will not initialize.
-                            (Requires Agent 7.60.0+)
-                            Default: 'true'
-                            Deprecated: Functionality now handled automatically. Use env var `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` to override.
-                          type: boolean
                         secretBackend:
                           description: |-
                             Configure the secret backend feature https://docs.datadoghq.com/agent/guide/secrets-management
