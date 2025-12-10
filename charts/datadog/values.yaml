@@ -349,7 +349,7 @@ datadog:
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
-  expvarPort: 6000
+  expvarPort: "6000"
 
   ## dogstatsd configuration
 
@@ -652,11 +652,11 @@ datadog:
     ports:
 
         # Default GRPC port of OTLP receiver
-      - containerPort: "4317"
+      - containerPort: 4317
         name: otel-grpc
         protocol: TCP
         # Default HTTP port of OTLP receiver
-      - containerPort: "4318"
+      - containerPort: 4318
         name: otel-http
         protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
@@ -1245,6 +1245,16 @@ datadog:
   operator:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
+
+    # datadog.operator.migration.enabled -- Enable migration of Agent workloads to be managed by the Datadog Operator.
+    # Creates a DatadogAgent manifest based on current release's values.yaml.
+    migration:
+      enabled: false
+
+      # datadog.operator.migration.preview -- Set to true to preview the DatadogAgent manifest mapped from the
+      # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `helm-dda-migrator`
+      # Kubernetes job logs.
+      preview: false
 
 # Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
@@ -2676,18 +2686,12 @@ clusterChecksRunner:
 operator:
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
-    enabled: false
-  datadogDashboards:
-    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
-    enabled: false
-  datadogMonitor:
-    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
-    enabled: false
+    enabled: true
 
   datadogCRDs:
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
-      datadogAgents: false
+      datadogAgents: true
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: false
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
@@ -2696,10 +2700,13 @@ operator:
       datadogDashboards: false
       # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
       datadogGenericResources: false
+      # operator.datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
+      datadogAgentProfiles: false
       # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
       # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      # use datadog.autoscaling.workload.enabled to enable instead.
       datadogPodAutoscalers: false
 
 datadog-crds:
@@ -2796,11 +2803,11 @@ otelAgentGateway:
   # otelAgentGateway.ports -- Ports that OTel Collector is listening on
   ports:
       # Default GRPC port of OTLP receiver
-    - containerPort: "4317"
+    - containerPort: 4317
       name: otel-grpc
       protocol: TCP
       # Default HTTP port of OTLP receiver
-    - containerPort: "4318"
+    - containerPort: 4318
       name: otel-http
       protocol: TCP
   # otelAgentGateway.config -- Gateway OTel Agent configuration
