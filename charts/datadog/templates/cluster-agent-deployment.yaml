@@ -440,6 +440,36 @@ spec:
               configMapKeyRef:
                 name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
                 key: install_type
+          {{- if .Values.datadog.appsec.injector.enabled }}
+          - name: DD_APPSEC_PROXY_ENABLED
+            value: "true"
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_ENABLED
+            value: "true"
+          {{- if .Values.datadog.appsec.injector.autoDetect }}
+          - name: DD_APPSEC_PROXY_AUTO_DETECT
+            value: "true"
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.proxies }}
+          - name: DD_APPSEC_PROXY_PROXIES
+            value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.port }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_PORT
+            value: {{ .Values.datadog.appsec.injector.processor.port | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.address }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_ADDRESS
+            value: {{ .Values.datadog.appsec.injector.processor.address | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.name }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAME
+            value: {{ .Values.datadog.appsec.injector.processor.service.name | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.namespace }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE
+            value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
+          {{- end }}
+          {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
