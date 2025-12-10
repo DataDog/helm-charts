@@ -2686,7 +2686,7 @@ clusterChecksRunner:
 operator:
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
-    enabled: false
+    enabled: true
 
   datadogCRDs:
     crds:
