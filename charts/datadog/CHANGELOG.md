@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.151.3
+
+* Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).
+
 ## 3.151.2
 
 * Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
