@@ -1,8 +1,38 @@
 # Datadog changelog
 
-## 3.150.0
+## 3.153.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+## 3.152.0
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+
+## 3.151.3
+
+* Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).
+
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
+## 3.149.3
+
+* Add `/metrics` RBAC permission to DCA ClusterRole.
 
 ## 3.149.2
 

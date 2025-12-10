@@ -101,6 +101,20 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:
@@ -617,6 +631,7 @@ rules:
   - nonResourceURLs:
       - /version
       - /healthz
+      - /metrics
     verbs:
       - get
   - apiGroups:
@@ -1276,7 +1291,7 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.72.4
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1304,6 +1319,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1331,6 +1348,8 @@ spec:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: false
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:
@@ -1339,7 +1358,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.4
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1391,7 +1410,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.72.4
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1419,6 +1438,8 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - emptyDir: {}
+          name: datadogrun
         - name: kubelet-cert-volume
           secret:
             secretName: datadog-kubelet-cert
@@ -1678,7 +1699,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.4
+          image: gcr.io/datadoghq/cluster-agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1751,7 +1772,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.4
+          image: gcr.io/datadoghq/cluster-agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
@@ -1771,11 +1792,6 @@ spec:
             name: datadog-installinfo
           name: installinfo
         - configMap:
-            items:
-              - key: kubernetes_state_core.yaml.default
-                path: kubernetes_state_core.yaml.default
-              - key: kubernetes_apiserver.yaml
-                path: kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
         - emptyDir: {}
