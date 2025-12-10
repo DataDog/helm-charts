@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.16.0-dev.5
+
+* Update version of Datadog CRDs to 2.14.0-dev.5.
+
 ## 2.16.0-dev.4
 
 * Use values from Datadog chart's endpoint-config configMap,  if present.
