@@ -2,15 +2,23 @@
 
 ## Overview
 
-This guide breaks down the process for migrating from the Datadog Helm chart to the Datadog Operator for managing the Datadog Agent in Kubernetes. The migration process consists of 5 main steps:
+This guide breaks down the process for migrating from the Datadog Helm chart to the Datadog Operator for managing the Datadog Agent in Kubernetes. Using the Datadog Operator offers the following advantages:
+
+* Operator configuration is more flexible for future enhancements.
+* Validation for your Agent configurations.
+* Orchestration for creating and updating Agent resources. 
+* As a Kubernetes Operator, the Datadog Operator is treated as a first-class resource by the Kubernetes API. 
+* Unlike the Helm chart, the Operator is included in the Kubernetes reconciliation loop.
+
+Learn more about the [Datadog Operator][1] and its benefits.
+
+The migration process consists of 5 main steps:
 
 1. Map Datadog Helm values to the DatadogAgent CRD format
 2. Enable migration of Datadog Agent workload ownership to the Datadog Operator
 3. Validate Datadog Agent workloads
 4. Uninstall Datadog Helm chart
 5. Install Operator Helm chart
-
-Learn more about the [Datadog Operator][1] its benefits.
 
 ## Prerequisites
 
