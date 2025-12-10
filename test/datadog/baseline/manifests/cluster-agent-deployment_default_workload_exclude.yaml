@@ -839,6 +839,8 @@ spec:
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"kube_services":["kube_service.name == \"nginx\""]}}]'
             - name: DD_ADMISSION_CONTROLLER_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED

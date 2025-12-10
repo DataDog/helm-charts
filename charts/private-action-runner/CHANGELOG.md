@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 1.19.0
+
+* Bump private runner version to 1.15.0
+* Add script connection testing
+* Add script name suggestions
+
 ## 1.18.0
 
 * Configurable Security Context Constraints for OpenShift
@@ -21,7 +27,7 @@
 
 ## 1.15.1
 
-* Bump private runenr version to 1.12.1
+* Bump private runner version to 1.12.1
 
 ## 1.15.0
 
