@@ -6,6 +6,7 @@ on:
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
+  id-token: write # Required for dd-octo-sts action
   pull-requests: write
   contents: write
   # packages: read
