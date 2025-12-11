@@ -8,6 +8,5 @@ claim_pattern:
   job_workflow_ref: DataDog/helm-charts/\.github/workflows/bump-chart-version\.yaml@.*
 
 permissions:
-  actions: write
-  issues: write
+  contents: write
   pull_requests: write
