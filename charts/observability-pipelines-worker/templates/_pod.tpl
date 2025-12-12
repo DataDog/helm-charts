@@ -91,6 +91,16 @@ containers:
     volumeMounts:
       - name: data
         mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+      - name: bootstrap
+        mountPath: /etc/observability-pipelines-worker
+        readOnly: true
+{{- end }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
+      - name: secret-file-backend
+        mountPath: /etc/observability-pipelines-secrets
+        readOnly: true
+{{- end }}
 {{- if .Values.extraVolumeMounts }}
 {{ toYaml .Values.extraVolumeMounts | indent 6 }}
 {{- end }}
@@ -120,6 +130,16 @@ volumes:
 {{- else }}
   - name: data
     emptyDir: {}
+{{- end }}
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+  - name: bootstrap
+    configMap:
+      name: {{ include "opw.fullname" $ }}-bootstrap
+{{- end }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
+  - name: secret-file-backend
+    secret:
+      secretName: {{ include "opw.fullname" $ }}-secret-file-backend
 {{- end }}
 {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 2 }}
