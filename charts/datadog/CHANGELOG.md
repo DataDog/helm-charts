@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.154.0
+## 3.153.1
 
 * Refactor chart version bump worfklow ([#2231](https://github.com/DataDog/helm-charts/pull/2231)).
 
