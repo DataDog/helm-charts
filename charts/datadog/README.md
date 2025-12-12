@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.153.0](https://img.shields.io/badge/Version-3.153.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.154.0](https://img.shields.io/badge/Version-3.154.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -989,14 +989,14 @@ helm install <RELEASE_NAME> \
 | nameOverride | string | `nil` | Override name of app |
 | operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller |
 | operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
-| operator.datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
+| operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
 | operator.datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead. |
-| operator.datadogCRDs.crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
-| operator.datadogDashboards.enabled | bool | `false` |  |
-| operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor |
+| operator.datadogDashboards.enabled | bool | `true` |  |
+| operator.datadogMonitor.enabled | bool | `true` | Enables the Datadog Monitor |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |

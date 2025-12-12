@@ -1871,7 +1871,7 @@ spec:
             - -operatorMetricsEnabled=true
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
-            - -datadogMonitorEnabled=false
+            - -datadogMonitorEnabled=true
             - -datadogAgentEnabled=false
             - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false

@@ -1283,8 +1283,8 @@ datadog:
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
-  ## * Configure the Datadog Operator using the values config, `datadog-operator`.
-  ## For all available Operator options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
+  ## * Configure the Datadog Operator sub-chart using the values config, `operator`.
+  ## For all available Operator chart options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
   operator:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
@@ -2722,21 +2722,21 @@ operator:
     enabled: false
   datadogDashboards:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
-    enabled: false
+    enabled: true
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
-    enabled: false
+    enabled: true
 
   datadogCRDs:
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
       datadogAgents: false
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
-      datadogMonitors: false
+      datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
       datadogSLOs: false
       # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
-      datadogDashboards: false
+      datadogDashboards: true
       # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
       datadogGenericResources: false
       # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
