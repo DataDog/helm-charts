@@ -1041,6 +1041,15 @@ spec:
                     autoscaling:
                       description: Autoscaling configuration.
                       properties:
+                        cluster:
+                          description: Cluster contains the configuration for the cluster autoscaling product.
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled enables the cluster autoscaling product.
+                                Default: false
+                              type: boolean
+                          type: object
                         workload:
                           description: Workload contains the configuration for the workload autoscaling product.
                           properties:
@@ -8817,6 +8826,15 @@ spec:
                         autoscaling:
                           description: Autoscaling configuration.
                           properties:
+                            cluster:
+                              description: Cluster contains the configuration for the cluster autoscaling product.
+                              properties:
+                                enabled:
+                                  description: |-
+                                    Enabled enables the cluster autoscaling product.
+                                    Default: false
+                                  type: boolean
+                              type: object
                             workload:
                               description: Workload contains the configuration for the workload autoscaling product.
                               properties:
