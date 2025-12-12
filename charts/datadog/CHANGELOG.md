@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.153.0
+## 3.154.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+
+## 3.153.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
 
 ## 3.152.0
 
