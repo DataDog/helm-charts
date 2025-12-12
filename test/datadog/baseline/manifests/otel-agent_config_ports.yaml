@@ -1246,7 +1246,7 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: trace
           image: gcr.io/datadoghq/ddot-collector:7.73.0
           imagePullPolicy: IfNotPresent
           name: otel-agent
