@@ -11,6 +11,7 @@
 ## 2.16.0-dev.4
 
 * Use values from Datadog chart's endpoint-config configMap,  if present.
+* Add dnsConfig option
 
 ## 2.16.0-dev.3
 
