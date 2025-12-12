@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.16.0-dev.6
+
+* Update Datadog Operator chart for 1.21.0-rc.3.
+
 ## 2.16.0-dev.5
 
 * Update version of Datadog CRDs to 2.14.0-dev.5.
