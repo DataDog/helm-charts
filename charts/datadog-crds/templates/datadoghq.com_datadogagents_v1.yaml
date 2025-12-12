@@ -569,6 +569,11 @@ spec:
                       type: object
                     autoscaling:
                       properties:
+                        cluster:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         workload:
                           properties:
                             enabled:
@@ -4572,6 +4577,11 @@ spec:
                           type: object
                         autoscaling:
                           properties:
+                            cluster:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                             workload:
                               properties:
                                 enabled:
