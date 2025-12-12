@@ -52,8 +52,6 @@ data:
       - collectors:
         - secrets
         - configmaps
-        - verticalpodautoscalers
-        - customresourcedefinitions
         - nodes
         - pods
         - services
@@ -80,48 +78,6 @@ data:
           {}
         annotations_as_tags:
           {}
-        custom_resource:
-          spec:
-            resources:
-              - commonLabels:
-                  crd_type: eniconfig
-                groupVersionKind:
-                  group: crd.k8s.amazonaws.com
-                  kind: ENIConfig
-                  version: v1alpha1
-                labelsFromPath:
-                  crd_name:
-                  - metadata
-                  - name
-                metrics:
-                - each:
-                    gauge:
-                      path:
-                      - metadata
-                      - generation
-                    type: gauge
-                  help: ENI Config
-                  name: eniconfig
-              - commonLabels:
-                  crd_type: cninode
-                groupVersionKind:
-                  group: vpcresources.k8s.aws
-                  kind: CNINode
-                  resource: cninode-pluralized
-                  version: v1alpha1
-                labelsFromPath:
-                  crd_name:
-                  - metadata
-                  - name
-                metrics:
-                - each:
-                    gauge:
-                      path:
-                      - metadata
-                      - generation
-                    type: gauge
-                  help: CNI Node
-                  name: cninode
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -561,13 +517,6 @@ rules:
       - list
       - watch
   - apiGroups:
-      - autoscaling.k8s.io
-    resources:
-      - verticalpodautoscalers
-    verbs:
-      - list
-      - watch
-  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
@@ -578,20 +527,6 @@ rules:
       - apiextensions.k8s.io
     resources:
       - customresourcedefinitions
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - crd.k8s.amazonaws.com
-    resources:
-      - eniconfigs
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - vpcresources.k8s.aws
-    resources:
-      - cninode-pluralized
     verbs:
       - list
       - watch
@@ -914,6 +849,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -1103,6 +1040,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1229,6 +1168,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_CEL_WORKLOAD_EXCLUDE
+              value: '[{"products":["global"],"rules":{"containers":["container.name == \"redis\""]}},{"products":["logs","metrics"],"rules":{"pods":["pod.name.startsWith(''nginx'')"]}}]'
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
           image: gcr.io/datadoghq/agent:7.73.0

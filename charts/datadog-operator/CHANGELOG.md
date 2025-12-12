@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.16.0-dev.5
+
+* Update version of Datadog CRDs to 2.14.0-dev.5.
+
+## 2.16.0-dev.4
+
+* Use values from Datadog chart's endpoint-config configMap,  if present.
+
 ## 2.16.0-dev.3
 
 * Update Datadog Operator image tag to 1.21.0-rc.2.

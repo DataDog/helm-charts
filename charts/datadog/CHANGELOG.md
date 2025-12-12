@@ -1,5 +1,30 @@
 # Datadog changelog
 
+## 3.153.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
+## 3.152.0
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+
+## 3.151.3
+
+* Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).
+
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
 ## 3.150.0
 
 * Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
