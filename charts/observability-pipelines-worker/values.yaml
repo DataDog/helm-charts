@@ -38,25 +38,15 @@ datadog:
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
-
-bootstrapBackend:
-  filename: bootstrap.yaml
-
-  # exactly one of these should be true
-  secretFile:
-    enabled: false
-
-    # where to mount secrets.json inside the container
-    mountPath: /etc/observability-pipelines-secrets/secrets.json
-
-    # Build secrets.json from entries
-    entries: {}
-
-  custom:
-    enabled: false
-
-    backend_type: ""
-    backend_config: {}
+  # datadog.bootstrap -- Provide a bootstrap file that conforms to the options provided in this documentation:
+  #   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
+  bootstrap:
+    # datadog.bootstrap.config -- The bootstrap file contents
+    config: {}
+    # datadog.bootstrap.secretFileContents -- Additional helper for the "secrets" portion of the bootstrap file.
+    # Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file,
+    # and correctly setup the bootstrap to point to the secrets file.
+    secretFileContents: {}
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).

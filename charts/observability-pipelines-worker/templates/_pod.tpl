@@ -91,15 +91,14 @@ containers:
     volumeMounts:
       - name: data
         mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
-{{- if or .Values.bootstrapBackend.secretFile.enabled .Values.bootstrapBackend.custom.enabled }}
-      - name: opworker-bootstrap-defaults
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+      - name: bootstrap
         mountPath: /etc/observability-pipelines-worker
         readOnly: true
 {{- end }}
-{{- if eq (include "opw.bootstrapMode" .) "secretFile" }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
       - name: secret-file-backend
-        mountPath: /etc/observability-pipelines-secrets/secrets.json
-        subPath: secrets.json
+        mountPath: /etc/observability-pipelines-secrets
         readOnly: true
 {{- end }}
 {{- if .Values.extraVolumeMounts }}
@@ -132,12 +131,12 @@ volumes:
   - name: data
     emptyDir: {}
 {{- end }}
-{{- if or .Values.bootstrapBackend.secretFile.enabled .Values.bootstrapBackend.custom.enabled }}
-  - name: opworker-bootstrap-defaults
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+  - name: bootstrap
     configMap:
-      name: {{ include "opw.fullname" $ }}-opworker-bootstrap-defaults
+      name: {{ include "opw.fullname" $ }}-bootstrap
 {{- end }}
-{{- if eq (include "opw.bootstrapMode" .) "secretFile" }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
   - name: secret-file-backend
     secret:
       secretName: {{ include "opw.fullname" $ }}-secret-file-backend

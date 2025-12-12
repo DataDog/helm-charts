@@ -198,13 +198,3 @@ Generate a single Container.Port based on a component configuration.
 {{- end }}
 {{- end }}
 
-{{/*
-Return "secretFile" or "custom" or "" based on enabled flags.
-*/}}
-{{- define "opw.bootstrapMode" -}}
-{{- if .Values.bootstrapBackend.secretFile.enabled -}}
-secretFile
-{{- else if .Values.bootstrapBackend.custom.enabled -}}
-custom
-{{- end -}}
-{{- end }}
