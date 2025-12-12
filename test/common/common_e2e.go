@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 )
 
