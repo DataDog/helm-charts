@@ -4,7 +4,7 @@ issuer: https://token.actions.githubusercontent.com
 subject: repo:DataDog/helm-charts:pull_request
 
 claim_pattern:
-  event_name: "(pull_request|label)"
+  event_name: "pull_request"
   job_workflow_ref: DataDog/helm-charts/\.github/workflows/bump-chart-version\.yaml@.*
 
 permissions:
