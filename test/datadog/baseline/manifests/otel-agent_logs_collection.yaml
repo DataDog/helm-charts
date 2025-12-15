@@ -66,6 +66,7 @@ data:
         - deployments
         - replicasets
         - statefulsets
+        - controllerrevisions
         - cronjobs
         - jobs
         - horizontalpodautoscalers
@@ -86,6 +87,20 @@ metadata:
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
+  namespace: datadog-agent
+---
+apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-endpoint-config
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -237,6 +252,7 @@ rules:
   - nonResourceURLs:
       - /version
       - /healthz
+      - /metrics
     verbs:
       - get
   - apiGroups:
@@ -407,6 +423,42 @@ rules:
     verbs:
       - list
       - watch
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gateways
+      - gatewayclasses
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - get
+      - delete
+      - create
+      - patch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - get
+      - delete
+      - create
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - get
+      - create
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -453,6 +505,7 @@ rules:
       - daemonsets
       - deployments
       - replicasets
+      - controllerrevisions
     verbs:
       - list
       - watch
@@ -774,6 +827,7 @@ metadata:
     app.kubernetes.io/instance: datadog-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
@@ -793,6 +847,7 @@ spec:
         app.kubernetes.io/instance: datadog-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog
     spec:
       affinity: {}
@@ -913,7 +968,7 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -941,6 +996,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -989,6 +1046,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
         - command:
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1054,7 +1113,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1068,6 +1127,8 @@ spec:
               name: traceport
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1145,7 +1206,7 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.72.1
+          image: gcr.io/datadoghq/ddot-collector:7.73.0
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1156,6 +1217,8 @@ spec:
               name: otel-http
               protocol: TCP
           resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1206,7 +1269,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1245,7 +1308,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.72.1
+          image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1308,9 +1371,6 @@ spec:
             path: /var/run
           name: runtimesocketdir
         - hostPath:
-            path: /var/lib/datadog-agent/logs
-          name: pointerdir
-        - hostPath:
             path: /var/log/pods
           name: logpodpath
         - hostPath:
@@ -1319,6 +1379,8 @@ spec:
         - hostPath:
             path: /var/lib/docker/containers
           name: logdockercontainerpath
+        - emptyDir: {}
+          name: datadogrun
         - configMap:
             items:
               - key: otel-config.yaml
@@ -1339,6 +1401,7 @@ metadata:
     app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
   namespace: datadog-agent
@@ -1364,6 +1427,7 @@ spec:
         app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
+        app.kubernetes.io/part-of: datadog--agent-datadog
       name: datadog-cluster-agent
     spec:
       affinity:
@@ -1494,7 +1558,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1567,7 +1631,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.72.1
+          image: gcr.io/datadoghq/cluster-agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
@@ -1587,11 +1651,6 @@ spec:
             name: datadog-installinfo
           name: installinfo
         - configMap:
-            items:
-              - key: kubernetes_state_core.yaml.default
-                path: kubernetes_state_core.yaml.default
-              - key: kubernetes_apiserver.yaml
-                path: kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
         - emptyDir: {}

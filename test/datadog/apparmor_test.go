@@ -129,8 +129,8 @@ func TestApparmor(t *testing.T) {
 		coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
 		if assert.True(t, ok, "has agent container") {
 			if assert.NotNil(t, coreAgentContainer.SecurityContext, "agent securityContext not found") {
-			profile := coreAgentContainer.SecurityContext.AppArmorProfile
-			if assert.NotNil(t, profile, "agent apparmor profile not found") {
+				profile := coreAgentContainer.SecurityContext.AppArmorProfile
+				if assert.NotNil(t, profile, "agent apparmor profile not found") {
 					assert.Equal(t, v1.AppArmorProfileTypeUnconfined, profile.Type, "agent apparmor profile type")
 				}
 			}

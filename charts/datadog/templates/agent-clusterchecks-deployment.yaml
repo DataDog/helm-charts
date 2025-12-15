@@ -214,6 +214,12 @@ spec:
 {{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
 {{- end }}
         volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+          - name: varlog
+            mountPath: /var/log/datadog
+          - name: tmpdir
+            mountPath: /tmp
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -225,6 +231,14 @@ spec:
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
             readOnly: false # Need RW for config path
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+          - name: etcd-client-certs
+            mountPath: /etc/etcd-certs
+            readOnly: true
+          - name: disable-etcd-autoconf
+            mountPath: /etc/datadog-agent/conf.d/etcd.d
+            readOnly: false
+{{- end }}
 {{- if eq (include "should-mount-fips-configmap" .) "true" }}
 {{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
 {{- end }}
@@ -241,11 +255,24 @@ spec:
 {{- $startup := .Values.clusterChecksRunner.startupProbe }}
 {{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
+        - name: datadogrun
+          emptyDir: {}
+        - name: varlog
+          emptyDir: {}
+        - name: tmpdir
+          emptyDir: {}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
 {{- if .Values.clusterChecksRunner.volumes }}
 {{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+        - name: etcd-client-certs
+          secret:
+            secretName: etcd-metric-client
+        - name: disable-etcd-autoconf
+          emptyDir: {}
 {{- end }}
         - name: config
           emptyDir: {}

@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.11.0](https://img.shields.io/badge/Version-2.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.11.0](https://img.shields.io/badge/AppVersion-2.11.0-informational?style=flat-square)
+![Version: 2.12.0](https://img.shields.io/badge/Version-2.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -110,7 +110,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
 | image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
-| image.tag | string | `"2.11.0"` | Specify the image tag to use. |
+| image.tag | string | `"2.12.0"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
@@ -122,6 +122,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
+| persistence.annotations | object | `{}` | Specify the annotations for PersistentVolumeClaimsTemplates. |
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |

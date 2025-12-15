@@ -27,7 +27,7 @@ download_crd() {
 
     if [ "$name" = "datadogagents" ]; then
         yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
-        yq -i eval 'del(.. | select(has("description")).description)' "$path"
+        yq -i eval 'del(.. | select(has("description") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
     fi
 
     ifCondition="{{- if .Values.crds.$installOption }}"
@@ -43,6 +43,10 @@ download_crd() {
     { echo "$ifCondition"; cat "$path"; } > tmp.file
     mv tmp.file "$path"
     echo '{{- end }}' >> "$path"
+
+    # Add keepCrds annotation
+    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}/' "$path"
+    rm -f "$path.bak"
 }
 
 mkdir -p "$ROOT/crds"

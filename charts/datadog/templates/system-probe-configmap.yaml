@@ -77,6 +77,8 @@ data:
     gpu_monitoring:
       enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
       configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    event_monitoring_config:
+      socket: /var/run/sysprobe/event-monitor.sock
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
 {{- if .Values.datadog.securityAgent.runtime.containerInclude }}
@@ -110,10 +112,14 @@ data:
         cgroup_wait_list_size:  {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
         path_merge:
           enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
+        local_storage:
+          output_directory: /var/run/sysprobe/runtime-security/profiles
 {{ else }}
       activity_dump:
         enabled: false
         traced_cgroups_count: 0
+        local_storage:
+          output_directory: /var/run/sysprobe/runtime-security/profiles
 {{ end }}
       security_profile:
         enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.enabled }}
@@ -121,6 +127,9 @@ data:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled }}
         auto_suppression:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
+        dir: /var/run/sysprobe/runtime-security/profiles
+    dynamic_instrumentation:
+      enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---

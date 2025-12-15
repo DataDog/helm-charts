@@ -619,6 +619,49 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
+
+  ## App & API Protection configuration
+  ##
+  ## App & API Protection is disabled by default and can be enabled by setting the `enabled` field to `true` under the `datadog.appsec.injector` section.
+  ## The Datadog Helm Chart offer the option to auto-instrument supported proxies in the cluster to forward traffic to a custom security processor delegating
+  ## traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product that has to be deployed separately. Please follow the documentation to deploy the processor:
+  ## https://docs.datadoghq.com/security/application_security/setup/#proxies
+  ## It requires Datadog Cluster Agent 7.73.0+.
+
+  appsec:
+    # App & API Protection Injector is used to automatically configure your proxy to forward traffic to a custom security processor delegating
+    # traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product.
+    injector:
+      # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
+      enabled: false
+
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      autoDetect: true
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      # When autoDetect is true, detected proxies are added to this list
+      # When autoDetect is false, only proxies in this list are enabled
+      proxies: []
+      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
+      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+
+      processor:
+        # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
+        # Defaults to `{service.name}.{service.namespace}.svc`
+        address: ""
+
+        # datadog.appsec.injector.processor.port -- Port of the AppSec processor service (defaults to 443)
+        port: 443
+
+        # datadog.appsec.injector.service -- Required service information to connect to the AppSec processor
+        # This service should point to a deployment of the image `ghcr.io/DataDog/dd-trace-go/service-extensions-callout:latest`
+        # This deployment is not managed by the Datadog Helm chart.
+        service:
+          # datadog.appsec.injector.processor.service.name -- Name of the AppSec processor service
+          name: ""
+          # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
+          namespace: ""
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -1026,9 +1069,17 @@ datadog:
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
       containerInclude:
 
+      # datadog.sbom.containerImage.analyzers -- List of analyzers to use for container image SBOM generation
+      analyzers:
+        - "os"
+
     host:
       # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
       enabled: false
+
+      # datadog.sbom.host.analyzers -- List of analyzers to use for host SBOM generation
+      analyzers:
+        - "os"
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1194,6 +1245,10 @@ datadog:
   # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
   containerIncludeMetrics:
 
+  # datadog.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
   # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
@@ -1232,6 +1287,11 @@ datadog:
       # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
+  # Configuration related to Dynamic Instrumentation for Go services.
+  dynamicInstrumentationGo:
+    # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
+    enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
@@ -1249,7 +1309,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1700,6 +1760,10 @@ clusterAgent:
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
   containerInclude:
 
+  # clusterAgent.celWorkloadExclude -- Exclude workloads using a CEL-based definition in the Cluster Agent. (Requires Agent 7.73.0+)
+  # ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/
+  celWorkloadExclude:
+
 ## This section lets you configure the agents deployed by this chart to connect to a Cluster Agent
 ## deployed independently
 existingClusterAgent:
@@ -1804,7 +1868,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1985,7 +2049,8 @@ agents:
         failureThreshold: 6
 
       # agents.containers.agent.securityContext -- Allows you to overwrite the default container SecurityContext for the agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2019,7 +2084,8 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.processAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the process-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.processAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2049,7 +2115,8 @@ agents:
       #    memory: 200Mi
 
       # agents.containers.otelAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the otel-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2095,7 +2162,8 @@ agents:
         timeoutSeconds: 5
 
       # agents.containers.traceAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the trace-agent container.
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.traceAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2132,6 +2200,7 @@ agents:
 
       ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
       securityContext:
+        readOnlyRootFilesystem: true
         privileged: false
         capabilities:
           add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
@@ -2166,6 +2235,10 @@ agents:
       #  limits:
       #    cpu: 100m
       #    memory: 300Mi
+
+      # agents.containers.securityAgent.securityContext -- Allows you to overwrite the default container SecurityContext for the security-agent container.
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.securityAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2226,6 +2299,10 @@ agents:
         timeoutSeconds: 5
         successThreshold: 1
         failureThreshold: 12
+
+      # agents.containers.agentDataPlane.securityContext -- Allows you to overwrite the default container SecurityContext for the agent-data-plane container.
+      securityContext:
+        readOnlyRootFilesystem: true
 
       # agents.containers.agentDataPlane.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2399,7 +2476,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.72.1
+    tag: 7.73.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2628,7 +2705,8 @@ clusterChecksRunner:
   containers:
     agent:
       # clusterChecksRunner.containers.agent.securityContext -- Specify securityContext on the agent container
-      securityContext: {}
+      securityContext:
+        readOnlyRootFilesystem: true
     initContainers:
       # clusterChecksRunner.containers.initContainers.securityContext -- Specify securityContext on the init containers
       securityContext: {}
@@ -2686,6 +2764,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2696,6 +2777,13 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
+    # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,

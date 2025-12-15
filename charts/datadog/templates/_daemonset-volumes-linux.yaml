@@ -108,6 +108,10 @@
   name: src
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
+- name: dynamic-instrumentation-cache-dir
+  emptyDir: {}
+{{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
@@ -153,12 +157,12 @@
   name: btf-path
 {{- end }}
 {{- end }}
-{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
+{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -186,7 +190,7 @@
   name: host-rpm-dir
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if .Values.datadog.securityAgent.compliance.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
   name: group
@@ -210,9 +214,6 @@
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
-    path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
-- hostPath:
     path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
@@ -224,6 +225,14 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+- hostPath:
+    path: {{ template "datadog.hostMountRoot" . }}/logs
+  name: pointerdir
+{{- else }}
+- name: datadogrun
+  emptyDir: {}
+{{- end }}
 {{- if .Values.providers.gke.gdc }}
 - secret:
     secretName: datadog-kubelet-cert
@@ -233,5 +242,12 @@
 - name: gpu-devices
   hostPath:
     path: /dev/null
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+- name: etcd-certs
+  secret:
+    secretName: etcd-metric-client
+- name: disable-etcd-autoconf
+  emptyDir: {}
 {{- end }}
 {{- end -}}
