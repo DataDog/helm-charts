@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.153.1
+
+* Expose `datadog.workload.autoscaling.enabled` parameter.
+
 ## 3.153.0
 
 * Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
