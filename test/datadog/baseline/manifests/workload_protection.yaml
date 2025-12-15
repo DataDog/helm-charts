@@ -1170,6 +1170,8 @@ spec:
               value: "true"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
+            - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
+              value: "true"
             - name: DD_EXPVAR_PORT
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
