@@ -1292,6 +1292,12 @@ datadog:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
 
+  # Configuration related to Workload Autoscaling
+  autoscaling:
+    workload:
+      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      enabled: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics

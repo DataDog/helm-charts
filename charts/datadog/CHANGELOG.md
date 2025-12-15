@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 3.154.1
+
+* Expose `datadog.workload.autoscaling.enabled` parameter.
+
 ## 3.154.0
 
 * Add a field to enable the kubelet orchestrator check
-
 
 ## 3.153.0
 
