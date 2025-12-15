@@ -46,6 +46,7 @@ datadog:
     # datadog.bootstrap.secretFileContents -- Additional helper for the "secrets" portion of the bootstrap file.
     # Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file,
     # and correctly setup the bootstrap to point to the secrets file.
+    # eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" }
     secretFileContents: {}
 
 image:

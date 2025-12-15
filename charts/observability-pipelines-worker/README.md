@@ -93,7 +93,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
 | datadog.bootstrap | object | `{"config":{},"secretFileContents":{}}` | Provide a bootstrap file that conforms to the options provided in this documentation:   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options |
 | datadog.bootstrap.config | object | `{}` | The bootstrap file contents |
-| datadog.bootstrap.secretFileContents | object | `{}` | Additional helper for the "secrets" portion of the bootstrap file. Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file, and correctly setup the bootstrap to point to the secrets file. |
+| datadog.bootstrap.secretFileContents | object | `{}` | Additional helper for the "secrets" portion of the bootstrap file. Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file, and correctly setup the bootstrap to point to the secrets file. eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" } |
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
