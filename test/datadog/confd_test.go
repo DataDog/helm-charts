@@ -21,11 +21,8 @@ func TestConfd(t *testing.T) {
 				ReleaseName: "datadog",
 				Namespace:   "datadog-agent",
 				ChartPath:   "../../charts/datadog",
-				ShowOnly: []string{
-					"templates/daemonset.yaml",
-					"templates/confd-configmap.yaml",
-				},
-				Values: []string{"../../charts/datadog/values.yaml", "../../charts/datadog/ci/confd-values.yaml"},
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml", "./baseline/values/confd.yaml"},
 			},
 			assertion: func(t *testing.T, manifest string) {
 				var ds appsv1.DaemonSet
@@ -43,7 +40,7 @@ func TestConfd(t *testing.T) {
 				require.NotNil(t, confdVolume.ConfigMap, "confd volume should be a ConfigMap volume")
 				require.Equal(t, "datadog-confd", confdVolume.ConfigMap.Name, "unexpected ConfigMap name for confd volume")
 
-				// Check that the container has the confd volume mount
+				// Check that the init-config init-container has the confd volume mount
 				var initConfig corev1.Container
 				for _, init := range ds.Spec.Template.Spec.InitContainers {
 					if init.Name == "init-config" {
@@ -58,7 +55,7 @@ func TestConfd(t *testing.T) {
 						break
 					}
 				}
-				require.NotNil(t, confdMount, "confd volume mount not found in container")
+				require.NotNil(t, confdMount, "confd volume mount not found in init-container")
 				require.Equal(t, "/conf.d", confdMount.MountPath, "unexpected mount path for confd volume")
 			},
 		},
@@ -72,7 +69,7 @@ func TestConfd(t *testing.T) {
 					"templates/cluster-agent-deployment.yaml",
 					"templates/cluster-agent-confd-configmap.yaml",
 				},
-				Values: []string{"../../charts/datadog/values.yaml", "../../charts/datadog/ci/cluster-agent-advanced-confd-values.yaml"},
+				Values: []string{"../../charts/datadog/values.yaml", "./baseline/values/confd.yaml"},
 			},
 			assertion: func(t *testing.T, manifest string) {
 				var deployment appsv1.Deployment
