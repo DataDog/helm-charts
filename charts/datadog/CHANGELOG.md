@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.155.1
+
+* Change default value for `datadog.workload.autoscaling.enabled` to be empty. Fixes issue [#2241](https://github.com/DataDog/helm-charts/issues/2241) in chart 3.154.1.
+
 ## 3.155.0
 
 * Allow activation of cluster autoscaling.
