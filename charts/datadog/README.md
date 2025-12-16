@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.155.0](https://img.shields.io/badge/Version-3.155.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.155.1](https://img.shields.io/badge/Version-3.155.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -754,7 +754,7 @@ helm install <RELEASE_NAME> \
 | datadog.asm.iast.enabled | bool | `false` | Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.threats.enabled | bool | `false` | Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster |
-| datadog.autoscaling.workload.enabled | bool | `false` | Enable Workload Autoscaling. |
+| datadog.autoscaling.workload.enabled | string | `nil` | Enable Workload Autoscaling. |
 | datadog.celWorkloadExclude | string | `nil` | Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+) ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/ |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
