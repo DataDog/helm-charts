@@ -425,6 +425,10 @@ spec:
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           {{- end }}
+          {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
+          - name: DD_AUTOSCALING_CLUSTER_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).cluster).enabled) | quote }}
+          {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
               configMapKeyRef:

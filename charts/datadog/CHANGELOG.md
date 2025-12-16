@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.155.0
+
+* Allow activation of cluster autoscaling.
+
 ## 3.154.1
 
 * Expose `datadog.workload.autoscaling.enabled` parameter.
