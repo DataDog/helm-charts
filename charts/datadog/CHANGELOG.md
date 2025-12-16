@@ -2,7 +2,7 @@
 
 ## 3.155.2
 
-* Fix incorrect confd mount path. 
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
 
 ## 3.155.1
 
