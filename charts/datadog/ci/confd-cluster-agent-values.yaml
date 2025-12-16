@@ -13,4 +13,3 @@ clusterAgent:
       instances:
         - name: "healthPort"
           port: "5556"
-

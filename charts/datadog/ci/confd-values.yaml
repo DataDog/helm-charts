@@ -9,5 +9,5 @@ datadog:
     redisdb.yaml: |-
       init_config:
       instances:
-        - host: "name"
+        - host: "redis"
           port: "6379"
