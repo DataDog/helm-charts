@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.156.1
+
+* Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
+
 ## 3.156.0
 
 * Improve the default configs of DDOT Gateway:
