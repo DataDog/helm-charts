@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.21.0-rc.3
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -162,7 +162,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.21.0-rc.3
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -435,8 +435,6 @@ rules:
   - apiGroups:
       - datadoghq.com
       - karpenter.azure.com
-      - karpenter.k8s.aws
-      - karpenter.sh
     resources:
       - '*'
     verbs:
@@ -451,11 +449,24 @@ rules:
       - watch
   - apiGroups:
       - external.metrics.k8s.io
+      - karpenter.k8s.aws
     resources:
       - '*'
     verbs:
       - get
       - list
+      - watch
+  - apiGroups:
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
       - watch
   - apiGroups:
       - metrics.eks.amazonaws.com
@@ -553,6 +564,32 @@ rules:
       - ksh/metrics
     verbs:
       - get
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogdashboards
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogdashboards/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogdashboards/status
+    verbs:
+      - get
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1718,7 +1755,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.21.0-rc.3
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1753,9 +1790,9 @@ spec:
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=true
             - -datadogAgentEnabled=false
-            - -datadogSLOEnabled=false
-            - -datadogDashboardEnabled=false
-            - -datadogGenericResourceEnabled=false
+            - -datadogSLOEnabled=true
+            - -datadogDashboardEnabled=true
+            - -datadogGenericResourceEnabled=true
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
           env:
@@ -1773,7 +1810,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0-rc.2
+          image: gcr.io/datadoghq/operator:1.21.0-rc.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
