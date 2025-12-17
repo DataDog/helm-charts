@@ -2719,12 +2719,19 @@ clusterChecksRunner:
 operator:
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # Note: The Datadog Agent controller will be enabled by default in a future release.
     enabled: false
-  datadogDashboards:
-    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard
+  datadogDashboard:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+    enabled: true
+  datadogGenericResource:
+    # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
     enabled: true
   datadogMonitor:
-    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
+    enabled: true
+  datadogSLO:
+    # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
     enabled: true
 
   datadogCRDs:
@@ -2734,16 +2741,15 @@ operator:
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
-      datadogSLOs: false
+      datadogSLOs: true
       # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
       datadogDashboards: true
       # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
-      datadogGenericResources: false
+      datadogGenericResources: true
       # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
-      # Use clusterAgent.metricsProvider.useDatadogMetrics to enable instead.
-      datadogMetrics: false
+      datadogMetrics: true
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
-      datadogPodAutoscalers: false
+      datadogPodAutoscalers: true
 
 datadog-crds:
   crds:
