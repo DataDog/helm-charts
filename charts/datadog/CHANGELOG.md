@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 3.156.0
+
+* Improve the default configs of DDOT Gateway:
+  * Include the infra attributes processor by default in daemon otel agents.
+  * Include the datadog extension by default in gateway otel agents.
+  * If user provides a gateway config that does not have the datadog extension, automatically add it to user's config.
+
 ## 3.155.1
 
 * Change default value for `datadog.workload.autoscaling.enabled` to be empty. Fixes issue [#2241](https://github.com/DataDog/helm-charts/issues/2241) in chart 3.154.1.
