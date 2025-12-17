@@ -2684,6 +2684,12 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  image:
+    # operator.image.repository -- Repository to use for Datadog Operator image
+    repository: gcr.io/datadoghq/operator
+    # operator.image.tag -- Define the Datadog Operator version to use
+    tag: 1.21.0
+
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     enabled: true

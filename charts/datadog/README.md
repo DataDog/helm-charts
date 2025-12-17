@@ -991,6 +991,8 @@ helm install <RELEASE_NAME> \
 | operator.datadogCRDs.crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD use datadog.autoscaling.workload.enabled to enable instead. |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
+| operator.image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
+| operator.image.tag | string | `"1.21.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
