@@ -11,6 +11,9 @@ nameOverride:  # ""
 # fullnameOverride -- Override the full qualified app name
 fullnameOverride:  # ""
 
+# kubeVersionOverride -- Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm
+kubeVersionOverride:  # "1.28.0"
+
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
