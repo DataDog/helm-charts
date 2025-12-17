@@ -1,9 +1,35 @@
 # Datadog changelog
 
-## 3.154.0
+## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
 
+## 3.156.1
+
+* Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
+
+## 3.156.0
+
+* Improve the default configs of DDOT Gateway:
+  * Include the infra attributes processor by default in daemon otel agents.
+  * Include the datadog extension by default in gateway otel agents.
+  * If user provides a gateway config that does not have the datadog extension, automatically add it to user's config.
+
+## 3.155.1
+
+* Change default value for `datadog.workload.autoscaling.enabled` to be empty. Fixes issue [#2241](https://github.com/DataDog/helm-charts/issues/2241) in chart 3.154.1.
+
+## 3.155.0
+
+* Allow activation of cluster autoscaling.
+
+## 3.154.1
+
+* Expose `datadog.workload.autoscaling.enabled` parameter.
+
+## 3.154.0
+
+* Add a field to enable the kubelet orchestrator check
 
 ## 3.153.0
 

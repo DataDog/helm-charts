@@ -16,6 +16,8 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
         tls:
           insecure: true
     processors:
+      infraattributes:
+        cardinality: 2
       batch:
         timeout: 10s
     connectors:
@@ -28,15 +30,15 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [batch]
+          processors: [infraattributes, batch]
           exporters: [otlphttp, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
-          processors: [batch]
+          processors: [infraattributes, batch]
           exporters: [otlphttp]
         logs:
           receivers: [otlp]
-          processors: [batch]
+          processors: [infraattributes, batch]
           exporters: [otlphttp]
   {{- else }} |
     receivers:

@@ -11,6 +11,9 @@ nameOverride:  # ""
 # fullnameOverride -- Override the full qualified app name
 fullnameOverride:  # ""
 
+# kubeVersionOverride -- Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm
+kubeVersionOverride:  # "1.28.0"
+
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
@@ -942,6 +945,12 @@ datadog:
     container_scrubbing:
       enabled: true
 
+    # datadog.orchestratorExplorer.kubelet_configuration_check.enabled -- Enable the orchestrator kubelet configuration check
+
+    ## this enables the collection of the kubelet configuration for viewing in the orchestrator
+    kubelet_configuration_check:
+      enabled: true
+
     # datadog.orchestratorExplorer.customResources -- Defines custom resources for the orchestrator explorer to collect
 
     # customResources is required for RBAC creation if a custom orchestrator explorer configuration is provided in `clusterAgent.confd` or `clusterAgent.advancedConfd`
@@ -1293,6 +1302,12 @@ datadog:
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
+
+  # Configuration related to Workload Autoscaling
+  autoscaling:
+    workload:
+      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      enabled:
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements

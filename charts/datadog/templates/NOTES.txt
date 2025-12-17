@@ -772,7 +772,7 @@ This behavior will be adjusted automatically and the Core Agent will be used by 
 
 {{- end }}
 
-{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+{{- if and (ne (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) }}
 
 ###################################################################################
 ####               WARNING: OTel Agent Gateway misconfiguration               ####

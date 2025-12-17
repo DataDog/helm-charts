@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.12.1
+
+- Add support for custom secrets management via datadog.bootstrap in values.yaml
+
 ## 2.12.0
 
 - Official image `2.12.0`
