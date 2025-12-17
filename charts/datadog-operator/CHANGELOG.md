@@ -1,9 +1,12 @@
 # Changelog
 
+## 2.16.0-dev.7
+
+* Add dnsConfig option
+
 ## 2.16.0-dev.6
 
 * Update Datadog Operator chart for 1.21.0-rc.3.
-* Add dnsConfig option
 
 ## 2.16.0-dev.5
 
