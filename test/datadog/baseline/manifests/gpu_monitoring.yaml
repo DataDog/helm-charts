@@ -1263,9 +1263,6 @@ spec:
               readOnly: false
             - mountPath: /var/run/nvidia-container-devices/all
               name: gpu-devices
-            - mountPath: /host/run
-              name: hostrun
-              readOnly: false
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
@@ -1505,8 +1502,14 @@ spec:
               mountPropagation: None
               name: hostroot
               readOnly: true
+            - mountPath: /var/lib/kubelet/pod-resources
+              name: pod-resources-socket
+              readOnly: false
             - mountPath: /var/run/nvidia-container-devices/all
               name: gpu-devices
+            - mountPath: /host/root/run/systemd/transient
+              name: host-systemd-transient
+              readOnly: false
       hostPID: true
       initContainers:
         - args:
@@ -1617,8 +1620,8 @@ spec:
             path: /var/lib/kubelet/pod-resources
           name: pod-resources-socket
         - hostPath:
-            path: /run
-          name: hostrun
+            path: /run/systemd/transient
+          name: host-systemd-transient
         - hostPath:
             path: /proc
           name: procdir
