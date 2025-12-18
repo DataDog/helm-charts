@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.16.0
+
+* Update Datadog Operator image tag to 1.21.0.
+
 ## 2.16.0-dev.7
 
 * Add dnsConfig option
