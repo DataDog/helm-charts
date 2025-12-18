@@ -1047,6 +1047,7 @@ spec:
                             enabled:
                               description: |-
                                 Enabled enables the cluster autoscaling product.
+                                (Requires Cluster Agent 7.74.0+)
                                 Default: false
                               type: boolean
                           type: object
@@ -8832,6 +8833,7 @@ spec:
                                 enabled:
                                   description: |-
                                     Enabled enables the cluster autoscaling product.
+                                    (Requires Cluster Agent 7.74.0+)
                                     Default: false
                                   type: boolean
                               type: object
