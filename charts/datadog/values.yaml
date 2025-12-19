@@ -1509,6 +1509,11 @@ clusterAgent:
     ## not otherwise specified.
     containerRegistry:
 
+    # clusterAgent.admissionController.autoInstrumentationContainerRegistry -- Override the default registry for auto instrumentation.
+    ## This allows you to override the default registry for the init container that is used to inject the Agent sidecar.
+    ## ref: https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/single-step-apm/kubernetes/?tab=agentv764recommended#change-the-default-image-registry
+    autoInstrumentationContainerRegistry:
+
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.
