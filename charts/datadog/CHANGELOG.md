@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.156.4
+Allow `datadog.tags` to convert individual tags with spaces to underscores.
+
 ## 3.156.3
 
 * Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
