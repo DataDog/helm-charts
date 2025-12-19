@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.156.2
+## 3.156.3
 
 * Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
+
+## 3.156.2
+
+* Add `ftruncate` and `ftruncate64` syscalls to system-probe seccomp profile when GPU monitoring is enabled and `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
 
 ## 3.156.1
 
