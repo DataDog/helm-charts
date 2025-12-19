@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.156.4
+
+* Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentationContainerRegistry`.
+
 ## 3.156.3
 
 * Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
