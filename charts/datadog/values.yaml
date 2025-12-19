@@ -2223,7 +2223,7 @@ agents:
 
       # agents.containers.systemProbe.securityContext -- Allows you to overwrite the default container SecurityContext for the system-probe container.
 
-      ## agents.podSecurity.capabilities must reflect the changed made in securityContext.capabilities.
+      ## agents.podSecurity.capabilities must reflect the changes made in securityContext.capabilities.
       securityContext:
         readOnlyRootFilesystem: true
         privileged: false
