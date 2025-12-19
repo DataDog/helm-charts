@@ -1,7 +1,7 @@
 # Datadog changelog
 
 ## 3.156.4
-Allow `datadog.tags` to convert individual tags with spaces to underscores.
+Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
 
 ## 3.156.3
 
