@@ -998,9 +998,9 @@ helm install <RELEASE_NAME> \
 | operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
-| operator.datadogDashboard.enabled | bool | `true` | Enables the Datadog Dashboard controller |
+| operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
 | operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
-| operator.datadogMonitor.enabled | bool | `true` | Enables the Datadog Monitor controller |
+| operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `true` | Enables the Datadog SLO controller |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |

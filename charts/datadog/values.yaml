@@ -2738,13 +2738,13 @@ operator:
     enabled: false
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
-    enabled: true
+    enabled: false
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
     enabled: true
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
-    enabled: true
+    enabled: false
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
     enabled: true
