@@ -311,11 +311,6 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
-    {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
-    - name: hostrun
-      mountPath: /host/run
-      readOnly: false
-    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
