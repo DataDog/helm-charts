@@ -994,9 +994,9 @@ helm install <RELEASE_NAME> \
 | operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
 | operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
 | operator.datadogCRDs.crds.datadogGenericResources | bool | `true` | Set to true to deploy the DatadogGenericResource CRD |
-| operator.datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
+| operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
-| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
 | operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
 | operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |

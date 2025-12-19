@@ -5,6 +5,6 @@ chart-dirs:
 chart-repos:
   - datadog=https://helm.datadoghq.com
   - kube-state-metrics=https://prometheus-community.github.io/helm-charts
-helm-extra-args: --timeout 360s
+helm-extra-args: --timeout 300s
 check-version-increment: true
 debug: true

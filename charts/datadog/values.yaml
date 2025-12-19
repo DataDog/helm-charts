@@ -2762,9 +2762,9 @@ operator:
       # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
       datadogGenericResources: true
       # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
-      datadogMetrics: true
+      datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
-      datadogPodAutoscalers: true
+      datadogPodAutoscalers: false
 
 datadog-crds:
   crds:
