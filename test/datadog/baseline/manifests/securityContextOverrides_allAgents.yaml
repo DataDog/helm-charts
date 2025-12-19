@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.3
+    app.kubernetes.io/version: 1.21.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -162,7 +162,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.3
+    app.kubernetes.io/version: 1.21.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -564,32 +564,6 @@ rules:
       - ksh/metrics
     verbs:
       - get
-  - apiGroups:
-      - datadoghq.com
-    resources:
-      - datadogdashboards
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - datadoghq.com
-    resources:
-      - datadogdashboards/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - datadoghq.com
-    resources:
-      - datadogdashboards/status
-    verbs:
-      - get
-      - patch
-      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1755,7 +1729,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.3
+    app.kubernetes.io/version: 1.21.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1788,10 +1762,10 @@ spec:
             - -operatorMetricsEnabled=true
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
-            - -datadogMonitorEnabled=true
+            - -datadogMonitorEnabled=false
             - -datadogAgentEnabled=false
             - -datadogSLOEnabled=true
-            - -datadogDashboardEnabled=true
+            - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=true
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
@@ -1810,7 +1784,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0-rc.3
+          image: gcr.io/datadoghq/operator:1.21.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
