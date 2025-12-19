@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.156.2
+
+* Add `ftruncate` and `ftruncate64` syscalls to system-probe seccomp profile when GPU monitoring is enabled and `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
 ## 3.156.1
 
 * Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
