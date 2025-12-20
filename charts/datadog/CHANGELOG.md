@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.156.4
+
+* Remove RBAC grants when App & API Protection is not enabled.
+
 ## 3.156.3
 
 * Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
