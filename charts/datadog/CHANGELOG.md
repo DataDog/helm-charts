@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.7
+
+* Remove RBAC grants when App & API Protection is not enabled.
+
 ## 3.157.6
 
 * Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
