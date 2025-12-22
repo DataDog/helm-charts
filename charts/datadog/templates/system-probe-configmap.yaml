@@ -128,6 +128,8 @@ data:
         auto_suppression:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
         dir: /var/run/sysprobe/runtime-security/profiles
+      enforcement:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
     dynamic_instrumentation:
       enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
 
@@ -236,6 +238,9 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
+            {{- if .Values.datadog.securityAgent.runtime.enforcement.enabled }}
+            "kill",
+            {{- end }}
             "listen",
             "lseek",
             "lstat",
