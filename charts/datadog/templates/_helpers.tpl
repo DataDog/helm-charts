@@ -1057,6 +1057,9 @@ securityContext:
   {{- if .mknod -}}
     {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
   {{- end -}}
+  {{- if .kill -}}
+    {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
+  {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
     {{- $capabilities := dict "capabilities" (dict "add" $addedCapabilities) -}}
