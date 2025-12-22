@@ -1256,33 +1256,6 @@ spec:
   selector:
     app: datadog-cluster-agent
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: datadog
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-    heritage: Helm
-    release: datadog
-  name: datadog
-  namespace: datadog-agent
-spec:
-  internalTrafficPolicy: Local
-  ports:
-    - name: dogstatsdport
-      port: 8125
-      protocol: UDP
-      targetPort: 8125
-    - name: traceport
-      port: 8126
-      protocol: TCP
-      targetPort: 8126
-  selector:
-    app: datadog
----
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -1303,7 +1276,8 @@ spec:
       app: datadog
   template:
     metadata:
-      annotations: {}
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/agent: unconfined
       labels:
         admission.datadoghq.com/enabled: "false"
         agent.datadoghq.com/component: agent
@@ -1474,8 +1448,6 @@ spec:
             timeoutSeconds: 5
           resources: {}
           securityContext:
-            appArmorProfile:
-              type: Unconfined
             readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
