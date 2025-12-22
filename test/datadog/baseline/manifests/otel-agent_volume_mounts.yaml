@@ -158,8 +158,6 @@ data:
           http:
              endpoint: 0.0.0.0:4318
     exporters:
-      debug:
-        verbosity: detailed
       datadog:
         api:
           key: ${env:DD_API_KEY}

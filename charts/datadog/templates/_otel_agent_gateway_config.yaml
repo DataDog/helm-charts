@@ -9,8 +9,6 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.otelAgentGateway.ports "portName" "otel-http") }}
     exporters:
-      debug:
-        verbosity: detailed
       datadog:
         api:
           key: ${env:DD_API_KEY}
