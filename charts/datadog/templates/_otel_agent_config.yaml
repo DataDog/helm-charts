@@ -9,8 +9,6 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
     exporters:
-      debug:
-        verbosity: detailed
       otlphttp:
         endpoint: http://{{ template "datadog.fullname" . }}-otel-agent-gateway:4318
         tls:
@@ -56,8 +54,6 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
     exporters:
-      debug:
-        verbosity: detailed
       datadog:
         api:
           key: ${env:DD_API_KEY}
