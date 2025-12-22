@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.1
+
+* Bump `datadog-csi-driver` dependency to version 0.4.4 to allow tolerations to be passed to the daemonset.
+
 ## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
