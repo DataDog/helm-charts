@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
 ## 3.156.3
 
 * Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
