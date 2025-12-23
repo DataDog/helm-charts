@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.0
+
+* deprecate-run-in-core-agent ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
 ## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
