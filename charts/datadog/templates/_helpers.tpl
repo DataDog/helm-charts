@@ -1289,7 +1289,7 @@ Create RBACs for custom resources
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
       true
   {{- else -}}
     false
