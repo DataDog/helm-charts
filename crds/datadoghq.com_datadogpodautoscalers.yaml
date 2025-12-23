@@ -741,7 +741,7 @@ spec:
       subresources:
         status: {}
     - additionalPrinterColumns:
-        - jsonPath: .spec.policy.applyMode
+        - jsonPath: .spec.applyPolicy.mode
           name: Apply Mode
           type: string
         - jsonPath: .status.conditions[?(@.type=='Active')].status

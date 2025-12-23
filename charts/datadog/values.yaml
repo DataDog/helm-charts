@@ -11,6 +11,9 @@ nameOverride:  # ""
 # fullnameOverride -- Override the full qualified app name
 fullnameOverride:  # ""
 
+# kubeVersionOverride -- Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm
+kubeVersionOverride:  # "1.28.0"
+
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
@@ -1287,7 +1290,15 @@ datadog:
       # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
-  # Configuration related to Dynamic Instrumentation for Go services.
+  ## Datadog Operator
+  ## * Enable the Datadog Operator chart dependency.
+  ## * Configure the Datadog Operator sub-chart using the values config, `operator`.
+  ## For all available Operator chart options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
+  operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator.
+    enabled: true
+
+# Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
@@ -2719,6 +2730,41 @@ clusterChecksRunner:
 
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
+
+operator:
+  datadogAgent:
+    # operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # Note: The Datadog Agent controller will be enabled by default in a future release.
+    enabled: false
+  datadogDashboard:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+    enabled: false
+  datadogGenericResource:
+    # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+    enabled: true
+  datadogMonitor:
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
+    enabled: false
+  datadogSLO:
+    # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
+    enabled: true
+
+  datadogCRDs:
+    crds:
+      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      datadogAgents: false
+      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      datadogMonitors: true
+      # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      datadogSLOs: true
+      # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: true
+      # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      datadogGenericResources: true
+      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      datadogMetrics: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      datadogPodAutoscalers: false
 
 datadog-crds:
   crds:

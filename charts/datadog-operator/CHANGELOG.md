@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.17.0-dev.1
+
+* Update Datadog Operator chart for to 1.22.0-rc.1.
+
+## 2.16.0
+
+* Update Datadog Operator image tag to 1.21.0.
+
+## 2.16.0-dev.7
+
+* Add dnsConfig option
+
 ## 2.16.0-dev.6
 
 * Update Datadog Operator chart for 1.21.0-rc.3.

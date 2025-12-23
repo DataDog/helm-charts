@@ -156,6 +156,6 @@ Check operator image tag version.
 {{- $parts := split "@" $tag -}}
 {{- index $parts "_0"}}
 {{- else -}}
-{{ "1.21.0-rc.3" }}
+{{ "1.22.0-rc.1" }}
 {{- end -}}
 {{- end -}}

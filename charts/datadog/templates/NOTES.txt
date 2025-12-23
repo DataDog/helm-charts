@@ -772,11 +772,23 @@ This behavior will be adjusted automatically and the Core Agent will be used by 
 
 {{- end }}
 
-{{- if and (semverCompare "<1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) }}
+{{- if and (ne (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) }}
 
 ###################################################################################
 ####               WARNING: OTel Agent Gateway misconfiguration               ####
 ###################################################################################
 OTel Agent Gateway autoscaling has no effect in Kubernetes version 1.22.x and below
+
+{{- end }}
+
+{{ if .Values.datadog.operator.enabled }}
+###################################################################################
+####                     INFO: Datadog Operator is enabled                     ####
+###################################################################################
+Datadog Operator is enabled by default and running.
+
+Learn more about the Datadog Operator: https://docs.datadoghq.com/containers/datadog_operator/
+
+To disable the Datadog Operator, set `datadog.operator.enabled` to `false`.
 
 {{- end }}

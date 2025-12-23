@@ -1,8 +1,31 @@
 # Datadog changelog
 
-## 3.155.2
+## 3.157.1
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.157.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+## 3.156.3
+
+* Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
+
+## 3.156.2
+
+* Add `ftruncate` and `ftruncate64` syscalls to system-probe seccomp profile when GPU monitoring is enabled and `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
+## 3.156.1
+
+* Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
+
+## 3.156.0
+
+* Improve the default configs of DDOT Gateway:
+  * Include the infra attributes processor by default in daemon otel agents.
+  * Include the datadog extension by default in gateway otel agents.
+  * If user provides a gateway config that does not have the datadog extension, automatically add it to user's config.
 
 ## 3.155.1
 
