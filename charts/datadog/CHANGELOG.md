@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.1
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
 ## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
