@@ -36,8 +36,8 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
 				},
 			},
 			assertions: verifyDefaultDaemonset,
@@ -118,10 +118,10 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"targetSystem":                        "windows",
-					"agents.image.tag":                    "7.60.0",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"targetSystem":                 "windows",
+					"agents.image.tag":             "7.60.0",
 				},
 			},
 			assertions: verifyDaemonsetWindowsProcessAgentChecks,
@@ -173,9 +173,9 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"agents.image.tag":                    "7.52.0",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.tag":             "7.52.0",
 				},
 			},
 			assertions: verifyLinuxRunInCoreAgentOld,
@@ -188,9 +188,9 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":        "datadog-secret",
-					"datadog.appKeyExistingSecret":        "datadog-secret",
-					"agents.image.doNotCheckTag":          "true",
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.doNotCheckTag":   "true",
 				},
 			},
 			assertions: verifyLinuxRunInCoreAgentOld,
@@ -261,6 +261,21 @@ func Test_processAgentConfigs(t *testing.T) {
 				},
 			},
 			assertions: verifyUnprivilegedAgentHandling,
+		},
+		{
+			name: "trying to disable run in core agent",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":        "datadog-secret",
+					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"datadog.processAgent.runInCoreAgent": "false",
+				},
+			},
+			assertions: verifyDefaultDaemonset,
 		},
 	}
 
