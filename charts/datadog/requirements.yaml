@@ -13,3 +13,8 @@ dependencies:
     version: 0.4.3
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
+  - name: datadog-operator
+    version: 2.16.0
+    repository: https://helm.datadoghq.com
+    condition: datadog.operator.enabled
+    alias: operator
