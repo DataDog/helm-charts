@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.157.1
+## 3.157.2
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
 
 ## 3.157.0
 
