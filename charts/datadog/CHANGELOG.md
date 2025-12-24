@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.0
+
+* [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
+
 ## 3.157.1
 
 * Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
