@@ -26,13 +26,16 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
-            privileged: true 
+            privileged: true
           ports:
             - containerPort: 5000
-              protocol: TCP 
+              protocol: TCP
           args:
             - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
             - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
+            {{- if .Values.storage.enabled }}
+            - --storage-path={{.Values.storage.path}}
+            {{- end }}
           volumeMounts:
             # plugin-dir stores the socket on which CSI node server service is exposed.
             # it is created by the node server and needs to be writeable.
@@ -47,10 +50,14 @@ spec:
               readOnly: true
             {{- end }}
             # write mode is required to perform a volume mount
-            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount. 
+            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount.
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
+          {{- if .Values.storage.enabled }}
+            - name: data
+              mountPath: {{ .Values.storage.path }}
+          {{- end }}
           env:
             - name: NODE_ID
               valueFrom:
@@ -102,3 +109,9 @@ spec:
             path: {{ dir .Values.sockets.dsdHostSocketPath }}
             type: DirectoryOrCreate
           name: dsd-socket
+        {{- if .Values.storage.enabled }}
+        - name: data
+          hostPath:
+            path: {{ .Values.storage.path }}
+            type: DirectoryOrCreate
+        {{- end }}
