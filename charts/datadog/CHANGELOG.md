@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
+
 ## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
