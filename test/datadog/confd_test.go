@@ -89,9 +89,11 @@ func TestConfd(t *testing.T) {
 
 				// Check that the volume has the expected items
 				expectedItems := map[string]string{
-					"redisdb.yaml":           "redisdb.yaml",
-					"orchestrator.d--1.yaml": "orchestrator.d/1.yaml",
-					"orchestrator.d--2.yaml": "orchestrator.d/2.yaml",
+					"redisdb.yaml":                       "redisdb.yaml",
+					"orchestrator.d--1.yaml":             "orchestrator.d/1.yaml",
+					"orchestrator.d--2.yaml":             "orchestrator.d/2.yaml",
+					"kubernetes_state_core.yaml.default": "kubernetes_state_core.d/kubernetes_state_core.yaml.default",
+					"kubernetes_apiserver.yaml":          "kubernetes_apiserver.d/kubernetes_apiserver.yaml",
 				}
 
 				require.Len(t, confdVolume.ConfigMap.Items, len(expectedItems), "unexpected number of items in confd volume")
