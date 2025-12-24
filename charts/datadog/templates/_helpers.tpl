@@ -694,6 +694,23 @@ false
 {{- end -}}
 
 {{/*
+Return true if trace-loader should be used for the trace-agent container.
+trace-loader is available in agent versions >= 7.75.0.
+*/}}
+{{- define "use-trace-loader" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
+{{- if semverCompare ">=7.75.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if a traffic over TCP is configured for APM.
 */}}
 {{- define "trace-agent-use-tcp-port" -}}
