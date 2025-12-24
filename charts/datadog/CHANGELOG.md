@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
 ## 3.157.2
 
 * Rename endpoint configmap to properly support multiple releases and the operator subchart.
