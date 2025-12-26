@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
 ## 3.157.1
 
 * Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.

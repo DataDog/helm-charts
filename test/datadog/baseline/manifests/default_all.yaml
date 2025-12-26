@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -147,7 +147,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -228,6 +228,7 @@ rules:
     resources:
       - customresourcedefinitions
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -442,6 +443,34 @@ rules:
       - list
       - watch
   - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+  - apiGroups:
       - karpenter.sh
     resources:
       - '*'
@@ -461,11 +490,21 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
     verbs:
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - networking.k8s.io
@@ -1678,7 +1717,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 spec:
