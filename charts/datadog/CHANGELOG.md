@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.4
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
+
 ## 3.157.3
 
 * Fix appKey secret creation needed by datadog-operator subchart.
