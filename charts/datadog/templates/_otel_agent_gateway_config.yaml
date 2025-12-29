@@ -15,6 +15,7 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
           site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
         sending_queue:
           batch:
+            flush_timeout: 10s
     processors:
     extension:
       datadog:
@@ -26,15 +27,12 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
       pipelines:
         traces:
           receivers: [otlp]
-          processors: []
           exporters: [datadog]
         metrics:
           receivers: [otlp]
-          processors: []
           exporters: [datadog]
         logs:
           receivers: [otlp]
-          processors: []
           exporters: [datadog]
 {{- end -}}
 {{- end -}}
