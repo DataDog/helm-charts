@@ -164,6 +164,7 @@ data:
           site: ""
         sending_queue:
           batch:
+            flush_timeout: 10s
     processors:
       infraattributes:
         cardinality: 2
