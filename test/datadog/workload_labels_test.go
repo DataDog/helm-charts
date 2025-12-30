@@ -280,6 +280,27 @@ func Test_workload_labels(t *testing.T) {
 			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
 			expectedName:   "a-datadog",
 		},
+		{
+			name: "part-of label not longer than 63 chars, release name has hyphens, trailing hyphens (`--`) are trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "a-b-c-d-e",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-a--b--c--d--e",
+			expectedName:   "a-b-c-d-e-datadog",
+		},
 	}
 
 	for _, tt := range tests {
