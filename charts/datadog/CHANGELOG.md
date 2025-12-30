@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
 ## 3.157.3
 
 * Fix appKey secret creation needed by datadog-operator subchart.
