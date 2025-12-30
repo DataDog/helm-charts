@@ -238,6 +238,48 @@ func Test_workload_labels(t *testing.T) {
 			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaa",
 			expectedName:   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa-datadog",
 		},
+		{
+			name: "part-of label not longer than 63 chars and trailing `--` hyphens are trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "aaaaaaaaaaaaaaaaaaa-xxx",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaa",
+			expectedName:   "aaaaaaaaaaaaaaaaaaa-xxx-datadog",
+		},
+		{
+			name: "part-of label not longer than 63 chars and trailing `-` hyphen is trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "a",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+			expectedName:   "a-datadog",
+		},
 	}
 
 	for _, tt := range tests {
