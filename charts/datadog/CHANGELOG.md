@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.5
+
+* Fix part-of label truncation.
+
 ## 3.157.4
 
 * Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
