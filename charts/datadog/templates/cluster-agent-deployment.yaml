@@ -187,7 +187,7 @@ spec:
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
           {{- include "language-detection-common-env" . | nindent 10 }}
-          {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+          {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
           - name: DD_APP_KEY
             valueFrom:
               secretKeyRef:
