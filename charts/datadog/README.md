@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.151.3](https://img.shields.io/badge/Version-3.151.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.157.5](https://img.shields.io/badge/Version-3.157.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -30,6 +30,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.17.0-dev.2 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -744,9 +745,17 @@ helm install <RELEASE_NAME> \
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
+| datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio) |
+| datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
+| datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
+| datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
+| datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |
+| datadog.appsec.injector.processor.service.namespace | string | `""` | Namespace where the AppSec processor service is deployed |
+| datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
 | datadog.asm.iast.enabled | bool | `false` | Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.threats.enabled | bool | `false` | Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster |
+| datadog.autoscaling.workload.enabled | string | `nil` | Enable Workload Autoscaling. |
 | datadog.celWorkloadExclude | string | `nil` | Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+) ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/ |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
@@ -850,9 +859,11 @@ helm install <RELEASE_NAME> \
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
+| datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
+| datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
@@ -977,7 +988,21 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.resources | object | `{}` | Resource requests and limits for the kube-state-metrics container. |
 | kube-state-metrics.serviceAccount.create | bool | `true` | If true, create ServiceAccount, require rbac kube-state-metrics.rbac.create true |
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
+| kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
+| operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
+| operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
+| operator.datadogCRDs.crds.datadogGenericResources | bool | `true` | Set to true to deploy the DatadogGenericResource CRD |
+| operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
+| operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
+| operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
+| operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
+| operator.datadogSLO.enabled | bool | `true` | Enables the Datadog SLO controller |
+| operator.image.tag | string | `"1.21.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
@@ -1037,10 +1062,12 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | otelAgentGateway.volumes | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
+| providers.eks.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the EKS cluster. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
+| providers.openshift.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the OpenShift cluster. Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace. To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in: `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -` |
 | providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |
 | registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |

@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.17.0-dev.2
+
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
+## 2.17.0-dev.1
+
+* Update Datadog Operator chart for to 1.22.0-rc.1.
+
+## 2.16.0
+
+* Update Datadog Operator image tag to 1.21.0.
+
+## 2.16.0-dev.7
+
+* Add dnsConfig option
+
+## 2.16.0-dev.6
+
+* Update Datadog Operator chart for 1.21.0-rc.3.
+
+## 2.16.0-dev.5
+
+* Update version of Datadog CRDs to 2.14.0-dev.5.
+
 ## 2.16.0-dev.4
 
 * Use values from Datadog chart's endpoint-config configMap,  if present.

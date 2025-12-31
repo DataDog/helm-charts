@@ -22,6 +22,12 @@ data:
 {{- if .Values.datadog.orchestratorExplorer.enabled -}}
 {{ include "orchestratorExplorer-config" . | nindent 2 }}
 {{- end -}}
+{{- if .Values.providers.eks.controlPlaneMonitoring }}
+{{ include "eks-control-plane-monitoring-config" . | nindent 2 }}
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+{{ include "openshift-control-plane-monitoring-config" . | nindent 2 }}
+{{- end }}
 {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
 {{- range $name, $config := $configs }}
   {{ printf "%s--%s: |" $integration $name }}

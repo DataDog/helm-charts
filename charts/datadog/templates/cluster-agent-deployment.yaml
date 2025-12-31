@@ -187,12 +187,14 @@ spec:
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
           {{- include "language-detection-common-env" . | nindent 10 }}
-          {{- if .Values.clusterAgent.metricsProvider.enabled }}
+          {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
           - name: DD_APP_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
+          {{- end }}
+          {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
@@ -425,6 +427,10 @@ spec:
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           {{- end }}
+          {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
+          - name: DD_AUTOSCALING_CLUSTER_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).cluster).enabled) | quote }}
+          {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
               configMapKeyRef:
@@ -440,6 +446,36 @@ spec:
               configMapKeyRef:
                 name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
                 key: install_type
+          {{- if .Values.datadog.appsec.injector.enabled }}
+          - name: DD_APPSEC_PROXY_ENABLED
+            value: "true"
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_ENABLED
+            value: "true"
+          {{- if .Values.datadog.appsec.injector.autoDetect }}
+          - name: DD_APPSEC_PROXY_AUTO_DETECT
+            value: "true"
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.proxies }}
+          - name: DD_APPSEC_PROXY_PROXIES
+            value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.port }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_PORT
+            value: {{ .Values.datadog.appsec.injector.processor.port | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.address }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_ADDRESS
+            value: {{ .Values.datadog.appsec.injector.processor.address | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.name }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAME
+            value: {{ .Values.datadog.appsec.injector.processor.service.name | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.namespace }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE
+            value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
+          {{- end }}
+          {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
@@ -511,35 +547,6 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-            items:
-{{- range $file, $configs := $.Values.clusterAgent.confd }}
-            - key: {{ $file | quote }}
-              path: {{ $file | quote }}
-{{- end }}
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
-            - key: kubernetes_state_core.yaml.default
-              path: kubernetes_state_core.yaml.default
-{{- end }}
-{{- if .Values.datadog.helmCheck.enabled }}
-            - key: helm.yaml
-              path: helm.yaml
-{{- end }}
-{{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
-            - key: kubernetes_apiserver.yaml
-              path: kubernetes_apiserver.yaml
-{{- end }}
-{{- if .Values.datadog.orchestratorExplorer.enabled }}
-{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
-            - key: orchestrator.yaml
-              path: orchestrator.yaml
-{{- end }}
-{{- end }}
-{{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
-{{- range $name, $config := $configs }}
-            - key: {{ printf "%s--%s" $integration $name | quote }}
-              path: {{ printf "%s/%s" $integration $name | quote }}
-{{- end }}
-{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         - name: cluster-agent-yaml

@@ -11,6 +11,9 @@ nameOverride:  # ""
 # fullnameOverride -- Override the full qualified app name
 fullnameOverride:  # ""
 
+# kubeVersionOverride -- Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm
+kubeVersionOverride:  # "1.28.0"
+
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
@@ -619,6 +622,49 @@ datadog:
     iast:
       # datadog.asm.iast.enabled -- Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster
       enabled: false
+
+  ## App & API Protection configuration
+  ##
+  ## App & API Protection is disabled by default and can be enabled by setting the `enabled` field to `true` under the `datadog.appsec.injector` section.
+  ## The Datadog Helm Chart offer the option to auto-instrument supported proxies in the cluster to forward traffic to a custom security processor delegating
+  ## traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product that has to be deployed separately. Please follow the documentation to deploy the processor:
+  ## https://docs.datadoghq.com/security/application_security/setup/#proxies
+  ## It requires Datadog Cluster Agent 7.73.0+.
+
+  appsec:
+    # App & API Protection Injector is used to automatically configure your proxy to forward traffic to a custom security processor delegating
+    # traffic analysis, WAF capabilities and API Posture management to Datadog's App and API Protection product.
+    injector:
+      # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
+      enabled: false
+
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      autoDetect: true
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      # When autoDetect is true, detected proxies are added to this list
+      # When autoDetect is false, only proxies in this list are enabled
+      proxies: []
+      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
+      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+
+      processor:
+        # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
+        # Defaults to `{service.name}.{service.namespace}.svc`
+        address: ""
+
+        # datadog.appsec.injector.processor.port -- Port of the AppSec processor service (defaults to 443)
+        port: 443
+
+        # datadog.appsec.injector.service -- Required service information to connect to the AppSec processor
+        # This service should point to a deployment of the image `ghcr.io/DataDog/dd-trace-go/service-extensions-callout:latest`
+        # This deployment is not managed by the Datadog Helm chart.
+        service:
+          # datadog.appsec.injector.processor.service.name -- Name of the AppSec processor service
+          name: ""
+          # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
+          namespace: ""
+
   ## OTLP ingest related configuration
   otlp:
     receiver:
@@ -897,6 +943,12 @@ datadog:
     ## If you notice that the cluster-agent uses too much CPU in larger clusters
     ## turning this option off will improve the situation.
     container_scrubbing:
+      enabled: true
+
+    # datadog.orchestratorExplorer.kubelet_configuration_check.enabled -- Enable the orchestrator kubelet configuration check
+
+    ## this enables the collection of the kubelet configuration for viewing in the orchestrator
+    kubelet_configuration_check:
       enabled: true
 
     # datadog.orchestratorExplorer.customResources -- Defines custom resources for the orchestrator explorer to collect
@@ -1238,10 +1290,24 @@ datadog:
       # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
-  # Configuration related to Dynamic Instrumentation for Go services.
+  ## Datadog Operator
+  ## * Enable the Datadog Operator chart dependency.
+  ## * Configure the Datadog Operator sub-chart using the values config, `operator`.
+  ## For all available Operator chart options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
+  operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator.
+    enabled: true
+
+# Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
+
+  # Configuration related to Workload Autoscaling
+  autoscaling:
+    workload:
+      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      enabled:
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
@@ -2665,6 +2731,45 @@ clusterChecksRunner:
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
 
+operator:
+  image:
+    # operator.image.tag -- Define the Datadog Operator version to use
+    tag: 1.21.0
+
+  datadogAgent:
+    # operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # Note: The Datadog Agent controller will be enabled by default in a future release.
+    enabled: false
+  datadogDashboard:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+    enabled: false
+  datadogGenericResource:
+    # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+    enabled: true
+  datadogMonitor:
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
+    enabled: false
+  datadogSLO:
+    # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
+    enabled: true
+
+  datadogCRDs:
+    crds:
+      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      datadogAgents: false
+      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      datadogMonitors: true
+      # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      datadogSLOs: true
+      # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: true
+      # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      datadogGenericResources: true
+      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      datadogMetrics: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      datadogPodAutoscalers: false
+
 datadog-crds:
   crds:
     # datadog-crds.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
@@ -2715,6 +2820,9 @@ providers:
     gdc: false
 
   eks:
+    # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
+    controlPlaneMonitoring: false
+
     ec2:
       # providers.eks.ec2.useHostnameFromFile -- Use hostname from EC2 filesystem instead of fetching from metadata endpoint.
 
@@ -2725,6 +2833,13 @@ providers:
   aks:
     # providers.aks.enabled -- Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS.
     enabled: false
+
+  openshift:
+    # providers.openshift.controlPlaneMonitoring -- Enable control plane monitoring checks in the OpenShift cluster.
+    # Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace.
+    # To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
+    # `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -`
+    controlPlaneMonitoring: false
 
   talos:
     # providers.talos.enabled -- Activate all required specificities related to Talos.dev configuration,

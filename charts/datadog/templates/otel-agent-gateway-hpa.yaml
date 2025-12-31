@@ -1,4 +1,4 @@
-{{- if and (semverCompare ">=1.23.0" .Capabilities.KubeVersion.Version) (.Values.otelAgentGateway.autoscaling.enabled) (.Values.otelAgentGateway.enabled) }}
+{{- if and (eq (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) (.Values.otelAgentGateway.enabled) }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

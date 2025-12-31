@@ -50,6 +50,26 @@ false
 {{- end -}}
 
 {{/*
+Check if HorizontalPodAutoscaler v2 is supported (requires Kubernetes >= 1.23.0).
+This helper supports FluxCD and other GitOps tools by allowing kubeVersionOverride.
+
+Note: kubeVersionOverride can be used as a workaround when the Helm capabilities API
+doesn't reflect the actual cluster version (e.g., in FluxCD helm-controller).
+Set it to your cluster's version: --set kubeVersionOverride="1.28.0"
+*/}}
+{{- define "hpa-autoscaling-v2-supported" -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
+{{- if .Values.kubeVersionOverride -}}
+{{- $kubeVersion = .Values.kubeVersionOverride -}}
+{{- end -}}
+{{- if semverCompare ">=1.23.0" $kubeVersion -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Check if target cluster supports GKE Autopilot WorkloadAllowlists.
 GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.1729000.
 
@@ -780,12 +800,23 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Recursively trim all trailing hyphens from a string
+*/}}
+{{- define "trim-trailing-hyphens" -}}
+{{- if hasSuffix "-" . -}}
+{{- include "trim-trailing-hyphens" (trimSuffix "-" .) -}}
+{{- else -}}
+{{- . -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Build part-of label
 */}}
 {{- define "part-of-label" -}}
 {{- $ns := .Release.Namespace | replace "-" "--" -}}
-{{- $name := include "datadog.fullname" . | replace "-" "--" | trimSuffix "-" -}}
-{{ printf "%s-%s" $ns $name | trunc 63 | trimSuffix "-" }}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{- include "trim-trailing-hyphens" (printf "%s-%s" $ns $name | trunc 63) -}}
 {{- end }}
 
 {{/*
@@ -1370,4 +1401,105 @@ false
   {{- else -}}
     true
   {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the check config for the EKS control plane monitoring.
+*/}}
+{{- define "eks-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/kcm/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/ksh/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+{{- end -}}
+
+{{/*
+  Returns the configuration for the OpenShift control plane monitoring.
+*/}}
+{{- define "openshift-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+      resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kube-controller-manager"
+        namespace: "openshift-kube-controller-manager"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "scheduler"
+        namespace: "openshift-kube-scheduler"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+etcd.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "etcd"
+        namespace: "openshift-etcd"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      tls_cert: "/etc/etcd-certs/tls.crt"
+      tls_private_key: "/etc/etcd-certs/tls.key"
 {{- end -}}

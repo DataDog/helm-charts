@@ -8,5 +8,8 @@ dependencies:
 - name: datadog-csi-driver
   repository: https://helm.datadoghq.com
   version: 0.4.3
-digest: sha256:8587e304dd5e095bc4a8830c303a69a14c102442c98cf6212f40fbe981071656
-generated: "2025-11-28T11:31:11.543538+01:00"
+- name: datadog-operator
+  repository: https://helm.datadoghq.com
+  version: 2.17.0-dev.2
+digest: sha256:4ef96930db20151f5da2e926c724878484a9c29993cf3d6660026ca5e9d48db5
+generated: "2025-12-26T11:30:30.112249-05:00"

@@ -368,6 +368,42 @@ rules:
   - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
+# Used by datadog.appsec.injector feature
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - gateways
+    - gatewayclasses
+  verbs:
+    - get
+    - list
+    - watch
+    - patch
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - referencegrants
+  verbs:
+    - get
+    - delete
+    - create
+    - patch
+- apiGroups:
+    - "gateway.envoyproxy.io"
+  resources:
+    - envoyextensionpolicies
+  verbs:
+    - get
+    - delete
+    - create
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - envoyfilters
+  verbs:
+    - get
+    - create
+    - delete
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
@@ -472,7 +508,7 @@ subjects:
     namespace: {{ .Release.Namespace }}
 {{- end -}}
 
-{{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
@@ -482,6 +518,15 @@ metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
   namespace: {{ .Release.Namespace }}
 rules:
+# Ability to generate events
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+{{- if (((.Values.datadog.autoscaling).workload).enabled) }}
 # Access to own CRD
 - apiGroups:
   - "datadoghq.com"
@@ -498,14 +543,6 @@ rules:
   verbs:
   - 'update'
   - 'get'
-# Ability to generate events
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
 # Patching POD to add annotations. TODO: Remove when we have a better way to generate single event
 - apiGroups:
   - ""
@@ -526,6 +563,27 @@ rules:
   - rollouts
   verbs:
   - patch
+{{- end}}
+{{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
+- apiGroups:
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+- apiGroups:
+  - karpenter.k8s.aws
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+{{- end}}
+
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

@@ -267,6 +267,10 @@
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
+    {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
+    - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
+      value: "true"
+    {{- end }}
   volumeMounts:
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
@@ -307,11 +311,6 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
-    {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
-    - name: hostrun
-      mountPath: /host/run
-      readOnly: false
-    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
@@ -428,6 +427,13 @@
     - name: kubelet-cert-volume
       mountPath: /certs
     {{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+    - name: etcd-certs
+      mountPath: /etc/etcd-certs
+      readOnly: true
+    - name: disable-etcd-autoconf
+      mountPath: /etc/datadog-agent/conf.d/etcd.d
+{{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
