@@ -1,8 +1,54 @@
 # Changelog
 
+## 2.17.0-dev.2
+
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
+## 2.17.0-dev.1
+
+* Update Datadog Operator chart for to 1.22.0-rc.1.
+
+## 2.16.0
+
+* Update Datadog Operator image tag to 1.21.0.
+
+## 2.16.0-dev.7
+
+* Add dnsConfig option
+
+## 2.16.0-dev.6
+
+* Update Datadog Operator chart for 1.21.0-rc.3.
+
+## 2.16.0-dev.5
+
+* Update version of Datadog CRDs to 2.14.0-dev.5.
+
+## 2.16.0-dev.4
+
+* Use values from Datadog chart's endpoint-config configMap,  if present.
+
+## 2.16.0-dev.3
+
+* Update Datadog Operator image tag to 1.21.0-rc.2.
+
+## 2.16.0-dev.2
+
+* Same as 2.16.0-dev.1 and update version of Datadog CRDs to 2.14.0-dev.2 to pick up changes to DatadogPodAutoscaler.
+
 ## 2.16.0-dev.1
 
-Update Datadog Operator image tag to 1.21.0-rc.1.
+* Update Datadog Operator image tag to 1.21.0-rc.1.
+
+## 2.15.2
+
+* Revert of Datadog Operator image to 1.20.0 on the stable branch (2.15.1 was missing this fix) and include updated version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
+
+## 2.15.1 (deprecated – do not use)
+
+* This version was missing some required fixes and should not be used.
+* Use **2.15.2** instead (or **2.15.0** if you cannot upgrade to 2.15.2).
+* (Original change) Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
 
 ## 2.15.0
 

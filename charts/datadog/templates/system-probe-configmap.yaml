@@ -198,6 +198,10 @@ data:
             "fstat64",
             "fstatfs",
             "fsync",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode .Values.datadog.gpuMonitoring.configureCgroupPerms) }}
+            "ftruncate",
+            "ftruncate64",
+            {{- end }}
             "futex",
             "futimens",
             "getcwd",
@@ -322,6 +326,9 @@ data:
             "sysinfo",
             "tgkill",
             "tkill",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode .Values.datadog.gpuMonitoring.configureCgroupPerms) }}
+            "truncate",
+            {{- end }}
             "umask",
             "uname",
             "unlink",

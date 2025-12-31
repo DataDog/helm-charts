@@ -57,6 +57,7 @@ spec:
                 type:
                   description: Type is the type of the API object
                   enum:
+                    - downtime
                     - monitor
                     - notebook
                     - synthetics_api_test

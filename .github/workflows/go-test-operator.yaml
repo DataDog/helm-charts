@@ -4,10 +4,12 @@ on:
     paths:
       - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
+      - 'test/integ/**'
   pull_request:
     paths:
       - 'test/datadog-operator/**'
       - 'charts/datadog-operator/**'
+      - 'test/integ/**'
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
@@ -22,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go
-      uses: actions/setup-go@0caeaed6fd66a828038c2da3c0f662a42862658f # v1.1.3
+      uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
       with:
-        go-version: 1.21
+        go-version: 1.24
       id: go
     - name: Set up Helm
       uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
@@ -86,8 +88,6 @@ jobs:
         run: helm repo add datadog https://helm.datadoghq.com && helm repo update
       - name: Run integ tests
         env:
-          API_KEY: ${{ secrets.GO_INTEG_TEST_API_KEY }}
-          APP_KEY: ${{ secrets.GO_INTEG_TEST_APP_KEY }}
           CLUSTER_NAME: operator-ci-${{ matrix.versions.k8s }}
           K8S_VERSION: ${{ matrix.versions.k8s }}
         run: |

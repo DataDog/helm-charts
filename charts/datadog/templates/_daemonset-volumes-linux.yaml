@@ -15,9 +15,9 @@
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
 {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
-- name: hostrun
+- name: host-systemd-transient
   hostPath:
-    path: /run
+    path: /run/systemd/transient
 {{- end }}
 {{- end }}
 {{- if not .Values.providers.gke.gdc }}
@@ -214,9 +214,6 @@
 {{- end }}
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
 - hostPath:
-    path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
-- hostPath:
     path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
@@ -228,6 +225,14 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+- hostPath:
+    path: {{ template "datadog.hostMountRoot" . }}/logs
+  name: pointerdir
+{{- else }}
+- name: datadogrun
+  emptyDir: {}
+{{- end }}
 {{- if .Values.providers.gke.gdc }}
 - secret:
     secretName: datadog-kubelet-cert
@@ -237,5 +242,12 @@
 - name: gpu-devices
   hostPath:
     path: /dev/null
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+- name: etcd-certs
+  secret:
+    secretName: etcd-metric-client
+- name: disable-etcd-autoconf
+  emptyDir: {}
 {{- end }}
 {{- end -}}

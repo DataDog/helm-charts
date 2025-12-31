@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.14.0
+  tag: v1.15.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -136,3 +136,42 @@ runner:
   scriptFiles: []
   # script files provided here will be mounted in /home/scriptuser/
   # see examples/values.yaml for examples on how to specify scripts
+
+  # -- Pod Security configuration
+  podSecurity:
+    securityContextConstraints:
+      # -- If true, create a SecurityContextConstraints resource for Private Action Runner pods
+      create: false
+
+    # -- If true, Allow to run privileged containers
+    privileged: false
+
+    # -- Allowed volumes types
+    volumes:
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
+
+    # -- Allowed seccomp profiles
+    seccompProfiles:
+      - runtime/default
+
+    # -- Allowed capabilities
+    capabilities: []
+
+    # -- Required dropped capabilities
+    # Notes: You can not list a capability in both capabilities and requiredDropCapabilities
+    requiredDropCapabilities:
+      - KILL
+      - MKNOD
+      - SETUID
+      - SETGID
+
+    # -- Provide seLinuxContext configuration for SCC
+    seLinuxContext:
+      type: MustRunAs

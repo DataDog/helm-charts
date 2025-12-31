@@ -1,6 +1,6 @@
 dependencies:
   - name: datadog-crds
-    version: 2.8.0
+    version: 2.13.1
     repository: https://helm.datadoghq.com
     condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
     tags:
@@ -13,3 +13,8 @@ dependencies:
     version: 0.4.3
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
+  - name: datadog-operator
+    version: 2.17.0-dev.2
+    repository: https://helm.datadoghq.com
+    condition: datadog.operator.enabled
+    alias: operator
