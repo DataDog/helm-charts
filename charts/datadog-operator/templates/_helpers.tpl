@@ -53,18 +53,18 @@ Create the name of the service account to use
 
 {{/*
 Return the value for a given data key in the datadog endpoint-config ConfigMap.
+Looks up the ConfigMap by exact name based on the release name to avoid
+concatenating values from multiple ConfigMaps when multiple Datadog releases
+exist in the same namespace.
 */}}
 {{- define "get-endpoint-config-data-key" -}}
 {{- $ctx := index . 0 }}
 {{- $key := index . 1 }}
 {{- $ns := $ctx.Release.Namespace -}}
-{{- $list := lookup "v1" "ConfigMap" $ns "" -}}
-{{- if $list }}
-  {{- range $list.items }}
-    {{- if hasSuffix "endpoint-config" .metadata.name }}
-      {{- get .data $key -}}
-    {{- end }}
-  {{- end }}
+{{- $cmName := printf "%s-endpoint-config" $ctx.Release.Name -}}
+{{- $cm := lookup "v1" "ConfigMap" $ns $cmName -}}
+{{- if $cm }}
+  {{- get $cm.data $key -}}
 {{- end }}
 {{- end -}}
 
@@ -156,6 +156,6 @@ Check operator image tag version.
 {{- $parts := split "@" $tag -}}
 {{- index $parts "_0"}}
 {{- else -}}
-{{ "1.21.0-rc.2" }}
+{{ "1.22.0-rc.1" }}
 {{- end -}}
 {{- end -}}

@@ -50,6 +50,26 @@ false
 {{- end -}}
 
 {{/*
+Check if HorizontalPodAutoscaler v2 is supported (requires Kubernetes >= 1.23.0).
+This helper supports FluxCD and other GitOps tools by allowing kubeVersionOverride.
+
+Note: kubeVersionOverride can be used as a workaround when the Helm capabilities API
+doesn't reflect the actual cluster version (e.g., in FluxCD helm-controller).
+Set it to your cluster's version: --set kubeVersionOverride="1.28.0"
+*/}}
+{{- define "hpa-autoscaling-v2-supported" -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
+{{- if .Values.kubeVersionOverride -}}
+{{- $kubeVersion = .Values.kubeVersionOverride -}}
+{{- end -}}
+{{- if semverCompare ">=1.23.0" $kubeVersion -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Check if target cluster supports GKE Autopilot WorkloadAllowlists.
 GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.1729000.
 
@@ -780,12 +800,23 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Recursively trim all trailing hyphens from a string
+*/}}
+{{- define "trim-trailing-hyphens" -}}
+{{- if hasSuffix "-" . -}}
+{{- include "trim-trailing-hyphens" (trimSuffix "-" .) -}}
+{{- else -}}
+{{- . -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Build part-of label
 */}}
 {{- define "part-of-label" -}}
 {{- $ns := .Release.Namespace | replace "-" "--" -}}
-{{- $name := include "datadog.fullname" . | replace "-" "--" | trimSuffix "-" -}}
-{{ printf "%s-%s" $ns $name | trunc 63 | trimSuffix "-" }}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{- include "trim-trailing-hyphens" (printf "%s-%s" $ns $name | trunc 63) -}}
 {{- end }}
 
 {{/*

@@ -1,12 +1,71 @@
 # Datadog changelog
 
-## 3.154.0
+## 3.158.0
 
 * Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
 
-## 3.153.0
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
+
+## 3.157.0
 
 * Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+## 3.156.3
+
+* Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
+
+## 3.156.2
+
+* Add `ftruncate` and `ftruncate64` syscalls to system-probe seccomp profile when GPU monitoring is enabled and `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
+## 3.156.1
+
+* Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
+
+## 3.156.0
+
+* Improve the default configs of DDOT Gateway:
+  * Include the infra attributes processor by default in daemon otel agents.
+  * Include the datadog extension by default in gateway otel agents.
+  * If user provides a gateway config that does not have the datadog extension, automatically add it to user's config.
+
+## 3.155.1
+
+* Change default value for `datadog.workload.autoscaling.enabled` to be empty. Fixes issue [#2241](https://github.com/DataDog/helm-charts/issues/2241) in chart 3.154.1.
+
+## 3.155.0
+
+* Allow activation of cluster autoscaling.
+
+## 3.154.1
+
+* Expose `datadog.workload.autoscaling.enabled` parameter.
+
+## 3.154.0
+
+* Add a field to enable the kubelet orchestrator check
+
+## 3.153.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
 
 ## 3.152.0
 

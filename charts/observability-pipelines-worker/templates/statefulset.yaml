@@ -22,6 +22,8 @@ spec:
 {{ toYaml .Values.podLabels | indent 8 }}
         {{- end }}
       annotations:
+        checksum/bootstrap: {{ include (print .Template.BasePath "/bootstrap.yaml") . | sha256sum }}
+        checksum/secret-file-backend: {{ include (print .Template.BasePath "/secret-file-backend.yaml") . | sha256sum }}
         {{- if .Values.podAnnotations }}
 {{ tpl (toYaml .Values.podAnnotations) . | indent 8 }}
         {{- end }}

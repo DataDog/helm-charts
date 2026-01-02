@@ -120,8 +120,16 @@
       readOnly: true
 {{- end }}
 {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+{{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    - name: host-systemd-transient
+      mountPath: /host/root/run/systemd/transient
+      readOnly: false
+{{- end }}
 {{- end }}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules

@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -207,7 +207,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -288,6 +288,7 @@ rules:
     resources:
       - customresourcedefinitions
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -480,8 +481,6 @@ rules:
   - apiGroups:
       - datadoghq.com
       - karpenter.azure.com
-      - karpenter.k8s.aws
-      - karpenter.sh
     resources:
       - '*'
     verbs:
@@ -496,11 +495,52 @@ rules:
       - watch
   - apiGroups:
       - external.metrics.k8s.io
+      - karpenter.k8s.aws
     resources:
       - '*'
     verbs:
       - get
       - list
+      - watch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+  - apiGroups:
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
       - watch
   - apiGroups:
       - metrics.eks.amazonaws.com
@@ -510,11 +550,21 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
     verbs:
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - networking.k8s.io
@@ -871,6 +921,41 @@ rules:
       - list
       - watch
       - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gateways
+      - gatewayclasses
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - get
+      - delete
+      - create
+      - patch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - get
+      - delete
+      - create
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - get
+      - create
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1393,6 +1478,8 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
+            - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
+              value: "true"
           image: gcr.io/datadoghq/agent:7.73.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -1807,7 +1894,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0-rc.2
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1841,10 +1928,10 @@ spec:
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
-            - -datadogAgentEnabled=true
-            - -datadogSLOEnabled=false
+            - -datadogAgentEnabled=false
+            - -datadogSLOEnabled=true
             - -datadogDashboardEnabled=false
-            - -datadogGenericResourceEnabled=false
+            - -datadogGenericResourceEnabled=true
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
           env:
@@ -1862,7 +1949,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0-rc.2
+          image: gcr.io/datadoghq/operator:1.21.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -1954,6 +2041,11 @@ spec:
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
               value: "false"
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-secret
             - name: DD_ADMISSION_CONTROLLER_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
