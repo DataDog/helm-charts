@@ -1503,3 +1503,29 @@ etcd.yaml: |-
       tls_cert: "/etc/etcd-certs/tls.crt"
       tls_private_key: "/etc/etcd-certs/tls.key"
 {{- end -}}
+
+
+{{/*
+  Returns true if the DatadogAgent CRD is installed.
+*/}}
+{{- define "datadogagents-crd-ready" }}
+{{- $crdsReady := false }}
+{{- range $i := until 10 }}
+  {{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+    {{- $crdsReady = true }}
+  {{- end }}
+{{- end }}
+{{ $crdsReady }}
+{{- end -}}
+
+
+{{/*
+  Returns true if Helm->DDA migration is supported.
+*/}}
+{{- define "migration-supported" }}
+{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) (or (.Values.operator.image.doNotCheckTag) ( semverCompare ">=1.21.0" .Values.operator.image.tag )) }}
+true
+{{- else }}
+false
+{{- end }}
+{{- end }}

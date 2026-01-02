@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.0
+
+* Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
 ## 3.157.5
 
 * Fix part-of label truncation.
