@@ -93,6 +93,13 @@
               "items": {
                 "type": "string"
               }
+            },
+            "tags": {
+              "type": "array",
+              "description": "List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": ["ddBaseURL", "modes"],
@@ -408,6 +415,60 @@
             "required": ["fileName", "data"],
             "additionalProperties": false
           }
+        },
+        "podSecurity": {
+          "type": "object",
+          "description": "Pod Security configuration",
+          "properties": {
+            "securityContextConstraints": {
+              "type": "object",
+              "description": "SecurityContextConstraints configuration",
+              "properties": {
+                "create": {
+                  "type": "boolean",
+                  "description": "If true, create a SecurityContextConstraints resource for Private Action Runner pods"
+                }
+              },
+              "additionalProperties": false
+            },
+            "privileged": {
+              "type": "boolean",
+              "description": "If true, Allow to run privileged containers"
+            },
+            "volumes": {
+              "type": "array",
+              "description": "Allowed volumes types",
+              "items": {
+                "type": "string"
+              }
+            },
+            "seccompProfiles": {
+              "type": "array",
+              "description": "Allowed seccomp profiles",
+              "items": {
+                "type": "string"
+              }
+            },
+            "capabilities": {
+              "type": "array",
+              "description": "Allowed capabilities",
+              "items": {
+                "type": "string"
+              }
+            },
+            "requiredDropCapabilities": {
+              "type": "array",
+              "description": "Required dropped capabilities",
+              "items": {
+                "type": "string"
+              }
+            },
+            "seLinuxContext": {
+              "$ref": "https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0/_definitions.json#/definitions/io.k8s.api.core.v1.SELinuxOptions",
+              "description": "Provide seLinuxContext configuration for SCC"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "required": ["config"],

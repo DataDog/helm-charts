@@ -1,5 +1,25 @@
 # Datadog changelog
 
+## 1.19.0
+
+* Bump private runner version to 1.15.0
+* Add script connection testing
+* Add script name suggestions
+
+## 1.18.0
+
+* Configurable Security Context Constraints for OpenShift
+
+## 1.17.0
+
+* Bump private runner version to 1.14.0
+* Gitlab Create pipeline action now supports the `inputs` field in the request
+
+## 1.16.0
+
+* Bump private runner version to 1.13.0
+* Support specifying custom tags when publishing observability metrics
+
 ## 1.15.2
 
 * Bump private runner version to 1.12.2
@@ -7,7 +27,7 @@
 
 ## 1.15.1
 
-* Bump private runenr version to 1.12.1
+* Bump private runner version to 1.12.1
 
 ## 1.15.0
 

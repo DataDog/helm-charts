@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-endpoint-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+data:
+  api-key-secret-name: {{ default "" ( include "datadog.apiSecretName" . ) }}
+{{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
+  app-key-secret-name: {{ default "" ( include "datadog.appKeySecretName" . )  }}
+{{- end }}
+{{- if .Values.datadog.site }}
+  dd-site: {{ .Values.datadog.site  | quote }}
+{{- end }}
+{{- if .Values.datadog.dd_url }}
+  dd-url: {{ .Values.datadog.dd_url | quote }}
+{{- end }}

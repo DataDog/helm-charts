@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
+    controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagentprofiles.datadoghq.com
 spec:
   group: datadoghq.com
@@ -1041,6 +1041,16 @@ spec:
                         autoscaling:
                           description: Autoscaling configuration.
                           properties:
+                            cluster:
+                              description: Cluster contains the configuration for the cluster autoscaling product.
+                              properties:
+                                enabled:
+                                  description: |-
+                                    Enabled enables the cluster autoscaling product.
+                                    (Requires Cluster Agent 7.74.0+)
+                                    Default: false
+                                  type: boolean
+                              type: object
                             workload:
                               description: Workload contains the configuration for the workload autoscaling product.
                               properties:
@@ -1936,6 +1946,106 @@ spec:
                                 ScrubContainers enables scrubbing of sensitive container data (passwords, tokens, etc. ).
                                 Default: true
                               type: boolean
+                          type: object
+                        otelAgentGateway:
+                          description: OtelAgentGateway configuration.
+                          properties:
+                            conf:
+                              description: |-
+                                Conf overrides the configuration for the default OTel Agent Gateway.
+                                This must point to a ConfigMap containing a valid OTel collector configuration.
+                                When passing a configmap, file name *must* be otel-gateway-config.yaml.
+                              properties:
+                                configData:
+                                  description: ConfigData corresponds to the configuration file content.
+                                  type: string
+                                configMap:
+                                  description: ConfigMap references an existing ConfigMap with the configuration file content.
+                                  properties:
+                                    items:
+                                      description: Items maps a ConfigMap data `key` to a file `path` mount.
+                                      items:
+                                        description: Maps a string key to a path within a volume.
+                                        properties:
+                                          key:
+                                            description: key is the key to project.
+                                            type: string
+                                          mode:
+                                            description: |-
+                                              mode is Optional: mode bits used to set permissions on this file.
+                                              Must be an octal value between 0000 and 0777 or a decimal value between 0 and 511.
+                                              YAML accepts both octal and decimal values, JSON requires decimal values for mode bits.
+                                              If not specified, the volume defaultMode will be used.
+                                              This might be in conflict with other options that affect the file
+                                              mode, like fsGroup, and the result can be other mode bits set.
+                                            format: int32
+                                            type: integer
+                                          path:
+                                            description: |-
+                                              path is the relative path of the file to map the key to.
+                                              May not be an absolute path.
+                                              May not contain the path element '..'.
+                                              May not start with the string '..'.
+                                            type: string
+                                        required:
+                                          - key
+                                          - path
+                                        type: object
+                                      type: array
+                                      x-kubernetes-list-map-keys:
+                                        - key
+                                      x-kubernetes-list-type: map
+                                    name:
+                                      description: Name is the name of the ConfigMap.
+                                      type: string
+                                  type: object
+                              type: object
+                            enabled:
+                              description: |-
+                                Enabled enables the OTel Agent Gateway.
+                                Default: false
+                              type: boolean
+                            ports:
+                              description: |-
+                                Ports contains the ports that the OTel Collector is listening on.
+                                Defaults: otel-grpc:4317 / otel-http:4318.
+                              items:
+                                description: ContainerPort represents a network port in a single container.
+                                properties:
+                                  containerPort:
+                                    description: |-
+                                      Number of port to expose on the pod's IP address.
+                                      This must be a valid port number, 0 < x < 65536.
+                                    format: int32
+                                    type: integer
+                                  hostIP:
+                                    description: What host IP to bind the external port to.
+                                    type: string
+                                  hostPort:
+                                    description: |-
+                                      Number of port to expose on the host.
+                                      If specified, this must be a valid port number, 0 < x < 65536.
+                                      If HostNetwork is specified, this must match ContainerPort.
+                                      Most containers do not need this.
+                                    format: int32
+                                    type: integer
+                                  name:
+                                    description: |-
+                                      If specified, this must be an IANA_SVC_NAME and unique within the pod. Each
+                                      named port in a pod must have a unique name. Name for the port that can be
+                                      referred to by services.
+                                    type: string
+                                  protocol:
+                                    default: TCP
+                                    description: |-
+                                      Protocol for port. Must be UDP, TCP, or SCTP.
+                                      Defaults to "TCP".
+                                    type: string
+                                required:
+                                  - containerPort
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                           type: object
                         otelCollector:
                           description: OtelCollector configuration.
@@ -2969,14 +3079,6 @@ spec:
                             Use 'docker.io/datadog' for DockerHub.
                             Default: 'gcr.io/datadoghq'
                           type: string
-                        runProcessChecksInCoreAgent:
-                          description: |-
-                            Configure whether the Process Agent or core Agent collects process and/or container information (Linux only).
-                            If no other checks are running, the Process Agent container will not initialize.
-                            (Requires Agent 7.60.0+)
-                            Default: 'true'
-                            Deprecated: Functionality now handled automatically. Use env var `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` to override.
-                          type: boolean
                         secretBackend:
                           description: |-
                             Configure the secret backend feature https://docs.datadoghq.com/agent/guide/secrets-management
@@ -3327,7 +3429,6 @@ spec:
                                                 pod labels will be ignored. The default value is empty.
                                                 The same key is forbidden to exist in both matchLabelKeys and labelSelector.
                                                 Also, matchLabelKeys cannot be set when labelSelector isn't set.
-                                                This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                               items:
                                                 type: string
                                               type: array
@@ -3342,7 +3443,6 @@ spec:
                                                 pod labels will be ignored. The default value is empty.
                                                 The same key is forbidden to exist in both mismatchLabelKeys and labelSelector.
                                                 Also, mismatchLabelKeys cannot be set when labelSelector isn't set.
-                                                This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                               items:
                                                 type: string
                                               type: array
@@ -3503,7 +3603,6 @@ spec:
                                             pod labels will be ignored. The default value is empty.
                                             The same key is forbidden to exist in both matchLabelKeys and labelSelector.
                                             Also, matchLabelKeys cannot be set when labelSelector isn't set.
-                                            This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                           items:
                                             type: string
                                           type: array
@@ -3518,7 +3617,6 @@ spec:
                                             pod labels will be ignored. The default value is empty.
                                             The same key is forbidden to exist in both mismatchLabelKeys and labelSelector.
                                             Also, mismatchLabelKeys cannot be set when labelSelector isn't set.
-                                            This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                           items:
                                             type: string
                                           type: array
@@ -3672,7 +3770,6 @@ spec:
                                                 pod labels will be ignored. The default value is empty.
                                                 The same key is forbidden to exist in both matchLabelKeys and labelSelector.
                                                 Also, matchLabelKeys cannot be set when labelSelector isn't set.
-                                                This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                               items:
                                                 type: string
                                               type: array
@@ -3687,7 +3784,6 @@ spec:
                                                 pod labels will be ignored. The default value is empty.
                                                 The same key is forbidden to exist in both mismatchLabelKeys and labelSelector.
                                                 Also, mismatchLabelKeys cannot be set when labelSelector isn't set.
-                                                This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                               items:
                                                 type: string
                                               type: array
@@ -3848,7 +3944,6 @@ spec:
                                             pod labels will be ignored. The default value is empty.
                                             The same key is forbidden to exist in both matchLabelKeys and labelSelector.
                                             Also, matchLabelKeys cannot be set when labelSelector isn't set.
-                                            This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                           items:
                                             type: string
                                           type: array
@@ -3863,7 +3958,6 @@ spec:
                                             pod labels will be ignored. The default value is empty.
                                             The same key is forbidden to exist in both mismatchLabelKeys and labelSelector.
                                             Also, mismatchLabelKeys cannot be set when labelSelector isn't set.
-                                            This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).
                                           items:
                                             type: string
                                           type: array
@@ -3947,6 +4041,62 @@ spec:
                               type: string
                             description: Annotations provide annotations that are added to the different component (Datadog Agent, Cluster Agent, Cluster Check Runner) pods.
                             type: object
+                          celWorkloadExclude:
+                            description: |-
+                              CELWorkloadExclude enables excluding workloads from monitoring using Common Expression Language (CEL).
+                              See https://docs.datadoghq.com/containers/guide/container-discovery-management
+                              (Requires Agent 7.73+ and Cluster Agent 7.73+)
+                            items:
+                              description: |-
+                                CelWorkloadExcludeConfig configures CEL-based filtering to exclude specific workloads
+                                from Agent collection.
+                              properties:
+                                products:
+                                  description: Products specifies which products these exclusion rules apply to.
+                                  items:
+                                    description: |-
+                                      Product defines which Datadog product(s) the CEL-based workload exclusion rules apply to.
+                                      Use "global" to apply rules across all products, or specify individual products for granular control.
+                                    enum:
+                                      - metrics
+                                      - logs
+                                      - sbom
+                                      - global
+                                    type: string
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                                rules:
+                                  description: Rules defines the CEL expressions used to identify workloads to exclude.
+                                  properties:
+                                    containers:
+                                      description: Containers exclude rule
+                                      items:
+                                        type: string
+                                      type: array
+                                    kube_endpoints:
+                                      description: KubeEndpoints exclude rule
+                                      items:
+                                        type: string
+                                      type: array
+                                    kube_services:
+                                      description: KubeServices exclude rule
+                                      items:
+                                        type: string
+                                      type: array
+                                    pods:
+                                      description: Pods exclude rule
+                                      items:
+                                        type: string
+                                      type: array
+                                    processes:
+                                      description: Processes exclude rule
+                                      items:
+                                        type: string
+                                      type: array
+                                  type: object
+                              type: object
+                            type: array
+                            x-kubernetes-list-type: atomic
                           containers:
                             additionalProperties:
                               description: DatadogAgentGenericContainer is the generic structure describing any container's common configuration.
@@ -5199,7 +5349,7 @@ spec:
                               EnvFrom specifies the ConfigMaps and Secrets to expose as environment variables.
                               Priority is env > envFrom.
                             items:
-                              description: EnvFromSource represents the source of a set of ConfigMaps
+                              description: EnvFromSource represents the source of a set of ConfigMaps or Secrets
                               properties:
                                 configMapRef:
                                   description: The ConfigMap to select from
@@ -5219,7 +5369,7 @@ spec:
                                   type: object
                                   x-kubernetes-map-type: atomic
                                 prefix:
-                                  description: An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
+                                  description: Optional text to prepend to the name of each environment variable. Must be a C_IDENTIFIER.
                                   type: string
                                 secretRef:
                                   description: The Secret to select from
@@ -5837,7 +5987,6 @@ spec:
                                     - Ignore: nodeAffinity/nodeSelector are ignored. All nodes are included in the calculations.
 
                                     If this value is nil, the behavior is equivalent to the Honor policy.
-                                    This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.
                                   type: string
                                 nodeTaintsPolicy:
                                   description: |-
@@ -5848,7 +5997,6 @@ spec:
                                     - Ignore: node taints are ignored. All nodes are included.
 
                                     If this value is nil, the behavior is equivalent to the Ignore policy.
-                                    This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.
                                   type: string
                                 topologyKey:
                                   description: |-
@@ -6806,7 +6954,7 @@ spec:
                                     The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                                     The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                                     The volume will be mounted read-only (ro) and non-executable files (noexec).
-                                    Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                                    Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                                     The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                                   properties:
                                     pullPolicy:

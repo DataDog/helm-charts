@@ -1,5 +1,190 @@
 # Datadog changelog
 
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
+
+## 3.157.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
+
+## 3.156.3
+
+* Fix mounts of `/host/run/systemd` and pod-resources socket in system-probe container when GPU monitoring.
+
+## 3.156.2
+
+* Add `ftruncate` and `ftruncate64` syscalls to system-probe seccomp profile when GPU monitoring is enabled and `datadog.gpuMonitoring.configureCgroupPerms` is set to `true`.
+
+## 3.156.1
+
+* Add `kubeVersionOverride` parameter to support GitOps tools like FluxCD that don't expose the real cluster Kubernetes version to Helm templates. This resolves issues where HPA resources (like `otelAgentGateway.autoscaling`) were skipped due to incorrect version detection.
+
+## 3.156.0
+
+* Improve the default configs of DDOT Gateway:
+  * Include the infra attributes processor by default in daemon otel agents.
+  * Include the datadog extension by default in gateway otel agents.
+  * If user provides a gateway config that does not have the datadog extension, automatically add it to user's config.
+
+## 3.155.1
+
+* Change default value for `datadog.workload.autoscaling.enabled` to be empty. Fixes issue [#2241](https://github.com/DataDog/helm-charts/issues/2241) in chart 3.154.1.
+
+## 3.155.0
+
+* Allow activation of cluster autoscaling.
+
+## 3.154.1
+
+* Expose `datadog.workload.autoscaling.enabled` parameter.
+
+## 3.154.0
+
+* Add a field to enable the kubelet orchestrator check
+
+## 3.153.0
+
+* Add support for App & API Protection injector configuration for proxies (Envoy Gateway, Istio) via `datadog.appsec.injector` settings.
+
+## 3.152.0
+
+* Add flags to enable control plane monitoring in EKS/OpenShift clusters.
+
+## 3.151.3
+
+* Update default Agent version to 7.73.0 ([#2232](https://github.com/DataDog/helm-charts/pull/2232)).
+
+## 3.151.2
+
+* Add DD_OTELCOLLECTOR_GATEWAY_MODE env variable to indicate Gateway deployment mode
+
+## 3.151.1
+
+* Reapply add datadog endpoint configMap.
+* Fix endpoint-config ConfigMap to respect fullnameOverride.
+
+## 3.151.0
+
+* Add new CEL workload exclude configuration: `datadog.celWorkloadExclude` and `clusterAgent.celWorkloadExcude`.
+
+## 3.150.0
+
+* Enables `readOnlyRootFilesystem` by default for all datadog agent containers while addressing the issue preventing
+  Remote Configuration from working.
+
+## 3.149.3
+
+* Add `/metrics` RBAC permission to DCA ClusterRole.
+
+## 3.149.2
+
+* Reverts `readOnlyRootFilesystem` default on all Datadog Agent containers (https://github.com/DataDog/helm-charts/pull/2150) as it prevents Remote Configuration from working as expected. We recommend updating to this version if you are using `3.148.0` to `3.149.1` included.
+
+## 3.149.1
+
+* [datadog] Default to Agent/Cluster-Agent 7.72.4 ([#2210](https://github.com/DataDog/helm-charts/pull/2210)).
+
+## 3.149.0
+
+* Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler
+
+## 3.148.2
+
+* Fix Kube State Metrics Core templates to respect `doNotCheckTag` flag before calling `semverCompare` on image tags.
+
+## 3.148.1
+
+* Make the chart compatible with older Helm versions such as `3.5.4`:
+    * Make security-agent helper template on a single line to avoid unclosed action errors.
+    * In the registry helper, defaults to `datadoghq.com` when `datadog.site` is undefined to not compare `nil` and `""`
+    * In `NOTES.txt`, check if `clusterAgent.admissionController.configMode` is defined before comparing with `"csi"`
+
+## 3.148.0
+
+* Enable readOnlyRootFilesystem by default on all Datadog Agent containers.
+
+## 3.147.2
+
+* Truncate part-of label values to be under 63 characters.
+
+## 3.147.1
+
+* Revert datadog endpoint configMap.
+
+## 3.147.0
+
+* Add controllerrevisions to default resource collection and rbac when agent version is 7.72.0 or later.
+
+## 3.146.4
+
+* Add datadog endpoint configMap.
+
+## 3.146.3
+
+* Fix templating granular roles defined in `datadog.secretBackend.roles` by removing the checksum annotation
+
+## 3.146.2
+
+* Fix templating error when creating sbom analyzers config with multiple values.
+
+## 3.146.1
+
+* Fix templating error when upgrading to version 3.144.0
+
+## 3.146.0
+
+* Add `datadog.dynamic_instrumentation_go.enabled` to enable the dynamic instrumentation module.
+* Add an `emptyDir` volume mount to the system probe for `/tmp/datadog-agent/system-probe/dynamic-instrumentation`.
+
+## 3.145.1
+
+* [CONS-7793] Add necessary RBAC for ArgoRollout to be provide read access to the admission controller.
+
+## 3.145.0
+
+* Add SBOM analyzer configurations: `datadog.sbom.host.analyzers` and `datadog.sbom.containerImage.analyzers`.
+
+## 3.144.1
+
+* Fix system-probe mounts for CWS, adding missing /host/root and /host/sys/fs/cgroup
+* Add unit tests for workload protection
+
+## 3.144.0
+
+* Add `app.kubernetes.io/part-of` label to the agent, cluster-agent, and cluster-checks-runner pods.
+
+## 3.143.0
+
+* Add configs on init containers in OTel Agent Gateway: `otelAgentGateway.initContainers.securityContext` and `otelAgentGateway.initContainers.resources`.
+* The image of OTel Agent Gateway is now configured with `otelAgentGateway.image` rather than `agents.image`.
+* Fix the default replicas of OTel Agent Gateway to match documentation (default is 1).
+* Update the OTel Agent Gateyway Deployment checksum annotation to use the full content of `otel-gateway-configmap.yaml`. Also allow to pass in the checksum of an existing ConfigMap with `otelAgentGateway.configMap.checksum`.
+
+## 3.142.0
+
+* Update Agent to 7.72.1 ([#2142](https://github.com/DataDog/helm-charts/pull/2142)).
+
+## 3.141.2
+
+* Fix system-probe rendering when empty security context rendered by helper ([#2137](https://github.com/DataDog/helm-charts/pull/2137)).
+
 ## 3.141.1
 
 * Support autoscaling using Horizontal Pod Autoscaler (HPA) in OTel Agent Gateway, configured by `otelAgentGateway.autoscaling`.
@@ -47,7 +232,6 @@
 ## 3.138.1
 
 * Update `fips.image.tag` to `1.1.17` fixing CVEs and updating packages.
-
 
 ## 3.138.0
 

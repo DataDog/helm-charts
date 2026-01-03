@@ -50,6 +50,26 @@ false
 {{- end -}}
 
 {{/*
+Check if HorizontalPodAutoscaler v2 is supported (requires Kubernetes >= 1.23.0).
+This helper supports FluxCD and other GitOps tools by allowing kubeVersionOverride.
+
+Note: kubeVersionOverride can be used as a workaround when the Helm capabilities API
+doesn't reflect the actual cluster version (e.g., in FluxCD helm-controller).
+Set it to your cluster's version: --set kubeVersionOverride="1.28.0"
+*/}}
+{{- define "hpa-autoscaling-v2-supported" -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
+{{- if .Values.kubeVersionOverride -}}
+{{- $kubeVersion = .Values.kubeVersionOverride -}}
+{{- end -}}
+{{- if semverCompare ">=1.23.0" $kubeVersion -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Check if target cluster supports GKE Autopilot WorkloadAllowlists.
 GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.1729000.
 
@@ -375,15 +395,16 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return the proper registry based on datadog.site (requires .Values to be passed as .)
 */}}
 {{- define "registry" -}}
+{{- $site := default "datadoghq.com" .datadog.site -}}
 {{- if .registry -}}
 {{- .registry -}}
-{{- else if eq .datadog.site "datadoghq.eu" -}}
+{{- else if eq $site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
-{{- else if eq .datadog.site "ddog-gov.com" -}}
+{{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
-{{- else if eq .datadog.site "ap1.datadoghq.com" -}}
+{{- else if eq $site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
-{{- else if and (eq .datadog.site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
@@ -447,10 +468,26 @@ Return a remote otel-agent based on `.Values` (passed as .)
 {{- end -}}
 
 {{/*
+Return the image for the otel-agent in gateway based on `.Values` (passed as .)
+*/}}
+{{- define "ddot-collector-gateway-image" -}}
+  {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
+    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
+      {{- fail "`-full` image is not supported in otel agent gateway" -}}
+    {{- end -}}
+    {{- if semverCompare "<7.67.0" $imageTag -}}
+      {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
+    {{- end -}}
+  {{- end -}}
+  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+{{- end -}}
+
+{{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
@@ -521,8 +558,7 @@ false
 Return true if the security-agent container should be created.
 */}}
 {{- define "should-enable-security-agent" -}}
-{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature"
-.) "true") -}}
+{{- if and (not .Values.providers.gke.gdc ) (eq .Values.targetSystem "linux") (eq (include "security-agent-feature" .) "true") -}}
 true
 {{- else -}}
 false
@@ -764,6 +800,26 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Recursively trim all trailing hyphens from a string
+*/}}
+{{- define "trim-trailing-hyphens" -}}
+{{- if hasSuffix "-" . -}}
+{{- include "trim-trailing-hyphens" (trimSuffix "-" .) -}}
+{{- else -}}
+{{- . -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Build part-of label
+*/}}
+{{- define "part-of-label" -}}
+{{- $ns := .Release.Namespace | replace "-" "--" -}}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{- include "trim-trailing-hyphens" (printf "%s-%s" $ns $name | trunc 63) -}}
+{{- end }}
+
+{{/*
 Common agent, cluster-agent, and cluster-checks-runner workload template labels
 */}}
 {{- define "datadog.pod-template-labels" }}
@@ -772,21 +828,22 @@ Common agent, cluster-agent, and cluster-checks-runner workload template labels
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
 app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
+app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
 
 {{/*
 Common agent, cluster-agent, and cluster-checks-runner workload labels
 */}}
-{{- define "datadog.workload-labels" }}
-{{- $ctx := index . 0 }}
-{{- $name := index . 1 }}
-helm.sh/chart: '{{ include "datadog.chart" $ctx }}'
-{{ include "datadog.pod-template-labels" (list $ctx $name) }}
+{{- define "datadog.workload-labels" -}}
+{{- $ctx := index . 0 -}}
+{{- $name := index . 1 -}}
+helm.sh/chart: '{{ include "datadog.chart" $ctx -}}'
+{{- include "datadog.pod-template-labels" (list $ctx $name) }}
 {{- if $ctx.Chart.AppVersion }}
 app.kubernetes.io/version: {{ $ctx.Chart.AppVersion | quote }}
-{{- end }}
-{{- if $ctx.Values.commonLabels}}
-{{ toYaml $ctx.Values.commonLabels }}
+{{- end -}}
+{{- if $ctx.Values.commonLabels }}
+{{ toYaml $ctx.Values.commonLabels -}}
 {{- end }}
 {{- end }}
 
@@ -1006,7 +1063,9 @@ securityContext:
     {{- $securityContext = merge $capabilities $securityContext -}}
   {{- end -}}
 securityContext:
+{{- if not (empty $securityContext) }}
 {{ toYaml $securityContext | indent 2 }}
+{{- end }}
 {{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
@@ -1342,4 +1401,105 @@ false
   {{- else -}}
     true
   {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the check config for the EKS control plane monitoring.
+*/}}
+{{- define "eks-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/kcm/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kubernetes"
+        namespace: "default"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/apis/metrics.eks.amazonaws.com/v1/ksh/container/metrics"
+      extra_headers:
+          accept: "*/*"
+      bearer_token_auth: true
+      tls_ca_cert: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+{{- end -}}
+
+{{/*
+  Returns the configuration for the OpenShift control plane monitoring.
+*/}}
+{{- define "openshift-control-plane-monitoring-config" -}}
+kube_apiserver_metrics.yaml: |-
+  advanced_ad_identifiers:
+  - kube_endpoints:
+      name: "kubernetes"
+      namespace: "default"
+      resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      bearer_token_auth: true
+
+kube_controller_manager.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "kube-controller-manager"
+        namespace: "openshift-kube-controller-manager"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+kube_scheduler.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "scheduler"
+        namespace: "openshift-kube-scheduler"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      bearer_token_auth: true
+
+etcd.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: "etcd"
+        namespace: "openshift-etcd"
+        resolve: "ip"
+  cluster_check: true
+  init_config: {}
+  instances:
+    - prometheus_url: "https://%%host%%:%%port%%/metrics"
+      ssl_verify: false
+      tls_cert: "/etc/etcd-certs/tls.crt"
+      tls_private_key: "/etc/etcd-certs/tls.key"
 {{- end -}}

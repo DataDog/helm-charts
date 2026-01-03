@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.11.0](https://img.shields.io/badge/Version-2.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.11.0](https://img.shields.io/badge/AppVersion-2.11.0-informational?style=flat-square)
+![Version: 2.12.1](https://img.shields.io/badge/Version-2.12.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -91,6 +91,9 @@ The command removes all the Kubernetes components associated with the chart and 
 | containerPorts | list | `[]` | Manually define ContainerPort array, overriding automated generation of ContainerPorts. |
 | datadog.apiKey | string | `nil` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
+| datadog.bootstrap | object | `{"config":{},"secretFileContents":{}}` | Provide a bootstrap file that conforms to the options provided in this documentation:   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options |
+| datadog.bootstrap.config | object | `{}` | The bootstrap file contents |
+| datadog.bootstrap.secretFileContents | object | `{}` | Additional helper for the "secrets" portion of the bootstrap file. Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file, and correctly setup the bootstrap to point to the secrets file. eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" } |
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
@@ -110,7 +113,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | image.pullPolicy | string | `"IfNotPresent"` | Specify the [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy). |
 | image.pullSecrets | list | `[]` | Specify the [imagePullSecrets](https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod). |
 | image.repository | string | `"gcr.io/datadoghq"` | Specify the image repository to use. |
-| image.tag | string | `"2.11.0"` | Specify the image tag to use. |
+| image.tag | string | `"2.12.0"` | Specify the image tag to use. |
 | ingress.annotations | object | `{}` | Specify annotations for the Ingress. |
 | ingress.className | string | `""` | Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress), requires Kubernetes >= 1.18. |
 | ingress.enabled | bool | `false` | If **true**, create an Ingress resource. |
@@ -122,6 +125,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
+| persistence.annotations | object | `{}` | Specify the annotations for PersistentVolumeClaimsTemplates. |
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |
