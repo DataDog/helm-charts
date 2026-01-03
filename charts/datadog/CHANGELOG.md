@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.157.6
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
 ## 3.157.5
 
 * Fix part-of label truncation.
