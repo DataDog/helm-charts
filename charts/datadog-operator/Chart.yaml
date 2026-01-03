@@ -19,7 +19,7 @@ dependencies:
 - name: datadog-crds
   version: 2.15.0-dev.1
   alias: datadogCRDs
-  repository: https://helm.datadoghq.com
+  repository: file://../datadog-crds
   condition: installCRDs
   tags:
   - install-crds

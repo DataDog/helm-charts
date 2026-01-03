@@ -165,7 +165,8 @@ datadogCRDs:
     datadogGenericResources: false
     # datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
     datadogAgentProfiles: false
-
+    # crds.datadogServiceMonitors -- Set to true to deploy the DatadogServiceMonitors CRD
+    datadogServiceMonitors: true
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
 # podLabels -- Allows setting additional labels for for Datadog Operator PODs

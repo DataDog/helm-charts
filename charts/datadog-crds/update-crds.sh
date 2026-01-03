@@ -59,3 +59,4 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscal
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogdashboards datadogDashboards v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoggenericresources datadogGenericResources v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentinternals datadogAgentInternal v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogservicemonitors datadogServiceMonitors v1
