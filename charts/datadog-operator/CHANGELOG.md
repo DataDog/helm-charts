@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.17.0-dev.2
+
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
 ## 2.17.0-dev.1
 
 * Update Datadog Operator chart for to 1.22.0-rc.1.

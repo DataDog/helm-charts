@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 3.157.2
+## 3.157.7
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
 
 ## 3.157.1
 
