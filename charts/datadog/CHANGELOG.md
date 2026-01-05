@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.158.7
+## 3.158.0
 
 * deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
 
