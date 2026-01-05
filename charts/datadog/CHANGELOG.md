@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.1
+
+* Fix Prometheus internal metrics in DDOT's default config: reduce the scraping interval from 60s to 10s, and exclude billable custom metrics.
+
 ## 3.158.0
 
 * deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
