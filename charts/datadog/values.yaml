@@ -1171,6 +1171,10 @@ datadog:
           # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
           enabled: true
 
+      enforcement:
+        # datadog.securityAgent.runtime.enforcement.enabled -- Set to false to disable CWS runtime enforcement
+        enabled: true
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
@@ -2733,6 +2737,10 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  image:
+    # operator.image.tag -- Define the Datadog Operator version to use
+    tag: 1.21.0
+
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.

@@ -1,8 +1,32 @@
 # Datadog changelog
 
-## 3.158.0
+## 3.158.7
 
 * deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
 
 ## 3.157.0
 

@@ -187,12 +187,14 @@ spec:
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
           {{- include "language-detection-common-env" . | nindent 10 }}
-          {{- if .Values.clusterAgent.metricsProvider.enabled }}
+          {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
           - name: DD_APP_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
+          {{- end }}
+          {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
