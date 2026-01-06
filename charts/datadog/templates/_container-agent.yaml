@@ -204,6 +204,10 @@
     - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
       value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
     {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.analyzers }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.containerImage.analyzers | quote }}
+    {{- end }}
     {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
     {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
@@ -220,6 +224,10 @@
       value: "true"
     - name: HOST_ROOT
       value: /host
+    {{- if .Values.datadog.sbom.host.analyzers }}
+    - name: DD_SBOM_HOST_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
+    {{- end }}
     {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -261,6 +269,10 @@
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
+    {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
+    - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
+      value: "true"
+    {{- end }}
   volumeMounts:
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
@@ -301,11 +313,6 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
-    {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
-    - name: hostrun
-      mountPath: /host/run
-      readOnly: false
-    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
@@ -328,7 +335,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") }}
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (and (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true")) }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
@@ -353,6 +360,9 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- else }}
+    - name: datadogrun
+      mountPath: /opt/datadog-agent/run
     {{- end }}
     {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
     - name: host-containerd-dir
@@ -419,6 +429,13 @@
     - name: kubelet-cert-volume
       mountPath: /certs
     {{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+    - name: etcd-certs
+      mountPath: /etc/etcd-certs
+      readOnly: true
+    - name: disable-etcd-autoconf
+      mountPath: /etc/datadog-agent/conf.d/etcd.d
+{{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}

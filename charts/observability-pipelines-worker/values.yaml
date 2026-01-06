@@ -38,12 +38,22 @@ datadog:
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
+  # datadog.bootstrap -- Provide a bootstrap file that conforms to the options provided in this documentation:
+  #   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
+  bootstrap:
+    # datadog.bootstrap.config -- The bootstrap file contents
+    config: {}
+    # datadog.bootstrap.secretFileContents -- Additional helper for the "secrets" portion of the bootstrap file.
+    # Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file,
+    # and correctly setup the bootstrap to point to the secrets file.
+    # eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" }
+    secretFileContents: {}
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 2.11.0
+  tag: 2.12.0
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -282,6 +292,11 @@ persistence:
     - kubernetes.io/pvc-protection
   # persistence.selector -- Specify the selectors for PersistentVolumeClaims.
   selector: {}
+  # persistence.annotations -- Specify the annotations for PersistentVolumeClaimsTemplates.
+  annotations: {}
+  # resize.topolvm.io/threshold: "10%"
+  # resize.topolvm.io/increase: "2Gi"
+  # resize.topolvm.io/storage_limit: "20Gi"
 
 # dnsPolicy -- Specify the
 # [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy).

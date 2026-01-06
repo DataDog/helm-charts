@@ -22,6 +22,8 @@ spec:
 {{ toYaml .Values.podLabels | indent 8 }}
         {{- end }}
       annotations:
+        checksum/bootstrap: {{ include (print .Template.BasePath "/bootstrap.yaml") . | sha256sum }}
+        checksum/secret-file-backend: {{ include (print .Template.BasePath "/secret-file-backend.yaml") . | sha256sum }}
         {{- if .Values.podAnnotations }}
 {{ tpl (toYaml .Values.podAnnotations) . | indent 8 }}
         {{- end }}
@@ -30,6 +32,10 @@ spec:
 {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   - metadata:
       name: data
+      annotations:
+        {{- if .Values.persistence.annotations }}
+{{ toYaml .Values.persistence.annotations | nindent 8 }}
+        {{- end }}
     spec:
       accessModes: {{ .Values.persistence.accessModes }}
       storageClassName: {{ .Values.persistence.storageClassName }}

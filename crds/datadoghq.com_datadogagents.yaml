@@ -32,6 +32,7 @@ spec:
       name: v2alpha1
       schema:
         openAPIV3Schema:
+          description: DatadogAgent defines Agent configuration, see reference https://github.com/DataDog/datadog-operator/blob/main/docs/configuration.v2alpha1.md
           properties:
             apiVersion:
               type: string
@@ -559,6 +560,11 @@ spec:
                       type: object
                     autoscaling:
                       properties:
+                        cluster:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         workload:
                           properties:
                             enabled:
@@ -1062,6 +1068,60 @@ spec:
                           x-kubernetes-list-type: set
                         scrubContainers:
                           type: boolean
+                      type: object
+                    otelAgentGateway:
+                      properties:
+                        conf:
+                          properties:
+                            configData:
+                              type: string
+                            configMap:
+                              properties:
+                                items:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        format: int32
+                                        type: integer
+                                      path:
+                                        type: string
+                                    required:
+                                      - key
+                                      - path
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-map-keys:
+                                    - key
+                                  x-kubernetes-list-type: map
+                                name:
+                                  type: string
+                              type: object
+                          type: object
+                        enabled:
+                          type: boolean
+                        ports:
+                          items:
+                            properties:
+                              containerPort:
+                                format: int32
+                                type: integer
+                              hostIP:
+                                type: string
+                              hostPort:
+                                format: int32
+                                type: integer
+                              name:
+                                type: string
+                              protocol:
+                                default: TCP
+                                type: string
+                            required:
+                              - containerPort
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                       type: object
                     otelCollector:
                       properties:
@@ -1636,8 +1696,6 @@ spec:
                       type: object
                     registry:
                       type: string
-                    runProcessChecksInCoreAgent:
-                      type: boolean
                     secretBackend:
                       properties:
                         args:
@@ -2125,6 +2183,45 @@ spec:
                         additionalProperties:
                           type: string
                         type: object
+                      celWorkloadExclude:
+                        items:
+                          properties:
+                            products:
+                              items:
+                                enum:
+                                  - metrics
+                                  - logs
+                                  - sbom
+                                  - global
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: atomic
+                            rules:
+                              properties:
+                                containers:
+                                  items:
+                                    type: string
+                                  type: array
+                                kube_endpoints:
+                                  items:
+                                    type: string
+                                  type: array
+                                kube_services:
+                                  items:
+                                    type: string
+                                  type: array
+                                pods:
+                                  items:
+                                    type: string
+                                  type: array
+                                processes:
+                                  items:
+                                    type: string
+                                  type: array
+                              type: object
+                          type: object
+                        type: array
+                        x-kubernetes-list-type: atomic
                       containers:
                         additionalProperties:
                           properties:
@@ -4564,6 +4661,11 @@ spec:
                           type: object
                         autoscaling:
                           properties:
+                            cluster:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                             workload:
                               properties:
                                 enabled:
@@ -5067,6 +5169,60 @@ spec:
                               x-kubernetes-list-type: set
                             scrubContainers:
                               type: boolean
+                          type: object
+                        otelAgentGateway:
+                          properties:
+                            conf:
+                              properties:
+                                configData:
+                                  type: string
+                                configMap:
+                                  properties:
+                                    items:
+                                      items:
+                                        properties:
+                                          key:
+                                            type: string
+                                          mode:
+                                            format: int32
+                                            type: integer
+                                          path:
+                                            type: string
+                                        required:
+                                          - key
+                                          - path
+                                        type: object
+                                      type: array
+                                      x-kubernetes-list-map-keys:
+                                        - key
+                                      x-kubernetes-list-type: map
+                                    name:
+                                      type: string
+                                  type: object
+                              type: object
+                            enabled:
+                              type: boolean
+                            ports:
+                              items:
+                                properties:
+                                  containerPort:
+                                    format: int32
+                                    type: integer
+                                  hostIP:
+                                    type: string
+                                  hostPort:
+                                    format: int32
+                                    type: integer
+                                  name:
+                                    type: string
+                                  protocol:
+                                    default: TCP
+                                    type: string
+                                required:
+                                  - containerPort
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
                           type: object
                         otelCollector:
                           properties:
