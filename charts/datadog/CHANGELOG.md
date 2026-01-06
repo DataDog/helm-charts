@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.3
+
+* Bump `datadog-csi-driver` dependency to version 0.4.4 to allow tolerations to be passed to the daemonset.
+
 ## 3.158.2
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
