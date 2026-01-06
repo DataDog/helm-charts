@@ -279,7 +279,6 @@ clusterAgent.tokenExistingSecret:
   args:
     - keyName: token
       keyNamePath: spec.global.clusterAgentTokenSecret.keyName
-      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.clusterAgentTokenSecret.secretName
 clusterAgent.tolerations: spec.override.clusterAgent.tolerations
@@ -377,7 +376,6 @@ datadog.apiKeyExistingSecret:
   args:
     - keyName: api-key
       keyNamePath: spec.global.credentials.apiSecret.keyName
-      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.credentials.apiSecret.secretName
 datadog.apm.enabled: spec.features.apm.hostPortConfig.enabled
@@ -402,7 +400,6 @@ datadog.appKeyExistingSecret:
   args:
     - keyName: app-key
       keyNamePath: spec.global.credentials.appSecret.keyName
-      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.credentials.appSecret.secretName
 datadog.asm.iast.enabled: spec.features.asm.iast.enabled
