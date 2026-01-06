@@ -18,14 +18,15 @@ exporters:
   datadog:
     api:
       key: ${env:DD_API_KEY}
+    sending_queue:
+      batch:
+        flush_timeout: 10s
 processors:
   infraattributes:
     cardinality: 2
   probabilistic_sampler:
     hash_seed: 22
     sampling_percentage: 15.3
-  batch:
-    timeout: 10s
 connectors:
   datadog/connector:
     traces:
@@ -42,17 +43,17 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: []
       exporters: [datadog/connector]
     traces/sampled:
       receivers: [otlp]
-      processors: [probabilistic_sampler, infraattributes, batch]
+      processors: [probabilistic_sampler, infraattributes]
       exporters: [datadog]
     metrics:
       receivers: [otlp, datadog/connector, prometheus]
-      processors: [infraattributes, batch]
+      processors: [infraattributes]
       exporters: [datadog]
     logs:
       receivers: [otlp]
-      processors: [infraattributes, batch]
+      processors: [infraattributes]
       exporters: [datadog]
