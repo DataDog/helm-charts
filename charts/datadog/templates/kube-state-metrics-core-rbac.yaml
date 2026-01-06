@@ -45,6 +45,11 @@ rules:
   - daemonsets
   - deployments
   - replicasets
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
+  - controllerrevisions
+{{- end }}
   verbs:
   - list
   - watch
@@ -101,6 +106,19 @@ rules:
   verbs:
     - list
     - watch
+{{- range .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+- apiGroups:
+    - {{ .groupVersionKind.group }}
+  resources:
+    - {{ if .groupVersionKind.resource }}
+        {{ .groupVersionKind.resource | lower }}
+      {{ else }}
+        {{ .groupVersionKind.kind | lower }}s
+      {{ end }}
+  verbs:
+    - list
+    - watch
+{{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
 - apiGroups:
     - apiregistration.k8s.io

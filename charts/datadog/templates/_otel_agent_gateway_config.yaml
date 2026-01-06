@@ -1,0 +1,38 @@
+{{- define "otel-agent-gateway-config-configmap-content" -}}
+otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .Values.otelAgentGateway.config | indent 4 }}
+  {{- else }} |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.otelAgentGateway.ports "portName" "otel-grpc") }}
+          http:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.otelAgentGateway.ports "portName" "otel-http") }}
+    exporters:
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+          site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
+        sending_queue:
+          batch:
+            flush_timeout: 10s
+    processors:
+    extension:
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+          site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
+        deployment_type: gateway
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [datadog]
+        metrics:
+          receivers: [otlp]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          exporters: [datadog]
+{{- end -}}
+{{- end -}}

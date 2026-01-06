@@ -1,5 +1,81 @@
 # Datadog changelog
 
+## 0.17.19
+
+* Update private location image version to `1.63.0`.
+
+## 0.17.18
+
+* Update private location image version to `1.62.0`.
+
+## 0.17.17
+
+* Update private location image version to `1.61.0`.
+
+## 0.17.16
+
+* Add support for namespaces
+
+## 0.17.15
+
+* Update private location image version to `1.60.0`.
+
+## 0.17.14
+
+* Update private location image version to `1.59.2`.
+
+## 0.17.13
+
+* Update private location image version to `1.59.1`.
+
+## 0.17.12
+
+* Update private location image version to `1.59.0`.
+
+## 0.17.11
+
+* Update private location image version to `1.58.0`.
+
+## 0.17.10
+
+* Update private location image version to `1.57.0`.
+
+## 0.17.9
+
+* Update private location image version to `1.56.1`.
+
+## 0.17.8
+
+* Update private location image version to `1.56.0`.
+
+## 0.17.7
+
+* Update private location image version to `1.55.0`.
+
+## 0.17.6
+
+* Add optional annotations for service account.
+
+## 0.17.5
+
+* Update private location image version to `1.54.0`.
+
+## 0.17.4
+
+* Update private location image version to `1.53.0`.
+
+## 0.17.3
+
+* Update private location image version to `1.52.0`.
+
+## 0.17.2
+
+* Update private location image version to `1.51.0`.
+
+## 0.17.1
+
+* Update private location image version to `1.50.0`.
+
 ## 0.17.0
 
 * Add `podDisruptionBudget` to allow creating and configuring PodDisruptionBudget for deployment.

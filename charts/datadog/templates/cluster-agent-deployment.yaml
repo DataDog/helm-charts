@@ -6,8 +6,9 @@ metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "cluster-agent") | indent 4 }}
     app.kubernetes.io/component: cluster-agent
+    agent.datadoghq.com/component: cluster-agent
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
@@ -36,10 +37,11 @@ spec:
   template:
     metadata:
       labels:
-{{ include "datadog.template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "cluster-agent") | indent 8 }}
         app.kubernetes.io/component: cluster-agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-cluster-agent
+        agent.datadoghq.com/component: cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
         {{- end }}
@@ -63,6 +65,9 @@ spec:
         {{- end }}
         {{- if .Values.clusterAgent.confd }}
         checksum/confd-config: {{ tpl (toYaml .Values.clusterAgent.confd) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
         {{- end }}
       {{- if .Values.clusterAgent.podAnnotations }}
 {{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
@@ -104,6 +109,9 @@ spec:
 {{- if .Values.clusterAgent.containers.initContainers.resources }}
         resources:
 {{ toYaml .Values.clusterAgent.containers.initContainers.resources | indent 10 }}
+{{- else if and (empty .Values.clusterAgent.containers.initContainers.resources) .Values.providers.gke.autopilot }}
+        resources:
+{{- include "default-container-resources" . | indent 10 }}
 {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
@@ -116,7 +124,7 @@ spec:
           - name: config
             mountPath: /opt/datadog-agent
       containers:
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
       - name: cluster-agent
@@ -128,7 +136,11 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         resources:
+{{- if and (empty .Values.clusterAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-agent-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterAgent.resources | indent 10 }}
+{{- end }}
         ports:
         - containerPort: 5005
           name: agentport
@@ -160,6 +172,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
@@ -170,12 +186,15 @@ spec:
                 key: api-key
                 optional: true
           {{- include "components-common-env" . | nindent 10 }}
-          {{- if .Values.clusterAgent.metricsProvider.enabled }}
+          {{- include "language-detection-common-env" . | nindent 10 }}
+          {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
           - name: DD_APP_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
+          {{- end }}
+          {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
@@ -188,6 +207,9 @@ spec:
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENDPOINT
             value: {{ .Values.clusterAgent.metricsProvider.endpoint | quote }}
           {{- end }}
+          - name: DD_EXTERNAL_METRICS_AGGREGATOR
+            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
+          {{- end }}
           {{- if .Values.clusterAgent.containerInclude }}
           - name: DD_CONTAINER_INCLUDE
             value: {{ .Values.clusterAgent.containerInclude | quote }}
@@ -196,12 +218,33 @@ spec:
           - name: DD_CONTAINER_EXCLUDE
             value: {{ .Values.clusterAgent.containerExclude | quote }}
           {{- end }}
-          - name: DD_EXTERNAL_METRICS_AGGREGATOR
-            value: {{ .Values.clusterAgent.metricsProvider.aggregator | quote }}
-          {{- end }}
+          {{- if .Values.clusterAgent.celWorkloadExclude }}
+          - name: DD_CEL_WORKLOAD_EXCLUDE
+            value: {{ .Values.clusterAgent.celWorkloadExclude | toJson | quote }}
+          {{ end }}
           {{- if .Values.clusterAgent.admissionController.enabled }}
           - name: DD_ADMISSION_CONTROLLER_ENABLED
             value: {{ .Values.clusterAgent.admissionController.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
+            value: {{ .Values.clusterAgent.admissionController.validation.enabled | quote }}
+          - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
+            value: {{ .Values.clusterAgent.admissionController.mutation.enabled | quote }}
+          {{- if .Values.datadog.apm.hostSocketPath }}
+          - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+            value: {{ .Values.datadog.apm.hostSocketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.dogstatsd.hostSocketPath }}
+          - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+            value: {{ .Values.datadog.dogstatsd.hostSocketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.dogstatsd.socketPath }}
+          - name: DD_DOGSTATSD_SOCKET
+            value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.socketPath }}
+          - name: DD_APM_RECEIVER_SOCKET
+            value: {{ .Values.datadog.apm.socketPath | quote }}
+          {{- end }}
           - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
             value: {{ .Values.clusterAgent.admissionController.webhookName | quote }}
           - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
@@ -213,8 +256,10 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.configMode }}
             {{- else if eq (include "trace-agent-use-uds" .) "true" }}
             value: socket
-            {{- else if or (eq (include "trace-agent-use-tcp-port" .) "true") ( .Values.providers.gke.autopilot )}}
+            {{- else if or (eq (include "trace-agent-use-host-port" .) "true") ( .Values.providers.gke.autopilot )}}
             value: hostip
+            {{- else if (eq (include "trace-agent-use-local-service" .) "true")}}
+            value: service
             {{- else if or (not .Values.datadog.apm.enabled ) (and (eq (include "trace-agent-use-tcp-port" .) "true") (eq (include "trace-agent-use-uds" .) "true")) }}
             value: socket
             {{- else }}
@@ -233,6 +278,22 @@ spec:
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
+            value: "true"
+          {{- end }}
+          - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+          {{- if .Values.clusterAgent.admissionController.containerRegistry }}
+            value: {{ .Values.clusterAgent.admissionController.containerRegistry | quote }}
+          {{- else }}
+            value: {{ include "registry" .Values | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.admissionController.cwsInstrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_MODE
+            value: {{ .Values.clusterAgent.admissionController.cwsInstrumentation.mode | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.admissionController.kubernetesAdmissionEvents.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_KUBERNETES_ADMISSION_EVENTS_ENABLED
             value: "true"
           {{- end }}
           {{ include "ac-agent-sidecar-env" . | nindent 10 }}
@@ -254,6 +315,14 @@ spec:
           - name: DD_APM_INSTRUMENTATION_LIB_VERSIONS
             value: {{ .Values.datadog.apm.instrumentation.libVersions | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.targets }}
+          - name: DD_APM_INSTRUMENTATION_TARGETS
+            value: {{ .Values.datadog.apm.instrumentation.targets | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injector.imageTag }}
+          - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
+            value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
@@ -265,6 +334,10 @@ spec:
           {{- if .Values.datadog.asm.iast.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_IAST_ENABLED
             value: "true"
+          {{- end }}
+          {{- if not (eq .Values.datadog.profiling.enabled nil) }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PROFILING_ENABLED
+            value: {{ .Values.datadog.profiling.enabled | quote }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -297,6 +370,10 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+            value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
+          - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
+            value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
             value: {{ template "datadog.fullname" . }}-cluster-agent
           - name: DD_CLUSTER_AGENT_AUTH_TOKEN
@@ -347,6 +424,12 @@ spec:
           {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
           - name: DD_AUTOSCALING_WORKLOAD_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          - name: DD_AUTOSCALING_FAILOVER_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          {{- end }}
+          {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
+          - name: DD_AUTOSCALING_CLUSTER_ENABLED
+            value: {{ (((.Values.datadog.autoscaling).cluster).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
@@ -363,6 +446,36 @@ spec:
               configMapKeyRef:
                 name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
                 key: install_type
+          {{- if .Values.datadog.appsec.injector.enabled }}
+          - name: DD_APPSEC_PROXY_ENABLED
+            value: "true"
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_ENABLED
+            value: "true"
+          {{- if .Values.datadog.appsec.injector.autoDetect }}
+          - name: DD_APPSEC_PROXY_AUTO_DETECT
+            value: "true"
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.proxies }}
+          - name: DD_APPSEC_PROXY_PROXIES
+            value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.port }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_PORT
+            value: {{ .Values.datadog.appsec.injector.processor.port | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.address }}
+          - name: DD_APPSEC_PROXY_PROCESSOR_ADDRESS
+            value: {{ .Values.datadog.appsec.injector.processor.address | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.name }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAME
+            value: {{ .Values.datadog.appsec.injector.processor.service.name | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.processor.service.namespace }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE
+            value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
+          {{- end }}
+          {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
@@ -434,35 +547,6 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
-            items:
-{{- range $file, $configs := $.Values.clusterAgent.confd }}
-            - key: {{ $file | quote }}
-              path: {{ $file | quote }}
-{{- end }}
-{{- if .Values.datadog.kubeStateMetricsCore.enabled }}
-            - key: kubernetes_state_core.yaml.default
-              path: kubernetes_state_core.yaml.default
-{{- end }}
-{{- if .Values.datadog.helmCheck.enabled }}
-            - key: helm.yaml
-              path: helm.yaml
-{{- end }}
-{{- if and .Values.datadog.collectEvents .Values.datadog.kubernetesEvents.unbundleEvents }}
-            - key: kubernetes_apiserver.yaml
-              path: kubernetes_apiserver.yaml
-{{- end }}
-{{- if .Values.datadog.orchestratorExplorer.enabled }}
-{{- if eq (include "orchestratorExplorer-add-crd-collection-config" .) "true" }}
-            - key: orchestrator.yaml
-              path: orchestrator.yaml
-{{- end }}
-{{- end }}
-{{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
-{{- range $name, $config := $configs }}
-            - key: {{ printf "%s--%s" $integration $name | quote }}
-              path: {{ printf "%s/%s" $integration $name | quote }}
-{{- end }}
-{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         - name: cluster-agent-yaml
@@ -484,6 +568,9 @@ spec:
 {{- if .Values.clusterAgent.volumes }}
 {{ toYaml .Values.clusterAgent.volumes | indent 8 }}
 {{- end }}
+      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
+      {{- end }}
       {{- if .Values.clusterAgent.tolerations }}
       tolerations:
 {{ toYaml .Values.clusterAgent.tolerations | indent 8 }}

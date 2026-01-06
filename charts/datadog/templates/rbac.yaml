@@ -88,10 +88,26 @@ rules:
   resources:
   - nodes/metrics
   - nodes/spec
+  {{ if .Values.datadog.kubelet.fineGrainedAuthorization }}
+  - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
+  {{ else }}
   - nodes/proxy
+  {{ end }}
   - nodes/stats
   verbs:
   - get
+{{- if .Values.datadog.kubelet.useApiServer }}
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+{{- end }}
 - apiGroups:  # leader election check
   - ""
   resources:
@@ -129,6 +145,13 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
@@ -156,6 +179,9 @@ metadata:
   {{- end }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.agents.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.agents.rbac.serviceAccountAdditionalLabels) . | nindent 4}}
+{{- end }}
 {{- range $role := .Values.datadog.secretBackend.roles }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1

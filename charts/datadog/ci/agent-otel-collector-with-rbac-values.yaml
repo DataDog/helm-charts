@@ -1,0 +1,39 @@
+targetSystem: "linux"
+agents:
+  image:
+    tagSuffix: full
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  otelCollector:
+    enabled: true
+    config: |
+      processors:
+        k8sattributes:
+        k8sattributes/passthrough:
+          passthrough: true
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "localhost:5317"
+      exporters:
+        datadog:
+          api:
+            key: "f0000000000000000000000000000000"
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            processors: [k8sattributes]
+            exporters: [datadog]
+          metrics:
+            receivers: [otlp]
+            processors: [k8sattributes]
+            exporters: [datadog]
+          logs:
+            receivers: [otlp]
+            processors: [k8sattributes]
+            exporters: [datadog]

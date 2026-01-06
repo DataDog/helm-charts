@@ -1,40 +1,320 @@
 # Datadog Private Action Runner
 
-![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![AppVersion: v0.0.1-alpha27](https://img.shields.io/badge/AppVersion-v0.0.1--alpha27-informational?style=flat-square)
+{{ template "chart.versionBadge" . }}{{ template "chart.appVersionBadge" . }}
 
-This Helm Chart deploys the Datadog Private Action runner inside a Kubernetes cluster. It allows you to use private actions from the Datadog Workflow and Datadog App Builder products. When deploying this chart, you can give permissions to the runner in order to be able to run Kubernetes actions.
+## Overview
 
-## Requirements
-* A Datadog account with private actions enabled
-* The `kubectl` cli
-* Helm
-* Sufficient permissions to the Kubernetes cluster
+This Helm Chart deploys the Datadog Private Action Runner inside a Kubernetes cluster. The Private Action Runner enables you to:
 
-## Use this chart
+- Execute private actions from [Datadog Workflow Automation](https://docs.datadoghq.com/service_management/workflows/)
+- Run [App Builder](https://docs.datadoghq.com/service_management/app_builder/) actions
+- Interact with resources in your Kubernetes cluster
+- Connect to internal services that aren't accessible from the public internet
 
-1. Go to the [private action runner tab](https://app.datadoghq.com/workflow/private-action-runners).
-2. Create a new private action runner.
-3. Follow the instructions. You now have a running docker container and `config/config.yaml` file.
-4. Stop the docker container (`docker stop <name-of-the-container>` or `docker compose stop`).
-5. Create a `config.yaml` file with the appropriate values. An example `config.yaml` file is provided in the `examples` directory for you to copy.
-    * Replace the `URN_FROM_CONFIG` and the `PRIVATE_KEY_FROM_CONFIG` in the example file with with the `urn` and the `privateKey` from the `config/config.yaml` of the docker container.
-    * You can reconfigure other values or use the defaults in the example.
-6. Add this repository to your Helm repositories:
-    ```
-    helm repo add datadog https://helm.datadoghq.com
-    helm repo update
-    ```
-7. Install the Helm chart:
-    ```bash
-        helm install <RELEASE_NAME> datadog/private-action-runner -f ./config.yaml
-    ```
-8. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections).
-9. Create a new connection, select your private action runner, and use **Service account authentication**.
-10. Create a new workflow and use a Kubernetes action like **List pod** or **List deployment**.
+## Prerequisites
 
-## Going further
-* Adjust the service account permissions according to your needs. Learn more about [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac).
-* Deploy several runners with different permissions or create different connections according to your needs.
-* Learn more about [Private actions](https://docs.datadoghq.com/service_management/app_builder/private_actions).
+Before installing the chart, ensure you have:
+
+* Kubernetes cluster running
+* `kubectl` CLI installed and configured to access your cluster
+* `helm` CLI installed
+* Appropriate permissions in your Kubernetes environment to create resources like Deployments, Services, and RBAC objects
+
+## Installation
+
+### Add the Datadog Helm Repository
+
+```bash
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+```
+
+### Create a Private Action Runner in Datadog
+
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners) in your Datadog account
+2. Click "New Private Action Runner"
+3. Configure your runner and select the list of actions you want to enable
+4. Select "Kubernetes" as the deployment method
+5. Note the config that gets printed in your terminal (URN, privateKey, baseUrl, actionsAllowlist, etc.)
+
+### Install the Chart
+
+Create a `values.yaml` file with your runner configuration (see the [examples/values.yaml](examples/values.yaml) for a complete example):
+
+```yaml
+runner:
+  config:
+    urn: "YOUR_RUNNER_URN"
+    privateKey: "YOUR_RUNNER_PRIVATE_KEY"
+```
+
+Install the chart:
+
+```bash
+helm install <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+### Verify the Installation
+
+Check that the runner pod is running:
+
+```bash
+kubectl get pods -l app.kubernetes.io/instance=<RELEASE-NAME>
+```
+
+## Upgrading
+
+
+### Upgrading from 0.x to 1.0.0
+
+> **Important:** Version 1.0.0 introduces breaking changes to the values.yaml structure. If you're upgrading from version 0.x, please follow the dedicated upgrade [UPGRADING.md](UPGRADING.md) guide.
+
+### General Upgrade Process
+
+To upgrade to the latest version:
+
+```bash
+helm repo update
+helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+## Usage
+
+### Using Connection Credentials
+
+To use private actions that require credentials:
+
+1. Configure [connection credentials](https://docs.datadoghq.com/service_management/workflows/private_actions/private_action_credentials) in your `values.yaml` file
+2. Update your Helm release:
+```bash
+helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+3. Create the connection in [Datadog](https://app.datadoghq.com/actions/connections)
+
+### Using Kubernetes Actions
+
+To enable Kubernetes actions:
+
+1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections)
+2. Create a new connection, select your private action runner, and use **Service account authentication**
+3. Enable the actions you want in your `values.yaml` file:
+
+```yaml
+runner:
+  kubernetesActions:
+    pods: ["get", "list"]
+    deployments: ["get", "list", "create", "update"]
+```
+
+4. Pick the appropriate role type for your runner. The `roleType` determines the permissions granted to the runner in your Kubernetes cluster.
+
+- **Role**: Grants permissions only in the namespace where the runner is deployed.
+- **ClusterRole**: Grants permissions across the entire cluster.
+
+Example configuration:
+```yaml
+runner:
+  roleType: "Role"
+```
+
+5. Update your Helm release
+```bash
+helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+## Going Further
+
+* Learn more about [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac)
+* Deploy several runners with different permissions for different teams or environments
+* Learn more about [Private actions](https://docs.datadoghq.com/actions/private_actions/)
+
+## OpenShift Deployment
+
+
+### Enabling Security Context Constraints
+
+When deploying on OpenShift, you need to configure [Security Context Constraints](https://docs.redhat.com/en/documentation/openshift_container_platform/3.11/html/cluster_administration/admin-guide-manage-scc) (SCC) to ensure the runner pods have the necessary permissions to function properly.
+
+Enable the creation of a custom SCC by setting the following in your `values.yaml`:
+
+```yaml
+runner:
+  podSecurity:
+    securityContextConstraints:
+      create: true
+```
+
+### Configuration Example
+
+Here's a complete example for deploying on OpenShift:
+
+```yaml
+runner:
+  config:
+    urn: "YOUR_RUNNER_URN"
+    privateKey: "YOUR_RUNNER_PRIVATE_KEY"
+
+  # Enable SCC creation for OpenShift
+  podSecurity:
+    securityContextConstraints:
+      create: true
+    # Configure security settings as needed
+    privileged: false
+    # Adjust capabilities if required by your use case
+    capabilities: []
+    # Required dropped capabilities (can be customized)
+    requiredDropCapabilities:
+      - KILL
+      - MKNOD
+      - SETUID
+      - SETGID
+    # SELinux context configuration
+    seLinuxContext:
+      type: MustRunAs
+    # Allowed volume types
+    volumes:
+      - configMap
+      - csi
+      - downwardAPI
+      - emptyDir
+      - ephemeral
+      - persistentVolumeClaim
+      - projected
+      - secret
+```
+
+### Deploy on OpenShift
+
+Once you have configured your `values.yaml` file with the OpenShift-specific settings, install the chart:
+
+```bash
+helm install <RELEASE_NAME> datadog/private-action-runner -f values.yaml
+```
+
+The chart will automatically create a SecurityContextConstraints resource that allows the Private Action Runner pods to run with the necessary permissions while maintaining security best practices.
+
+You can access the SecurityContextConstraints resource by running:
+
+```bash
+kubectl get scc private-action-runner-scc -o yaml
+```
+
+## Advanced Configuration
+
+### Using Kubernetes Secrets for Runner Identity
+
+For enhanced security, you can store the runner's identity (URN and private key) in a Kubernetes secret instead of in the values.yaml file:
+
+```bash
+# Create a secret with runner's private key and urn
+kubectl create secret generic runner-identity \
+  --from-literal RUNNER_URN=YOUR_RUNNER_URN \
+  --from-literal RUNNER_PRIVATE_KEY=YOUR_RUNNER_PRIVATE_KEY
+
+# Alternatively, store only the private key in the secret
+kubectl create secret generic <secret-name> \
+  --from-literal RUNNER_PRIVATE_KEY=YOUR_RUNNER_PRIVATE_KEY
+```
+
+Then reference this secret in your values.yaml:
+
+```yaml
+runner:
+  runnerIdentitySecret: "runner-identity"
+  config:
+    # When using runnerIdentitySecret, you can omit these values
+    # urn: "YOUR_RUNNER_URN"  # Only needed if not in the secret
+    # privateKey: "YOUR_RUNNER_PRIVATE_KEY"
+```
+
+### Using Kubernetes Secrets for Credentials
+
+You can also store connection credentials in Kubernetes secrets:
+
+```bash
+# Create a secret with multiple credential files
+kubectl create secret generic action-credentials \
+  --from-literal jenkins_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}' \
+  --from-literal gitlab_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "baseURL", "tokenValue": "GITLAB_BASE_URL"}, {"tokenName": "gitlabApiToken", "tokenValue": "GITLAB_API_TOKEN"}]}'
+
+# Or create separate secrets for different services
+kubectl create secret generic jenkins-credentials \
+  --from-literal jenkins_token.json='{"auth_type": "Token Auth", "credentials": [{"tokenName": "username", "tokenValue": "USERNAME"}, {"tokenName": "token", "tokenValue": "TOKEN"}, {"tokenName": "domain", "tokenValue": "DOMAIN" }]}'
+```
+
+Reference these secrets in your values.yaml:
+
+```yaml
+runner:
+  credentialSecrets:
+    # Mount all files from the secret at /etc/dd-action-runner/config/credentials/gitlab/
+    - secretName: gitlab-credentials
+      directoryName: "gitlab"
+    # Mount files in a subdirectory at /etc/dd-action-runner/config/credentials/jenkins/
+    - secretName: jenkins-credentials
+      directoryName: "jenkins"
+```
+
+## Using Custom Scripts
+
+The Run Predefined Script Action can run inline commands by creating a script configuration file, but it can also run more advanced custom scripts. The Private Action Runner supports custom scripts via the `runner.scriptFiles` parameter. Scripts are mounted in `/home/scriptuser/` directory.
+
+### Example
+
+```yaml
+runner:
+  credentialFiles:
+    - fileName: "script.yaml"
+      data: |
+        schemaId: script-credentials-v1
+        runPredefinedScript:
+          echoInBash:
+            command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+  scriptFiles:
+    - fileName: "hello-from-bash.sh"
+      data: |
+        #!/bin/bash
+        echo "Hello World from bash!"
+```
+
+## Architecture
+
+The Private Action Runner Helm chart deploys the following components:
+
+- **Deployment**: Runs the Private Action Runner container
+- **Service**: Exposes the runner's HTTP endpoint for health checks and App Builder mode
+- **ServiceAccount**: Identity used by the runner to interact with the Kubernetes API
+- **Role/ClusterRole**: Defines permissions for the runner to perform Kubernetes actions
+- **RoleBinding/ClusterRoleBinding**: Associates the ServiceAccount with the Role/ClusterRole
+- **Secret**: Stores the runner configuration and credentials
+
+## Troubleshooting
+
+1. Check if the pod is running:
+   ```bash
+   kubectl get pods -l app.kubernetes.io/instance=<RELEASE-NAME>
+   ```
+
+2. Check the pod logs for connection issues:
+   ```bash
+   kubectl logs -l app.kubernetes.io/instance=<RELEASE-NAME>
+   ```
+
+3. Verify that the URN and private key are correct in your values.yaml or secret
+
+### Connection Credential Issues
+
+If actions requiring credentials fail:
+
+1. Verify that your credential files are properly formatted
+2. Check that the credentials are mounted correctly in the pod:
+   ```bash
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config/credentials/
+   ## Depending on how you pass the credentials they might appear in a different directory
+   kubectl exec <pod-name> -- ls /etc/dd-action-runner/config
+   ```
+
+3. Check the pod logs for credential-related errors
+
 
 {{ template "chart.valuesSection" . }}

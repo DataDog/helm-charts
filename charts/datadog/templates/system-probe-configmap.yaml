@@ -43,8 +43,56 @@ data:
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
+      enable_http_monitoring: {{ $.Values.datadog.serviceMonitoring.httpMonitoringEnabled }}
+      {{- end }}
+      {{- if not (eq .Values.datadog.serviceMonitoring.http2MonitoringEnabled nil) }}
+      enable_http2_monitoring: {{ $.Values.datadog.serviceMonitoring.http2MonitoringEnabled }}
+      {{- end }}
+      tls:
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.go.enabled nil) }}
+        go:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.go.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.istio.enabled nil) }}
+        istio:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.istio.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.nodejs.enabled nil) }}
+        nodejs:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.nodejs.enabled }}
+        {{- end }}
+        {{- if not (eq .Values.datadog.serviceMonitoring.tls.native.enabled nil) }}
+        native:
+          enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
+        {{- end }}
+    traceroute:
+      enabled: {{ $.Values.datadog.traceroute.enabled }}
+    {{- if not (eq .Values.datadog.discovery.enabled nil) }}
+    discovery:
+      enabled: {{ $.Values.datadog.discovery.enabled }}
+      network_stats:
+        enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
+    {{- end }}
+    gpu_monitoring:
+      enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
+      configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    event_monitoring_config:
+      socket: /var/run/sysprobe/event-monitor.sock
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
+{{- if .Values.datadog.securityAgent.runtime.containerInclude }}
+      container_include:
+{{- range (split " " .Values.datadog.securityAgent.runtime.containerInclude) }}
+      - {{ .  | quote }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.runtime.containerExclude }}
+      container_exclude:
+{{- range (split " " .Values.datadog.securityAgent.runtime.containerExclude) }}
+      - {{ . | quote }}
+{{- end }}
+{{- end }}
       fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
       socket: /var/run/sysprobe/runtime-security.sock
@@ -64,10 +112,14 @@ data:
         cgroup_wait_list_size:  {{ $.Values.datadog.securityAgent.runtime.activityDump.cgroupWaitListSize }}
         path_merge:
           enabled: {{ $.Values.datadog.securityAgent.runtime.activityDump.pathMerge.enabled }}
+        local_storage:
+          output_directory: /var/run/sysprobe/runtime-security/profiles
 {{ else }}
       activity_dump:
         enabled: false
         traced_cgroups_count: 0
+        local_storage:
+          output_directory: /var/run/sysprobe/runtime-security/profiles
 {{ end }}
       security_profile:
         enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.enabled }}
@@ -75,6 +127,11 @@ data:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled }}
         auto_suppression:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
+        dir: /var/run/sysprobe/runtime-security/profiles
+      enforcement:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+    dynamic_instrumentation:
+      enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
@@ -102,10 +159,14 @@ data:
             "capset",
             "chdir",
             "chmod",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+            "chown",
+            {{- end }}
             "clock_gettime",
             "clone",
             "clone3",
             "close",
+            "close_range",
             "connect",
             "copy_file_range",
             "creat",
@@ -139,6 +200,10 @@ data:
             "fstat64",
             "fstatfs",
             "fsync",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode .Values.datadog.gpuMonitoring.configureCgroupPerms) }}
+            "ftruncate",
+            "ftruncate64",
+            {{- end }}
             "futex",
             "futimens",
             "getcwd",
@@ -173,6 +238,9 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
+            {{- if .Values.datadog.securityAgent.runtime.enforcement.enabled }}
+            "kill",
+            {{- end }}
             "listen",
             "lseek",
             "lstat",
@@ -181,6 +249,10 @@ data:
             "memfd_create",
             "mkdir",
             "mkdirat",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+            "mknod",
+            "mknodat",
+            {{- end }}
             "mmap",
             "mmap2",
             "mprotect",
@@ -193,6 +265,8 @@ data:
             "openat2",
             "pause",
             "perf_event_open",
+            "pidfd_open",
+            "pidfd_send_signal",
             "pipe",
             "pipe2",
             "poll",
@@ -256,6 +330,10 @@ data:
             "symlinkat",
             "sysinfo",
             "tgkill",
+            "tkill",
+            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode .Values.datadog.gpuMonitoring.configureCgroupPerms) }}
+            "truncate",
+            {{- end }}
             "umask",
             "uname",
             "unlink",

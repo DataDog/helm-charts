@@ -197,3 +197,4 @@ Generate a single Container.Port based on a component configuration.
 {{ fail "Component's `mode` is not a supported protocol" }}
 {{- end }}
 {{- end }}
+

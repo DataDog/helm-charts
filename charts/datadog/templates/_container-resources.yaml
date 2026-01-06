@@ -1,0 +1,35 @@
+{{- define "default-agent-container-resources" }}
+requests:
+  cpu: 200m
+  memory: 256Mi
+limits:
+  cpu: 200m
+  memory: 256Mi
+{{- end }}
+
+{{- define "default-system-probe-container-resources" }}
+requests:
+  cpu: 100m
+  memory: 400Mi
+limits:
+  cpu: 100m
+  memory: 400Mi
+{{- end }}
+
+{{- define "default-container-resources" }}
+requests:
+  cpu: 100m
+  memory: 200Mi
+limits:
+  cpu: 100m
+  memory: 200Mi
+{{- end }}
+
+{{- define "default-cluster-check-runner-resources" }}
+requests:
+  cpu: 200m
+  memory: 500Mi
+limits:
+  cpu: 200m
+  memory: 500Mi
+{{- end }}

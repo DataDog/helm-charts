@@ -1,0 +1,332 @@
+---
+# Source: private-action-runner/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+stringData:
+  config.yaml: |
+    ddBaseURL: https://app.datadoghq.com
+    urn: CHANGE_ME_URN_FROM_CONFIG
+    privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
+    modes:
+      - pull
+    port: 9016
+    tags: []
+    actionsAllowlist:
+      - com.datadoghq.http.request
+      - com.datadoghq.kubernetes.core.getPod
+      - com.datadoghq.kubernetes.core.listPod
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-test-private-action-runner-credentials
+  namespace: datadog-agent
+stringData:  
+  http_basic.json: |
+    {
+      "auth_type": "Basic Auth",
+      "credentials": [
+        {
+          "username": "USERNAME",
+          "password": "PASSWORD"
+        }
+      ]
+    }
+    
+  http_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "TOKEN1",
+          "tokenValue": "VALUE1"
+        }
+      ]
+    }
+    
+  jenkins_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "username": "localhost:7233",
+          "token": "TOKEN",
+          "domain": "DOMAIN"
+        }
+      ]
+    }
+    
+  postgresql_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "host",
+          "tokenValue": "HOST"
+        },
+        {
+          "tokenName": "port",
+          "tokenValue": "5432"
+        },
+        {
+          "tokenName": "user",
+          "tokenValue": "USER"
+        },
+        {
+          "tokenName": "password",
+          "tokenValue": "PASSWORD"
+        },
+        {
+          "tokenName": "database",
+          "tokenValue": "DATABASE"
+        },
+        {
+          "tokenName": "sslmode",
+          "tokenValue": "require"
+        },
+        {
+          "tokenName": "applicationName",
+          "tokenValue": "APPLICATION_NAME"
+        },
+        {
+          "tokenName": "searchPath",
+          "tokenValue": "SEARCH_PATH"
+        }
+      ]
+    }
+    
+  temporal_mTLS_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "serverAddress",
+          "tokenValue": "SERVERADDRESS"
+        },
+        {
+          "tokenName": "serverNameOverride",
+          "tokenValue": "SERVERNAMEOERRIDE"
+        },
+        {
+          "tokenName": "serverRootCACertificate",
+          "tokenValue": "SERVERROOTCACERTIFICATE"
+        },
+        {
+          "tokenName": "clientCertPairCrt",
+          "tokenValue": "CLIENTCERTPAIRCRT"
+        },
+        {
+          "tokenName": "clientCertPairKey",
+          "tokenValue": "CLIENTCERTPAIRKEY"
+        }
+      ]
+    }
+    
+  temporal_TLS_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "serverAddress",
+          "tokenValue": "SERVERADDRESS"
+        },
+        {
+          "tokenName": "serverNameOverride",
+          "tokenValue": "SERVERNAMEOERRIDE"
+        },
+        {
+          "tokenName": "serverRootCACertificate",
+          "tokenValue": "CLIENTCERTPAIRKEY"
+        }
+      ]
+    }
+    
+  gitlab_token.json: |
+    {
+      "auth_type": "Token Auth",
+      "credentials": [
+        {
+          "tokenName": "baseURL",
+          "tokenValue": "GITLAB_BASE_URL"
+        },
+        {
+          "tokenName": "gitlabApiToken",
+          "tokenValue": "GITLAB_API_TOKEN"
+        }
+      ]
+    }
+    
+  script.yaml: |
+    schemaId: script-credentials-v1
+    runPredefinedScript:
+      echo:
+        # you have to use an array to specify the command
+        command: ["echo", "Hello world"]
+      echo-parametrized:
+        # you can use [workflow-like syntax](https://docs.datadoghq.com/actions/workflows/variables/) to retrieve values from the parameters object
+        command: [ "echo", "{{ parameters.echoValue }}" ]
+        # you can use [json schema](https://json-schema.org/) to validate the parameters
+        parameterSchema:
+          properties:
+            echoValue:
+              type: string
+              const: "world"
+          required:
+            - echoValue
+      echoInBash:
+        command: ["bash", "/home/scriptuser/hello-from-bash.sh"]
+---
+# Source: private-action-runner/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-test-private-action-runner-scripts
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.19.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
+data:
+  hello-from-bash.sh: |
+    #!/bin/bash
+    echo "Hello World from bash!"
+---
+# Source: private-action-runner/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: datadog-agent
+  name: example-test-private-action-runner
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+# Source: private-action-runner/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: example-test-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: example-test-private-action-runner
+    namespace: datadog-agent
+---
+# Source: private-action-runner/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+spec:
+  selector:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: example-test
+  ports:
+    - name: http
+      port: 9016
+      targetPort: 9016
+---
+# Source: private-action-runner/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-test-private-action-runner
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.19.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: example-test
+    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: example-test
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: private-action-runner-1.19.0
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: example-test
+        app.kubernetes.io/version: "v1.15.0"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/values: 0086f88e12e3e8c541ecb72a6249142967bb71735b1296a01fe4d9532961c57c
+    spec:
+      serviceAccountName: example-test-private-action-runner
+      containers:
+        - name: runner
+          image: "gcr.io/datadoghq/private-action-runner:v1.15.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9016
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /liveness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner/config
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            - name: scripts
+              mountPath: /home/scriptuser
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: /etc/dd-action-runner/config
+      volumes:
+        - name: secrets
+          secret:
+            secretName: example-test-private-action-runner
+        - name: credentials
+          secret:
+            secretName: example-test-private-action-runner-credentials
+        - name: scripts
+          configMap:
+            name: example-test-private-action-runner-scripts

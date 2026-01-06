@@ -35,6 +35,11 @@ kubernetes_state_core.yaml.default: |-
       - deployments
       - replicasets
       - statefulsets
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
+      - controllerrevisions
+{{- end }}
       - cronjobs
       - jobs
       - horizontalpodautoscalers
@@ -49,4 +54,14 @@ kubernetes_state_core.yaml.default: |-
 {{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
       annotations_as_tags:
 {{ .Values.datadog.kubeStateMetricsCore.annotationsAsTags | toYaml | indent 8 }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+      custom_resource:
+        spec:
+          resources:
+{{ .Values.datadog.kubeStateMetricsCore.collectCrMetrics | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.tags }}
+      tags:
+{{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}
+{{- end }}
 {{- end -}}

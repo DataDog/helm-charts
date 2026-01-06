@@ -1,0 +1,26 @@
+{{- if and (eq (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) (.Values.otelAgentGateway.enabled) }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent-gateway-hpa
+  labels:
+    {{- include "datadog.labels" . | nindent 4 }}
+    app.kubernetes.io/component: otel-agent-gateway-hpa
+  {{- with .Values.otelAgentGateway.autoscaling.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  minReplicas: {{ .Values.otelAgentGateway.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.otelAgentGateway.autoscaling.maxReplicas }}
+  metrics:
+    {{- toYaml .Values.otelAgentGateway.autoscaling.metrics | nindent 4 }}
+  {{- if .Values.otelAgentGateway.autoscaling.behavior }}
+  behavior:
+    {{- toYaml .Values.otelAgentGateway.autoscaling.behavior | nindent 4 }}
+  {{- end }}
+{{- end }}

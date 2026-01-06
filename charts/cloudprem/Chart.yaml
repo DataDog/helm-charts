@@ -1,0 +1,12 @@
+apiVersion: v2
+name: cloudprem
+description: Datadog CloudPrem
+type: application
+version: 0.1.14
+# This is the version of the "application". Right now, we follow the image version.
+appVersion: v0.1.16
+home: https://www.datadoghq.com/
+icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+maintainers:
+  - name: Datadog
+    email: support@datadoghq.com

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Support Request or Feature Request (recommended)
+    url: https://help.datadoghq.com/hc/en-us/requests/new?tf_1260824651490=pt_product_type:containers
+    about: Recommended for most issues. No login required. Best for configuration problems, crashes, missing metrics, or anything needing logs/flares. Share privately for faster, personalized support.

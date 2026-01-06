@@ -1,5 +1,242 @@
 # Changelog
 
+## 2.17.0-dev.2
+
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
+## 2.17.0-dev.1
+
+* Update Datadog Operator chart for to 1.22.0-rc.1.
+
+## 2.16.0
+
+* Update Datadog Operator image tag to 1.21.0.
+
+## 2.16.0-dev.7
+
+* Add dnsConfig option
+
+## 2.16.0-dev.6
+
+* Update Datadog Operator chart for 1.21.0-rc.3.
+
+## 2.16.0-dev.5
+
+* Update version of Datadog CRDs to 2.14.0-dev.5.
+
+## 2.16.0-dev.4
+
+* Use values from Datadog chart's endpoint-config configMap,  if present.
+
+## 2.16.0-dev.3
+
+* Update Datadog Operator image tag to 1.21.0-rc.2.
+
+## 2.16.0-dev.2
+
+* Same as 2.16.0-dev.1 and update version of Datadog CRDs to 2.14.0-dev.2 to pick up changes to DatadogPodAutoscaler.
+
+## 2.16.0-dev.1
+
+* Update Datadog Operator image tag to 1.21.0-rc.1.
+
+## 2.15.2
+
+* Revert of Datadog Operator image to 1.20.0 on the stable branch (2.15.1 was missing this fix) and include updated version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
+
+## 2.15.1 (deprecated – do not use)
+
+* This version was missing some required fixes and should not be used.
+* Use **2.15.2** instead (or **2.15.0** if you cannot upgrade to 2.15.2).
+* (Original change) Update version of Datadog CRDs to 2.13.1 to pick up changes to DatadogPodAutoscaler.
+
+## 2.15.0
+
+* Update Datadog Operator image tag to 1.20.0.
+
+## 2.15.0-dev.3
+
+* Update Datadog Operator image tag to 1.20.0-rc.4.
+
+## 2.15.0-dev.2
+
+* Update Datadog Operator image tag to 1.20.0-rc.2.
+
+## 2.15.0-dev.1
+
+* Update Datadog Operator image tag to 1.20.0-rc.1.
+
+## 2.14.3
+
+* Update Datadog Operator image tag to 1.19.1.
+
+## 2.14.2
+
+* Update Datadog Operator image tag to 1.19.0.
+
+## 2.14.1
+
+* [CASCL-610] Add require RBAC for ArgoRollout support in datadog-operator chart ([#2076](https://github.com/DataDog/helm-charts/pull/2076)).
+
+## 2.14.0-dev.3
+
+* Update Datadog Operator image tag to 1.19.0-rc.3.
+
+## 2.14.0-dev.2
+
+* Update Datadog Operator image tag to 1.19.0-rc.2.
+
+## 2.14.0-dev.1
+
+* Update Datadog Operator image tag to 1.19.0-rc.1.
+
+## 2.13.1
+
+* Add default `initialDelaySeconds: 15` to the Liveness Probe
+
+## 2.13.0
+
+* Update Datadog Operator chart for 1.18.0.
+
+## 2.13.0-dev.5
+
+* Update Datadog Operator image tag to 1.18.0-rc.4.
+
+## 2.13.0-dev.4
+
+* Update Datadog Operator image tag to 1.18.0-rc.3.
+
+## 2.13.0-dev.3
+
+* Update Datadog Operator image tag to 1.18.0-rc.2.
+
+## 2.13.0-dev.2
+
+* Update Datadog Operator image tag to 1.18.0-rc.1.
+
+## 2.13.0-dev.1
+
+* Update Datadog Operator chart for 1.18.0-rc.1.
+
+## 2.12.1
+
+* Update `datadog-crds` dependency to stable version (no-op change).
+
+## 2.12.0
+
+* Update Datadog Operator chart for 1.17.0.
+
+## 2.12.0-dev.4
+
+* Add option to disable service account automountServiceAccountToken. 
+
+## 2.12.0-dev.3
+
+* Update Datadog Operator chart for 1.17.0-rc.3.
+
+## 2.12.0-dev.2
+
+* Update Datadog Operator chart for 1.17.0-rc.2.
+
+## 2.12.0-dev.1
+
+* Update Datadog Operator chart for 1.17.0-rc.1.
+
+## 2.11.1
+
+* Handle Operator image tag with a digest gracefully.
+
+## 2.11.0
+
+* Update Datadog Operator chart for 1.16.0.
+
+## 2.11.0-dev.3
+
+* Document `datadogCRDs.crds.datadogAgentProfiles` option to install the DatadogAgentProfile CRD.
+
+## 2.11.0-dev.2
+
+* Update default image tag for Datadog Operator to `1.16.0-rc.1`.
+
+## 2.11.0-dev.1
+
+* Update Datadog Operator chart for 1.16.0-rc.1.
+
+## 2.10.0
+
+* Update Datadog Operator chart for 1.15.1
+
+## 2.10.0-dev.2
+
+* Update Datadog Operator chart for 1.15.0-rc.2.
+
+## 2.10.0-dev.1
+
+* Fix semverCompare to work with pre-release versions.
+
+## 2.10.0-dev
+
+* Update Datadog Operator chart for 1.15.0-rc.1.
+
+## 2.9.2
+
+* no-op chart bump to sync changlog with chart version.
+
+## 2.9.0
+
+* Update Datadog Operator version to 1.14.0.
+
+## 2.9.0-dev
+
+* Update Datadog Operator version to 1.14.0-rc.3.
+
+## 2.8.0
+
+* Update Datadog Operator version to 1.13.0.
+
+## 2.7.0
+
+* Update Datadog Operator version to 1.12.1.
+
+## 2.6.0
+
+* Update Datadog Operator version to 1.12.0.
+* Add DatadogGenericResource configuration.
+
+## 2.5.1
+
+* Expose CRD-specific namespace watch configuration added in Operator 1.8.0 release.
+
+## 2.5.0
+
+* Update Datadog Operator version to 1.11.1.
+
+## 2.4.0
+
+* Add configuration to grant the necessary RBAC to the operator for the CWS Instrumentation Admission Controller feature in the Cluster-Agent.
+
+## 2.3.0
+
+* Update Datadog Operator version to 1.10.0.
+
+## 2.2.0
+
+* Add clusterRole.allowReadAllResources to allow viewing all resources. This is required for collecting custom resources in the Kubernetes Explorer
+
+## 2.1.0
+
+* Update Datadog Operator version to 1.9.0.
+* Add DatadogDashboard configuration.
+
+## 2.0.1
+
+* Make Operator `livenessProbe` configurable.
+
+## 2.0.0
+
+* Update Datadog Operator version to 1.8.0.
+* Drop support for DatadogAgent `v1alpha1` and conversion webhook.
+
 ## 1.8.5
 
 * Update `datadog-crds` dependency to `1.7.2`.

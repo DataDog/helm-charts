@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.7.0
+  tag: 1.22.0-rc.1
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -84,6 +84,15 @@ secretBackend:
 datadogAgent:
   # datadogAgent.enabled -- Enables Datadog Agent controller
   enabled: true
+datadogAgentInternal:
+  # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+  enabled: false
+datadogDashboard:
+  # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+  enabled: false
+datadogGenericResource:
+  # datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+  enabled: false
 datadogMonitor:
   # datadogMonitor.enabled -- Enables the Datadog Monitor controller
   enabled: false
@@ -107,6 +116,8 @@ serviceAccount:
   name:
   # serviceAccount.annotations -- Allows setting additional annotations for service account
   annotations: {}
+  # serviceAccount.automountServiceAccountToken -- Specifies whether the service account token should be automatically mounted
+  automountServiceAccountToken: true
 # resources -- Set resources requests/limits for Datadog Operator PODs
 resources: {}
 # We usually recommend not to specify default resources and to leave this as a conscious
@@ -127,6 +138,12 @@ tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
 
+# dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
+dnsConfig: {}
+#  options:
+#    - name: ndots
+#      value: "1"
+
 # installCRDs -- Set to true to deploy the Datadog's CRDs
 installCRDs: true
 
@@ -142,16 +159,12 @@ datadogCRDs:
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
-
-  # v1alpha1 to v2alpha1 CRD conversion is deprecated in v1.7.0
-  migration:
-    datadogAgents:
-      conversionWebhook:
-        enabled: false
-        name: datadog-operator-webhook-service
-        namespace: default
-      useCertManager: false
-      version: "v2alpha1"
+    # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+    datadogDashboards: false
+    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+    datadogGenericResources: false
+    # datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
+    datadogAgentProfiles: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
@@ -162,6 +175,7 @@ podLabels: {}
 collectOperatorMetrics: true
 
 # watchNamespaces -- Restricts the Operator to watch its managed resources on specific namespaces
+# unless CRD-specific watchNamespaces properties are set
 watchNamespaces: []
 # example: watch only two namespaces:
 # watchNamespaces:
@@ -170,6 +184,54 @@ watchNamespaces: []
 #
 # to watch all namespaces
 # watchNamespaces:
+# - ""
+
+# watchNamespacesAgent -- Restricts the Operator to watch DatadogAgent resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgent: []
+# example: watch only two namespaces:
+# watchNamespacesAgent:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgent:
+# - ""
+
+# watchNamespacesMonitor -- Restricts the Operator to watch DatadogMonitor resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesMonitor: []
+# example: watch only two namespaces:
+# watchNamespacesMonitor:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesMonitor:
+# - ""
+
+# watchNamespacesSLO -- Restricts the Operator to watch DatadogSLO resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesSLO: []
+# example: watch only two namespaces:
+# watchNamespacesSLO:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesSLO:
+# - ""
+
+# watchNamespacesAgentProfile -- Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgentProfile: []
+# example: watch only two namespaces:
+# watchNamespacesAgentProfile:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgentProfile:
 # - ""
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
@@ -186,3 +248,21 @@ volumeMounts: []
 #   - name: <VOLUME_NAME>
 #     mountPath: <CONTAINER_PATH>
 #     readOnly: true
+
+# livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
+livenessProbe:
+  periodSeconds: 10
+  initialDelaySeconds: 15
+  # Example fields of livenessProbe that are also configurable:
+  # timeoutSeconds: 1
+  # successThreshold: 1
+  # failureThreshold: 3
+
+# clusterRole -- Set specific configuration for the cluster role
+clusterRole:
+  # allowReadAllResources is required to allow the operator to view all custom resources.
+  # If collecting CRDs in the Kubernetes Explorer this is required
+  allowReadAllResources: false
+
+  # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
+  allowCreatePodsExec: false

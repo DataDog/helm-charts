@@ -2,15 +2,23 @@
 - name: trace-agent
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
   command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
   {{- end -}}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
+{{- if and (empty .Values.agents.containers.traceAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
+{{- end }}
   ports:
   - containerPort: {{ .Values.datadog.apm.port }}
   {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
@@ -67,6 +75,10 @@
           key: install_type
     {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: "true"
+    {{- end }}
   volumeMounts:
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
@@ -86,7 +98,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not .Values.providers.gke.autopilot }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -99,6 +111,7 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW for tmp directory
+    {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false # Need RW for UDS DSD socket
@@ -109,6 +122,7 @@
     {{- end }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}

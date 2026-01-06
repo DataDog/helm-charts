@@ -1,0 +1,22 @@
+providers:
+  gke:
+    gdc: true
+
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+  apm:
+    socketEnabled: false
+    portEnabled: false
+
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+
+  kubeStateMetricsCore:
+    enabled: true

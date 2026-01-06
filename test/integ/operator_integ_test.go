@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/stretchr/testify/require"
@@ -19,9 +18,8 @@ import (
 )
 
 const (
-	apiKeyEnv     = "API_KEY"
-	appKeyEnv     = "APP_KEY"
-	k8sVersionEnv = "K8S_VERSION"
+	apiKeyEnv = "API_KEY"
+	appKeyEnv = "APP_KEY"
 )
 
 func Test(t *testing.T) {
@@ -33,6 +31,15 @@ func Test(t *testing.T) {
 		t.Fatal("Make sure context is pointing to local cluster")
 
 	}
+	if os.Getenv(apiKeyEnv) == "" {
+		err := os.Setenv(apiKeyEnv, "00000000000000000000000000000000")
+		require.NoError(t, err)
+	}
+
+	if os.Getenv(appKeyEnv) == "" {
+		err := os.Setenv(appKeyEnv, "0000000000000000000000000000000000000000")
+		require.NoError(t, err)
+	}
 	require.NotEmpty(t, os.Getenv(apiKeyEnv), "API key can't be empty")
 	require.NotEmpty(t, os.Getenv(appKeyEnv), "APP key can't be empty")
 
@@ -42,7 +49,6 @@ func Test(t *testing.T) {
 		datadogAgentManifestPath string
 		operatorAssertions       func(t *testing.T, kubectlOptions *k8s.KubectlOptions)
 		agentAssertions          func(t *testing.T, kubectlOptions *k8s.KubectlOptions)
-		installCertManager       bool
 	}{
 		{
 			name: "Datadog agent with default Operator Helm install and base manifest",
@@ -54,24 +60,6 @@ func Test(t *testing.T) {
 			datadogAgentManifestPath: "./manifests/default.yaml",
 			operatorAssertions:       verifyOperator,
 			agentAssertions:          verifyAgent,
-			installCertManager:       false,
-		},
-		{
-			name: "Datadog agent with Operator Helm install, conversion webhook enabled",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator-with-webhook",
-				ChartPath:   "../../charts/datadog-operator",
-				Overrides: map[string]string{
-					"installCRDs": "true",
-					"datadogCRDs.migration.datadogAgents.version":                   "v2alpha1",
-					"datadogCRDs.migration.datadogAgents.useCertManager":            "true",
-					"datadogCRDs.migration.datadogAgents.conversionWebhook.enabled": "true",
-				},
-			},
-			datadogAgentManifestPath: "./manifests/default.yaml",
-			operatorAssertions:       verifyOperator,
-			agentAssertions:          verifyAgent,
-			installCertManager:       true,
 		},
 	}
 
@@ -82,10 +70,6 @@ func Test(t *testing.T) {
 			kubectlOptions := k8s.NewKubectlOptions("", "", namespaceName)
 			k8s.CreateNamespace(t, kubectlOptions, namespaceName)
 			defer k8s.DeleteNamespace(t, kubectlOptions, namespaceName)
-
-			// Install Cert Manager if needed
-			cleanupCM := setupCertManager(t, kubectlOptions, tt.installCertManager)
-			defer cleanupCM()
 
 			// Install Operator
 			cleanupOperator := common.InstallChart(t, kubectlOptions, tt.command)
@@ -110,7 +94,6 @@ func Test(t *testing.T) {
 			//time.Sleep(120 * time.Second)
 		})
 	}
-
 }
 
 func verifyOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
@@ -134,27 +117,4 @@ func currentContext(t *testing.T) string {
 	val, err := k8s.RunKubectlAndGetOutputE(t, k8s.NewKubectlOptions("", "", ""), "config", "current-context")
 	require.Nil(t, err)
 	return val
-}
-
-func setupCertManager(t *testing.T, kubectlOptions *k8s.KubectlOptions, installCertManager bool) func() {
-	if installCertManager {
-		k8sVersion := os.Getenv(k8sVersionEnv)
-		// Unable to install Cert Manager on older K8s versions for now, so skipping tests.
-		if strings.Compare("v1.22", k8sVersion) == 1 {
-			t.Skipf("Skipping test requiring cert-manager for k8s older than 1.22")
-		}
-		helmOptions := &helm.Options{
-			KubectlOptions: kubectlOptions,
-			Version:        "v1.11.0",
-			SetValues: map[string]string{
-				"installCRDs": "true",
-			},
-		}
-		helm.Install(t, helmOptions, "jetstack/cert-manager", "cert-manager")
-		return func() {
-			t.Log("Deleting cert manager")
-			helm.Delete(t, helmOptions, "cert-manager", true)
-		}
-	}
-	return func() {}
 }

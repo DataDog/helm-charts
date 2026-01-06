@@ -5,8 +5,9 @@ metadata:
   name: {{ template "datadog.fullname" . }}-clusterchecks
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "datadog.labels" . | indent 4 }}
+{{ include "datadog.workload-labels" (list . "cluster-checks-runner") | indent 4 }}
     app.kubernetes.io/component: clusterchecks-agent
+    agent.datadoghq.com/component: cluster-checks-runner
     {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
     {{- end }}
@@ -25,10 +26,11 @@ spec:
   template:
     metadata:
       labels:
-{{ include "datadog.template-labels" . | indent 8 }}
+{{ include "datadog.pod-template-labels" (list . "cluster-checks-runner") | indent 8 }}
         app.kubernetes.io/component: clusterchecks-agent
         admission.datadoghq.com/enabled: "false"
         app: {{ template "datadog.fullname" . }}-clusterchecks
+        agent.datadoghq.com/component: cluster-checks-runner
         {{- if .Values.clusterChecksRunner.additionalLabels }}
 {{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
         {{- end }}
@@ -42,6 +44,9 @@ spec:
         checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
         {{- if .Values.datadog.checksd }}
         checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
         {{- end }}
       {{- if .Values.clusterChecksRunner.podAnnotations }}
 {{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
@@ -78,18 +83,30 @@ spec:
         command: ["bash", "-c"]
         args:
           - cp -r /etc/datadog-agent /opt
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /opt/datadog-agent
             readOnly: false # Need RW for writing agent config files
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       - name: init-config
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
         command: ["bash", "-c"]
         args:
           - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
           - name: config
             mountPath: /etc/datadog-agent
@@ -100,16 +117,20 @@ spec:
             readOnly: true
           {{- end }}
         resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
       containers:
-        {{- if eq  (include "should-enable-fips" .) "true" }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
           {{- include "fips-proxy" . | nindent 6 }}
         {{- end }}
       - name: agent
         image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
         command: ["bash", "-c"]
         args:
-          - rm -rf /etc/datadog-agent/conf.d && touch /etc/datadog-agent/datadog.yaml && exec agent run
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
         imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
 {{- if .Values.clusterChecksRunner.ports }}
         ports:
@@ -125,33 +146,12 @@ spec:
 {{- end }}
 {{- end }}
         env:
+          {{- include "components-common-env" . | nindent 10 }}
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "datadog.apiSecretName" . }}
                 key: api-key
-          {{- if .Values.datadog.secretBackend.command }}
-          - name: DD_SECRET_BACKEND_COMMAND
-            value: {{ .Values.datadog.secretBackend.command | quote }}
-          {{- end }}
-          {{- if .Values.datadog.secretBackend.arguments }}
-          - name: DD_SECRET_BACKEND_ARGUMENTS
-            value: {{ .Values.datadog.secretBackend.arguments | quote }}
-          {{- end }}
-          {{- if .Values.datadog.secretBackend.timeout }}
-          - name: DD_SECRET_BACKEND_TIMEOUT
-            value: {{ .Values.datadog.secretBackend.timeout | quote }}
-          {{- end }}
-          - name: KUBERNETES
-            value: "yes"
-          {{- if .Values.datadog.site }}
-          - name: DD_SITE
-            value: {{ .Values.datadog.site | quote }}
-          {{- end }}
-          {{- if .Values.datadog.dd_url }}
-          - name: DD_DD_URL
-            value: {{ .Values.datadog.dd_url | quote }}
-          {{- end }}
           {{- if .Values.datadog.logLevel }}
           - name: DD_LOG_LEVEL
             value: {{ .Values.datadog.logLevel | quote }}
@@ -177,10 +177,17 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
-          # Remove unused features
+          {{- if eq .Values.clusterChecksRunner.image.tagSuffix "jmx" }}
+          - name: DD_USE_DOGSTATSD
+            value: "true"
+          {{- else }}
           - name: DD_USE_DOGSTATSD
             value: "false"
+          {{- end }}
+          # Remove unused features
           - name: DD_PROCESS_AGENT_ENABLED
+            value: "false"
+          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
           - name: DD_LOGS_ENABLED
             value: "false"
@@ -192,18 +199,27 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-          {{- if .Values.datadog.clusterName }}
-          {{- template "check-cluster-name" . }}
-          - name: DD_CLUSTER_NAME
-            value: {{ tpl .Values.datadog.clusterName . | quote }}
-          {{- end }}
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:
+{{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
+{{- include "default-cluster-check-runner-resources" . | indent 10 }}
+{{- else }}
 {{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
+{{- end }}
         volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+          - name: varlog
+            mountPath: /var/log/datadog
+          - name: tmpdir
+            mountPath: /tmp
           - name: installinfo
             subPath: install_info
             {{- if eq .Values.targetSystem "windows" }}
@@ -215,6 +231,14 @@ spec:
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
             readOnly: false # Need RW for config path
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+          - name: etcd-client-certs
+            mountPath: /etc/etcd-certs
+            readOnly: true
+          - name: disable-etcd-autoconf
+            mountPath: /etc/datadog-agent/conf.d/etcd.d
+            readOnly: false
+{{- end }}
 {{- if eq (include "should-mount-fips-configmap" .) "true" }}
 {{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
 {{- end }}
@@ -231,11 +255,24 @@ spec:
 {{- $startup := .Values.clusterChecksRunner.startupProbe }}
 {{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
       volumes:
+        - name: datadogrun
+          emptyDir: {}
+        - name: varlog
+          emptyDir: {}
+        - name: tmpdir
+          emptyDir: {}
         - name: installinfo
           configMap:
             name: {{ include "agents-install-info-configmap-name" . }}
 {{- if .Values.clusterChecksRunner.volumes }}
 {{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+        - name: etcd-client-certs
+          secret:
+            secretName: etcd-metric-client
+        - name: disable-etcd-autoconf
+          emptyDir: {}
 {{- end }}
         - name: config
           emptyDir: {}

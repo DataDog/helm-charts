@@ -1,3 +1,7 @@
+chart/cloudprem:
+    - changed-files:
+        - any-glob-to-any-file: "charts/cloudprem/**"
+
 chart/datadog:
     - changed-files:
         - any-glob-to-any-file: "charts/datadog/**"
@@ -26,6 +30,10 @@ chart/observability-pipelines-worker:
 chart/synthetics-private-location:
     - changed-files:
         - any-glob-to-any-file: "charts/synthetics-private-location/**"
+
+chart/private-action-runner:
+    - changed-files:
+          - any-glob-to-any-file: "charts/private-action-runner/**"
 
 tools/tests:
     - changed-files:

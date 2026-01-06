@@ -102,11 +102,33 @@ spec:
  {{- end }}
 {{- if eq (include "should-enable-otel-agent" .) "true" }}
 {{- range .Values.datadog.otelCollector.ports }}
-    - protocol: TCP
+    - protocol: {{ .protocol | default "TCP" }}
       port: {{ .containerPort }}
       targetPort: {{ .containerPort }}
       name: {{ .name }}
 {{- end }}
 {{- end }}
   internalTrafficPolicy: Local
+{{ end }}
+
+{{- if .Values.otelAgentGateway.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.otelAgentGateway.service.type | default "ClusterIP"}}
+  selector:
+    app: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  ports:
+{{- range .Values.otelAgentGateway.ports }}
+    - protocol: {{ .protocol | default "TCP" }}
+      port: {{ .containerPort }}
+      targetPort: {{ .containerPort }}
+      name: {{ .name }}
+{{- end }}
 {{ end }}

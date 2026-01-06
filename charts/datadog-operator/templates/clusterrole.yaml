@@ -15,6 +15,13 @@ rules:
   - ""
   resources:
   - componentstatuses
+  - deployments
+  - limitranges
+  - namespaces
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  - resourcequotas
   verbs:
   - get
   - list
@@ -23,38 +30,12 @@ rules:
   - ""
   resources:
   - configmaps
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - deployments
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - endpoints
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - events
+  - pods
+  - secrets
+  - serviceaccounts
+  - services
   verbs:
   - create
   - delete
@@ -62,21 +43,6 @@ rules:
   - list
   - patch
   - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - limitranges
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
   - watch
 - apiGroups:
   - ""
@@ -89,114 +55,36 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - nodes/configz
+  - nodes/healthz
+  - nodes/logs
   - nodes/metrics
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resources:
+  - nodes/pods
   - nodes/proxy
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resources:
   - nodes/spec
-  verbs:
-  - get
-- apiGroups:
-  - ""
-  resources:
   - nodes/stats
   verbs:
   - get
 - apiGroups:
-  - ""
+  - '*'
   resources:
-  - persistentvolumeclaims
+  - '*/scale'
   verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumes
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - create
-  - delete
   - get
-  - list
-  - patch
   - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - replicationcontrollers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - resourcequotas
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
   verbs:
   - '*'
 - apiGroups:
-  - admissionregistration.k8s.io
+  - apiextensions.k8s.io
   resources:
-  - validatingwebhookconfigurations
+  - customresourcedefinitions
   verbs:
+  - get
   - list
   - watch
 - apiGroups:
@@ -208,22 +96,19 @@ rules:
 - apiGroups:
   - apps
   resources:
-  - daemonsets
+  - controllerrevisions
   verbs:
-  - create
-  - delete
-  - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - apps
   resources:
+  - daemonsets
   - deployments
   verbs:
   - create
   - delete
+  - deletecollection
   - get
   - list
   - patch
@@ -233,35 +118,19 @@ rules:
   - apps
   resources:
   - replicasets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - replicationcontrollers
-  verbs:
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
   - statefulsets
   verbs:
   - get
   - list
   - watch
 - apiGroups:
-  - apps
-  - extensions
+  - argoproj.io
   resources:
-  - daemonsets
-  - deployments
-  - replicasets
+  - rollouts
   verbs:
   - list
   - watch
+  - patch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -269,53 +138,7 @@ rules:
   verbs:
   - create
   - get
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - clusterrolebindings
-  verbs:
-  - create
-  - delete
-  - get
   - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - clusterroles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - roles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - authorization.k8s.io
@@ -325,17 +148,18 @@ rules:
   - create
   - get
 - apiGroups:
-  - autoscaling
+  - auto.gke.io
   resources:
-  - horizontalpodautoscalers
+  - allowlistsynchronizers
   verbs:
+  - create
+  - get
   - list
   - watch
 - apiGroups:
-  - apiextensions.k8s.io
-  - extensions
+  - autoscaling
   resources:
-  - customresourcedefinitions
+  - horizontalpodautoscalers
   verbs:
   - list
   - watch
@@ -350,13 +174,6 @@ rules:
   - batch
   resources:
   - cronjobs
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - batch
-  resources:
   - jobs
   verbs:
   - get
@@ -367,6 +184,7 @@ rules:
   resources:
   - certificatesigningrequests
   verbs:
+  - get
   - list
   - watch
 - apiGroups:
@@ -397,90 +215,13 @@ rules:
   - datadoghq.com
   resources:
   - datadogagents
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
   - datadogagents/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogagents/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogmetrics
-  verbs:
-  - create
-  - delete
-  - list
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogmetrics/status
-  verbs:
-  - update
-- apiGroups:
-  - datadoghq.com
-  resources:
+  - datadoggenericresources
+  - datadoggenericresources/finalizers
   - datadogmonitors
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
   - datadogmonitors/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - datadogmonitors/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - extendeddaemonsetreplicasets
-  verbs:
-  - get
-- apiGroups:
-  - datadoghq.com
-  resources:
+  - datadogslos
+  - datadogslos/finalizers
   - extendeddaemonsets
   verbs:
   - create
@@ -493,45 +234,64 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagents/status
+  - datadoggenericresources/status
+  - datadogmonitors/status
+  - datadogslos/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics/status
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogpodautoscalers
+  - datadogpodautoscalers/status
+  verbs:
+  - '*'
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsetreplicasets
   - watermarkpodautoscalers
   verbs:
   - get
   - list
   - watch
 - apiGroups:
-    - datadoghq.com
+  - datadoghq.com
+  - karpenter.azure.com
   resources:
-    - datadogslos
+  - '*'
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - list
+  - watch
 - apiGroups:
-    - datadoghq.com
+  - discovery.k8s.io
   resources:
-    - datadogslos/finalizers
+  - endpointslices
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
-- apiGroups:
-    - datadoghq.com
-  resources:
-    - datadogslos/status
-  verbs:
-    - get
-    - patch
-    - update
+  - list
+  - watch
 - apiGroups:
   - external.metrics.k8s.io
+  - karpenter.k8s.aws
   resources:
   - '*'
   verbs:
@@ -539,11 +299,68 @@ rules:
   - list
   - watch
 - apiGroups:
+    - gateway.envoyproxy.io
+  resources:
+    - envoyextensionpolicies
+  verbs:
+    - create
+    - delete
+    - get
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - gatewayclasses
+    - gateways
+    - httproutes
+  verbs:
+    - get
+    - list
+    - patch
+    - watch
+- apiGroups:
+    - gateway.networking.k8s.io
+  resources:
+    - referencegrants
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+- apiGroups:
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - metrics.eks.amazonaws.com
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
+- apiGroups:
+    - networking.istio.io
+  resources:
+    - envoyfilters
+  verbs:
+    - create
+    - delete
+    - get
+- apiGroups:
   - networking.k8s.io
   resources:
   - ingresses
   verbs:
+  - get
   - list
+  - patch
   - watch
 - apiGroups:
   - networking.k8s.io
@@ -570,14 +387,6 @@ rules:
   - update
   - watch
 - apiGroups:
-  - policy
-  resources:
-  - podsecuritypolicies
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
   - quota.openshift.io
   resources:
   - clusterresourcequotas
@@ -588,21 +397,11 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - clusterrolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
   - clusterroles
   verbs:
   - create
   - delete
+  - deletecollection
   - get
   - list
   - patch
@@ -612,65 +411,6 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - roles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - roles.rbac.authorization.k8s.io
-  resources:
-  - clusterrolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - roles.rbac.authorization.k8s.io
-  resources:
-  - clusterroles
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - roles.rbac.authorization.k8s.io
-  resources:
-  - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - roles.rbac.authorization.k8s.io
-  resources:
   - roles
   verbs:
   - create
@@ -694,14 +434,16 @@ rules:
   - storageclasses
   - volumeattachments
   verbs:
+  - get
   - list
   - watch
-- apiGroups:
-    - ""
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
   resources:
-    - pods/exec
+  - kcm/metrics
+  - ksh/metrics
   verbs:
-    - create
+  - get
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
@@ -712,6 +454,7 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals
   - datadogagentprofiles
   verbs:
   - create
@@ -724,16 +467,66 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogagentinternals/finalizers
+  - datadogagentprofiles/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/status
   - datadogagentprofiles/status
   verbs:
   - get
   - patch
   - update
+{{- end }}
+{{- if .Values.datadogDashboard.enabled }}
 - apiGroups:
   - datadoghq.com
   resources:
-  - datadogagentprofiles/finalizers
+  - datadogdashboards
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/finalizers
   verbs:
   - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.clusterRole.allowReadAllResources }}
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+{{- end }}
+{{- if .Values.clusterRole.allowCreatePodsExec }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
 {{- end }}
 {{- end -}}

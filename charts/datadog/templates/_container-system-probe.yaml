@@ -2,8 +2,8 @@
 - name: system-probe
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
-  command: ["/opt/datadog-agent/embedded/bin/system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version "apparmor" (and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.systemProbe.apparmor) "mknod" (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) "kill" .Values.datadog.securityAgent.runtime.enforcement.enabled) | nindent 2 }}
+  command: ["system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
@@ -21,18 +21,29 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if .Values.datadog.serviceMonitoring.enabled }}
+    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: HOST_ROOT
       value: "/host/root"
+    {{- end }}
+    {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+     # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
+{{- if and (empty .Values.agents.containers.systemProbe.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-system-probe-container-resources" . | indent 4 }}
+{{- else }}
 {{ toYaml .Values.agents.containers.systemProbe.resources | indent 4 }}
+{{- end }}
   volumeMounts:
+    {{- if (not .Values.providers.gke.autopilot) }}
     - name: auth-token
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
+    {{- end }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
@@ -43,6 +54,12 @@
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for kprobe_events
+{{- if .Values.datadog.networkMonitoring.enabled }}
+    - name: bpffs
+      mountPath: /sys/fs/bpf
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true
@@ -64,8 +81,22 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+{{- end }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    - name: group
+      mountPath: /etc/group
+      readOnly: true
+{{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
-  {{- if .Values.datadog.systemProbe.enableDefaultOsReleasePaths }}
+  {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
     {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
     - name: etc-redhat-release
       mountPath: /host/etc/redhat-release
@@ -82,11 +113,23 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if .Values.datadog.serviceMonitoring.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- end }}
+{{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
+{{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
+    - name: host-systemd-transient
+      mountPath: /host/root/run/systemd/transient
+      readOnly: false
+{{- end }}
 {{- end }}
 {{- if and (eq (include "runtime-compilation-enabled" .) "true") .Values.datadog.systemProbe.enableDefaultKernelHeadersPaths }}
     - name: modules
@@ -104,6 +147,10 @@
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
       readOnly: true
+{{- end }}
+{{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
+    - name: dynamic-instrumentation-cache-dir
+      mountPath: /tmp/datadog-agent/system-probe/dynamic-instrumentation
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
     - name: runtime-compiler-output-dir

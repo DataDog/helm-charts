@@ -4,12 +4,14 @@ GOTESTSUM_FORMAT?=standard-verbose
 
 # E2E environment variables
 E2E_CONFIG_PARAMS?=
+E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
+E2E_BUILD_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe e2e_autopilot_csi"
 
 ## Local profile
 E2E_PROFILE?=local
-export AWS_KEYPAIR_NAME?=${USER}
+export E2E_KEY_PAIR_NAME?=${USER}
 export E2E_API_KEY?=
 export E2E_APP_KEY?=
 export PULUMI_CONFIG_PASSPHRASE?=
@@ -25,6 +27,7 @@ override E2E_PROFILE=ci
 endif
 
 ifeq ($(E2E_PROFILE), ci)
+export E2E_KEY_PAIR_NAME
 export CI_ENV_NAMES
 export DD_TEAM
 export DD_TAGS
@@ -45,20 +48,38 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test:
-	go test -C test ./... -count=1
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner
+
+.PHONY: unit-test-datadog
+unit-test-datadog:
+	helm dependency update ./charts/datadog 2>/dev/null
+	go test -C test ./datadog -count=1
 
 .PHONY: unit-test-operator
 unit-test-operator:
+	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1
 
+.PHONY: unit-test-private-action-runner
+unit-test-private-action-runner:
+	go test -C test ./private-action-runner -count=1
+
 .PHONY: update-test-baselines
-update-test-baselines:
-	go test -C test ./... -count=1 -args -updateBaselines=true
+update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner
+
+.PHONY: update-test-baselines-private-action-runner
+update-test-baselines-private-action-runner:
+	go test -C test ./private-action-runner -count=1 -args -updateBaselines=true
 
 .PHONY: update-test-baselines-operator
 update-test-baselines-operator:
+	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-datadog-agent
+update-test-baselines-datadog-agent:
+	helm dependency update ./charts/datadog 2>/dev/null
+	go test -C test ./datadog -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:
@@ -75,14 +96,4 @@ test-e2e: fmt vet e2e-test
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test
 .PHONY: e2e-test
 e2e-test:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1
-
-# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-preserve-stacks
-.PHONY: e2e-test-preserve-stacks
-e2e-test-preserve-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -preserveStacks=true
-
-# aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test-cleanup-stacks
-.PHONY: e2e-test-cleanup-stacks
-e2e-test-cleanup-stacks:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) go test -C test/e2e ./... --tags=e2e -v -vet=off -timeout 1h -count=1 -args -destroyStacks=true
+	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) E2E_AGENT_VERSION=$(E2E_AGENT_VERSION) go test -C test/e2e ./... --tags=$(E2E_BUILD_TAGS) -v -vet=off -timeout 1h -count=1
