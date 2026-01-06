@@ -109,8 +109,10 @@
     - name: DD_APM_ENABLED
       value: {{ include "should-enable-trace-agent" . | quote }}
     {{- if eq (include "should-enable-trace-agent" .) "true" }}
+    {{- if (eq  (include "trace-agent-use-tcp-port" .) "true") }}
     - name: DD_APM_NON_LOCAL_TRAFFIC
       value: "true"
+    {{- end }}
     - name: DD_APM_RECEIVER_PORT
       value: {{ .Values.datadog.apm.port | quote }}
     {{- if eq (include "trace-agent-use-uds" .) "true" }}
@@ -138,7 +140,7 @@
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
-      value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
+      value: {{  (default false (and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled) .Values.datadog.logs.containerCollectUsingFiles )) | quote}}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
     - name: DD_HEALTH_PORT

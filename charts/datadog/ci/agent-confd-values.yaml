@@ -1,12 +1,11 @@
-# Empty values file for testing default parameters.
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
-
-  dogstatsd:
-    useSocketVolume: true
-
-  apm:
-    socketEnabled: true
+  confd:
+    http_check.yaml: |-
+      init_config:
+      instances:
+        - name: "test"
+          url: "https://google.com"

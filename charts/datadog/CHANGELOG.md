@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.158.3
+
+* Harmonize datadog chart configs with the Datadog Operator.
+* Add yaml-mapper integration tests.
+
 ## 3.158.2
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
