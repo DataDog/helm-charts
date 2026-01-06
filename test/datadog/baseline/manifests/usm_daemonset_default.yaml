@@ -2007,7 +2007,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
-              value: INFO
+              value: info
             - name: HOST_ROOT
               value: /host/root
           image: gcr.io/datadoghq/agent:7.73.0
