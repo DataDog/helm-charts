@@ -9,17 +9,16 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
     exporters:
-      debug:
-        verbosity: detailed
       otlphttp:
         endpoint: http://{{ template "datadog.fullname" . }}-otel-agent-gateway:4318
         tls:
           insecure: true
+        sending_queue:
+          batch:
+            flush_timeout: 10s
     processors:
       infraattributes:
         cardinality: 2
-      batch:
-        timeout: 10s
     connectors:
       datadog/connector:
         traces:
@@ -30,15 +29,15 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes,]
           exporters: [otlphttp, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [otlphttp]
         logs:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [otlphttp]
   {{- else }} |
     receivers:
@@ -56,17 +55,16 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
     exporters:
-      debug:
-        verbosity: detailed
       datadog:
         api:
           key: ${env:DD_API_KEY}
           site: {{ .Values.datadog.site | default "" | quote }}
+        sending_queue:
+          batch:
+            flush_timeout: 10s
     processors:
       infraattributes:
         cardinality: 2
-      batch:
-        timeout: 10s
       filter/drop-prometheus-internal-metrics:
         metrics:
           exclude:
@@ -85,20 +83,19 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [datadog, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [datadog]
         metrics/prometheus:
           receivers: [prometheus]
-          processors: [filter/drop-prometheus-internal-metrics, infraattributes, batch]
+          processors: [filter/drop-prometheus-internal-metrics, infraattributes]
           exporters: [datadog]
         logs:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [datadog]
 {{- end -}}
 {{- end -}}
-

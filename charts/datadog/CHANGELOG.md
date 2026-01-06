@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.158.1
+## 3.158.2
 
 * Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
+
+## 3.158.1
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
 
 ## 3.158.0
 
