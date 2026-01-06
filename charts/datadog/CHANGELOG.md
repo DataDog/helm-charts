@@ -2,7 +2,7 @@
 
 ## 3.158.1
 
-* Fix Prometheus internal metrics in DDOT's default config: reduce the scraping interval from 60s to 10s, and exclude billable custom metrics.
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
 
 ## 3.158.0
 
