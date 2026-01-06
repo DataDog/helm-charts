@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.3
+
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
+
 ## 3.158.2
 
 * Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
