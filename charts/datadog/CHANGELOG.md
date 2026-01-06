@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.2
+
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
 ## 3.158.1
 
 * Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
