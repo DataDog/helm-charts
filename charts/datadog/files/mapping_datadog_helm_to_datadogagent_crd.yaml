@@ -8,7 +8,7 @@ agents.containers.agent.healthPort:
   newPath: spec.override.nodeAgent.containers.agent.healthPort
   args:
     - sourcePrefix: agents.containers.agent
-    - containerPath: spec.override.nodeAgent.containers.agent
+      containerPath: spec.override.nodeAgent.containers.agent
 agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold
 agents.containers.agent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.livenessProbe.initialDelaySeconds
 agents.containers.agent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.periodSeconds
@@ -90,9 +90,6 @@ agents.containers.traceAgent.envFrom: ""
 agents.containers.traceAgent.livenessProbe:
   mapFunc: mapTraceAgentLivenessProbe
   newPath: spec.override.nodeAgent.containers.trace-agent.livenessProbe
-  args:
-    - apmPortPath: datadog.apm.port
-# Sub-paths handled by mapTraceAgentLivenessProbe
 agents.containers.traceAgent.livenessProbe.initialDelaySeconds: ""
 agents.containers.traceAgent.livenessProbe.periodSeconds: ""
 agents.containers.traceAgent.livenessProbe.timeoutSeconds: ""
@@ -132,8 +129,6 @@ agents.podSecurity.capabilities:
 agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
-# agents.podSecurity.seLinuxContext contains PSP/SCC-specific fields (rule) that don't exist in DDA
-# Only map the nested seLinuxOptions fields
 agents.podSecurity.seLinuxContext: ""
 agents.podSecurity.seLinuxContext.rule: ""
 agents.podSecurity.seLinuxContext.seLinuxOptions: ""
@@ -217,7 +212,7 @@ clusterAgent.healthPort:
   newPath: spec.override.clusterAgent.containers.cluster-agent.healthPort
   args:
     - sourcePrefix: clusterAgent
-    - containerPath: spec.override.clusterAgent.containers.cluster-agent
+      containerPath: spec.override.clusterAgent.containers.cluster-agent
 clusterAgent.image.digest: ""
 clusterAgent.image.doNotCheckTag: ""
 clusterAgent.image.name: spec.override.clusterAgent.image.name
@@ -306,7 +301,7 @@ clusterChecksRunner.healthPort:
   newPath: spec.override.clusterChecksRunner.containers.agent.healthPort
   args:
     - sourcePrefix: clusterChecksRunner
-    - containerPath: spec.override.clusterChecksRunner.containers.agent
+      containerPath: spec.override.clusterChecksRunner.containers.agent
 clusterChecksRunner.image.digest: ""
 clusterChecksRunner.image.name: spec.override.clusterChecksRunner.image.name
 clusterChecksRunner.image.pullPolicy: spec.override.clusterChecksRunner.image.pullPolicy
