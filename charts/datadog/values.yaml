@@ -843,6 +843,7 @@ datadog:
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.60.0+ and Linux.
+    ## DEPRECATED: This behavior will be enabled by default for installations that meet the requirements.
     runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
@@ -1169,6 +1170,10 @@ datadog:
         autoSuppression:
           # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
           enabled: true
+
+      enforcement:
+        # datadog.securityAgent.runtime.enforcement.enabled -- Set to false to disable CWS runtime enforcement
+        enabled: true
 
   ## Manage NetworkPolicy
   networkPolicy:
@@ -2732,6 +2737,10 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  image:
+    # operator.image.tag -- Define the Datadog Operator version to use
+    tag: 1.21.0
+
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.14
+
+* Add support for PodDisruptionBudget for metastore
+
 ## 0.1.13
 
 * Update Docker image to `v0.1.16`

@@ -104,6 +104,26 @@ data:
           {}
         annotations_as_tags:
           {}
+  orchestrator.d--1.yaml: |
+    cluster_check: true
+    init_config:
+    instances:
+      - collectors:
+        - nodes
+        skip_leader_election: true
+  orchestrator.d--2.yaml: |
+    cluster_check: true
+    init_config:
+    instances:
+      - collectors:
+        - deployments
+        skip_leader_election: true
+  redisdb.yaml: |-
+    cluster_check: true
+    init_config:
+    instances:
+      - host: "name"
+        port: "6379"
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -113,6 +133,24 @@ metadata:
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
+  namespace: datadog-agent
+---
+apiVersion: v1
+data:
+  redisdb.yaml: |-
+    init_config:
+    instances:
+      - host: "redis"
+        port: "6379"
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-confd
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -1266,6 +1304,33 @@ spec:
   selector:
     app: datadog-cluster-agent
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: datadog
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+    heritage: Helm
+    release: datadog
+  name: datadog
+  namespace: datadog-agent
+spec:
+  internalTrafficPolicy: Local
+  ports:
+    - name: dogstatsdport
+      port: 8125
+      protocol: UDP
+      targetPort: 8125
+    - name: traceport
+      port: 8126
+      protocol: TCP
+      targetPort: 8126
+  selector:
+    app: datadog
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -1441,12 +1506,7 @@ spec:
             timeoutSeconds: 5
           resources: {}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -1491,6 +1551,9 @@ spec:
             - mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               name: cgroups
+              readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
               readOnly: true
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
@@ -1574,12 +1637,7 @@ spec:
               protocol: TCP
           resources: {}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
@@ -1619,12 +1677,6 @@ spec:
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
@@ -1664,16 +1716,13 @@ spec:
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
+            - mountPath: /conf.d
+              name: confd
+              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
@@ -1688,9 +1737,7 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
-        runAsUser: 100
-        seccompProfile:
-          type: RuntimeDefault
+        runAsUser: 0
       serviceAccountName: datadog
       tolerations: null
       volumes:
@@ -1707,6 +1754,9 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - configMap:
+            name: datadog-confd
+          name: confd
         - hostPath:
             path: /proc
           name: procdir
@@ -1724,6 +1774,9 @@ spec:
             path: /var/run/datadog
             type: DirectoryOrCreate
           name: apmsocket
+        - hostPath:
+            path: /etc/passwd
+          name: passwd
         - hostPath:
             path: /var/run
           name: runtimesocketdir
@@ -1982,12 +2035,6 @@ spec:
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
@@ -2001,22 +2048,12 @@ spec:
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
       nodeSelector:
         kubernetes.io/os: linux
-      securityContext:
-        runAsUser: 100
-        seccompProfile:
-          type: RuntimeDefault
       serviceAccountName: datadog-cluster-checks
       volumes:
         - emptyDir: {}
@@ -2240,11 +2277,7 @@ spec:
           resources: {}
           securityContext:
             allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
           startupProbe:
             failureThreshold: 6
             httpGet:
@@ -2284,21 +2317,11 @@ spec:
           image: gcr.io/datadoghq/cluster-agent:7.73.0
           imagePullPolicy: IfNotPresent
           name: init-volume
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
           volumeMounts:
             - mountPath: /opt/datadog-agent
               name: config
       nodeSelector:
         kubernetes.io/os: linux
-      securityContext:
-        runAsUser: 100
-        seccompProfile:
-          type: RuntimeDefault
       serviceAccountName: datadog-cluster-agent
       volumes:
         - emptyDir: {}
@@ -2312,6 +2335,12 @@ spec:
           name: installinfo
         - configMap:
             items:
+              - key: redisdb.yaml
+                path: redisdb.yaml
+              - key: orchestrator.d--1.yaml
+                path: orchestrator.d/1.yaml
+              - key: orchestrator.d--2.yaml
+                path: orchestrator.d/2.yaml
               - key: kubernetes_state_core.yaml.default
                 path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
               - key: kubernetes_apiserver.yaml

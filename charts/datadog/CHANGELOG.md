@@ -1,8 +1,44 @@
 # Datadog changelog
 
-## 3.157.1
+## 3.158.3
 
 * Bump `datadog-csi-driver` dependency to version 0.4.4 to allow tolerations to be passed to the daemonset.
+
+## 3.158.2
+
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.158.1
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
+
+## 3.158.0
+
+* deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
 
 ## 3.157.0
 

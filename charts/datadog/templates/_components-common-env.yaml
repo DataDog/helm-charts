@@ -24,7 +24,7 @@
 {{- end }}
 {{- if .Values.datadog.tags }}
 - name: DD_TAGS
-  value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
+  value: {{ tpl (.Values.datadog.tags | toJson | quote) . }}
 {{- end }}
 {{- if .Values.datadog.nodeLabelsAsTags }}
 - name: DD_KUBERNETES_NODE_LABELS_AS_TAGS

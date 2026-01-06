@@ -238,6 +238,90 @@ func Test_workload_labels(t *testing.T) {
 			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaa",
 			expectedName:   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa-datadog",
 		},
+		{
+			name: "part-of label not longer than 63 chars and trailing `--` hyphens are trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "aaaaaaaaaaaaaaaaaaa-xxx",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-aaaaaaaaaaaaaaaaaaa",
+			expectedName:   "aaaaaaaaaaaaaaaaaaa-xxx-datadog",
+		},
+		{
+			name: "part-of label not longer than 63 chars and trailing `-` hyphen is trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "a",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+			expectedName:   "a-datadog",
+		},
+		{
+			name: "part-of label not longer than 63 chars, release name has hyphens, trailing hyphens (`--`) are trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "a-b-c-d-e",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-a--b--c--d--e",
+			expectedName:   "a-b-c-d-e-datadog",
+		},
+		{
+			name: "part-of label not longer than 63 chars and all trailing hyphens (`------`) are trimmed",
+			command: common.HelmCommand{
+				ReleaseName: "a",
+				Namespace:   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb---aa",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/daemonset.yaml",
+					"templates/cluster-agent-deployment.yaml",
+					"templates/agent-clusterchecks-deployment.yaml",
+				},
+				Values: []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"clusterChecksRunner.enabled":  "true",
+				},
+			},
+			expectedPartOf: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+			expectedName:   "a-datadog",
+		},
 	}
 
 	for _, tt := range tests {
@@ -245,7 +329,11 @@ func Test_workload_labels(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
 
-			manifests := strings.Split(manifest, "---")[1:]
+			// Split on YAML document separators properly:
+			// 1. Remove leading "---" (first document separator has no preceding newline)
+			// 2. Split on "\n---" to avoid splitting on "---" within string values
+			manifest = strings.TrimPrefix(manifest, "---")
+			manifests := strings.Split(manifest, "\n---")
 			require.Len(t, manifests, 3)
 
 			agent, dca, ccr := manifests[0], manifests[1], manifests[2]

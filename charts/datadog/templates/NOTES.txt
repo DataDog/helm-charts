@@ -482,7 +482,7 @@ On GKE Autopilot environments, GPU Monitoring is not supported. The option 'data
 ####               INFO: OpenShift Control Plane Monitoring                    ####
 ###################################################################################
 
-Certificates are needed to communicate with the Etcd service, which can be found in the secret etcd-metric-client in the openshift-etcd-operator namespace. 
+Certificates are needed to communicate with the Etcd service, which can be found in the secret etcd-metric-client in the openshift-etcd-operator namespace.
 
 To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
 
@@ -766,10 +766,8 @@ Otherwise, `socket` config mode will be used.
 ####               WARNING: Deprecation notice               ####
 #################################################################
 You have set `datadog.processAgent.runInCoreAgent` to `false`.
-Support for this configuration will be deprecated in a future version.
-This configuration controlled whether the Process Agent or Core Agent runs the following features: Live Processes, Live Containers, Process Discovery.
-This behavior will be adjusted automatically and the Core Agent will be used by default on versions 7.60+.
-
+However, this configuration is deprecated.
+If the agent version is 7.60+, the following features will run in the core agent: Live Processes, Live Containers, Process Discovery.
 {{- end }}
 
 {{- if and (ne (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) }}
