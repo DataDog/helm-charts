@@ -3,7 +3,12 @@ agents.containers.agent.env:
   mapFunc: mapMergeEnvs
   newPath: spec.override.nodeAgent.containers.agent.env
 agents.containers.agent.envFrom: spec.override.nodeAgent.envFrom
-agents.containers.agent.healthPort: spec.override.nodeAgent.containers.agent.healthPort
+agents.containers.agent.healthPort:
+  mapFunc: mapHealthPortWithProbes
+  newPath: spec.override.nodeAgent.containers.agent.healthPort
+  args:
+    - sourcePrefix: agents.containers.agent
+    - containerPath: spec.override.nodeAgent.containers.agent
 agents.containers.agent.livenessProbe.failureThreshold: spec.override.nodeAgent.containers.agent.livenessProbe.failureThreshold
 agents.containers.agent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.agent.livenessProbe.initialDelaySeconds
 agents.containers.agent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.agent.livenessProbe.periodSeconds
@@ -82,10 +87,15 @@ agents.containers.systemProbe.securityContext.privileged: spec.override.nodeAgen
 agents.containers.traceAgent.env: spec.override.nodeAgent.containers.trace-agent.env
 agents.containers.traceAgent.envDict: ""
 agents.containers.traceAgent.envFrom: ""
-agents.containers.traceAgent.livenessProbe: spec.override.nodeAgent.containers.trace-agent.livenessProbe
-agents.containers.traceAgent.livenessProbe.initialDelaySeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.initialDelaySeconds
-agents.containers.traceAgent.livenessProbe.periodSeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.periodSeconds
-agents.containers.traceAgent.livenessProbe.timeoutSeconds: spec.override.nodeAgent.containers.trace-agent.livenessProbe.timeoutSeconds
+agents.containers.traceAgent.livenessProbe:
+  mapFunc: mapTraceAgentLivenessProbe
+  newPath: spec.override.nodeAgent.containers.trace-agent.livenessProbe
+  args:
+    - apmPortPath: datadog.apm.port
+# Sub-paths handled by mapTraceAgentLivenessProbe
+agents.containers.traceAgent.livenessProbe.initialDelaySeconds: ""
+agents.containers.traceAgent.livenessProbe.periodSeconds: ""
+agents.containers.traceAgent.livenessProbe.timeoutSeconds: ""
 agents.containers.traceAgent.logLevel: spec.override.nodeAgent.containers.trace-agent.logLevel
 agents.containers.traceAgent.ports: spec.override.nodeAgent.containers.trace-agent.ports
 agents.containers.traceAgent.resources: spec.override.nodeAgent.containers.trace-agent.resources
@@ -122,8 +132,11 @@ agents.podSecurity.capabilities:
 agents.podSecurity.defaultApparmor: ""
 agents.podSecurity.podSecurityPolicy.create: ""
 agents.podSecurity.privileged: spec.override.nodeAgent.containers.agent.securityContext.privileged
-agents.podSecurity.seLinuxContext: spec.override.nodeAgent.containers.agent.securityContext.seLinuxOptions
+# agents.podSecurity.seLinuxContext contains PSP/SCC-specific fields (rule) that don't exist in DDA
+# Only map the nested seLinuxOptions fields
+agents.podSecurity.seLinuxContext: ""
 agents.podSecurity.seLinuxContext.rule: ""
+agents.podSecurity.seLinuxContext.seLinuxOptions: ""
 agents.podSecurity.seLinuxContext.seLinuxOptions.level: spec.override.nodeAgent.containers.agent.securityContext.seLinuxOptions.level
 agents.podSecurity.seLinuxContext.seLinuxOptions.role: spec.override.nodeAgent.containers.agent.securityContext.seLinuxOptions.role
 agents.podSecurity.seLinuxContext.seLinuxOptions.type: spec.override.nodeAgent.containers.agent.securityContext.seLinuxOptions.type
@@ -138,7 +151,11 @@ agents.priorityPreemptionPolicyValue: ""
 agents.rbac.automountServiceAccountToken: ""
 agents.rbac.create: spec.override.nodeAgent.createRbac
 agents.rbac.serviceAccountAnnotations: spec.override.nodeAgent.serviceAccountAnnotations
-agents.rbac.serviceAccountName: spec.override.nodeAgent.serviceAccountName
+agents.rbac.serviceAccountName:
+  mapFunc: mapServiceAccountName
+  newPath: spec.override.nodeAgent.serviceAccountName
+  args:
+    - rbacCreatePath: spec.override.nodeAgent.createRbac
 agents.revisionHistoryLimit: ""
 agents.shareProcessNamespace: ""
 agents.terminationGracePeriodSeconds: ""
@@ -195,7 +212,12 @@ clusterAgent.enabled: ""
 clusterAgent.env: spec.override.clusterAgent.env
 clusterAgent.envDict: ""
 clusterAgent.envFrom: spec.override.clusterAgent.envFrom
-clusterAgent.healthPort: spec.override.clusterAgent.containers.cluster-agent.healthPort
+clusterAgent.healthPort:
+  mapFunc: mapHealthPortWithProbes
+  newPath: spec.override.clusterAgent.containers.cluster-agent.healthPort
+  args:
+    - sourcePrefix: clusterAgent
+    - containerPath: spec.override.clusterAgent.containers.cluster-agent
 clusterAgent.image.digest: ""
 clusterAgent.image.doNotCheckTag: ""
 clusterAgent.image.name: spec.override.clusterAgent.image.name
@@ -232,7 +254,11 @@ clusterAgent.rbac.automountServiceAccountToken: ""
 clusterAgent.rbac.create: spec.override.clusterAgent.createRbac
 clusterAgent.rbac.flareAdditionalPermissions: ""
 clusterAgent.rbac.serviceAccountAnnotations: spec.override.clusterAgent.serviceAccountAnnotations
-clusterAgent.rbac.serviceAccountName: spec.override.clusterAgent.serviceAccountName
+clusterAgent.rbac.serviceAccountName:
+  mapFunc: mapServiceAccountName
+  newPath: spec.override.clusterAgent.serviceAccountName
+  args:
+    - rbacCreatePath: spec.override.clusterAgent.createRbac
 clusterAgent.readinessProbe: spec.override.clusterAgent.containers.cluster-agent.readinessProbe
 clusterAgent.readinessProbe.failureThreshold: spec.override.clusterAgent.containers.cluster-agent.readinessProbe.failureThreshold
 clusterAgent.readinessProbe.initialDelaySeconds: spec.override.clusterAgent.containers.cluster-agent.readinessProbe.initialDelaySeconds
@@ -253,11 +279,12 @@ clusterAgent.strategy: spec.override.clusterAgent.updateStrategy
 clusterAgent.strategy.rollingUpdate.maxSurge: spec.override.clusterAgent.updateStrategy.rollingUpdate.maxSurge
 clusterAgent.strategy.rollingUpdate.maxUnavailable: spec.override.clusterAgent.updateStrategy.rollingUpdate.maxUnavailable
 clusterAgent.strategy.type: spec.override.clusterAgent.updateStrategy.type
-clusterAgent.token: spec.global.clusterAgentToken
+clusterAgent.token: ""
 clusterAgent.tokenExistingSecret:
   args:
     - keyName: token
       keyNamePath: spec.global.clusterAgentTokenSecret.keyName
+      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.clusterAgentTokenSecret.secretName
 clusterAgent.tolerations: spec.override.clusterAgent.tolerations
@@ -274,7 +301,12 @@ clusterChecksRunner.enabled: spec.features.clusterChecks.useClusterChecksRunners
 clusterChecksRunner.env: spec.override.clusterChecksRunner.env
 clusterChecksRunner.envDict: ""
 clusterChecksRunner.envFrom: spec.override.clusterChecksRunner.envFrom
-clusterChecksRunner.healthPort: spec.override.clusterChecksRunner.containers.agent.healthPort
+clusterChecksRunner.healthPort:
+  mapFunc: mapHealthPortWithProbes
+  newPath: spec.override.clusterChecksRunner.containers.agent.healthPort
+  args:
+    - sourcePrefix: clusterChecksRunner
+    - containerPath: spec.override.clusterChecksRunner.containers.agent
 clusterChecksRunner.image.digest: ""
 clusterChecksRunner.image.name: spec.override.clusterChecksRunner.image.name
 clusterChecksRunner.image.pullPolicy: spec.override.clusterChecksRunner.image.pullPolicy
@@ -300,7 +332,11 @@ clusterChecksRunner.rbac.automountServiceAccountToken: ""
 clusterChecksRunner.rbac.create: spec.override.clusterChecksRunner.createRbac
 clusterChecksRunner.rbac.dedicated: ""
 clusterChecksRunner.rbac.serviceAccountAnnotations: spec.override.clusterChecksRunner.serviceAccountAnnotations
-clusterChecksRunner.rbac.serviceAccountName: spec.override.clusterChecksRunner.serviceAccountName
+clusterChecksRunner.rbac.serviceAccountName:
+  mapFunc: mapServiceAccountName
+  newPath: spec.override.clusterChecksRunner.serviceAccountName
+  args:
+    - rbacCreatePath: spec.override.clusterChecksRunner.createRbac
 clusterChecksRunner.readinessProbe: spec.override.clusterChecksRunner.containers.agent.readinessProbe
 clusterChecksRunner.readinessProbe.failureThreshold: spec.override.clusterChecksRunner.containers.agent.readinessProbe.failureThreshold
 clusterChecksRunner.readinessProbe.initialDelaySeconds: spec.override.clusterChecksRunner.containers.agent.readinessProbe.initialDelaySeconds
@@ -346,6 +382,7 @@ datadog.apiKeyExistingSecret:
   args:
     - keyName: api-key
       keyNamePath: spec.global.credentials.apiSecret.keyName
+      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.credentials.apiSecret.secretName
 datadog.apm.enabled: spec.features.apm.hostPortConfig.enabled
@@ -370,6 +407,7 @@ datadog.appKeyExistingSecret:
   args:
     - keyName: app-key
       keyNamePath: spec.global.credentials.appSecret.keyName
+      skipEmpty: true
   mapFunc: mapSecretKeyName
   newPath: spec.global.credentials.appSecret.secretName
 datadog.asm.iast.enabled: spec.features.asm.iast.enabled

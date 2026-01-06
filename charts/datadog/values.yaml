@@ -2765,7 +2765,7 @@ operator:
 
   datadogCRDs:
     # operator.datadogCRDs.keepCrds -- Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true.
-    keepCrds: true
+    keepCrds: true 
     
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD

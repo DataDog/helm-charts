@@ -820,7 +820,6 @@ kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.full
 ###################################################################################
 ####                     INFO: Helm-DDA Migration Enabled                      ####
 ###################################################################################
-{{ if .Values.datadog.operator.migration.enabled -}}
 View and save your migrated DatadogAgent manifest with this command:
 
 kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oyaml
@@ -828,6 +827,14 @@ kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oya
 View migration mapper results:
 
 kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }} --all-containers
+
+{{- if and .Values.datadog.operator.migration.enabled (ne .Values.operator.datadogCRDs.keepCrds true) }}
+
+###################################################################################
+####         ERROR: Helm-DDA Migration Enabled and Keep CRDs not set           ####
+###################################################################################
+
+{{- fail "The options `datadog.operator.migration.enabled` and `operator.datadogCRDs.keepCrds` must both be enabled." }}
 
 {{- end }}
 {{- end }}
