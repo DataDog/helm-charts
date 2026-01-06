@@ -6,13 +6,13 @@
 ## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
 
 # nameOverride -- Override name of app
-nameOverride:  # ""
+nameOverride: # ""
 
 # fullnameOverride -- Override the full qualified app name
-fullnameOverride:  # ""
+fullnameOverride: # ""
 
 # kubeVersionOverride -- Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm
-kubeVersionOverride:  # "1.28.0"
+kubeVersionOverride: # "1.28.0"
 
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
@@ -32,29 +32,29 @@ commonLabels: {}
 ## DockerHub - use docker.io/datadog
 ## If you are on GKE Autopilot, you must use a gcr.io variant registry.
 
-registry:  # gcr.io/datadoghq
+registry: # gcr.io/datadoghq
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
-  apiKey:  # <DATADOG_API_KEY>
+  apiKey: # <DATADOG_API_KEY>
 
   # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "apiKey".
-  apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+  apiKeyExistingSecret: # <DATADOG_API_KEY_SECRET>
 
   # datadog.appKey -- Datadog APP key required to use metricsProvider
 
   ## If you are using clusterAgent.metricsProvider.enabled = true, you must set
   ## a Datadog application key for read access to your metrics.
-  appKey:  # <DATADOG_APP_KEY>
+  appKey: # <DATADOG_APP_KEY>
 
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "appKey".
-  appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+  appKeyExistingSecret: # <DATADOG_APP_KEY_SECRET>
 
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
@@ -67,16 +67,16 @@ datadog:
 
     ## Note: If the command value is "/readsecret_multiple_providers.sh", and datadog.secretBackend.enableGlobalPermissions is enabled below, the agents will have permissions to get secret objects across the cluster.
     ## Read more about "/readsecret_multiple_providers.sh": https://docs.datadoghq.com/agent/guide/secrets-management/#script-for-reading-from-multiple-secret-providers-readsecret_multiple_providerssh
-    command:  # "/readsecret.sh" or "/readsecret_multiple_providers.sh" or any custom binary path
+    command: # "/readsecret.sh" or "/readsecret_multiple_providers.sh" or any custom binary path
 
     # datadog.secretBackend.arguments -- Configure the secret backend command arguments (space-separated strings).
-    arguments:  # "/etc/secret-volume" or any other custom arguments
+    arguments: # "/etc/secret-volume" or any other custom arguments
 
     # datadog.secretBackend.timeout -- Configure the secret backend command timeout in seconds.
-    timeout:  # 30
+    timeout: # 30
 
     # datadog.secretBackend.refreshInterval -- [PREVIEW] Configure the secret backend command refresh interval in seconds.
-    refreshInterval:  # 0
+    refreshInterval: # 0
 
     # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
     enableGlobalPermissions: true
@@ -111,7 +111,7 @@ datadog:
   ## * Overall length should not be higher than 80 characters.
   ## Compared to the rules of GKE, dots are allowed whereas they are not allowed on GKE:
   ## https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters#Cluster.FIELDS.name
-  clusterName:  # <CLUSTER_NAME>
+  clusterName: # <CLUSTER_NAME>
 
   # datadog.site -- The site of the Datadog intake to send Agent data to.
   # (documentation: https://docs.datadoghq.com/getting_started/site/)
@@ -122,12 +122,12 @@ datadog:
   ## Set to 'us5.datadoghq.com' to send data to the US5 site.
   ## Set to 'ddog-gov.com' to send data to the US1-FED site.
   ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
-  site:  # datadoghq.com
+  site: # datadoghq.com
 
   # datadog.dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
 
   ## Overrides the site setting defined in "site".
-  dd_url:  # https://app.datadoghq.com
+  dd_url: # https://app.datadoghq.com
 
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
   logLevel: INFO
@@ -149,7 +149,7 @@ datadog:
     enabled: true
 
     rbac:
-    # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
+      # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
       create: true
 
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
@@ -317,7 +317,7 @@ datadog:
   # datadog.checksCardinality -- Sets the tag cardinality for the checks run by the Agent.
 
   ## ref: https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
-  checksCardinality:  # low, orchestrator or high (not set by default to avoid overriding existing DD_CHECKS_TAG_CARDINALITY configurations, the default value in the Agent is low)
+  checksCardinality: # low, orchestrator or high (not set by default to avoid overriding existing DD_CHECKS_TAG_CARDINALITY configurations, the default value in the Agent is low)
 
   # kubelet configuration
   kubelet:
@@ -328,7 +328,7 @@ datadog:
           fieldPath: status.hostIP
     # datadog.kubelet.tlsVerify -- Toggle kubelet TLS verification
     # @default -- true
-    tlsVerify:  # false
+    tlsVerify: # false
     # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
     # @default -- None (no mount from host)
     hostCAPath:
@@ -349,7 +349,6 @@ datadog:
     useApiServer: false
     # datadog.kubelet.fineGrainedAuthorization -- Enable fine-grained authentication for kubelet (requires: Kubernetes 1.32+)
     fineGrainedAuthorization: false
-
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
   expvarPort: 6000
@@ -438,10 +437,10 @@ datadog:
     unbundleEvents: false
     # datadog.kubernetesEvents.collectedEventTypes -- Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true.
     collectedEventTypes:
-    # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
-    #   source: <controller name> # (optional if `kind`` is provided)
-    #   reasons: # (optional) if empty accept all event reasons
-    #   - <kubernetes event reason>
+      # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
+      #   source: <controller name> # (optional if `kind`` is provided)
+      #   reasons: # (optional) if empty accept all event reasons
+      #   - <kubernetes event reason>
       - kind: Pod
         reasons:
           - Failed
@@ -468,7 +467,7 @@ datadog:
   leaderElection: true
 
   # datadog.leaderLeaseDuration -- Set the lease time for leader election in second
-  leaderLeaseDuration:  # 60
+  leaderLeaseDuration: # 60
 
   # datadog.leaderElectionResource -- Selects the default resource to use for leader election.
   # Can be:
@@ -696,8 +695,7 @@ datadog:
     enabled: false
     # datadog.otelCollector.ports -- Ports that OTel Collector is listening on
     ports:
-
-        # Default GRPC port of OTLP receiver
+      # Default GRPC port of OTLP receiver
       - containerPort: "4317"
         name: otel-grpc
         protocol: TCP
@@ -812,10 +810,10 @@ datadog:
   #   service.py: |-
 
   # datadog.dockerSocketPath -- Path to the docker socket
-  dockerSocketPath:  # /var/run/docker.sock
+  dockerSocketPath: # /var/run/docker.sock
 
   # datadog.criSocketPath -- Path to the container runtime socket (if different from Docker)
-  criSocketPath:  # /var/run/containerd/containerd.sock
+  criSocketPath: # /var/run/containerd/containerd.sock
 
   # Configure how the agent interact with the host's container runtime
   containerRuntimeSupport:
@@ -844,10 +842,11 @@ datadog:
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.60.0+ and Linux.
     ## DEPRECATED: This behavior will be enabled by default for installations that meet the requirements.
-    runInCoreAgent: true
+    runInCoreAgent:
+      true
 
-     # datadog.processAgent.containerCollection -- Set this to true to enable container collection
-     ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
+      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
+      ## ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm
     containerCollection: true
 
   # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
@@ -861,7 +860,6 @@ datadog:
 
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
-
     # datadog.systemProbe.debugPort -- Specify the port to expose pprof and expvar for system-probe agent
     debugPort: 0
 
@@ -912,7 +910,7 @@ datadog:
     maxTrackedConnections: 131072
 
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
-    conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
+    conntrackMaxStateSize: 131072 # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
 
     # datadog.systemProbe.conntrackInitTimeout -- the time to wait for conntrack to initialize before failing
     conntrackInitTimeout: 10s
@@ -923,7 +921,6 @@ datadog:
 
     # datadog.systemProbe.enableDefaultKernelHeadersPaths -- Enable mount of default paths where kernel headers are stored
     enableDefaultKernelHeadersPaths: true
-
 
   containerImageCollection:
     # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
@@ -1025,7 +1022,7 @@ datadog:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
-    enabled:  # false
+    enabled: # false
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
@@ -1065,7 +1062,7 @@ datadog:
       # datadog.sbom.containerImage.containerExclude -- Exclude containers from SBOM generation, as a space-separated list
 
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
-      containerExclude:  # "image:datadog/agent"
+      containerExclude: # "image:datadog/agent"
 
       # datadog.sbom.containerImage.containerInclude -- Include containers in SBOM generation, as a space-separated list.
       # If a container matches an include rule, it’s always included in SBOM generation
@@ -1122,7 +1119,7 @@ datadog:
       useSecruntimeTrack: true
 
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
-      containerExclude:  # "image:datadog/agent"
+      containerExclude: # "image:datadog/agent"
 
       # datadog.securityAgent.runtime.containerInclude -- Include containers in runtime security monitoring, as a space-separated list.
       # If a container matches an include rule, it’s always included
@@ -1233,7 +1230,7 @@ datadog:
   # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
-  containerExclude:  # "image:datadog/agent"
+  containerExclude: # "image:datadog/agent"
 
   # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
   # If a container matches an include rule, it’s always included in Autodiscovery
@@ -1275,24 +1272,28 @@ datadog:
     enabled: false
 
   ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
-  agentDataPlane:
-    # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
+  dataPlane:
+    # datadog.dataPlane.enabled -- Whether or not Agent Data Plane is enabled
     enabled: false
 
+    dogstatsd:
+      # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
+      enabled: false
+
     image:
-      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      # datadog.dataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
       name: agent-data-plane
 
-      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
-      tag: 0.1.11
+      # datadog.dataPlane.image.tag -- Define the Agent Data Plane version to use
+      tag: 0.1.28
 
-      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      # datadog.dataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
       digest: ""
 
-      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      # datadog.dataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
       repository:
 
-      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      # datadog.dataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
   ## Datadog Operator
@@ -1303,7 +1304,7 @@ datadog:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
 
-# Configuration related to Dynamic Instrumentation for Go services.
+  # Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
@@ -1355,7 +1356,7 @@ clusterAgent:
     ## This boolean permits completely skipping this check.
     ## This is useful, for example, for custom tags that are not
     ## respecting semantic versioning.
-    doNotCheckTag:  # false
+    doNotCheckTag: # false
 
   # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
   securityContext: {}
@@ -1455,7 +1456,7 @@ clusterAgent:
       port: 8443
 
     # clusterAgent.metricsProvider.endpoint -- Override the external metrics provider endpoint. If not set, the cluster-agent defaults to `datadog.site`
-    endpoint:  # https://api.datadoghq.com
+    endpoint: # https://api.datadoghq.com
 
   # clusterAgent.env -- Set environment variables specific to Cluster Agent
 
@@ -1508,7 +1509,7 @@ clusterAgent:
     ## Note: "csi" mode requires enabling csi with `datadog.csi.enabled`. If not set, the admission controller will fallback to "socket" mode.
     ## Note: "csi" mode requires version 7.65 or later of the cluster agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
-    configMode:  # "hostip", "socket", "csi" or "service"
+    configMode: # "hostip", "socket", "csi" or "service"
 
     # clusterAgent.admissionController.failurePolicy -- Set the failure policy for dynamic admission control.'
 
@@ -1640,7 +1641,7 @@ clusterAgent:
   #   memory: 256Mi
 
   # clusterAgent.priorityClassName -- Name of the priorityClass to apply to the Cluster Agent
-  priorityClassName:  # system-cluster-critical
+  priorityClassName: # system-cluster-critical
 
   # clusterAgent.nodeSelector -- Allow the Cluster Agent Deployment to be scheduled on selected nodes
 
@@ -1773,7 +1774,7 @@ clusterAgent:
   # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
-  containerExclude:  # "image:datadog/agent"
+  containerExclude: # "image:datadog/agent"
 
   # clusterAgent.containerInclude -- Include containers in the Cluster Agent Autodiscovery,
   # as a space-separated list.  If a container matches an include rule, it’s
@@ -1794,10 +1795,10 @@ existingClusterAgent:
   join: false
 
   # existingClusterAgent.tokenSecretName -- Existing secret name to use for external Cluster Agent token
-  tokenSecretName:  # <EXISTING_DCA_SECRET_NAME>
+  tokenSecretName: # <EXISTING_DCA_SECRET_NAME>
 
   # existingClusterAgent.serviceName -- Existing service name to use for reaching the external Cluster Agent
-  serviceName:  # <EXISTING_DCA_SERVICE_NAME>
+  serviceName: # <EXISTING_DCA_SERVICE_NAME>
 
   # existingClusterAgent.clusterchecksEnabled -- set this to false if you don’t want the agents to run the cluster checks of the joined external cluster agent
   clusterchecksEnabled: true
@@ -1862,7 +1863,7 @@ fips:
 
   ## Note: Use `|` to declare multi-line configuration.
   ## ref: https://docs.datadoghq.com/agent/guide/agent-fips-proxy
-  customFipsConfig: {}  # |
+  customFipsConfig: {} # |
   #  foobar
   #     foo bar baz
 
@@ -1913,7 +1914,7 @@ agents:
     ## This boolean permits to completely skip this check.
     ## This is useful, for example, for custom tags that are not
     ## respecting semantic versioning
-    doNotCheckTag:  # false
+    doNotCheckTag: # false
 
     # agents.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
@@ -2029,7 +2030,7 @@ agents:
 
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.agent.resources -- Resource requests and limits for the agent container.
       resources: {}
@@ -2094,7 +2095,7 @@ agents:
 
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.processAgent.resources -- Resource requests and limits for the process-agent container
       resources: {}
@@ -2165,7 +2166,7 @@ agents:
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.traceAgent.resources -- Resource requests and limits for the trace-agent container
       resources: {}
@@ -2207,7 +2208,7 @@ agents:
 
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
       resources: {}
@@ -2225,7 +2226,18 @@ agents:
         readOnlyRootFilesystem: true
         privileged: false
         capabilities:
-          add: ["SYS_ADMIN", "SYS_RESOURCE", "SYS_PTRACE", "NET_ADMIN", "NET_BROADCAST", "NET_RAW", "IPC_LOCK", "CHOWN", "DAC_READ_SEARCH"]
+          add:
+            [
+              "SYS_ADMIN",
+              "SYS_RESOURCE",
+              "SYS_PTRACE",
+              "NET_ADMIN",
+              "NET_BROADCAST",
+              "NET_RAW",
+              "IPC_LOCK",
+              "CHOWN",
+              "DAC_READ_SEARCH",
+            ]
 
       # agents.containers.systemProbe.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
@@ -2247,7 +2259,7 @@ agents:
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.securityAgent.resources -- Resource requests and limits for the security-agent container
       resources: {}
@@ -2282,7 +2294,7 @@ agents:
 
       # agents.containers.agentDataPlane.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
       # agents.containers.agentDataPlane.resources -- Resource requests and limits for the agent-data-plane container
       resources: {}
@@ -2426,7 +2438,7 @@ agents:
     # key: "value"
 
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
-  useConfigMap:  # false
+  useConfigMap: # false
 
   # agents.customAgentConfig -- Specify custom contents for the datadog agent config (datadog.yaml)
 
@@ -2482,7 +2494,7 @@ agents:
     #     seconds: 5
 
   # agents.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the Agent
-  terminationGracePeriodSeconds:  # 70
+  terminationGracePeriodSeconds: # 70
 
 clusterChecksRunner:
   # clusterChecksRunner.enabled -- If true, deploys agent dedicated for running the Cluster Checks instead of running in the Daemonset's agents.
@@ -2550,7 +2562,6 @@ clusterChecksRunner:
     # clusterChecksRunner.rbac.serviceAccountAdditionalLabels -- Labels to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true
     serviceAccountAdditionalLabels: {}
 
-
     # clusterChecksRunner.rbac.automountServiceAccountToken -- If true, automatically mount the ServiceAccount's API credentials if clusterChecksRunner.rbac.create is true
     automountServiceAccountToken: true
 
@@ -2605,7 +2616,7 @@ clusterChecksRunner:
   #    value: "1"
 
   # clusterChecksRunner.priorityClassName -- Name of the priorityClass to apply to the Cluster checks runners
-  priorityClassName:  # system-cluster-critical
+  priorityClassName: # system-cluster-critical
 
   # clusterChecksRunner.nodeSelector -- Allow the ClusterChecks Deployment to schedule on selected nodes
 
@@ -2868,7 +2879,7 @@ otelAgentGateway:
   enabled: false
   # otelAgentGateway.ports -- Ports that OTel Collector is listening on
   ports:
-      # Default GRPC port of OTLP receiver
+    # Default GRPC port of OTLP receiver
     - containerPort: "4317"
       name: otel-grpc
       protocol: TCP
@@ -2994,7 +3005,7 @@ otelAgentGateway:
     #     command: ["/bin/sh", "-c", "sleep 70"]
 
   # otelAgentGateway.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the otel-agent
-  terminationGracePeriodSeconds:  # 70
+  terminationGracePeriodSeconds: # 70
 
   # otelAgentGateway.topologySpreadConstraints -- Allow the otel-agent Gateway Deployment to schedule using pod topology spreading
 
@@ -3031,7 +3042,7 @@ otelAgentGateway:
     ## This boolean permits completely skipping this check.
     ## This is useful, for example, for custom tags that are not
     ## respecting semantic versioning.
-    doNotCheckTag:  # false
+    doNotCheckTag: # false
 
     # otelAgentGateway.image.pullPolicy -- otel Agent image pullPolicy
     pullPolicy: IfNotPresent
@@ -3084,7 +3095,7 @@ otelAgentGateway:
 
       # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
-      logLevel:  # INFO
+      logLevel: # INFO
 
   ## Provide OTel Collector RBAC configuration in Gateway
   rbac:
