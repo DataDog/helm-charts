@@ -73,7 +73,6 @@ data:
         filtering_enabled: false
         unbundle_events: false
   kubernetes_state_core.yaml.default: |-
-    cluster_check: true
     init_config:
     instances:
       - collectors:
@@ -101,11 +100,30 @@ data:
         - storageclasses
         - volumeattachments
         - ingresses
-        skip_leader_election: true
         labels_as_tags:
           {}
         annotations_as_tags:
           {}
+  orchestrator.d--1.yaml: |
+    cluster_check: true
+    init_config:
+    instances:
+      - collectors:
+        - nodes
+        skip_leader_election: true
+  orchestrator.d--2.yaml: |
+    cluster_check: true
+    init_config:
+    instances:
+      - collectors:
+        - deployments
+        skip_leader_election: true
+  redisdb.yaml: |-
+    cluster_check: true
+    init_config:
+    instances:
+      - host: "name"
+        port: "6379"
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -115,6 +133,24 @@ metadata:
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog-cluster-agent-confd
+  namespace: datadog-agent
+---
+apiVersion: v1
+data:
+  redisdb.yaml: |-
+    init_config:
+    instances:
+      - host: "redis"
+        port: "6379"
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-confd
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -1126,7 +1162,7 @@ roleRef:
   name: datadog-ksm-core
 subjects:
   - kind: ServiceAccount
-    name: datadog-cluster-checks
+    name: datadog-cluster-agent
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1422,7 +1458,7 @@ spec:
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_EXTRA_CONFIG_PROVIDERS
-              value: clusterchecks endpointschecks
+              value: endpointschecks
             - name: DD_IGNORE_AUTOCONF
               value: kubernetes_state
             - name: DD_CONTAINER_LIFECYCLE_ENABLED
@@ -1684,6 +1720,9 @@ spec:
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: false
+            - mountPath: /conf.d
+              name: confd
+              readOnly: true
             - mountPath: /var/log/datadog
               name: logdatadog
               readOnly: false
@@ -1715,6 +1754,9 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
+        - configMap:
+            name: datadog-confd
+          name: confd
         - hostPath:
             path: /proc
           name: procdir
@@ -1786,7 +1828,7 @@ spec:
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
-            - -datadogAgentEnabled=true
+            - -datadogAgentEnabled=false
             - -datadogSLOEnabled=true
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=true
@@ -2293,6 +2335,12 @@ spec:
           name: installinfo
         - configMap:
             items:
+              - key: redisdb.yaml
+                path: redisdb.yaml
+              - key: orchestrator.d--1.yaml
+                path: orchestrator.d/1.yaml
+              - key: orchestrator.d--2.yaml
+                path: orchestrator.d/2.yaml
               - key: kubernetes_state_core.yaml.default
                 path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
               - key: kubernetes_apiserver.yaml

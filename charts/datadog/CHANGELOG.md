@@ -1,8 +1,28 @@
 # Datadog changelog
 
-## 3.158.0
+## 3.159.0
 
 * Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
+## 3.158.3
+
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
+
+## 3.158.2
+
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.158.1
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
+
+## 3.158.0
+
+* deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
 
 ## 3.157.5
 
