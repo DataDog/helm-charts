@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.159.0
+
+* Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
 ## 3.158.3
 
 * Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
