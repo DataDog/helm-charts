@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.156.4](https://img.shields.io/badge/Version-3.156.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.158.4](https://img.shields.io/badge/Version-3.156.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -30,6 +30,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.17.0-dev.2 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -859,6 +860,7 @@ helm install <RELEASE_NAME> \
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
+| datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
@@ -890,7 +892,7 @@ helm install <RELEASE_NAME> \
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
-| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. |
+| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes # Requires datadog.processAgent.processCollection to be set to true to have any effect # ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing |
 | datadog.profiling.enabled | string | `nil` | Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED` environment variable with the same value to all pods in the cluster Valid values are: - false: Profiler is turned off and can not be turned on by other means. - null: Profiler is turned off, but can be turned on by other means. - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling. - true: Profiler is turned on. |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
@@ -927,6 +929,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.containerExclude | string | `nil` |  |
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
+| datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
 | datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring |
 | datadog.securityAgent.runtime.network.enabled | bool | `true` | Set to true to enable the collection of CWS network events |
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
@@ -989,6 +992,19 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
+| operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
+| operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
+| operator.datadogCRDs.crds.datadogGenericResources | bool | `true` | Set to true to deploy the DatadogGenericResource CRD |
+| operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
+| operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
+| operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
+| operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
+| operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
+| operator.datadogSLO.enabled | bool | `true` | Enables the Datadog SLO controller |
+| operator.image.tag | string | `"1.21.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |

@@ -1,4 +1,15 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: 1.22.0-rc.1
+  name: datadog-operator
+  namespace: datadog-agent
+---
+apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
@@ -128,6 +139,455 @@ metadata:
     app.kubernetes.io/version: "7"
   name: datadog-kpi-telemetry-configmap
   namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: 1.22.0-rc.1
+  name: datadog-operator
+rules:
+  - nonResourceURLs:
+      - /metrics
+      - /metrics/slis
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - componentstatuses
+      - deployments
+      - limitranges
+      - namespaces
+      - persistentvolumeclaims
+      - persistentvolumes
+      - replicationcontrollers
+      - resourcequotas
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - events
+      - pods
+      - secrets
+      - serviceaccounts
+      - services
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes/configz
+      - nodes/healthz
+      - nodes/logs
+      - nodes/metrics
+      - nodes/pods
+      - nodes/proxy
+      - nodes/spec
+      - nodes/stats
+    verbs:
+      - get
+  - apiGroups:
+      - '*'
+    resources:
+      - '*/scale'
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - '*'
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - '*'
+  - apiGroups:
+      - apps
+    resources:
+      - controllerrevisions
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+      - deployments
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+    verbs:
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
+      - get
+  - apiGroups:
+      - auto.gke.io
+    resources:
+      - allowlistsynchronizers
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - autoscaling.k8s.io
+    resources:
+      - verticalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - certificates.k8s.io
+    resources:
+      - certificatesigningrequests
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagents
+      - datadogagents/finalizers
+      - datadoggenericresources
+      - datadoggenericresources/finalizers
+      - datadogmonitors
+      - datadogmonitors/finalizers
+      - datadogslos
+      - datadogslos/finalizers
+      - extendeddaemonsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagents/status
+      - datadoggenericresources/status
+      - datadogmonitors/status
+      - datadogslos/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogmetrics/status
+    verbs:
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogmetrics
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogpodautoscalers
+      - datadogpodautoscalers/status
+    verbs:
+      - '*'
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - extendeddaemonsetreplicasets
+      - watermarkpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+      - karpenter.azure.com
+    resources:
+      - '*'
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - external.metrics.k8s.io
+      - karpenter.k8s.aws
+    resources:
+      - '*'
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+  - apiGroups:
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - metrics.eks.amazonaws.com
+    resources:
+      - kcm/metrics
+      - ksh/metrics
+    verbs:
+      - get
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - quota.openshift.io
+    resources:
+      - clusterresourcequotas
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterrolebindings
+      - clusterroles
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+      - roles
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - restricted
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+      - volumeattachments
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - metrics.eks.amazonaws.com
+    resources:
+      - kcm/metrics
+      - ksh/metrics
+    verbs:
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -584,6 +1044,19 @@ rules:
       - ksh/metrics
     verbs:
       - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: datadog-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-operator
+subjects:
+  - kind: ServiceAccount
+    name: datadog-operator
+    namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -1317,6 +1790,86 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: 1.22.0-rc.1
+  name: datadog-operator
+  namespace: datadog-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: datadog
+      app.kubernetes.io/name: operator
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/operator.check_names: '["openmetrics"]'
+        ad.datadoghq.com/operator.init_configs: '[{}]'
+        ad.datadoghq.com/operator.instances: |
+          [{
+            "prometheus_url": "http://%%host%%:8383/metrics",
+            "namespace": "datadog.operator",
+            "metrics": ["*"]
+          }]
+      labels:
+        app.kubernetes.io/instance: datadog
+        app.kubernetes.io/name: operator
+    spec:
+      containers:
+        - args:
+            - -supportExtendedDaemonset=false
+            - -logEncoder=json
+            - -metrics-addr=:8383
+            - -loglevel=info
+            - -operatorMetricsEnabled=true
+            - -introspectionEnabled=false
+            - -datadogAgentProfileEnabled=false
+            - -datadogMonitorEnabled=false
+            - -datadogAgentEnabled=false
+            - -datadogSLOEnabled=true
+            - -datadogDashboardEnabled=false
+            - -datadogGenericResourceEnabled=true
+            - -remoteConfigEnabled=false
+            - -datadogAgentInternalEnabled=false
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DD_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DD_TOOL_VERSION
+              value: helm
+          image: gcr.io/datadoghq/operator:1.21.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthz/
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          name: operator
+          ports:
+            - containerPort: 8383
+              name: metrics
+              protocol: TCP
+          resources: {}
+          volumeMounts: null
+      serviceAccountName: datadog-operator
+      volumes: null
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
     agent.datadoghq.com/component: cluster-agent
     app.kubernetes.io/component: cluster-agent
     app.kubernetes.io/instance: datadog-cluster-agent
@@ -1387,6 +1940,11 @@ spec:
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
               value: "false"
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-secret
             - name: DD_ADMISSION_CONTROLLER_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
@@ -1572,6 +2130,11 @@ spec:
             name: datadog-installinfo
           name: installinfo
         - configMap:
+            items:
+              - key: kubernetes_state_core.yaml.default
+                path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
+              - key: kubernetes_apiserver.yaml
+                path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
         - emptyDir: {}

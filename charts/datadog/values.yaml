@@ -843,6 +843,7 @@ datadog:
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.60.0+ and Linux.
+    ## DEPRECATED: This behavior will be enabled by default for installations that meet the requirements.
     runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
@@ -1170,6 +1171,10 @@ datadog:
           # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
           enabled: true
 
+      enforcement:
+        # datadog.securityAgent.runtime.enforcement.enabled -- Set to false to disable CWS runtime enforcement
+        enabled: true
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
@@ -1290,7 +1295,15 @@ datadog:
       # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
-  # Configuration related to Dynamic Instrumentation for Go services.
+  ## Datadog Operator
+  ## * Enable the Datadog Operator chart dependency.
+  ## * Configure the Datadog Operator sub-chart using the values config, `operator`.
+  ## For all available Operator chart options see: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
+  operator:
+    # datadog.operator.enabled -- Enable the Datadog Operator.
+    enabled: true
+
+# Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
     enabled: false
@@ -2727,6 +2740,45 @@ clusterChecksRunner:
 
   # clusterChecksRunner.ports -- Allows to specify extra ports (hostPorts for instance) for this container
   ports: []
+
+operator:
+  image:
+    # operator.image.tag -- Define the Datadog Operator version to use
+    tag: 1.21.0
+
+  datadogAgent:
+    # operator.datadogAgent.enabled -- Enables Datadog Agent controller
+    # Note: The Datadog Agent controller will be enabled by default in a future release.
+    enabled: false
+  datadogDashboard:
+    # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+    enabled: false
+  datadogGenericResource:
+    # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+    enabled: true
+  datadogMonitor:
+    # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
+    enabled: false
+  datadogSLO:
+    # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
+    enabled: true
+
+  datadogCRDs:
+    crds:
+      # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+      datadogAgents: false
+      # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+      datadogMonitors: true
+      # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+      datadogSLOs: true
+      # operator.datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+      datadogDashboards: true
+      # operator.datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+      datadogGenericResources: true
+      # operator.datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+      datadogMetrics: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+      datadogPodAutoscalers: false
 
 datadog-crds:
   crds:

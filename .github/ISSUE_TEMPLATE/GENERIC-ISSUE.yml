@@ -1,0 +1,89 @@
+---
+name: Generic Issue
+description: "For clean, reproducible bugs only. Need to submit logs, require debugging help, or unsure? Choose 'Support Request' instead for faster resolution."
+title: "[BUG] "
+labels: bug,pending
+body:
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched [existing issues](https://github.com/DataDog/helm-charts/issues) and this is not a duplicate
+          required: true
+        - label: This is a Helm chart issue, not a Datadog product/service problem
+          required: true
+
+  - type: dropdown
+    id: chart-name
+    attributes:
+      label: Helm chart name
+      description: Name of the Helm chart affected by this bug
+      default: 1
+      options:
+        - cloudprem
+        - datadog
+        - datadog-crds
+        - datadog-csi-driver
+        - datadog-operator
+        - extended-daemon-set
+        - observability-pipelines-worker
+        - private-action-runner
+        - synthetics-private-location
+    validations:
+      required: true
+
+  - type: input
+    id: chart-version
+    attributes:
+      label: Helm chart version
+      description: Version(s) of the Helm chart affected by this bug
+      placeholder: "3.X.Y"
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-report
+    attributes:
+      label: Bug Report
+      description: What happened and what did you expect?
+      value: |
+        **What happened:**
+        <!-- Describe the issue... -->
+
+        **What I expected:**
+        <!-- Describe expected behavior... -->
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Help us reproduce the problem
+      placeholder: |
+        1. Install the chart with `helm install ...`
+        2. Configure the following values: ...
+        3. Observe...
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Kubernetes version, cloud provider, Helm version, etc.
+      value: |
+        **Kubernetes version:** 
+        **Helm version:** 
+        **Cloud provider:** 
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Error messages, screenshots, or anything else that might help
+    validations:
+      required: false

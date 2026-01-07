@@ -800,12 +800,23 @@ datadog-agent-fips-config
 {{- end -}}
 
 {{/*
+Recursively trim all trailing hyphens from a string
+*/}}
+{{- define "trim-trailing-hyphens" -}}
+{{- if hasSuffix "-" . -}}
+{{- include "trim-trailing-hyphens" (trimSuffix "-" .) -}}
+{{- else -}}
+{{- . -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Build part-of label
 */}}
 {{- define "part-of-label" -}}
 {{- $ns := .Release.Namespace | replace "-" "--" -}}
-{{- $name := include "datadog.fullname" . | replace "-" "--" | trimSuffix "-" -}}
-{{ printf "%s-%s" $ns $name | trunc 63 | trimSuffix "-" }}
+{{- $name := include "datadog.fullname" . | replace "-" "--" -}}
+{{- include "trim-trailing-hyphens" (printf "%s-%s" $ns $name | trunc 63) -}}
 {{- end }}
 
 {{/*
@@ -1045,6 +1056,9 @@ securityContext:
   {{- end -}}
   {{- if .mknod -}}
     {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
+  {{- end -}}
+  {{- if .kill -}}
+    {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
   {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
@@ -1289,7 +1303,7 @@ Create RBACs for custom resources
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
       true
   {{- else -}}
     false

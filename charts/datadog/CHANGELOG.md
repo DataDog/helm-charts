@@ -1,8 +1,51 @@
 # Datadog changelog
 
-## 3.156.4
+## 3.158.4
 
 * Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentationContainerRegistry`.
+## 3.158.3
+
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
+
+## 3.158.2
+
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+
+## 3.158.1
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
+
+## 3.158.0
+
+* deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
+## 3.157.5
+
+* Fix part-of label truncation.
+
+## 3.157.4
+
+* Fix appKey and appKeyExistingSecret reference in cluster-agent deployment
+
+## 3.157.3
+
+* Fix appKey secret creation needed by datadog-operator subchart.
+
+## 3.157.2
+
+* Rename endpoint configmap to properly support multiple releases and the operator subchart.
+
+## 3.157.1
+
+* Allow `datadog.tags` to convert the spaces to underscores on individual tags that contain spaces.
+
+## 3.157.0
+
+* Enable Datadog Operator chart dependency ([#2112](https://github.com/DataDog/helm-charts/pull/2112)).
 
 ## 3.156.3
 
