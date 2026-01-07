@@ -1384,6 +1384,8 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
+            - name: DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR
+              value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
           image: gcr.io/datadoghq/agent:7.74.0
@@ -1759,6 +1761,8 @@ spec:
             - name: DD_COLLECT_KUBERNETES_EVENTS
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "false"
+            - name: DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR
               value: "false"
             - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
               value: "false"

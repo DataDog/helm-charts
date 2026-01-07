@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.160.2
+
+* Add DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR flag to alter `kube_service` tag behavior.
+
 ## 3.160.1
 
 * Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).
