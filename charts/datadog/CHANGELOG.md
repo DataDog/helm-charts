@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.158.5
+
+* Remove an unreleased field from DDOT gateway default config.
+
 ## 3.158.4
 
 * Fix a typo in DDOT gateway default config: extension -> extensions.
