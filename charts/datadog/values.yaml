@@ -1313,6 +1313,10 @@ datadog:
       # Kubernetes job logs.
       preview: false
 
+      # datadog.operator.migration.userValues -- Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest.
+      # Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml
+      userValues: ""
+
 # Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.

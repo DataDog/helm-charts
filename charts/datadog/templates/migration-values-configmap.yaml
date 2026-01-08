@@ -1,4 +1,5 @@
 {{- if or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview }}
+{{- if .Values.datadog.operator.migration.userValues }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,8 +8,9 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
   annotations:
-    checksum/migration-config: {{ tpl (toYaml .Values) . | sha256sum }}
+    checksum/migration-config: {{ .Values.datadog.operator.migration.userValues | sha256sum }}
 data:
   values.yaml: |-
-{{ toYaml .Values | indent 4 }}
+{{ .Values.datadog.operator.migration.userValues | indent 4 }}
+{{- end }}
 {{- end }}

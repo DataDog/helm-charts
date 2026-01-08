@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "datadog.fullname" . }}-migration-job
+  name: {{ template "datadog.fullname" . }}-dda-migration-job
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: "post-install,post-upgrade"
@@ -17,7 +17,7 @@ spec:
       serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
       restartPolicy: Never
       containers:
-        - name: helm-dda-migrator
+        - name: dda-mapper
           image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}
           command:
             - /yaml-mapper
@@ -39,7 +39,7 @@ spec:
               subPath: mapping_datadog_helm_to_datadogagent_crd.yaml
               readOnly: true
   {{- if and .Values.datadog.operator.migration.enabled ( include "datadogagents-crd-ready" . ) }}
-        - name: k8s
+        - name: dda-migrator
           image: bitnami/kubectl:latest
           command:
             - sh
