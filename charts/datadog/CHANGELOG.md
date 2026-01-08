@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.160.0
+
+* Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentationContainerRegistry`.
+
 ## 3.159.0
 
 * [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
