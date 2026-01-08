@@ -1,8 +1,13 @@
 # Datadog changelog
 
-## 3.158.4
+## 3.159.0
 
 * Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentationContainerRegistry`.
+
+## 3.158.4
+
+* Fix a typo in DDOT gateway default config: extension -> extensions.
+
 ## 3.158.3
 
 * Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
