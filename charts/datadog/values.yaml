@@ -3013,7 +3013,7 @@ otelAgentGateway:
     name: ddot-collector
 
     # otelAgentGateway.image.tag -- Override the image tag of otel agent
-    tag: 7.71.2
+    tag: ""
 
     # otelAgentGateway.image.tagSuffix -- Suffix to append to image tag of otel agent
     tagSuffix: ""
