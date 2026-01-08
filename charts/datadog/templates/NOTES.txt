@@ -808,9 +808,9 @@ Skipping migration.
 ####                 INFO: Helm-DDA Migration Preview Enabled                  ####
 ###################################################################################
 
-View migration mapper results:
+View migration job logs:
 
-kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }} --all-containers
+kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
 
 {{- end }}
 
@@ -820,11 +820,11 @@ kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.full
 ###################################################################################
 View and save your migrated DatadogAgent manifest with this command:
 
-kubectl -n <namespace> get datadogagent {{ template "datadog.fullname" . }} -oyaml
+kubectl -n {{ .Release.Namespace }} get datadogagent {{ template "datadog.fullname" . }} -oyaml
 
-View migration mapper results:
+View migration job logs:
 
-kubectl -n <namespace> logs {{ printf "<%s-%s-POD_NAME>" ( include "datadog.fullname" . ) "migration-job" }} --all-containers
+kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
 
 {{- if and .Values.datadog.operator.migration.enabled (ne .Values.operator.datadogCRDs.keepCrds true) }}
 

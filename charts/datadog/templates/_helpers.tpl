@@ -1512,13 +1512,9 @@ etcd.yaml: |-
   Returns true if the DatadogAgent CRD is installed.
 */}}
 {{- define "datadogagents-crd-ready" }}
-{{- $crdsReady := false }}
-{{- range $i := until 10 }}
-  {{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
-    {{- $crdsReady = true }}
-  {{- end }}
+{{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+true
 {{- end }}
-{{ $crdsReady }}
 {{- end -}}
 
 

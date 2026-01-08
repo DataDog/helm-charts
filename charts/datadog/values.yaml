@@ -352,7 +352,7 @@ datadog:
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
-  expvarPort: "6000"
+  expvarPort: 6000
 
   ## dogstatsd configuration
 
@@ -698,11 +698,11 @@ datadog:
     ports:
 
         # Default GRPC port of OTLP receiver
-      - containerPort: 4317
+      - containerPort: "4317"
         name: otel-grpc
         protocol: TCP
         # Default HTTP port of OTLP receiver
-      - containerPort: 4318
+      - containerPort: "4318"
         name: otel-http
         protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
@@ -1309,8 +1309,8 @@ datadog:
       enabled: false
 
       # datadog.operator.migration.preview -- Set to true to preview the DatadogAgent manifest mapped from the
-      # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `helm-dda-migrator`
-      # Kubernetes job logs.
+      # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper`
+      # container logs in the migration job.
       preview: false
 
       # datadog.operator.migration.userValues -- Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest.
@@ -2886,11 +2886,11 @@ otelAgentGateway:
   # otelAgentGateway.ports -- Ports that OTel Collector is listening on
   ports:
       # Default GRPC port of OTLP receiver
-    - containerPort: 4317
+    - containerPort: "4317"
       name: otel-grpc
       protocol: TCP
       # Default HTTP port of OTLP receiver
-    - containerPort: 4318
+    - containerPort: "4318"
       name: otel-http
       protocol: TCP
   # otelAgentGateway.config -- Gateway OTel Agent configuration
