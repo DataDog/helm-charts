@@ -4,6 +4,10 @@
 
 * [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
 
+## 3.158.4
+
+* Fix a typo in DDOT gateway default config: extension -> extensions.
+
 ## 3.158.3
 
 * Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
@@ -39,7 +43,6 @@
 ## 3.157.2
 
 * Rename endpoint configmap to properly support multiple releases and the operator subchart.
->>>>>>> 63731e832bedf72197acf16ccd70b3fbc3c02269
 
 ## 3.157.1
 
