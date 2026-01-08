@@ -797,7 +797,7 @@ helm install <RELEASE_NAME> \
 | datadog.envDict | object | `{}` | Set environment variables for all Agents defined in a dict |
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
-| datadog.expvarPort | string | `"6000"` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
+| datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
 | datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
 | datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
@@ -861,7 +861,8 @@ helm install <RELEASE_NAME> \
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
 | datadog.operator.migration.enabled | bool | `false` | Enable migration of Agent workloads to be managed by the Datadog Operator. Creates a DatadogAgent manifest based on current release's values.yaml. |
-| datadog.operator.migration.preview | bool | `false` | Set to true to preview the DatadogAgent manifest mapped from the Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `helm-dda-migrator` Kubernetes job logs. |
+| datadog.operator.migration.preview | bool | `false` | Set to true to preview the DatadogAgent manifest mapped from the Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper` container logs in the migration job. |
+| datadog.operator.migration.userValues | string | `""` | Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest. Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
@@ -876,7 +877,7 @@ helm install <RELEASE_NAME> \
 | datadog.otelCollector.enabled | bool | `false` | Enable the OTel Collector |
 | datadog.otelCollector.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
 | datadog.otelCollector.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
-| datadog.otelCollector.ports | list | `[{"containerPort":4317,"name":"otel-grpc","protocol":"TCP"},{"containerPort":4318,"name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
+| datadog.otelCollector.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | datadog.otelCollector.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
 | datadog.otelCollector.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
 | datadog.otelCollector.useStandaloneImage | bool | `true` | If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image The tag is retrieved from the `agents.image.tag` value. This is only supported for agent versions 7.67.0+ If set to false, you will need to set `agents.image.tagSuffix` to `full` |
@@ -1047,7 +1048,7 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.nodeSelector | object | `{}` | Allow the Gateway Deployment to schedule on selected nodes |
 | otelAgentGateway.podAnnotations | object | `{}` | Annotations to add to the Gateway Deployment's Pods |
 | otelAgentGateway.podLabels | object | `{}` | Sets podLabels if defined |
-| otelAgentGateway.ports | list | `[{"containerPort":4317,"name":"otel-grpc","protocol":"TCP"},{"containerPort":4318,"name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
+| otelAgentGateway.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
 | otelAgentGateway.priorityClassCreate | bool | `false` | Creates a priorityClass for the otel-agent Gateway Deployment pods. |
 | otelAgentGateway.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
 | otelAgentGateway.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods. |
