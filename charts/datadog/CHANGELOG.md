@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.158.5
+## 3.159.1
 
 * Add support for wildcards in `kind` field of KSM RBAC.
+
+## 3.159.0
+
+* [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
 
 ## 3.158.4
 
@@ -14,7 +18,7 @@
 
 ## 3.158.2
 
-* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243)
 
 ## 3.158.1
 
