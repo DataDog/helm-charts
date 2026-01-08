@@ -53,19 +53,29 @@ Create the name of the service account to use
 
 {{/*
 Return the value for a given data key in the datadog endpoint-config ConfigMap.
-Looks up the ConfigMap by exact name based on the release name to avoid
-concatenating values from multiple ConfigMaps when multiple Datadog releases
-exist in the same namespace.
+Looks up the ConfigMap by labels to support various installation patterns:
+- Multiple releases with different names in same namespace
+- Single release with aliased chart dependencies
+Only returns a value if exactly one matching ConfigMap is found to avoid
+concatenating values from multiple ConfigMaps.
 */}}
 {{- define "get-endpoint-config-data-key" -}}
 {{- $ctx := index . 0 }}
 {{- $key := index . 1 }}
 {{- $ns := $ctx.Release.Namespace -}}
-{{- $cmName := printf "%s-endpoint-config" $ctx.Release.Name -}}
-{{- $cm := lookup "v1" "ConfigMap" $ns $cmName -}}
-{{- if $cm }}
-  {{- get $cm.data $key -}}
-{{- end }}
+{{- $matchingCMs := list -}}
+{{- $cms := (lookup "v1" "ConfigMap" $ns "").items -}}
+{{- range $cms -}}
+  {{- $instance := index .metadata.labels "app.kubernetes.io/instance" -}}
+  {{- $configType := index .metadata.labels "datadog.com/config-type" -}}
+  {{- if and (eq $instance $ctx.Release.Name) (eq $configType "endpoint-config") -}}
+    {{- $matchingCMs = append $matchingCMs . -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Only return value if exactly one ConfigMap matches */ -}}
+{{- if eq (len $matchingCMs) 1 -}}
+  {{- get (index $matchingCMs 0).data $key -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
