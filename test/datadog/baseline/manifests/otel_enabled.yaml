@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -148,7 +148,7 @@ data:
         config:
           scrape_configs:
             - job_name: "otelcol"
-              scrape_interval: 10s
+              scrape_interval: 60s
               static_configs:
                 - targets: ["0.0.0.0:8888"]
       otlp:
@@ -158,17 +158,24 @@ data:
           http:
              endpoint: 0.0.0.0:4318
     exporters:
-      debug:
-        verbosity: detailed
       datadog:
         api:
           key: ${env:DD_API_KEY}
           site: ""
+        sending_queue:
+          batch:
+            flush_timeout: 10s
     processors:
       infraattributes:
         cardinality: 2
-      batch:
-        timeout: 10s
+      filter/drop-prometheus-internal-metrics:
+        metrics:
+          exclude:
+            match_type: regexp
+            metric_names:
+              - ^scrape_.*$
+              - ^up$
+              - ^promhttp_metric_handler_errors_total$
     connectors:
       datadog/connector:
         traces:
@@ -179,15 +186,19 @@ data:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [datadog, datadog/connector]
         metrics:
-          receivers: [otlp, datadog/connector, prometheus]
-          processors: [infraattributes, batch]
+          receivers: [otlp, datadog/connector]
+          processors: [infraattributes]
+          exporters: [datadog]
+        metrics/prometheus:
+          receivers: [prometheus]
+          processors: [filter/drop-prometheus-internal-metrics, infraattributes]
           exporters: [datadog]
         logs:
           receivers: [otlp]
-          processors: [infraattributes, batch]
+          processors: [infraattributes]
           exporters: [datadog]
 kind: ConfigMap
 metadata:
@@ -207,7 +218,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -288,6 +299,7 @@ rules:
     resources:
       - customresourcedefinitions
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -502,6 +514,34 @@ rules:
       - list
       - watch
   - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+  - apiGroups:
       - karpenter.sh
     resources:
       - '*'
@@ -521,11 +561,21 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
     verbs:
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - networking.k8s.io
@@ -1851,7 +1901,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1998,6 +2048,11 @@ spec:
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
               value: "false"
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-secret
             - name: DD_ADMISSION_CONTROLLER_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
@@ -2183,6 +2238,11 @@ spec:
             name: datadog-installinfo
           name: installinfo
         - configMap:
+            items:
+              - key: kubernetes_state_core.yaml.default
+                path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
+              - key: kubernetes_apiserver.yaml
+                path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
         - emptyDir: {}

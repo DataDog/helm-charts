@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -164,7 +164,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -245,6 +245,7 @@ rules:
     resources:
       - customresourcedefinitions
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -459,6 +460,34 @@ rules:
       - list
       - watch
   - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+    verbs:
+      - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+  - apiGroups:
       - karpenter.sh
     resources:
       - '*'
@@ -478,11 +507,21 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - create
+      - delete
+      - get
+  - apiGroups:
       - networking.k8s.io
     resources:
       - ingresses
     verbs:
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - networking.k8s.io
@@ -1713,7 +1752,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.21.0
+    app.kubernetes.io/version: 1.22.0-rc.1
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2061,6 +2100,11 @@ spec:
               value: "false"
             - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
               value: "false"
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-secret
             - name: DD_ADMISSION_CONTROLLER_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
@@ -2248,6 +2292,11 @@ spec:
             name: datadog-installinfo
           name: installinfo
         - configMap:
+            items:
+              - key: kubernetes_state_core.yaml.default
+                path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
+              - key: kubernetes_apiserver.yaml
+                path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
         - emptyDir: {}
