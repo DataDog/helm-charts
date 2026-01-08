@@ -1,0 +1,24 @@
+# Global value to disable operator in datadog subcharts
+# NOTE: Only works for datadog-a due to Helm bug with second aliased dependency
+global:
+  datadog:
+    operator:
+      enabled: false
+
+datadog-a:
+  datadog:
+    nameOverride: datadog-a
+    apiKeyExistingSecret: datadog-secret
+    appKeyExistingSecret: datadog-secret
+
+datadog-b:
+  nameOverride: datadog-b
+  datadog:
+    apiKeyExistingSecret: datadog-secret
+    appKeyExistingSecret: datadog-secret
+  # The operator from datadog-b will be the one installed (Helm bug prevents disabling)
+  # Configure it here:
+  operator:
+    apiKeyExistingSecret: datadog-secret
+    appKeyExistingSecret: datadog-secret
+

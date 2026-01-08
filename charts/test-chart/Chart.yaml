@@ -1,0 +1,18 @@
+apiVersion: v2
+name: datadog
+type: application
+version: 1.0.0
+dependencies:
+- name: kube-state-metrics
+  version: 6.4.2
+  repository: 'https://prometheus-community.github.io/helm-charts'
+- name: datadog
+  alias: 'datadog-a'
+  version: 3.159.0
+  repository: file://../datadog
+- name: datadog
+  alias: 'datadog-b'
+  version: 3.159.0
+  repository: file://../datadog
+# NOTE: datadog-operator comes from datadog-b subchart (cannot be disabled due to Helm bug)
+# Only ONE operator is needed, so this is acceptable
