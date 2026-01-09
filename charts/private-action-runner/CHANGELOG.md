@@ -2,7 +2,8 @@
 
 ## 1.20.0
 
-* Add your changelog here!
+* Bump private runner version to 1.16.0
+* Add kubernetes connection testing
 
 ## 1.19.0
 
