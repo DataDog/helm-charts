@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.20.0
+
+* Add your changelog here!
+
 ## 1.19.0
 
 * Bump private runner version to 1.15.0
