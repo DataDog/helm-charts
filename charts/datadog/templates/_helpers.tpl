@@ -471,8 +471,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
 Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 */}}
 {{- define "ddot-collector-gateway-image" -}}
+  {{- $imageTag := .Values.otelAgentGateway.image.tag -}}
+  {{- if not $imageTag -}}
+    {{- $imageTag = include "get-agent-version" . -}}
+  {{- end -}}
   {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
-    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- $imageTag = $imageTag | toString -}}
     {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
       {{- fail "`-full` image is not supported in otel agent gateway" -}}
     {{- end -}}
@@ -480,7 +484,8 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
       {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
     {{- end -}}
   {{- end -}}
-  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+  {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
+  {{ include "image-path" (dict "root" .Values "image" $image) }}
 {{- end -}}
 
 {{/*
