@@ -3,7 +3,8 @@
 ## 2.17.0-dev.3
 
 * Update Datadog Operator chart for 1.22.0-rc.3.
-* Enable DatadogAgentInternal controller and CRD. 
+* Enable DatadogAgentInternal controller and CRD.
+* Add ClusterRole RBAC permissions for DatadogAgentInternal. 
 
 ## 2.17.0-dev.2
 
