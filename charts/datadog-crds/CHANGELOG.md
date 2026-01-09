@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.0-dev.2
+
+* Update DatadogAgentInternals values name.
+
 ## 2.15.0-dev.1
 
 * Update CRDs from Datadog Operator v1.22.0-rc.1 release candidate tag.
