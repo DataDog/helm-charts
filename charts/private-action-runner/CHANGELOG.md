@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.20.0
+
+* Bump private runner version to 1.16.0
+* Add kubernetes connection testing
+
 ## 1.19.0
 
 * Bump private runner version to 1.15.0
