@@ -1,9 +1,8 @@
 {{- define "container-agent-data-plane" -}}
 - name: agent-data-plane
-  image: "{{ include "image-path" (dict "root" .Values "image" .Values.datadog.agentDataPlane.image) }}"
-  imagePullPolicy: {{ .Values.datadog.agentDataPlane.image.pullPolicy }}
-  command: ["agent-data-plane", "run", "--config={{ template "datadog.confPath" . }}/datadog.yaml"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agentDataPlane.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.datadog.dataPlane.image) }}"
+  imagePullPolicy: {{ .Values.datadog.dataPlane.image.pullPolicy }}
+  command: ["agent-data-plane", "--config", "{{ template "datadog.confPath" . }}/datadog.yaml", "run"]
   resources:
 {{- if and (empty .Values.agents.containers.agentDataPlane.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-container-resources" . | indent 4 }}

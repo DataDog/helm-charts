@@ -154,10 +154,17 @@ false
 
 {{/*
 Return true if Agent Data Plane needs to be deployed
+
+This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
+data pipeline enabled
 */}}
-{{- define "should-enable-agent-data-plane" -}}
-{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- define "should-enable-data-plane" -}}
+{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
+{{- else -}}
+false
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
