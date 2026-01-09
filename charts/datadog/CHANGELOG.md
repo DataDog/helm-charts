@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.160.0
+
+* Use agent version as default image tag for DDOT Gateway when `otelAgentGateway.image.tag` is not specified.
+* Remove an unreleased field from DDOT gateway default config: `extensions.datadog.deployment_type`.
+
 ## 3.159.1
 
 * Add support for wildcards in `kind` field of KSM RBAC.
