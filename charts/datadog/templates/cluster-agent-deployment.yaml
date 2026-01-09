@@ -372,6 +372,8 @@ spec:
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
+          - name: DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR
+            value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
