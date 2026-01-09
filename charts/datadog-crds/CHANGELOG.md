@@ -2,7 +2,7 @@
 
 ## 2.15.0-dev.2
 
-* Update DatadogAgentInternals values name.
+* [BREAKING] Update datadogAgentInternal CRD values name to datadogAgentInternals.
 
 ## 2.15.0-dev.1
 
