@@ -50,6 +50,15 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
+# storage -- Configure persistent storage for the CSI driver (data and database).
+# Data stored here survives pod rollouts.
+storage:
+  # storage.enabled -- Enable persistent storage for downloaded data and database
+  enabled: true
+
+  # storage.hostPath -- Host path where data will be stored on each node
+  path: /var/lib/datadog-csi-driver
+
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
