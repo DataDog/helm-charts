@@ -444,6 +444,40 @@ rules:
   - ksh/metrics
   verbs:
   - get
+{{- if .Values.datadogAgentInternal.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""
