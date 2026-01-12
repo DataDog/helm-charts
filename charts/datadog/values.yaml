@@ -130,7 +130,7 @@ datadog:
   dd_url:  # https://app.datadoghq.com
 
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
-  logLevel: info
+  logLevel: INFO
 
   # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
 
@@ -331,7 +331,7 @@ datadog:
     tlsVerify:  # false
     # datadog.kubelet.hostCAPath -- Path (on host) where the Kubelet CA certificate is stored
     # @default -- None (no mount from host)
-    hostCAPath: ""
+    hostCAPath:
     # datadog.kubelet.agentCAPath -- Path (inside Agent containers) where the Kubelet CA certificate is stored
     # @default -- /var/run/host-kubelet-ca.crt if hostCAPath else /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     agentCAPath:
@@ -352,7 +352,7 @@ datadog:
 
 
   # datadog.expvarPort -- Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000
-  expvarPort: "6000"
+  expvarPort: 6000
 
   ## dogstatsd configuration
 
@@ -698,11 +698,11 @@ datadog:
     ports:
 
         # Default GRPC port of OTLP receiver
-      - containerPort: 4317
+      - containerPort: "4317"
         name: otel-grpc
         protocol: TCP
         # Default HTTP port of OTLP receiver
-      - containerPort: 4318
+      - containerPort: "4318"
         name: otel-http
         protocol: TCP
     # datadog.otelCollector.config -- OTel collector configuration
@@ -2869,11 +2869,11 @@ otelAgentGateway:
   # otelAgentGateway.ports -- Ports that OTel Collector is listening on
   ports:
       # Default GRPC port of OTLP receiver
-    - containerPort: 4317
+    - containerPort: "4317"
       name: otel-grpc
       protocol: TCP
       # Default HTTP port of OTLP receiver
-    - containerPort: 4318
+    - containerPort: "4318"
       name: otel-http
       protocol: TCP
   # otelAgentGateway.config -- Gateway OTel Agent configuration
