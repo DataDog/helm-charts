@@ -372,7 +372,7 @@ spec:
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
-          - name: DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR
+          - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
             value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}

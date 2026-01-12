@@ -2,7 +2,7 @@
 
 ## 3.160.2
 
-* Add DD_KUBERNETES_KUBE_SERVICE_NEW_BEHAVIOR flag to alter `kube_service` tag behavior.
+* Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
 
 ## 3.160.1
 
