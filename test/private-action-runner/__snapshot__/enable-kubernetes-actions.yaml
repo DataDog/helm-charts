@@ -131,10 +131,10 @@ metadata:
   name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.20.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: kubernetes-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.16.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -146,18 +146,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.19.0
+        helm.sh/chart: private-action-runner-1.20.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: kubernetes-test
-        app.kubernetes.io/version: "v1.15.0"
+        app.kubernetes.io/version: "v1.16.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: f511c1c13021c044619523438a68592f473c1907d15f97d79416d8eb710c9cac
+        checksum/values: 125e0a33dbe2815cc6fecec6fcfe91871d24762c281b4329d1c26d68571e958c
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.15.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.16.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
