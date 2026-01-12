@@ -1285,7 +1285,7 @@ datadog:
       name: agent-data-plane
 
       # datadog.dataPlane.image.tag -- Define the Agent Data Plane version to use
-      tag: 0.1.28
+      tag: 0.1.29
 
       # datadog.dataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
       digest: ""
