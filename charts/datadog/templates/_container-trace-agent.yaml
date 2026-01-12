@@ -7,7 +7,11 @@
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
   {{- if eq .Values.targetSystem "linux" }}
+  {{- if eq (include "use-trace-loader" .) "true" }}
+  command: ["trace-loader", "{{ template "datadog.confPath" . }}/datadog.yaml", "trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- else }}
   command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
   command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]

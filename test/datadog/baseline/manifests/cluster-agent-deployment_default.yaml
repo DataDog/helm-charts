@@ -1519,7 +1519,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1592,7 +1592,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

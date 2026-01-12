@@ -1,13 +1,33 @@
 # Datadog changelog
 
+## 3.160.1
+
+* Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).
+
+## 3.160.0
+
+* Use agent version as default image tag for DDOT Gateway when `otelAgentGateway.image.tag` is not specified.
+* Remove an unreleased field from DDOT gateway default config: `extensions.datadog.deployment_type`.
+
+## 3.159.1
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
+## 3.159.0
+
+* [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
+
+## 3.158.4
+
+* Fix a typo in DDOT gateway default config: extension -> extensions.
+
 ## 3.158.3
 
-* Harmonize datadog chart configs with the Datadog Operator.
-* Add yaml-mapper integration tests.
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
 
 ## 3.158.2
 
-* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243)
 
 ## 3.158.1
 

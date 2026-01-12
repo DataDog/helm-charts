@@ -148,7 +148,7 @@ data:
         config:
           scrape_configs:
             - job_name: "otelcol"
-              scrape_interval: 10s
+              scrape_interval: 60s
               static_configs:
                 - targets: ["0.0.0.0:8888"]
       otlp:
@@ -168,6 +168,14 @@ data:
     processors:
       infraattributes:
         cardinality: 2
+      filter/drop-prometheus-internal-metrics:
+        metrics:
+          exclude:
+            match_type: regexp
+            metric_names:
+              - ^scrape_.*$
+              - ^up$
+              - ^promhttp_metric_handler_errors_total$
     connectors:
       datadog/connector:
         traces:
@@ -181,8 +189,12 @@ data:
           processors: [infraattributes]
           exporters: [datadog, datadog/connector]
         metrics:
-          receivers: [otlp, datadog/connector, prometheus]
+          receivers: [otlp, datadog/connector]
           processors: [infraattributes]
+          exporters: [datadog]
+        metrics/prometheus:
+          receivers: [prometheus]
+          processors: [filter/drop-prometheus-internal-metrics, infraattributes]
           exporters: [datadog]
         logs:
           receivers: [otlp]
@@ -1484,7 +1496,7 @@ spec:
               value: /var/lib/kubelet/pod-resources/kubelet.sock
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1632,7 +1644,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1729,8 +1741,8 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: info
-          image: gcr.io/datadoghq/ddot-collector:7.73.0
+              value: INFO
+          image: gcr.io/datadoghq/ddot-collector:7.74.0
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1787,7 +1799,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1831,7 +1843,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2157,7 +2169,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2230,7 +2242,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
