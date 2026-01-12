@@ -718,12 +718,6 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
-| datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
-| datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
-| datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
-| datadog.agentDataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
-| datadog.agentDataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
-| datadog.agentDataPlane.image.tag | string | `"0.1.11"` | Define the Agent Data Plane version to use |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
@@ -776,6 +770,13 @@ helm install <RELEASE_NAME> \
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts. |
+| datadog.dataPlane.dogstatsd.enabled | bool | `false` | Whether or not DogStatsD is enabled in the data plane |
+| datadog.dataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
+| datadog.dataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
+| datadog.dataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
+| datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
+| datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
+| datadog.dataPlane.image.tag | string | `"0.1.28"` | Define the Agent Data Plane version to use |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |

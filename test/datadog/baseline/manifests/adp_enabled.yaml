@@ -1346,9 +1346,9 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_USE_DOGSTATSD
-              value: "false"
             - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+              value: "true"
+            - name: DD_DATA_PLANE_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
@@ -1600,8 +1600,9 @@ spec:
               readOnly: true
         - command:
             - agent-data-plane
+            - --config
+            - /etc/datadog-agent/datadog.yaml
             - run
-            - --config=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -1646,7 +1647,7 @@ spec:
               value: "true"
             - name: DD_PROMETHEUS_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: gcr.io/datadoghq/agent-data-plane:0.1.11
+          image: gcr.io/datadoghq/agent-data-plane:0.1.28
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
@@ -1674,8 +1675,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
-          securityContext:
-            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /tmp
               name: tmpdir
