@@ -776,7 +776,7 @@ helm install <RELEASE_NAME> \
 | datadog.dataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
 | datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
 | datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
-| datadog.dataPlane.image.tag | string | `"0.1.28"` | Define the Agent Data Plane version to use |
+| datadog.dataPlane.image.tag | string | `"0.1.29"` | Define the Agent Data Plane version to use |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
