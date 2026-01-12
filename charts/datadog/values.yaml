@@ -1281,25 +1281,32 @@ datadog:
     #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
-  ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
-  agentDataPlane:
-    # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
+  dataPlane:
+    # datadog.dataPlane.enabled -- Whether or not Agent Data Plane is enabled
+    #
+    # Requires version 7.74 or later of the Datadog Agent.
+    #
+    # The Data Plane feature is currently in preview. Please reach out to your Datadog representative for more information.
     enabled: false
 
+    dogstatsd:
+      # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
+      enabled: false
+
     image:
-      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      # datadog.dataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
       name: agent-data-plane
 
-      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
-      tag: 0.1.11
+      # datadog.dataPlane.image.tag -- Define the Agent Data Plane version to use
+      tag: 0.1.30
 
-      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      # datadog.dataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
       digest: ""
 
-      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      # datadog.dataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
       repository:
 
-      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      # datadog.dataPlane.image.pullPolicy -- Agent Data Plane image pull policy
       pullPolicy: IfNotPresent
 
   ## Datadog Operator
