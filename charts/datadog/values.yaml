@@ -428,6 +428,9 @@ datadog:
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
 
+  # datadog.kubernetesKubeServiceNewBehavior -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
+  kubernetesKubeServiceNewBehavior: false
+
   # Configure Kubernetes events collection
   kubernetesEvents:
     # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
@@ -843,6 +846,7 @@ datadog:
 
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.60.0+ and Linux.
+    ## DEPRECATED: This behavior will be enabled by default for installations that meet the requirements.
     runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
@@ -1170,6 +1174,10 @@ datadog:
           # datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled -- Set to true to enable CWS runtime auto suppression
           enabled: true
 
+      enforcement:
+        # datadog.securityAgent.runtime.enforcement.enabled -- Set to false to disable CWS runtime enforcement
+        enabled: true
+
   ## Manage NetworkPolicy
   networkPolicy:
     # datadog.networkPolicy.create -- If true, create NetworkPolicy for all the components
@@ -1326,7 +1334,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1885,7 +1893,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2493,7 +2501,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -3008,7 +3016,7 @@ otelAgentGateway:
     name: ddot-collector
 
     # otelAgentGateway.image.tag -- Override the image tag of otel agent
-    tag: 7.71.2
+    tag: ""
 
     # otelAgentGateway.image.tagSuffix -- Suffix to append to image tag of otel agent
     tagSuffix: ""

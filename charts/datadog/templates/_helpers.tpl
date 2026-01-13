@@ -471,8 +471,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
 Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 */}}
 {{- define "ddot-collector-gateway-image" -}}
+  {{- $imageTag := .Values.otelAgentGateway.image.tag -}}
+  {{- if not $imageTag -}}
+    {{- $imageTag = include "get-agent-version" . -}}
+  {{- end -}}
   {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
-    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- $imageTag = $imageTag | toString -}}
     {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
       {{- fail "`-full` image is not supported in otel agent gateway" -}}
     {{- end -}}
@@ -480,7 +484,8 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
       {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
     {{- end -}}
   {{- end -}}
-  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+  {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
+  {{ include "image-path" (dict "root" .Values "image" $image) }}
 {{- end -}}
 
 {{/*
@@ -688,6 +693,23 @@ Return true if a host port is desired for APM.
 {{- define "trace-agent-use-host-port" -}}
 {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
 true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if trace-loader should be used for the trace-agent container.
+trace-loader is available in agent versions >= 7.75.0.
+*/}}
+{{- define "use-trace-loader" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
+{{- if semverCompare ">=7.75.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
@@ -1057,6 +1079,9 @@ securityContext:
   {{- if .mknod -}}
     {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
   {{- end -}}
+  {{- if .kill -}}
+    {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
+  {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
     {{- $capabilities := dict "capabilities" (dict "add" $addedCapabilities) -}}
@@ -1300,7 +1325,7 @@ Create RBACs for custom resources
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
       true
   {{- else -}}
     false

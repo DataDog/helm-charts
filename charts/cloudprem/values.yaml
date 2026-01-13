@@ -314,11 +314,11 @@ indexer:
   resources:
     # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
     limits:
-      cpu: 2
-      memory: 8Gi
+      cpu: 4
+      memory: 16Gi
     requests:
-      cpu: 2
-      memory: 8Gi
+      cpu: 4
+      memory: 16Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -461,6 +461,11 @@ metastore:
     requests:
       cpu: 2
       memory: 4Gi
+
+  ## Pod distruption budget
+  podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # minAvailable: 2
 
   updateStrategy: {}
     # type: RollingUpdate
