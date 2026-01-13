@@ -30,9 +30,13 @@ runner:
   configDirectory: "/etc/dd-action-runner/config"
   # -- Configure whether to use a separate kubernetes secret for the credentials and the config
   useSeparateSecretForCredentials: false
+  # -- Reference to a kubernetes secrets that contains the runner identity.
+  # When used, this replaces config.urn and config.privateKey
+  runnerIdentitySecret: ""
   # -- Configuration for the Datadog Private Action Runner
   config:
-    # -- Base URL of the Datadog app
+    # -- Base URL of your Datadog site.
+    # See https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
     ddBaseURL: "https://app.datadoghq.com"
     # -- The runner's URN from the enrollment page
     urn: "CHANGE_ME_URN_FROM_CONFIG"
@@ -62,8 +66,6 @@ runner:
   livenessProbe: {}
   # -- ReadinessProbe settings
   readinessProbe: {}
-  # -- Reference to a kubernetes secrets that contains the runner identity
-  runnerIdentitySecret: ""
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
   kubernetesActions:
     # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
