@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.161.1
+
+* Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
+
 ## 3.161.0
 
 * Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
