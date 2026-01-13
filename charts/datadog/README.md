@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.160.1](https://img.shields.io/badge/Version-3.160.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.160.2](https://img.shields.io/badge/Version-3.160.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -835,6 +835,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.sourceDetectionEnabled | bool | `false` | Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+). |
 | datadog.kubernetesEvents.unbundleEvents | bool | `false` | Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+). |
+| datadog.kubernetesKubeServiceNewBehavior | bool | `false` | Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+). |
 | datadog.kubernetesResourcesAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Annotations to Datadog Tags |
 | datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
 | datadog.kubernetesUseEndpointSlices | bool | `false` | Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+). |
