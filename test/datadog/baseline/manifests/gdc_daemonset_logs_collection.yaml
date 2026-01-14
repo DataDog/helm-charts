@@ -1306,11 +1306,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1345,7 +1340,7 @@ spec:
             - name: DD_PROVIDER_KIND
               value: gke-gdc
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1486,11 +1481,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: api-key
-                  name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
                   name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
@@ -1774,7 +1764,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
