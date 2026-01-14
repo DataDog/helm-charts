@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.160.3
+
+* Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
+
+
 ## 3.160.2
 
 * Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
