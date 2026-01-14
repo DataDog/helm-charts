@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.20.0](https://img.shields.io/badge/Version-1.20.0-informational?style=flat-square) ![AppVersion: v1.16.0](https://img.shields.io/badge/AppVersion-v1.16.0-informational?style=flat-square)
+![Version: 1.20.1](https://img.shields.io/badge/Version-1.20.1-informational?style=flat-square) ![AppVersion: v1.16.0](https://img.shields.io/badge/AppVersion-v1.16.0-informational?style=flat-square)
 
 ## Overview
 
@@ -326,7 +326,7 @@ If actions requiring credentials fail:
 | runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","tags":[],"urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
 | runner.config.actionsAllowlist | list | `[]` | List of actions that the Datadog Private Action Runner is allowed to execute |
 | runner.config.allowIMDSEndpoint | bool | `false` | Whether to allow the runner to access IDM services endpoint |
-| runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Base URL of the Datadog app |
+| runner.config.ddBaseURL | string | `"https://app.datadoghq.com"` | Datadog site URL. See https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site |
 | runner.config.modes | list | `["workflowAutomation","appBuilder"]` | Modes that the runner can run in |
 | runner.config.port | int | `9016` | Port for HTTP server liveness checks and App Builder mode |
 | runner.config.privateKey | string | `"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG"` | The runner's privateKey from the enrollment page |
@@ -377,7 +377,7 @@ If actions requiring credentials fail:
 | runner.resources.limits | object | `{"cpu":"250m","memory":"1Gi"}` | Resource limits for the runner container |
 | runner.resources.requests | object | `{"cpu":"250m","memory":"1Gi"}` | Resource requests for the runner container |
 | runner.roleType | string | `"Role"` | Type of kubernetes role to create (either "Role" or "ClusterRole") |
-| runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity |
+| runner.runnerIdentitySecret | string | `""` | Reference to a kubernetes secrets that contains the runner identity. When used, this replaces config.urn and config.privateKey |
 | runner.scriptFiles | list | `[]` | List of script files to be used by the Datadog Private Action Runner |
 | runner.tolerations | list | `[]` | Tolerations to allow scheduling runner pods on nodes with taints |
 | runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |

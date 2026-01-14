@@ -79,7 +79,7 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.20.0
+    helm.sh/chart: private-action-runner-1.20.1
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
     app.kubernetes.io/version: "v1.16.0"
@@ -94,7 +94,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.20.0
+        helm.sh/chart: private-action-runner-1.20.1
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
         app.kubernetes.io/version: "v1.16.0"
