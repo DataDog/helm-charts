@@ -35,3 +35,4 @@ jobs:
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           CR_SKIP_EXISTING: true # Ignore chart changes when version was not updated (documentation)
+          CR_GENERATE_RELEASE_NOTES: true
