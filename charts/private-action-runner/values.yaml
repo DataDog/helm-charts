@@ -35,7 +35,7 @@ runner:
   runnerIdentitySecret: ""
   # -- Configuration for the Datadog Private Action Runner
   config:
-    # -- Base URL of your Datadog site.
+    # -- Datadog site URL.
     # See https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
     ddBaseURL: "https://app.datadoghq.com"
     # -- The runner's URN from the enrollment page

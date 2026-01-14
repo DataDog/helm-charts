@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.20.1
+* Update default `values.yaml` comments
+
+
 ## 1.20.0
 
 * Bump private runner version to 1.16.0
