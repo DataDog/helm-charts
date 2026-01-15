@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.160.4
+
+* Fix typo in `agents.podSecurity.capabilities` documentation.
+
 ## 3.160.3
 
 * Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
