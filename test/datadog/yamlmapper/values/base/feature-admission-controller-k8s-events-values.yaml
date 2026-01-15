@@ -1,0 +1,15 @@
+# Test values for Admission Controller Kubernetes Events feature mappings
+# Tests: clusterAgent.admissionController.kubernetesAdmissionEvents.enabled
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    kubernetesAdmissionEvents:
+      enabled: true
+

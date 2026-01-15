@@ -1,0 +1,39 @@
+# Test values for Admission Controller Sidecar Injection feature mappings
+# Tests: clusterAgent.admissionController.agentSidecarInjection.enabled, 
+#        clusterAgent.admissionController.agentSidecarInjection.*
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    agentSidecarInjection:
+      enabled: true
+      clusterAgentCommunicationEnabled: true
+      provider: fargate
+      containerRegistry: gcr.io/datadoghq
+      imageName: agent
+      imageTag: 7.52.0
+      selectors:
+        - namespaceSelector:
+            matchLabels:
+              sidecar-injection: enabled
+          objectSelector:
+            matchLabels:
+              inject-agent: "true"
+      profiles:
+        - env:
+            - name: DD_APM_ENABLED
+              value: "true"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+

@@ -1,0 +1,28 @@
+# Test values for Event Collection feature mappings
+# Tests: datadog.collectEvents, datadog.kubernetesEvents.unbundleEvents, datadog.kubernetesEvents.collectedEventTypes
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  collectEvents: true
+  kubernetesEvents:
+    unbundleEvents: true
+    collectedEventTypes:
+      - kind: Pod
+        reasons:
+          - Failed
+          - BackOff
+          - Unhealthy
+          - FailedScheduling
+          - Evicted
+      - kind: Node
+        reasons:
+          - TerminatingEvictedPod
+          - NodeNotReady
+          - Rebooted
+          - HostPortConflict
+
+clusterAgent:
+  enabled: true
+

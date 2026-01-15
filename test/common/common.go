@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -16,6 +17,8 @@ import (
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
 
@@ -67,10 +70,21 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 	helmChartPath, err := filepath.Abs(cmd.ChartPath)
 	require.NoError(t, err)
 
+	// Default extra args include --wait and --timeout for clean state transitions
+	// Use 3m timeout to allow for multiple pods with readiness probes to start
+	extraArgs := []string{"--wait", "--timeout", "3m"}
+	if len(cmd.ExtraArgs) > 0 {
+		extraArgs = append(extraArgs, cmd.ExtraArgs...)
+	}
+
 	helmOptions := &helm.Options{
 		KubectlOptions: kubectlOptions,
 		SetValues:      cmd.Overrides,
 		ValuesFiles:    cmd.Values,
+		ExtraArgs:      map[string][]string{"install": extraArgs},
+	}
+	if cmd.Logger != nil {
+		helmOptions.Logger = cmd.Logger
 	}
 
 	releaseName := cmd.ReleaseName + "-" + strings.ToLower(random.UniqueId())
@@ -80,7 +94,15 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 
 	return func() {
 		t.Log("Deleting release", releaseName)
-		helm.Delete(t, helmOptions, releaseName, true)
+		// Use --wait on delete to ensure resources are fully cleaned up before returning
+		deleteOptions := &helm.Options{
+			KubectlOptions: kubectlOptions,
+			ExtraArgs:      map[string][]string{"delete": {"--wait", "--timeout", "2m"}},
+		}
+		if cmd.Logger != nil {
+			deleteOptions.Logger = cmd.Logger
+		}
+		helm.Delete(t, deleteOptions, releaseName, true)
 	}
 }
 
@@ -88,17 +110,61 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 	apiKey := os.Getenv(apiKeyEnv)
 	appKey := os.Getenv(appKeyEnv)
 
-	// Setup Datadog Agent
-	t.Log("Creating secret")
-	kubectlOptions.Logger = logger.Discard
-	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
-		"--from-literal",
-		"api-key="+apiKey,
-		"--from-literal",
-		"app-key="+appKey)
+	return CreateSecret(t, kubectlOptions, "datadog-secret", map[string]string{
+		"api-key": apiKey,
+		"app-key": appKey,
+	})
+}
+
+// CreateSecret creates a Kubernetes secret with the given name and key-value pairs using client-go.
+// This is more efficient than shelling out to kubectl as it makes direct API calls.
+// Returns a cleanup function to delete the secret.
+func CreateSecret(t *testing.T, kubectlOptions *k8s.KubectlOptions, secretName string, data map[string]string) (cleanupFunc func()) {
+	t.Logf("Creating secret %s", secretName)
+
+	clientset, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+	require.NoError(t, err, "Failed to get Kubernetes client")
+
+	secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: kubectlOptions.Namespace,
+		},
+		StringData: data,
+	}
+
+	_, err = clientset.CoreV1().Secrets(kubectlOptions.Namespace).Create(context.Background(), secret, metav1.CreateOptions{})
+	require.NoError(t, err, "Failed to create secret %s", secretName)
+
 	return func() {
-		t.Log("Deleting secret")
-		k8s.RunKubectl(t, kubectlOptions, "delete", "secret", "datadog-secret")
+		t.Logf("Deleting secret %s", secretName)
+		_ = clientset.CoreV1().Secrets(kubectlOptions.Namespace).Delete(context.Background(), secretName, metav1.DeleteOptions{})
+	}
+}
+
+// CreateConfigMap creates a Kubernetes configmap with the given name and key-value pairs using client-go.
+// This is more efficient than shelling out to kubectl as it makes direct API calls.
+// Returns a cleanup function to delete the configmap.
+func CreateConfigMap(t *testing.T, kubectlOptions *k8s.KubectlOptions, configMapName string, data map[string]string) (cleanupFunc func()) {
+	t.Logf("Creating configmap %s", configMapName)
+
+	clientset, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+	require.NoError(t, err, "Failed to get Kubernetes client")
+
+	configMap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      configMapName,
+			Namespace: kubectlOptions.Namespace,
+		},
+		Data: data,
+	}
+
+	_, err = clientset.CoreV1().ConfigMaps(kubectlOptions.Namespace).Create(context.Background(), configMap, metav1.CreateOptions{})
+	require.NoError(t, err, "Failed to create configmap %s", configMapName)
+
+	return func() {
+		t.Logf("Deleting configmap %s", configMapName)
+		_ = clientset.CoreV1().ConfigMaps(kubectlOptions.Namespace).Delete(context.Background(), configMapName, metav1.DeleteOptions{})
 	}
 }
 

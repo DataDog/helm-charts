@@ -1,0 +1,18 @@
+# Test values for miscellaneous global mappings
+# Tests: datadog.expvarPort, datadog.envFrom, useFIPSAgent
+# Note: This test requires ConfigMap 'datadog-env-config' and Secret 'datadog-env-secrets' to be pre-created
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  
+  # Environment variables from ConfigMaps/Secrets
+  envFrom:
+    - configMapRef:
+        name: datadog-env-config
+    - secretRef:
+        name: datadog-env-secrets
+
+# Enable FIPS-compliant agent
+useFIPSAgent: true

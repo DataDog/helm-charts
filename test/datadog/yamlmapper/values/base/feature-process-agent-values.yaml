@@ -1,0 +1,14 @@
+# Test values for Process Agent feature mappings
+# Tests: datadog.processAgent.processCollection, datadog.processAgent.containerCollection,
+#        datadog.processAgent.processDiscovery, datadog.processAgent.stripProcessArguments
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  processAgent:
+    processCollection: true
+    containerCollection: true
+    processDiscovery: true
+    stripProcessArguments: true
+

@@ -1,0 +1,15 @@
+# Test values for Helm Check feature mappings
+# Tests: datadog.helmCheck.enabled, datadog.helmCheck.collectEvents, datadog.helmCheck.valuesAsTags
+# Note: Helm Check requires clusterAgent.enabled
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  helmCheck:
+    enabled: true
+    collectEvents: true
+
+clusterAgent:
+  enabled: true
+

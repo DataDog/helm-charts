@@ -1,0 +1,20 @@
+# Test values for Dogstatsd feature mappings (Unix socket mode)
+# Tests: datadog.dogstatsd.useSocketVolume, datadog.dogstatsd.socketPath,
+#        datadog.dogstatsd.originDetection, datadog.dogstatsd.tagCardinality,
+#        datadog.dogstatsd.nonLocalTraffic
+# Note: useHostPort and useSocketVolume are mutually exclusive - use one or the other.
+#       This test uses socket mode (useSocketVolume: true, useHostPort: false)
+#       originDetection and tagCardinality are Unix socket-specific features.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  dogstatsd:
+    useHostPort: false
+    useSocketVolume: true
+    socketPath: /var/run/datadog/dsd.socket
+    originDetection: true
+    tagCardinality: orchestrator
+    nonLocalTraffic: true
+
