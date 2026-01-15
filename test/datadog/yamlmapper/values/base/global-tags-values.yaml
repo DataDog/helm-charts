@@ -1,0 +1,19 @@
+# Test values for global tags mappings
+# Tests: datadog.tags, datadog.env
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  tags:
+    - "env:production"
+    - "team:platform"
+    - "service:my-app"
+  env:
+    - name: DD_CUSTOM_ENV_VAR
+      value: "custom-value"
+    - name: DD_ANOTHER_VAR
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+

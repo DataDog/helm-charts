@@ -1,0 +1,12 @@
+# Test values for global site/endpoint mappings
+# Tests: datadog.site, datadog.dd_url, registry
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  site: datadoghq.eu
+  dd_url: https://custom-intake.datadoghq.eu
+
+registry: gcr.io/datadoghq
+

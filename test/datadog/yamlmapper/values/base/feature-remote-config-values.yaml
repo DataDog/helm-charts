@@ -1,0 +1,13 @@
+# Test values for Remote Configuration feature mappings
+# Tests: datadog.remoteConfiguration.enabled, remoteConfiguration.enabled
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  remoteConfiguration:
+    enabled: true
+
+remoteConfiguration:
+  enabled: true
+
