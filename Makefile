@@ -109,7 +109,11 @@ cleanup-mapper-crds:
 # 	-- -count=1 -parallel 1 -run Test/feature-p -timeout 2h .
 .PHONY: integ-test-mapper
 integ-test-mapper:
-	go test -C test/datadog/yamlmapper -count=1 -parallel 1 -run Test/feature-p -timeout 2h -v
+	cd test/datadog/yamlmapper && \
+	set -o pipefail; \
+	gotestsum --format standard-verbose --hide-summary=skipped --no-color=false \
+		--jsonfile gotestsum.json \
+		-- -count=1 -parallel 1 -timeout 2h . | tee gotestsum.log
 
 # Strict mode: fail tests if helm vs operator agent config differs
 .PHONY: integ-test-mapper-strict
