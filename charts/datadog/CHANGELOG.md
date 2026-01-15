@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.160.3
+
+* Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
+
+
+## 3.160.2
+
+* Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
+
 ## 3.160.1
 
 * Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).

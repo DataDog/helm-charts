@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.15.0
+
+* Update CRDs from Datadog Operator v1.22.0 tag.
+* [BREAKING] Update datadogAgentInternal CRD values name to datadogAgentInternals.
+
 ## 2.15.0-dev.2
 
 * [BREAKING] Update datadogAgentInternal CRD values name to datadogAgentInternals.

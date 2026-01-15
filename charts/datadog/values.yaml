@@ -428,6 +428,9 @@ datadog:
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
 
+  # datadog.kubernetesKubeServiceNewBehavior -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
+  kubernetesKubeServiceNewBehavior: false
+
   # Configure Kubernetes events collection
   kubernetesEvents:
     # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
@@ -1847,7 +1850,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.17
+    tag: 1.1.18
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
