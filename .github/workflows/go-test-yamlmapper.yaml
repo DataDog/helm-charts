@@ -4,12 +4,14 @@ on:
     paths:
       - 'test/datadog/**'
       - 'test/datadog/yamlmapper/**'
-      - 'charts/datadog/**' # required for helm dependency build
+      - 'charts/datadog/**'
+      - '.github/workflows/go-test-yamlmapper.yaml'
   pull_request:
     paths:
       - 'test/datadog/**'
       - 'test/datadog/yamlmapper/**'
-      - 'charts/datadog/**' # required for helm dependency build
+      - 'charts/datadog/**'
+      - '.github/workflows/go-test-yamlmapper.yaml'
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
