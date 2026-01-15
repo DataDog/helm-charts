@@ -169,7 +169,7 @@ var baseTestCases = []BaseTestCase{
 		SkipReason: "NPM requires kernel features not available in kind"},
 	{Name: "feature-orchestrator-explorer-values.yaml", ValuesFile: baseValuesDir + "/feature-orchestrator-explorer-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-process-agent-values.yaml", ValuesFile: baseValuesDir + "/feature-process-agent-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: ExpectedContainers{
-		Agent: []string{"process-agent"},
+		Agent: []string{"agent", "trace-agent"},
 	}},
 	{Name: "feature-prometheus-scrape-values.yaml", ValuesFile: baseValuesDir + "/feature-prometheus-scrape-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-remote-config-values.yaml", ValuesFile: baseValuesDir + "/feature-remote-config-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
