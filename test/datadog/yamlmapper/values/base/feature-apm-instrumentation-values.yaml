@@ -10,18 +10,6 @@ datadog:
   apm:
     instrumentation:
       enabled: true
-      enabledNamespaces:
-        - default
-        - applications
-        - services
-      disabledNamespaces:
-        - kube-system
-        - monitoring
-      libVersions:
-        java: "v1.25.0"
-        python: "v2.6.0"
-        dotnet: "v2.49.0"
-        js: "v5.0.0"
 
 clusterAgent:
   enabled: true

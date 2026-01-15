@@ -344,9 +344,9 @@ datadog.apiKeyExistingSecret:
 datadog.apm.enabled: ""
 datadog.apm.errorTrackingStandalone.enabled: spec.features.apm.errorTrackingStandalone.enabled
 datadog.apm.hostSocketPath: spec.features.apm.unixDomainSocketConfig.path
-datadog.apm.instrumentation.disabledNamespaces: spec.features.apm.instrumentation.disabledNamespaces
+datadog.apm.instrumentation.disabledNamespaces: ""
 datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
-datadog.apm.instrumentation.enabledNamespaces: spec.features.apm.instrumentation.enabledNamespaces
+datadog.apm.instrumentation.enabledNamespaces: ""
 datadog.apm.instrumentation.injector.imageTag: ""
 datadog.apm.instrumentation.language_detection.enabled: ""
 datadog.apm.instrumentation.libVersions: spec.features.apm.instrumentation.libVersions
