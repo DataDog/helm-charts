@@ -1,0 +1,29 @@
+# Test values for APM Instrumentation (SSI) feature mappings
+# Tests: datadog.apm.instrumentation.enabled, datadog.apm.instrumentation.enabledNamespaces,
+#        datadog.apm.instrumentation.disabledNamespaces, datadog.apm.instrumentation.libVersions
+# Note: datadog.apm.instrumentation.targets mapping is disabled due to complex nested structure
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  apm:
+    instrumentation:
+      enabled: true
+      enabledNamespaces:
+        - default
+        - applications
+        - services
+      disabledNamespaces:
+        - kube-system
+        - monitoring
+      libVersions:
+        java: "v1.25.0"
+        python: "v2.6.0"
+        dotnet: "v2.49.0"
+        js: "v5.0.0"
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
