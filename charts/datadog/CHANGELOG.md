@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.160.4
-
-* Update README to remove mention of Deployments as way to deploy datadog-agent
-
 ## 3.160.3
 
 * Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
