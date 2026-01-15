@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.16.0
+  tag: v1.17.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -54,6 +54,10 @@ runner:
     actionsAllowlist: []
     # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
     tags: []
+    # -- Global timeout for task executions. Use 0 for no timeout.
+    taskTimeoutSeconds: 0
+    # -- Global http client timeout for http based actions.
+    httpTimeoutSeconds: 30
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env: []
   # -- Allow the private action runner pods to schedule on selected nodes

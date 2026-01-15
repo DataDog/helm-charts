@@ -26,6 +26,8 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
+    taskTimeoutSeconds: 25
+    httpTimeoutSeconds: 10
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -79,10 +81,10 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.20.1
+    helm.sh/chart: private-action-runner-1.21.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
-    app.kubernetes.io/version: "v1.16.0"
+    app.kubernetes.io/version: "v1.17.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -94,18 +96,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.20.1
+        helm.sh/chart: private-action-runner-1.21.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
-        app.kubernetes.io/version: "v1.16.0"
+        app.kubernetes.io/version: "v1.17.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: de51f61514b48b4212b27296ffe2d715eb4397e57c92c4aa20ad2d884bd8b0cb
+        checksum/values: 01281fa9cdcc55797b034e6dd38383489aca16f44733ca74eb011e818209d8da
     spec:
       serviceAccountName: custom-full-name
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.16.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.17.0"
           imagePullPolicy: Always
           ports:
             - name: http
