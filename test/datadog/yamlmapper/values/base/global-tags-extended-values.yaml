@@ -1,0 +1,13 @@
+# Test values for extended tags mappings
+# Note: The following mappings are disabled due to dynamic nested keys that the mapper cannot handle:
+#       - datadog.namespaceAnnotationsAsTags
+#       - datadog.namespaceLabelsAsTags
+#       - datadog.nodeLabelsAsTags
+#       - datadog.podAnnotationsAsTags
+#       - datadog.podLabelsAsTags
+# This file is kept minimal since these tag mappings are disabled
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false

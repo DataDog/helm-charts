@@ -1,0 +1,29 @@
+# Test values for Node Agent component override mappings
+# Tests: agents.image.name, agents.image.tag, agents.image.pullPolicy,
+#        agents.updateStrategy, agents.useHostNetwork
+# Note: agents.image.repository, agents.image.pullSecrets, agents.tolerations, agents.daemonsetAnnotations, 
+#       agents.podLabels, agents.podAnnotations, agents.nodeSelector, agents.customAgentConfig, 
+#       and agents.env mappings are disabled
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  useHostPID: true
+
+agents:
+  image:
+    name: agent
+    tag: 7.72.0
+    pullPolicy: Always
+  
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+  
+  useHostNetwork: false
+
+clusterAgent:
+  enabled: true
+

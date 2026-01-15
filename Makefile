@@ -85,9 +85,36 @@ update-test-baselines-datadog-agent:
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
 
+# Yamlmapper integration tests - CRD management
+.PHONY: setup-mapper-crds
+setup-mapper-crds:
+	@echo "Installing Datadog CRDs for yamlmapper tests..."
+	helm install datadog-crds ./charts/datadog-crds \
+		--create-namespace --namespace datadog-crds \
+		--set crds.datadogAgents=true \
+		--set crds.datadogAgentInternals=true \
+		--wait --timeout 2m
+
+.PHONY: cleanup-mapper-crds
+cleanup-mapper-crds:
+	@echo "Cleaning up Datadog CRDs..."
+	-helm uninstall datadog-crds --namespace datadog-crds --ignore-not-found --wait --timeout 2m
+	-kubectl delete namespace datadog-crds --ignore-not-found --timeout=2m
+
+# Optional: enable stale namespace cleanup at test startup (safe local contexts only)
+#   YAMLMAPPER_CLEANUP_STALE=true
+# cd test/datadog/yamlmapper && \
+# gotestsum --format pkgname-and-test-fails --format-icons text --no-color=false \
+# 	--jsonfile gotestsum.json \
+# 	-- -count=1 -parallel 1 -run Test/feature-p -timeout 2h .
 .PHONY: integ-test-mapper
 integ-test-mapper:
-	go test -C test/yaml-mapper --tags=integration -count=1 -v -timeout 1h
+	go test -C test/datadog/yamlmapper -count=1 -parallel 1 -run Test/feature-p -timeout 2h -v
+
+# Strict mode: fail tests if helm vs operator agent config differs
+.PHONY: integ-test-mapper-strict
+integ-test-mapper-strict:
+	AGENT_CONF_STRICT=1 $(MAKE) integ-test-mapper
 
 # Running E2E tests locally:
 ## Must be connected to appgate

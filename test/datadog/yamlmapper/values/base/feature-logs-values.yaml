@@ -1,0 +1,14 @@
+# Test values for Logs feature mappings
+# Tests: datadog.logs.enabled, datadog.logs.containerCollectAll, 
+#        datadog.logs.containerCollectUsingFiles, datadog.logs.autoMultiLineDetection
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+
