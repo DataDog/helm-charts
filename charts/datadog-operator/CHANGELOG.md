@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.17.0
+
+* Update Datadog Operator chart for 1.22.0.
+* Enable DatadogAgentInternal controller and CRD.
+* Add ClusterRole RBAC permissions for DatadogAgentInternal. 
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
 ## 2.17.0-dev.3
 
 * Update Datadog Operator chart for 1.22.0-rc.3.
