@@ -2748,15 +2748,24 @@ operator:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.
     enabled: false
+
+  datadogAgentInternal:
+    # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+    # Note: The Datadog Agent Internal controller will be enabled by default in a future release.
+    enabled: false
+
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
     enabled: false
+
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
     enabled: true
+
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
     enabled: false
+
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
     enabled: true
@@ -2777,6 +2786,8 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
+      datadogAgentInternals: false
 
 datadog-crds:
   crds:
