@@ -8,6 +8,10 @@
   
   Datadog Operator [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
 
+## 3.160.4
+
+* Add "watch" permission for cluster roles and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+
 ## 3.160.3
 
 * Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.

@@ -1219,6 +1219,14 @@ spec:
                                 Enabled enables Cloud Workload Security.
                                 Default: false
                               type: boolean
+                            enforcement:
+                              properties:
+                                enabled:
+                                  description: |-
+                                    Enabled enables Enforcement for Cloud Workload Security.
+                                    Default: true
+                                  type: boolean
+                              type: object
                             network:
                               properties:
                                 enabled:
