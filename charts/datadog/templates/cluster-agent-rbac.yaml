@@ -307,6 +307,7 @@ rules:
   - rolebindings
   verbs:
   - list
+  - watch
 - apiGroups:
   - networking.k8s.io
   resources:
