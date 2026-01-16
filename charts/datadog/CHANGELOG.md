@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.161.0
+
+* Update Datadog Operator dependency to 2.17.0. 
+  
+  Datadog Operator chart [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0). 
+  
+  Datadog Operator [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
+
 ## 3.160.3
 
 * Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
