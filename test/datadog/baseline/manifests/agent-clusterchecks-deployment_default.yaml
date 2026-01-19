@@ -2162,6 +2162,8 @@ spec:
               value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
+            - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+              value: auto
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
