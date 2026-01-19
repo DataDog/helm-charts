@@ -602,6 +602,10 @@ datadog:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (preview).
         enabled: true
 
+      # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
+      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver)
+      injectionMode: "auto"
+
       # This feature is in preview. It requires Cluster Agent 7.57+.
       injector:
         # datadog.apm.instrumentation.injector.imageTag -- The image tag to use for the APM Injector (preview).
