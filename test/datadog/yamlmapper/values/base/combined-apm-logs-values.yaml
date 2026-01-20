@@ -25,7 +25,13 @@ datadog:
     processCollection: true
     processDiscovery: true
 
+agents:
+  image:
+    tag: 7.74.0
+
 clusterAgent:
+  image:
+    tag: 7.74.0
   enabled: true
   admissionController:
     enabled: true

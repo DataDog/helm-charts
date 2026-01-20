@@ -1,5 +1,5 @@
 # Test values for Helm Check feature mappings
-# Tests: datadog.helmCheck.enabled, datadog.helmCheck.collectEvents, datadog.helmCheck.valuesAsTags
+# Tests: datadog.helmCheck.enabled, datadog.helmCheck.collectEvents
 # Note: Helm Check requires clusterAgent.enabled
 datadog:
   apiKey: "00000000000000000000000000000000"

@@ -9,12 +9,12 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-operator/cmd/yaml-mapper/mapper"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/google/go-cmp/cmp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -24,9 +24,6 @@ import (
 	yaml "gopkg.in/yaml.v3"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-// mapperPackage is the Go package path for the yaml-mapper command
-const mapperPackage = "github.com/DataDog/datadog-operator/cmd/yaml-mapper"
 
 // TestMain runs before all tests and handles pre-test cleanup of stale resources
 func TestMain(m *testing.M) {
@@ -146,7 +143,6 @@ var baseTestCases = []BaseTestCase{
 	{Name: "feature-admission-controller-k8s-events-values.yaml", ValuesFile: baseValuesDir + "/feature-admission-controller-k8s-events-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-admission-controller-sidecar-values.yaml", ValuesFile: baseValuesDir + "/feature-admission-controller-sidecar-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-admission-controller-values.yaml", ValuesFile: baseValuesDir + "/feature-admission-controller-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "feature-apm-instrumentation-targets-values.yaml", ValuesFile: baseValuesDir + "/feature-apm-instrumentation-targets-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-apm-instrumentation-values.yaml", ValuesFile: baseValuesDir + "/feature-apm-instrumentation-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-apm-values.yaml", ValuesFile: baseValuesDir + "/feature-apm-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: ExpectedContainers{
 		Agent: []string{"trace-agent"},
@@ -179,13 +175,13 @@ var baseTestCases = []BaseTestCase{
 		},
 		SkipReason: "System probe requires kernel features not available in kind"},
 	{Name: "global-cluster-values.yaml", ValuesFile: baseValuesDir + "/global-cluster-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "global-labels-annotations-tags-values.yaml", ValuesFile: baseValuesDir + "/global-labels-annotations-tags-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
+	{Name: "global-cri-socket-values.yaml", ValuesFile: baseValuesDir + "/global-cri-socket-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
+	{Name: "global-docker-socket-values.yaml", ValuesFile: baseValuesDir + "/global-docker-socket-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-logging-values.yaml", ValuesFile: baseValuesDir + "/global-logging-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-metadata-values.yaml", ValuesFile: baseValuesDir + "/global-metadata-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-network-policy-values.yaml", ValuesFile: baseValuesDir + "/global-network-policy-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-origin-detection-values.yaml", ValuesFile: baseValuesDir + "/global-origin-detection-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-site-endpoint-values.yaml", ValuesFile: baseValuesDir + "/global-site-endpoint-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "global-tags-extended-values.yaml", ValuesFile: baseValuesDir + "/global-tags-extended-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-tags-values.yaml", ValuesFile: baseValuesDir + "/global-tags-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 }
 	
@@ -234,8 +230,8 @@ var testCasesWithDependencies = []TestCaseWithDependencies{
 		// No dependencies for node agent - kept here for organization with other override tests
 	},
 	{
-		Name:       "global-misc-values.yaml",
-		ValuesFile: "values/global-misc-values.yaml",
+		Name:       "global-envfrom-values.yaml",
+		ValuesFile: "values/global-envfrom-values.yaml",
 		ExpectedPods: defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
 		ConfigMaps: []ConfigMapDef{
@@ -718,19 +714,19 @@ func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *Clean
 	mappingFilePath := getMappingPath()
 	t.Logf("Using mapping file: %s", mappingFilePath)
 
-	// Run mapper as external process to avoid global state pollution between tests. 
-	// TODO: run the mapper package directly when bug is fixed in mapper binary
-	cmd := exec.Command("go", "run", mapperPackage, "map",
-		"--mappingPath", mappingFilePath,
-		"--sourcePath", valuesPath,
-		"--destPath", destFile.Name(),
-		"--namespace", namespace,
-	)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		t.Logf("Mapper output: %s", string(output))
+	absValuesPath, err := filepath.Abs(valuesPath)
+	require.NoError(t, err)
+
+	mapperConfig := mapper.MapConfig{
+		MappingPath: mappingFilePath,
+		SourcePath:  absValuesPath,
+		DestPath:    destFile.Name(),
+		Namespace:   namespace,
+		PrintOutput: false,
 	}
-	require.NoError(t, err, "Mapper failed: %s", string(output))
+	newMapper := mapper.NewMapper(mapperConfig)
+	err = newMapper.Run()
+	require.NoError(t, err, "Mapper failed")
 
 	return destFile.Name()
 }

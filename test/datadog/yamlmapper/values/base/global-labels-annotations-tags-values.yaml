@@ -1,9 +1,0 @@
-# Test values for labels/annotations as tags mappings
-# Note: datadog.kubernetesResourcesLabelsAsTags and datadog.kubernetesResourcesAnnotationsAsTags
-#       mappings are disabled due to dynamic nested keys that the mapper cannot handle
-# This file is kept minimal since the nested tag mappings are disabled
-datadog:
-  apiKey: "00000000000000000000000000000000"
-  appKey: "0000000000000000000000000000000000000000"
-  kubelet:
-    tlsVerify: false
