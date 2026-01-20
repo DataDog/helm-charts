@@ -137,8 +137,10 @@
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
+    {{- with .Values.datadog.logs.enabled -}}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
+    {{- end }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
     - name: DD_HEALTH_PORT
@@ -156,6 +158,8 @@
     {{- if .Values.datadog.prometheusScrape.enabled }}
     - name: DD_PROMETHEUS_SCRAPE_ENABLED
       value: "true"
+    - name: DD_PROMETHEUS_SCRAPE_SERVICE_ENDPOINTS
+      value: {{ .Values.datadog.prometheusScrape.serviceEndpoints | quote }}
     {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
     - name: DD_PROMETHEUS_SCRAPE_CHECKS
       value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
