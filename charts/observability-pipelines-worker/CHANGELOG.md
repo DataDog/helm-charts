@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.12.2
+## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
 
