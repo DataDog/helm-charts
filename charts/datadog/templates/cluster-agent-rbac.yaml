@@ -598,6 +598,7 @@ rules:
   - delete
   - get
   - list
+  - watch
   - patch
 - apiGroups:
   - karpenter.k8s.aws
