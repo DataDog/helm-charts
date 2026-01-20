@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.12.2
+
+- Change the default podManagementPolicy to Parallel
+
 ## 2.12.1
 
 - Add support for custom secrets management via datadog.bootstrap in values.yaml
