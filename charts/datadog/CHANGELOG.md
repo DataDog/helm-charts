@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.161.1
+## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
 
