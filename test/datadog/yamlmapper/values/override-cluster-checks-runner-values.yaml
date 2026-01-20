@@ -1,9 +1,9 @@
 # Test values for Cluster Checks Runner component override mappings
 # Tests: clusterChecksRunner.image.name/tag/pullPolicy, clusterChecksRunner.env, 
-#        clusterChecksRunner.envFrom, clusterChecksRunner.strategy, clusterChecksRunner.replicas
+#        clusterChecksRunner.envFrom, clusterChecksRunner.strategy, clusterChecksRunner.replicas, clusterChecksRunner.resources
 # Note: clusterChecksRunner.image.repository, clusterChecksRunner.podLabels are not mapped
 # Note: clusterChecksRunner.image.pullSecrets, clusterChecksRunner.tolerations, clusterChecksRunner.nodeSelector, 
-#       clusterChecksRunner.affinity, clusterChecksRunner.resources, livenessProbe, readinessProbe, startupProbe, 
+#       clusterChecksRunner.affinity, livenessProbe, readinessProbe, startupProbe, 
 #       pdb.create, additionalLabels, deploymentAnnotations, podAnnotations mappings are disabled
 datadog:
   apiKey: "00000000000000000000000000000000"
@@ -37,9 +37,6 @@ clusterChecksRunner:
   envFrom:
     - configMapRef:
         name: ccr-config
-  
-  networkPolicy:
-    create: true
   
   strategy:
     type: RollingUpdate

@@ -105,9 +105,8 @@ cleanup-mapper-crds:
 #   YAMLMAPPER_CLEANUP_STALE=true
 .PHONY: integ-test-mapper
 integ-test-mapper:
-	cd test/datadog/yamlmapper && \
 	set -o pipefail; \
-	go test -v -count=1 -parallel 1 -timeout 2h .
+	go test -C ./test/datadog/yamlmapper/ -v -count=1 -parallel 1 -timeout 2h
 
 # Strict mode: fail tests if helm vs operator agent config differs
 .PHONY: integ-test-mapper-strict

@@ -349,7 +349,7 @@ datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
 datadog.apm.instrumentation.enabledNamespaces: ""
 datadog.apm.instrumentation.injector.imageTag: ""
 datadog.apm.instrumentation.language_detection.enabled: ""
-datadog.apm.instrumentation.libVersions: spec.features.apm.instrumentation.libVersions
+datadog.apm.instrumentation.libVersions: ""
 datadog.apm.instrumentation.skipKPITelemetry: ""
 datadog.apm.instrumentation.targets: ""
 datadog.apm.port: spec.features.apm.hostPortConfig.hostPort
@@ -394,14 +394,14 @@ datadog.containerIncludeLogs: ""
 datadog.containerIncludeMetrics: ""
 datadog.containerLifecycle.enabled: ""
 datadog.containerRuntimeSupport.enabled: ""
-datadog.criSocketPath: ""
+datadog.criSocketPath: spec.global.criSocketPath
 datadog.csi.enabled: ""
 datadog.dd_url: spec.global.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""
 datadog.discovery.enabled: ""
 datadog.discovery.networkStats.enabled: ""
-datadog.dockerSocketPath: ""
+datadog.dockerSocketPath: spec.global.dockerSocketPath
 datadog.dogstatsd.hostSocketPath: ""
 datadog.dogstatsd.nonLocalTraffic: spec.features.dogstatsd.nonLocalTraffic
 datadog.dogstatsd.originDetection: spec.features.dogstatsd.originDetectionEnabled
@@ -689,4 +689,4 @@ providers.talos.enabled: ""
 registry: spec.global.registry
 remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 targetSystem: ""
-useFIPSAgent: spec.global.fips.enabled
+useFIPSAgent: ""
