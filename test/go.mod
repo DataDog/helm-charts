@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/DataDog/datadog-agent/test/new-e2e v0.72.2
-	github.com/DataDog/datadog-operator v1.22.0-rc.3
+	github.com/DataDog/datadog-operator v0.7.1-0.20260120192928-0fc9a710f143
 	github.com/DataDog/test-infra-definitions v0.0.6-0.20251119093242-958482005014
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
@@ -259,6 +259,7 @@ require (
 	helm.sh/helm/v3 v3.18.5 // indirect
 	k8s.io/cli-runtime v0.33.3 // indirect
 	k8s.io/client-go v0.33.3 // indirect
+	k8s.io/gengo/v2 v2.0.0-20250207200755-1244d31929d7 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect

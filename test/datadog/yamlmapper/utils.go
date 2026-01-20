@@ -206,15 +206,31 @@ func normalizeAgentConf(input string) string {
 // and replaces any bool value with its string equivalent ("true"/"false").
 // It also filters out fields that should be skipped
 func normalizeData(m map[string]interface{}) {
+	normalizeDataWithPath(m, "")
+}
+
+func normalizeDataWithPath(m map[string]interface{}, parentPath string) {
 	for k, v := range m {
+		currentPath := k
+		if parentPath != "" {
+			currentPath = parentPath + "." + k
+		}
+
+		// Check if this key or full path should be skipped
 		if _, ok := skipFields[k]; ok {
 			delete(m, k)
+			continue
 		}
+		if _, ok := skipFields[currentPath]; ok {
+			delete(m, k)
+			continue
+		}
+
 		switch val := v.(type) {
 		case bool:
 			m[k] = fmt.Sprintf("%v", val)
 		case map[string]interface{}:
-			normalizeData(val)
+			normalizeDataWithPath(val, currentPath)
 		}
 	}
 }
@@ -230,19 +246,21 @@ func isTimestampLine(line string) bool {
 	return err == nil
 }
 
-// skipFields is a set of field names in the agent config output that should be skipped during comparison.
-// Using struct{} for memory efficiency (zero-size type).
+// skipFields is a set of field names or dot-separated paths that should be skipped during comparison.
+// Use simple field names for top-level keys, or full paths for nested fields (e.g., "parent.child.field").
 var skipFields = map[string]struct{}{
 	"install_id":              {},
 	"install_time":            {},
 	"install_type":            {},
-	"kubernetes_service_name": {}, // service name differs according to installation
-	"kubernetes_kubelet_host": {}, // may also differ
+	"kubernetes_service_name": {},
+	"kubernetes_kubelet_host": {},
 	"token_name":              {},
 	"site":                    {},
 	"app_key":                 {},
 	"expvar_port":             {},
 	"log_level":               {},
+	// Nested paths
+	"orchestrator_explorer.kubelet_config_check.enabled": {}, // TODO: remove this when available in operator
 }
 
 // Label selectors for different agent installation types

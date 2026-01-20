@@ -1,9 +1,9 @@
 # Test values for Cluster Agent component override mappings
 # Tests: clusterAgent.image.name/tag/pullPolicy, clusterAgent.env, clusterAgent.envFrom, 
-#        clusterAgent.strategy, clusterAgent.useHostNetwork, clusterAgent.replicas
+#        clusterAgent.strategy, clusterAgent.useHostNetwork, clusterAgent.replicas, clusterAgent.resources
 # Note: clusterAgent.image.repository, clusterAgent.podLabels, clusterAgent.confd are not mapped
 # Note: clusterAgent.image.pullSecrets, clusterAgent.tolerations, clusterAgent.nodeSelector, clusterAgent.affinity, 
-#       clusterAgent.resources, livenessProbe, readinessProbe, startupProbe, pdb.create, additionalLabels, 
+#       livenessProbe, readinessProbe, startupProbe, pdb.create, additionalLabels, 
 #       deploymentAnnotations, podAnnotations mappings are disabled
 datadog:
   apiKey: "00000000000000000000000000000000"
