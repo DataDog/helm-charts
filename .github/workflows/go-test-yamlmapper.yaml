@@ -72,4 +72,4 @@ jobs:
           kubectl get nodes
           helm dependency build ./charts/datadog
           helm dependency build ./charts/datadog-operator
-          make integ-test-mapper
+          make integ-test-mapper-strict
