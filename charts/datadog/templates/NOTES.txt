@@ -207,6 +207,16 @@ The Datadog Agent is listening on port {{ $apmPort }} for APM service.
 
 {{- end }}
 
+{{- if and (eq .Values.datadog.apm.instrumentation.injectionMode "csi") (not .Values.datadog.csi.enabled) }}
+
+###################################################################################
+####               ERROR: APM CSI Injection misconfiguration                    ####
+###################################################################################
+
+{{- fail "You are using datadog.apm.instrumentation.injectionMode=csi but the CSI driver is not enabled. Please set datadog.csi.enabled to 'true' to use CSI injection mode." }}
+
+{{- end }}
+
 {{- if and .Values.datadog.apm.instrumentation.enabledNamespaces (not .Values.datadog.apm.instrumentation.enabled) }}
 
 #################################################################
