@@ -363,6 +363,29 @@ rules:
   - argoproj.io
   resources:
   - rollouts
+  - applications
+  - applicationsets
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - helmcharts
+  - externalartifacts
+  - gitrepositories
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
   verbs:
   - list
   - watch
