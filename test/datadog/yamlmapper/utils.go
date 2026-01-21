@@ -24,7 +24,7 @@ import (
 const testNamespacePrefix = "datadog-agent-"
 
 const (
-	agentConfStrictEnv   = "AGENT_CONF_STRICT"
+	agentConfStrictEnv     = "AGENT_CONF_STRICT"
 	staleCleanupEnabledEnv = "YAMLMAPPER_CLEANUP_STALE"
 )
 
@@ -122,7 +122,7 @@ func validateEnv(t *testing.T) {
 	// Check required CRDs are installed
 	logVerbose(t, "Checking required CRDs are installed...")
 	kubectlOptions := quietKubectlOptions(k8s.NewKubectlOptions("", "", ""))
-	
+
 	var missingCRDs []string
 	for _, crd := range requiredCRDs {
 		_, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "crd", crd)
@@ -318,13 +318,13 @@ func isAgentConfStrict() bool {
 // This helps prevent containerd state corruption from rapid pod creation/deletion
 func waitForPodsTerminated(t *testing.T, kubectlOptions *k8s.KubectlOptions, labelSelector string, timeout time.Duration) error {
 	logVerbosef(t, "Waiting for pods with selector '%s' to terminate...", labelSelector)
-	
+
 	quietOptions := quietKubectlOptions(kubectlOptions)
 
 	// Calculate max retries: timeout / sleep interval
 	sleepInterval := 2 * time.Second
 	maxRetries := int(timeout / sleepInterval)
-	
+
 	_, err := retry.DoWithRetryE(t, fmt.Sprintf("waiting for pods with selector '%s' to terminate", labelSelector),
 		maxRetries, sleepInterval, func() (string, error) {
 			pods := k8s.ListPods(t, quietOptions, metav1.ListOptions{
@@ -619,4 +619,3 @@ func runHelm(ctx context.Context, args ...string) bool {
 	}
 	return true
 }
-
