@@ -162,7 +162,7 @@ var baseTestCases = []BaseTestCase{
 	{Name: "feature-logs-values.yaml", ValuesFile: baseValuesDir + "/feature-logs-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-npm-values.yaml", ValuesFile: baseValuesDir + "/feature-npm-values.yaml", ExpectedPods: defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
-		SkipReason: "NPM requires kernel features not available in kind"},
+		SkipReason:         "NPM requires kernel features not available in kind"},
 	{Name: "feature-orchestrator-explorer-values.yaml", ValuesFile: baseValuesDir + "/feature-orchestrator-explorer-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "feature-process-agent-values.yaml", ValuesFile: baseValuesDir + "/feature-process-agent-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: ExpectedContainers{
 		Agent: []string{"agent", "trace-agent"},
@@ -184,13 +184,13 @@ var baseTestCases = []BaseTestCase{
 	{Name: "global-site-endpoint-values.yaml", ValuesFile: baseValuesDir + "/global-site-endpoint-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 	{Name: "global-tags-values.yaml", ValuesFile: baseValuesDir + "/global-tags-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
 }
-	
+
 // testCasesWithDependencies defines all test cases that require pre-created resources
 var testCasesWithDependencies = []TestCaseWithDependencies{
 	{
-		Name:       "global-credentials-existing-secret-values.yaml",
-		ValuesFile: "values/global-credentials-existing-secret-values.yaml",
-		ExpectedPods: defaultExpectedPods(),
+		Name:               "global-credentials-existing-secret-values.yaml",
+		ValuesFile:         "values/global-credentials-existing-secret-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
 		Secrets: []SecretDef{
 			{Name: "my-datadog-api-secret", Data: map[string]string{"api-key": "00000000000000000000000000000000"}},
@@ -199,9 +199,9 @@ var testCasesWithDependencies = []TestCaseWithDependencies{
 		},
 	},
 	{
-		Name:       "override-cluster-agent-values.yaml",
-		ValuesFile: "values/override-cluster-agent-values.yaml",
-		ExpectedPods: defaultExpectedPods(),
+		Name:               "override-cluster-agent-values.yaml",
+		ValuesFile:         "values/override-cluster-agent-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
 		ConfigMaps: []ConfigMapDef{
 			{Name: "cluster-agent-config", Data: map[string]string{"DD_LOG_LEVEL": "debug"}},
@@ -223,16 +223,16 @@ var testCasesWithDependencies = []TestCaseWithDependencies{
 		},
 	},
 	{
-		Name:       "override-node-agent-values.yaml",
-		ValuesFile: "values/override-node-agent-values.yaml",
-		ExpectedPods: defaultExpectedPods(),
+		Name:               "override-node-agent-values.yaml",
+		ValuesFile:         "values/override-node-agent-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
 		// No dependencies for node agent - kept here for organization with other override tests
 	},
 	{
-		Name:       "global-envfrom-values.yaml",
-		ValuesFile: "values/global-envfrom-values.yaml",
-		ExpectedPods: defaultExpectedPods(),
+		Name:               "global-envfrom-values.yaml",
+		ValuesFile:         "values/global-envfrom-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
 		ExpectedContainers: defaultExpectedContainers(),
 		ConfigMaps: []ConfigMapDef{
 			{Name: "datadog-env-config", Data: map[string]string{"DD_LOG_LEVEL": "debug", "DD_TAGS": "env:test"}},
