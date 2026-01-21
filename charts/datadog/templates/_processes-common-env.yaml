@@ -11,6 +11,7 @@
 - name: DD_STRIP_PROCESS_ARGS
   value: {{ .Values.datadog.processAgent.stripProcessArguments | quote }}
 {{- end }}
+{{- end }}
 {{- if and (eq .Values.targetSystem "linux") (eq (include "get-process-checks-in-core-agent-envvar" .) "") }}
 - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
   value: {{ (include "should-run-process-checks-on-core-agent" .) | quote }}
