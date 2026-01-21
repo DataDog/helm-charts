@@ -1282,11 +1282,11 @@ datadog:
     enabled: false
 
   dataPlane:
-    # datadog.dataPlane.enabled -- Whether or not Agent Data Plane is enabled
+    # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
     #
     # Requires version 7.74 or later of the Datadog Agent.
     #
-    # The Data Plane feature is currently in preview. Please reach out to your Datadog representative for more information.
+    # The data plane feature is currently in preview. Please reach out to your Datadog representative for more information.
     enabled: false
 
     dogstatsd:
@@ -1294,19 +1294,19 @@ datadog:
       enabled: false
 
     image:
-      # datadog.dataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
       name: agent-data-plane
 
-      # datadog.dataPlane.image.tag -- Define the Agent Data Plane version to use
+      # datadog.dataPlane.image.tag -- Define the data plane version to use
       tag: 0.1.30
 
-      # datadog.dataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
       digest: ""
 
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
       repository:
 
-      # datadog.dataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
       pullPolicy: IfNotPresent
 
   ## Datadog Operator
