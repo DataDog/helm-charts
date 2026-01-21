@@ -1603,8 +1603,6 @@ spec:
               value: "true"
             - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
               value: "true"
-            - name: DD_STRIP_PROCESS_ARGS
-              value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
@@ -1653,8 +1651,6 @@ spec:
               value: "false"
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
-            - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
-              value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
               value: "false"
             - name: DD_HEALTH_PORT
@@ -1925,8 +1921,6 @@ spec:
               value: "true"
             - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
               value: "true"
-            - name: DD_STRIP_PROCESS_ARGS
-              value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
