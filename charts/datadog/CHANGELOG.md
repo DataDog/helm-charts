@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.161.1
+
+* Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
+
+## 3.161.0
+
+* Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
+  
+  Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
+  
+  Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
+
 ## 3.160.4
 
 * Add "watch" permission for cluster roles and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.

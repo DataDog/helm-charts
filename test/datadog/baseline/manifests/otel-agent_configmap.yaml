@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -147,7 +147,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -857,6 +857,29 @@ rules:
       - argoproj.io
     resources:
       - rollouts
+      - applications
+      - applicationsets
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+      - helmcharts
+      - externalartifacts
+      - gitrepositories
+      - helmrepositories
+      - ocirepositories
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
     verbs:
       - list
       - watch
@@ -1832,7 +1855,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
