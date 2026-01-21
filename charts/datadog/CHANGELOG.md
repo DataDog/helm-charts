@@ -4,7 +4,6 @@
 
 *  Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
 
-
 ## 3.161.1
 
 * Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
