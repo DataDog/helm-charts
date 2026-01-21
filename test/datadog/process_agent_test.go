@@ -219,11 +219,11 @@ func Test_processAgentConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":                "datadog-secret",
-					"datadog.appKeyExistingSecret":                "datadog-secret",
-					"datadog.processAgent.processCollection":      "true",
-					"datadog.processAgent.stripProcessArguments":  "true",
-					"agents.image.tag":                            "7.60.0",
+					"datadog.apiKeyExistingSecret":               "datadog-secret",
+					"datadog.appKeyExistingSecret":               "datadog-secret",
+					"datadog.processAgent.processCollection":     "true",
+					"datadog.processAgent.stripProcessArguments": "true",
+					"agents.image.tag":                           "7.60.0",
 				},
 			},
 			assertions: verifyProcessCollectionWithStripArgs,
@@ -344,7 +344,7 @@ func verifyLinuxRunInCoreAgent(t *testing.T, manifest string) {
 	assert.Equal(t, "true", coreEnvs[DDContainerCollectionEnabled])
 	assert.Equal(t, "true", coreEnvs[DDProcessCollectionEnabled])
 	assert.Equal(t, "true", coreEnvs[DDProcessDiscoveryEnabled])
-	assert.Equal(t, "false", coreEnvs[DDStripProcessArgs])
+	assert.Equal(t, "", coreEnvs[DDStripProcessArgs])
 	assert.Equal(t, "true", coreEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.True(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
 
@@ -361,7 +361,7 @@ func verifyLanguageDetectionInCoreAgent(t *testing.T, manifest string) {
 	assert.Equal(t, "true", coreEnvs[DDContainerCollectionEnabled])
 	assert.Equal(t, "true", coreEnvs[DDProcessCollectionEnabled])
 	assert.Equal(t, "true", coreEnvs[DDProcessDiscoveryEnabled])
-	assert.Equal(t, "false", coreEnvs[DDStripProcessArgs])
+	assert.Equal(t, "", coreEnvs[DDStripProcessArgs])
 	assert.Equal(t, "true", coreEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.Equal(t, "true", coreEnvs[DDLanguageDetectionEnabled])
 	assert.True(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
@@ -402,7 +402,7 @@ func verifyLanguageDetectionInProcessAgent(t *testing.T, manifest string) {
 	assert.Equal(t, "true", processEnvs[DDContainerCollectionEnabled])
 	assert.Equal(t, "true", processEnvs[DDProcessCollectionEnabled])
 	assert.Equal(t, "true", processEnvs[DDProcessDiscoveryEnabled])
-	assert.Equal(t, "false", processEnvs[DDStripProcessArgs])
+	assert.Equal(t, "", processEnvs[DDStripProcessArgs])
 	assert.Equal(t, "false", processEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.Equal(t, "true", processEnvs[DDLanguageDetectionEnabled])
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))

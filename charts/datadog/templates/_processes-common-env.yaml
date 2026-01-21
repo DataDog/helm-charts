@@ -17,4 +17,3 @@
   value: {{ (include "should-run-process-checks-on-core-agent" .) | quote }}
 {{- end }}
 {{- end }}
-{{- end -}}
