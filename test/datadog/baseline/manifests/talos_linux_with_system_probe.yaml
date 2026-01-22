@@ -1577,11 +1577,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1615,7 +1610,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -1804,11 +1799,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1841,7 +1831,7 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_APM_ENABLED
               value: "true"
             - name: DD_APM_NON_LOCAL_TRAFFIC
@@ -1921,11 +1911,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -1968,7 +1953,7 @@ spec:
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
@@ -2030,11 +2015,6 @@ spec:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
-                  name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_AUTH_TOKEN_FILE_PATH
@@ -2058,7 +2038,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: HOST_ROOT
               value: /host/root
           image: gcr.io/datadoghq/agent:7.74.0
@@ -2153,11 +2133,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: api-key
-                  name: datadog-secret
-            - name: DD_APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: app-key
                   name: datadog-secret
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
@@ -2495,7 +2470,7 @@ spec:
             - name: DD_EXTRA_LISTENERS
               value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
-              value: info
+              value: INFO
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
