@@ -1,0 +1,12 @@
+# Test file with invalid YAML syntax that should cause Helm to fail
+# This tests that the chart properly rejects malformed input
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  # Invalid YAML - missing colon and has bad indentation
+  kubelet
+    tlsVerify: false
+    - invalid list syntax here
+  tags:
+    - "env:test
+    - unclosed quote
+
