@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -119,13 +118,13 @@ func verifyWorkload(t *testing.T, kubectlOptions *k8s.KubectlOptions, valuesPath
 	// Uninstall datadog chart and wait for all pods to be fully terminated
 	// This prevents containerd state corruption from rapid pod creation/deletion
 	cleanup.UninstallDatadog()
-	err = waitForPodsTerminated(t, kubectlOptions, "app.kubernetes.io/managed-by=Helm", 3*time.Minute)
+	err = waitForPodsTerminated(t, kubectlOptions, "app.kubernetes.io/managed-by=Helm", defaultHelmTimeout)
 	if err != nil {
 		t.Logf("Warning: %v", err)
 	}
 
 	// Small delay to let containerd stabilize after pod termination
-	interTestDelay(t, 5*time.Second)
+	interTestDelay(t, defaultContainerdDelay)
 
 	err = installOperator(t, kubectlOptions, namespace, cleanup)
 	require.NoError(t, err, "Failed to install operator")
