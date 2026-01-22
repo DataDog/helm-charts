@@ -50,6 +50,15 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
+# serviceAccount -- Configuration for the ServiceAccount used by the CSI driver.
+serviceAccount:
+  # serviceAccount.create -- Create a ServiceAccount for the CSI driver.
+  create: true
+
+  # serviceAccount.name -- Name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
 # disableSSI -- Disable Single Step Instrumentation (SSI) support for the CSI driver.
 disableSSI: false
 

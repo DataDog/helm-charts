@@ -109,6 +109,18 @@ rules:
   - events
   verbs:
   - create
+{{- if .Values.datadog.csi.enabled }}
+- apiGroups:  # To read CSI driver configuration
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - datadog-csi-driver-config
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
 - nonResourceURLs:
   - "/version"
   - "/healthz"

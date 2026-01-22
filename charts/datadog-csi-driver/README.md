@@ -24,6 +24,9 @@ Datadog CSI Driver helm chart
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
+| serviceAccount | object | `{"create":true,"name":""}` | Configuration for the ServiceAccount used by the CSI driver. |
+| serviceAccount.create | bool | `true` | Create a ServiceAccount for the CSI driver. |
+| serviceAccount.name | string | `""` | Name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template. |
 | sockets.apmHostSocketPath | string | `"/var/run/datadog/apm.socket"` |  |
 | sockets.dsdHostSocketPath | string | `"/var/run/datadog/dsd.socket"` |  |
 | tolerations | list | `[]` | Allow scheduling the csi driver daemonset pods on tainted nodes. |

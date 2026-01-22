@@ -17,6 +17,7 @@ spec:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
     spec:
+      serviceAccountName: {{ include "datadog-csi-driver.serviceAccountName" . }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
     {{ toYaml .Values.image.pullSecrets | indent 8 }}
