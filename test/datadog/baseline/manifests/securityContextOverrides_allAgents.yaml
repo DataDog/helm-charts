@@ -1492,10 +1492,10 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources:
-            requests:
+            limits:
               cpu: 200m
               memory: 256Mi
-            limits:
+            requests:
               cpu: 200m
               memory: 256Mi
           securityContext:
