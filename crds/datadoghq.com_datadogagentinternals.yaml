@@ -1219,6 +1219,14 @@ spec:
                             Enabled enables Cloud Workload Security.
                             Default: false
                           type: boolean
+                        enforcement:
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled enables Enforcement for Cloud Workload Security.
+                                Default: true
+                              type: boolean
+                          type: object
                         network:
                           properties:
                             enabled:
@@ -7983,6 +7991,54 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                otelAgentGateway:
+                  description: The actual state of the OTel Agent Gateway as a deployment.
+                  properties:
+                    availableReplicas:
+                      description: Total number of available pods (ready for at least minReadySeconds) targeted by this Deployment.
+                      format: int32
+                      type: integer
+                    currentHash:
+                      description: CurrentHash is the stored hash of the Deployment.
+                      type: string
+                    deploymentName:
+                      description: DeploymentName corresponds to the name of the Deployment.
+                      type: string
+                    generatedToken:
+                      description: |-
+                        GeneratedToken corresponds to the generated token if any token was provided in the Credential configuration when ClusterAgent is
+                        enabled.
+                      type: string
+                    lastUpdate:
+                      description: LastUpdate is the last time the status was updated.
+                      format: date-time
+                      type: string
+                    readyReplicas:
+                      description: Total number of ready pods targeted by this Deployment.
+                      format: int32
+                      type: integer
+                    replicas:
+                      description: Total number of non-terminated pods targeted by this Deployment (their labels match the selector).
+                      format: int32
+                      type: integer
+                    state:
+                      description: State corresponds to the Deployment state.
+                      type: string
+                    status:
+                      description: Status corresponds to the Deployment computed status.
+                      type: string
+                    unavailableReplicas:
+                      description: |-
+                        Total number of unavailable pods targeted by this Deployment. This is the total number of
+                        pods that are still required for the Deployment to have 100% available capacity. They may
+                        either be pods that are running but not yet available or pods that still have not been created.
+                      format: int32
+                      type: integer
+                    updatedReplicas:
+                      description: Total number of non-terminated pods targeted by this Deployment that have the desired template spec.
+                      format: int32
+                      type: integer
+                  type: object
                 remoteConfigConfiguration:
                   description: RemoteConfigConfiguration stores the configuration received from RemoteConfig.
                   properties:
@@ -9151,6 +9207,14 @@ spec:
                                 Enabled enables Cloud Workload Security.
                                 Default: false
                               type: boolean
+                            enforcement:
+                              properties:
+                                enabled:
+                                  description: |-
+                                    Enabled enables Enforcement for Cloud Workload Security.
+                                    Default: true
+                                  type: boolean
+                              type: object
                             network:
                               properties:
                                 enabled:

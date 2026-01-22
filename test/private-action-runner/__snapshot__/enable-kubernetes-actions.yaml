@@ -37,6 +37,7 @@ stringData:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
       - com.datadoghq.kubernetes.customresources.deleteMultipleCustomObjects
+    httpTimeoutSeconds: 30
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -131,10 +132,10 @@ metadata:
   name: kubernetes-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.21.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: kubernetes-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.17.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -146,18 +147,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.19.0
+        helm.sh/chart: private-action-runner-1.21.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: kubernetes-test
-        app.kubernetes.io/version: "v1.15.0"
+        app.kubernetes.io/version: "v1.17.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: f511c1c13021c044619523438a68592f473c1907d15f97d79416d8eb710c9cac
+        checksum/values: a18a4caafbdfeed29b398522cd1ac964d0f20401979ae30c5b8e7ea8ee183beb
     spec:
       serviceAccountName: kubernetes-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.15.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.17.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

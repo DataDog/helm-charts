@@ -14,6 +14,8 @@ runner:
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
+    # taskTimeoutSeconds: 0 # Global timeout for task executions. Use 0 for no timeout.
+    # httpTimeoutSeconds: 30 # Global http client timeout for http based actions.
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
   useSeparateSecretForCredentials: true

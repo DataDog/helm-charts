@@ -428,6 +428,9 @@ datadog:
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
 
+  # datadog.kubernetesKubeServiceNewBehavior -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
+  kubernetesKubeServiceNewBehavior: false
+
   # Configure Kubernetes events collection
   kubernetesEvents:
     # datadog.kubernetesEvents.sourceDetectionEnabled -- Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+).
@@ -1331,7 +1334,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1847,7 +1850,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.17
+    tag: 1.1.18
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -1890,7 +1893,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2498,7 +2501,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.73.0
+    tag: 7.74.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2745,15 +2748,24 @@ operator:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.
     enabled: false
+
+  datadogAgentInternal:
+    # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+    # Note: The Datadog Agent Internal controller will be enabled by default in a future release.
+    enabled: false
+
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
     enabled: false
+
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
     enabled: true
+
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
     enabled: false
+
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
     enabled: true
@@ -2774,6 +2786,8 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
+      datadogAgentInternals: false
 
 datadog-crds:
   crds:
@@ -3013,7 +3027,7 @@ otelAgentGateway:
     name: ddot-collector
 
     # otelAgentGateway.image.tag -- Override the image tag of otel agent
-    tag: 7.71.2
+    tag: ""
 
     # otelAgentGateway.image.tagSuffix -- Suffix to append to image tag of otel agent
     tagSuffix: ""

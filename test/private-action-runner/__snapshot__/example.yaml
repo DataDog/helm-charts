@@ -25,6 +25,7 @@ stringData:
       - com.datadoghq.http.request
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
+    httpTimeoutSeconds: 30
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
@@ -194,10 +195,10 @@ metadata:
   name: example-test-private-action-runner-scripts
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.21.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.17.0"
     app.kubernetes.io/managed-by: Helm
   annotations:
     checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
@@ -258,10 +259,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.21.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.17.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -273,18 +274,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.19.0
+        helm.sh/chart: private-action-runner-1.21.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.15.0"
+        app.kubernetes.io/version: "v1.17.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 0086f88e12e3e8c541ecb72a6249142967bb71735b1296a01fe4d9532961c57c
+        checksum/values: 23b312f0ba619543e70dd2fcba5e63505c61e588c4b7f6fb392f1025f24114f8
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.15.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.17.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

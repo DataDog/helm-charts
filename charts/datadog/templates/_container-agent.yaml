@@ -267,6 +267,8 @@
     - name: DD_AUTOSCALING_FAILOVER_METRICS
       value: "container.memory.usage container.cpu.usage"
     {{- end }}
+    - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+      value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
     {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
