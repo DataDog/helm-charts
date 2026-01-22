@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.161.3
+
+* Add yaml-mapper integration tests ([#2143](https://github.com/DataDog/helm-charts/pull/2143)).
+
 ## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
