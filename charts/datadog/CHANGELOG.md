@@ -1,8 +1,11 @@
 # Datadog changelog
 
-## 3.161.2
+## 3.161.3
 
 * Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
+## 3.161.2
+
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
 
 ## 3.161.1
