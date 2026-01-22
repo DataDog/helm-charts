@@ -1,0 +1,67 @@
+# Consolidated test values for global settings mappings
+# Tests:
+#   - datadog.tags, datadog.env (from global-tags-values.yaml)
+#   - fullnameOverride, nameOverride (from global-metadata-values.yaml)
+#   - datadog.logLevel (from global-logging-values.yaml)
+#   - datadog.site, datadog.dd_url, registry (from global-site-endpoint-values.yaml)
+#   - datadog.originDetectionUnified.enabled (from global-origin-detection-values.yaml)
+#   - datadog.criSocketPath (from global-cri-socket-values.yaml)
+#   - datadog.dockerSocketPath (from global-docker-socket-values.yaml)
+#   - datadog.kubelet.tlsVerify, datadog.kubelet.agentCAPath, datadog.kubelet.podResourcesSocketDir (from global-kubelet-values.yaml)
+#   - datadog.networkPolicy.create, datadog.networkPolicy.flavor (from global-network-policy-values.yaml)
+#   - datadog.clusterName, clusterAgent.token (from global-cluster-values.yaml)
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  
+  # Global cluster settings
+  clusterName: my-kubernetes-cluster
+  site: datadoghq.eu
+  dd_url: https://custom-intake.datadoghq.eu
+  logLevel: DEBUG
+  
+  # Tags and env
+  tags:
+    - "env:production"
+    - "team:platform"
+    - "service:my-app"
+  env:
+    - name: DD_CUSTOM_ENV_VAR
+      value: "custom-value"
+    - name: DD_ANOTHER_VAR
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+  
+  # Kubelet configuration
+  # Note: agentCAPath has a behavioral disparity - see skipFields in utils.go for details
+  kubelet:
+    tlsVerify: false
+    agentCAPath: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    podResourcesSocketDir: /var/lib/kubelet/pod-resources
+  
+  # Container runtime sockets
+  criSocketPath: /var/run/containerd/containerd.sock
+  dockerSocketPath: /var/run/containerd/containerd.sock
+  
+  # Origin detection
+  originDetectionUnified:
+    enabled: true
+  
+  # Network policy
+  networkPolicy:
+    create: true
+    flavor: kubernetes
+
+# Name overrides
+fullnameOverride: "my-custom-datadog-agent"
+nameOverride: "custom-dd"
+
+# Registry
+registry: gcr.io/datadoghq
+
+# Cluster agent with token
+clusterAgent:
+  enabled: true
+  token: "my-custom-cluster-agent-token-32chars"
+

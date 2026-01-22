@@ -1,0 +1,58 @@
+# Consolidated test values for all Admission Controller feature mappings
+# Tests:
+#   - clusterAgent.admissionController.enabled, mutateUnlabelled, configMode, failurePolicy,
+#     webhookName, containerRegistry, mutation.enabled, validation.enabled
+#     (from feature-admission-controller-values.yaml)
+#   - clusterAgent.admissionController.agentSidecarInjection.*
+#     (from feature-admission-controller-sidecar-values.yaml)
+#   - clusterAgent.admissionController.kubernetesAdmissionEvents.enabled
+#     (from feature-admission-controller-k8s-events-values.yaml)
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+    mutateUnlabelled: true
+    configMode: socket
+    failurePolicy: Ignore
+    webhookName: custom-datadog-webhook
+    containerRegistry: gcr.io/datadoghq
+    mutation:
+      enabled: true
+    validation:
+      enabled: true
+    # Kubernetes admission events
+    kubernetesAdmissionEvents:
+      enabled: true
+    # Sidecar injection
+    agentSidecarInjection:
+      enabled: true
+      clusterAgentCommunicationEnabled: true
+      provider: fargate
+      containerRegistry: gcr.io/datadoghq
+      imageName: agent
+      imageTag: 7.52.0
+      selectors:
+        - namespaceSelector:
+            matchLabels:
+              sidecar-injection: enabled
+          objectSelector:
+            matchLabels:
+              inject-agent: "true"
+      profiles:
+        - env:
+            - name: DD_APM_ENABLED
+              value: "true"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+

@@ -1,9 +1,0 @@
-# Test values for global logging mappings
-# Tests: datadog.logLevel
-datadog:
-  apiKey: "00000000000000000000000000000000"
-  appKey: "0000000000000000000000000000000000000000"
-  kubelet:
-    tlsVerify: false
-  logLevel: DEBUG
-
