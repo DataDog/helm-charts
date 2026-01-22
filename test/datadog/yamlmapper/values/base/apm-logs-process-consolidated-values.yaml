@@ -1,0 +1,46 @@
+# Consolidated test values for APM, Logs, and Process Agent features
+# Tests:
+#   - datadog.apm.portEnabled, port, socketEnabled, socketPath, errorTrackingStandalone.enabled
+#     (from feature-apm-values.yaml)
+#   - datadog.apm.instrumentation.enabled
+#     (from feature-apm-instrumentation-values.yaml)
+#   - datadog.logs.enabled, containerCollectAll, containerCollectUsingFiles, autoMultiLineDetection
+#     (from feature-logs-values.yaml)
+#   - datadog.processAgent.processCollection, containerCollection, processDiscovery, stripProcessArguments
+#     (from feature-process-agent-values.yaml)
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  
+  # APM configuration
+  apm:
+    portEnabled: true
+    port: 8126
+    socketEnabled: true
+    socketPath: /var/run/datadog/apm.socket
+    errorTrackingStandalone:
+      enabled: true
+    instrumentation:
+      enabled: true
+  
+  # Logs configuration
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+  
+  # Process Agent configuration
+  processAgent:
+    processCollection: true
+    containerCollection: true
+    processDiscovery: true
+    stripProcessArguments: true
+
+clusterAgent:
+  enabled: true
+  admissionController:
+    enabled: true
+

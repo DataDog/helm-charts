@@ -1,6 +1,7 @@
 # Test values for Cluster Checks Runner component override mappings
 # Tests: clusterChecksRunner.image.name/tag/pullPolicy, clusterChecksRunner.env, 
-#        clusterChecksRunner.envFrom, clusterChecksRunner.strategy, clusterChecksRunner.replicas, clusterChecksRunner.resources
+#        clusterChecksRunner.envFrom, clusterChecksRunner.strategy, clusterChecksRunner.replicas, 
+#        clusterChecksRunner.resources, clusterChecksRunner.priorityClassName
 # Note: clusterChecksRunner.image.repository, clusterChecksRunner.podLabels are not mapped
 # Note: clusterChecksRunner.image.pullSecrets, clusterChecksRunner.tolerations, clusterChecksRunner.nodeSelector, 
 #       clusterChecksRunner.affinity, livenessProbe, readinessProbe, startupProbe, 
@@ -19,6 +20,8 @@ clusterAgent:
 clusterChecksRunner:
   enabled: true
   replicas: 2
+  
+  priorityClassName: ccr-critical
   
   image:
     name: agent

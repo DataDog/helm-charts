@@ -1,6 +1,7 @@
 # Test values for Cluster Agent component override mappings
 # Tests: clusterAgent.image.name/tag/pullPolicy, clusterAgent.env, clusterAgent.envFrom, 
-#        clusterAgent.strategy, clusterAgent.useHostNetwork, clusterAgent.replicas, clusterAgent.resources
+#        clusterAgent.strategy, clusterAgent.useHostNetwork, clusterAgent.replicas, clusterAgent.resources,
+#        clusterAgent.priorityClassName
 # Note: clusterAgent.image.repository, clusterAgent.podLabels, clusterAgent.confd are not mapped
 # Note: clusterAgent.image.pullSecrets, clusterAgent.tolerations, clusterAgent.nodeSelector, clusterAgent.affinity, 
 #       livenessProbe, readinessProbe, startupProbe, pdb.create, additionalLabels, 
@@ -13,6 +14,8 @@ datadog:
 
 clusterAgent:
   enabled: true
+  
+  priorityClassName: cluster-agent-critical
   
   image:
     name: cluster-agent

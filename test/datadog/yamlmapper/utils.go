@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"strings"
@@ -24,8 +25,9 @@ import (
 const testNamespacePrefix = "datadog-agent-"
 
 const (
-	agentConfStrictEnv     = "AGENT_CONF_STRICT"
-	staleCleanupEnabledEnv = "YAMLMAPPER_CLEANUP_STALE"
+	agentConfStrictEnv       = "AGENT_CONF_STRICT"
+	staleCleanupEnabledEnv   = "YAMLMAPPER_CLEANUP_STALE"
+	mapperWarningsStrictEnv  = "MAPPER_WARNINGS_STRICT"
 )
 
 // CleanupRegistry stores test artifacts that require cleanup after each test run.
@@ -261,6 +263,13 @@ var skipFields = map[string]struct{}{
 	"log_level":               {},
 	// Nested paths
 	"orchestrator_explorer.kubelet_config_check.enabled": {}, // TODO: remove this when available in operator
+
+	// kubelet_client_ca: Behavioral disparity between Helm and Operator
+	// - Helm: Sets DD_KUBELET_CLIENT_CA when agentCAPath is provided (allows referencing existing files like k8s service account CA)
+	// - Operator: Only sets DD_KUBELET_CLIENT_CA when hostCAPath is provided (assumes all CA paths need explicit host mounts)
+	// See: datadog-operator/internal/controller/datadogagent/global/agent.go lines 39-75
+	// TODO: Consider filing operator enhancement to support agentCAPath without hostCAPath
+	"kubelet_client_ca": {},
 }
 
 // Label selectors for different agent installation types
@@ -312,6 +321,188 @@ func isAgentConfStrict() bool {
 	return strings.EqualFold(os.Getenv(agentConfStrictEnv), "1") ||
 		strings.EqualFold(os.Getenv(agentConfStrictEnv), "true") ||
 		strings.EqualFold(os.Getenv(agentConfStrictEnv), "yes")
+}
+
+// isMapperWarningsStrict returns true if mapper warnings should cause test failures
+func isMapperWarningsStrict() bool {
+	return strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "1") ||
+		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "true") ||
+		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "yes")
+}
+
+// =============================================================================
+// Thread-Safe Log Capture
+// =============================================================================
+
+// logCaptureGlobalMutex protects the global slog default handler during test runs.
+// This prevents race conditions when multiple tests run in parallel and try to
+// install/restore log handlers simultaneously.
+var logCaptureGlobalMutex sync.Mutex
+
+// MapperLogCapture captures slog output during mapper runs.
+// It is safe for concurrent use from multiple goroutines.
+type MapperLogCapture struct {
+	mu       sync.RWMutex
+	warnings []string
+	errors   []string
+	infos    []string
+}
+
+// NewMapperLogCapture creates a new log capture instance
+func NewMapperLogCapture() *MapperLogCapture {
+	return &MapperLogCapture{
+		warnings: make([]string, 0, 8),
+		errors:   make([]string, 0, 8),
+		infos:    make([]string, 0, 16),
+	}
+}
+
+// Enabled implements slog.Handler
+func (c *MapperLogCapture) Enabled(_ context.Context, level slog.Level) bool {
+	return true
+}
+
+// Handle implements slog.Handler - thread-safe log message capture
+func (c *MapperLogCapture) Handle(_ context.Context, r slog.Record) error {
+	// Build the message with attributes
+	var sb strings.Builder
+	sb.WriteString(r.Message)
+	r.Attrs(func(a slog.Attr) bool {
+		sb.WriteString(fmt.Sprintf(" %s=%v", a.Key, a.Value))
+		return true
+	})
+	msg := sb.String()
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	switch r.Level {
+	case slog.LevelWarn:
+		c.warnings = append(c.warnings, msg)
+	case slog.LevelError:
+		c.errors = append(c.errors, msg)
+	case slog.LevelInfo:
+		c.infos = append(c.infos, msg)
+	}
+	return nil
+}
+
+// WithAttrs implements slog.Handler
+func (c *MapperLogCapture) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return c
+}
+
+// WithGroup implements slog.Handler
+func (c *MapperLogCapture) WithGroup(name string) slog.Handler {
+	return c
+}
+
+// GetWarnings returns a copy of all captured warnings (thread-safe)
+func (c *MapperLogCapture) GetWarnings() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	result := make([]string, len(c.warnings))
+	copy(result, c.warnings)
+	return result
+}
+
+// GetErrors returns a copy of all captured errors (thread-safe)
+func (c *MapperLogCapture) GetErrors() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	result := make([]string, len(c.errors))
+	copy(result, c.errors)
+	return result
+}
+
+// GetInfos returns a copy of all captured info messages (thread-safe)
+func (c *MapperLogCapture) GetInfos() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	result := make([]string, len(c.infos))
+	copy(result, c.infos)
+	return result
+}
+
+// HasWarnings returns true if any warnings were captured (thread-safe)
+func (c *MapperLogCapture) HasWarnings() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.warnings) > 0
+}
+
+// HasErrors returns true if any errors were captured (thread-safe)
+func (c *MapperLogCapture) HasErrors() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.errors) > 0
+}
+
+// WarningCount returns the number of captured warnings (thread-safe)
+func (c *MapperLogCapture) WarningCount() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.warnings)
+}
+
+// ErrorCount returns the number of captured errors (thread-safe)
+func (c *MapperLogCapture) ErrorCount() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.errors)
+}
+
+// Clear resets all captured logs (thread-safe)
+func (c *MapperLogCapture) Clear() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.warnings = c.warnings[:0]
+	c.errors = c.errors[:0]
+	c.infos = c.infos[:0]
+}
+
+// InstallLogCapture installs the log capture as the default slog handler and returns
+// the capture instance and a cleanup function to restore the original handler.
+// This function is thread-safe and uses a global mutex to prevent race conditions
+// when multiple tests attempt to modify the global slog handler.
+func InstallLogCapture() (*MapperLogCapture, func()) {
+	logCaptureGlobalMutex.Lock()
+
+	capture := NewMapperLogCapture()
+	originalHandler := slog.Default().Handler()
+	slog.SetDefault(slog.New(capture))
+
+	return capture, func() {
+		slog.SetDefault(slog.New(originalHandler))
+		logCaptureGlobalMutex.Unlock()
+	}
+}
+
+// CheckMapperWarnings logs warnings and optionally fails the test if strict mode is enabled
+func CheckMapperWarnings(t *testing.T, capture *MapperLogCapture) {
+	t.Helper()
+	warnings := capture.GetWarnings()
+	if len(warnings) > 0 {
+		t.Logf("Mapper warnings (%d):", len(warnings))
+		for _, w := range warnings {
+			t.Logf("  WARN: %s", w)
+		}
+		if isMapperWarningsStrict() {
+			t.Fatalf("Strict mode: mapper produced %d warning(s)", len(warnings))
+		}
+	}
+}
+
+// CheckMapperErrors logs errors captured during mapper execution
+func CheckMapperErrors(t *testing.T, capture *MapperLogCapture) {
+	t.Helper()
+	errors := capture.GetErrors()
+	if len(errors) > 0 {
+		t.Logf("Mapper errors (%d):", len(errors))
+		for _, e := range errors {
+			t.Logf("  ERROR: %s", e)
+		}
+	}
 }
 
 // waitForPodsTerminated waits until all pods matching the label selector are fully terminated

@@ -1,0 +1,11 @@
+# Test values with an unsupported Helm key that should cause mapper to error
+# This tests that the mapper correctly rejects unknown/unmapped keys
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+# This key is not in the mapping file and should cause an error
+thisIsAnUnsupportedKey: "should-cause-error"
+
