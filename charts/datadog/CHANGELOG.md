@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.161.2
+
+* Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
+
 ## 3.161.1
 
 * Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
