@@ -2,7 +2,6 @@ apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
   name: custom-dd
-  namespace: datadog-agent-gxrzik
 spec:
   global:
     clusterAgentToken: my-custom-cluster-agent-token-32chars

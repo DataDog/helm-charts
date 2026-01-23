@@ -445,7 +445,7 @@ func getMappingPath() string {
 }
 
 // runMapper executes the yaml-mapper and returns the output DDA file path.
-func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *TestCleanupRegistry) (string, error) {
+func runMapper(t *testing.T, valuesPath string) (string, error) {
 	t.Helper()
 	destFilePath := ddaOutputPath(valuesPath)
 	ensureDDAOutputDirExists(t)
@@ -464,7 +464,6 @@ func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *TestC
 		MappingPath: mappingFilePath,
 		SourcePath:  absValuesPath,
 		DestPath:    destFilePath,
-		Namespace:   namespace,
 		PrintOutput: false,
 	}
 	newMapper := mapper.NewMapper(mapperConfig)

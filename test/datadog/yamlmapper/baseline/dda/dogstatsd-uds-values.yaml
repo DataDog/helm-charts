@@ -2,7 +2,6 @@ apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
   name: datadog
-  namespace: datadog-agent-qrvqu7
 spec:
   features:
     dogstatsd:
