@@ -1,12 +1,4 @@
-# Consolidated test values for all Admission Controller feature mappings
-# Tests:
-#   - clusterAgent.admissionController.enabled, mutateUnlabelled, configMode, failurePolicy,
-#     webhookName, containerRegistry, mutation.enabled, validation.enabled
-#     (from feature-admission-controller-values.yaml)
-#   - clusterAgent.admissionController.agentSidecarInjection.*
-#     (from feature-admission-controller-sidecar-values.yaml)
-#   - clusterAgent.admissionController.kubernetesAdmissionEvents.enabled
-#     (from feature-admission-controller-k8s-events-values.yaml)
+# Test values for all Admission Controller feature mappings
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"

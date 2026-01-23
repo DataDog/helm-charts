@@ -5,61 +5,119 @@
 
 package yamlmapper
 
-// =============================================================================
-// Base Test Cases
-// =============================================================================
+// ### Base Test Cases
 
-// baseTestCases defines all base values test cases with explicit pod counts
-// Note: Many individual test files have been consolidated to reduce test run time
 var baseTestCases = []BaseTestCase{
-	// Consolidated test files (combine multiple related feature tests)
-	{Name: "global-settings-consolidated-values.yaml", ValuesFile: baseValuesDir + "/global-settings-consolidated-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "admission-controller-consolidated-values.yaml", ValuesFile: baseValuesDir + "/admission-controller-consolidated-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "cluster-agent-features-consolidated-values.yaml", ValuesFile: baseValuesDir + "/cluster-agent-features-consolidated-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "apm-logs-process-consolidated-values.yaml", ValuesFile: baseValuesDir + "/apm-logs-process-consolidated-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: ExpectedContainers{
-		Agent: []string{containerTraceAgent},
-	}},
-
-	// Existing combined files
-	{Name: "combined-apm-logs-values.yaml", ValuesFile: baseValuesDir + "/combined-apm-logs-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "combined-full-observability-values.yaml", ValuesFile: baseValuesDir + "/combined-full-observability-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-
-	// Baseline and minimal tests
-	{Name: "default-minimal.yaml", ValuesFile: baseValuesDir + "/default-minimal.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-
-	// Features that need separate tests (special pod counts or mutually exclusive configurations)
-	{Name: "feature-cluster-checks-values.yaml", ValuesFile: baseValuesDir + "/feature-cluster-checks-values.yaml", ExpectedPods: ExpectedPodCounts{
-		AgentDaemonset:      true,
-		ClusterAgent:        1,
-		ClusterChecksRunner: 2,
-	}, ExpectedContainers: ExpectedContainers{
-		ClusterChecksRunner: []string{containerAgent},
-	}},
-	{Name: "feature-dogstatsd-hostport-values.yaml", ValuesFile: baseValuesDir + "/feature-dogstatsd-hostport-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
-	{Name: "feature-dogstatsd-values.yaml", ValuesFile: baseValuesDir + "/feature-dogstatsd-values.yaml", ExpectedPods: defaultExpectedPods(), ExpectedContainers: defaultExpectedContainers()},
+	{
+		Name:               "global-settings-values.yaml",
+		ValuesFile:         baseValuesDir + "/global-settings-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "admission-controller-values.yaml",
+		ValuesFile:         baseValuesDir + "/admission-controller-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "cluster-agent-features-values.yaml",
+		ValuesFile:         baseValuesDir + "/cluster-agent-features-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:       "apm-logs-process-values.yaml",
+		ValuesFile: baseValuesDir + "/apm-logs-process-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			Agent: []string{containerTraceAgent},
+		},
+	},
+	{
+		Name:       "apm-port-enabled-values.yaml",
+		ValuesFile: baseValuesDir + "/apm-port-enabled-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			Agent: []string{containerTraceAgent},
+		},
+	},
+	{
+		Name:       "apm-use-localservice-values.yaml",
+		ValuesFile: baseValuesDir + "/apm-use-localservice-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			Agent: []string{containerTraceAgent},
+		},
+	},
+	{
+		Name:               "apm-logs-values.yaml",
+		ValuesFile:         baseValuesDir + "/apm-logs-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "full-observability-values.yaml",
+		ValuesFile:         baseValuesDir + "/full-observability-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "default-minimal.yaml",
+		ValuesFile:         baseValuesDir + "/default-minimal.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:       "cluster-checks-values.yaml",
+		ValuesFile: baseValuesDir + "/cluster-checks-values.yaml",
+		ExpectedPods: ExpectedComponentPods{
+			ClusterAgent:        1,
+			ClusterChecksRunner: 2,
+		},
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			ClusterChecksRunner: []string{containerAgent},
+		},
+	},
+	{
+		Name:               "dogstatsd-hostport-values.yaml",
+		ValuesFile:         baseValuesDir + "/dogstatsd-hostport-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "dogstatsd-uds-values.yaml",
+		ValuesFile:         baseValuesDir + "/dogstatsd-uds-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
 
 	// Skipped tests (require kernel features not available in kind)
-	{Name: "feature-npm-values.yaml", ValuesFile: baseValuesDir + "/feature-npm-values.yaml", ExpectedPods: defaultExpectedPods(),
-		ExpectedContainers: defaultExpectedContainers(),
-		SkipReason:         "NPM requires kernel features not available in kind"},
-	{Name: "feature-system-probe-checks-values.yaml", ValuesFile: baseValuesDir + "/feature-system-probe-checks-values.yaml", ExpectedPods: defaultExpectedPods(),
-		ExpectedContainers: ExpectedContainers{
+	{
+		Name:               "npm-values.yaml",
+		ValuesFile:         baseValuesDir + "/npm-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+		SkipReason:         "NPM requires kernel features not available in kind",
+	},
+	{
+		Name:       "system-probe-checks-values.yaml",
+		ValuesFile: baseValuesDir + "/system-probe-checks-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
 			Agent: []string{containerSystemProbe},
 		},
-		SkipReason: "System probe requires kernel features not available in kind"},
+		SkipReason: "System probe requires kernel features not available in kind",
+	},
 }
 
-// =============================================================================
-// Test Cases with Dependencies
-// =============================================================================
-
-// testCasesWithDependencies defines all test cases that require pre-created resources
-var testCasesWithDependencies = []TestCaseWithDependencies{
+// ### Test Cases with Dependencies
+var testCasesWithDependencies = []ResourceDependentTestCase{
 	{
 		Name:               "global-credentials-existing-secret-values.yaml",
 		ValuesFile:         "values/global-credentials-existing-secret-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
-		ExpectedContainers: defaultExpectedContainers(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		Secrets: []SecretDef{
 			{Name: "my-datadog-api-secret", Data: map[string]string{"api-key": "00000000000000000000000000000000"}},
 			{Name: "my-datadog-app-secret", Data: map[string]string{"app-key": "0000000000000000000000000000000000000000"}},
@@ -70,60 +128,80 @@ var testCasesWithDependencies = []TestCaseWithDependencies{
 		Name:               "override-cluster-agent-values.yaml",
 		ValuesFile:         "values/override-cluster-agent-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
-		ExpectedContainers: defaultExpectedContainers(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		ConfigMaps: []ConfigMapDef{
-			{Name: "cluster-agent-config", Data: map[string]string{"DD_LOG_LEVEL": "debug"}},
+			{
+				Name: "cluster-agent-config",
+				Data: map[string]string{"DD_LOG_LEVEL": "debug"},
+			},
 		},
 		PriorityClasses: []PriorityClassDef{
-			{Name: "cluster-agent-critical", Value: 1000000000, Description: "Ensures Cluster Agent pods run with elevated priority"},
+			{
+				Name:        "cluster-agent-critical",
+				Value:       1000000000,
+				Description: "Ensures Cluster Agent pods run with elevated priority",
+			},
 		},
 	},
 	{
 		Name:       "override-cluster-checks-runner-values.yaml",
 		ValuesFile: "values/override-cluster-checks-runner-values.yaml",
-		ExpectedPods: ExpectedPodCounts{
-			AgentDaemonset:      true,
+		ExpectedPods: ExpectedComponentPods{
 			ClusterAgent:        1,
 			ClusterChecksRunner: 2,
 		},
-		ExpectedContainers: ExpectedContainers{
+		ExpectedComponentContainers: ExpectedComponentContainers{
 			ClusterChecksRunner: []string{containerAgent},
 		},
 		ConfigMaps: []ConfigMapDef{
-			{Name: "ccr-config", Data: map[string]string{"DD_LOG_LEVEL": "debug"}},
+			{
+				Name: "ccr-config",
+				Data: map[string]string{"DD_LOG_LEVEL": "debug"},
+			},
 		},
 		PriorityClasses: []PriorityClassDef{
-			{Name: "ccr-critical", Value: 1000000000, Description: "Ensures Cluster Checks Runner pods run with elevated priority"},
+			{
+				Name:        "ccr-critical",
+				Value:       1000000000,
+				Description: "Ensures Cluster Checks Runner pods run with elevated priority",
+			},
 		},
 	},
 	{
 		Name:               "override-node-agent-values.yaml",
 		ValuesFile:         "values/override-node-agent-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
-		ExpectedContainers: defaultExpectedContainers(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		PriorityClasses: []PriorityClassDef{
-			{Name: "datadog-agent-critical", Value: 1000000000, Description: "Ensures Datadog Agent pods run with elevated priority"},
+			{
+				Name:        "datadog-agent-critical",
+				Value:       1000000000,
+				Description: "Ensures Datadog Agent pods run with elevated priority",
+			},
 		},
 	},
 	{
 		Name:               "global-envfrom-values.yaml",
 		ValuesFile:         "values/global-envfrom-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
-		ExpectedContainers: defaultExpectedContainers(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		ConfigMaps: []ConfigMapDef{
-			{Name: "datadog-env-config", Data: map[string]string{"DD_LOG_LEVEL": "debug", "DD_TAGS": "env:test"}},
+			{
+				Name: "datadog-env-config",
+				Data: map[string]string{"DD_LOG_LEVEL": "debug", "DD_TAGS": "env:test"},
+			},
 		},
 		Secrets: []SecretDef{
-			{Name: "datadog-env-secrets", Data: map[string]string{"DD_SECRET_VAR": "secret-value"}},
+			{
+				Name: "datadog-env-secrets",
+				Data: map[string]string{"DD_SECRET_VAR": "secret-value"},
+			},
 		},
 	},
 }
 
-// =============================================================================
-// Negative Test Cases
-// =============================================================================
+// ### Negative Test Cases
 
-// negativeTestCases defines test cases where the mapper should return an error
 var negativeTestCases = []NegativeTestCase{
 	{
 		Name:           "unsupported-helm-key",
@@ -138,4 +216,3 @@ var negativeTestCases = []NegativeTestCase{
 		Description:    "Mapper should error when values file contains multiple unmapped keys",
 	},
 }
-

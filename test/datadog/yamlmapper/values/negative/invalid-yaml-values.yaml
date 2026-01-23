@@ -9,4 +9,3 @@ datadog:
   tags:
     - "env:test
     - unclosed quote
-

@@ -1,5 +1,4 @@
 # Test values for full observability setup - APM, Logs, Process, Events, KSM
-# Tests multiple features that work well together
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"

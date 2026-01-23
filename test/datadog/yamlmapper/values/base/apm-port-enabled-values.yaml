@@ -1,17 +1,12 @@
-#  Minimal test values.
+# Test values for APM over TCP (port enabled)
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
 
-agents:
-  image:
-    tag: 7.74.0
+  apm:
+    portEnabled: true
+    port: 8126
+    socketEnabled: false
 
-clusterAgent:
-  image:
-    tag: 7.74.0
-
-clusterChecksRunner:
-  enabled: false
