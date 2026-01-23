@@ -790,3 +790,49 @@ Learn more about the Datadog Operator: https://docs.datadoghq.com/containers/dat
 To disable the Datadog Operator, set `datadog.operator.enabled` to `false`.
 
 {{- end }}
+
+{{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( not ( include "migration-supported" . ) ) }}
+###################################################################################
+####               WARNING: Unsupported Datadog Operator version               ####
+###################################################################################
+You have set `datadog.operator.migration.enabled` or `datadog.operator.migration.preview` to `true`.
+Support for this configuration is supported in Datadog Operator version 1.21.0+.
+Update your chart or set `datadog-operator.image.tag` to a supported version.
+
+Skipping migration.
+
+{{- end }}
+
+{{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.preview }}
+###################################################################################
+####                 INFO: Helm-DDA Migration Preview Enabled                  ####
+###################################################################################
+
+View migration job logs:
+
+kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
+
+{{- end }}
+
+{{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.enabled }}
+###################################################################################
+####                     INFO: Helm-DDA Migration Enabled                      ####
+###################################################################################
+View and save your migrated DatadogAgent manifest with this command:
+
+kubectl -n {{ .Release.Namespace }} get datadogagent {{ template "datadog.fullname" . }} -oyaml
+
+View migration job logs:
+
+kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
+
+{{- if and .Values.datadog.operator.migration.enabled (ne .Values.operator.datadogCRDs.keepCrds true) }}
+
+###################################################################################
+####         ERROR: Helm-DDA Migration Enabled and Keep CRDs not set           ####
+###################################################################################
+
+{{- fail "The options `datadog.operator.migration.enabled` and `operator.datadogCRDs.keepCrds` must both be enabled." }}
+
+{{- end }}
+{{- end }}
