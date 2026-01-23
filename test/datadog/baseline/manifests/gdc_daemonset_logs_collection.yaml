@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -147,7 +147,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -857,6 +857,29 @@ rules:
       - argoproj.io
     resources:
       - rollouts
+      - applications
+      - applicationsets
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+      - helmcharts
+      - externalartifacts
+      - gitrepositories
+      - helmrepositories
+      - ocirepositories
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
     verbs:
       - list
       - watch
@@ -1384,9 +1407,11 @@ spec:
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
+            - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+              value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1463,7 +1488,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1515,7 +1540,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.73.0
+          image: gcr.io/datadoghq/agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1567,7 +1592,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0-rc.1
+    app.kubernetes.io/version: 1.22.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1777,6 +1802,8 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "false"
+            - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+              value: "false"
             - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1817,7 +1844,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1890,7 +1917,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.73.0
+          image: gcr.io/datadoghq/cluster-agent:7.74.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

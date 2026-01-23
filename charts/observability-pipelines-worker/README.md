@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.12.1](https://img.shields.io/badge/Version-2.12.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
+![Version: 2.12.3](https://img.shields.io/badge/Version-2.12.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -92,8 +92,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.apiKey | string | `nil` | Specify your Datadog API key. |
 | datadog.apiKeyExistingSecret | string | `""` | Specify a preexisting Secret that has your API key instead of creating a new one. The value must be stored under the `api-key`. |
 | datadog.bootstrap | object | `{"config":{},"secretFileContents":{}}` | Provide a bootstrap file that conforms to the options provided in this documentation:   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options |
-| datadog.bootstrap.config | object | `{}` | The bootstrap file contents |
-| datadog.bootstrap.secretFileContents | object | `{}` | Additional helper for the "secrets" portion of the bootstrap file. Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file, and correctly setup the bootstrap to point to the secrets file. eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" } |
+| datadog.bootstrap.config | object | `{}` | The bootstrap file contents. Use only if `secretFileContents` is not provided. |
+| datadog.bootstrap.secretFileContents | object | `{}` | Additional helper for the "secrets" portion of the bootstrap file. Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file, and correctly setup the bootstrap to point to the secrets file in `bootstrap.config`. eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" } |
 | datadog.dataDir | string | `"/var/lib/observability-pipelines-worker"` | The data directory for OPW to store runtime data in. |
 | datadog.pipelineId | string | `nil` | Specify your Datadog Observability Pipelines pipeline ID |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
@@ -138,7 +138,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podDisruptionBudget.minAvailable | int | `1` | Specify the number of Pods that must still be available after an eviction. |
 | podHostNetwork | bool | `false` | Enable the hostNetwork option on Pods. |
 | podLabels | object | `{}` | Set labels on Pods. |
-| podManagementPolicy | string | `"OrderedReady"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
+| podManagementPolicy | string | `"Parallel"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
 | readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |

@@ -3,16 +3,16 @@ name: private-action-runner
 description: A Helm chart to deploy the private action runner
 
 type: application
-version: 1.19.0
-appVersion: "v1.15.0"
+version: 1.21.1
+appVersion: "v1.17.1"
 keywords:
-- app builder
-- workflow automation
+    - app builder
+    - workflow automation
 home: https://www.datadoghq.com
 icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
 sources:
-- https://docs.datadoghq.com/service_management/workflows/private_actions
-- https://app.datadoghq.com/app-builder/private-action-runners
+    - https://docs.datadoghq.com/service_management/workflows/private_actions
+    - https://app.datadoghq.com/app-builder/private-action-runners
 maintainers:
-- name: Datadog
-  email: support@datadoghq.com
+    - name: Datadog
+      email: support@datadoghq.com

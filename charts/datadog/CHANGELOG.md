@@ -1,8 +1,58 @@
 # Datadog changelog
 
-## 3.159.0
+## 3.162.0
 
 * Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
+## 3.161.2
+
+* Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
+
+## 3.161.1
+
+* Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
+
+## 3.161.0
+
+* Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
+  
+  Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
+  
+  Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
+
+## 3.160.4
+
+* Add "watch" permission for cluster roles and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+
+## 3.160.3
+
+* Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
+
+
+## 3.160.2
+
+* Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
+
+## 3.160.1
+
+* Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).
+
+## 3.160.0
+
+* Use agent version as default image tag for DDOT Gateway when `otelAgentGateway.image.tag` is not specified.
+* Remove an unreleased field from DDOT gateway default config: `extensions.datadog.deployment_type`.
+
+## 3.159.1
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
+## 3.159.0
+
+* [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
+
+## 3.158.4
+
+* Fix a typo in DDOT gateway default config: extension -> extensions.
 
 ## 3.158.3
 
@@ -10,7 +60,7 @@
 
 ## 3.158.2
 
-* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243) 
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243)
 
 ## 3.158.1
 
