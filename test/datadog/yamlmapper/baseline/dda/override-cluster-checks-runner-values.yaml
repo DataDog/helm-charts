@@ -1,0 +1,44 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: datadog-agent-bpfvkk
+spec:
+  features:
+    clusterChecks:
+      enabled: true
+      useClusterChecksRunners: true
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
+  override:
+    clusterChecksRunner:
+      containers:
+        agent:
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      env:
+      - name: DD_CCR_CUSTOM_VAR
+        value: custom-value
+      envFrom:
+      - configMapRef:
+          name: ccr-config
+      image:
+        name: agent
+        pullPolicy: Always
+        tag: 7.72.0
+      priorityClassName: ccr-critical
+      replicas: 2
+      updateStrategy:
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate

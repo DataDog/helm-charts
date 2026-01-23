@@ -1,0 +1,54 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: datadog-agent-6g5lnk
+spec:
+  features:
+    admissionController:
+      enabled: true
+      mutateUnlabelled: true
+    apm:
+      hostPortConfig:
+        enabled: false
+      unixDomainSocketConfig:
+        enabled: true
+    dogstatsd:
+      originDetectionEnabled: true
+      tagCardinality: orchestrator
+      unixDomainSocketConfig:
+        enabled: true
+    eventCollection:
+      collectKubernetesEvents: true
+      unbundleEvents: true
+    kubeStateMetricsCore:
+      enabled: true
+    liveContainerCollection:
+      enabled: true
+    liveProcessCollection:
+      enabled: true
+    logCollection:
+      autoMultiLineDetection: true
+      containerCollectAll: true
+      containerCollectUsingFiles: true
+      enabled: true
+    orchestratorExplorer:
+      enabled: true
+      scrubContainers: true
+    processDiscovery:
+      enabled: true
+    prometheusScrape:
+      enableServiceEndpoints: true
+      enabled: true
+  global:
+    clusterName: full-observability-cluster
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
+    logLevel: INFO
+    site: datadoghq.com
+    tags:
+    - env:staging
+    - team:platform

@@ -76,7 +76,14 @@ func runValuesToDDAMappingTest(t *testing.T, valuesPath string, expectedPods Exp
 	// run mapper against values.yaml to generate DDA
 	ddaFilePath, err := runMapper(t, valuesPath, ctx.Namespace, ctx.TestCleanupRegistry)
 	require.NoError(t, err, fmt.Sprintf("Mapper returned error: %s", err))
-	
+
+	// log the mapped DDA file contents
+	ddaFileContents, err := os.ReadFile(ddaFilePath)
+	if err != nil {
+		t.Fatalf("Failed to read DDA file: %v", err)
+	}
+	t.Logf("Mapped DDA:\n%s", string(ddaFileContents))
+
 	// uninstall Datadog chart
 	ctx.TestCleanupRegistry.UninstallDatadog()
 	err = waitForPodsTerminated(t, ctx.KubectlOptions, "app.kubernetes.io/managed-by=Helm", defaultHelmTimeout)
