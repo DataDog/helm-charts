@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.162.0
+
+* Add migration k8s job ([#2122](https://github.com/DataDog/helm-charts/pull/2122)).
+
 ## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.

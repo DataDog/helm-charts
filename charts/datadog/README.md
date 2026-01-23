@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.161.2](https://img.shields.io/badge/Version-3.161.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.162.0](https://img.shields.io/badge/Version-3.162.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -864,6 +864,9 @@ helm install <RELEASE_NAME> \
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
+| datadog.operator.migration.enabled | bool | `false` | Enable migration of Agent workloads to be managed by the Datadog Operator. Creates a DatadogAgent manifest based on current release's values.yaml. |
+| datadog.operator.migration.preview | bool | `false` | Set to true to preview the DatadogAgent manifest mapped from the Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper` container logs in the migration job. |
+| datadog.operator.migration.userValues | string | `""` | Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest. Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
@@ -995,16 +998,17 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
-| operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
+| operator.datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
 | operator.datadogAgentInternal.enabled | bool | `false` | Enables the Datadog Agent Internal controller Note: The Datadog Agent Internal controller will be enabled by default in a future release. |
 | operator.datadogCRDs.crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
-| operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
 | operator.datadogCRDs.crds.datadogGenericResources | bool | `true` | Set to true to deploy the DatadogGenericResource CRD |
 | operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
+| operator.datadogCRDs.keepCrds | bool | `true` | Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true. |
 | operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
 | operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |

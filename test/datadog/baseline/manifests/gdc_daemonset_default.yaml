@@ -1609,7 +1609,7 @@ spec:
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
-            - -datadogAgentEnabled=false
+            - -datadogAgentEnabled=true
             - -datadogSLOEnabled=true
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=true

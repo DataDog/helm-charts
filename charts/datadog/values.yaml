@@ -1306,6 +1306,20 @@ datadog:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
 
+        # datadog.operator.migration.enabled -- Enable migration of Agent workloads to be managed by the Datadog Operator.
+    # Creates a DatadogAgent manifest based on current release's values.yaml.
+    migration:
+      enabled: false
+
+      # datadog.operator.migration.preview -- Set to true to preview the DatadogAgent manifest mapped from the
+      # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper`
+      # container logs in the migration job.
+      preview: false
+
+      # datadog.operator.migration.userValues -- Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest.
+      # Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml
+      userValues: ""
+
 # Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
     # datadog.dynamicInstrumentationGo.enabled -- Enable Dynamic Instrumentation and Live Debugger for Go services.
@@ -2747,7 +2761,7 @@ operator:
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.
-    enabled: false
+    enabled: true
 
   datadogAgentInternal:
     # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
@@ -2771,9 +2785,12 @@ operator:
     enabled: true
 
   datadogCRDs:
+    # operator.datadogCRDs.keepCrds -- Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true.
+    keepCrds: true
+
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
-      datadogAgents: false
+      datadogAgents: true
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
