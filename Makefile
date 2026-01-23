@@ -85,6 +85,10 @@ update-test-baselines-datadog-agent:
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
 
+.PHONY: integ-test-mapper
+integ-test-mapper:
+	go test -C test/yaml-mapper --tags=integration -count=1 -v -timeout 1h
+
 # Running E2E tests locally:
 ## Must be connected to appgate
 ## E2E make target commands must be prepended with `aws-vault exec sso-agent-sandbox-account-admin --`
