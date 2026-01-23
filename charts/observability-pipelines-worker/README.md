@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.12.2](https://img.shields.io/badge/Version-2.12.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
+![Version: 2.12.3](https://img.shields.io/badge/Version-2.12.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.12.0](https://img.shields.io/badge/AppVersion-2.12.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -138,7 +138,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podDisruptionBudget.minAvailable | int | `1` | Specify the number of Pods that must still be available after an eviction. |
 | podHostNetwork | bool | `false` | Enable the hostNetwork option on Pods. |
 | podLabels | object | `{}` | Set labels on Pods. |
-| podManagementPolicy | string | `"OrderedReady"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
+| podManagementPolicy | string | `"Parallel"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
 | readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
