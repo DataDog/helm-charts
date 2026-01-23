@@ -15,7 +15,7 @@ import (
 // =============================================================================
 
 const (
-	ddaDestPath       = "tempDDADest.yaml"
+	ddaOutputDir      = "baseline/dda"
 	operatorChartPath = "../../../charts/datadog-operator"
 	datadogChartPath  = "../../../charts/datadog"
 
@@ -44,8 +44,7 @@ const (
 
 // Directory paths for values files
 const (
-	baseValuesDir     = "values/base"
-	negativeValuesDir = "values/negative"
+	valuesDir     = "baseline/values"
 	mappingFileName   = "mapping_datadog_helm_to_datadogagent_crd.yaml"
 )
 
@@ -134,29 +133,13 @@ type PodSelectors struct {
 // Cleanup registry
 // =============================================================================
 
-// TestCleanupRegistry stores test artifacts that require cleanup after each test run.
-// - files: mapped DDA manifest files
+// TestCleanupRegistry stores cleanup hooks for test runs.
 // - datadog: datadog helm chart uninstall function
 // - operator: operator chart uninstall function
 type TestCleanupRegistry struct {
 	mu       sync.Mutex
-	files    []string
 	datadog  func()
 	operator func()
-}
-
-func (c *TestCleanupRegistry) AddDDA(files ...string) {
-	c.mu.Lock()
-	c.files = append(c.files, files...)
-	c.mu.Unlock()
-}
-
-func (c *TestCleanupRegistry) GetFiles() []string {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	cp := make([]string, len(c.files))
-	copy(cp, c.files)
-	return cp
 }
 
 func (c *TestCleanupRegistry) SetDatadog(cleanup func()) {

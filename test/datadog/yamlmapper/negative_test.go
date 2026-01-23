@@ -32,7 +32,7 @@ func TestMapperNegativeCases(t *testing.T) {
 
 // TestInvalidYAMLChartInstall verifies that invalid YAML causes Helm chart installation to fail.
 func TestInvalidYAMLChartInstall(t *testing.T) {
-	invalidValuesFile := negativeValuesDir + "/invalid-yaml-values.yaml"
+	invalidValuesFile := valuesDir + "/invalid-yaml-values.yaml"
 	_, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: releaseDatadog,
 		ChartPath:   datadogChartPath,

@@ -1,0 +1,55 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: datadog-agent-horksk
+spec:
+  features:
+    eventCollection:
+      collectKubernetesEvents: true
+      collectedEventTypes:
+      - kind: Pod
+        reasons:
+        - Failed
+        - BackOff
+        - Unhealthy
+        - FailedScheduling
+        - Evicted
+      - kind: Node
+        reasons:
+        - TerminatingEvictedPod
+        - NodeNotReady
+        - Rebooted
+        - HostPortConflict
+      unbundleEvents: true
+    helmCheck:
+      collectEvents: true
+      enabled: true
+    kubeStateMetricsCore:
+      enabled: true
+    orchestratorExplorer:
+      enabled: true
+      scrubContainers: true
+    prometheusScrape:
+      additionalConfigs: |
+        - autodiscovery:
+            kubernetes_annotations:
+              exclude:
+                prometheus.io/scrape: "false"
+              include:
+                prometheus.io/scrape: "true"
+          configurations:
+          - send_distribution_buckets: true
+            send_distribution_counts_as_monotonic: true
+            send_monotonic_counter: true
+      enableServiceEndpoints: true
+      enabled: true
+      version: 2
+    remoteConfiguration:
+      enabled: true
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false

@@ -1,0 +1,22 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: datadog-agent-qrvqu7
+spec:
+  features:
+    dogstatsd:
+      hostPortConfig:
+        enabled: false
+      nonLocalTraffic: true
+      originDetectionEnabled: true
+      tagCardinality: orchestrator
+      unixDomainSocketConfig:
+        enabled: true
+        path: /var/run/datadog/dsd.socket
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false

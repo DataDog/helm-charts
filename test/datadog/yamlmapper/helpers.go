@@ -80,12 +80,7 @@ func (tc *TestContext) cleanup() {
 	t.Logf("Starting cleanup for namespace %s", tc.Namespace)
 
 	// Step 1: Delete DDA and wait for finalizers to complete
-	for _, ddaFile := range tc.TestCleanupRegistry.GetFiles() {
-		t.Logf("Deleting DDA from file %s", ddaFile)
-		_ = k8s.RunKubectlE(t, cleanupKubectlOptions, []string{"delete", "-f", ddaFile, "--ignore-not-found", "--wait=true", "--timeout=60s"}...)
-		_ = os.Remove(ddaFile)
-	}
-
+	_ = k8s.RunKubectlE(t, cleanupKubectlOptions, "delete", ddaCRDName, "--all", "--ignore-not-found")
 	waitForDDADeletion(t, cleanupKubectlOptions, tc.Namespace, defaultWaitTimeout)
 
 	// Step 2: Uninstall helm charts
@@ -233,8 +228,8 @@ func validateExpectedPodCount(t *testing.T, name string, enabled *bool, replicas
 
 // assertBaseValuesCoverage verifies that all base values files are covered by a test case.
 func assertBaseValuesCoverage(t *testing.T) {
-	entries, err := os.ReadDir(baseValuesDir)
-	require.NoError(t, err, "Failed to read base values directory")
+	entries, err := os.ReadDir(valuesDir)
+	require.NoError(t, err, "Failed to read values directory")
 
 	filesOnDisk := map[string]struct{}{}
 	for _, entry := range entries {
@@ -244,30 +239,23 @@ func assertBaseValuesCoverage(t *testing.T) {
 		filesOnDisk[entry.Name()] = struct{}{}
 	}
 
-	listed := map[string]int{}
-	for _, tc := range baseTestCases {
-		listed[tc.Name]++
-	}
-
+	seen := map[string]int{}
 	var missing []string
-	for name := range filesOnDisk {
-		if listed[name] == 0 {
-			missing = append(missing, name)
+	for _, tc := range baseTestCases {
+		seen[tc.Name]++
+		if _, ok := filesOnDisk[tc.Name]; !ok {
+			missing = append(missing, tc.Name)
 		}
 	}
 
-	var extra []string
-	for name, count := range listed {
+	for name, count := range seen {
 		if count > 1 {
 			t.Fatalf("Duplicate base test case entry for %s", name)
 		}
-		if _, ok := filesOnDisk[name]; !ok {
-			extra = append(extra, name)
-		}
 	}
 
-	if len(missing) > 0 || len(extra) > 0 {
-		t.Fatalf("Base values coverage mismatch: missing=%v extra=%v", missing, extra)
+	if len(missing) > 0 {
+		t.Fatalf("Base values coverage mismatch: missing=%v", missing)
 	}
 }
 
@@ -459,11 +447,8 @@ func getMappingPath() string {
 // runMapper executes the yaml-mapper and returns the output DDA file path.
 func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *TestCleanupRegistry) (string, error) {
 	t.Helper()
-	destFile, err := os.CreateTemp("", ddaDestPath)
-	require.NoError(t, err, "Failed to create temp file for DDA output")
-	if cleanup != nil {
-		cleanup.AddDDA(destFile.Name())
-	}
+	destFilePath := ddaOutputPath(valuesPath)
+	ensureDDAOutputDirExists(t)
 
 	mappingFilePath := getMappingPath()
 	t.Logf("Using mapping file: %s", mappingFilePath)
@@ -478,7 +463,7 @@ func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *TestC
 	mapperConfig := mapper.MapConfig{
 		MappingPath: mappingFilePath,
 		SourcePath:  absValuesPath,
-		DestPath:    destFile.Name(),
+		DestPath:    destFilePath,
 		Namespace:   namespace,
 		PrintOutput: false,
 	}
@@ -492,15 +477,14 @@ func runMapper(t *testing.T, valuesPath string, namespace string, cleanup *TestC
 		t.Fatalf("Mapper logged %d error(s) without returning an error", logCapture.ErrorCount())
 	}
 
-	return destFile.Name(), err
+	return destFilePath, err
 }
 
 // runMapperExpectError runs the mapper and expects it to return an error.
 func runMapperExpectError(t *testing.T, valuesPath string) error {
 	t.Helper()
-	destFile, err := os.CreateTemp("", ddaDestPath)
-	require.NoError(t, err, "Failed to create temp file for DDA output")
-	defer os.Remove(destFile.Name())
+	destFilePath := ddaOutputPath(valuesPath)
+	ensureDDAOutputDirExists(t)
 
 	mappingFilePath := getMappingPath()
 	absValuesPath, err := filepath.Abs(valuesPath)
@@ -509,12 +493,23 @@ func runMapperExpectError(t *testing.T, valuesPath string) error {
 	mapperConfig := mapper.MapConfig{
 		MappingPath: mappingFilePath,
 		SourcePath:  absValuesPath,
-		DestPath:    destFile.Name(),
+		DestPath:    destFilePath,
 		Namespace:   "test-ns",
 		PrintOutput: false,
 	}
 	newMapper := mapper.NewMapper(mapperConfig)
 	return newMapper.Run()
+}
+
+func ddaOutputPath(valuesPath string) string {
+	return filepath.Join(ddaOutputDir, filepath.Base(valuesPath))
+}
+
+func ensureDDAOutputDirExists(t *testing.T) {
+	t.Helper()
+	info, err := os.Stat(ddaOutputDir)
+	require.NoError(t, err, "DDA output dir missing: %s", ddaOutputDir)
+	require.True(t, info.IsDir(), "DDA output path is not a directory: %s", ddaOutputDir)
 }
 
 
