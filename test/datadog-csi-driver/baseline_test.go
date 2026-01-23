@@ -16,7 +16,6 @@ func Test_baseline_manifests(t *testing.T) {
 		command              common.HelmCommand
 		baselineManifestPath string
 		assertions           func(t *testing.T, baselineManifestPath, manifest string)
-		skipTest             bool
 	}{
 		{
 			name: "CSI Driver DaemonSet default",
@@ -29,7 +28,6 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/CSI_Driver_default.yaml",
 			assertions:           verifyCSIDriverDaemonSet,
-			skipTest:             SkipTest,
 		},
 		{
 			name: "CSI Driver with annotations and security context set",
@@ -45,14 +43,10 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/CSI_Driver_annotation_and_securitycontext.yaml",
 			assertions:           verifyCSIDriverDaemonSet,
-			skipTest:             SkipTest,
 		},
 	}
 
 	for _, tt := range tests {
-		if tt.skipTest {
-			continue
-		}
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
