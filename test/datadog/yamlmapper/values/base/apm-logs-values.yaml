@@ -1,5 +1,4 @@
-# Test values for combined APM and Logs - common production setup
-# Tests compatibility of APM and Logs features together
+# Test values for APM and Logs features
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"

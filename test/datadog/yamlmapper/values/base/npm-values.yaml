@@ -1,0 +1,13 @@
+# Test values for enabling Network Performance Monitoring (NPM)
+# Currently skipped due to system probe not being supported on kind clusters
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  networkMonitoring:
+    enabled: true
+  systemProbe:
+    enableConntrack: true
+    collectDNSStats: true
+

@@ -24,7 +24,7 @@ env:
 jobs:
   integ-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 60
     strategy:
       matrix:
         versions:
@@ -61,11 +61,7 @@ jobs:
           config: .github/kind_config.yaml
       - name: Install Datadog CRDs
         run: |
-          helm install datadog-crds ./charts/datadog-crds \
-            --create-namespace --namespace datadog-crds \
-            --set crds.datadogAgents=true \
-            --set crds.datadogAgentInternals=true \
-            --wait --timeout 2m
+          make setup-mapper-crds
       - name: Run yamlmapper integ tests
         run: |
           kubectl cluster-info

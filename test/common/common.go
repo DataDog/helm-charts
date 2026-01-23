@@ -70,8 +70,8 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 	helmChartPath, err := filepath.Abs(cmd.ChartPath)
 	require.NoError(t, err)
 
-	// Default extra args include --wait and --timeout for clean state transitions
-	// Use 3m timeout to allow for multiple pods with readiness probes to start
+	// --wait and --timeout for clean state transitions between chart installs
+	// 3m timeout to wait for readiness probes
 	extraArgs := []string{"--wait", "--timeout", "3m"}
 	if len(cmd.ExtraArgs) > 0 {
 		extraArgs = append(extraArgs, cmd.ExtraArgs...)
@@ -94,7 +94,7 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 
 	return func() {
 		t.Log("Deleting release", releaseName)
-		// Use --wait on delete to ensure resources are fully cleaned up before returning
+		// use --wait to ensure resources are fully cleaned up before returning
 		deleteOptions := &helm.Options{
 			KubectlOptions: kubectlOptions,
 			ExtraArgs:      map[string][]string{"delete": {"--wait", "--timeout", "2m"}},
@@ -106,6 +106,7 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 	}
 }
 
+// CreateSecretFromEnv creates a Kubernetes secret from environment variables
 func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKeyEnv, appKeyEnv string) (cleanupFunc func()) {
 	apiKey := os.Getenv(apiKeyEnv)
 	appKey := os.Getenv(appKeyEnv)
@@ -116,9 +117,7 @@ func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKe
 	})
 }
 
-// CreateSecret creates a Kubernetes secret with the given name and key-value pairs using client-go.
-// This is more efficient than shelling out to kubectl as it makes direct API calls.
-// Returns a cleanup function to delete the secret.
+// CreateSecret creates a Kubernetes secret with the given name and key-value pairs
 func CreateSecret(t *testing.T, kubectlOptions *k8s.KubectlOptions, secretName string, data map[string]string) (cleanupFunc func()) {
 	t.Logf("Creating secret %s", secretName)
 
@@ -142,9 +141,7 @@ func CreateSecret(t *testing.T, kubectlOptions *k8s.KubectlOptions, secretName s
 	}
 }
 
-// CreateConfigMap creates a Kubernetes configmap with the given name and key-value pairs using client-go.
-// This is more efficient than shelling out to kubectl as it makes direct API calls.
-// Returns a cleanup function to delete the configmap.
+// CreateConfigMap creates a Kubernetes configmap with the given name and key-value pairs
 func CreateConfigMap(t *testing.T, kubectlOptions *k8s.KubectlOptions, configMapName string, data map[string]string) (cleanupFunc func()) {
 	t.Logf("Creating configmap %s", configMapName)
 

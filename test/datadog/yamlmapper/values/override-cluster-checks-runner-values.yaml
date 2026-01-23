@@ -1,11 +1,4 @@
 # Test values for Cluster Checks Runner component override mappings
-# Tests: clusterChecksRunner.image.name/tag/pullPolicy, clusterChecksRunner.env, 
-#        clusterChecksRunner.envFrom, clusterChecksRunner.strategy, clusterChecksRunner.replicas, 
-#        clusterChecksRunner.resources, clusterChecksRunner.priorityClassName
-# Note: clusterChecksRunner.image.repository, clusterChecksRunner.podLabels are not mapped
-# Note: clusterChecksRunner.image.pullSecrets, clusterChecksRunner.tolerations, clusterChecksRunner.nodeSelector, 
-#       clusterChecksRunner.affinity, livenessProbe, readinessProbe, startupProbe, 
-#       pdb.create, additionalLabels, deploymentAnnotations, podAnnotations mappings are disabled
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
@@ -21,7 +14,7 @@ clusterChecksRunner:
   enabled: true
   replicas: 2
   
-  priorityClassName: ccr-critical
+  priorityClassName: ccr-critical # this is a custom priority class created by the test framework before helm install
   
   image:
     name: agent

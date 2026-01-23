@@ -1,6 +1,4 @@
 # Test values for envFrom mappings
-# Tests: datadog.envFrom
-# Note: This test requires ConfigMap 'datadog-env-config' and Secret 'datadog-env-secrets' to be pre-created
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
