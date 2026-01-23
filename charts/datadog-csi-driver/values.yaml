@@ -55,7 +55,7 @@ sockets:
   # Should correspond to `datadog.apm.hostSocketPath`
   apmHostSocketPath: /var/run/datadog/apm.socket
 
-  # dsdHostSocketPath -- Host path of the apm socket.
+  # dsdHostSocketPath -- Host path of the dsd socket.
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
