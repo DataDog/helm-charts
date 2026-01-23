@@ -74,7 +74,7 @@ func runValuesToDDAMappingTest(t *testing.T, valuesPath string, expectedPods Exp
 	helmAgentConf := installAndVerifyHelmAgent(t, ctx, valuesPath, expectedPods, expectedContainers)
 
 	// run mapper against values.yaml to generate DDA
-	ddaFilePath, err := runMapper(t, valuesPath, ctx.Namespace, ctx.TestCleanupRegistry)
+	ddaFilePath, err := runMapper(t, valuesPath)
 	require.NoError(t, err, fmt.Sprintf("Mapper returned error: %s", err))
 
 	// log the mapped DDA file contents
