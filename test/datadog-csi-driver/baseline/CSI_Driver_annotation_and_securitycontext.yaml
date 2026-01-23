@@ -1,61 +1,62 @@
+---
+# Source: datadog-csi-driver/templates/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "datadog-csi-driver.daemonsetName" . }}
-  namespace: {{ .Release.Namespace }}
-  {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
-  labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
-  {{- end }}
+  name: datadog-csi-driver-node-server
+  namespace: datadog-agent
 spec:
   selector:
     matchLabels:
-      app: {{ include "datadog-csi-driver.daemonsetName" . }}
+      app: datadog-csi-driver-node-server
   template:
     metadata:
       labels:
-        app: {{ include "datadog-csi-driver.daemonsetName" . }}
+        app: datadog-csi-driver-node-server
         admission.datadoghq.com/enabled: "false"
-      {{- with .Values.annotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        ad.datadoghq.com/csi-node-driver.checks: |
+          {
+            "openmetrics": {
+              "init_config": {},
+              "instances": [
+                {
+                  "openmetrics_endpoint": "http://%%host%%:5000/metrics",
+                  "metrics": [{
+                    "datadog_csi_driver_node_publish_volume_attempts": "datadog_csi.driver_node_publish_volume_attempts",
+                    "datadog_csi_driver_node_unpublish_volume_attempts": "datadog_csi.driver_node_unpublish_volume_attempts"
+                    }]
+                }
+              ]
+            }
+          }
     spec:
-      {{- with .Values.securityContext }}
       securityContext:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-    {{ toYaml .Values.image.pullSecrets | indent 8 }}
-      {{- end }}
+        fsGroup: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
       containers:
         - name: csi-node-driver
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.driver.securityContext }}
+          image: "gcr.io/datadoghq/csi-driver:1.0.0"
+          imagePullPolicy: IfNotPresent
           securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            privileged: true
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 5000
               protocol: TCP 
           args:
-            - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
-            - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
+            - --apm-host-socket-path=/var/run/datadog/apm.socket
+            - --dsd-host-socket-path=/var/run/datadog/dsd.socket
           volumeMounts:
             # plugin-dir stores the socket on which CSI node server service is exposed.
             # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
             - name: apm-socket
-              mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
+              mountPath: /var/run/datadog
               readOnly: true
-            {{- if ne (dir .Values.sockets.dsdHostSocketPath) (dir .Values.sockets.apmHostSocketPath) }}
-            - name: dsd-socket
-              mountPath: {{ (dir .Values.sockets.dsdHostSocketPath) }}
-              readOnly: true
-            {{- end }}
             # write mode is required to perform a volume mount
             # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount. 
             - mountPath: /var/lib/kubelet/pods
@@ -67,12 +68,11 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
         - name: csi-node-driver-registrar
-          image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
-          imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
-          {{- with .Values.registrar.securityContext }}
+          image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
+          imagePullPolicy: IfNotPresent
           securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            privileged: true
+            readOnlyRootFilesystem: false
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -91,10 +91,6 @@ spec:
             # it needs to be writeable
             - name: registration-dir
               mountPath: /registration # This is where the registrar writes the registration information
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       volumes:
         - name: plugin-dir
           hostPath:
@@ -109,10 +105,10 @@ spec:
             type: DirectoryOrCreate
           name: mountpoint-dir
         - hostPath:
-            path: {{ dir .Values.sockets.apmHostSocketPath }}
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: apm-socket
         - hostPath:
-            path: {{ dir .Values.sockets.dsdHostSocketPath }}
+            path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsd-socket
