@@ -2742,7 +2742,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.21.0
+    tag: 1.22.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

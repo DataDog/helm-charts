@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.162.0
+
+* Bump default Datadog Operator image tag to 1.22.0.
+
 ## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.

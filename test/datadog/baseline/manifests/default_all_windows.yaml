@@ -1684,7 +1684,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0
+          image: gcr.io/datadoghq/operator:1.22.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
