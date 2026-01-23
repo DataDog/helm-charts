@@ -41,12 +41,21 @@ registrar:
     # registrar.image.pullPolicy -- CSI registrar image pullPolicy
     pullPolicy: IfNotPresent
 
+  # registrar.securityContext -- CSI registrar securityContext
+  securityContext: {}
+
+driver:
+  # driver.securityContext -- CSI driver securityContext
+  securityContext:
+    readOnlyRootFilesystem: true
+    privileged: true
+
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.apm.hostSocketPath`
   apmHostSocketPath: /var/run/datadog/apm.socket
 
-  # dsdHostSocketPath -- Host path of the apm socket.
+  # dsdHostSocketPath -- Host path of the dsd socket.
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
@@ -54,3 +63,9 @@ sockets:
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
+
+# securityContext -- Configure the security context for the csi driver daemonset pods.
+securityContext: {}
+
+# annotations -- Configure the annotations for the csi driver daemonset pods.
+annotations: {}

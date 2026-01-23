@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.4.4](https://img.shields.io/badge/Version-0.4.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -14,6 +14,8 @@ Datadog CSI Driver helm chart
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| annotations | object | `{}` | Configure the annotations for the csi driver daemonset pods. |
+| driver.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | CSI driver securityContext |
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
 | image.pullSecrets | list | `[]` | CSI driver repository pullSecret (for example: specify Docker registry credentials) |
@@ -23,6 +25,8 @@ Datadog CSI Driver helm chart
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
+| registrar.securityContext | object | `{}` | CSI registrar securityContext |
+| securityContext | object | `{}` | Configure the security context for the csi driver daemonset pods. |
 | sockets.apmHostSocketPath | string | `"/var/run/datadog/apm.socket"` |  |
 | sockets.dsdHostSocketPath | string | `"/var/run/datadog/dsd.socket"` |  |
 | tolerations | list | `[]` | Allow scheduling the csi driver daemonset pods on tainted nodes. |
