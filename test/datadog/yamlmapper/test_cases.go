@@ -10,25 +10,25 @@ package yamlmapper
 var baseTestCases = []BaseTestCase{
 	{
 		Name:               "global-settings-values.yaml",
-		ValuesFile:         baseValuesDir + "/global-settings-values.yaml",
+		ValuesFile:         valuesDir + "/global-settings-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:               "admission-controller-values.yaml",
-		ValuesFile:         baseValuesDir + "/admission-controller-values.yaml",
+		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:               "cluster-agent-features-values.yaml",
-		ValuesFile:         baseValuesDir + "/cluster-agent-features-values.yaml",
+		ValuesFile:         valuesDir + "/cluster-agent-features-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:       "apm-logs-process-values.yaml",
-		ValuesFile: baseValuesDir + "/apm-logs-process-values.yaml",
+		ValuesFile: valuesDir + "/apm-logs-process-values.yaml",
 		ExpectedPods: defaultExpectedPods(),
 		ExpectedComponentContainers: ExpectedComponentContainers{
 			Agent: []string{containerTraceAgent},
@@ -36,15 +36,7 @@ var baseTestCases = []BaseTestCase{
 	},
 	{
 		Name:       "apm-port-enabled-values.yaml",
-		ValuesFile: baseValuesDir + "/apm-port-enabled-values.yaml",
-		ExpectedPods: defaultExpectedPods(),
-		ExpectedComponentContainers: ExpectedComponentContainers{
-			Agent: []string{containerTraceAgent},
-		},
-	},
-	{
-		Name:       "apm-use-localservice-values.yaml",
-		ValuesFile: baseValuesDir + "/apm-use-localservice-values.yaml",
+		ValuesFile: valuesDir + "/apm-port-enabled-values.yaml",
 		ExpectedPods: defaultExpectedPods(),
 		ExpectedComponentContainers: ExpectedComponentContainers{
 			Agent: []string{containerTraceAgent},
@@ -52,25 +44,25 @@ var baseTestCases = []BaseTestCase{
 	},
 	{
 		Name:               "apm-logs-values.yaml",
-		ValuesFile:         baseValuesDir + "/apm-logs-values.yaml",
+		ValuesFile:         valuesDir + "/apm-logs-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:               "full-observability-values.yaml",
-		ValuesFile:         baseValuesDir + "/full-observability-values.yaml",
+		ValuesFile:         valuesDir + "/full-observability-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:               "default-minimal.yaml",
-		ValuesFile:         baseValuesDir + "/default-minimal.yaml",
+		ValuesFile:         valuesDir + "/default-minimal.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:       "cluster-checks-values.yaml",
-		ValuesFile: baseValuesDir + "/cluster-checks-values.yaml",
+		ValuesFile: valuesDir + "/cluster-checks-values.yaml",
 		ExpectedPods: ExpectedComponentPods{
 			ClusterAgent:        1,
 			ClusterChecksRunner: 2,
@@ -81,13 +73,13 @@ var baseTestCases = []BaseTestCase{
 	},
 	{
 		Name:               "dogstatsd-hostport-values.yaml",
-		ValuesFile:         baseValuesDir + "/dogstatsd-hostport-values.yaml",
+		ValuesFile:         valuesDir + "/dogstatsd-hostport-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
 		Name:               "dogstatsd-uds-values.yaml",
-		ValuesFile:         baseValuesDir + "/dogstatsd-uds-values.yaml",
+		ValuesFile:         valuesDir + "/dogstatsd-uds-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
@@ -95,14 +87,14 @@ var baseTestCases = []BaseTestCase{
 	// Skipped tests (require kernel features not available in kind)
 	{
 		Name:               "npm-values.yaml",
-		ValuesFile:         baseValuesDir + "/npm-values.yaml",
+		ValuesFile:         valuesDir + "/npm-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		SkipReason:         "NPM requires kernel features not available in kind",
 	},
 	{
 		Name:       "system-probe-checks-values.yaml",
-		ValuesFile: baseValuesDir + "/system-probe-checks-values.yaml",
+		ValuesFile: valuesDir + "/system-probe-checks-values.yaml",
 		ExpectedPods: defaultExpectedPods(),
 		ExpectedComponentContainers: ExpectedComponentContainers{
 			Agent: []string{containerSystemProbe},
@@ -115,7 +107,7 @@ var baseTestCases = []BaseTestCase{
 var testCasesWithDependencies = []ResourceDependentTestCase{
 	{
 		Name:               "global-credentials-existing-secret-values.yaml",
-		ValuesFile:         "values/global-credentials-existing-secret-values.yaml",
+		ValuesFile:         valuesDir + "/global-credentials-existing-secret-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		Secrets: []SecretDef{
@@ -126,7 +118,7 @@ var testCasesWithDependencies = []ResourceDependentTestCase{
 	},
 	{
 		Name:               "override-cluster-agent-values.yaml",
-		ValuesFile:         "values/override-cluster-agent-values.yaml",
+		ValuesFile:         valuesDir + "/override-cluster-agent-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		ConfigMaps: []ConfigMapDef{
@@ -145,7 +137,7 @@ var testCasesWithDependencies = []ResourceDependentTestCase{
 	},
 	{
 		Name:       "override-cluster-checks-runner-values.yaml",
-		ValuesFile: "values/override-cluster-checks-runner-values.yaml",
+		ValuesFile: valuesDir + "/override-cluster-checks-runner-values.yaml",
 		ExpectedPods: ExpectedComponentPods{
 			ClusterAgent:        1,
 			ClusterChecksRunner: 2,
@@ -169,7 +161,7 @@ var testCasesWithDependencies = []ResourceDependentTestCase{
 	},
 	{
 		Name:               "override-node-agent-values.yaml",
-		ValuesFile:         "values/override-node-agent-values.yaml",
+		ValuesFile:         valuesDir + "/override-node-agent-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		PriorityClasses: []PriorityClassDef{
@@ -182,7 +174,7 @@ var testCasesWithDependencies = []ResourceDependentTestCase{
 	},
 	{
 		Name:               "global-envfrom-values.yaml",
-		ValuesFile:         "values/global-envfrom-values.yaml",
+		ValuesFile:         valuesDir + "/global-envfrom-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 		ConfigMaps: []ConfigMapDef{
@@ -205,13 +197,13 @@ var testCasesWithDependencies = []ResourceDependentTestCase{
 var negativeTestCases = []NegativeTestCase{
 	{
 		Name:           "unsupported-helm-key",
-		ValuesFile:     negativeValuesDir + "/unsupported-key-values.yaml",
+		ValuesFile:     valuesDir + "/unsupported-key-values.yaml",
 		ExpectedErrMsg: "error",
 		Description:    "Mapper should error when values file contains unmapped/unsupported Helm keys",
 	},
 	{
 		Name:           "multiple-unsupported-keys",
-		ValuesFile:     negativeValuesDir + "/multiple-unsupported-keys-values.yaml",
+		ValuesFile:     valuesDir + "/multiple-unsupported-keys-values.yaml",
 		ExpectedErrMsg: "error",
 		Description:    "Mapper should error when values file contains multiple unmapped keys",
 	},

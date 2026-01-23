@@ -101,12 +101,13 @@ cleanup-mapper-crds:
 	-helm uninstall datadog-crds --namespace datadog-crds --ignore-not-found --wait --timeout 2m
 	-kubectl delete namespace datadog-crds --ignore-not-found --timeout=2m
 
-# Optional: enable stale namespace cleanup at test startup (safe local k8s contexts only)
-#   YAMLMAPPER_CLEANUP_STALE=true
+# Optional:
+# - YAMLMAPPER_CLEANUP_STALE=true   Enable stale namespace cleanup (safe local k8s contexts only)
+# - GOTEST_RUN=<test-name-pattern>  Run specific test(s)
 .PHONY: integ-test-mapper
 integ-test-mapper:
 	set -o pipefail; \
-	go test -C ./test/datadog/yamlmapper/ -v -count=1 -parallel 1 -timeout 1h $(if $(TEST_RUN),-run $(TEST_RUN))
+	go test -C ./test/datadog/yamlmapper/ -v -count=1 -parallel 1 -timeout 1h $(if $(GOTEST_RUN),-run $(GOTEST_RUN))
 
 # Strict mode: fail tests if helm vs operator agent config differs
 .PHONY: integ-test-mapper-strict
