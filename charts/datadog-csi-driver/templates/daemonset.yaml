@@ -16,7 +16,15 @@ spec:
       labels:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
+      {{- with .Values.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
     {{ toYaml .Values.image.pullSecrets | indent 8 }}
@@ -25,8 +33,10 @@ spec:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.registrar.securityContext }}
           securityContext:
-            privileged: true 
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 5000
               protocol: TCP 
@@ -59,6 +69,10 @@ spec:
         - name: csi-node-driver-registrar
           image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
           imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
+          {{- with .Values.registrar.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
