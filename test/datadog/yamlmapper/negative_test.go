@@ -6,7 +6,6 @@
 package yamlmapper
 
 import (
-	"os"
 	"strings"
 	"testing"
 
@@ -14,28 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// =============================================================================
-// Negative Test Cases
-// =============================================================================
-
 // TestMapperNegativeCases verifies that the mapper correctly rejects invalid configurations.
-// These tests ensure that unsupported or invalid Helm keys are not silently ignored.
 func TestMapperNegativeCases(t *testing.T) {
-	// Ensure negative test directory exists
-	if _, err := os.Stat(negativeValuesDir); os.IsNotExist(err) {
-		t.Skipf("Negative test values directory does not exist: %s", negativeValuesDir)
-	}
-
 	for _, tc := range negativeTestCases {
-		tc := tc // capture range variable
 		t.Run(tc.Name, func(t *testing.T) {
-			// Check if values file exists
-			if _, err := os.Stat(tc.ValuesFile); os.IsNotExist(err) {
-				t.Skipf("Negative test values file does not exist: %s", tc.ValuesFile)
-			}
-
-			t.Logf("Testing: %s", tc.Description)
-
 			err := runMapperExpectError(t, tc.ValuesFile)
 			require.Error(t, err, "Expected mapper to return an error for %s, but it succeeded", tc.Name)
 
@@ -50,19 +31,8 @@ func TestMapperNegativeCases(t *testing.T) {
 }
 
 // TestInvalidYAMLChartInstall verifies that invalid YAML causes Helm chart installation to fail.
-// This is a sanity check to ensure the Datadog chart properly validates its input.
 func TestInvalidYAMLChartInstall(t *testing.T) {
-	// Skip if negative values directory doesn't exist
-	if _, err := os.Stat(negativeValuesDir); os.IsNotExist(err) {
-		t.Skipf("Negative test values directory does not exist: %s", negativeValuesDir)
-	}
-
 	invalidValuesFile := negativeValuesDir + "/invalid-yaml-values.yaml"
-	if _, err := os.Stat(invalidValuesFile); os.IsNotExist(err) {
-		t.Skipf("Invalid YAML test file does not exist: %s", invalidValuesFile)
-	}
-
-	// Attempt to render the chart with invalid values - this should fail
 	_, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: releaseDatadog,
 		ChartPath:   datadogChartPath,

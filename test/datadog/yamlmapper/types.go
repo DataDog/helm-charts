@@ -6,24 +6,22 @@
 package yamlmapper
 
 import (
+	"sync"
 	"time"
 )
 
 // =============================================================================
-// Constants
+// Paths, env vars, and defaults
 // =============================================================================
 
 const (
-	// File paths and names
 	ddaDestPath       = "tempDDADest.yaml"
 	operatorChartPath = "../../../charts/datadog-operator"
 	datadogChartPath  = "../../../charts/datadog"
 
-	// Environment variables
 	apiKeyEnv = "API_KEY"
 	appKeyEnv = "APP_KEY"
 
-	// Container names
 	containerAgent       = "agent"
 	containerTraceAgent  = "trace-agent"
 	containerSystemProbe = "system-probe"
@@ -32,41 +30,38 @@ const (
 	releaseDatadog         = "datadog"
 	releaseDatadogOperator = "datadog-operator"
 
-	// Timeouts
 	defaultPodTimeout      = 15 * time.Second
 	defaultPodRetries      = 10
 	defaultWaitTimeout     = 2 * time.Minute
 	defaultHelmTimeout     = 3 * time.Minute
 	defaultContainerdDelay = 5 * time.Second
+
+	operatorDeployRetries = 10
+	operatorDeploySleep   = 15 * time.Second
+
+	testNamespacePrefix = "datadog-agent-"
 )
 
-// =============================================================================
-// Path Configuration
-// =============================================================================
-
+// Directory paths for values files
 const (
-	// Directory paths for values files
 	baseValuesDir     = "values/base"
 	negativeValuesDir = "values/negative"
 	mappingFileName   = "mapping_datadog_helm_to_datadogagent_crd.yaml"
 )
 
 // =============================================================================
-// Type Definitions
+// Test case types
 // =============================================================================
 
-// ExpectedPodCounts defines explicit expected pod counts for each component.
-// Agent pods are daemonset-based unless AgentDaemonset is false.
-type ExpectedPodCounts struct {
-	AgentDaemonset      bool
-	AgentPods           int
+// ExpectedComponentPods defines explicit expected pod counts for each component.
+// DaemonSet Agent pod count is always calculated dynamically based on cluster node count.
+type ExpectedComponentPods struct {
 	ClusterAgent        int
 	ClusterChecksRunner int
 }
 
-// ExpectedContainers defines required container names per component.
-// Empty slices mean "no container assertions for this component".
-type ExpectedContainers struct {
+// ExpectedComponentContainers defines required container names per component.
+type ExpectedComponentContainers struct {
 	Agent               []string
 	ClusterAgent        []string
 	ClusterChecksRunner []string
@@ -76,14 +71,10 @@ type ExpectedContainers struct {
 type BaseTestCase struct {
 	Name               string
 	ValuesFile         string
-	ExpectedPods       ExpectedPodCounts
-	ExpectedContainers ExpectedContainers
+	ExpectedPods       ExpectedComponentPods
+	ExpectedComponentContainers ExpectedComponentContainers
 	SkipReason         string
 }
-
-// =============================================================================
-// Resource Definition Types
-// =============================================================================
 
 // ConfigMapDef defines a ConfigMap to be created before the test
 type ConfigMapDef struct {
@@ -104,71 +95,118 @@ type PriorityClassDef struct {
 	Description string
 }
 
-// TestCaseWithDependencies defines a test case that requires pre-created resources
-type TestCaseWithDependencies struct {
-	// Name is used for the test name (usually the filename)
-	Name string
-	// ValuesFile is the path to the values file relative to the yamlmapper directory
-	ValuesFile string
-	// ExpectedPods defines explicit pod counts for each component
-	ExpectedPods ExpectedPodCounts
-	// ExpectedContainers defines required container names per component
-	ExpectedContainers ExpectedContainers
-	// ConfigMaps to create before the test
-	ConfigMaps []ConfigMapDef
-	// Secrets to create before the test
-	Secrets []SecretDef
-	// PriorityClasses to create before the test
-	PriorityClasses []PriorityClassDef
-	// SkipReason if set, the test will be skipped with this reason
-	SkipReason string
-}
-
-// PodSelectors contains label selectors for different pod types
-type PodSelectors struct {
-	Agent               string
-	ClusterAgent        string
-	ClusterChecksRunner string
+// ResourceDependentTestCase defines a test case that requires pre-created resources.
+//   - Name: test name (usually the filename)
+//   - ValuesFile: path to the values file relative to the yamlmapper directory
+//   - ExpectedPods: explicit pod counts for each component
+//   - ExpectedComponentContainers: required container names per component
+//   - ConfigMaps: ConfigMaps to create before the test
+//   - Secrets: Secrets to create before the test
+//   - PriorityClasses: PriorityClasses to create before the test
+//   - SkipReason: if set, the test will be skipped with this reason
+type ResourceDependentTestCase struct {
+	Name               string
+	ValuesFile         string
+	ExpectedPods       ExpectedComponentPods
+	ExpectedComponentContainers ExpectedComponentContainers
+	ConfigMaps         []ConfigMapDef
+	Secrets            []SecretDef
+	PriorityClasses    []PriorityClassDef
+	SkipReason         string
 }
 
 // NegativeTestCase defines a test case that expects the mapper to fail
 type NegativeTestCase struct {
 	Name           string
 	ValuesFile     string
-	ExpectedErrMsg string // Substring that should appear in the error message
-	Description    string // Human-readable description of what's being tested
+	ExpectedErrMsg string
+	Description    string
 }
 
-// valuesExpectations is used to parse values files for validation
-type valuesExpectations struct {
-	ClusterAgent struct {
-		Enabled  *bool `yaml:"enabled"`
-		Replicas *int  `yaml:"replicas"`
-	} `yaml:"clusterAgent"`
-	ClusterChecksRunner struct {
-		Enabled  *bool `yaml:"enabled"`
-		Replicas *int  `yaml:"replicas"`
-	} `yaml:"clusterChecksRunner"`
+// PodSelectors groups label selectors for agent components.
+type PodSelectors struct {
+	Agent               string
+	ClusterAgent        string
+	ClusterChecksRunner string
 }
 
 // =============================================================================
-// Default Values
+// Cleanup registry
 // =============================================================================
 
-func defaultExpectedPods() ExpectedPodCounts {
-	return ExpectedPodCounts{
-		AgentDaemonset:      true,
+// TestCleanupRegistry stores test artifacts that require cleanup after each test run.
+// - files: mapped DDA manifest files
+// - datadog: datadog helm chart uninstall function
+// - operator: operator chart uninstall function
+type TestCleanupRegistry struct {
+	mu       sync.Mutex
+	files    []string
+	datadog  func()
+	operator func()
+}
+
+func (c *TestCleanupRegistry) AddDDA(files ...string) {
+	c.mu.Lock()
+	c.files = append(c.files, files...)
+	c.mu.Unlock()
+}
+
+func (c *TestCleanupRegistry) GetFiles() []string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	cp := make([]string, len(c.files))
+	copy(cp, c.files)
+	return cp
+}
+
+func (c *TestCleanupRegistry) SetDatadog(cleanup func()) {
+	c.mu.Lock()
+	c.datadog = cleanup
+	c.mu.Unlock()
+}
+
+func (c *TestCleanupRegistry) UninstallDatadog() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.datadog != nil {
+		c.datadog()
+		c.datadog = nil
+	}
+}
+
+func (c *TestCleanupRegistry) SetOperator(cleanup func()) {
+	c.mu.Lock()
+	c.operator = cleanup
+	c.mu.Unlock()
+}
+
+func (c *TestCleanupRegistry) UninstallOperator() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.operator != nil {
+		c.operator()
+		c.operator = nil
+	}
+}
+
+// =============================================================================
+// Defaults
+// =============================================================================
+
+func defaultExpectedPods() ExpectedComponentPods {
+	return ExpectedComponentPods{
 		ClusterAgent:        1,
 		ClusterChecksRunner: 0,
 	}
 }
 
-func defaultExpectedContainers() ExpectedContainers {
-	return ExpectedContainers{}
+// Default expected containers when left empty means "no container assertions for this component".
+func defaultExpectedComponentContainers() ExpectedComponentContainers {
+	return ExpectedComponentContainers{}
 }
 
-// HelmPodSelectors returns label selectors for Helm-managed pods
-func HelmPodSelectors() PodSelectors {
+// helmPodSelectors returns label selectors for Helm-managed pods
+func helmPodSelectors() PodSelectors {
 	return PodSelectors{
 		Agent:               helmAgentLabelSelector,
 		ClusterAgent:        helmClusterAgentLabelSelector,
@@ -176,8 +214,8 @@ func HelmPodSelectors() PodSelectors {
 	}
 }
 
-// OperatorPodSelectors returns label selectors for Operator-managed pods
-func OperatorPodSelectors() PodSelectors {
+// operatorPodSelectors returns label selectors for Operator-managed pods
+func operatorPodSelectors() PodSelectors {
 	return PodSelectors{
 		Agent:               operatorAgentLabelSelector,
 		ClusterAgent:        operatorClusterAgentLabelSelector,

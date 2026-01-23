@@ -1,13 +1,4 @@
-# Consolidated test values for APM, Logs, and Process Agent features
-# Tests:
-#   - datadog.apm.portEnabled, port, socketEnabled, socketPath, errorTrackingStandalone.enabled
-#     (from feature-apm-values.yaml)
-#   - datadog.apm.instrumentation.enabled
-#     (from feature-apm-instrumentation-values.yaml)
-#   - datadog.logs.enabled, containerCollectAll, containerCollectUsingFiles, autoMultiLineDetection
-#     (from feature-logs-values.yaml)
-#   - datadog.processAgent.processCollection, containerCollection, processDiscovery, stripProcessArguments
-#     (from feature-process-agent-values.yaml)
+# Test values for APM, Logs, and Process Agent features
 datadog:
   apiKey: "00000000000000000000000000000000"
   appKey: "0000000000000000000000000000000000000000"
@@ -16,8 +7,6 @@ datadog:
   
   # APM configuration
   apm:
-    portEnabled: true
-    port: 8126
     socketEnabled: true
     socketPath: /var/run/datadog/apm.socket
     errorTrackingStandalone:

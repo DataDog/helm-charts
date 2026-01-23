@@ -14,76 +14,19 @@ import (
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// testNamespacePrefix is the prefix used for test namespaces
-const testNamespacePrefix = "datadog-agent-"
-
 const (
-	agentConfStrictEnv       = "AGENT_CONF_STRICT"
-	staleCleanupEnabledEnv   = "YAMLMAPPER_CLEANUP_STALE"
-	mapperWarningsStrictEnv  = "MAPPER_WARNINGS_STRICT"
+	agentConfStrictEnv      = "YAMLMAPPER_AGENT_CONF_STRICT" // enable strict agent config comparison
+	staleCleanupEnabledEnv  = "YAMLMAPPER_CLEANUP_STALE"     // enable stale resource cleanup
+	mapperWarningsStrictEnv = "YAMLMAPPER_WARNINGS_STRICT"   // enable strict mapper warnings
+
+	ddaCRDName              = "datadogagents.datadoghq.com"
 )
-
-// CleanupRegistry stores test artifacts that require cleanup after each test run.
-// - files: mapped DDA manifest files
-// - datadog: datadog helm chart uninstall function
-// - operator: operator chart uninstall function
-type CleanupRegistry struct {
-	mu       sync.Mutex
-	files    []string
-	datadog  func()
-	operator func()
-}
-
-func (c *CleanupRegistry) AddDDA(files ...string) {
-	c.mu.Lock()
-	c.files = append(c.files, files...)
-	c.mu.Unlock()
-}
-
-func (c *CleanupRegistry) GetFiles() []string {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	cp := make([]string, len(c.files))
-	copy(cp, c.files)
-	return cp
-}
-
-func (c *CleanupRegistry) SetDatadog(cleanup func()) {
-	c.mu.Lock()
-	c.datadog = cleanup
-	c.mu.Unlock()
-}
-
-func (c *CleanupRegistry) UninstallDatadog() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	if c.datadog != nil {
-		c.datadog()
-		c.datadog = nil
-	}
-}
-
-func (c *CleanupRegistry) SetOperator(cleanup func()) {
-	c.mu.Lock()
-	c.operator = cleanup
-	c.mu.Unlock()
-}
-
-func (c *CleanupRegistry) UninstallOperator() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	if c.operator != nil {
-		c.operator()
-		c.operator = nil
-	}
-}
 
 // requiredCRDs lists the CRDs that must be present for integration tests to run
 var requiredCRDs = []string{
@@ -91,39 +34,22 @@ var requiredCRDs = []string{
 	"datadogagentinternals.datadoghq.com",
 }
 
-func logVerbose(t *testing.T, args ...any) {
-	if testing.Verbose() {
-		t.Log(args...)
-	}
-}
-
-func logVerbosef(t *testing.T, format string, args ...any) {
-	if testing.Verbose() {
-		t.Logf(format, args...)
-	}
-}
-
-func quietKubectlOptions(options *k8s.KubectlOptions) *k8s.KubectlOptions {
-	if options == nil || !testing.Verbose() {
-		return options
-	}
-	copyOptions := *options
-	copyOptions.Logger = logger.Discard
-	return &copyOptions
-}
+// =============================================================================
+// Environment and configuration
+// =============================================================================
 
 func validateEnv(t *testing.T) {
 	// Check cluster context is not production
 	context := common.CurrentContext(t)
-	logVerbose(t, "Checking current context:", context)
+	t.Log("Checking current context:", context)
 	if strings.Contains(strings.ToLower(context), "staging") ||
 		strings.Contains(strings.ToLower(context), "prod") {
 		t.Fatal("Make sure context is pointing to local cluster")
 	}
 
 	// Check required CRDs are installed
-	logVerbose(t, "Checking required CRDs are installed...")
-	kubectlOptions := quietKubectlOptions(k8s.NewKubectlOptions("", "", ""))
+	t.Log("Checking required CRDs are installed...")
+	kubectlOptions := k8s.NewKubectlOptions("", "", "")
 
 	var missingCRDs []string
 	for _, crd := range requiredCRDs {
@@ -146,8 +72,25 @@ Or use the Makefile target:
   make setup-mapper-crds
 `, missingCRDs)
 	}
-	logVerbose(t, "All required CRDs are present")
+	t.Log("All required CRDs are present")
 }
+
+func isAgentConfStrict() bool {
+	return strings.EqualFold(os.Getenv(agentConfStrictEnv), "1") ||
+		strings.EqualFold(os.Getenv(agentConfStrictEnv), "true") ||
+		strings.EqualFold(os.Getenv(agentConfStrictEnv), "yes")
+}
+
+// isMapperWarningsStrict returns true if mapper warnings should cause test failures
+func isMapperWarningsStrict() bool {
+	return strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "1") ||
+		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "true") ||
+		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "yes")
+}
+
+// =============================================================================
+// Agent config normalization
+// =============================================================================
 
 func expectedDsCount(t *testing.T, kubectlOptions *k8s.KubectlOptions) int {
 	nodes := k8s.GetNodes(t, kubectlOptions)
@@ -317,40 +260,22 @@ func getOperatorAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions) stri
 	return getAgentConf(t, kubectlOptions, operatorAgentLabelSelector, 5)
 }
 
-func isAgentConfStrict() bool {
-	return strings.EqualFold(os.Getenv(agentConfStrictEnv), "1") ||
-		strings.EqualFold(os.Getenv(agentConfStrictEnv), "true") ||
-		strings.EqualFold(os.Getenv(agentConfStrictEnv), "yes")
-}
-
-// isMapperWarningsStrict returns true if mapper warnings should cause test failures
-func isMapperWarningsStrict() bool {
-	return strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "1") ||
-		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "true") ||
-		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "yes")
-}
-
 // =============================================================================
-// Thread-Safe Log Capture
+// Log Capture
 // =============================================================================
 
-// logCaptureGlobalMutex protects the global slog default handler during test runs.
-// This prevents race conditions when multiple tests run in parallel and try to
-// install/restore log handlers simultaneously.
-var logCaptureGlobalMutex sync.Mutex
-
-// MapperLogCapture captures slog output during mapper runs.
+// MapperLogSink captures slog output during mapper runs.
 // It is safe for concurrent use from multiple goroutines.
-type MapperLogCapture struct {
+type MapperLogSink struct {
 	mu       sync.RWMutex
 	warnings []string
 	errors   []string
 	infos    []string
 }
 
-// NewMapperLogCapture creates a new log capture instance
-func NewMapperLogCapture() *MapperLogCapture {
-	return &MapperLogCapture{
+// newMapperLogSink creates a new log capture instance
+func newMapperLogSink() *MapperLogSink {
+	return &MapperLogSink{
 		warnings: make([]string, 0, 8),
 		errors:   make([]string, 0, 8),
 		infos:    make([]string, 0, 16),
@@ -358,12 +283,12 @@ func NewMapperLogCapture() *MapperLogCapture {
 }
 
 // Enabled implements slog.Handler
-func (c *MapperLogCapture) Enabled(_ context.Context, level slog.Level) bool {
+func (c *MapperLogSink) Enabled(_ context.Context, level slog.Level) bool {
 	return true
 }
 
 // Handle implements slog.Handler - thread-safe log message capture
-func (c *MapperLogCapture) Handle(_ context.Context, r slog.Record) error {
+func (c *MapperLogSink) Handle(_ context.Context, r slog.Record) error {
 	// Build the message with attributes
 	var sb strings.Builder
 	sb.WriteString(r.Message)
@@ -388,17 +313,17 @@ func (c *MapperLogCapture) Handle(_ context.Context, r slog.Record) error {
 }
 
 // WithAttrs implements slog.Handler
-func (c *MapperLogCapture) WithAttrs(attrs []slog.Attr) slog.Handler {
+func (c *MapperLogSink) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return c
 }
 
 // WithGroup implements slog.Handler
-func (c *MapperLogCapture) WithGroup(name string) slog.Handler {
+func (c *MapperLogSink) WithGroup(name string) slog.Handler {
 	return c
 }
 
 // GetWarnings returns a copy of all captured warnings (thread-safe)
-func (c *MapperLogCapture) GetWarnings() []string {
+func (c *MapperLogSink) GetWarnings() []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	result := make([]string, len(c.warnings))
@@ -407,7 +332,7 @@ func (c *MapperLogCapture) GetWarnings() []string {
 }
 
 // GetErrors returns a copy of all captured errors (thread-safe)
-func (c *MapperLogCapture) GetErrors() []string {
+func (c *MapperLogSink) GetErrors() []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	result := make([]string, len(c.errors))
@@ -416,7 +341,7 @@ func (c *MapperLogCapture) GetErrors() []string {
 }
 
 // GetInfos returns a copy of all captured info messages (thread-safe)
-func (c *MapperLogCapture) GetInfos() []string {
+func (c *MapperLogSink) GetInfos() []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	result := make([]string, len(c.infos))
@@ -425,35 +350,35 @@ func (c *MapperLogCapture) GetInfos() []string {
 }
 
 // HasWarnings returns true if any warnings were captured (thread-safe)
-func (c *MapperLogCapture) HasWarnings() bool {
+func (c *MapperLogSink) HasWarnings() bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.warnings) > 0
 }
 
 // HasErrors returns true if any errors were captured (thread-safe)
-func (c *MapperLogCapture) HasErrors() bool {
+func (c *MapperLogSink) HasErrors() bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.errors) > 0
 }
 
 // WarningCount returns the number of captured warnings (thread-safe)
-func (c *MapperLogCapture) WarningCount() int {
+func (c *MapperLogSink) WarningCount() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.warnings)
 }
 
 // ErrorCount returns the number of captured errors (thread-safe)
-func (c *MapperLogCapture) ErrorCount() int {
+func (c *MapperLogSink) ErrorCount() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.errors)
 }
 
 // Clear resets all captured logs (thread-safe)
-func (c *MapperLogCapture) Clear() {
+func (c *MapperLogSink) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.warnings = c.warnings[:0]
@@ -461,25 +386,21 @@ func (c *MapperLogCapture) Clear() {
 	c.infos = c.infos[:0]
 }
 
-// InstallLogCapture installs the log capture as the default slog handler and returns
+// captureMapperLogs installs the log capture as the default slog handler and returns
 // the capture instance and a cleanup function to restore the original handler.
-// This function is thread-safe and uses a global mutex to prevent race conditions
-// when multiple tests attempt to modify the global slog handler.
-func InstallLogCapture() (*MapperLogCapture, func()) {
-	logCaptureGlobalMutex.Lock()
-
-	capture := NewMapperLogCapture()
+// Tests are run sequentially, so we do not guard the global handler swap with a mutex.
+func captureMapperLogs() (*MapperLogSink, func()) {
+	capture := newMapperLogSink()
 	originalHandler := slog.Default().Handler()
 	slog.SetDefault(slog.New(capture))
 
 	return capture, func() {
 		slog.SetDefault(slog.New(originalHandler))
-		logCaptureGlobalMutex.Unlock()
 	}
 }
 
-// CheckMapperWarnings logs warnings and optionally fails the test if strict mode is enabled
-func CheckMapperWarnings(t *testing.T, capture *MapperLogCapture) {
+// reportMapperWarnings logs warnings and optionally fails the test if strict mode is enabled
+func reportMapperWarnings(t *testing.T, capture *MapperLogSink) {
 	t.Helper()
 	warnings := capture.GetWarnings()
 	if len(warnings) > 0 {
@@ -493,8 +414,8 @@ func CheckMapperWarnings(t *testing.T, capture *MapperLogCapture) {
 	}
 }
 
-// CheckMapperErrors logs errors captured during mapper execution
-func CheckMapperErrors(t *testing.T, capture *MapperLogCapture) {
+// reportMapperErrors logs errors captured during mapper execution
+func reportMapperErrors(t *testing.T, capture *MapperLogSink) {
 	t.Helper()
 	errors := capture.GetErrors()
 	if len(errors) > 0 {
@@ -505,12 +426,14 @@ func CheckMapperErrors(t *testing.T, capture *MapperLogCapture) {
 	}
 }
 
+// =============================================================================
+// Kubernetes wait helpers
+// =============================================================================
+
 // waitForPodsTerminated waits until all pods matching the label selector are fully terminated
 // This helps prevent containerd state corruption from rapid pod creation/deletion
 func waitForPodsTerminated(t *testing.T, kubectlOptions *k8s.KubectlOptions, labelSelector string, timeout time.Duration) error {
-	logVerbosef(t, "Waiting for pods with selector '%s' to terminate...", labelSelector)
-
-	quietOptions := quietKubectlOptions(kubectlOptions)
+	t.Logf("Waiting for pods with selector '%s' to terminate...", labelSelector)
 
 	// Calculate max retries: timeout / sleep interval
 	sleepInterval := 2 * time.Second
@@ -518,11 +441,11 @@ func waitForPodsTerminated(t *testing.T, kubectlOptions *k8s.KubectlOptions, lab
 
 	_, err := retry.DoWithRetryE(t, fmt.Sprintf("waiting for pods with selector '%s' to terminate", labelSelector),
 		maxRetries, sleepInterval, func() (string, error) {
-			pods := k8s.ListPods(t, quietOptions, metav1.ListOptions{
+			pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{
 				LabelSelector: labelSelector,
 			})
 			if len(pods) == 0 {
-				logVerbose(t, "All pods terminated successfully")
+				t.Log("All pods terminated successfully")
 				return "", nil
 			}
 			return "", fmt.Errorf("still waiting for %d pods to terminate", len(pods))
@@ -533,17 +456,16 @@ func waitForPodsTerminated(t *testing.T, kubectlOptions *k8s.KubectlOptions, lab
 // interTestDelay adds a small delay between tests to allow containerd to stabilize
 // This helps prevent containerd state corruption from rapid container operations
 func interTestDelay(t *testing.T, duration time.Duration) {
-	logVerbosef(t, "Waiting %v between tests for containerd stability...", duration)
+	t.Logf("Waiting %v between tests for containerd stability...", duration)
 	time.Sleep(duration)
 }
 
 // waitForNamespaceDeletion waits for a namespace to be fully deleted from the cluster.
 // If the namespace is stuck terminating, it will attempt to force delete by removing finalizers.
 func waitForNamespaceDeletion(t *testing.T, namespace string, timeout time.Duration) {
-	logVerbosef(t, "Waiting for namespace %s to be fully deleted", namespace)
-
+	t.Logf("Waiting for namespace %s to be fully deleted", namespace)
 	// Use a kubectlOptions without namespace for cluster-scoped operations
-	kubectlOptions := quietKubectlOptions(k8s.NewKubectlOptions("", "", ""))
+	kubectlOptions := k8s.NewKubectlOptions("", "", "")
 
 	// Calculate max retries: timeout / sleep interval
 	sleepInterval := 5 * time.Second
@@ -558,18 +480,17 @@ func waitForNamespaceDeletion(t *testing.T, namespace string, timeout time.Durat
 			// Check if namespace exists
 			output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "namespace", namespace, "-o", "name")
 			if err != nil || strings.TrimSpace(output) == "" {
-				logVerbosef(t, "Namespace %s has been deleted", namespace)
+				t.Logf("Namespace %s has been deleted", namespace)
 				return "", nil
 			}
 
 			// Check if namespace is stuck terminating
 			phase, _ := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "namespace", namespace, "-o", "jsonpath={.status.phase}")
 			if strings.TrimSpace(phase) == "Terminating" {
-				logVerbosef(t, "Namespace %s is terminating, waiting...", namespace)
-
+				t.Logf("Namespace %s is terminating, waiting...", namespace)
 				// If stuck terminating for a while (>70% of timeout), try to force delete by removing finalizers
 				if !forceDeleteAttempted && retryCount > int(float64(maxRetries)*0.7) {
-					logVerbosef(t, "Attempting to force delete stuck namespace %s by removing finalizers", namespace)
+					t.Logf("Attempting to force delete stuck namespace %s by removing finalizers", namespace)
 					forceDeleteAttempted = true
 
 					// Remove finalizers from namespace
@@ -583,7 +504,7 @@ func waitForNamespaceDeletion(t *testing.T, namespace string, timeout time.Durat
 
 	if err != nil {
 		// Final force delete attempt
-		logVerbosef(t, "Warning: Timeout waiting for namespace %s deletion, attempting final force delete", namespace)
+		t.Logf("Warning: Timeout waiting for namespace %s deletion, attempting final force delete", namespace)
 		_ = k8s.RunKubectlE(t, kubectlOptions, "delete", "namespace", namespace, "--force", "--grace-period=0", "--ignore-not-found")
 	}
 }
@@ -591,9 +512,7 @@ func waitForNamespaceDeletion(t *testing.T, namespace string, timeout time.Durat
 // waitForDDADeletion waits for all DatadogAgent resources in a namespace to be fully deleted.
 // It handles stuck resources by removing finalizers if necessary.
 func waitForDDADeletion(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace string, timeout time.Duration) {
-	logVerbosef(t, "Waiting for DDA resources to be deleted in namespace %s", namespace)
-
-	quietOptions := quietKubectlOptions(kubectlOptions)
+	t.Logf("Waiting for DDA resources to be deleted in namespace %s", namespace)
 
 	// Calculate max retries: timeout / sleep interval
 	sleepInterval := 5 * time.Second
@@ -602,10 +521,10 @@ func waitForDDADeletion(t *testing.T, kubectlOptions *k8s.KubectlOptions, namesp
 	_, err := retry.DoWithRetryE(t, fmt.Sprintf("waiting for DDA resources to be deleted in namespace %s", namespace),
 		maxRetries, sleepInterval, func() (string, error) {
 			// Check if any DatadogAgent resources exist in the namespace
-			output, err := k8s.RunKubectlAndGetOutputE(t, quietOptions, "get", "datadogagents.datadoghq.com", "-o", "name")
+			output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", ddaCRDName, "-o", "name")
 			if err != nil || strings.TrimSpace(output) == "" {
 				// No resources found or error (likely means no resources)
-				logVerbosef(t, "No DDA resources found in namespace %s", namespace)
+				t.Logf("No DDA resources found in namespace %s", namespace)
 				return "", nil
 			}
 
@@ -620,13 +539,13 @@ func waitForDDADeletion(t *testing.T, kubectlOptions *k8s.KubectlOptions, namesp
 				name := parts[len(parts)-1]
 
 				// Check if resource is stuck in terminating state
-				status, _ := k8s.RunKubectlAndGetOutputE(t, quietOptions,
-					"get", "datadogagents.datadoghq.com", name, "-o", "jsonpath={.metadata.deletionTimestamp}")
+				status, _ := k8s.RunKubectlAndGetOutputE(t, kubectlOptions,
+					"get", ddaCRDName, name, "-o", "jsonpath={.metadata.deletionTimestamp}")
 				if status != "" {
 					// Resource is terminating but stuck - remove finalizers
-					logVerbosef(t, "DDA %s is stuck terminating, removing finalizers", name)
-					_ = k8s.RunKubectlE(t, quietOptions,
-						"patch", "datadogagents.datadoghq.com", name, "--type=merge", "-p", `{"metadata":{"finalizers":null}}`)
+					t.Logf("DDA %s is stuck terminating, removing finalizers", name)
+					_ = k8s.RunKubectlE(t, kubectlOptions,
+						"patch", ddaCRDName, name, "--type=merge", "-p", `{"metadata":{"finalizers":null}}`)
 				}
 			}
 
@@ -634,29 +553,27 @@ func waitForDDADeletion(t *testing.T, kubectlOptions *k8s.KubectlOptions, namesp
 		})
 
 	if err != nil {
-		logVerbosef(t, "Warning: Timeout waiting for DDA deletion in namespace %s", namespace)
+		t.Logf("Warning: Timeout waiting for DDA deletion in namespace %s", namespace)
 	}
 }
+
+// =============================================================================
+// Stale resource cleanup
+// =============================================================================
 
 // cleanupStaleResources removes any leftover test namespaces from previous runs.
 // This handles the case where tests were interrupted with Ctrl+C and t.Cleanup() didn't run.
 // It uses force-deletion since these are orphaned resources that need quick cleanup.
 func cleanupStaleResources() {
-	if testing.Verbose() {
-		log.Printf("Checking for stale test resources from previous runs...")
-	}
+	log.Printf("Checking for stale test resources from previous runs...")
 
 	if !isStaleCleanupEnabled() {
-		if testing.Verbose() {
-			log.Printf("Stale cleanup disabled (set %s=true to enable)", staleCleanupEnabledEnv)
-		}
+		log.Printf("Stale cleanup disabled (set %s=true to enable)", staleCleanupEnabledEnv)
 		return
 	}
 
 	if !isSafeContext() {
-		if testing.Verbose() {
-			log.Printf("Stale cleanup skipped: unsafe kubectl context")
-		}
+		log.Printf("Stale cleanup skipped: unsafe kubectl context")
 		return
 	}
 
@@ -665,15 +582,11 @@ func cleanupStaleResources() {
 
 	staleNamespaces := findStaleNamespaces(ctx)
 	if len(staleNamespaces) == 0 {
-		if testing.Verbose() {
-			log.Printf("No stale test namespaces found")
-		}
+		log.Printf("No stale test namespaces found")
 		return
 	}
 
-	if testing.Verbose() {
-		log.Printf("Found %d stale test namespace(s): %v", len(staleNamespaces), staleNamespaces)
-	}
+	log.Printf("Found %d stale test namespace(s): %v", len(staleNamespaces), staleNamespaces)
 
 	for _, ns := range staleNamespaces {
 		forceDeleteNamespace(ctx, ns)
@@ -739,10 +652,10 @@ func forceDeleteNamespace(ctx context.Context, namespace string) {
 	removeDDAFinalizersInNamespace(ctx, namespace)
 
 	// Delete DDAs
-	runKubectl(ctx, "delete", "datadogagents.datadoghq.com", "--all", "-n", namespace, "--ignore-not-found", "--timeout=10s")
+	runKubectl(ctx, "delete", ddaCRDName, "--all", "-n", namespace, "--ignore-not-found", "--timeout=10s")
 
 	// Uninstall helm releases
-	for _, release := range []string{"datadog-operator", "datadog"} {
+	for _, release := range []string{releaseDatadogOperator, releaseDatadog} {
 		runHelm(ctx, "uninstall", release, "-n", namespace, "--ignore-not-found", "--timeout=30s")
 	}
 
@@ -759,12 +672,12 @@ func forceDeleteNamespace(ctx context.Context, namespace string) {
 
 // removeDDAFinalizersInNamespace removes finalizers from all DDAs in a namespace
 func removeDDAFinalizersInNamespace(ctx context.Context, namespace string) {
-	cmd := exec.CommandContext(ctx, "kubectl", "get", "datadogagents.datadoghq.com",
+	cmd := exec.CommandContext(ctx, "kubectl", "get", ddaCRDName,
 		"-n", namespace, "-o", "jsonpath={.items[*].metadata.name}")
 	output, _ := cmd.CombinedOutput()
 
 	for _, name := range strings.Fields(string(output)) {
-		runKubectl(ctx, "patch", "datadogagents.datadoghq.com", name,
+		runKubectl(ctx, "patch", ddaCRDName, name,
 			"-n", namespace, "--type=merge", "-p", `{"metadata":{"finalizers":null}}`)
 	}
 }
