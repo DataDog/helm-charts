@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.12.3
+
+- Change the default podManagementPolicy to Parallel
+
 ## 2.12.2
 
 - Add clarifying note to values.yaml configuration for custom secrets management
