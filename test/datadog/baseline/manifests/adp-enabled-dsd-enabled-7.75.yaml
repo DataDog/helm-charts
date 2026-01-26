@@ -1369,10 +1369,20 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_USE_DOGSTATSD
-              value: "false"
             - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
               value: "true"
+            - name: DD_DATA_PLANE_ENABLED
+              value: "true"
+            - name: DD_DATA_PLANE_DOGSTATSD_ENABLED
+              value: "true"
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_DOGSTATSD_TAG_CARDINALITY
+              value: low
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1437,7 +1447,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1515,6 +1525,8 @@ spec:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
         - command:
+            - trace-loader
+            - /etc/datadog-agent/datadog.yaml
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
           env:
@@ -1579,7 +1591,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1625,8 +1637,9 @@ spec:
               readOnly: true
         - command:
             - agent-data-plane
+            - --config
+            - /etc/datadog-agent/datadog.yaml
             - run
-            - --config=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -1653,25 +1666,21 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-            - name: DD_DOGSTATSD_PORT
-              value: "8125"
-            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
-              value: "true"
-            - name: DD_DOGSTATSD_TAG_CARDINALITY
-              value: low
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_API_LISTEN_ADDRESS
-              value: tcp://0.0.0.0:5100
-            - name: DD_SECURE_API_LISTEN_ADDRESS
-              value: tcp://0.0.0.0:5101
-            - name: DD_TELEMETRY_ENABLED
+            - name: DD_DATA_PLANE_REMOTE_AGENT_ENABLED
               value: "true"
-            - name: DD_PROMETHEUS_LISTEN_ADDR
+            - name: DD_DATA_PLANE_USE_NEW_CONFIG_STREAM_ENDPOINT
+              value: "true"
+            - name: DD_DATA_PLANE_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5100
+            - name: DD_DATA_PLANE_SECURE_API_LISTEN_ADDRESS
+              value: tcp://0.0.0.0:5101
+            - name: DD_DATA_PLANE_TELEMETRY_ENABLED
+              value: "true"
+            - name: DD_DATA_PLANE_TELEMETRY_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: gcr.io/datadoghq/agent-data-plane:0.1.11
+          image: gcr.io/datadoghq/agent-data-plane:0.1.30
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
@@ -1699,8 +1708,6 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           resources: {}
-          securityContext:
-            readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /tmp
               name: tmpdir
@@ -1733,7 +1740,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1772,7 +1779,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
