@@ -3,6 +3,7 @@
 ## 3.163.0
 
 * Bump default Datadog Operator image tag to 1.22.0.
+* Temporarily disable datadogGenericResource and datadogSLO controllers by default.
 
 ## 3.161.2
 

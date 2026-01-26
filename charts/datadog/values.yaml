@@ -2764,7 +2764,7 @@ operator:
 
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
-    enabled: true
+    enabled: false
 
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
@@ -2772,7 +2772,7 @@ operator:
 
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
-    enabled: true
+    enabled: false
 
   datadogCRDs:
     crds:

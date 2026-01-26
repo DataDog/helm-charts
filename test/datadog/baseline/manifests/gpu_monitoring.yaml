@@ -2229,9 +2229,9 @@ spec:
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
             - -datadogAgentEnabled=false
-            - -datadogSLOEnabled=true
+            - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false
-            - -datadogGenericResourceEnabled=true
+            - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
           env:
