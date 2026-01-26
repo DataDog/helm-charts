@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.162.0
+## 3.163.0
 
 * Bump default Datadog Operator image tag to 1.22.0.
 
