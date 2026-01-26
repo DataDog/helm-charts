@@ -34,3 +34,9 @@ datadog:
           logs:
             receivers: [otlp]
             exporters: [datadog]
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

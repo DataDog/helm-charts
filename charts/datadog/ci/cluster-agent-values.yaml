@@ -165,3 +165,9 @@ clusterChecksRunner:
     - name: tmp
       mountPath: /etc/tmp
       readOnly: true
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

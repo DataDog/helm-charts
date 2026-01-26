@@ -12,3 +12,9 @@ clusterAgent:
 
     service:
       port: 4443
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

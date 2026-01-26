@@ -9,3 +9,9 @@ clusterAgent:
   enabled: true
   admissionController:
     enabled: true
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

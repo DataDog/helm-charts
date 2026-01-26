@@ -14,3 +14,9 @@ securityAgent:
     configMap:
     host_benchmarks:
       enabled: true
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

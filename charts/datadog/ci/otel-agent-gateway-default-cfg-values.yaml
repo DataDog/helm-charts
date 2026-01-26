@@ -19,3 +19,9 @@ otelAgentGateway:
       hostPort: "5318"
       name: "otel-http"
   replicas: 1
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

@@ -10,3 +10,9 @@ clusterChecksRunner:
 datadog:
   kubelet:
     tlsVerify: false
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

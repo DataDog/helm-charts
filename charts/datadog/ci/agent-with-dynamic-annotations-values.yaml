@@ -11,3 +11,9 @@ datadog:
   appKey: "0000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

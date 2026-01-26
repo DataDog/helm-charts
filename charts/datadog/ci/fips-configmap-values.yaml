@@ -26,3 +26,9 @@ datadog:
           timeout server 5s
           timeout connect 5s
           default-server verify required ca-file ca-certificates.crt check inter 10s resolvers my-dns init-addr none resolve-prefer ipv4
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

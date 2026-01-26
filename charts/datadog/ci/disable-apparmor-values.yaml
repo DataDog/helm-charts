@@ -12,3 +12,9 @@ agents:
       create: true
     apparmor:
       enabled: false
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

@@ -9,3 +9,9 @@ datadog:
     portEnabled: false
     socketEnabled: false
     useLocalService: true
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false

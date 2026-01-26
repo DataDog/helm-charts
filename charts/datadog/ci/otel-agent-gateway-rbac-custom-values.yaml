@@ -43,3 +43,9 @@ otelAgentGateway:
         metrics:
           receivers: [otlp]
           exporters: [loadbalancing, debug]
+
+operator:
+  datadogSLO:
+    enabled: false
+  datadogGenericResource:
+    enabled: false
