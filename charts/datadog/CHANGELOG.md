@@ -4,6 +4,10 @@
 
 * [AGTMETRICS-393] Update Agent Data Plane support to reflect new "Data Plane" terminology. ([#2313](https://github.com/DataDog/helm-charts/pull/2313)).
 
+## 3.162.0
+
+* Add injectionMode option for APM instrumentation ([#2308](https://github.com/DataDog/helm-charts/pull/2308)).
+
 ## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
