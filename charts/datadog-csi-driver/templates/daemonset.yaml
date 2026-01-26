@@ -69,10 +69,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            {{- if .Values.disableSSI }}
-            - name: DD_DISABLE_SSI
-              value: {{ .Values.disableSSI | quote  }}
-            {{- end }}
+            - name: DD_APM_ENABLED
+              value: {{ .Values.apm.enabled | quote }}
         - name: csi-node-driver-registrar
           image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
           imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}

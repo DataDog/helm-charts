@@ -59,8 +59,10 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
-# disableSSI -- Disable Single Step Instrumentation (SSI) support for the CSI driver.
-disableSSI: false
+## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
+apm:
+  # apm.enabled -- Enable APM/SSI support for the CSI driver.
+  enabled: true
 
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 
