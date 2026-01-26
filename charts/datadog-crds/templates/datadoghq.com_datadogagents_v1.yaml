@@ -1115,6 +1115,8 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        featureGates:
+                          type: string
                         ports:
                           items:
                             properties:
@@ -5252,6 +5254,8 @@ spec:
                               type: object
                             enabled:
                               type: boolean
+                            featureGates:
+                              type: string
                             ports:
                               items:
                                 properties:

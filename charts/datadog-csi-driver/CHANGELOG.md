@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+* [CONTP-719] Expose security context and annotation configurations ([#2317](https://github.com/DataDog/helm-charts/pull/2317)).
+
 ## 0.4.4
 
 * Support the definition of tolerations

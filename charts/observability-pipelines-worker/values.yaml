@@ -75,7 +75,7 @@ replicas: 1
 
 # podManagementPolicy -- Specify the
 # [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies).
-podManagementPolicy: OrderedReady
+podManagementPolicy: Parallel
 
 ## TODO: Support Watermark Pod Autoscaler?
 autoscaling:

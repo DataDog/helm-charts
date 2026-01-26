@@ -48,7 +48,7 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
@@ -60,12 +60,17 @@ unit-test-operator:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1
 
+.PHONY: unit-test-datadog-csi-driver
+unit-test-datadog-csi-driver:
+	helm dependency update ./charts/datadog-csi-driver 2>/dev/null
+	go test -C test ./datadog-csi-driver -count=1
+
 .PHONY: unit-test-private-action-runner
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
 
 .PHONY: update-test-baselines
-update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner
+update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-datadog-csi-driver
 
 .PHONY: update-test-baselines-private-action-runner
 update-test-baselines-private-action-runner:
@@ -80,6 +85,11 @@ update-test-baselines-operator:
 update-test-baselines-datadog-agent:
 	helm dependency update ./charts/datadog 2>/dev/null
 	go test -C test ./datadog -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-datadog-csi-driver
+update-test-baselines-datadog-csi-driver:
+	helm dependency update ./charts/datadog-csi-driver 2>/dev/null
+	go test -C test ./datadog-csi-driver -count=1 -args -updateBaselines=true
 
 .PHONY: integration-test
 integration-test:
