@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.162.0
+
+* Add injectionMode option for APM instrumentation ([#2308](https://github.com/DataDog/helm-charts/pull/2308)).
+
 ## 3.161.2
 
 * Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
