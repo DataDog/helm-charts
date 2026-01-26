@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.162.0](https://img.shields.io/badge/Version-3.162.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.163.0](https://img.shields.io/badge/Version-3.163.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -775,12 +775,12 @@ helm install <RELEASE_NAME> \
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts. |
 | datadog.dataPlane.dogstatsd.enabled | bool | `false` | Whether or not DogStatsD is enabled in the data plane |
-| datadog.dataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The Data Plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
-| datadog.dataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
-| datadog.dataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
-| datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
-| datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
-| datadog.dataPlane.image.tag | string | `"0.1.30"` | Define the Agent Data Plane version to use |
+| datadog.dataPlane.enabled | bool | `false` | Whether or not the data plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The data plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
+| datadog.dataPlane.image.digest | string | `""` | Define the data plane image digest to use, takes precedence over tag if specified |
+| datadog.dataPlane.image.name | string | `"agent-data-plane"` | Data plane image name to use (relative to `registry`) |
+| datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Data plane image pull policy |
+| datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for data plane |
+| datadog.dataPlane.image.tag | string | `"0.1.30"` | Define the data plane version to use |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
