@@ -604,7 +604,7 @@ datadog:
 
       # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
       # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver)
-      injectionMode: "auto"
+      injectionMode: ""
 
       # This feature is in preview. It requires Cluster Agent 7.57+.
       injector:
