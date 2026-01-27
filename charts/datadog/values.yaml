@@ -2753,7 +2753,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.21.0
+    tag: 1.22.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -2771,7 +2771,7 @@ operator:
 
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
-    enabled: true
+    enabled: false
 
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
@@ -2779,7 +2779,7 @@ operator:
 
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
-    enabled: true
+    enabled: false
 
   datadogCRDs:
     crds:

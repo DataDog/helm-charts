@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.164.0
+
+* Bump default Datadog Operator image tag to 1.22.0.
+* [BREAKING] Temporarily disable datadogGenericResource and datadogSLO controllers by default.
+
 ## 3.163.1
 
 * Update default Agent version to 7.75.0 ([#2326](https://github.com/DataDog/helm-charts/pull/2326)).

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.163.1](https://img.shields.io/badge/Version-3.163.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.164.0](https://img.shields.io/badge/Version-3.164.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -1008,10 +1008,10 @@ helm install <RELEASE_NAME> \
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
 | operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
-| operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
+| operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
-| operator.datadogSLO.enabled | bool | `true` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.21.0"` | Define the Datadog Operator version to use |
+| operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
+| operator.image.tag | string | `"1.22.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
