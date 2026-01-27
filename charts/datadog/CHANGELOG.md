@@ -30,7 +30,7 @@
 
 ## 3.160.4
 
-* Add "watch" permission for cluster roles and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+* Add "watch" permission for role bindings and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
 
 ## 3.160.3
 
