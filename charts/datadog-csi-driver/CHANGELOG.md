@@ -2,7 +2,7 @@
 
 ## 0.6.0
 
-* Add `apm.enabled` configuration option to enable/disable APM/SSI support
+* Add `apm.enabled` configuration option to enable/disable APM/SSI support (not yet supported on GKE Autopilot)
 
 ## 0.5.0
 
