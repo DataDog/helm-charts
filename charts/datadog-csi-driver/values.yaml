@@ -59,6 +59,13 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
+## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
+## Note: SSI is not yet supported on GKE Autopilot. SSI-related configurations
+## are not rendered when running on GKE Autopilot clusters.
+apm:
+  # apm.enabled -- Enable APM/SSI support for the CSI driver.
+  enabled: true
+
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/

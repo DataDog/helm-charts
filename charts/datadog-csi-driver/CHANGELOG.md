@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+* Add `apm.enabled` configuration option to enable/disable APM/SSI support (not yet supported on GKE Autopilot)
+
 ## 0.5.0
 
 * [CONTP-719] Expose security context and annotation configurations ([#2317](https://github.com/DataDog/helm-charts/pull/2317)).
@@ -43,11 +47,11 @@
 
 ## 0.3.0
 
-* Support configuring different host socket paths for apm and dogstatsd sockets. 
- 
+* Support configuring different host socket paths for apm and dogstatsd sockets.
+
 ## 0.2.0
 
-* Support configuring apm and dogstatsd sockets hostpaths. 
+* Support configuring apm and dogstatsd sockets hostpaths.
 
 ## 0.1.0
 

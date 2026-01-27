@@ -1496,7 +1496,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1577,6 +1577,8 @@ spec:
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
         - command:
+            - trace-loader
+            - /etc/datadog-agent/datadog.yaml
             - trace-agent
             - -config=/etc/datadog-agent/datadog.yaml
           env:
@@ -1641,7 +1643,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1692,7 +1694,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1731,7 +1733,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.74.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1842,9 +1844,9 @@ spec:
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
             - -datadogAgentEnabled=true
-            - -datadogSLOEnabled=true
+            - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false
-            - -datadogGenericResourceEnabled=true
+            - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
           env:
@@ -1862,7 +1864,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0
+          image: gcr.io/datadoghq/operator:1.22.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -1991,6 +1993,8 @@ spec:
               value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
+            - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+              value: auto
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -2053,7 +2057,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2126,7 +2130,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

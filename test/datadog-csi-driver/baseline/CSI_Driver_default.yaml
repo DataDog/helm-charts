@@ -24,7 +24,7 @@ spec:
             readOnlyRootFilesystem: true
           ports:
             - containerPort: 5000
-              protocol: TCP 
+              protocol: TCP
           args:
             - --apm-host-socket-path=/var/run/datadog/apm.socket
             - --dsd-host-socket-path=/var/run/datadog/dsd.socket
@@ -33,11 +33,14 @@ spec:
             # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
+            # storage-dir stores the data and database for the CSI driver.
+            - name: storage-dir
+              mountPath: /var/lib/datadog-csi-driver
             - name: apm-socket
               mountPath: /var/run/datadog
               readOnly: true
             # write mode is required to perform a volume mount
-            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount. 
+            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount.
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
@@ -46,6 +49,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: DD_APM_ENABLED
+              value: "true"
         - name: csi-node-driver-registrar
           image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
           imagePullPolicy: IfNotPresent
@@ -71,6 +76,10 @@ spec:
         - name: plugin-dir
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/driver
+            type: DirectoryOrCreate
+        - name: storage-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/datadog.csi/storage
             type: DirectoryOrCreate
         - name: registration-dir
           hostPath:
