@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.163.1
+
+* Update default Agent version to 7.75.0 ([#2326](https://github.com/DataDog/helm-charts/pull/2326)).
+
 ## 3.163.0
 
 * [AGTMETRICS-393] Update Agent Data Plane support to reflect new "Data Plane" terminology. ([#2313](https://github.com/DataDog/helm-charts/pull/2313)).
