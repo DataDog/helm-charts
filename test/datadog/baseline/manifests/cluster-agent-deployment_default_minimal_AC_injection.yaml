@@ -1489,7 +1489,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
               value: agent
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-              value: 7.74.0
+              value: 7.75.0
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
@@ -1556,7 +1556,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1629,7 +1629,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

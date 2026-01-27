@@ -1,9 +1,17 @@
 # Datadog changelog
 
-## 3.163.0
+## 3.164.0
 
 * Bump default Datadog Operator image tag to 1.22.0.
-* Temporarily disable datadogGenericResource and datadogSLO controllers by default.
+* [BREAKING] Temporarily disable datadogGenericResource and datadogSLO controllers by default.
+
+## 3.163.1
+
+* Update default Agent version to 7.75.0 ([#2326](https://github.com/DataDog/helm-charts/pull/2326)).
+
+## 3.163.0
+
+* [AGTMETRICS-393] Update Agent Data Plane support to reflect new "Data Plane" terminology. ([#2313](https://github.com/DataDog/helm-charts/pull/2313)).
 
 ## 3.162.0
 
@@ -27,7 +35,7 @@
 
 ## 3.160.4
 
-* Add "watch" permission for cluster roles and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+* Add "watch" permission for role bindings and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
 
 ## 3.160.3
 

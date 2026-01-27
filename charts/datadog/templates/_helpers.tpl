@@ -154,13 +154,40 @@ false
 
 {{/*
 Return true if Agent Data Plane needs to be deployed
+
+This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
+data pipeline enabled
 */}}
-{{- define "should-enable-agent-data-plane" -}}
-{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- define "should-enable-data-plane" -}}
+{{- $adpVersion := .Values.datadog.dataPlane.image.tag -}}
+{{- if not (semverCompare ">=0.1.29" $adpVersion) -}}
+{{- fail "Agent Data Plane 0.1.29 or newer is required to enable the Data Plane feature." -}}
+{{- end -}}
+{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
+{{- else -}}
+{{- fail "One or more data pipelines must be enabled when the Data Plane feature is enabled." -}}
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return env var settings for Core Agent when Data Plane feature is enabled
+*/}}
+{{- define "core-agent-data-plane-env" -}}
+# If we're running 7.74.x or earlier, disable DogStatsD explicitly on the Core Agent if ADP has the DSD pipeline
+# enabled. If ADP isn't handling DogStatsD, then we don't need to modify the value.
+{{- if not (semverCompare "^6.75.0-0 || ^7.75.0-0" (include "get-agent-version" .)) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled }}
+- name: DD_USE_DOGSTATSD
+  value: "false"
+{{- end }}
+{{- end }}
+- name: DD_DATA_PLANE_DOGSTATSD_ENABLED
+  value: {{ .Values.datadog.dataPlane.dogstatsd.enabled | quote }}
 {{- end -}}
 
 {{/*
