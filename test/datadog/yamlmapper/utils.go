@@ -206,6 +206,7 @@ var skipFields = map[string]struct{}{
 	"log_level":               {},
 	// Nested paths
 	"orchestrator_explorer.kubelet_config_check.enabled": {}, // TODO: remove this when available in operator
+	"strip_proc_arguments":                                {}, // TODO: remove this when fixed in the operator
 
 	// kubelet_client_ca: Behavioral disparity between Helm and Operator
 	// - Helm: Sets DD_KUBELET_CLIENT_CA when agentCAPath is provided (allows referencing existing files like k8s service account CA)
