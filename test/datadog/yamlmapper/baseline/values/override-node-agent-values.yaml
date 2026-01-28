@@ -17,7 +17,7 @@ agents:
       memory: 512Mi
   image:
     name: agent
-    tag: 7.72.0
+    tag: 7.75.0
     pullPolicy: Always
   
   updateStrategy:
@@ -28,5 +28,7 @@ agents:
   useHostNetwork: false
 
 clusterAgent:
+  image:
+    tag: 7.75.0
   enabled: true
 

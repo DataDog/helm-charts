@@ -6,6 +6,14 @@ datadog:
   kubelet:
     tlsVerify: false
 
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+
 # Multiple unsupported keys - all should be flagged as errors
 fakeTopLevelKey:
   someValue: true

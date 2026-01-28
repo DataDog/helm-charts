@@ -7,10 +7,18 @@ datadog:
   clusterChecks:
     enabled: true
 
+agents:
+  image:
+    tag: 7.75.0
+
 clusterAgent:
+  image:
+    tag: 7.75.0
   enabled: true
 
 clusterChecksRunner:
+  image:
+    tag: 7.75.0
   enabled: true
   replicas: 2
 

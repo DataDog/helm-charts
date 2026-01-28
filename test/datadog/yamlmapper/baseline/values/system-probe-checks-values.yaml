@@ -9,3 +9,10 @@ datadog:
     enableOOMKill: true
     enableTCPQueueLength: true
 
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0

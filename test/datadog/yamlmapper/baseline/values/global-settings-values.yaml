@@ -49,8 +49,14 @@ nameOverride: "custom-dd"
 # Registry
 registry: gcr.io/datadoghq
 
+agents:
+  image:
+    tag: 7.75.0
+
 # Cluster agent with token
 clusterAgent:
+  image:
+    tag: 7.75.0
   enabled: true
   token: "my-custom-cluster-agent-token-32chars"
 

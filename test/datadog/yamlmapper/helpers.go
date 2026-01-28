@@ -501,7 +501,9 @@ func runMapperExpectError(t *testing.T, valuesPath string) error {
 }
 
 func ddaOutputPath(valuesPath string) string {
-	return filepath.Join(ddaOutputDir, filepath.Base(valuesPath))
+	base := filepath.Base(valuesPath)
+	ddaFileName := strings.TrimSuffix(base, "-values.yaml") + "-dda.yaml"
+	return filepath.Join(ddaOutputDir, ddaFileName)
 }
 
 func ensureDDAOutputDirExists(t *testing.T) {

@@ -7,7 +7,13 @@ datadog:
   clusterChecks:
     enabled: true
 
+agents:
+  image:
+    tag: 7.75.0
+
 clusterAgent:
+  image:
+    tag: 7.75.0
   enabled: true
 
 clusterChecksRunner:
@@ -18,7 +24,7 @@ clusterChecksRunner:
   
   image:
     name: agent
-    tag: 7.72.0
+    tag: 7.75.0
     pullPolicy: Always
   
   resources:
