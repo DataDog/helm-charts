@@ -1,0 +1,38 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: custom-dd
+spec:
+  global:
+    clusterAgentToken: my-custom-cluster-agent-token-32chars
+    clusterName: my-kubernetes-cluster
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    criSocketPath: /var/run/containerd/containerd.sock
+    dockerSocketPath: /var/run/containerd/containerd.sock
+    endpoint:
+      url: https://custom-intake.datadoghq.eu
+    env:
+    - name: DD_CUSTOM_ENV_VAR
+      value: custom-value
+    - name: DD_ANOTHER_VAR
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    kubelet:
+      agentCAPath: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      podResourcesSocketPath: /var/lib/kubelet/pod-resources
+      tlsVerify: false
+    logLevel: DEBUG
+    networkPolicy:
+      create: true
+      flavor: kubernetes
+    originDetectionUnified:
+      enabled: true
+    registry: gcr.io/datadoghq
+    site: datadoghq.eu
+    tags:
+    - env:production
+    - team:platform
+    - service:my-app
