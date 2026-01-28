@@ -806,7 +806,7 @@ To disable the Datadog Operator, set `datadog.operator.enabled` to `false`.
 ####               WARNING: Unsupported Datadog Operator version               ####
 ###################################################################################
 You have set `datadog.operator.migration.enabled` or `datadog.operator.migration.preview` to `true`.
-Support for this configuration is supported in Datadog Operator version 1.21.0+.
+Support for this configuration is supported in Datadog Operator version 1.22.0+.
 Update your chart or set `datadog-operator.image.tag` to a supported version.
 
 Skipping migration.
