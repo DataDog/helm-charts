@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.164.2
+
+* Remove RBAC grants when App & API Protection is not enabled.
+
 ## 3.164.1
 
 * Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
@@ -32,9 +36,9 @@
 ## 3.161.0
 
 * Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
-  
+
   Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
-  
+
   Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
 
 ## 3.160.4
