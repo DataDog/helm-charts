@@ -657,6 +657,11 @@ spec:
                           type: boolean
                         enabled:
                           type: boolean
+                        enforcement:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         network:
                           properties:
                             enabled:
@@ -1101,6 +1106,8 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        featureGates:
+                          type: string
                         ports:
                           items:
                             properties:
@@ -4141,6 +4148,37 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                otelAgentGateway:
+                  properties:
+                    availableReplicas:
+                      format: int32
+                      type: integer
+                    currentHash:
+                      type: string
+                    deploymentName:
+                      type: string
+                    generatedToken:
+                      type: string
+                    lastUpdate:
+                      format: date-time
+                      type: string
+                    readyReplicas:
+                      format: int32
+                      type: integer
+                    replicas:
+                      format: int32
+                      type: integer
+                    state:
+                      type: string
+                    status:
+                      type: string
+                    unavailableReplicas:
+                      format: int32
+                      type: integer
+                    updatedReplicas:
+                      format: int32
+                      type: integer
+                  type: object
                 remoteConfigConfiguration:
                   properties:
                     features:
@@ -4758,6 +4796,11 @@ spec:
                               type: boolean
                             enabled:
                               type: boolean
+                            enforcement:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                             network:
                               properties:
                                 enabled:
@@ -5202,6 +5245,8 @@ spec:
                               type: object
                             enabled:
                               type: boolean
+                            featureGates:
+                              type: string
                             ports:
                               items:
                                 properties:

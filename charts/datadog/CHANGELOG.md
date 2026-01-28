@@ -1,5 +1,92 @@
 # Datadog changelog
 
+## 3.164.0
+
+* Bump default Datadog Operator image tag to 1.22.0.
+* [BREAKING] Temporarily disable datadogGenericResource and datadogSLO controllers by default.
+
+## 3.163.1
+
+* Update default Agent version to 7.75.0 ([#2326](https://github.com/DataDog/helm-charts/pull/2326)).
+
+## 3.163.0
+
+* [AGTMETRICS-393] Update Agent Data Plane support to reflect new "Data Plane" terminology. ([#2313](https://github.com/DataDog/helm-charts/pull/2313)).
+
+## 3.162.0
+
+* Add injectionMode option for APM instrumentation ([#2308](https://github.com/DataDog/helm-charts/pull/2308)).
+
+## 3.161.2
+
+* Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
+
+## 3.161.1
+
+* Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
+
+## 3.161.0
+
+* Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
+  
+  Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
+  
+  Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
+
+## 3.160.4
+
+* Add "watch" permission for role bindings and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+
+## 3.160.3
+
+* Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
+
+
+## 3.160.2
+
+* Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
+
+## 3.160.1
+
+* Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).
+
+## 3.160.0
+
+* Use agent version as default image tag for DDOT Gateway when `otelAgentGateway.image.tag` is not specified.
+* Remove an unreleased field from DDOT gateway default config: `extensions.datadog.deployment_type`.
+
+## 3.159.1
+
+* Add support for wildcards in `kind` field of KSM RBAC.
+
+## 3.159.0
+
+* [AGENTRUN-908] Run the trace-loader process in trace-agent container if available ([#2267](https://github.com/DataDog/helm-charts/pull/2267)).
+
+## 3.158.4
+
+* Fix a typo in DDOT gateway default config: extension -> extensions.
+
+## 3.158.3
+
+* Fix Prometheus internal metrics in DDOT's default config: increase the scraping interval from 10s to 60s, and exclude billable custom metrics.
+
+## 3.158.2
+
+* Fix DCA/CCR confd configMap volume. Fixes issue [#2243](https://github.com/DataDog/helm-charts/issues/2243)
+
+## 3.158.1
+
+* Use DD exporter's sending queue instead of the batch processor ([#2263](https://github.com/DataDog/helm-charts/pull/2263)).
+
+## 3.158.0
+
+* deprecate `datadog.processAgent.runInCoreAgent` ([#2265](https://github.com/DataDog/helm-charts/pull/2265)).
+
+## 3.157.6
+
+* Expose the datadog.securityAgent.runtime.enforcement.enabled parameter and adjust the capabilities and seccomp profile accordingly.
+
 ## 3.157.5
 
 * Fix part-of label truncation.

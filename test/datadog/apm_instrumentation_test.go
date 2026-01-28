@@ -83,6 +83,16 @@ func TestAPMConfigValidation(t *testing.T) {
 			values:  "values_from_invalid.yaml",
 			isValid: false,
 		},
+		{
+			name:    "injectionMode csi without csi.enabled",
+			values:  "injection_mode_csi_without_driver.yaml",
+			isValid: false,
+		},
+		{
+			name:    "injectionMode csi with csi.enabled",
+			values:  "injection_mode_csi_with_driver.yaml",
+			isValid: true,
+		},
 	}
 
 	for _, tt := range tests {

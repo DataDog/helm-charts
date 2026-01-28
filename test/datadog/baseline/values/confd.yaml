@@ -1,0 +1,40 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  confd:
+    redisdb.yaml: |-
+      init_config:
+      instances:
+        - host: "redis"
+          port: "6379"
+
+clusterChecksRunner:
+  enabled: true
+
+clusterAgent:
+  enabled: true
+  clusterChecks:
+    enabled: true
+  confd:
+    redisdb.yaml: |-
+      cluster_check: true
+      init_config:
+      instances:
+        - host: "name"
+          port: "6379"
+  advancedConfd:
+    orchestrator.d:
+      1.yaml: |-
+        cluster_check: true
+        init_config:
+        instances:
+          - collectors:
+            - nodes
+            skip_leader_election: true
+      2.yaml: |-
+        cluster_check: true
+        init_config:
+        instances:
+          - collectors:
+            - deployments
+            skip_leader_election: true

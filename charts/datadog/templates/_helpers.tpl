@@ -154,13 +154,40 @@ false
 
 {{/*
 Return true if Agent Data Plane needs to be deployed
+
+This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
+data pipeline enabled
 */}}
-{{- define "should-enable-agent-data-plane" -}}
-{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- define "should-enable-data-plane" -}}
+{{- $adpVersion := .Values.datadog.dataPlane.image.tag -}}
+{{- if not (semverCompare ">=0.1.29" $adpVersion) -}}
+{{- fail "Agent Data Plane 0.1.29 or newer is required to enable the Data Plane feature." -}}
+{{- end -}}
+{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
+{{- else -}}
+{{- fail "One or more data pipelines must be enabled when the Data Plane feature is enabled." -}}
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return env var settings for Core Agent when Data Plane feature is enabled
+*/}}
+{{- define "core-agent-data-plane-env" -}}
+# If we're running 7.74.x or earlier, disable DogStatsD explicitly on the Core Agent if ADP has the DSD pipeline
+# enabled. If ADP isn't handling DogStatsD, then we don't need to modify the value.
+{{- if not (semverCompare "^6.75.0-0 || ^7.75.0-0" (include "get-agent-version" .)) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled }}
+- name: DD_USE_DOGSTATSD
+  value: "false"
+{{- end }}
+{{- end }}
+- name: DD_DATA_PLANE_DOGSTATSD_ENABLED
+  value: {{ .Values.datadog.dataPlane.dogstatsd.enabled | quote }}
 {{- end -}}
 
 {{/*
@@ -471,8 +498,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
 Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 */}}
 {{- define "ddot-collector-gateway-image" -}}
+  {{- $imageTag := .Values.otelAgentGateway.image.tag -}}
+  {{- if not $imageTag -}}
+    {{- $imageTag = include "get-agent-version" . -}}
+  {{- end -}}
   {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
-    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- $imageTag = $imageTag | toString -}}
     {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
       {{- fail "`-full` image is not supported in otel agent gateway" -}}
     {{- end -}}
@@ -480,7 +511,8 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
       {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
     {{- end -}}
   {{- end -}}
-  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+  {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
+  {{ include "image-path" (dict "root" .Values "image" $image) }}
 {{- end -}}
 
 {{/*
@@ -688,6 +720,23 @@ Return true if a host port is desired for APM.
 {{- define "trace-agent-use-host-port" -}}
 {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled -}}
 true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if trace-loader should be used for the trace-agent container.
+trace-loader is available in agent versions >= 7.75.0.
+*/}}
+{{- define "use-trace-loader" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := (include "get-agent-version" .) -}}
+{{- if semverCompare ">=7.75.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
@@ -1057,6 +1106,9 @@ securityContext:
   {{- if .mknod -}}
     {{- $addedCapabilities = append $addedCapabilities "MKNOD" -}}
   {{- end -}}
+  {{- if .kill -}}
+    {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
+  {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
     {{- $capabilities := dict "capabilities" (dict "add" $addedCapabilities) -}}
@@ -1300,7 +1352,7 @@ Create RBACs for custom resources
     false
   {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
     {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) .Values.datadog.processAgent.runInCoreAgent (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
+  {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
       true
   {{- else -}}
     false

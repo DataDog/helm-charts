@@ -323,6 +323,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
             value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injectionMode }}
+          - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+            value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
@@ -372,6 +376,8 @@ spec:
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
+          - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+            value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -547,6 +553,47 @@ spec:
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd
+            items:
+            {{- if or $.Values.clusterAgent.confd $.Values.clusterAgent.advancedConfd }}
+            {{- range $file, $configs := $.Values.clusterAgent.confd }}
+            - key: {{ $file | quote }}
+              path: {{ $file | quote }}
+            {{- end }}
+            {{- range $integration, $configs := $.Values.clusterAgent.advancedConfd }}
+            {{- range $name, $config := $configs }}
+            - key: {{ printf "%s--%s" $integration $name | quote }}
+              path: {{ printf "%s/%s" $integration $name | quote }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.datadog.kubeStateMetricsCore.enabled }}
+            - key: kubernetes_state_core.yaml.default
+              path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
+            {{- end }}
+            {{- if .Values.datadog.helmCheck.enabled }}
+            - key: helm.yaml
+              path: helm.d/helm.yaml
+            {{- end }}
+            {{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
+            - key: kubernetes_apiserver.yaml
+              path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
+            {{- end }}
+            {{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "orchestratorExplorer-add-crd-collection-config" .) "true") }}
+            - key: orchestrator.yaml
+              path: orchestrator.d/orchestrator.yaml
+            {{- end }}
+            {{- if or .Values.providers.eks.controlPlaneMonitoring .Values.providers.openshift.controlPlaneMonitoring }}
+            - key: kube_apiserver_metrics.yaml
+              path: kube_apiserver_metrics.d/kube_apiserver_metrics.yaml
+            - key: kube_controller_manager.yaml
+              path: kube_controller_manager.d/kube_controller_manager.yaml
+            - key: kube_scheduler.yaml
+              path: kube_scheduler.d/kube_scheduler.yaml
+            {{- end }}
+            {{- if .Values.providers.openshift.controlPlaneMonitoring }}
+            - key: etcd.yaml
+              path: etcd.d/etcd.yaml
+            {{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.datadog_cluster_yaml }}
         - name: cluster-agent-yaml
