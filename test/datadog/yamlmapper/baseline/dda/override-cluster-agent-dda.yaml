@@ -1,0 +1,40 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
+  override:
+    clusterAgent:
+      containers:
+        cluster-agent:
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+      env:
+      - name: DD_CLUSTER_AGENT_CUSTOM_VAR
+        value: custom-value
+      envFrom:
+      - configMapRef:
+          name: cluster-agent-config
+      hostNetwork: false
+      image:
+        name: cluster-agent
+        pullPolicy: Always
+        tag: 7.72.0
+      priorityClassName: cluster-agent-critical
+      replicas: 1
+      updateStrategy:
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate

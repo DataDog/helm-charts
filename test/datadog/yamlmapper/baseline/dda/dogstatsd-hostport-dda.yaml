@@ -1,0 +1,19 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  features:
+    dogstatsd:
+      hostPortConfig:
+        enabled: true
+        hostPort: 8125
+      nonLocalTraffic: true
+      unixDomainSocketConfig:
+        enabled: false
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
