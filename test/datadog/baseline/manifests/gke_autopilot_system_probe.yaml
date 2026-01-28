@@ -1612,6 +1612,8 @@ spec:
               value: "true"
             - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
               value: "true"
+            - name: DD_STRIP_PROCESS_ARGS
+              value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
@@ -1797,6 +1799,8 @@ spec:
               value: "true"
             - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
               value: "true"
+            - name: DD_STRIP_PROCESS_ARGS
+              value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
             - name: DD_LOG_LEVEL
