@@ -1,4 +1,4 @@
-# Datadog Helm chart to Datadog Operator Migration Guide
+# Migrating from Helm to Datadog Operator
 
 ## Overview
 
@@ -17,37 +17,95 @@ Learn more about the [Datadog Operator][1] and its benefits.
 * Datadog Helm chart version X.X.X+
 * Helm version 3.17.0+
 
-## Migrate Existing Datadog Helm Release
+## Migrate existing Datadog Helm release
 
-To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version X.X.X and later:
+To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version X.X.X and later.
 
-1. Configure `datadog-values.yaml`
+The migration tooling supports the following Datadog Helm chart configuration options either minimally or partially:
+
+* Agent credentials and Kubernetes secrets
+* Cluster and Datadog site settings
+* Tags, environment variables, and name overrides
+* Pod-level overrides (partial)
+* Kubelet and container runtime sockets
+* Network policy (basic)
+* APM (hostPort/UDS modes) with basic instrumentation and error tracking
+* Logs collection (basic)
+* Process monitoring
+* DogStatsD
+* Cluster Agent overrides and Admission Controller
+* Cluster checks and cluster checks runner
+* Kubernetes events, KSM core check (basic), Orchestrator Explorer (basic), and Helm check
+* Prometheus scraping (partial)
+* Remote Configuration
+
+Support for additional Datadog Helm chart configurations will be expanded in upcoming releases.
+
+1. **Configure `datadog-values.yaml` to enable migration preview**.
     
     Add the following to your `datadog-values.yaml` file:
 
-    ```yaml
+   ```yaml
    datadog:
       operator:
          enabled: true
          migration:
-         enabled: true
-   
-   operator:
-      datadogCRDs:
-         keepCrds: true
-    ```
+            preview: true
+   ```
 
-2. Upgrade your Helm release with the above configuration file
+2. **Upgrade your Helm release and provide the file path to your updated `datadog-values.yaml` file using --set-file**.
 
    Run:
 
    ```shell
-   helm upgrade <RELEASE_NAME> -f datadog-values.yaml datadog/datadog
+   helm upgrade <RELEASE_NAME> \
+      --set-file datadog.operator.migration.userValues=datadog-values.yaml \
+      -f datadog-values.yaml \
+      datadog/datadog
    ```
 
-3. Confirm Agent installation
+3. **Review the migration job pod logs**
 
-   Verify that Agent pods (tagged with `app.kubernetes.io/component:agent` and `app.kubernetes.io/managed-by: datadog-operator`) are updating according to the configured update strategy and reporting on the Containers page in Datadog. Agent pods are detected within a few minutes of deployment.
+   Run:
+
+   ```shell
+   kubectl logs job/<RELEASE_NAME>-dda-migration-job --all-containers
+   ```
+
+   If there are no configuration mapping errors present in the logs, you may proceed with migrating your current Datadog Helm release.
+
+4. **Configure `datadog-values.yaml` to enable migration**.
+
+   Add the following to your `datadog-values.yaml` file:
+
+   ```yaml
+   datadog:
+      operator:
+         enabled: true
+         migration:
+            enabled: true
+   
+   operator:
+      datadogCRDs:
+         keepCrds: true
+   ```
+
+   Note: Setting `operator.datadogCRDs.keepCrds=true` applies the Helm `helm.sh/resource-policy: keep` annotation to the CRDs, so Helm does not delete them when the Datadog Helm release is uninstalled.
+
+5. **Upgrade your Helm release and provide the file path to your updated `datadog-values.yaml` file using --set-file once more**.
+
+   Run:
+
+   ```shell
+   helm upgrade <RELEASE_NAME> \
+      --set-file datadog.operator.migration.userValues=datadog-values.yaml \
+      -f datadog-values.yaml \
+      datadog/datadog
+   ```
+
+6. **Confirm Datadog Agent installation**.
+
+   Verify that Agent pods (tagged with `app.kubernetes.io/component:agent` and `app.kubernetes.io/managed-by: datadog-operator`) are updating according to the configured update strategy and reporting on the [Containers page][5] in Datadog. Agent pods are detected within a few minutes of deployment.
 
    Your Datadog Agent workloads are now managed by the DatadogAgent custom resource. To view and save the migrated DatadogAgent custom resource, run: 
 
@@ -59,21 +117,9 @@ To migrate Datadog Agent workloads deployed by an existing Datadog Helm release 
    kubectl get datadogagent datadog -oyaml > datadog.yaml
    ```
 
-For more advanced configurations and use-cases, refer to [Datadog Helm chart to Datadog Operator Advanced Migration Guide][2].
-
-## Uninstall Datadog Helm chart
-
-After migrating your Datadog Agent workloads and validating that the Agent pods are reporting as expected, you can now uninstall the Datadog Helm chart in preparation for installing the Datadog Operator.
-
-1. Run:
-
-   ```shell
-   helm uninstall <RELEASE_NAME>
-   ```
-
-Datadog Agent pods should remain unaffected and Datadog custom resource definitions (CRDs) should remain installed on the Kubernetes cluster. 
-
 ## Install Datadog Operator Helm chart
+
+After migrating your Datadog Agent workloads and validating that the Agent pods are reporting as expected, you can proceed to installing the Datadog Operator Helm chart as a standalone Helm release.
 
 1. Run:
 
@@ -85,24 +131,36 @@ Datadog Agent pods should remain unaffected and Datadog custom resource definiti
       datadog/datadog-operator
    ```
 
-2. Confirm Datadog Operator installation
+   Note: `--take-ownership` lets the Datadog Operator release adopt Datadog CRDs left behind when `operator.datadogCRDs.keepCrds=true` was enabled during migration.
 
-   Verify that Datadog Operator pod is reporting on the Containers page in Datadog. 
+2. Verify that the Datadog Operator pod is reporting on the [Containers page][5] in Datadog is reporting as expected.
 
 To customize the Operator configuration, create a values.yaml file that can override the default Datadog Operator Helm chart [values][3]. 
 
+## Uninstall Datadog Helm chart
+
+After you install the Datadog Operator Helm chart, uninstall the Datadog Helm chart.
+
+1. Run:
+
+   ```shell
+   helm uninstall <RELEASE_NAME>
+   ```
+
+Datadog Agent pods should remain unaffected, and Datadog custom resource definitions (CRDs) should remain installed on the Kubernetes cluster. The Cluster Agent, Cluster Agent service account, and Cluster Checks Runners (if enabled) will be recreated by the Datadog Operator.
 
 ## DatadogAgent custom resource configuration
 
-Now, you can manage your Datadog Agent workloads using the DatadogAgent custom resource. To make updates to your Datadog Agent deployment, modify the configuration file containing your DatadogAgent spec and deploy it on your cluster:
+After you install the Datadog Operator Helm chart, you can manage your Datadog Agent workloads using the DatadogAgent custom resource. To make updates to your Datadog Agent deployment, modify the configuration file containing your DatadogAgent spec and deploy it on your cluster:
 
 ```shell
 kubectl apply -f datadog.yaml
 ```
 
-For a full list of configuration options, see the DatadogAgent configuration [spec][4].
+For a full list of configuration options, see the [DatadogAgent configuration spec][4].
 
 [1]: https://docs.datadoghq.com/containers/datadog_operator/#why-use-the-datadog-operator-instead-of-a-helm-chart-or-daemonset
 [2]: https://docs.datadoghq.com/containers/datadog_operator/migration_advanced
 [3]: https://github.com/DataDog/helm-charts/blob/main/charts/datadog-operator/values.yaml
 [4]: https://docs.datadoghq.com/containers/datadog_operator/configuration/
+[5]: https://app.datadoghq.com/containers
