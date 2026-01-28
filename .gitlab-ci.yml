@@ -15,20 +15,25 @@ noop:
 e2e:
   stage: e2e
   rules:
+    # Run on merge queue branches
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       changes:
         paths:
-          - charts/datadog/*.yaml
-          - test/**/*
+          - charts/datadog/templates/**
+          - charts/datadog/values.yaml
+          - charts/datadog/Chart.yaml
+          - test/e2e/**/*
         compare_to: "refs/heads/main"
       when: always
       allow_failure: true
-    - if: $CI_COMMIT_BRANCH == "main"
+    # Run on main branch commits (after merge, compare to parent commit)
+    - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         paths:
-          - charts/datadog/**
-          - test/**/*
-        compare_to: "refs/heads/main"
+          - charts/datadog/templates/**
+          - charts/datadog/values.yaml
+          - charts/datadog/Chart.yaml
+          - test/e2e/**/*
       when: always
     - when: manual
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
