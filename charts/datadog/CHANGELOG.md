@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.164.1
+
+* Rename kubernetesKubeServiceNewBehavior to kubernetesKubeServiceIgnoreReadiness. Old flag was never used and it should be safe to rename it.
+
 ## 3.164.0
 
 * Bump default Datadog Operator image tag to 1.22.0.
