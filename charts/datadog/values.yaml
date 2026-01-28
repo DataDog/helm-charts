@@ -428,8 +428,8 @@ datadog:
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
 
-  # datadog.kubernetesKubeServiceNewBehavior -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
-  kubernetesKubeServiceNewBehavior: false
+  # datadog.kubernetesKubeServiceIgnoreReadiness -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
+  kubernetesKubeServiceIgnoreReadiness: false
 
   # Configure Kubernetes events collection
   kubernetesEvents:
