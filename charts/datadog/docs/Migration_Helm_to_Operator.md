@@ -14,12 +14,14 @@ Learn more about the [Datadog Operator][1] and its benefits.
 
 ## Prerequisites
 
-* Datadog Helm chart version X.X.X+
 * Helm version 3.17.0+
+* Datadog Helm chart version X.X.X+
+* Datadog Operator Helm chart version 2.17.0+
+* Datadog Operator v1.22.0+
 
 ## Migrate existing Datadog Helm release
 
-To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version X.X.X and later.
+To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version X.X.X and Datadog Operator version 1.22.0 and later.
 
 The migration tooling supports the following Datadog Helm chart configuration options either minimally or partially:
 
@@ -86,6 +88,8 @@ Support for additional Datadog Helm chart configurations will be expanded in upc
             enabled: true
    
    operator:
+      image:
+         tag: 1.22.0
       datadogCRDs:
          keepCrds: true
    ```
@@ -135,7 +139,7 @@ After migrating your Datadog Agent workloads and validating that the Agent pods 
 
 2. Verify that the Datadog Operator pod is reporting on the [Containers page][5] in Datadog is reporting as expected.
 
-To customize the Operator configuration, create a values.yaml file that can override the default Datadog Operator Helm chart [values][3]. 
+To customize the Operator configuration, create an `operator-values.yaml` file to override the default [Datadog Operator Helm chart values][3].
 
 ## Uninstall Datadog Helm chart
 
