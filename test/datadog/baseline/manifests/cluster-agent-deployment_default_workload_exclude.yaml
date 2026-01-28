@@ -1338,9 +1338,9 @@ spec:
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
             - -datadogAgentEnabled=false
-            - -datadogSLOEnabled=true
+            - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false
-            - -datadogGenericResourceEnabled=true
+            - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
           env:
@@ -1358,7 +1358,7 @@ spec:
                   fieldPath: metadata.name
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.21.0
+          image: gcr.io/datadoghq/operator:1.22.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -1484,6 +1484,8 @@ spec:
               value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
+            - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+              value: auto
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -1546,7 +1548,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1619,7 +1621,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.74.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

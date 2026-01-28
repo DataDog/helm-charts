@@ -323,6 +323,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
             value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injectionMode }}
+          - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+            value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
@@ -373,7 +377,7 @@ spec:
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
-            value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
+            value: {{ .Values.datadog.kubernetesKubeServiceIgnoreReadiness | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME

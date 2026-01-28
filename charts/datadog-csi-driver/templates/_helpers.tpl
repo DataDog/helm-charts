@@ -29,7 +29,7 @@ Generate the DaemonSet name by appending "-node-server" to the name and truncati
 {{- define "datadog-csi-driver.daemonsetName" -}}
 {{- printf "%s-node-server" (include "datadog-csi-driver.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end }}
-    
+
 
 {{/*
 Create chart name and version as used by the chart label.
@@ -75,6 +75,19 @@ GKE Autopilot WorkloadAllowlists are supported in GKE versions >= 1.32.1-gke.172
 */}}
 {{- define "csi.gke-autopilot-workloadallowlists-enabled" -}}
 {{- if and (.Capabilities.APIVersions.Has "auto.gke.io/v1/AllowlistSynchronizer") (.Capabilities.APIVersions.Has "auto.gke.io/v1/WorkloadAllowlist") (semverCompare ">=v1.32.1-gke.1729000" .Capabilities.KubeVersion.Version) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if target cluster is GKE Autopilot (any version).
+Older GKE Autopilot versions have allowlistedv2workloads.auto.gke.io CRD.
+Newer versions (>= 1.32.1-gke.1729000) have WorkloadAllowlist and AllowlistSynchronizer CRDs.
+*/}}
+{{- define "csi.gke-autopilot" -}}
+{{- if or (.Capabilities.APIVersions.Has "allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload") (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") -}}
 true
 {{- else -}}
 false

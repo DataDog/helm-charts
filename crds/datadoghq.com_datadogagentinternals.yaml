@@ -2013,6 +2013,11 @@ spec:
                             Enabled enables the OTel Agent Gateway.
                             Default: false
                           type: boolean
+                        featureGates:
+                          description: |-
+                            FeatureGates are the feature gates to pass to the OTel collector as a comma-separated list.
+                            Example: "component.UseLocalHostAsDefaultHost,connector.datadogconnector.NativeIngest"
+                          type: string
                         ports:
                           description: |-
                             Ports contains the ports that the OTel Collector is listening on.
@@ -10001,6 +10006,11 @@ spec:
                                 Enabled enables the OTel Agent Gateway.
                                 Default: false
                               type: boolean
+                            featureGates:
+                              description: |-
+                                FeatureGates are the feature gates to pass to the OTel collector as a comma-separated list.
+                                Example: "component.UseLocalHostAsDefaultHost,connector.datadogconnector.NativeIngest"
+                              type: string
                             ports:
                               description: |-
                                 Ports contains the ports that the OTel Collector is listening on.
