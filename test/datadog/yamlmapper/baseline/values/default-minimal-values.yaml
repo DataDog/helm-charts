@@ -7,11 +7,11 @@ datadog:
 
 agents:
   image:
-    tag: 7.74.0
+    tag: 7.75.0
 
 clusterAgent:
   image:
-    tag: 7.74.0
+    tag: 7.75.0
 
 clusterChecksRunner:
   enabled: false

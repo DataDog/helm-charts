@@ -55,8 +55,8 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
-		Name:               "default-minimal.yaml",
-		ValuesFile:         valuesDir + "/default-minimal.yaml",
+		Name:               "default-minimal-values.yaml",
+		ValuesFile:         valuesDir + "/default-minimal-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},

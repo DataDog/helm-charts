@@ -28,7 +28,13 @@ datadog:
     processDiscovery: true
     stripProcessArguments: true
 
+agents:
+  image:
+    tag: 7.75.0
+
 clusterAgent:
+  image:
+    tag: 7.75.0
   enabled: true
   admissionController:
     enabled: true

@@ -11,7 +11,6 @@ datadog:
     - "service:my-app"
   
   apm:
-    portEnabled: true
     port: 8126
     socketEnabled: true
   
@@ -26,11 +25,11 @@ datadog:
 
 agents:
   image:
-    tag: 7.74.0
+    tag: 7.75.0
 
 clusterAgent:
   image:
-    tag: 7.74.0
+    tag: 7.75.0
   enabled: true
   admissionController:
     enabled: true

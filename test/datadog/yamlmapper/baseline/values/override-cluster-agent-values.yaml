@@ -5,6 +5,10 @@ datadog:
   kubelet:
     tlsVerify: false
 
+agents:
+  image:
+    tag: 7.75.0
+
 clusterAgent:
   enabled: true
   
@@ -12,7 +16,7 @@ clusterAgent:
   
   image:
     name: cluster-agent
-    tag: 7.72.0
+    tag: 7.75.0
     pullPolicy: Always
   
   replicas: 1

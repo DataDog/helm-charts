@@ -6,5 +6,13 @@ datadog:
   kubelet:
     tlsVerify: false
 
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+
 # This key is not in the mapping file and should cause an error
 thisIsAnUnsupportedKey: "should-cause-error"
