@@ -2,7 +2,7 @@
 
 ## 3.164.1
 
-* Rename kubernetesKubeServiceNewBehavior to kubernetesKubeServiceIgnoreReadiness. Old flag was never used and it should be safe to rename it.
+* Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
 
 ## 3.164.0
 
