@@ -16,7 +16,15 @@ spec:
       labels:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
+      {{- with .Values.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
     {{ toYaml .Values.image.pullSecrets | indent 8 }}
@@ -25,11 +33,13 @@ spec:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.driver.securityContext }}
           securityContext:
-            privileged: true 
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 5000
-              protocol: TCP 
+              protocol: TCP
           args:
             - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
             - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
@@ -38,6 +48,11 @@ spec:
             # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
+            {{- if ne (include "csi.gke-autopilot" .) "true" }}
+            # storage-dir stores the data and database for the CSI driver.
+            - name: storage-dir
+              mountPath: /var/lib/datadog-csi-driver
+            {{- end }}
             - name: apm-socket
               mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
               readOnly: true
@@ -47,7 +62,7 @@ spec:
               readOnly: true
             {{- end }}
             # write mode is required to perform a volume mount
-            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount. 
+            # csi driver has to create a subdirectory under /var/lib/kubelet/pods/<pod-uid>/volumes/kubernetes.io~csi/datadog/mount.
             - mountPath: /var/lib/kubelet/pods
               mountPropagation: Bidirectional
               name: mountpoint-dir
@@ -56,9 +71,17 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            {{- if ne (include "csi.gke-autopilot" .) "true" }}
+            - name: DD_APM_ENABLED
+              value: {{ .Values.apm.enabled | quote }}
+            {{- end }}
         - name: csi-node-driver-registrar
           image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
           imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
+          {{- with .Values.registrar.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -86,6 +109,12 @@ spec:
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/driver
             type: DirectoryOrCreate
+        {{- if ne (include "csi.gke-autopilot" .) "true" }}
+        - name: storage-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/datadog.csi/storage
+            type: DirectoryOrCreate
+        {{- end }}
         - name: registration-dir
           hostPath:
             path: /var/lib/kubelet/plugins_registry

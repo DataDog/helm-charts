@@ -15,7 +15,7 @@
 {{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
 {{- end }}
   ports:
-  {{- if eq (include "should-enable-agent-data-plane" .) "false" }}
+  {{- if eq (include "should-enable-data-plane" .) "false" }}
   - containerPort: {{ .Values.datadog.dogstatsd.port }}
     {{- if .Values.datadog.dogstatsd.useHostPort }}
     hostPort: {{ .Values.datadog.dogstatsd.port }}
@@ -80,14 +80,14 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
-    {{- if eq (include "should-enable-agent-data-plane" .) "true" }}
-    - name: DD_USE_DOGSTATSD
-      value: "false"
+    {{- if eq (include "should-enable-data-plane" .) "true" }}
     - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
       value: "true"
-    {{- else }}
-    {{- include "containers-dogstatsd-env" . | nindent 4 }}
+    - name: DD_DATA_PLANE_ENABLED
+      value: "true"
+    {{- include "core-agent-data-plane-env" . | nindent 4 }}
     {{- end }}
+    {{- include "containers-dogstatsd-env" . | nindent 4 }}
     {{- if eq (include "cluster-agent-enabled" .) "false" }}
     {{- if .Values.datadog.leaderElection }}
     - name: DD_LEADER_ELECTION
@@ -270,7 +270,7 @@
       value: "container.memory.usage container.cpu.usage"
     {{- end }}
     - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
-      value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
+      value: {{ .Values.datadog.kubernetesKubeServiceIgnoreReadiness | quote }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
     {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}

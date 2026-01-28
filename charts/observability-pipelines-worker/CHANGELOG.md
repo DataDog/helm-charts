@@ -3,6 +3,7 @@
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
+- Official image `2.13.0`
 
 ## 2.12.2
 
