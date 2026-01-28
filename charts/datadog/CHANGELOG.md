@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.165.0
+
+* Add migration k8s job ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
 ## 3.164.1
 
 * Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
