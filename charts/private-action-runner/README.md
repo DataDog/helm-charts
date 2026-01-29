@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.21.1](https://img.shields.io/badge/Version-1.21.1-informational?style=flat-square) ![AppVersion: v1.17.1](https://img.shields.io/badge/AppVersion-v1.17.1-informational?style=flat-square)
+![Version: 1.21.2](https://img.shields.io/badge/Version-1.21.2-informational?style=flat-square) ![AppVersion: v1.17.1](https://img.shields.io/badge/AppVersion-v1.17.1-informational?style=flat-square)
 
 ## Overview
 
