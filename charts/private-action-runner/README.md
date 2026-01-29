@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.21.2](https://img.shields.io/badge/Version-1.21.2-informational?style=flat-square) ![AppVersion: v1.17.1](https://img.shields.io/badge/AppVersion-v1.17.1-informational?style=flat-square)
+![Version: 1.22.0](https://img.shields.io/badge/Version-1.22.0-informational?style=flat-square) ![AppVersion: v1.17.1](https://img.shields.io/badge/AppVersion-v1.17.1-informational?style=flat-square)
 
 ## Overview
 
@@ -319,6 +319,9 @@ If actions requiring credentials fail:
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | $schema | string | `"./values.schema.json"` | Schema for the values file, enables support in Jetbrains IDEs. You should probably use https://raw.githubusercontent.com/DataDog/helm-charts/refs/heads/main/charts/private-action-runner/values.schema.json. |
+| deployment | object | `{"metadata":{"annotations":{},"labels":{}}}` | Deployment configuration |
+| deployment.metadata.annotations | object | `{}` | Annotations to add to the deployment metadata |
+| deployment.metadata.labels | object | `{}` | Labels to add to the deployment metadata |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.17.1"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
@@ -365,6 +368,7 @@ If actions requiring credentials fail:
 | runner.kubernetesPermissions | list | `[]` | Kubernetes permissions to provide in addition to the one that will be inferred from `kubernetesActions` (useful for customObjects) |
 | runner.livenessProbe | object | `{}` | LivenessProbe settings |
 | runner.nodeSelector | object | `{}` | Allow the private action runner pods to schedule on selected nodes |
+| runner.podAnnotations | object | `{}` | Annotations to add to the pod template |
 | runner.podSecurity | object | `{"capabilities":[],"privileged":false,"requiredDropCapabilities":["KILL","MKNOD","SETUID","SETGID"],"seLinuxContext":{"type":"MustRunAs"},"seccompProfiles":["runtime/default"],"securityContextConstraints":{"create":false},"volumes":["configMap","csi","downwardAPI","emptyDir","ephemeral","persistentVolumeClaim","projected","secret"]}` | Pod Security configuration |
 | runner.podSecurity.capabilities | list | `[]` | Allowed capabilities |
 | runner.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
