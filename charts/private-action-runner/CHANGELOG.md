@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.21.2
+
+* Update charts description
+
 ## 1.21.1
 
 * Bump private runner version to 1.17.1
