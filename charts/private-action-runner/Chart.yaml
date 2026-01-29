@@ -1,6 +1,6 @@
 apiVersion: v2
 name: private-action-runner
-description: A Helm chart to deploy the private action runner
+description: Datadog Private Action Runner
 
 type: application
 version: 1.21.1
