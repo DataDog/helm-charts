@@ -81,7 +81,7 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.21.1
+    helm.sh/chart: private-action-runner-1.22.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
     app.kubernetes.io/version: "v1.17.1"
@@ -96,13 +96,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.21.1
+        helm.sh/chart: private-action-runner-1.22.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
         app.kubernetes.io/version: "v1.17.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: fa5eb9f17c40980921c45c6f0dfdcdfedbcd4c089a81907b33127a363df7dc59
+        checksum/values: 7775df721ba32f83d6cf49b05deb09acff65b9809ebc5307ae51125549448026
     spec:
       serviceAccountName: custom-full-name
       containers:
