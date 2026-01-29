@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.164.1](https://img.shields.io/badge/Version-3.164.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.164.2](https://img.shields.io/badge/Version-3.164.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -997,6 +997,11 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
+| operator.datadog | object | `{"apiKey":null,"apiKeyExistingSecret":null,"appKey":null,"appKeyExistingSecret":null}` | Parent chart's datadog configuration These values are automatically set to match the parent datadog chart's API/App key configuration This ensures the operator has access to your Datadog credentials |
+| operator.datadog.apiKey | string | `nil` | Automatically references datadog.apiKey |
+| operator.datadog.apiKeyExistingSecret | string | `nil` | Automatically references datadog.apiKeyExistingSecret |
+| operator.datadog.appKey | string | `nil` | Automatically references datadog.appKey |
+| operator.datadog.appKeyExistingSecret | string | `nil` | Automatically references datadog.appKeyExistingSecret |
 | operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
 | operator.datadogAgentInternal.enabled | bool | `false` | Enables the Datadog Agent Internal controller Note: The Datadog Agent Internal controller will be enabled by default in a future release. |
 | operator.datadogCRDs.crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
