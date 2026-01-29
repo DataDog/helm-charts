@@ -153,6 +153,10 @@
           "type": "object",
           "description": "Readiness Probe configuration"
         },
+        "podAnnotations": {
+          "type": "object",
+          "description": "Annotations to add to the pod template"
+        },
         "runnerIdentitySecret": {
           "type": "string",
           "description": "Name of the secret containing the runner's identity"
@@ -489,6 +493,28 @@
         "annotations": {
           "type": "object",
           "description": "Annotations to add to the service"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deployment": {
+      "type": "object",
+      "description": "Deployment configuration for the Datadog Private Action Runner",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "description": "Deployment metadata configuration",
+          "properties": {
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to add to the deployment metadata"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Labels to add to the deployment metadata"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

@@ -79,7 +79,7 @@ metadata:
   name: scc-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.21.2
+    helm.sh/chart: private-action-runner-1.22.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
     app.kubernetes.io/version: "v1.17.1"
@@ -94,13 +94,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.21.2
+        helm.sh/chart: private-action-runner-1.22.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: scc-test
         app.kubernetes.io/version: "v1.17.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: a9485dff8ff91d136520f45192a374f226c6a5abc6e7236684e1707d2a36324d
+        checksum/values: 2af8816ee428adbdd1ff76cc702a9ccde48e1941cd6a2704a239bb3718c43f6c
     spec:
       serviceAccountName: scc-test-private-action-runner
       containers:
@@ -134,7 +134,7 @@ apiVersion: security.openshift.io/v1
 metadata:
   name: scc-test-private-action-runner
   labels:
-    helm.sh/chart: private-action-runner-1.21.2
+    helm.sh/chart: private-action-runner-1.22.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
     app.kubernetes.io/version: "v1.17.1"
