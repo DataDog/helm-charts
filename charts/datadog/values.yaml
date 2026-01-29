@@ -38,23 +38,23 @@ datadog:
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
-  apiKey:  # <DATADOG_API_KEY>
+  apiKey: &apiKey  # <DATADOG_API_KEY>
 
   # datadog.apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "apiKey".
-  apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+  apiKeyExistingSecret: &apiKeyExistingSecret  # <DATADOG_API_KEY_SECRET>
 
   # datadog.appKey -- Datadog APP key required to use metricsProvider
 
   ## If you are using clusterAgent.metricsProvider.enabled = true, you must set
   ## a Datadog application key for read access to your metrics.
-  appKey:  # <DATADOG_APP_KEY>
+  appKey: &appKey  # <DATADOG_APP_KEY>
 
   # datadog.appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret.
 
   ## If set, this parameter takes precedence over "appKey".
-  appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+  appKeyExistingSecret: &appKeyExistingSecret  # <DATADOG_APP_KEY_SECRET>
 
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
@@ -2751,6 +2751,19 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  # operator.datadog -- Parent chart's datadog configuration
+  # These values are automatically set to match the parent datadog chart's API/App key configuration
+  # This ensures the operator has access to your Datadog credentials
+  datadog:
+    # operator.datadog.apiKey -- Automatically references datadog.apiKey
+    apiKey: *apiKey
+    # operator.datadog.apiKeyExistingSecret -- Automatically references datadog.apiKeyExistingSecret
+    apiKeyExistingSecret: *apiKeyExistingSecret
+    # operator.datadog.appKey -- Automatically references datadog.appKey
+    appKey: *appKey
+    # operator.datadog.appKeyExistingSecret -- Automatically references datadog.appKeyExistingSecret
+    appKeyExistingSecret: *appKeyExistingSecret
+
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
     tag: 1.22.0

@@ -84,9 +84,21 @@ false
 
 {{/*
 Return true if DD_API_KEY env var should be set.
+Checks:
+1. operator.apiKey
+2. operator.apiKeyExistingSecret
+3. datadog.apiKey (parent chart)
+4. datadog.apiKeyExistingSecret (parent chart)
+5. endpoint-config ConfigMap
 */}}
 {{- define "should-set-dd-api-key" -}}
-{{- if or .Values.apiKey .Values.apiKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "api-key-secret-name")) "true") -}}
+{{- $parentApiKey := "" -}}
+{{- $parentApiKeyExistingSecret := "" -}}
+{{- if .Values.datadog -}}
+  {{- $parentApiKey = .Values.datadog.apiKey -}}
+  {{- $parentApiKeyExistingSecret = .Values.datadog.apiKeyExistingSecret -}}
+{{- end -}}
+{{- if or .Values.apiKey .Values.apiKeyExistingSecret $parentApiKey $parentApiKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "api-key-secret-name")) "true") -}}
 true
 {{- else -}}
 false
@@ -95,9 +107,21 @@ false
 
 {{/*
 Return true if DD_APP_KEY env var should be set.
+Checks:
+1. operator.appKey
+2. operator.appKeyExistingSecret
+3. datadog.appKey (parent chart)
+4. datadog.appKeyExistingSecret (parent chart)
+5. endpoint-config ConfigMap
 */}}
 {{- define "should-set-dd-app-key" -}}
-{{- if or .Values.appKey .Values.appKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "app-key-secret-name")) "true") -}}
+{{- $parentAppKey := "" -}}
+{{- $parentAppKeyExistingSecret := "" -}}
+{{- if .Values.datadog -}}
+  {{- $parentAppKey = .Values.datadog.appKey -}}
+  {{- $parentAppKeyExistingSecret = .Values.datadog.appKeyExistingSecret -}}
+{{- end -}}
+{{- if or .Values.appKey .Values.appKeyExistingSecret $parentAppKey $parentAppKeyExistingSecret (eq (include "is-valid-endpoint-config-data" ( list . "app-key-secret-name")) "true") -}}
 true
 {{- else -}}
 false
@@ -107,13 +131,20 @@ false
 {{/*
 Return apiKey secret name to be used based on provided values.
 Priority for determining secret name:
-1. .Values.apiKey
-2. .Values.apiKeyExistingSecret
-3. api-key-secret-name from endpoint-config configMap
+1. .Values.apiKey (operator's own value)
+2. .Values.apiKeyExistingSecret (operator's own value)
+3. .Values.datadog.apiKeyExistingSecret (parent chart value)
+4. api-key-secret-name from endpoint-config configMap
 */}}
 {{- define "datadog-operator.apiKeySecretName" -}}
-{{- if and (eq (include "is-valid-endpoint-config-data" (list . "api-key-secret-name")) "true") (not .Values.apiKey) (not .Values.apiKeyExistingSecret) }}
+{{- $parentApiKeyExistingSecret := "" -}}
+{{- if .Values.datadog -}}
+  {{- $parentApiKeyExistingSecret = .Values.datadog.apiKeyExistingSecret -}}
+{{- end -}}
+{{- if and (eq (include "is-valid-endpoint-config-data" (list . "api-key-secret-name")) "true") (not .Values.apiKey) (not .Values.apiKeyExistingSecret) (not $parentApiKeyExistingSecret) }}
 {{- (include "get-endpoint-config-data-key" (list . "api-key-secret-name")) }}
+{{- else if and (not .Values.apiKey) (not .Values.apiKeyExistingSecret) $parentApiKeyExistingSecret }}
+{{- $parentApiKeyExistingSecret | quote -}}
 {{- else }}
 {{- $fullName := printf "%s-apikey" (include "datadog-operator.fullname" .) -}}
 {{- default $fullName .Values.apiKeyExistingSecret -}}
@@ -123,13 +154,20 @@ Priority for determining secret name:
 {{/*
 Return appKey secret name to be used based on provided values.
 Priority for determining secret name:
-1. .Values.appKey
-2. .Values.appKeyExistingSecret
-3. app-key-secret-name from endpoint-config configMap
+1. .Values.appKey (operator's own value)
+2. .Values.appKeyExistingSecret (operator's own value)
+3. .Values.datadog.appKeyExistingSecret (parent chart value)
+4. app-key-secret-name from endpoint-config configMap
 */}}
 {{- define "datadog-operator.appKeySecretName" -}}
-{{- if and (eq (include "is-valid-endpoint-config-data" (list . "app-key-secret-name")) "true") (not .Values.appKey) (not .Values.appKeyExistingSecret) }}
+{{- $parentAppKeyExistingSecret := "" -}}
+{{- if .Values.datadog -}}
+  {{- $parentAppKeyExistingSecret = .Values.datadog.appKeyExistingSecret -}}
+{{- end -}}
+{{- if and (eq (include "is-valid-endpoint-config-data" (list . "app-key-secret-name")) "true") (not .Values.appKey) (not .Values.appKeyExistingSecret) (not $parentAppKeyExistingSecret) }}
 {{- (include "get-endpoint-config-data-key" (list . "app-key-secret-name")) }}
+{{- else if and (not .Values.appKey) (not .Values.appKeyExistingSecret) $parentAppKeyExistingSecret }}
+{{- $parentAppKeyExistingSecret | quote -}}
 {{- else }}
 {{- $fullName := printf "%s-appkey" (include "datadog-operator.fullname" .) -}}
 {{- default $fullName .Values.appKeyExistingSecret -}}
