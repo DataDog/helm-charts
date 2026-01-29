@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.164.1
+
+* Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
+
 ## 3.164.0
 
 * Bump default Datadog Operator image tag to 1.22.0.
