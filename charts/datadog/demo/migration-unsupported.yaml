@@ -1,0 +1,47 @@
+# Test values with multiple unsupported Helm keys that should cause mapper to error
+# This tests that the mapper correctly rejects multiple unknown/unmapped keys
+
+operator:
+  image:
+    tag: 1.22.0
+  # datadogCRDs:
+  #   keepCrds: true
+
+datadog:
+  operator:
+    enabled: true   # default is true
+
+    # migration:
+    #   preview: true
+    #   enabled: true
+
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  kubelet:
+    tlsVerify: false
+  site: datad0g.com
+  clusterName: helm-migration-unsupported
+  
+  otelCollector:
+    enabled: true  # not supported
+
+  apm:
+    enabled: true  # deprecated key
+    instrumentation:
+      enabled: true
+      libVersions:   # not supported
+        golang: "v2.5.0"
+        python: "v4.3.0"
+        java: "v1.58.2"
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+
+clusterChecksRunner:
+  enabled: true
+  image:
+    tag: 7.75.0
