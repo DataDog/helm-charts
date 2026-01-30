@@ -1334,26 +1334,13 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
-  Return value of "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" env var in core agent container.
-*/}}
-{{- define "get-process-checks-in-core-agent-envvar" -}}
-  {{- range .Values.agents.containers.agent.env -}}
-    {{- if eq .name "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" -}}
-      {{- .value -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-
-{{/*
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
   {{- if ne .Values.targetSystem "linux" -}}
     false
-  {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
-    {{- include "get-process-checks-in-core-agent-envvar" . -}}
   {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
-      true
+    true
   {{- else -}}
     false
   {{- end -}}
