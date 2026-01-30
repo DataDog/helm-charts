@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.165.0
+
+* Add `datadog.networkMonitoring.dnsMonitoringPorts` option to configure custom DNS monitoring ports for network performance monitoring.
+
 ## 3.164.1
 
 * Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
