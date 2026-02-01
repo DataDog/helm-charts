@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.166.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
 ## 3.165.0
 
 * Deprecate `securityAgent.runtime.fimEnabled` config value.
