@@ -2183,7 +2183,7 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
               value: /etc/datadog-agent/runtime-security.d
             - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
