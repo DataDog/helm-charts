@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
 ## 3.166.5
 
 * Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
