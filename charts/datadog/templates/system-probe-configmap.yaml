@@ -81,6 +81,10 @@ data:
       socket: /var/run/sysprobe/event-monitor.sock
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
+{{- if not (eq .Values.datadog.securityAgent.runtime.fimEnabled nil) }}
+      fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
+{{- end }}
+      use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
 {{- if .Values.datadog.securityAgent.runtime.containerInclude }}
       container_include:
 {{- range (split " " .Values.datadog.securityAgent.runtime.containerInclude) }}
@@ -93,8 +97,6 @@ data:
       - {{ . | quote }}
 {{- end }}
 {{- end }}
-      fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
-      use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d

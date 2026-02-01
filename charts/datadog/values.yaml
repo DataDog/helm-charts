@@ -1122,8 +1122,12 @@ datadog:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
       enabled: false
 
-      # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
-      fimEnabled: false
+      # datadog.securityAgent.runtime.fimEnabled -- Enable Cloud Workload Security (CWS) File Integrity Monitoring
+      # Valid values are:
+      # - false: FIM is turned off.
+      # - null: FIM configuration is not set (by default, FIM is enabled by the agent if runtime is enabled).
+      # - true: FIM is turned on.
+      fimEnabled: null
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
       useSecruntimeTrack: true

@@ -54,7 +54,7 @@
     {{- end }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
+      value: {{ (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) | quote }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
