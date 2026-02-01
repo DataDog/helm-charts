@@ -94,6 +94,7 @@ data:
 {{- end }}
 {{- end }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
+      direct_send_from_system_probe: {{ $.Values.datadog.securityAgent.runtime.directSendFromSystemProbe }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
