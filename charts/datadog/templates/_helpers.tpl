@@ -728,9 +728,12 @@ false
 {{/*
 Return true if trace-loader should be used for the trace-agent container.
 trace-loader is available in agent versions >= 7.75.0.
+trace-loader is not supported on GKE Autopilot.
 */}}
 {{- define "use-trace-loader" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- if .Values.providers.gke.autopilot -}}
+false
+{{- else if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare ">=7.75.0-0" $version -}}
 true
