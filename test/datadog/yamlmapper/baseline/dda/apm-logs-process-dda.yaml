@@ -1,0 +1,34 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  features:
+    admissionController:
+      enabled: true
+    apm:
+      errorTrackingStandalone:
+        enabled: true
+      instrumentation:
+        enabled: true
+      unixDomainSocketConfig:
+        enabled: true
+        path: /var/run/datadog/apm.socket
+    liveContainerCollection:
+      enabled: true
+    liveProcessCollection:
+      enabled: true
+      stripProcessArguments: true
+    logCollection:
+      autoMultiLineDetection: true
+      containerCollectAll: true
+      containerCollectUsingFiles: true
+      enabled: true
+    processDiscovery:
+      enabled: true
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false

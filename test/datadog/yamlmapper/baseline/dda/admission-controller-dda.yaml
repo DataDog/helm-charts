@@ -1,0 +1,51 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  features:
+    admissionController:
+      agentCommunicationMode: socket
+      agentSidecarInjection:
+        clusterAgentCommunicationEnabled: true
+        enabled: true
+        image:
+          name: agent
+          tag: 7.52.0
+        profiles:
+        - env:
+          - name: DD_APM_ENABLED
+            value: "true"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+        provider: fargate
+        registry: gcr.io/datadoghq
+        selectors:
+        - namespaceSelector:
+            matchLabels:
+              sidecar-injection: enabled
+          objectSelector:
+            matchLabels:
+              inject-agent: "true"
+      enabled: true
+      failurePolicy: Ignore
+      kubernetesAdmissionEvents:
+        enabled: true
+      mutateUnlabelled: true
+      mutation:
+        enabled: true
+      registry: gcr.io/datadoghq
+      validation:
+        enabled: true
+      webhookName: custom-datadog-webhook
+  global:
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false

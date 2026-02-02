@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -16,6 +17,8 @@ import (
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	yaml2 "k8s.io/apimachinery/pkg/util/yaml"
 )
 
@@ -67,10 +70,21 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 	helmChartPath, err := filepath.Abs(cmd.ChartPath)
 	require.NoError(t, err)
 
+	// --wait and --timeout for clean state transitions between chart installs
+	// 3m timeout to wait for readiness probes
+	extraArgs := []string{"--wait", "--timeout", "3m"}
+	if len(cmd.ExtraArgs) > 0 {
+		extraArgs = append(extraArgs, cmd.ExtraArgs...)
+	}
+
 	helmOptions := &helm.Options{
 		KubectlOptions: kubectlOptions,
 		SetValues:      cmd.Overrides,
 		ValuesFiles:    cmd.Values,
+		ExtraArgs:      map[string][]string{"install": extraArgs},
+	}
+	if cmd.Logger != nil {
+		helmOptions.Logger = cmd.Logger
 	}
 
 	releaseName := cmd.ReleaseName + "-" + strings.ToLower(random.UniqueId())
@@ -80,24 +94,74 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 
 	return func() {
 		t.Log("Deleting release", releaseName)
-		helm.Delete(t, helmOptions, releaseName, true)
+		// use --wait to ensure resources are fully cleaned up before returning
+		deleteOptions := &helm.Options{
+			KubectlOptions: kubectlOptions,
+			ExtraArgs:      map[string][]string{"delete": {"--wait", "--timeout", "2m"}},
+		}
+		if cmd.Logger != nil {
+			deleteOptions.Logger = cmd.Logger
+		}
+		helm.Delete(t, deleteOptions, releaseName, true)
 	}
 }
 
+// CreateSecretFromEnv creates a Kubernetes secret from environment variables
 func CreateSecretFromEnv(t *testing.T, kubectlOptions *k8s.KubectlOptions, apiKeyEnv, appKeyEnv string) (cleanupFunc func()) {
 	apiKey := os.Getenv(apiKeyEnv)
 	appKey := os.Getenv(appKeyEnv)
 
-	// Setup Datadog Agent
-	t.Log("Creating secret")
-	k8s.RunKubectl(t, kubectlOptions, "create", "secret", "generic", "datadog-secret",
-		"--from-literal",
-		"api-key="+apiKey,
-		"--from-literal",
-		"app-key="+appKey)
+	return CreateSecret(t, kubectlOptions, "datadog-secret", map[string]string{
+		"api-key": apiKey,
+		"app-key": appKey,
+	})
+}
+
+// CreateSecret creates a Kubernetes secret with the given name and key-value pairs
+func CreateSecret(t *testing.T, kubectlOptions *k8s.KubectlOptions, secretName string, data map[string]string) (cleanupFunc func()) {
+	t.Logf("Creating secret %s", secretName)
+
+	clientset, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+	require.NoError(t, err, "Failed to get Kubernetes client")
+
+	secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: kubectlOptions.Namespace,
+		},
+		StringData: data,
+	}
+
+	_, err = clientset.CoreV1().Secrets(kubectlOptions.Namespace).Create(context.Background(), secret, metav1.CreateOptions{})
+	require.NoError(t, err, "Failed to create secret %s", secretName)
+
 	return func() {
-		t.Log("Deleting secret")
-		k8s.RunKubectl(t, kubectlOptions, "delete", "secret", "datadog-secret")
+		t.Logf("Deleting secret %s", secretName)
+		_ = clientset.CoreV1().Secrets(kubectlOptions.Namespace).Delete(context.Background(), secretName, metav1.DeleteOptions{})
+	}
+}
+
+// CreateConfigMap creates a Kubernetes configmap with the given name and key-value pairs
+func CreateConfigMap(t *testing.T, kubectlOptions *k8s.KubectlOptions, configMapName string, data map[string]string) (cleanupFunc func()) {
+	t.Logf("Creating configmap %s", configMapName)
+
+	clientset, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+	require.NoError(t, err, "Failed to get Kubernetes client")
+
+	configMap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      configMapName,
+			Namespace: kubectlOptions.Namespace,
+		},
+		Data: data,
+	}
+
+	_, err = clientset.CoreV1().ConfigMaps(kubectlOptions.Namespace).Create(context.Background(), configMap, metav1.CreateOptions{})
+	require.NoError(t, err, "Failed to create configmap %s", configMapName)
+
+	return func() {
+		t.Logf("Deleting configmap %s", configMapName)
+		_ = clientset.CoreV1().ConfigMaps(kubectlOptions.Namespace).Delete(context.Background(), configMapName, metav1.DeleteOptions{})
 	}
 }
 
@@ -138,7 +202,7 @@ func Contains(str string, list []string) bool {
 	return false
 }
 
-// Takes multi-document YAML and filter out keys from each document.
+// FilterYamlKeysMultiManifest Takes multi-document YAML and filter out keys from each document.
 func FilterYamlKeysMultiManifest(manifest string, filterKeys map[string]interface{}) (string, error) {
 	reader := strings.NewReader(manifest)
 	decoder := yaml2.NewYAMLOrJSONDecoder(reader, 4096)
@@ -193,4 +257,35 @@ func filterKeysRecursive(yamlMap *map[string]interface{}, keys map[string]interf
 			filterKeysRecursive(&nested, keys)
 		}
 	}
+}
+
+func CurrentContext(t *testing.T) string {
+	val, err := k8s.RunKubectlAndGetOutputE(t, k8s.NewKubectlOptions("", "", ""), "config", "current-context")
+	require.Nil(t, err)
+	return val
+}
+
+func GetFullValues(t *testing.T, cmd HelmCommand, namespace string) string {
+	tempFile, err := os.CreateTemp("", "helm-values-*.yaml")
+	require.NoError(t, err, "failed to create temporary file")
+	defer tempFile.Close()
+
+	tempFilePath := tempFile.Name()
+
+	// Default namespace is datadog-agent
+	if namespace == "" {
+		namespace = "datadog-agent"
+	}
+	kubectlOptions := k8s.NewKubectlOptions("", "", namespace)
+	helmOptions := &helm.Options{
+		KubectlOptions: kubectlOptions,
+	}
+
+	output, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "get", "values", cmd.ReleaseName, "--all")
+	require.NoError(t, err, "failed to get helm values")
+
+	err = os.WriteFile(tempFilePath, []byte(output), 0644)
+	require.NoError(t, err, "failed to write values to temporary file")
+
+	return tempFilePath
 }
