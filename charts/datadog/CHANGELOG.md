@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.164.2
+
+* Update `fips.image.tag` to `1.1.19` fixing CVEs and updating packages.
+
+
 ## 3.164.1
 
 * Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
