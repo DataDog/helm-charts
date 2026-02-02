@@ -307,6 +307,7 @@ rules:
   - rolebindings
   verbs:
   - list
+  - watch
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -362,6 +363,29 @@ rules:
   - argoproj.io
   resources:
   - rollouts
+  - applications
+  - applicationsets
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - helmcharts
+  - externalartifacts
+  - gitrepositories
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
   verbs:
   - list
   - watch
@@ -574,6 +598,7 @@ rules:
   - delete
   - get
   - list
+  - watch
   - patch
 - apiGroups:
   - karpenter.k8s.aws

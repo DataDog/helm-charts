@@ -428,8 +428,8 @@ datadog:
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
   kubernetesUseEndpointSlices: false
 
-  # datadog.kubernetesKubeServiceNewBehavior -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
-  kubernetesKubeServiceNewBehavior: false
+  # datadog.kubernetesKubeServiceIgnoreReadiness -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
+  kubernetesKubeServiceIgnoreReadiness: false
 
   # Configure Kubernetes events collection
   kubernetesEvents:
@@ -601,6 +601,10 @@ datadog:
       language_detection:
         # datadog.apm.instrumentation.language_detection.enabled -- Run language detection to automatically detect languages of user workloads (preview).
         enabled: true
+
+      # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
+      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver)
+      injectionMode: "auto"
 
       # This feature is in preview. It requires Cluster Agent 7.57+.
       injector:
@@ -1277,25 +1281,32 @@ datadog:
     #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
-  ## Agent Data Plane is currently in preview. Please reach out to your Datadog representative for more information.
-  agentDataPlane:
-    # datadog.agentDataPlane.enabled -- Whether or not Agent Data Plane is enabled
+  dataPlane:
+    # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
+    #
+    # Requires version 7.74 or later of the Datadog Agent.
+    #
+    # The data plane feature is currently in preview. Please reach out to your Datadog representative for more information.
     enabled: false
 
+    dogstatsd:
+      # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
+      enabled: false
+
     image:
-      # datadog.agentDataPlane.image.name -- Agent Data Plane image name to use (relative to `registry`)
+      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
       name: agent-data-plane
 
-      # datadog.agentDataPlane.image.tag -- Define the Agent Data Plane version to use
-      tag: 0.1.11
+      # datadog.dataPlane.image.tag -- Define the data plane version to use
+      tag: 0.1.30
 
-      # datadog.agentDataPlane.image.digest -- Define Agent Data Plane image digest to use, takes precedence over tag if specified
+      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
       digest: ""
 
-      # datadog.agentDataPlane.image.repository -- Override default registry + image.name for Agent Data Plane
+      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
       repository:
 
-      # datadog.agentDataPlane.image.pullPolicy -- Agent Data Plane image pull policy
+      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
       pullPolicy: IfNotPresent
 
   ## Datadog Operator
@@ -1334,7 +1345,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.74.0
+    tag: 7.75.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1893,7 +1904,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.74.0
+    tag: 7.75.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2501,7 +2512,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.74.0
+    tag: 7.75.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2742,24 +2753,33 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.21.0
+    tag: 1.22.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
     # Note: The Datadog Agent controller will be enabled by default in a future release.
     enabled: false
+
+  datadogAgentInternal:
+    # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+    # Note: The Datadog Agent Internal controller will be enabled by default in a future release.
+    enabled: false
+
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
     enabled: false
+
   datadogGenericResource:
     # operator.datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
-    enabled: true
+    enabled: false
+
   datadogMonitor:
     # operator.datadogMonitor.enabled -- Enables the Datadog Monitor controller
     enabled: false
+
   datadogSLO:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
-    enabled: true
+    enabled: false
 
   datadogCRDs:
     crds:
@@ -2777,6 +2797,8 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
+      datadogAgentInternals: false
 
 datadog-crds:
   crds:

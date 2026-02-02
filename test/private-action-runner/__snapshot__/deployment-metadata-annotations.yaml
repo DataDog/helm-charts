@@ -1,0 +1,132 @@
+---
+# Source: private-action-runner/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deployment-metadata-test-private-action-runner
+  namespace: datadog-agent
+---
+# Source: private-action-runner/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: deployment-metadata-test-private-action-runner
+  namespace: datadog-agent
+stringData:
+  config.yaml: |
+    ddBaseURL: https://app.datadoghq.com
+    urn: CHANGE_ME_URN_FROM_CONFIG
+    privateKey: CHANGE_ME_PRIVATE_KEY_FROM_CONFIG
+    modes:
+      - workflowAutomation
+      - appBuilder
+    port: 9016
+    tags: []
+    actionsAllowlist:
+      - com.datadoghq.kubernetes.core.getPod
+      - com.datadoghq.kubernetes.core.listPod
+    httpTimeoutSeconds: 30
+---
+# Source: private-action-runner/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: datadog-agent
+  name: deployment-metadata-test-private-action-runner
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+# Source: private-action-runner/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployment-metadata-test-private-action-runner
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: deployment-metadata-test-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: deployment-metadata-test-private-action-runner
+    namespace: datadog-agent
+---
+# Source: private-action-runner/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: deployment-metadata-test-private-action-runner
+  namespace: datadog-agent
+spec:
+  selector:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: deployment-metadata-test
+  ports:
+    - name: http
+      port: 9016
+      targetPort: 9016
+---
+# Source: private-action-runner/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-metadata-test-private-action-runner
+  namespace: datadog-agent
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    example.com/owner: platform-team
+  labels:
+    helm.sh/chart: private-action-runner-1.22.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: deployment-metadata-test
+    app.kubernetes.io/version: "v1.17.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: private-action-runner
+      app.kubernetes.io/instance: deployment-metadata-test
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: private-action-runner-1.22.0
+        app.kubernetes.io/name: private-action-runner
+        app.kubernetes.io/instance: deployment-metadata-test
+        app.kubernetes.io/version: "v1.17.1"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/values: 4cdc75734459f08d86de2b96a1eb6aea54172bf19d0bdef284373253d9fc7bb6
+    spec:
+      serviceAccountName: deployment-metadata-test-private-action-runner
+      containers:
+        - name: runner
+          image: "gcr.io/datadoghq/private-action-runner:v1.17.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9016
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner/config
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: /etc/dd-action-runner/config
+      volumes:
+        - name: secrets
+          secret:
+            secretName: deployment-metadata-test-private-action-runner

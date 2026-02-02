@@ -41,11 +41,11 @@ datadog:
   # datadog.bootstrap -- Provide a bootstrap file that conforms to the options provided in this documentation:
   #   https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
   bootstrap:
-    # datadog.bootstrap.config -- The bootstrap file contents
+    # datadog.bootstrap.config -- The bootstrap file contents. Use only if `secretFileContents` is not provided.
     config: {}
     # datadog.bootstrap.secretFileContents -- Additional helper for the "secrets" portion of the bootstrap file.
     # Use if your backend_type is of type 'file'. Helm chart will copy the provided secrets into a new file,
-    # and correctly setup the bootstrap to point to the secrets file.
+    # and correctly setup the bootstrap to point to the secrets file in `bootstrap.config`.
     # eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" }
     secretFileContents: {}
 
@@ -53,7 +53,7 @@ image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 2.12.0
+  tag: 2.13.1
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -75,7 +75,7 @@ replicas: 1
 
 # podManagementPolicy -- Specify the
 # [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies).
-podManagementPolicy: OrderedReady
+podManagementPolicy: Parallel
 
 ## TODO: Support Watermark Pod Autoscaler?
 autoscaling:

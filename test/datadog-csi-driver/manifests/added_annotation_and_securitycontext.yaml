@@ -1,0 +1,27 @@
+annotations:
+  ad.datadoghq.com/csi-node-driver.checks: |
+    {
+      "openmetrics": {
+        "init_config": {},
+        "instances": [
+          {
+            "openmetrics_endpoint": "http://%%host%%:5000/metrics",
+            "metrics": [{
+              "datadog_csi_driver_node_publish_volume_attempts": "datadog_csi.driver_node_publish_volume_attempts",
+              "datadog_csi_driver_node_unpublish_volume_attempts": "datadog_csi.driver_node_unpublish_volume_attempts"
+              }]
+          }
+        ]
+      }
+    }
+
+registrar:
+  securityContext:
+    readOnlyRootFilesystem: false
+    privileged: true
+
+securityContext:
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0
