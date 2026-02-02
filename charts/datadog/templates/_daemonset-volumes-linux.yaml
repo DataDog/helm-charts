@@ -157,12 +157,12 @@
   name: btf-path
 {{- end }}
 {{- end }}
-{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
+{{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.securityAgent.runtime.enabled (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true") (eq (include "should-enable-system-probe" .) "true") (eq (include "should-enable-security-agent" .) "true")) }}
 - hostPath:
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /
   name: hostroot
@@ -190,7 +190,7 @@
   name: host-rpm-dir
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.securityAgent.compliance.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
 - hostPath:
     path: /etc/group
   name: group
@@ -200,7 +200,7 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
