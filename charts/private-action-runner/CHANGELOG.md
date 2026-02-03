@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.23.0
+
+* Bump private runner version to 1.18.0
+
 ## 1.22.0
 
 * Add `deployment.metadata.annotations` to add custom annotations to the Deployment resource
