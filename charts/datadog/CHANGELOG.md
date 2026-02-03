@@ -1,8 +1,13 @@
 # Datadog changelog
 
+## 3.166.1
+
+* Disable trace-loader on GKE Autopilot.
+
 ## 3.166.0
 
 * change injectionMode default value from 'auto' to '' ([#2331](https://github.com/DataDog/helm-charts/pull/2331)).
+
 ## 3.165.1
 
 * Update `fips.image.tag` to `1.1.19` fixing CVEs and updating packages.
@@ -43,9 +48,9 @@
 ## 3.161.0
 
 * Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
-  
+
   Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
-  
+
   Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
 
 ## 3.160.4
