@@ -5,6 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+  annotations:
+    # Create this ConfigMap early so operator subchart lookup succeeds on initial install
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
 data:
   api-key-secret-name: {{ default "" ( include "datadog.apiSecretName" . ) }}
 {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}

@@ -2752,6 +2752,23 @@ clusterChecksRunner:
   ports: []
 
 operator:
+  # operator.apiKeyExistingSecret -- Secret name for operator API key.
+  # Set to override operator credentials (different from parent chart).
+  # If empty, operator automatically inherits from datadog.apiKeyExistingSecret.
+  apiKeyExistingSecret: ""
+
+  # operator.appKeyExistingSecret -- Secret name for operator APP key.
+  # Set to override operator credentials (different from parent chart).
+  # If empty, operator automatically inherits from datadog.appKeyExistingSecret.
+  appKeyExistingSecret: ""
+
+  # Parent chart values - automatically populated, do not set manually
+  datadog:
+    apiKey: ""
+    apiKeyExistingSecret: ""
+    appKey: ""
+    appKeyExistingSecret: ""
+
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
     tag: 1.22.0

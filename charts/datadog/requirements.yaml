@@ -18,3 +18,8 @@ dependencies:
     repository: https://helm.datadoghq.com
     condition: datadog.operator.enabled
     alias: operator
+    import-values:
+      - child: apiKeyExistingSecret
+        parent: operator.apiKeyExistingSecret
+      - child: appKeyExistingSecret
+        parent: operator.appKeyExistingSecret
