@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.165.1
+
+* Update `fips.image.tag` to `1.1.19` fixing CVEs and updating packages.
+
 ## 3.165.0
 
 * Deprecate `securityAgent.runtime.fimEnabled` config value.
