@@ -1130,7 +1130,8 @@ datadog:
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
       useSecruntimeTrack: true
 
-      # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent
+      # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent.
+      # When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled).
       directSendFromSystemProbe: false
 
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers

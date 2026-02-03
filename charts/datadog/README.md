@@ -931,7 +931,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.containerExclude | string | `nil` |  |
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
-| datadog.securityAgent.runtime.directSendFromSystemProbe | bool | `false` | Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent |
+| datadog.securityAgent.runtime.directSendFromSystemProbe | bool | `false` | Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent. When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled). |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
 | datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |
