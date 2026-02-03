@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.164.2
+## 3.165.1
 
 * Disable trace-loader on GKE Autopilot.
+
+## 3.165.0
+
+* Deprecate `securityAgent.runtime.fimEnabled` config value.
 
 ## 3.164.1
 
