@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.13.2
+
+- Official image `2.13.2`
+
 ## 2.13.1
 
 - Official image `2.13.1`
