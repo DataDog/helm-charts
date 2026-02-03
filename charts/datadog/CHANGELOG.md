@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.166.0
+
+* change injectionMode default value from 'auto' to '' ([#2331](https://github.com/DataDog/helm-charts/pull/2331)).
 ## 3.165.1
 
 * Update `fips.image.tag` to `1.1.19` fixing CVEs and updating packages.
