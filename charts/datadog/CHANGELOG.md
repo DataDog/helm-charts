@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.165.2
+## 3.166.1
 
 * Disable trace-loader on GKE Autopilot.
+
+## 3.166.0
+
+* change injectionMode default value from 'auto' to '' ([#2331](https://github.com/DataDog/helm-charts/pull/2331)).
 
 ## 3.165.1
 
