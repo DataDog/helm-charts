@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.164.1](https://img.shields.io/badge/Version-3.164.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.165.1](https://img.shields.io/badge/Version-3.165.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -933,7 +933,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
-| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring |
+| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |
 | datadog.securityAgent.runtime.network.enabled | bool | `true` | Set to true to enable the collection of CWS network events |
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
 | datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled | bool | `true` | Set to true to enable CWS runtime drift events |
@@ -980,7 +980,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.18"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.19"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
