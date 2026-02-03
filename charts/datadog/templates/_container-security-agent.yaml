@@ -55,7 +55,7 @@
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
-    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
+    {{- if .Values.datadog.securityAgent.runtime.enabled }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
@@ -126,7 +126,7 @@
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled }}
+    {{- if .Values.datadog.securityAgent.runtime.enabled }}
     {{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
