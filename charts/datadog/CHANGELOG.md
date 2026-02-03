@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.166.0
+
+* change injectionMode default value from 'auto' to '' ([#2331](https://github.com/DataDog/helm-charts/pull/2331)).
+
 ## 3.165.0
 
 * Deprecate `securityAgent.runtime.fimEnabled` config value.
