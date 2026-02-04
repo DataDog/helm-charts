@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.17.1
+  tag: v1.18.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -21,11 +21,21 @@ service:
   # -- Annotations to add to the service
   annotations: {}
 
+# -- Deployment configuration
+deployment:
+  metadata:
+    # -- Annotations to add to the deployment metadata
+    annotations: {}
+    # -- Labels to add to the deployment metadata
+    labels: {}
+
 runner:
   # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
   roleType: "Role"
   # -- Number of pod instances for the Datadog Private Action Runner
   replicas: 1
+  # -- Annotations to add to the pod template
+  podAnnotations: {}
   # -- The directory containing the Datadog Private Action Runner configuration
   configDirectory: "/etc/dd-action-runner/config"
   # -- Configure whether to use a separate kubernetes secret for the credentials and the config

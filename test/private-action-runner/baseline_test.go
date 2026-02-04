@@ -166,6 +166,59 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:   verifyPrivateActionRunner,
 		},
 		{
+			name: "Deployment metadata annotations",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-metadata-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.annotations": `{"example.com/owner": "platform-team", "deployment.kubernetes.io/revision": "1"}`,
+				},
+			},
+			snapshotName: "deployment-metadata-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Deployment metadata labels",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-metadata-labels-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.labels": `{"custom-label": "custom-value", "environment": "production"}`,
+				},
+			},
+			snapshotName: "deployment-metadata-labels",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Runner pod annotations",
+			command: common.HelmCommand{
+				ReleaseName: "runner-pod-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.podAnnotations": `{"prometheus.io/scrape": "true", "prometheus.io/port": "9016"}`,
+				},
+			},
+			snapshotName: "pod-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Deployment metadata and runner pod annotations",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-runner-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.annotations": `{"example.com/owner": "platform-team"}`,
+					"runner.podAnnotations":           `{"prometheus.io/scrape": "true"}`,
+				},
+			},
+			snapshotName: "deployment-runner-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
 			name: "SecurityContextConstraints enabled",
 			command: common.HelmCommand{
 				ReleaseName: "scc-test",
