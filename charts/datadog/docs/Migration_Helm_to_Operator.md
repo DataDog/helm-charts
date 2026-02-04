@@ -1,5 +1,7 @@
 # Migrating from Helm to Datadog Operator
 
+**Note**: This feature is in preview.
+
 ## Overview
 
 This guide breaks down the process for migrating from the Datadog Helm chart to the Datadog Operator for managing the Datadog Agent in Kubernetes. Using the Datadog Operator offers the following advantages:
@@ -40,8 +42,6 @@ The migration tooling supports the following Datadog Helm chart configuration op
 * Kubernetes events, KSM core check (basic), Orchestrator Explorer (basic), and Helm check
 * Prometheus scraping (partial)
 * Remote Configuration
-
-Support for additional Datadog Helm chart configurations will be expanded in upcoming releases.
 
 1. **Configure `datadog-values.yaml` to enable migration preview**.
     
