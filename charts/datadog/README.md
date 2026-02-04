@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.164.1](https://img.shields.io/badge/Version-3.164.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.166.2](https://img.shields.io/badge/Version-3.166.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -38,9 +38,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 ## Quick start
 
-By default, the Datadog Agent runs in a DaemonSet. It can alternatively run inside a Deployment for special use cases.
-
-**Note:** simultaneous DaemonSet + Deployment installation within a single release will be deprecated in a future version, requiring two releases to achieve this.
+By default, the Datadog Agent runs as a DaemonSet to ensure it runs on every node in your cluster. For alternative deployment patterns, consider using the [Datadog Operator](https://docs.datadoghq.com/containers/datadog_operator/). Supporting the Agent as a deployment has been removed since version 2.0.0 of our Helm chart.
 
 ### Installing the Datadog Chart
 
@@ -729,7 +727,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces. |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster. |
 | datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces. |
-| datadog.apm.instrumentation.injectionMode | string | `"auto"` | The injection mode to use for libraries injection. Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver) |
+| datadog.apm.instrumentation.injectionMode | string | `""` | The injection mode to use for libraries injection. Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver) Empty by default so the Cluster Agent can apply its own defaults. |
 | datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
 | datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (preview). |
 | datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. |
@@ -935,7 +933,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
-| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring |
+| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |
 | datadog.securityAgent.runtime.network.enabled | bool | `true` | Set to true to enable the collection of CWS network events |
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
 | datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled | bool | `true` | Set to true to enable CWS runtime drift events |
@@ -982,7 +980,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.18"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.19"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
