@@ -1,6 +1,6 @@
 # Migrating from Helm to Datadog Operator
 
-**Note**: This feature is in preview.
+**Note**: Helm-Operator Migration is in Preview.
 
 ## Overview
 
