@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.166.2
+
+* Remove RBAC grants when App & API Protection is not enabled.
+
 ## 3.166.1
 
 * Disable trace-loader on GKE Autopilot.
