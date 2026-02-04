@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.0
+
+* Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
 ## 3.166.2
 
 * Remove RBAC grants when App & API Protection is not enabled.
