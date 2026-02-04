@@ -30,7 +30,7 @@ spec:
       image:
         name: cluster-agent
         pullPolicy: Always
-        tag: 7.72.0
+        tag: 7.75.0
       priorityClassName: cluster-agent-critical
       replicas: 1
       updateStrategy:
@@ -38,3 +38,6 @@ spec:
           maxSurge: 1
           maxUnavailable: 0
         type: RollingUpdate
+    nodeAgent:
+      image:
+        tag: 7.75.0

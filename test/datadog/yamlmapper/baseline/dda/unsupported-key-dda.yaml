@@ -2,6 +2,7 @@ apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
   name: datadog
+  namespace: test-ns
 spec:
   global:
     credentials:
@@ -9,3 +10,10 @@ spec:
       appKey: "0000000000000000000000000000000000000000"
     kubelet:
       tlsVerify: false
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0

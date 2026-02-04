@@ -10,9 +10,14 @@ spec:
     kubelet:
       tlsVerify: false
   override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
     nodeAgent:
       envFrom:
       - configMapRef:
           name: datadog-env-config
       - secretRef:
           name: datadog-env-secrets
+      image:
+        tag: 7.75.0

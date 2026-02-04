@@ -51,3 +51,10 @@ spec:
     tags:
     - env:staging
     - team:platform
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0

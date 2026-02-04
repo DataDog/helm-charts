@@ -32,3 +32,10 @@ spec:
       appKey: "0000000000000000000000000000000000000000"
     kubelet:
       tlsVerify: false
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0
