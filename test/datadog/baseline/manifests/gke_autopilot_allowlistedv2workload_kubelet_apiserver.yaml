@@ -884,41 +884,6 @@ rules:
       - list
       - watch
       - get
-  - apiGroups:
-      - gateway.networking.k8s.io
-    resources:
-      - gateways
-      - gatewayclasses
-    verbs:
-      - get
-      - list
-      - watch
-      - patch
-  - apiGroups:
-      - gateway.networking.k8s.io
-    resources:
-      - referencegrants
-    verbs:
-      - get
-      - delete
-      - create
-      - patch
-  - apiGroups:
-      - gateway.envoyproxy.io
-    resources:
-      - envoyextensionpolicies
-    verbs:
-      - get
-      - delete
-      - create
-  - apiGroups:
-      - networking.istio.io
-    resources:
-      - envoyfilters
-    verbs:
-      - get
-      - create
-      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1806,8 +1771,6 @@ spec:
               value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
-            - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
-              value: auto
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
