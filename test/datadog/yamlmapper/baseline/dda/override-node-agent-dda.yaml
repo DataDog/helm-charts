@@ -10,6 +10,9 @@ spec:
     kubelet:
       tlsVerify: false
   override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
     nodeAgent:
       containers:
         agent:
@@ -25,7 +28,7 @@ spec:
       image:
         name: agent
         pullPolicy: Always
-        tag: 7.72.0
+        tag: 7.75.0
       priorityClassName: datadog-agent-critical
       updateStrategy:
         rollingUpdate:
