@@ -31,9 +31,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 ## Quick start
 
-By default, the Datadog Agent runs in a DaemonSet. It can alternatively run inside a Deployment for special use cases.
-
-**Note:** simultaneous DaemonSet + Deployment installation within a single release will be deprecated in a future version, requiring two releases to achieve this.
+By default, the Datadog Agent runs as a DaemonSet to ensure it runs on every node in your cluster. For alternative deployment patterns, consider using the [Datadog Operator](https://docs.datadoghq.com/containers/datadog_operator/). Supporting the Agent as a deployment has been removed since version 2.0.0 of our Helm chart.
 
 ### Installing the Datadog Chart
 

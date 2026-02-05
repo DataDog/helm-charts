@@ -1,9 +1,20 @@
 # Changelog
 
+## 2.13.2
+
+- Official image `2.13.2`
+
+## 2.13.1
+
+- Official image `2.13.1`
+
+## 2.13.0
+
+- Official image `2.13.0`
+
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
-- Official image `2.13.0`
 
 ## 2.12.2
 
