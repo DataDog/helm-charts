@@ -153,6 +153,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Host Profiler needs to be deployed
+*/}}
+{{- define "should-enable-host-profiler" -}}
+{{- if and .Values.datadog.hostProfiler.enabled (eq .Values.targetSystem "linux") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if Agent Data Plane needs to be deployed
 
 This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
@@ -365,6 +376,14 @@ C:/ProgramData/Datadog
 {{- end -}}
 
 {{/*
+Return host profiler config path
+*/}}
+{{- define "datadog.hostprofilerconfPath" -}}
+/etc/host-profiler
+{{- end -}}
+
+
+{{/*
 Return agent host mount root
 */}}
 {{- define "datadog.hostMountRoot" -}}
@@ -492,6 +511,17 @@ Return a remote otel-agent based on `.Values` (passed as .)
   {{- else -}}
     {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
   {{- end -}}
+{{- end -}}
+
+{{/*
+Return the ddot-ebpf image path (only available in Docker Hub)
+*/}}
+{{- define "ddot-ebpf-image" -}}
+{{- if .Values.datadog.hostProfiler.image -}}
+{{ .Values.datadog.hostProfiler.image }}
+{{- else -}}
+datadog/ddot-ebpf-dev:nightly-latest
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -625,7 +655,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
 true
 {{- else -}}
 false
@@ -846,6 +876,10 @@ datadog-agent-fips-config
 
 {{- define "agents-install-otel-gateway-configmap-name" -}}
 {{ template "datadog.fullname" . }}-otel-gateway-config
+{{- end -}}
+
+{{- define "agents-install-host-profiler-configmap-name" -}}
+{{ template "datadog.fullname" . }}-host-profiler-config
 {{- end -}}
 
 {{/*
