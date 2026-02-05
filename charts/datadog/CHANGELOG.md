@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.164.2
+
+* [CXP-2640][helm] Remove envvar ovveride for controlling whether process checks run in core or process agent ([#2339](https://github.com/DataDog/helm-charts/pull/2339)).
+
 ## 3.164.1
 
 * Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
