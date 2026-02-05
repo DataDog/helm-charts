@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.18.0-dev.3
+## 2.18.1
 
 * Gate Helm upgrades that skip Operator 1.21.x.
 
