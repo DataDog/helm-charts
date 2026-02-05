@@ -159,3 +159,28 @@ Check operator image tag version.
 {{ "1.23.0-rc.2" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Detect if upgrading to 1.22.x or 1.23.0-rc.1 while skipping required version 1.21.x.
+Returns the running version if skip detected, empty string otherwise.
+Version 1.21.0 contains required metadata changes that cannot be skipped.
+Note: Version 1.23.0-rc.2+ includes a fix allowing direct upgrades.
+Skipped when doNotCheckTag is true (non-semver tags).
+*/}}
+{{- define "datadog-operator.detect-1-21-version-skip" -}}
+{{- if and (not .Values.image.doNotCheckTag) (semverCompare ">=1.22.0-0 <1.23.0-rc.2" (index (split "@" .Values.image.tag) "_0")) }}
+{{- $operatorName := include "datadog-operator.fullname" . }}
+{{- range $index, $pod := (lookup "v1" "Pod" $.Release.Namespace "").items }}
+{{- if hasPrefix $operatorName $pod.metadata.name }}
+{{- range $i, $container := $pod.spec.containers }}
+{{- if and (eq $container.name $.Chart.Name) (not (contains "@" $container.image)) (gt (len (splitList ":" $container.image)) 1) }}
+{{- $runningVersion := last (splitList ":" $container.image) }}
+{{- if semverCompare "<1.21.0-0" $runningVersion }}
+{{- $runningVersion }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
