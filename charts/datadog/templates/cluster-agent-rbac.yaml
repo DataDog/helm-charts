@@ -392,6 +392,7 @@ rules:
   - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
+{{- if .Values.datadog.appsec.injector.enabled }}
 # Used by datadog.appsec.injector feature
 - apiGroups:
     - "gateway.networking.k8s.io"
@@ -428,6 +429,7 @@ rules:
     - get
     - create
     - delete
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
