@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.165.0
+
+* Add experimental support for host profiler.
+
 ## 3.164.1
 
 * Rename kubernetesKubeServiceNewBehavior to kubernetesKubeServiceIgnoreReadiness. Old flag was never used and it should be safe to rename it.
