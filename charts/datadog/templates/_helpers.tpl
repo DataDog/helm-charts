@@ -135,6 +135,20 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Return the endpoint-config ConfigMap name.
+For non-aliased installs (standalone or primary sub-chart), uses the default
+<releaseName>-endpoint-config name. For aliased sub-chart instances, prepends
+the alias to produce a unique name: <alias>-<releaseName>-endpoint-config.
+*/}}
+{{- define "datadog.endpointConfigName" -}}
+{{- if eq .Chart.Name "datadog" -}}
+{{- printf "%s-endpoint-config" .Release.Name -}}
+{{- else -}}
+{{- printf "%s-%s-endpoint-config" .Chart.Name .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "datadog.chart" -}}

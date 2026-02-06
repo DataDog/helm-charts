@@ -12,4 +12,4 @@ dependencies:
   repository: https://helm.datadoghq.com
   version: 2.17.0
 digest: sha256:5eafd967383658e32008144297123a655dfd32de40ae0964d5dd1512b366378d
-generated: "2026-01-15T14:05:27.583593-05:00"
+generated: "2026-02-05T21:38:25.628819-05:00"
