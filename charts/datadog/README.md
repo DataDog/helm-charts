@@ -493,6 +493,12 @@ helm install <RELEASE_NAME> \
 | agents.containers.agentDataPlane.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the agent-data-plane container. |
 | agents.containers.agentDataPlane.telemetryApiPort | int | `5102` | Port for telemetry API server, used for exposing internal telemetry to be scraped by the Agent |
 | agents.containers.agentDataPlane.unprivilegedApiPort | int | `5100` | Port for unprivileged API server, used primarily for health checks |
+| agents.containers.hostProfiler.env | list | `[]` | Additional environment variables for the host-profiler container |
+| agents.containers.hostProfiler.envDict | object | `{}` | Set environment variables specific to host-profiler defined in a dict |
+| agents.containers.hostProfiler.envFrom | list | `[]` | Set environment variables specific to host-profiler from configMaps and/or secrets |
+| agents.containers.hostProfiler.resources | object | `{}` | Resource requests and limits for the host-profiler container |
+| agents.containers.hostProfiler.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
+| agents.containers.hostProfiler.volumeMounts | list | `[]` | Specify additional volumes to mount in the host-profiler container |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
 | agents.containers.initContainers.volumeMounts | list | `[]` | Specify additional volumes to mount for the init containers |
@@ -808,6 +814,13 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
+| datadog.hostProfiler.config | string | `nil` | Host Profiler configuration |
+| datadog.hostProfiler.configMap | object | `{"items":null,"key":"host-profiler-config.yaml","name":null}` | Use an existing ConfigMap for Host Profiler configuration |
+| datadog.hostProfiler.configMap.items | string | `nil` | Items within the ConfigMap that contain Host Profiler configuration |
+| datadog.hostProfiler.configMap.key | string | `"host-profiler-config.yaml"` | Key within the ConfigMap that contains the Host Profiler configuration |
+| datadog.hostProfiler.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Host Profiler configuration |
+| datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler |
+| datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter will be removed once official image is available. |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
