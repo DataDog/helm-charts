@@ -182,8 +182,9 @@ spec:
           securityContext:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           {{- end }}
-      {{- with .Values.nodeSelector }}
       nodeSelector:
+        kubernetes.io/os: linux
+      {{- with .Values.nodeSelector }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
     {{- with .Values.affinity }}

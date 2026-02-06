@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.18.0-dev.3
+
+* Switch endpoint-config ConfigMap lookup to label-based discovery, supporting aliased datadog chart installations with name-based fallback for backward compatibility.
+* Add `kubernetes.io/os: linux` nodeSelector to the operator deployment to prevent scheduling on Windows nodes.
+
 ## 2.18.0-dev.2
 
 * Update Datadog Operator chart for 1.23.0-rc.2.

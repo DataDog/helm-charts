@@ -53,19 +53,49 @@ Create the name of the service account to use
 
 {{/*
 Return the value for a given data key in the datadog endpoint-config ConfigMap.
-Looks up the ConfigMap by exact name based on the release name to avoid
-concatenating values from multiple ConfigMaps when multiple Datadog releases
-exist in the same namespace.
+Uses label-based discovery to find the endpoint-config ConfigMap,
+supporting both non-aliased and aliased datadog chart installations.
+
+The lookup matches ConfigMaps by two labels:
+  - datadoghq.com/component: endpoint-config — identifies the ConfigMap as an
+    endpoint-config resource (set by the datadog chart's configmap template).
+  - app.kubernetes.io/instance: <releaseName> — scopes the match to the current
+    Helm release, preventing cross-release matches when multiple releases exist
+    in the same namespace.
+
+The endpoint-config ConfigMap also carries a datadoghq.com/chart-name label
+(set to .Chart.Name by the datadog chart) for informational/debugging purposes,
+but the operator does NOT filter on it. This is intentional: in wrapper chart
+setups where ALL datadog dependencies are aliased, none have chart-name "datadog",
+so filtering on it would cause the operator to find nothing.
+
+If multiple aliased datadog instances exist in the same release (e.g. for
+dual-shipping with different API keys), the operator deterministically picks
+the alphabetically first matching ConfigMap (by name) using sortAlpha. This
+ensures consistent behavior across renders and upgrades.
 */}}
 {{- define "get-endpoint-config-data-key" -}}
 {{- $ctx := index . 0 }}
 {{- $key := index . 1 }}
 {{- $ns := $ctx.Release.Namespace -}}
-{{- $cmName := printf "%s-endpoint-config" $ctx.Release.Name -}}
-{{- $cm := lookup "v1" "ConfigMap" $ns $cmName -}}
-{{- if $cm }}
-  {{- get $cm.data $key -}}
-{{- end }}
+{{- $matchingCMs := dict -}}
+{{- $matchingNames := list -}}
+{{- $allCMs := lookup "v1" "ConfigMap" $ns "" -}}
+{{- if $allCMs -}}
+  {{- range $cm := $allCMs.items -}}
+    {{- $labels := default dict $cm.metadata.labels -}}
+    {{- if and (eq (default "" (get $labels "datadoghq.com/component")) "endpoint-config") (eq (default "" (get $labels "app.kubernetes.io/instance")) $ctx.Release.Name) -}}
+      {{- $matchingNames = append $matchingNames $cm.metadata.name -}}
+      {{- $_ := set $matchingCMs $cm.metadata.name $cm -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $matchingNames -}}
+  {{- $sorted := sortAlpha $matchingNames -}}
+  {{- $winner := index $sorted 0 -}}
+  {{- $cm := get $matchingCMs $winner -}}
+  {{- default "" (get $cm.data $key) -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
