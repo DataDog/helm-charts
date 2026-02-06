@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.166.4
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
 ## 3.166.3
 
 * [CXP-2640][helm] Remove envvar ovveride for controlling whether process checks run in core or process agent ([#2339](https://github.com/DataDog/helm-charts/pull/2339)).

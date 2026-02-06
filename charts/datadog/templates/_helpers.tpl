@@ -1047,6 +1047,9 @@ Returns env vars correctly quoted and valueFrom respected
 {{- define "additional-env-entries" -}}
 {{- if . -}}
 {{- range . }}
+{{- if not .name }}
+{{- fail "env var entry must have a 'name' field" }}
+{{- end }}
 - name: {{ .name }}
 {{- if .value }}
   value: {{ .value | quote }}
