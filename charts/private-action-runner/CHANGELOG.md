@@ -1,5 +1,19 @@
 # Datadog changelog
 
+## 1.23.0
+
+* Bump private runner version to 1.18.0
+
+## 1.22.0
+
+* Add `deployment.metadata.annotations` to add custom annotations to the Deployment resource
+* Add `deployment.metadata.labels` to add custom labels to the Deployment resource
+* Add `runner.podAnnotations` to add custom annotations to pod templates
+
+## 1.21.2
+
+* Update charts description
+
 ## 1.21.1
 
 * Bump private runner version to 1.17.1

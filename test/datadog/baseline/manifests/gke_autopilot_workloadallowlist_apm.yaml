@@ -1384,11 +1384,32 @@ spec:
                   key: token
                   name: datadog-cluster-agent
             - name: DD_APM_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_APM_RECEIVER_PORT
+              value: "8126"
+            - name: DD_INSTRUMENTATION_INSTALL_TIME
+              valueFrom:
+                configMapKeyRef:
+                  key: install_time
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: install_id
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  key: install_type
+                  name: datadog-kpi-telemetry-configmap
             - name: DD_LOGS_ENABLED
               value: "false"
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
+            - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
+              value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
               value: "false"
             - name: DD_HEALTH_PORT
@@ -1483,6 +1504,115 @@ spec:
               readOnly: true
             - mountPath: /opt/datadog-agent/run
               name: datadogrun
+        - command:
+            - trace-agent
+            - -config=/etc/datadog-agent/datadog.yaml
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-secret
+            - name: DD_REMOTE_CONFIGURATION_ENABLED
+              value: "true"
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_CLOUD_PROVIDER_METADATA
+              value: '["gcp"]'
+            - name: DD_CSI_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
+            - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
+              value: "0"
+            - name: HELM_FORCE_RENDER
+              value: "true"
+            - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_PROVIDER_KIND
+              value: gke-autopilot
+            - name: DD_CLUSTER_AGENT_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
+            - name: DD_LOG_LEVEL
+              value: INFO
+            - name: DD_APM_ENABLED
+              value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_APM_RECEIVER_PORT
+              value: "8126"
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_INSTRUMENTATION_INSTALL_TIME
+              valueFrom:
+                configMapKeyRef:
+                  key: install_time
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: install_id
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  key: install_type
+                  name: datadog-kpi-telemetry-configmap
+          image: gcr.io/datadoghq/agent:7.75.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            tcpSocket:
+              port: 8126
+            timeoutSeconds: 5
+          name: trace-agent
+          ports:
+            - containerPort: 8126
+              hostPort: 8126
+              name: traceport
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: true
+            - mountPath: /var/log/datadog
+              name: logdatadog
+              readOnly: false
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: false
+            - mountPath: /host/var/run/containerd
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt

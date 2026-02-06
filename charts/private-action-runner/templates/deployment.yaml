@@ -3,8 +3,15 @@ kind: Deployment
 metadata:
   name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
+  {{- with .Values.deployment.metadata.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     {{- include "chart.labels" . | nindent 4 }}
+    {{- with .Values.deployment.metadata.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   minReadySeconds: 10
   replicas: {{ $.Values.runner.replicas }}
@@ -17,6 +24,9 @@ spec:
         {{- include "chart.labels" . | nindent 8 }}
       annotations:
         checksum/values: {{ $.Values | toJson | sha256sum }}
+        {{- with .Values.runner.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "chart.fullname" . }}
       containers:
