@@ -42,7 +42,7 @@ Setting a value will not change the default defined in the Operator.
     {{- end }}
 {{- end }}
 
-{{- if (semverCompare ">=1.18.0-rc.1" $version) }}
+{{- if and (semverCompare ">=1.18.0-rc.1" $version) (semverCompare "<1.21.0-rc.1" $version) }}
 ##############################################################################
 ####               WARNING: Upcoming metadata change in Operator 1.21.    ####
 ##############################################################################
@@ -50,4 +50,27 @@ Setting a value will not change the default defined in the Operator.
 We are changing Datadog Agent daemonset and pod metadata handling in upcoming releases.
 Please check Operator README for more details https://github.com/DataDog/datadog-operator/blob/main/README.md
 
+{{- end }}
+
+{{- $skippingFromVersion := include "datadog-operator.detect-1-21-version-skip" . }}
+{{- if $skippingFromVersion }}
+{{- $msg := concat (list
+  ""
+  "##############################################################################"
+  "####     ERROR: Datadog Operator upgrade requires intermediate version    ####"
+  "##############################################################################"
+  ""
+  (printf "You are attempting to upgrade from Operator %s to %s." $skippingFromVersion $version)
+  "This version requires first upgrading to version 1.21.x."
+  ""
+  "Upgrade in two steps:"
+  "  1. First, upgrade to Operator 1.21.x:"
+  (printf "     helm upgrade %s datadog/datadog-operator --set image.tag=1.21.0" .Release.Name)
+  ""
+  "  2. Then, upgrade to your target version:"
+  (printf "     helm upgrade %s datadog/datadog-operator --set image.tag=%s" .Release.Name $version)
+  ""
+  "See Operator README for more details: https://github.com/DataDog/datadog-operator/blob/main/README.md"
+) | join "\n" }}
+{{- fail $msg }}
 {{- end }}
