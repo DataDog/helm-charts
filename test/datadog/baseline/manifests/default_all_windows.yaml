@@ -90,6 +90,21 @@ metadata:
   namespace: datadog-agent
 ---
 apiVersion: v1
+data:
+  api-key-secret-name: datadog-secret
+  app-key-secret-name: datadog-secret
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+    datadoghq.com/component: endpoint-config
+  name: datadog-endpoint-config
+  namespace: datadog-agent
+---
+apiVersion: v1
 data: {}
 kind: ConfigMap
 metadata:

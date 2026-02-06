@@ -1,7 +1,3 @@
-{{- if and (ne .Chart.Name "datadog") .Values.datadog.operator.enabled }}
-{{- fail (printf "The datadog chart is aliased as '%s', but datadog.operator.enabled is true. The operator sub-chart does not work correctly as a third-level dependency in aliased setups due to a Helm bug (https://github.com/helm/helm/issues/31466). Please set 'datadog.operator.enabled: false' on this alias. If you need the operator, install the datadog-operator chart as a direct dependency of your wrapper chart instead." .Chart.Name) }}
-{{- end }}
-{{- if ne .Values.targetSystem "windows" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,7 +6,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
     datadoghq.com/component: endpoint-config
-    datadoghq.com/chart-name: {{ .Chart.Name }}
 data:
   api-key-secret-name: {{ default "" ( include "datadog.apiSecretName" . ) }}
 {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
@@ -21,5 +16,4 @@ data:
 {{- end }}
 {{- if .Values.datadog.dd_url }}
   dd-url: {{ .Values.datadog.dd_url | quote }}
-{{- end }}
 {{- end }}

@@ -164,7 +164,6 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
-    datadoghq.com/chart-name: datadog
     datadoghq.com/component: endpoint-config
   name: datadog-endpoint-config
   namespace: datadog-agent
