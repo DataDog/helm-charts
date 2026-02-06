@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
   namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
   namespace: datadog-agent
 stringData:
   config.yaml: |
@@ -32,7 +32,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: datadog-agent
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
 rules:
 - apiGroups:
   - ""
@@ -46,30 +46,27 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
   namespace: datadog-agent
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
 subjects:
   - kind: ServiceAccount
-    name: scripts-test-private-action-runner
+    name: runner-pod-test-private-action-runner
     namespace: datadog-agent
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
   namespace: datadog-agent
-  annotations:
-    example.com/custom-annotation: custom-value
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
   selector:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: scripts-test
+      app.kubernetes.io/instance: runner-pod-test
   ports:
     - name: http
       port: 9016
@@ -79,12 +76,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scripts-test-private-action-runner
+  name: runner-pod-test-private-action-runner
   namespace: datadog-agent
   labels:
     helm.sh/chart: private-action-runner-1.23.0
     app.kubernetes.io/name: private-action-runner
-    app.kubernetes.io/instance: scripts-test
+    app.kubernetes.io/instance: runner-pod-test
     app.kubernetes.io/version: "v1.18.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -93,19 +90,21 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: private-action-runner
-      app.kubernetes.io/instance: scripts-test
+      app.kubernetes.io/instance: runner-pod-test
   template:
     metadata:
       labels:
         helm.sh/chart: private-action-runner-1.23.0
         app.kubernetes.io/name: private-action-runner
-        app.kubernetes.io/instance: scripts-test
+        app.kubernetes.io/instance: runner-pod-test
         app.kubernetes.io/version: "v1.18.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: b1e9f2e4ba07acee0d5e50f530b128d525cd39705af06cf0939444366e1bd539
+        checksum/values: 2aa16d12329c8f21e65fb1a1e1db4a29e41ba7129d9e4f06d8fddf7f6f9a43fa
+        prometheus.io/port: "9016"
+        prometheus.io/scrape: "true"
     spec:
-      serviceAccountName: scripts-test-private-action-runner
+      serviceAccountName: runner-pod-test-private-action-runner
       containers:
         - name: runner
           image: "gcr.io/datadoghq/private-action-runner:v1.18.0"
@@ -129,4 +128,4 @@ spec:
       volumes:
         - name: secrets
           secret:
-            secretName: scripts-test-private-action-runner
+            secretName: runner-pod-test-private-action-runner

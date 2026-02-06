@@ -604,7 +604,8 @@ datadog:
 
       # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
       # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver)
-      injectionMode: "auto"
+      # Empty by default so the Cluster Agent can apply its own defaults.
+      injectionMode: ""
 
       # This feature is in preview. It requires Cluster Agent 7.57+.
       injector:
@@ -1144,6 +1145,7 @@ datadog:
       enabled: false
 
       # datadog.securityAgent.runtime.fimEnabled -- Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring
+      # DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled.
       fimEnabled: false
 
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
@@ -1882,7 +1884,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.18
+    tag: 1.1.19
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
