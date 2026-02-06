@@ -697,10 +697,12 @@ datadog:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
 
-  ## Host Profiler related configuration for the host-profiler in Agent Daemonset
+  ## Host Profiler related configuration for the host-profiler in Agent Daemonset. Note this is experimental and subject to change
   hostProfiler:
     # datadog.hostProfiler.enabled -- Enable the Host Profiler
     enabled: false
+    # datadog.hostProfiler.image -- Image the Host Profiler. This parameter will be removed once official image is available.
+    image: ""
     # datadog.hostProfiler.config -- Host Profiler configuration
     config: null
     # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration
@@ -770,29 +772,6 @@ datadog:
       # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
       # and pods logs.
       enabled: false
-
-  ## Host Profiler related configuration for the host-profiler in Agent Daemonset. Note this is experimental and subject to change
-  hostProfiler:
-    # datadog.hostProfiler.enabled -- Enable the Host Profiler
-    enabled: false
-    # datadog.hostProfiler.image -- Image the Host Profiler. This parameter will be removed once official image is available.
-    image: ""
-    # datadog.hostProfiler.config -- Host Profiler configuration
-    config: null
-    # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration
-    configMap:
-      # datadog.hostProfiler.configMap.name -- Name of the existing ConfigMap that contains the Host Profiler configuration
-      name: null
-      # datadog.hostProfiler.configMap.items -- Items within the ConfigMap that contain Host Profiler configuration
-      items:
-      #   - key: host-profiler-config.yaml
-      #     path: host-profiler-config.yaml
-      #   - key: host-profiler-config-two.yaml
-      #     path: host-profiler-config-two.yaml
-      # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration
-      key: host-profiler-config.yaml
-    # datadog.hostProfiler.featureGates -- Feature gates to pass to Host Profiler, as a comma separated list
-    featureGates: null
 
   ## Continuous Profiler configuration
   ##
