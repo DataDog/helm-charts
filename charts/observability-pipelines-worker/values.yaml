@@ -133,14 +133,16 @@ podSecurityContext: {}
 securityContext: {}
 
 # command -- Override default image command.
-command: []
+command: ["/bin/sh", "-c"]
 
 # args -- Override default image arguments.
 args:
-  - run
+  - >
+    export VECTOR_HOSTNAME="${POD_NAME}.${CLUSTER_NAME}";
+    exec /usr/bin/observability-pipelines-worker run
 
 # env -- Define environment variables.
-env: []
+env:
 #  - name: <ENV_VAR_NAME>
 #    value: <ENV_VAR_VALUE>
 #  - name: <ENV_VAR_NAME>
@@ -148,6 +150,13 @@ env: []
 #      secretKeyRef:
 #        name: <SECRET_NAME>
 #        key: <KEY_NAME>
+  # Example: create VECTOR_HOSTNAME from POD_NAME.CLUSTER_NAME at runtime
+  - name: CLUSTER_NAME
+    value: "my-cluster"
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
 
 # envFrom -- Define environment variables from ConfigMap or Secret data.
 envFrom: []
