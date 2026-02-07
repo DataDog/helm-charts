@@ -51,19 +51,31 @@ jobs:
             const fileChanges = [];
             const commitMessages = [];
 
-            // Helper to parse a semver string (e.g., "1.2.3") into an object {major, minor, patch}
+            // Helper to parse a semver string (e.g., "1.2.3" or "1.2.3-dev.4") into an object
+            // Supports: major.minor.patch[-prerelease]
+            // Pre-release can contain alphanumeric characters and dots
+            // Note: Build metadata (e.g., +build.123) is not supported
             function parseVersion(versionStr) {
-              const parts = versionStr.split('.');
+              // Match semver pattern with optional pre-release (e.g., -dev.4)
+              const match = versionStr.match(/^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?$/);
+              if (!match) {
+                throw new Error(`Invalid version format: ${versionStr}. Expected format: major.minor.patch[-prerelease]`);
+              }
               return {
-                major: parseInt(parts[0], 10),
-                minor: parseInt(parts[1], 10),
-                patch: parseInt(parts[2], 10)
+                major: parseInt(match[1], 10),
+                minor: parseInt(match[2], 10),
+                patch: parseInt(match[3], 10),
+                prerelease: match[4] || null
               };
             }
 
             // Helper to produce a semver string
-            function makeVersion({ major, minor, patch }) {
-              return `${major}.${minor}.${patch}`;
+            function makeVersion({ major, minor, patch, prerelease }) {
+              let version = `${major}.${minor}.${patch}`;
+              if (prerelease) {
+                version += `-${prerelease}`;
+              }
+              return version;
             }
 
             // Get the list of charts that need a version bump (or changelog update)
@@ -119,6 +131,15 @@ jobs:
               }
               const baseVersion = baseVersionMatch[1].trim();
               core.info(`Base version for '${chartName}' is '${baseVersion}'.`);
+              
+              // Validate base version format
+              let baseParsed;
+              try {
+                baseParsed = parseVersion(baseVersion);
+              } catch (error) {
+                core.setFailed(`Invalid base version format '${baseVersion}' for ${chartName}: ${error.message}`);
+                return;
+              }
 
               // Read the PR Chart.yaml on the PR head branch.
               let prChartFile;
@@ -141,15 +162,53 @@ jobs:
               }
               const prVersion = prVersionMatch[1].trim();
               core.info(`PR version for '${chartName}' is '${prVersion}'.`);
+              
+              // Validate PR version format
+              try {
+                parseVersion(prVersion);
+              } catch (error) {
+                core.setFailed(`Invalid PR version format '${prVersion}' for ${chartName}: ${error.message}`);
+                return;
+              }
 
               // Calculate the desired version based on bump type.
-              const baseParsed = parseVersion(baseVersion);
               let desiredParsed = { ...baseParsed };
-              if (bumpType === 'patch-version') {
-                desiredParsed.patch += 1;
-              } else if (bumpType === 'minor-version') {
-                desiredParsed.minor += 1;
-                desiredParsed.patch = 0;
+              
+              // Skip version bump calculation for no-version-bump label
+              if (bumpType === 'no-version-bump') {
+                core.info(`No version bump requested for '${chartName}' (no-version-bump label).`);
+                // desiredParsed stays the same as baseParsed
+              }
+              // If the base version is a pre-release, handle based on bump type
+              else if (baseParsed.prerelease) {
+                core.info(`Base version '${baseVersion}' is a pre-release version.`);
+                
+                if (bumpType === 'minor-version') {
+                  // For minor-version, drop the pre-release suffix to promote to full release
+                  core.info(`Promoting pre-release to full release version (dropping pre-release suffix).`);
+                  desiredParsed.prerelease = null;
+                } else if (bumpType === 'patch-version') {
+                  // For patch-version, bump the pre-release number
+                  // Expected format: <letters>.<number> (e.g., dev.2, alpha.1, beta.5)
+                  const prereleaseMatch = baseParsed.prerelease.match(/^([a-zA-Z]+)\.(\d+)$/);
+                  if (prereleaseMatch) {
+                    const prereleasePrefix = prereleaseMatch[1];
+                    const prereleaseNumber = parseInt(prereleaseMatch[2], 10);
+                    desiredParsed.prerelease = `${prereleasePrefix}.${prereleaseNumber + 1}`;
+                    core.info(`Bumping pre-release number from ${baseParsed.prerelease} to ${desiredParsed.prerelease}`);
+                  } else {
+                    core.setFailed(`Pre-release format '${baseParsed.prerelease}' for ${chartName} is not supported for patch bumping. Expected format: '<letters>.<number>' (e.g., 'dev.2', 'alpha.1'). Unsupported formats include: 'rc1', 'dev-2', 'beta.1.2'.`);
+                    return;
+                  }
+                }
+              } else {
+                // Standard semver bump for non-pre-release versions
+                if (bumpType === 'patch-version') {
+                  desiredParsed.patch += 1;
+                } else if (bumpType === 'minor-version') {
+                  desiredParsed.minor += 1;
+                  desiredParsed.patch = 0;
+                }
               }
               const desiredVersion = makeVersion(desiredParsed);
               core.info(`Desired version for '${chartName}' is '${desiredVersion}'.`);
