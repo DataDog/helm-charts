@@ -1,16 +1,79 @@
 stages:
   - test
+  - e2e_deps
   - e2e
 
 variables:
-  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
-
+  CI_IMAGE_LINUX: v85347149-d27e3e3a
+  CI_IMAGE_LINUX_SUFFIX: ""
+  FF_KUBERNETES_HONOR_ENTRYPOINT: true # Honor the entrypoint in the Docker image when running Kubernetes jobs
+  
 noop:
   stage: test
   script:
     - echo "No op job to get merge queue working"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
+
+
+
+e2e_deps:
+  stage: e2e_deps
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
+  tags: ["arch:amd64"]
+  variables:
+    KUBERNETES_CPU_REQUEST: 16
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        paths:
+          - charts/datadog/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
+      when: always
+      variables:
+        POLICY: pull-push
+    - if: $CI_COMMIT_BRANCH =~ /^mq-working-branch-*/
+      changes:
+        paths:
+          - charts/datadog/*.yaml
+          - test/**/*
+        compare_to: "refs/heads/main"
+      when: always
+      allow_failure: true
+      variables:
+        POLICY: pull
+    - when: manual
+      variables:
+        POLICY: pull
+  id_tokens:
+    DDOCTOSTS_ID_TOKEN:
+      aud: dd-octo-sts
+  before_script:
+    - export GITHUB_TOKEN=$(dd-octo-sts token --scope DataDog/helm-charts --policy self.gitlab.read.sts)
+  script:
+    - |
+      if [ ! -f pulumi_plugins.tar.xz ]; then
+        # Pre-download Pulumi plugins used by e2e scenarios and components, should no longer be needed when we move test-infra-definitions to datadog-agent
+        pushd test
+        PULUMI_CONFIG_PASSPHRASE=dummy pulumi --non-interactive plugin install
+        popd
+        tar c -I "xz -T${KUBERNETES_CPU_REQUEST}" -f $CI_PROJECT_DIR/pulumi_plugins.tar.xz -C ~/.pulumi plugins
+      fi
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - $CI_PROJECT_DIR/pulumi_plugins.tar.xz
+  cache:
+    - key:
+        files:
+          - ./test/new-e2e/go.mod
+          - .gitlab/deps_fetch/deps_fetch.yml
+        prefix: "pulumi_plugins"
+      paths:
+        - pulumi_plugins.tar.xz
+
+
 
 e2e:
   stage: e2e
@@ -36,7 +99,9 @@ e2e:
           - test/e2e/**/*
       when: always
     - when: manual
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  needs:
+    - e2e_deps
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
   variables:
     E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
@@ -54,6 +119,8 @@ e2e:
         E2E_AGENT_VERSION:
           - "7-rc"
   before_script:
+    - mkdir -p ~/.pulumi && tar xJf pulumi_plugins.tar.xz -C ~/.pulumi
+    - rm -f pulumi_plugins.tar.xz
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
 
