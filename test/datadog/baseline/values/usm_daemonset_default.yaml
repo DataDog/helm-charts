@@ -4,18 +4,9 @@ datadog:
   processAgent:
     enabled: true
     processCollection: true
-  securityAgent:
-    runtime:
-      enabled: false
-  networkMonitoring:
-    enabled: true
   systemProbe:
-    enableTCPQueueLength: true
-    enableOOMKill: true
     debugPort: 7654
   serviceMonitoring:
-    enabled: false
-  discovery:
     enabled: true
 daemonset:
   useDedicatedContainers: true
