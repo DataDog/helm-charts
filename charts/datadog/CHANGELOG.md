@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.166.5
+## 3.166.6
 
 * Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
 
 ## 3.166.4
 
