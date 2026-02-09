@@ -86,6 +86,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             {{- $version := include "check-image-tag" . }}
             {{- if (semverCompare ">=1.7.0-0" $version) }}
             - name: DD_TOOL_VERSION
