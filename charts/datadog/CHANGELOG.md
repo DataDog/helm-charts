@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.166.4
+## 3.166.5
 
 * Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
+## 3.166.4
+
+* Update datadog-csi-driver chart dependency version.
 
 ## 3.166.3
 
