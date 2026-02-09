@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.166.4
+## 3.166.5
 
 * Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
+
+## 3.166.4
+
+* Update datadog-csi-driver chart dependency version.
 
 ## 3.166.3
 
