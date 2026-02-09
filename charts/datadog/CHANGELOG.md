@@ -2,9 +2,7 @@
 
 ## 3.166.4
 
-* Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart. Aliased instances now produce unique configmap names using `<alias>-<releaseName>-endpoint-config`.
-* Gate endpoint-config ConfigMap creation on `targetSystem != windows` since the configmap is only used by the operator, which does not support Windows.
-* Disable the operator sub-chart by default in the Windows baseline test values.
+* Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
 
 ## 3.166.3
 
