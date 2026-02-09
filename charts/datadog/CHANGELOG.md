@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.0
+
+* Support 'image_volume' for apm.instrumentation.injectionMode
+
 ## 3.166.4
 
 * Update datadog-csi-driver chart dependency version.
