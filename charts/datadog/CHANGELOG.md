@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.0
+
+* Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
+
 ## 3.166.5
 
 * Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
