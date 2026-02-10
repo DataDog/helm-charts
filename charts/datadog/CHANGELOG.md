@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.169.0
+
+* Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
+
 ## 3.168.0
 
 * Update datadog-csi-driver chart dependency version.
