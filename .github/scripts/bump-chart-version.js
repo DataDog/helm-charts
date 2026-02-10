@@ -374,13 +374,12 @@ module.exports = async ({github, context, core, exec}) => {
   core.info("Creating new tree with modified files…");
   let newTreeResponse;
   try {
-    const response = await github.rest.git.createTree({
+    newTreeResponse = await github.rest.git.createTree({
       owner,
       repo,
       tree: treeItems,
       base_tree: baseTreeSha
     });
-    newTreeResponse = response;
   } catch (error) {
     core.setFailed(`Could not create new tree: ${error.message}`);
     return;
@@ -395,15 +394,15 @@ module.exports = async ({github, context, core, exec}) => {
   // Create a new commit object.
   core.info("Creating new commit object…");
   let newCommitResponse;
-  try {            
-    const response = await github.rest.git.createCommit({
+  try {
+
+    newCommitResponse = await github.rest.git.createCommit({
       owner,
       repo,
       message: commitMessage,
       tree: newTreeSha,
       parents: [baseCommitSha]
     });
-    newCommitResponse = response;
   } catch (error) {
     core.setFailed(`Could not create new commit: ${error.message}`);
     return;
@@ -423,7 +422,6 @@ module.exports = async ({github, context, core, exec}) => {
     core.info(`Branch '${pr.head.ref}' has been updated with a combined commit.`);
   } catch (error) {
     core.setFailed(`Could not update branch reference: ${error.message}`);
-    return;
   }
 };
 
