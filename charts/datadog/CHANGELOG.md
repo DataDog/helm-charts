@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.167.1
+## 3.168.0
 
 * [do not merge] test update bump chart changes ([#2373](https://github.com/DataDog/helm-charts/pull/2373)).
 
