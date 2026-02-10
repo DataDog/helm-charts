@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.166.5](https://img.shields.io/badge/Version-3.166.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.167.0](https://img.shields.io/badge/Version-3.167.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -931,6 +931,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.containerExclude | string | `nil` |  |
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
+| datadog.securityAgent.runtime.directSendFromSystemProbe | bool | `false` | Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent. When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled). |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
 | datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |

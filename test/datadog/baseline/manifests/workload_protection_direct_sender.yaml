@@ -142,7 +142,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ngpu_monitoring:\n  enabled: true\n  configure_cgroup_perms: true\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: true\ndynamic_instrumentation:\n  enabled: false\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: true\n  use_secruntime_track: true\n  direct_send_from_system_probe: true\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: true \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: true\ndynamic_instrumentation:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -171,7 +171,6 @@ data:
             "capset",
             "chdir",
             "chmod",
-            "chown",
             "clock_gettime",
             "clone",
             "clone3",
@@ -210,8 +209,6 @@ data:
             "fstat64",
             "fstatfs",
             "fsync",
-            "ftruncate",
-            "ftruncate64",
             "futex",
             "futimens",
             "getcwd",
@@ -255,8 +252,6 @@ data:
             "memfd_create",
             "mkdir",
             "mkdirat",
-            "mknod",
-            "mknodat",
             "mmap",
             "mmap2",
             "mprotect",
@@ -335,7 +330,6 @@ data:
             "sysinfo",
             "tgkill",
             "tkill",
-            "truncate",
             "umask",
             "uname",
             "unlink",
@@ -1646,12 +1640,6 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: all
-            - name: DD_ENABLE_NVML_DETECTION
-              value: "true"
-            - name: DD_GPU_ENABLED
-              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
@@ -1685,9 +1673,6 @@ spec:
             timeoutSeconds: 5
           resources: {}
           securityContext:
-            capabilities:
-              add:
-                - MKNOD
             readOnlyRootFilesystem: true
           startupProbe:
             failureThreshold: 6
@@ -1723,11 +1708,6 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
-            - mountPath: /var/lib/kubelet/pod-resources
-              name: pod-resources-socket
-              readOnly: false
-            - mountPath: /var/run/nvidia-container-devices/all
-              name: gpu-devices
             - mountPath: /var/run/datadog
               name: dsdsocket
               readOnly: false
@@ -1895,8 +1875,6 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: all
           image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -1915,7 +1893,6 @@ spec:
                 - IPC_LOCK
                 - CHOWN
                 - DAC_READ_SEARCH
-                - MKNOD
                 - KILL
             privileged: false
             readOnlyRootFilesystem: true
@@ -1954,6 +1931,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1970,14 +1953,6 @@ spec:
               mountPropagation: None
               name: hostroot
               readOnly: true
-            - mountPath: /var/lib/kubelet/pod-resources
-              name: pod-resources-socket
-              readOnly: false
-            - mountPath: /var/run/nvidia-container-devices/all
-              name: gpu-devices
-            - mountPath: /host/root/run/systemd/transient
-              name: host-systemd-transient
-              readOnly: false
       hostPID: true
       initContainers:
         - args:
@@ -2065,7 +2040,6 @@ spec:
               readOnly: false
       nodeSelector:
         kubernetes.io/os: linux
-      runtimeClassName: nvidia
       securityContext:
         runAsUser: 0
       serviceAccountName: datadog
@@ -2084,12 +2058,6 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
-        - hostPath:
-            path: /var/lib/kubelet/pod-resources
-          name: pod-resources-socket
-        - hostPath:
-            path: /run/systemd/transient
-          name: host-systemd-transient
         - hostPath:
             path: /proc
           name: procdir
@@ -2144,9 +2112,6 @@ spec:
           name: runtimesocketdir
         - emptyDir: {}
           name: datadogrun
-        - hostPath:
-            path: /dev/null
-          name: gpu-devices
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
