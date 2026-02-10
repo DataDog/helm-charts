@@ -1,9 +1,5 @@
 # Changelog
 
-## 2.18.0-dev.5
-
-* [do not merge] test update bump chart changes ([#2373](https://github.com/DataDog/helm-charts/pull/2373)).
-
 ## 2.18.0-dev.4
 
 * Update Datadog Operator chart for 1.23.0-rc.3.
