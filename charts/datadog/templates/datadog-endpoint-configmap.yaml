@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-endpoint-config
+  name: {{ include "datadog.endpointConfigName" . }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog.labels" . | indent 4 }}
+    datadoghq.com/component: endpoint-config
 data:
   api-key-secret-name: {{ default "" ( include "datadog.apiSecretName" . ) }}
 {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
