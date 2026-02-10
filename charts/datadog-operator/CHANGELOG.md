@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.18.0-dev.5
+## 2.18.0
 
 * [do not merge] test update bump chart changes ([#2373](https://github.com/DataDog/helm-charts/pull/2373)).
 
