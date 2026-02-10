@@ -206,11 +206,6 @@ module.exports = async ({github, context, core, exec}) => {
     }
 
     // Unless the bump type is no-version-bump, prepare CHANGELOG update.
-    if (bumpType === 'no-version-bump') {
-      core.info(`Skipping CHANGELOG update for '${chartName}' (no-version-bump).`);
-      continue;
-    }
-
     // Get base and head CHANGELOG.md files.
     let baseChangelog, prChangelog;
     try {
@@ -234,6 +229,22 @@ module.exports = async ({github, context, core, exec}) => {
     } catch (error) {
       core.setFailed(`Could not get head CHANGELOG.md for ${chartName}: ${error.message}`);
       return;
+    }
+
+    if (bumpType === 'no-version-bump') {
+      if (prChangelog.data.sha !== baseChangelog.data.sha) {
+        core.info(`Reverting CHANGELOG.md for '${chartName}' to merge-base version (no-version-bump).`);
+        const baseChangelogContent = Buffer.from(baseChangelog.data.content, baseChangelog.data.encoding).toString();
+        fileChanges.push({
+          path: `charts/${chartName}/CHANGELOG.md`,
+          content: baseChangelogContent
+        });
+        commitMessages.push(`revert changelog for ${chartName} (no-version-bump)`);
+        fs.writeFileSync(`charts/${chartName}/CHANGELOG.md`, baseChangelogContent, 'utf8');
+      } else {
+        core.info(`CHANGELOG.md for '${chartName}' matches merge-base, nothing to do here (no-version-bump).`);
+      }
+      continue;
     }
   
     // Get the changelog content and check if it has already been modified in this branch.
