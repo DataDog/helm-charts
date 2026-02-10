@@ -268,3 +268,8 @@ clusterRole:
 
   # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
   allowCreatePodsExec: false
+
+  # clusterRole.kubelet -- Set specific configuration for the kubelet RBAC rules
+  kubelet:
+    # clusterRole.kubelet.fineGrainedAuthorization -- Enable fine-grained authorization for kubelet (requires: Kubernetes 1.32+)
+    fineGrainedAuthorization: false

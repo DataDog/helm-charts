@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.18.0-dev.4](https://img.shields.io/badge/Version-2.18.0--dev.4-informational?style=flat-square) ![AppVersion: 1.23.0-rc.3](https://img.shields.io/badge/AppVersion-1.23.0--rc.3-informational?style=flat-square)
+![Version: 2.18.0-dev.5](https://img.shields.io/badge/Version-2.18.0--dev.5-informational?style=flat-square) ![AppVersion: 1.23.0-rc.3](https://img.shields.io/badge/AppVersion-1.23.0--rc.3-informational?style=flat-square)
 
 ## Values
 
@@ -12,7 +12,9 @@
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
-| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false}` | Set specific configuration for the cluster role |
+| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false,"kubelet":{"fineGrainedAuthorization":false}}` | Set specific configuration for the cluster role |
+| clusterRole.kubelet | object | `{"fineGrainedAuthorization":false}` | Set specific configuration for the kubelet RBAC rules |
+| clusterRole.kubelet.fineGrainedAuthorization | bool | `false` | Enable fine-grained authorization for kubelet (requires: Kubernetes 1.32+) |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
