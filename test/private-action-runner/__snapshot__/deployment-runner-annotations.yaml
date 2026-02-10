@@ -102,7 +102,7 @@ spec:
         app.kubernetes.io/version: "v1.18.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 40b0e41615620e1ec49fdb6eb500de4f662862a2735a6a05a7c732373a975b8b
+        checksum/values: 0f86c30ed771c3d7dd3313751083dc889da96bfc303ce55250a1c308158e9ca0
         prometheus.io/scrape: "true"
     spec:
       serviceAccountName: deployment-runner-test-private-action-runner

@@ -340,6 +340,8 @@ If actions requiring credentials fail:
 | runner.configDirectory | string | `"/etc/dd-action-runner/config"` | The directory containing the Datadog Private Action Runner configuration |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
+| runner.customCaCert | object | `{"configMapName":""}` | Custom CA certificate configuration for trusting internal/private CAs |
+| runner.customCaCert.configMapName | string | `""` | Name of a ConfigMap containing the PEM-encoded CA certificate(s) |
 | runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |
