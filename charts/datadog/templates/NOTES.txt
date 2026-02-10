@@ -655,8 +655,6 @@ To resolve this:
 
 {{- end }}
 
-
-
 {{- $hasContainerIncludeEnv := false }}
 {{- range $key := .Values.datadog.env }}
   {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
