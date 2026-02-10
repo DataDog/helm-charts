@@ -1,8 +1,12 @@
 # Changelog
 
-## 0.7.0
+## 0.8.0
 
 * Support configuring `NodeAffinity` and `NodeSelector` in datadog csi driver chart.
+
+## 0.7.0
+
+* [CONTP-1250] feat(csi_driver): Make updateStrategy configurable and increase default strategy. ([#2369](https://github.com/DataDog/helm-charts/pull/2369)).
 
 ## 0.6.0
 

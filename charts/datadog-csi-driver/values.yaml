@@ -80,6 +80,13 @@ nodeSelector: {}
 
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 nodeAffinity: {}
+# updateStrategy -- Allow the DaemonSet to perform a rolling update on helm update
+
+## Ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: "10%"
 
 # securityContext -- Configure the security context for the csi driver daemonset pods.
 securityContext: {}
