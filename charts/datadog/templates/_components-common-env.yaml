@@ -17,6 +17,14 @@
 - name: DD_SECRET_REFRESH_INTERVAL
   value: {{ .Values.datadog.secretBackend.refreshInterval | quote }}
 {{- end }}
+{{- if .Values.datadog.secretBackend.type }}
+- name: DD_SECRET_BACKEND_TYPE
+  value: {{ .Values.datadog.secretBackend.type | quote }}
+{{- end }}
+{{- if .Values.datadog.secretBackend.config }}
+- name: DD_SECRET_BACKEND_CONFIG
+  value: {{ .Values.datadog.secretBackend.config | toJson | quote }}
+{{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
 - name: DD_CLUSTER_NAME
