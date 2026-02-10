@@ -54,8 +54,8 @@
     {{- end }}
     {{- end }}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
-    {{- if .Values.datadog.securityAgent.runtime.enabled }}
+      value: {{ include "should-enable-security-agent-cws-integration" . | quote }}
+    {{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
     - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
       value: "/etc/datadog-agent/runtime-security.d"
     - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
@@ -126,7 +126,7 @@
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.securityAgent.runtime.enabled }}
+    {{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
     {{- if .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
