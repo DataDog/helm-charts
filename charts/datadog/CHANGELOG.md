@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.168.0
-
-* [do not merge] test update bump chart changes ([#2373](https://github.com/DataDog/helm-charts/pull/2373)).
-
 ## 3.167.0
 
 * Add new config option to allow sending CWS events directly from the system-probe
