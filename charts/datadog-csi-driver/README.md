@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -23,6 +23,8 @@ Datadog CSI Driver helm chart
 | image.repository | string | `"gcr.io/datadoghq/csi-driver"` | Override default registry + image.name for CSI driver |
 | image.tag | string | `"1.0.0"` | CSI driver image tag to use |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
+| nodeAffinity | object | `{}` | Configure the nodeAffinity for the csi driver daemonset pods. |
+| nodeSelector | object | `{}` | Configure the nodeSelector for the csi driver daemonset pods. |
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
