@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+* Support configuring `NodeAffinity` and `NodeSelector` in datadog csi driver chart.
+
 ## 0.6.0
 
 * Add `apm.enabled` configuration option to enable/disable APM/SSI support (not yet supported on GKE Autopilot)

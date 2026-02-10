@@ -1,0 +1,21 @@
+nodeSelector:
+  disktype: ssd
+  kubernetes.io/os: linux
+
+nodeAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values:
+              - us-east-1a
+              - us-east-1b
+  preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 1
+      preference:
+        matchExpressions:
+          - key: node-type
+            operator: In
+            values:
+              - high-memory

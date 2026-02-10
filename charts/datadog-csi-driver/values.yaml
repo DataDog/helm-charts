@@ -71,6 +71,16 @@ apm:
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
 
+# nodeSelector -- Configure the nodeSelector for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# nodeAffinity -- Configure the nodeAffinity for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+nodeAffinity: {}
+
 # securityContext -- Configure the security context for the csi driver daemonset pods.
 securityContext: {}
 
