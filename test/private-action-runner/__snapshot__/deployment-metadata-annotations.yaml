@@ -82,7 +82,7 @@ metadata:
     deployment.kubernetes.io/revision: "1"
     example.com/owner: platform-team
   labels:
-    helm.sh/chart: private-action-runner-1.23.0
+    helm.sh/chart: private-action-runner-1.24.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-test
     app.kubernetes.io/version: "v1.18.0"
@@ -97,7 +97,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.23.0
+        helm.sh/chart: private-action-runner-1.24.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-metadata-test
         app.kubernetes.io/version: "v1.18.0"
