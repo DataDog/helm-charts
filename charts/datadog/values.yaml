@@ -79,7 +79,7 @@ datadog:
     refreshInterval:  # 0
 
     # datadog.secretBackend.type -- Configure the built-in secret backend type.
-    # Alternative to command; when set, the Agent uses the built-in backend instead of an external binary. Requires Agent 7.70+.
+    # Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+.
     type:  # Examples: "file.text", "k8s.secrets", "docker.secrets", "aws.secrets", etc.
 
     # datadog.secretBackend.config -- Additional configuration for the secret backend type.
