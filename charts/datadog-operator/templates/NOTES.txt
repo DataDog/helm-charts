@@ -42,7 +42,6 @@ Setting a value will not change the default defined in the Operator.
     {{- end }}
 {{- end }}
 
-
 {{- if (semverCompare ">=1.18.0-rc.1" $version) }}
 ##############################################################################
 ####               WARNING: Upcoming metadata change in Operator 1.21.    ####
