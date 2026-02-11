@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+* Set csi driver image to `1.2.0`
+
 ## 0.8.0
 
 * Support configuring `NodeAffinity` and `NodeSelector` in datadog csi driver chart.
