@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.1
+
+* Update `fips.image.tag` to `1.1.20` fixing CVEs and updating packages.
+
 ## 3.167.0
 
 * Add new config option to allow sending CWS events directly from the system-probe
