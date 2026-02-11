@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.169.0
+
+* Update datadog-csi-driver chart dependency version.
+
 ## 3.168.0
 
 * Update datadog-csi-driver chart dependency version.
