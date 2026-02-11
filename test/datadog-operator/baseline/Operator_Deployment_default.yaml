@@ -84,4 +84,6 @@ spec:
           resources:
             {}
           volumeMounts:
+      nodeSelector:
+        kubernetes.io/os: linux
       volumes:

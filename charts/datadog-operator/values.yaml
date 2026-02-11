@@ -132,7 +132,8 @@ resources: {}
 #   memory: 128Mi
 
 # nodeSelector -- Allows to schedule Datadog Operator on specific nodes
-nodeSelector: {}
+nodeSelector:
+  kubernetes.io/os: linux
 # tolerations -- Allows to schedule Datadog Operator on tainted nodes
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
