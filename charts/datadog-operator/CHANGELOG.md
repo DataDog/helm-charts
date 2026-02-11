@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.18.0-dev.5
+
+* Add `clusterRole.kubelet.fineGrainedAuthorization` option, allowing for finer grained kubelet API authorization (Kubernetes 1.32+).
+
 ## 2.18.0-dev.4
 
 * Update Datadog Operator chart for 1.23.0-rc.3.

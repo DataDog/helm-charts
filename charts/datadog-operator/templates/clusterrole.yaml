@@ -55,12 +55,15 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - nodes/configz
-  - nodes/healthz
-  - nodes/logs
   - nodes/metrics
+  {{- if .Values.clusterRole.kubelet.fineGrainedAuthorization }}
   - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
+  {{- else }}
   - nodes/proxy
+  {{- end }}
   - nodes/spec
   - nodes/stats
   verbs:
