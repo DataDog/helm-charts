@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.167.0](https://img.shields.io/badge/Version-3.167.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.168.0](https://img.shields.io/badge/Version-3.168.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,7 +32,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.6.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.8.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.17.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
