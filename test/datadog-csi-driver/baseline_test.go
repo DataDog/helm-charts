@@ -43,6 +43,21 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/CSI_Driver_annotation_and_securitycontext.yaml",
 			assertions:           verifyCSIDriverDaemonSet,
 		},
+		{
+			name: "CSI Driver with nodeSelector and nodeAffinity set",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-csi-driver",
+				ChartPath:   "../../charts/datadog-csi-driver",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values: []string{
+					"../../charts/datadog-csi-driver/values.yaml",
+					"./manifests/added_nodeselector_and_nodeaffinity.yaml",
+				},
+				Overrides: map[string]string{},
+			},
+			baselineManifestPath: "./baseline/CSI_Driver_nodeselector_and_nodeaffinity.yaml",
+			assertions:           verifyCSIDriverDaemonSet,
+		},
 	}
 
 	for _, tt := range tests {

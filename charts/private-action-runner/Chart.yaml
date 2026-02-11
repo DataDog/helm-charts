@@ -3,7 +3,7 @@ name: private-action-runner
 description: Datadog Private Action Runner
 
 type: application
-version: 1.23.0
+version: 1.24.0
 appVersion: "v1.18.0"
 keywords:
     - app builder

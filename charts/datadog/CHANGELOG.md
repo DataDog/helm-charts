@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.168.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.167.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
 ## 3.166.4
 
 * Update datadog-csi-driver chart dependency version.

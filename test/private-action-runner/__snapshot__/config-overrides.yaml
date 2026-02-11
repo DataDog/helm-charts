@@ -81,7 +81,7 @@ metadata:
   name: custom-full-name
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.23.0
+    helm.sh/chart: private-action-runner-1.24.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: override-test
     app.kubernetes.io/version: "v1.18.0"
@@ -96,13 +96,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.23.0
+        helm.sh/chart: private-action-runner-1.24.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: override-test
         app.kubernetes.io/version: "v1.18.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 69ec7c474d474a84a8bf1f93b7ea24ce0b9818a5980b09c2b7cd760cb3d20f75
+        checksum/values: a9e6b26014f80a3ec56e503db0d6f0053378fcda4d7411b79a31bde13fb9af25
     spec:
       serviceAccountName: custom-full-name
       containers:
@@ -122,9 +122,14 @@ spec:
           volumeMounts:
             - name: secrets
               mountPath: /etc/dd-action-runner/config
+            - name: custom-ca-cert
+              mountPath: /etc/dd-action-runner/config/ca-certificates
+              readOnly: true
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: /etc/dd-action-runner/config
+            - name: SSL_CERT_DIR
+              value: /etc/dd-action-runner/config/ca-certificates
             - name: FOO
               value: foo
             - name: BAR
@@ -133,3 +138,6 @@ spec:
         - name: secrets
           secret:
             secretName: custom-full-name
+        - name: custom-ca-cert
+          configMap:
+            name: my-ca-cert

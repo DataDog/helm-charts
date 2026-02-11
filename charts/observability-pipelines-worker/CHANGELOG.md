@@ -2,6 +2,10 @@
 
 ## 2.13.2
 
+- Set service.ports to empty list to fix nil issue
+
+## 2.13.2
+
 - Official image `2.13.2`
 
 ## 2.13.1
