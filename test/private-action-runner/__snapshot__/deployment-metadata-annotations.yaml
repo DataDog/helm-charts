@@ -82,7 +82,7 @@ metadata:
     deployment.kubernetes.io/revision: "1"
     example.com/owner: platform-team
   labels:
-    helm.sh/chart: private-action-runner-1.23.0
+    helm.sh/chart: private-action-runner-1.24.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-test
     app.kubernetes.io/version: "v1.18.0"
@@ -97,13 +97,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.23.0
+        helm.sh/chart: private-action-runner-1.24.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-metadata-test
         app.kubernetes.io/version: "v1.18.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 32c61bc56c1b6a0d8fb28e30ce101c7f1bca9d8b867c1a13d99059f468ef8ce5
+        checksum/values: 53c7b216e54bfdf842baa0b1118bc1912a804fa83b29465370e207edab7f7440
     spec:
       serviceAccountName: deployment-metadata-test-private-action-runner
       containers:

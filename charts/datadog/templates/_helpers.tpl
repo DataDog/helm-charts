@@ -546,7 +546,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -613,6 +613,18 @@ Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
 {{- if and (not .Values.providers.gke.gdc) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if security-agent should handle CWS integration.
+This considers both runtime security features AND whether direct send from system-probe is enabled.
+*/}}
+{{- define "should-enable-security-agent-cws-integration" -}}
+{{- if and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -1047,6 +1059,9 @@ Returns env vars correctly quoted and valueFrom respected
 {{- define "additional-env-entries" -}}
 {{- if . -}}
 {{- range . }}
+{{- if not .name }}
+{{- fail "env var entry must have a 'name' field" }}
+{{- end }}
 - name: {{ .name }}
 {{- if .value }}
   value: {{ .value | quote }}

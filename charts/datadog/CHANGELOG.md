@@ -1,9 +1,20 @@
 # Datadog changelog
 
-## 3.166.4
+## 3.167.1
 
 * Update `fips.image.tag` to `1.1.20` fixing CVEs and updating packages.
 
+## 3.167.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
+## 3.166.4
+
+* Update datadog-csi-driver chart dependency version.
 
 ## 3.166.3
 

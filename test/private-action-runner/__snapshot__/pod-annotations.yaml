@@ -79,7 +79,7 @@ metadata:
   name: runner-pod-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.23.0
+    helm.sh/chart: private-action-runner-1.24.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: runner-pod-test
     app.kubernetes.io/version: "v1.18.0"
@@ -94,13 +94,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.23.0
+        helm.sh/chart: private-action-runner-1.24.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: runner-pod-test
         app.kubernetes.io/version: "v1.18.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 2aa16d12329c8f21e65fb1a1e1db4a29e41ba7129d9e4f06d8fddf7f6f9a43fa
+        checksum/values: 389079e87bdcafa1cdd14ce8aea7bb9cf27e20a24418e4fc489d00b6dbc010e0
         prometheus.io/port: "9016"
         prometheus.io/scrape: "true"
     spec:
