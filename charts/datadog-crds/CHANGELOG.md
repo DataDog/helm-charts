@@ -1,5 +1,9 @@
 # Changelog
 
+# 2.17.0-dev.1
+
+* Update CRDs from Datadog Operator v1.24.0-rc.1 release candidate tag.
+
 ## 2.16.0
 
 * Update CRDs from Datadog Operator v1.23.0 tag.
