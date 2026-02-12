@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.169.0
+## 3.170.0
 
 * Update datadog-csi-driver chart dependency version.
+
+## 3.169.0
+
+* Update Datadog Operator dependency to 2.18.0 for Operator image tag 1.23.0.
 
 ## 3.168.0
 
