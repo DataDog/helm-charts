@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.170.1
+
+* Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
 ## 3.170.0
 
 * Update datadog-csi-driver chart dependency version.
