@@ -542,7 +542,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
-  namespace: {{ .Release.Namespace }}
 rules:
 # Ability to generate events
 - apiGroups:
@@ -636,7 +635,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
-  namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
 {{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
