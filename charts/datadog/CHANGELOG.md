@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.171.0
+
+* Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
 ## 3.170.1
 
 * Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
