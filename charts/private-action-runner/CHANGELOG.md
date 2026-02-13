@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 1.25.0
+
+* Bump private actions runner version to v1.19.0!
+
+## 1.24.0
+
+* Add support for `customCaCert`
+
 ## 1.23.0
 
 * Bump private runner version to 1.18.0

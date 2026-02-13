@@ -1127,8 +1127,12 @@ datadog:
       # DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled.
       fimEnabled: false
 
-      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
+      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support.
       useSecruntimeTrack: true
+
+      # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent.
+      # When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled).
+      directSendFromSystemProbe: false
 
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
       containerExclude:  # "image:datadog/agent"
@@ -2769,7 +2773,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.22.0
+    tag: 1.23.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

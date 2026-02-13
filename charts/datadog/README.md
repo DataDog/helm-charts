@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.167.0](https://img.shields.io/badge/Version-3.167.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.171.0](https://img.shields.io/badge/Version-3.171.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,8 +32,8 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.17.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.9.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.18.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -934,6 +934,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.containerExclude | string | `nil` |  |
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
+| datadog.securityAgent.runtime.directSendFromSystemProbe | bool | `false` | Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent. When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled). |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
 | datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |
@@ -943,7 +944,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled | bool | `true` | Set to true to enable CWS runtime auto suppression |
 | datadog.securityAgent.runtime.securityProfile.enabled | bool | `true` | Set to true to enable CWS runtime security profiles |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
-| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer |
+| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support. |
 | datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.serviceMonitoring.http2MonitoringEnabled | string | `nil` | Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent. |
@@ -1013,7 +1014,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.22.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.23.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |

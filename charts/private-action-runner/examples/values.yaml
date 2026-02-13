@@ -241,6 +241,11 @@ runner:
     # - secretName: jenkins-secret
     #   directoryName: jenkins
 
+  # Custom CA certificate for trusting internal/private CAs
+  # First create a ConfigMap: kubectl create configmap my-ca-cert --from-file=ca.crt=./my-custom-ca.pem
+  # customCaCert:
+  #   configMapName: my-ca-cert
+
   # script files provided here will be mounted in /home/scriptuser/
   scriptFiles:
     - fileName: "hello-from-bash.sh"

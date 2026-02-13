@@ -126,6 +126,14 @@ rules:
 - apiGroups:
   - argoproj.io
   resources:
+  - applications
+  - applicationsets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
   - rollouts
   verbs:
   - list
@@ -339,6 +347,13 @@ rules:
   - update
   - watch
 - apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - metrics.eks.amazonaws.com
   resources:
   - kcm/metrics
@@ -428,6 +443,18 @@ rules:
   - securitycontextconstraints
   verbs:
   - use
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - externalartifacts
+  - gitrepositories
+  - helmcharts
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
 - apiGroups:
   - storage.k8s.io
   resources:
