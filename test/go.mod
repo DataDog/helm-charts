@@ -1,6 +1,6 @@
 module github.com/DataDog/helm-charts/test
 
-go 1.24.9
+go 1.25.7
 
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
