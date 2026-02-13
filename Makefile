@@ -95,6 +95,35 @@ update-test-baselines-datadog-csi-driver:
 integration-test:
 	go test -C test/integ --tags=integration -count=1 -v
 
+# yamlmapper integration tests - install required CRDs
+.PHONY: setup-mapper-crds
+setup-mapper-crds:
+	@echo "Installing Datadog CRDs for yamlmapper tests..."
+	helm install datadog-crds ./charts/datadog-crds \
+		--create-namespace --namespace datadog-crds \
+		--set crds.datadogAgents=true \
+		--set crds.datadogAgentInternals=true \
+		--wait --timeout 2m
+
+.PHONY: cleanup-mapper-crds
+cleanup-mapper-crds:
+	@echo "Cleaning up Datadog CRDs..."
+	-helm uninstall datadog-crds --namespace datadog-crds --ignore-not-found --wait --timeout 2m
+	-kubectl delete namespace datadog-crds --ignore-not-found --timeout=2m
+
+# Optional:
+# - YAMLMAPPER_CLEANUP_STALE=true   Enable stale namespace cleanup (safe local k8s contexts only)
+# - GOTEST_RUN=<test-name-pattern>  Run specific test(s)
+.PHONY: integ-test-mapper
+integ-test-mapper:
+	set -o pipefail; \
+	go test -C ./test/datadog/yamlmapper/ -v -count=1 -parallel 1 -timeout 1h $(if $(GOTEST_RUN),-run $(GOTEST_RUN))
+
+# Strict mode: fail tests if helm vs operator agent config differs
+.PHONY: integ-test-mapper-strict
+integ-test-mapper-strict:
+	YAMLMAPPER_AGENT_CONF_STRICT=1 $(MAKE) integ-test-mapper
+
 # Running E2E tests locally:
 ## Must be connected to appgate
 ## E2E make target commands must be prepended with `aws-vault exec sso-agent-sandbox-account-admin --`
