@@ -275,6 +275,7 @@ initContainers: []
 # extraContainers -- Specify extra Containers to be added.
 extraContainers: []
 
+persistence:
   # persistence.enabled -- If **true**, create and use PersistentVolumeClaims.
   enabled: false
   # persistence.existingClaim -- Name of an existing PersistentVolumeClaim to use.
@@ -292,10 +293,10 @@ extraContainers: []
   # persistence.selector -- Specify the selectors for PersistentVolumeClaims.
   selector: {}
   # persistence.annotations -- Specify the annotations for PersistentVolumeClaimsTemplates.
+  annotations: {}
   # resize.topolvm.io/threshold: "10%"
   # resize.topolvm.io/increase: "2Gi"
   # resize.topolvm.io/storage_limit: "20Gi"
-  annotations: {}
   # persistence.retentionPolicy -- Set the PVC retention policy. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
   retentionPolicy: {}
   # retentionPolicy:
