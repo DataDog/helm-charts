@@ -60,7 +60,9 @@ rules:
   - nodes/logs
   - nodes/metrics
   - nodes/pods
+  {{- if not .Values.clusterRole.kubelet.fineGrainedAuthorization }}
   - nodes/proxy
+  {{- end }}
   - nodes/spec
   - nodes/stats
   verbs:

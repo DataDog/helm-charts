@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.2
+
+* Adds `clusterRole.kubelet.fineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
+
 ## 2.19.0-dev.1
 
 * Update Datadog Operator chart for 1.24.0-rc.1.
