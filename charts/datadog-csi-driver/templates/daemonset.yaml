@@ -8,6 +8,10 @@ metadata:
     cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
   {{- end }}
 spec:
+  {{- with .Values.updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ include "datadog-csi-driver.daemonsetName" . }}
@@ -103,6 +107,15 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeAffinity }}
+      affinity:
+        nodeAffinity:
+          {{- toYaml .Values.nodeAffinity | nindent 10 }}
       {{- end }}
       volumes:
         - name: plugin-dir

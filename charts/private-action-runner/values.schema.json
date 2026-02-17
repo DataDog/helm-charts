@@ -428,6 +428,17 @@
             "additionalProperties": false
           }
         },
+        "customCaCert": {
+          "type": "object",
+          "description": "Custom CA certificate configuration for trusting internal/private CAs",
+          "properties": {
+            "configMapName": {
+              "type": "string",
+              "description": "Name of a ConfigMap containing the PEM-encoded CA certificate(s)"
+            }
+          },
+          "additionalProperties": false
+        },
         "podSecurity": {
           "type": "object",
           "description": "Pod Security configuration",

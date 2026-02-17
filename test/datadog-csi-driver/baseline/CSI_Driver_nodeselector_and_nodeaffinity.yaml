@@ -8,7 +8,7 @@ metadata:
 spec:
   updateStrategy:
     rollingUpdate:
-      maxUnavailable: 5%
+      maxUnavailable: 10%
     type: RollingUpdate
   selector:
     matchLabels:
@@ -18,28 +18,7 @@ spec:
       labels:
         app: datadog-csi-driver-node-server
         admission.datadoghq.com/enabled: "false"
-      annotations:
-        ad.datadoghq.com/csi-node-driver.checks: |
-          {
-            "openmetrics": {
-              "init_config": {},
-              "instances": [
-                {
-                  "openmetrics_endpoint": "http://%%host%%:5000/metrics",
-                  "metrics": [{
-                    "datadog_csi_driver_node_publish_volume_attempts": "datadog_csi.driver_node_publish_volume_attempts",
-                    "datadog_csi_driver_node_unpublish_volume_attempts": "datadog_csi.driver_node_unpublish_volume_attempts"
-                    }]
-                }
-              ]
-            }
-          }
     spec:
-      securityContext:
-        fsGroup: 0
-        runAsGroup: 0
-        runAsNonRoot: false
-        runAsUser: 0
       containers:
         - name: csi-node-driver
           image: "gcr.io/datadoghq/csi-driver:1.2.0"
@@ -79,9 +58,6 @@ spec:
         - name: csi-node-driver-registrar
           image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
           imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: true
-            readOnlyRootFilesystem: false
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
@@ -100,6 +76,27 @@ spec:
             # it needs to be writeable
             - name: registration-dir
               mountPath: /registration # This is where the registrar writes the registration information
+      nodeSelector:
+        disktype: ssd
+        kubernetes.io/os: linux
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                - high-memory
+            weight: 1
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - us-east-1a
+                - us-east-1b
       volumes:
         - name: plugin-dir
           hostPath:

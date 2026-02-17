@@ -1,8 +1,35 @@
 # Datadog changelog
 
-## 3.167.0
+## 3.171.0
 
 * Support 'image_volume' for apm.instrumentation.injectionMode
+## 3.170.2
+
+* [datadog/datadog] Update default Agent version to 7.75.4 ([#2390](https://github.com/DataDog/helm-charts/pull/2390)).
+
+## 3.170.1
+
+* Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
+## 3.170.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.169.0
+
+* Update Datadog Operator dependency to 2.18.0 for Operator image tag 1.23.0.
+
+## 3.168.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.167.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
 
 ## 3.166.4
 

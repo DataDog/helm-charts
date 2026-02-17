@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.19.0-dev.1
+
+* Update Datadog Operator chart for 1.24.0-rc.1.
+
+## 2.18.1
+
+* Update Datadog Operator chart for 1.23.1.
+
+## 2.18.0
+
+* Update Datadog Operator chart for 1.23.0.
+
+## 2.18.0-dev.4
+
+* Update Datadog Operator chart for 1.23.0-rc.3.
+
 ## 2.18.0-dev.3
 
 * Add POD_NAMESPACE environment variable via downward API.
