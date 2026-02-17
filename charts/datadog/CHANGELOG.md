@@ -2,7 +2,7 @@
 
 ## 3.172.0
 
-* Add `datadog.networkMonitoring.maxConnectionStateBuffered` option to configure the maximum number of connection states buffered per client for network performance monitoring.
+* Add `datadog.networkMonitoring.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
 
 ## 3.171.0
 

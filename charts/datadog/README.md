@@ -852,8 +852,8 @@ helm install <RELEASE_NAME> \
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
-| datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
-| datadog.networkMonitoring.maxConnectionStateBuffered | string | `nil` | Maximum number of connection states buffered per client |
+| datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
+| datadog.networkMonitoring.maxConnectionStateBuffered | string | `nil` | Maximum number of concurrent connections for Cloud Network Monitoring |
 | datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
 | datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
 | datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |
