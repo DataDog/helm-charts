@@ -997,6 +997,10 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable network performance monitoring
     enabled: false
 
+    # datadog.networkMonitoring.maxConnectionStateBuffered -- Maximum number of connection states buffered per client
+    # @default -- `75000` (set by agent)
+    maxConnectionStateBuffered:
+
   networkPath:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.172.0
+
+* Add `datadog.networkMonitoring.maxConnectionStateBuffered` option to configure the maximum number of connection states buffered per client for network performance monitoring.
+
 ## 3.171.0
 
 * Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
