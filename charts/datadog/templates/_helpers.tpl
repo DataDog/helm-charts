@@ -527,6 +527,25 @@ false
 {{- end -}}
 
 {{/*
+Return true if discovery is the ONLY system-probe feature enabled.
+*/}}
+{{- define "only-discovery-system-probe-feature" -}}
+{{- if and .Values.datadog.discovery.enabled
+          (not .Values.datadog.securityAgent.runtime.enabled)
+          (not .Values.datadog.networkMonitoring.enabled)
+          (not .Values.datadog.systemProbe.enableTCPQueueLength)
+          (not .Values.datadog.systemProbe.enableOOMKill)
+          (not .Values.datadog.serviceMonitoring.enabled)
+          (not .Values.datadog.traceroute.enabled)
+          (not (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode))
+          (not .Values.datadog.dynamicInstrumentationGo.enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}

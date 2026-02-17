@@ -1,0 +1,7 @@
+datadog:
+  apiKey: xxx
+  discovery:
+    enabled: true
+    useSystemProbeLite: true
+  networkMonitoring:
+    enabled: true
