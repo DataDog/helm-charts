@@ -994,11 +994,10 @@ datadog:
       #   <HELM_VALUE>: <LABEL_NAME>
 
   networkMonitoring:
-    # datadog.networkMonitoring.enabled -- Enable network performance monitoring
+    # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
 
-    # datadog.networkMonitoring.maxConnectionStateBuffered -- Maximum number of connection states buffered per client
-    # @default -- `75000` (set by agent)
+    # datadog.networkMonitoring.maxConnectionStateBuffered -- Maximum number of concurrent connections for Cloud Network Monitoring
     maxConnectionStateBuffered:
 
   networkPath:
