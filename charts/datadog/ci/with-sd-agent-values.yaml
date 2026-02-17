@@ -1,0 +1,5 @@
+datadog:
+  apiKey: xxx
+  discovery:
+    enabled: true
+    useSdAgent: true

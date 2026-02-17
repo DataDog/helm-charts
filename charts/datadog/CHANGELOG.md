@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.167.0
+
+* Add `datadog.discovery.useSdAgent` option to wrap system-probe with sd-agent for lightweight service discovery.
+
 ## 3.166.5
 
 * Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent

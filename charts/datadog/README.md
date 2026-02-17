@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.166.5](https://img.shields.io/badge/Version-3.166.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.167.0](https://img.shields.io/badge/Version-3.167.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -784,6 +784,7 @@ helm install <RELEASE_NAME> \
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
+| datadog.discovery.useSdAgent | bool | `false` | Use sd-agent to wrap system-probe for discovery. When enabled, sd-agent runs as a lightweight alternative to system-probe when only discovery features are needed. Falls back to system-probe automatically on older agent images that don't include sd-agent, or when non-discovery features are also enabled. |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |

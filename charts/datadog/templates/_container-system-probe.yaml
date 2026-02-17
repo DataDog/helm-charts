@@ -3,7 +3,12 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version "apparmor" (and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.systemProbe.apparmor) "mknod" (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) "kill" .Values.datadog.securityAgent.runtime.enforcement.enabled) | nindent 2 }}
+{{- if and .Values.datadog.discovery.enabled .Values.datadog.discovery.useSdAgent }}
+  command: ["/bin/sh", "-c"]
+  args: ["if [ -x /opt/datadog-agent/embedded/bin/sd-agent ]; then exec /opt/datadog-agent/embedded/bin/sd-agent -- /opt/datadog-agent/embedded/bin/system-probe --config=/etc/datadog-agent/system-probe.yaml; else exec system-probe --config=/etc/datadog-agent/system-probe.yaml; fi"]
+{{- else }}
   command: ["system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+{{- end }}
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}
@@ -21,6 +26,10 @@
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- if and .Values.datadog.discovery.enabled .Values.datadog.discovery.useSdAgent }}
+    - name: DD_DISCOVERY_USE_SD_AGENT
+      value: "true"
+    {{- end }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: HOST_ROOT
       value: "/host/root"

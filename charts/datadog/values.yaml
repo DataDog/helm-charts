@@ -1035,6 +1035,9 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+    # datadog.discovery.useSdAgent -- (bool) Use sd-agent to wrap system-probe for discovery.
+    useSdAgent: false
+
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
       enabled: true
