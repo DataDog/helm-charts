@@ -349,6 +349,8 @@ spec:
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
           - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
             value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
+          - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_USE_K8S_SECRET
+            value: "true"
           - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_SECRET_NAME
             value: {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
           {{- end }}
