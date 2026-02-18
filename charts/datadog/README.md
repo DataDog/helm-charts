@@ -914,10 +914,12 @@ helm install <RELEASE_NAME> \
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
-| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
+| datadog.secretBackend.config | object | `{}` | Additional configuration for the secret backend type. |
+| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"` or `datadog.secretBackend.type` is set. |
 | datadog.secretBackend.refreshInterval | string | `nil` | [PREVIEW] Configure the secret backend command refresh interval in seconds. |
 | datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`. |
 | datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
+| datadog.secretBackend.type | string | `nil` | Configure the built-in secret backend type. Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.containerInclude | string | `nil` | Include containers in CSPM monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
