@@ -179,6 +179,8 @@ spec:
           - name: DD_HEALTH_PORT
           {{- $healthPort := .Values.clusterAgent.healthPort }}
             value: {{ $healthPort | quote }}
+          - name: DD_CLUSTER_AGENT_ENABLED
+            value: {{ (include "cluster-agent-enabled" .) | quote }}
           - name: DD_API_KEY
             valueFrom:
               secretKeyRef:
