@@ -269,11 +269,10 @@ clusterRole:
   # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
   allowCreatePodsExec: false
 
-  # kubelet.fineGrainedAuthorization -- When set to true, the operator cluster role will not include the nodes/proxy resource.
+  # kubeletFineGrainedAuthorization -- When set to true, the operator cluster role will not include the nodes/proxy resource.
   # WARNING: The following requirements must be met:
   # - the Kubernetes feature gate `KubeletFineGrainedAuthz` (false in 1.32, true in 1.33+ by default)
   # - Datadog Operator version 1.20.0 or later
   # - adding the annotation `agent.datadoghq.com/fine-grained-kubelet-authorization-enabled: "true"` on your `DatadogAgent` resource. (ref: https://github.com/DataDog/datadog-operator/pull/2188)
   # Without any of these requirements, your Datadog Agent will not function properly.
-  kubelet:
-    fineGrainedAuthorization: false
+  kubeletFineGrainedAuthorization: false

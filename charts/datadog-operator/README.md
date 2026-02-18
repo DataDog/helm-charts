@@ -12,7 +12,7 @@
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
-| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false,"kubelet":{"fineGrainedAuthorization":false}}` | Set specific configuration for the cluster role |
+| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false,"kubeletFineGrainedAuthorization":false}` | Set specific configuration for the cluster role |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |

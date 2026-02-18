@@ -2,7 +2,7 @@
 
 ## 2.19.0-dev.2
 
-* Adds `clusterRole.kubelet.fineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
+* Adds `clusterRole.kubeletFineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
 
 ## 2.19.0-dev.1
 

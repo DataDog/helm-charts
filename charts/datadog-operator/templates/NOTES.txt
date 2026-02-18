@@ -52,7 +52,7 @@ Please check Operator README for more details https://github.com/DataDog/datadog
 
 {{- end }}
 
-{{- if .Values.clusterRole.kubelet.fineGrainedAuthorization }}
+{{- if .Values.clusterRole.kubeletFineGrainedAuthorization }}
 ##############################################################################
 ####               WARNING: Fine-grained authorization flag enabled.      ####
 ##############################################################################
