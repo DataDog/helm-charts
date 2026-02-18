@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.172.0
+
+* Support 'image_volume' for apm.instrumentation.injectionMode
+
 ## 3.171.0
 
 * Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
