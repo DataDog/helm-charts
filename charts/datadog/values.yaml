@@ -78,7 +78,17 @@ datadog:
     # datadog.secretBackend.refreshInterval -- [PREVIEW] Configure the secret backend command refresh interval in seconds.
     refreshInterval:  # 0
 
-    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
+    # datadog.secretBackend.type -- Configure the built-in secret backend type.
+    # Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+.
+    type:  # Examples: "file.text", "k8s.secrets", "docker.secrets", "aws.secrets", etc.
+
+    # datadog.secretBackend.config -- Additional configuration for the secret backend type.
+    config: {}
+    # Example for k8s.secrets:
+    #   token_path: "/custom/path/token"
+    #   ca_path: "/custom/path/ca.crt"
+
+    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"` or `datadog.secretBackend.type` is set.
     enableGlobalPermissions: true
 
     # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`.
