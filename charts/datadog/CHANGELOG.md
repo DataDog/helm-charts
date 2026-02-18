@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.172.0
+
+* Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
 ## 3.171.0
 
 * Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
