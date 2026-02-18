@@ -2,7 +2,7 @@
 
 ## 3.172.0
 
-* Add `datadog.networkMonitoring.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
 
 ## 3.171.0
 
