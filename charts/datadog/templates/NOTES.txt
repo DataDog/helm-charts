@@ -800,10 +800,14 @@ OTel Agent Gateway autoscaling has no effect in Kubernetes version 1.22.x and be
 
 {{- end }}
 
-{{ if .Values.datadog.operator.enabled }}
+
+{{- if .Values.datadog.operator.enabled }}
+
+
 ###################################################################################
 ####                     INFO: Datadog Operator is enabled                     ####
 ###################################################################################
+
 Datadog Operator is enabled by default and running.
 
 Learn more about the Datadog Operator: https://docs.datadoghq.com/containers/datadog_operator/
@@ -813,9 +817,11 @@ To disable the Datadog Operator, set `datadog.operator.enabled` to `false`.
 {{- end }}
 
 {{- if and .Values.datadog.operator.enabled ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) ( not ( include "migration-supported" . ) ) }}
+
 ###################################################################################
 ####               WARNING: Unsupported Datadog Operator version               ####
 ###################################################################################
+
 You have set `datadog.operator.migration.enabled` or `datadog.operator.migration.preview` to `true`.
 Support for this configuration is supported in Datadog Operator version 1.22.0+.
 Update your chart or set `datadog-operator.image.tag` to a supported version.
@@ -824,28 +830,34 @@ Skipping migration.
 
 {{- end }}
 
-{{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.preview }}
+{{- if and ( include "migration-supported" . ) .Values.datadog.operator.migration.preview }}
+
 ###################################################################################
 ####                 INFO: Helm-DDA Migration Preview Enabled                  ####
 ###################################################################################
 
-View migration job logs:
+View migration preview job logs:
 
 kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
+
+
+###################################################################################
+####                      NEXT STEP: Enable Migration                          ####
+###################################################################################
+
+After reviewing the preview logs and mapped DatadogAgent, enable migration to apply the DatadogAgent manifest.
+
+Example:
+
+  helm upgrade {{ .Release.Name }} datadog/datadog \
+    --namespace {{ .Release.Namespace }} \
+    -f datadog-values.yaml \
+    --set-file datadog.operator.migration.userValues=datadog-values.yaml \
+    --set datadog.operator.migration.enabled=true \
+    --set datadog.operator.migration.preview=false \
+    --set operator.datadogCRDs.keepCrds=true
 
 {{- end }}
-
-{{ if and ( include "migration-supported" . ) .Values.datadog.operator.migration.enabled }}
-###################################################################################
-####                     INFO: Helm-DDA Migration Enabled                      ####
-###################################################################################
-View and save your migrated DatadogAgent manifest with this command:
-
-kubectl -n {{ .Release.Namespace }} get datadogagent {{ template "datadog.fullname" . }} -oyaml
-
-View migration job logs:
-
-kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
 
 {{- if and .Values.datadog.operator.migration.enabled (ne .Values.operator.datadogCRDs.keepCrds true) }}
 
@@ -854,6 +866,45 @@ kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}
 ###################################################################################
 
 {{- fail "The options `datadog.operator.migration.enabled` and `operator.datadogCRDs.keepCrds` must both be enabled." }}
-
 {{- end }}
+
+{{- if and ( include "migration-supported" . ) .Values.datadog.operator.migration.enabled }}
+
+###################################################################################
+####                     INFO: Helm-DDA Migration Enabled                      ####
+###################################################################################
+
+View and save your migrated DatadogAgent manifest:
+
+kubectl -n {{ .Release.Namespace }} get datadogagent {{ template "datadog.fullname" . }} -oyaml
+
+View migration job logs:
+
+kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job --all-containers
+
+
+###################################################################################
+####           NEXT STEP: Complete Migration to Datadog Operator Chart         ####
+###################################################################################
+
+To complete the migration:
+
+1. Install the datadog-operator chart.
+
+   Example:
+
+   helm install operator datadog/datadog-operator \
+     --namespace {{ .Release.Namespace }} \
+     --set datadogCRDs.crds.datadogAgents=true \
+     --take-ownership
+
+{{- if contains "datadog-operator" (include "operator-subchart-deployment-name" .) }}
+   IMPORTANT: Do not use release name '{{ include "operator-subchart-deployment-name" . }}' — it produces deployment name '{{ include "operator-subchart-deployment-name" . }}', colliding with the subchart operator.
+   Use a different release name or set --set fullnameOverride to a different name to avoid immutable field errors.
+{{- end }}
+
+2. Uninstall this Datadog Helm release:
+
+   helm uninstall {{ .Release.Name }} --namespace {{ .Release.Namespace }}
+
 {{- end }}

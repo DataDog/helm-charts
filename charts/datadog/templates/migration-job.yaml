@@ -1,4 +1,7 @@
 {{- if and ( include "migration-supported" . ) ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) }}
+{{- if not .Values.datadog.operator.migration.userValues }}
+{{- fail "\n\n=================================================================================\nERROR: Migration Enabled but userValues Not Provided\n=================================================================================\n\nMigration is enabled but 'datadog.operator.migration.userValues' is not set.\n\nThe migration job requires your Helm values to be provided as a string.\nPlease reinstall with your values file using --set-file.\n\nExample:\n\n  helm upgrade dd datadog/datadog \\\n    -f datadog-values.yaml \\\n    --set-file datadog.operator.migration.userValues=datadog-values.yaml\n\n=================================================================================\n" }}
+{{- end }}
 apiVersion: batch/v1
 kind: Job
 metadata:
