@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.19.0-dev.2](https://img.shields.io/badge/Version-2.19.0--dev.2-informational?style=flat-square) ![AppVersion: 1.24.0-rc.1](https://img.shields.io/badge/AppVersion-1.24.0--rc.1-informational?style=flat-square)
+![Version: 2.19.0-dev.3](https://img.shields.io/badge/Version-2.19.0--dev.3-informational?style=flat-square) ![AppVersion: 1.24.0-rc.1](https://img.shields.io/badge/AppVersion-1.24.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -48,7 +48,7 @@
 | maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
-| nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
+| nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Allows to schedule Datadog Operator on specific nodes |
 | operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
