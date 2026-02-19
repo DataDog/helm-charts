@@ -79,10 +79,10 @@ metadata:
   name: deployment-metadata-labels-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.23.0
+    helm.sh/chart: private-action-runner-1.25.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-labels-test
-    app.kubernetes.io/version: "v1.18.0"
+    app.kubernetes.io/version: "v1.19.0"
     app.kubernetes.io/managed-by: Helm
     custom-label: custom-value
     environment: production
@@ -96,18 +96,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.23.0
+        helm.sh/chart: private-action-runner-1.25.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-metadata-labels-test
-        app.kubernetes.io/version: "v1.18.0"
+        app.kubernetes.io/version: "v1.19.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 96a3b9f5be52a5c3e4c53dbc15921eb585097cf4bf4d1cfc93a9c1fe60183dda
+        checksum/values: 08729d4755fd34d18fe848417b5ea5bdaf8cca99ec64f2c8623052f65d7a5af5
     spec:
       serviceAccountName: deployment-metadata-labels-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.18.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.19.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

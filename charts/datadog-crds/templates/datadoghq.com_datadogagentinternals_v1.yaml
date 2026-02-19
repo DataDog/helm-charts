@@ -1163,6 +1163,12 @@ spec:
                                 Default: true
                               type: boolean
                           type: object
+                        runInSystemProbe:
+                          description: |-
+                            RunInSystemProbe configures CSPM to send payloads directly from the system-probe, without using the security-agent.
+                            This is an experimental feature. Contact support before using.
+                            Default: false
+                          type: boolean
                       type: object
                     cws:
                       description: CWS (Cloud Workload Security) configuration.
@@ -1348,6 +1354,7 @@ spec:
                         tagCardinality:
                           description: |-
                             TagCardinality configures tag cardinality for the metrics collected using origin detection (`low`, `orchestrator` or `high`).
+                            This setting only applies when OriginDetectionEnabled is true.
                             See also: https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
                             Cardinality default: low
                           type: string
@@ -1857,6 +1864,11 @@ spec:
                         collectDNSStats:
                           description: |-
                             CollectDNSStats enables DNS stat collection.
+                            Default: false
+                          type: boolean
+                        directSend:
+                          description: |-
+                            DirectSend enables CNM/USM to send data directly to the backend
                             Default: false
                           type: boolean
                         enableConntrack:
@@ -9156,6 +9168,12 @@ spec:
                                     Default: true
                                   type: boolean
                               type: object
+                            runInSystemProbe:
+                              description: |-
+                                RunInSystemProbe configures CSPM to send payloads directly from the system-probe, without using the security-agent.
+                                This is an experimental feature. Contact support before using.
+                                Default: false
+                              type: boolean
                           type: object
                         cws:
                           description: CWS (Cloud Workload Security) configuration.
@@ -9341,6 +9359,7 @@ spec:
                             tagCardinality:
                               description: |-
                                 TagCardinality configures tag cardinality for the metrics collected using origin detection (`low`, `orchestrator` or `high`).
+                                This setting only applies when OriginDetectionEnabled is true.
                                 See also: https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
                                 Cardinality default: low
                               type: string
@@ -9850,6 +9869,11 @@ spec:
                             collectDNSStats:
                               description: |-
                                 CollectDNSStats enables DNS stat collection.
+                                Default: false
+                              type: boolean
+                            directSend:
+                              description: |-
+                                DirectSend enables CNM/USM to send data directly to the backend
                                 Default: false
                               type: boolean
                             enableConntrack:

@@ -61,9 +61,18 @@ spec:
             - name: scripts
               mountPath: /home/scriptuser
             {{- end }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: custom-ca-cert
+              mountPath: /etc/dd-action-runner/config/ca-certificates
+              readOnly: true
+            {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: {{ $.Values.runner.configDirectory }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: SSL_CERT_DIR
+              value: /etc/dd-action-runner/config/ca-certificates
+            {{- end }}
           {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
           {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
@@ -100,4 +109,13 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "chart.fullname" . }}-scripts
+        {{- end }}
+        {{- if $.Values.runner.customCaCert.configMapName }}
+        - name: custom-ca-cert
+          configMap:
+            name: {{ $.Values.runner.customCaCert.configMapName }}
+        {{- else if $.Values.runner.customCaCert.secretName }}
+        - name: custom-ca-cert
+          secret:
+            secretName: {{ $.Values.runner.customCaCert.secretName }}
         {{- end }}

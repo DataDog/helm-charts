@@ -546,7 +546,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -613,6 +613,18 @@ Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
 {{- if and (not .Values.providers.gke.gdc) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if security-agent should handle CWS integration.
+This considers both runtime security features AND whether direct send from system-probe is enabled.
+*/}}
+{{- define "should-enable-security-agent-cws-integration" -}}
+{{- if and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -1032,8 +1044,8 @@ false
 Return true if secret RBACs are needed for secret backend.
 */}}
 {{- define "need-secret-permissions" -}}
-{{- if .Values.datadog.secretBackend.command -}}
-{{- if and .Values.datadog.secretBackend.enableGlobalPermissions (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh") -}}
+{{- if .Values.datadog.secretBackend.enableGlobalPermissions -}}
+{{- if or (and .Values.datadog.secretBackend.command (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh")) .Values.datadog.secretBackend.type -}}
 true
 {{- end -}}
 {{- else -}}
@@ -1047,6 +1059,9 @@ Returns env vars correctly quoted and valueFrom respected
 {{- define "additional-env-entries" -}}
 {{- if . -}}
 {{- range . }}
+{{- if not .name }}
+{{- fail "env var entry must have a 'name' field" }}
+{{- end }}
 - name: {{ .name }}
 {{- if .value }}
   value: {{ .value | quote }}
@@ -1337,26 +1352,13 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
-  Return value of "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" env var in core agent container.
-*/}}
-{{- define "get-process-checks-in-core-agent-envvar" -}}
-  {{- range .Values.agents.containers.agent.env -}}
-    {{- if eq .name "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" -}}
-      {{- .value -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-
-{{/*
   Returns true if process-related checks should run on the core agent.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
   {{- if ne .Values.targetSystem "linux" -}}
     false
-  {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
-    {{- include "get-process-checks-in-core-agent-envvar" . -}}
   {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
-      true
+    true
   {{- else -}}
     false
   {{- end -}}
