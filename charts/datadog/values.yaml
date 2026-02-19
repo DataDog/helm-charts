@@ -30,6 +30,7 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+## Datadog - use registry.datadoghq.com/datadog
 ## If you are on GKE Autopilot, you must use a gcr.io variant registry.
 
 registry:  # gcr.io/datadoghq
