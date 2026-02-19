@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.20.0
+## 2.19.1
 
 * Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
 
