@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.171.0
+## 3.172.0
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
+## 3.171.1
+
+* Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
+
+## 3.171.0
+
+* Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
+
+## 3.170.2
+
+* [datadog/datadog] Update default Agent version to 7.75.4 ([#2390](https://github.com/DataDog/helm-charts/pull/2390)).
 
 ## 3.170.1
 
