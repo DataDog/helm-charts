@@ -51,3 +51,16 @@ We are changing Datadog Agent daemonset and pod metadata handling in upcoming re
 Please check Operator README for more details https://github.com/DataDog/datadog-operator/blob/main/README.md
 
 {{- end }}
+
+{{- if .Values.clusterRole.kubeletFineGrainedAuthorization }}
+##############################################################################
+####               WARNING: Fine-grained authorization flag enabled.      ####
+##############################################################################
+
+Setting this flag requires:
+- the Kubernetes feature gate `KubeletFineGrainedAuthz` (false in 1.32, true in 1.33+ by default)
+- Datadog Operator version 1.20.0 or later
+- adding the annotation `agent.datadoghq.com/fine-grained-kubelet-authorization-enabled: "true"` on your `DatadogAgent` resource.
+
+Without any of these prerequisites, your Datadog Agent will not function properly.
+{{- end }}

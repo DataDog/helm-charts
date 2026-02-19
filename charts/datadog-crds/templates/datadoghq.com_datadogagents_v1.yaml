@@ -631,6 +631,8 @@ spec:
                             enabled:
                               type: boolean
                           type: object
+                        runInSystemProbe:
+                          type: boolean
                       type: object
                     cws:
                       properties:
@@ -1025,6 +1027,8 @@ spec:
                     npm:
                       properties:
                         collectDNSStats:
+                          type: boolean
+                        directSend:
                           type: boolean
                         enableConntrack:
                           type: boolean
@@ -4770,6 +4774,8 @@ spec:
                                 enabled:
                                   type: boolean
                               type: object
+                            runInSystemProbe:
+                              type: boolean
                           type: object
                         cws:
                           properties:
@@ -5164,6 +5170,8 @@ spec:
                         npm:
                           properties:
                             collectDNSStats:
+                              type: boolean
+                            directSend:
                               type: boolean
                             enableConntrack:
                               type: boolean
