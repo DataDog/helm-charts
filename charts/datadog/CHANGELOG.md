@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.171.1
+
+* Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
+
+
 ## 3.171.0
 
 * Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
