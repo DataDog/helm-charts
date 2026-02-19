@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.169.0](https://img.shields.io/badge/Version-3.169.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.171.1](https://img.shields.io/badge/Version-3.171.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,7 +32,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.8.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.9.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.18.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
@@ -542,7 +542,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.75.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.75.4"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
@@ -629,7 +629,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.75.0"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.75.4"` | Cluster Agent image tag to use |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
@@ -688,7 +688,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.75.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.75.4"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -914,10 +914,12 @@ helm install <RELEASE_NAME> \
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
-| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
+| datadog.secretBackend.config | object | `{}` | Additional configuration for the secret backend type. |
+| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"` or `datadog.secretBackend.type` is set. |
 | datadog.secretBackend.refreshInterval | string | `nil` | [PREVIEW] Configure the secret backend command refresh interval in seconds. |
 | datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`. |
 | datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
+| datadog.secretBackend.type | string | `nil` | Configure the built-in secret backend type. Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.containerInclude | string | `nil` | Include containers in CSPM monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
@@ -941,7 +943,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled | bool | `true` | Set to true to enable CWS runtime auto suppression |
 | datadog.securityAgent.runtime.securityProfile.enabled | bool | `true` | Set to true to enable CWS runtime security profiles |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
-| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer |
+| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support. |
 | datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.serviceMonitoring.http2MonitoringEnabled | string | `nil` | Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent. |
