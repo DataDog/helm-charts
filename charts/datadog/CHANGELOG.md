@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.171.0
+
+* Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
+
+## 3.170.2
+
+* [datadog/datadog] Update default Agent version to 7.75.4 ([#2390](https://github.com/DataDog/helm-charts/pull/2390)).
+
 ## 3.170.1
 
 * Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
