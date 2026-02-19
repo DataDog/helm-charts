@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.1
+
+* Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
 ## 2.19.0-dev.2
 
 * Adds `clusterRole.kubeletFineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
