@@ -17,13 +17,13 @@ Learn more about the [Datadog Operator][1] and its benefits.
 ## Prerequisites
 
 * Helm version 3.17.0+
-* Datadog Helm chart version X.X.X+
+* Datadog Helm chart version 3.172.0+
 * Datadog Operator Helm chart version 2.17.0+
-* Datadog Operator v1.22.0+
+* Datadog Operator v1.23.0+
 
 ## Migrate existing Datadog Helm release
 
-To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version X.X.X and Datadog Operator version 1.22.0 and later.
+To migrate Datadog Agent workloads deployed by an existing Datadog Helm release to the DatadogAgent custom resource definition, use the built-in migration tooling available in Datadog Helm chart version 3.172.0 and Datadog Operator version 1.23.0 and later.
 
 The migration tooling supports the following Datadog Helm chart configuration options either minimally or partially:
 
@@ -60,7 +60,7 @@ The migration tooling supports the following Datadog Helm chart configuration op
    Run:
 
    ```shell
-   helm upgrade <RELEASE_NAME> \
+   helm upgrade <DATADOG_RELEASE_NAME> \
       --set-file datadog.operator.migration.userValues=datadog-values.yaml \
       -f datadog-values.yaml \
       datadog/datadog
@@ -71,7 +71,7 @@ The migration tooling supports the following Datadog Helm chart configuration op
    Run:
 
    ```shell
-   kubectl logs job/<RELEASE_NAME>-dda-migration-job --all-containers
+   kubectl logs job/<DATADOG_RELEASE_NAME>-dda-migration-job --all-containers
    ```
 
    If there are no configuration mapping errors present in the logs, you may proceed with migrating your current Datadog Helm release.
@@ -89,7 +89,7 @@ The migration tooling supports the following Datadog Helm chart configuration op
    
    operator:
       image:
-         tag: 1.22.0
+         tag: 1.23.0
       datadogCRDs:
          keepCrds: true
    ```
@@ -101,7 +101,7 @@ The migration tooling supports the following Datadog Helm chart configuration op
    Run:
 
    ```shell
-   helm upgrade <RELEASE_NAME> \
+   helm upgrade <DATADOG_RELEASE_NAME> \
       --set-file datadog.operator.migration.userValues=datadog-values.yaml \
       -f datadog-values.yaml \
       datadog/datadog
@@ -128,14 +128,15 @@ After migrating your Datadog Agent workloads and validating that the Agent pods 
 1. Run:
 
    ```shell
-   helm install <RELEASE_NAME> \
+   helm install <OPERATOR_RELEASE_NAME> \
       --set apiKeyExistingSecret=datadog-secret \
       --set appKeyExistingSecret=datadog-secret \
+      --set datadogCRDs.keepCrds=true \
       --take-ownership \
       datadog/datadog-operator
    ```
 
-   Note: `--take-ownership` lets the Datadog Operator release adopt Datadog CRDs left behind when `operator.datadogCRDs.keepCrds=true` was enabled during migration.
+   **Note**: `--take-ownership` lets the Datadog Operator release adopt Datadog CRDs that were previously created by the Operator subchart (enabled through `datadog.operator.enabled`).
 
 2. Verify that the Datadog Operator pod is reporting on the [Containers page][5] in Datadog is reporting as expected.
 
@@ -148,7 +149,7 @@ After you install the Datadog Operator Helm chart, uninstall the Datadog Helm ch
 1. Run:
 
    ```shell
-   helm uninstall <RELEASE_NAME>
+   helm uninstall <DATADOG_RELEASE_NAME>
    ```
 
 Datadog Agent pods should remain unaffected, and Datadog custom resource definitions (CRDs) should remain installed on the Kubernetes cluster. The Cluster Agent, Cluster Agent service account, and Cluster Checks Runners (if enabled) will be recreated by the Datadog Operator.
