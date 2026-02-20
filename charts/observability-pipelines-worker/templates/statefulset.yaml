@@ -42,6 +42,10 @@ spec:
       resources:
         requests:
           storage: {{ .Values.persistence.size }}
+      {{- if .Values.persistence.retentionPolicy }}
+      persistentVolumeClaimRetentionPolicy:
+        {{- toYaml .Values.persistence.retentionPolicy | nindent 8 }}
+      {{- end }}
       {{- if .Values.persistence.selector }}
       selector: {{ toYaml .Values.persistence.selector | nindent 8 }}
       {{- end }}

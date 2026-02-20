@@ -297,6 +297,11 @@ persistence:
   # resize.topolvm.io/threshold: "10%"
   # resize.topolvm.io/increase: "2Gi"
   # resize.topolvm.io/storage_limit: "20Gi"
+  # persistence.retentionPolicy -- Set the PVC retention policy. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+  retentionPolicy: {}
+  # retentionPolicy:
+  #   whenScaled: Delete
+  #   whenDeleted: Delete
 
 # dnsPolicy -- Specify the
 # [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy).

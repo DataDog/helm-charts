@@ -129,6 +129,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |
+| persistence.retentionPolicy | object | `{}` | Set the PVC retention policy. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention |
 | persistence.selector | object | `{}` | Specify the selectors for PersistentVolumeClaims. |
 | persistence.size | string | `"10Gi"` | Specify the size of PersistentVolumeClaims. |
 | persistence.storageClassName | string | `nil` | Specify the storageClassName for PersistentVolumeClaims. |

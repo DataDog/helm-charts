@@ -1,4 +1,9 @@
+
 # Changelog
+
+## 2.13.3
+
+- Add support for Kubernetes `persistentVolumeClaimRetentionPolicy` in StatefulSet and values.yaml. Users can now configure PVC retention policy via `persistence.retentionPolicy`.
 
 ## 2.13.2
 
