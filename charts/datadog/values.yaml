@@ -929,6 +929,9 @@ datadog:
     # datadog.systemProbe.maxTrackedConnections -- the maximum number of tracked connections
     maxTrackedConnections: 131072
 
+    # datadog.systemProbe.maxConnectionStateBuffered -- Maximum number of concurrent connections for Cloud Network Monitoring
+    maxConnectionStateBuffered:
+
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
     conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
 
@@ -994,7 +997,7 @@ datadog:
       #   <HELM_VALUE>: <LABEL_NAME>
 
   networkMonitoring:
-    # datadog.networkMonitoring.enabled -- Enable network performance monitoring
+    # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
 
   networkPath:

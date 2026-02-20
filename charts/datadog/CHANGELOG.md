@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.172.0
+## 3.174.0
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
+## 3.173.0
+
+* [CONTP] feat(rbac): Add endpointslices read permissions to node agent ([#2399](https://github.com/DataDog/helm-charts/pull/2399)).
+
+## 3.172.0
+
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
 
 ## 3.171.2
 
