@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.173.1
+
+* Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
 ## 3.173.0
 
 * [CONTP] feat(rbac): Add endpointslices read permissions to node agent ([#2399](https://github.com/DataDog/helm-charts/pull/2399)).
