@@ -898,6 +898,7 @@ To complete the migration:
      --set datadogCRDs.crds.datadogAgents=true \
      --take-ownership
 
+
 {{- if contains "datadog-operator" (include "operator-subchart-deployment-name" .) }}
    IMPORTANT: Do not use release name '{{ include "operator-subchart-deployment-name" . }}' — it produces deployment name '{{ include "operator-subchart-deployment-name" . }}', colliding with the subchart operator.
    Use a different release name or set --set fullnameOverride to a different name to avoid immutable field errors.
