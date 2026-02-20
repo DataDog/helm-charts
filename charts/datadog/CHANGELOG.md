@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.172.0
+
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
+
 ## 3.171.2
 
 * Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.

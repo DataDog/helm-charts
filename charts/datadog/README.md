@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.171.2](https://img.shields.io/badge/Version-3.171.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.172.0](https://img.shields.io/badge/Version-3.172.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -852,7 +852,7 @@ helm install <RELEASE_NAME> \
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
-| datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
+| datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
 | datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
 | datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
 | datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |
@@ -965,6 +965,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
+| datadog.systemProbe.maxConnectionStateBuffered | string | `nil` | Maximum number of concurrent connections for Cloud Network Monitoring |
 | datadog.systemProbe.maxTrackedConnections | int | `131072` | the maximum number of tracked connections |
 | datadog.systemProbe.mountPackageManagementDirs | list | `[]` | Enables mounting of specific package management directories when runtime compilation is enabled |
 | datadog.systemProbe.runtimeCompilationAssetDir | string | `"/var/tmp/datadog-agent/system-probe"` | Specify a directory for runtime compilation assets to live in |
