@@ -44,6 +44,30 @@ helm install --name <RELEASE_NAME> \
     datadog/observability-pipelines-worker
 ```
 
+### Runtime-derived hostnames (VECTOR_HOSTNAME)
+
+Helm renders manifests at install/upgrade time, but pod name or node name are only known after scheduling. Use the
+[Downward API](https://kubernetes.io/docs/concepts/workloads/pods/downward-api/) to inject those runtime values, then build
+`VECTOR_HOSTNAME` inside the container at startup (Kubernetes env vars cannot concatenate other env vars).
+
+Example `values.yaml` override (POD_NAME.CLUSTER_NAME):
+
+```yaml
+env:
+  - name: CLUSTER_NAME
+    value: "my-cluster"
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+
+command: ["/bin/sh", "-c"]
+args:
+  - >
+    export VECTOR_HOSTNAME="${POD_NAME}.${CLUSTER_NAME}";
+    exec /usr/bin/observability-pipelines-worker
+```
+
 #### Create and provide a Secret that contains your Datadog API Key
 
 To create a Secret that contains your Datadog API key, replace the `<DATADOG_API_KEY>` below with the API key for your
