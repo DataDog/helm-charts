@@ -1,0 +1,174 @@
+{{- if and ( include "migration-supported" . ) ( or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview ) }}
+{{- if not .Values.datadog.operator.migration.userValues }}
+{{- fail "\n\n=================================================================================\nERROR: Migration Enabled but userValues Not Provided\n=================================================================================\n\nMigration is enabled but 'datadog.operator.migration.userValues' is not set.\n\nThe migration job requires your Helm values to be provided as a string.\nPlease reinstall with your values file using --set-file.\n\nExample:\n\n  helm upgrade dd datadog/datadog \\\n    -f datadog-values.yaml \\\n    --set-file datadog.operator.migration.userValues=datadog-values.yaml\n\n=================================================================================\n" }}
+{{- end }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-dda-migration-job
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "post-install,post-upgrade"
+    helm.sh/hook-delete-policy: "before-hook-creation"
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  ttlSecondsAfterFinished: 3600
+  activeDeadlineSeconds: 30
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
+      restartPolicy: Never
+      containers:
+        # Mapper container: converts Helm values to DatadogAgent manifest
+        - name: dda-mapper
+          image: {{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          command:
+            - sh
+            - -c
+            - |
+              /yaml-mapper map \
+                --ddaName={{ template "datadog.fullname" . }} \
+                --sourcePath=/tmp/values.yaml \
+                --mappingPath=/tmp/mapping_datadog_helm_to_datadogagent_crd.yaml \
+                --destPath=/tmp/{{ template "datadog.fullname" . }}.yaml \
+                --namespace={{ .Release.Namespace }}
+              EXIT_CODE=$?
+              if [ $EXIT_CODE -ne 0 ]; then
+                echo ""
+                echo "============================================================"
+                echo " ERROR: Helm-to-DDA mapping failed (exit code: $EXIT_CODE)"
+                echo "============================================================"
+                echo "The yaml-mapper encountered errors while mapping Helm values"
+                echo "to a DatadogAgent manifest. Review the errors above."
+                echo ""
+                echo "FAILED" > /tmp/mapper-status
+              else
+                echo "SUCCEEDED" > /tmp/mapper-status
+              fi
+{{- if not ( and .Values.datadog.operator.migration.enabled ( include "datadogagents-crd-ready" . ) ) }}
+              # Preview mode or migration enabled but CRD not ready: print completion message
+              echo ""
+              echo "============================================================"
+  {{- if and .Values.datadog.operator.migration.enabled (not ( include "datadogagents-crd-ready" . )) }}
+              echo " WARNING: Migration enabled but DatadogAgent CRD not found"
+              echo "============================================================"
+              echo "The DatadogAgent CRD must be installed before migration can proceed."
+              echo "Ensure the CRD is deployed by setting:"
+              echo "  operator.datadogCRDs.crds.datadogAgents=true"
+  {{- else }}
+              if [ -f /tmp/mapper-status ] && read status < /tmp/mapper-status && [ "$status" = "SUCCEEDED" ]; then
+                echo " INFO: Migration preview complete"
+              else
+                echo " ERROR: Migration preview failed"
+              fi
+              echo "============================================================"
+  {{- end }}
+{{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: values-config
+              mountPath: /tmp/values.yaml
+              subPath: values.yaml
+              readOnly: true
+            - name: migration-mapper-config
+              mountPath: /tmp/mapping_datadog_helm_to_datadogagent_crd.yaml
+              subPath: mapping_datadog_helm_to_datadogagent_crd.yaml
+              readOnly: true
+{{- if and .Values.datadog.operator.migration.enabled ( include "datadogagents-crd-ready" . ) }}
+        # Migrator container: waits for mapper, then applies the DatadogAgent manifest
+        - name: dda-migrator
+          image: bitnami/kubectl:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          command:
+            - sh
+            - -c
+            - |
+              DDA_FILE="/tmp/{{ template "datadog.fullname" . }}.yaml"
+              STATUS_FILE="/tmp/mapper-status"
+              
+              # Wait for mapper to complete (status file to be written)
+              echo "Waiting for dda-mapper to complete..."
+              while [ ! -f "$STATUS_FILE" ]; do sleep 1; done
+              
+              # Check if mapper succeeded
+              if grep -q "SUCCEEDED" "$STATUS_FILE"; then
+                if [ -s "$DDA_FILE" ]; then
+                  # Inject the helm-migration annotation into the DDA manifest before applying
+                  # Use sed address range to only modify within the metadata section
+                  echo "Adding 'agent.datadoghq.com/helm-migration: \"true\"' annotation to DatadogAgent manifest..."
+                  if sed -n '/^metadata:/,/^spec:/p' "$DDA_FILE" | grep -q "^  annotations:"; then
+                    # Annotations exist in metadata section, just add the key-value pair
+                    sed -i '/^metadata:/,/^spec:/{/^  annotations:/a\    agent.datadoghq.com/helm-migration: "true"
+                    }' "$DDA_FILE"
+                  else
+                    # No annotations in metadata section, add the full block after metadata
+                    sed -i '/^metadata:/a\  annotations:' "$DDA_FILE"
+                    sed -i '/^  annotations:/a\    agent.datadoghq.com/helm-migration: "true"' "$DDA_FILE"
+                  fi
+                  echo "Applying DatadogAgent manifest..."
+                  echo ""
+                  if kubectl apply -f "$DDA_FILE" --namespace {{ .Release.Namespace }}; then
+                    echo ""
+                    echo "============================================================"
+                    echo " SUCCESS: DatadogAgent manifest applied successfully"
+                    echo "============================================================"
+                  else
+                    echo ""
+                    echo "============================================================"
+                    echo " ERROR: Failed to apply DatadogAgent manifest"
+                    echo "============================================================"
+                    echo "Ensure the DatadogAgent CRD is installed. You may need to set:"
+                    echo "  operator.datadogCRDs.crds.datadogAgents=true"
+                  fi
+                else
+                  echo ""
+                  echo "============================================================"
+                  echo " WARNING: Mapper succeeded but DDA file is empty"
+                  echo "============================================================"
+                fi
+              else
+                echo ""
+                echo "============================================================"
+                echo " SKIPPED: DatadogAgent apply skipped due to mapping errors"
+                echo "============================================================"
+                echo "Check the dda-mapper container logs for details:"
+                echo "  kubectl -n {{ .Release.Namespace }} logs job/{{ template "datadog.fullname" . }}-dda-migration-job -c dda-mapper"
+              fi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+{{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: values-config
+          configMap:
+            name: {{ template "datadog.fullname" . }}-values-config
+            items:
+              - key: values.yaml
+                path: values.yaml
+        - name: migration-mapper-config
+          configMap:
+            name: {{ template "datadog.fullname" . }}-migration-mapper-config
+            items:
+              - key: mapping_datadog_helm_to_datadogagent_crd.yaml
+                path: mapping_datadog_helm_to_datadogagent_crd.yaml
+{{- end }}

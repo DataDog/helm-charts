@@ -1574,3 +1574,54 @@ etcd.yaml: |-
       tls_cert: "/etc/etcd-certs/tls.crt"
       tls_private_key: "/etc/etcd-certs/tls.key"
 {{- end -}}
+
+
+{{/*
+  Returns true if the DatadogAgent CRD is installed.
+*/}}
+{{- define "datadogagents-crd-ready" }}
+{{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+true
+{{- end }}
+{{- end -}}
+
+
+{{/*
+  Returns true if Helm->DDA migration is supported.
+*/}}
+{{- define "migration-supported" }}
+{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) (or (.Values.operator.image.doNotCheckTag) ( semverCompare ">=1.22.0" .Values.operator.image.tag )) }}
+true
+{{- end }}
+{{- end }}
+
+
+{{/*
+This helper computes the Deployment name for the operator when installed as a subchart of the datadog chart.
+
+The Operator subchart dependency uses hardcoded alias = "operator", so the subchart sees .Chart.Name = "operator" (not "datadog-operator").
+Release.Name = parent (datadog chart) release name.
+
+The logic follows the Operator chart's `datadog-operator.fullname` helper:
+  1. If operator.fullnameOverride is set, use that value
+  2. Otherwise, use operator.nameOverride (default "operator") as <name>
+  3. If the <name> is contained in Release.Name, use Release.Name
+  4. Otherwise, use Release.Name-<name>
+
+Examples (assuming no overrides):
+  - datadog chart release "datadog" → operator Deployment "datadog-operator"
+  - datadog chart release "dd" → operator Deployment "dd-operator"
+  - datadog chart release "my-datadog" → operator Deployment "my-datadog-operator"
+*/}}
+{{- define "operator-subchart-deployment-name" -}}
+{{- if .Values.operator.fullnameOverride -}}
+{{- .Values.operator.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default "operator" .Values.operator.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

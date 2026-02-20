@@ -1936,7 +1936,7 @@ spec:
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
-            - -datadogAgentEnabled=false
+            - -datadogAgentEnabled=true
             - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
