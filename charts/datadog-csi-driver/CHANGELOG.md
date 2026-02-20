@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.0
+
+* Set csi driver image to `1.2.0`
+
+## 0.8.0
+
+* Support configuring `NodeAffinity` and `NodeSelector` in datadog csi driver chart.
+
+## 0.7.0
+
+* [CONTP-1250] feat(csi_driver): Make updateStrategy configurable and increase default strategy. ([#2369](https://github.com/DataDog/helm-charts/pull/2369)).
+
 ## 0.6.0
 
 * Add `apm.enabled` configuration option to enable/disable APM/SSI support (not yet supported on GKE Autopilot)

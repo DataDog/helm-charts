@@ -560,7 +560,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -627,6 +627,18 @@ Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
 {{- if and (not .Values.providers.gke.gdc) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if security-agent should handle CWS integration.
+This considers both runtime security features AND whether direct send from system-probe is enabled.
+*/}}
+{{- define "should-enable-security-agent-cws-integration" -}}
+{{- if and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -1046,8 +1058,8 @@ false
 Return true if secret RBACs are needed for secret backend.
 */}}
 {{- define "need-secret-permissions" -}}
-{{- if .Values.datadog.secretBackend.command -}}
-{{- if and .Values.datadog.secretBackend.enableGlobalPermissions (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh") -}}
+{{- if .Values.datadog.secretBackend.enableGlobalPermissions -}}
+{{- if or (and .Values.datadog.secretBackend.command (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh")) .Values.datadog.secretBackend.type -}}
 true
 {{- end -}}
 {{- else -}}

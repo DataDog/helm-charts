@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.18.0
+  tag: v1.19.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -152,6 +152,10 @@ runner:
   scriptFiles: []
   # script files provided here will be mounted in /home/scriptuser/
   # see examples/values.yaml for examples on how to specify scripts
+  # -- Custom CA certificate configuration for trusting internal/private CAs
+  customCaCert:
+    # -- Name of a ConfigMap containing the PEM-encoded CA certificate(s)
+    configMapName: ""
 
   # -- Pod Security configuration
   podSecurity:

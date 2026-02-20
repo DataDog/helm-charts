@@ -6,6 +6,10 @@ metadata:
   name: datadog-csi-driver-node-server
   namespace: datadog-agent
 spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 10%
+    type: RollingUpdate
   selector:
     matchLabels:
       app: datadog-csi-driver-node-server
@@ -17,7 +21,7 @@ spec:
     spec:
       containers:
         - name: csi-node-driver
-          image: "gcr.io/datadoghq/csi-driver:1.0.0"
+          image: "gcr.io/datadoghq/csi-driver:1.2.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
