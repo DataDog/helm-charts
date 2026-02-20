@@ -300,6 +300,7 @@ rules:
   - list
   - watch
 - apiGroups:
+  - eks.amazonaws.com
   - external.metrics.k8s.io
   - karpenter.k8s.aws
   resources:

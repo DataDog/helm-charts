@@ -1,7 +1,7 @@
 ---
 apiVersion: v1
 name: datadog
-version: 3.171.3
+version: 3.173.1
 appVersion: "7"
 description: Datadog Agent
 keywords:
