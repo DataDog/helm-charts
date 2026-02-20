@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.4
+
+* Update Datadog Operator chart for 1.24.0-rc.2.
+
 ## 2.19.0-dev.3
 
 * Add label-based discovery to the endpoint-config ConfigMap lookup to support aliased datadog chart installations.
