@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 3.173.0
+
+* [CONTP] feat(rbac): Add endpointslices read permissions to node agent ([#2399](https://github.com/DataDog/helm-charts/pull/2399)).
+
+## 3.172.0
+
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
+
+## 3.171.2
+
+* Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.
+
 ## 3.171.1
 
 * Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
