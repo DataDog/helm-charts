@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.171.2
+## 3.171.3
 
 * Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
+
+## 3.171.2
+
+* Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.
 
 ## 3.171.1
 
