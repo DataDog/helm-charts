@@ -17,8 +17,8 @@ Learn more about the [Datadog Operator][1] and its benefits.
 ## Prerequisites
 
 * Helm version 3.17.0+
-* Datadog Helm chart version 3.172.0+
-* Datadog Operator Helm chart version 2.17.0+
+* Datadog Helm chart version 3.174.0+
+* Datadog Operator Helm chart version 2.18.0+
 * Datadog Operator v1.23.0+
 
 ## Migrate existing Datadog Helm release
@@ -135,6 +135,8 @@ After migrating your Datadog Agent workloads and validating that the Agent pods 
       --take-ownership \
       datadog/datadog-operator
    ```
+
+   **Important**: If your Datadog Helm release name contains the suffix, `datadog`, do not use release name `<DATADOG_RELEASE_NAME>-operator`. It produces deployment name `<DATADOG_RELEASE_NAME>-operator`, which collides with the subchart Operator. Use a different release name or set `--set fullnameOverride` to a different name to avoid immutable field errors.
 
    **Note**: `--take-ownership` lets the Datadog Operator release adopt Datadog CRDs that were previously created by the Operator subchart (enabled through `datadog.operator.enabled`).
 
