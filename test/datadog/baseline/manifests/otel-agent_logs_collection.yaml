@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -170,7 +170,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -1431,7 +1431,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1578,7 +1578,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1671,7 +1671,7 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.75.0
+          image: gcr.io/datadoghq/ddot-collector:7.75.4
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1734,7 +1734,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1773,7 +1773,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.4
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1864,7 +1864,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1917,9 +1917,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.22.0
+          image: gcr.io/datadoghq/operator:1.23.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2110,7 +2114,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.75.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2183,7 +2187,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.75.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

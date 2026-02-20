@@ -78,7 +78,17 @@ datadog:
     # datadog.secretBackend.refreshInterval -- [PREVIEW] Configure the secret backend command refresh interval in seconds.
     refreshInterval:  # 0
 
-    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`.
+    # datadog.secretBackend.type -- Configure the built-in secret backend type.
+    # Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+.
+    type:  # Examples: "file.text", "k8s.secrets", "docker.secrets", "aws.secrets", etc.
+
+    # datadog.secretBackend.config -- Additional configuration for the secret backend type.
+    config: {}
+    # Example for k8s.secrets:
+    #   token_path: "/custom/path/token"
+    #   ca_path: "/custom/path/ca.crt"
+
+    # datadog.secretBackend.enableGlobalPermissions -- Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"` or `datadog.secretBackend.type` is set.
     enableGlobalPermissions: true
 
     # datadog.secretBackend.roles -- Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`.
@@ -1127,7 +1137,7 @@ datadog:
       # DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled.
       fimEnabled: false
 
-      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer
+      # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support.
       useSecruntimeTrack: true
 
       # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent.
@@ -1351,7 +1361,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.75.0
+    tag: 7.75.4
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1910,7 +1920,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.75.0
+    tag: 7.75.4
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2518,7 +2528,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.75.0
+    tag: 7.75.4
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2759,7 +2769,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.22.0
+    tag: 1.23.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

@@ -1044,8 +1044,8 @@ false
 Return true if secret RBACs are needed for secret backend.
 */}}
 {{- define "need-secret-permissions" -}}
-{{- if .Values.datadog.secretBackend.command -}}
-{{- if and .Values.datadog.secretBackend.enableGlobalPermissions (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh") -}}
+{{- if .Values.datadog.secretBackend.enableGlobalPermissions -}}
+{{- if or (and .Values.datadog.secretBackend.command (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh")) .Values.datadog.secretBackend.type -}}
 true
 {{- end -}}
 {{- else -}}
