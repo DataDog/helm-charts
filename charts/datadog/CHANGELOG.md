@@ -4,6 +4,10 @@
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
 
+## 3.171.2
+
+* Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.
+
 ## 3.171.1
 
 * Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.19.0-dev.3
+
+* Add label-based discovery to the endpoint-config ConfigMap lookup to support aliased datadog chart installations.
+* Add `kubernetes.io/os: linux` nodeSelector to the operator deployment to prevent scheduling on Windows nodes.
+
 ## 2.19.0-dev.2
 
 * Adds `clusterRole.kubeletFineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
