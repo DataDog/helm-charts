@@ -1730,7 +1730,7 @@ clusterAgent:
     # clusterAgent.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
     ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
     ## and store its identity in a Kubernetes secret. Requires leader election to be enabled.
-    selfEnroll: false
+    selfEnroll: true
 
     # clusterAgent.privateActionRunner.identitySecretName -- Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled
     ## The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key
