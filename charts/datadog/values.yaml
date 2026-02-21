@@ -1745,10 +1745,10 @@ clusterAgent:
     ## This key is used to authenticate the runner with Datadog
     privateKey:  # "<PRIVATE_KEY>"
 
-    # clusterAgent.privateActionRunner.existingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
+    # clusterAgent.privateActionRunner.identityFromExistingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
     ## The secret should contain 'urn' and 'private_key' keys
     ## If set, this parameter takes precedence over "urn" and "privateKey"
-    existingSecret:  # "<PAR_SECRET_NAME>"
+    identityFromExistingSecret:  # "<PAR_SECRET_NAME>"
 
     # clusterAgent.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
     actionsAllowlist: []
