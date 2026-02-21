@@ -234,3 +234,70 @@ func Test_PrivateActionRunner_RBAC_Not_Created_When_Disabled(t *testing.T) {
 	// Also verify the identity secret name is not referenced
 	assert.NotContains(t, manifest, "datadog-private-action-runner-identity")
 }
+
+func Test_PrivateActionRunner_Validation_SelfEnrollWithoutLeaderElection(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":    "true",
+			"clusterAgent.privateActionRunner.selfEnroll": "true",
+			"datadog.leaderElection":                      "false",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "selfEnroll requires leader election to be enabled")
+}
+
+func Test_PrivateActionRunner_Validation_ManualModeWithoutCredentials(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":    "true",
+			"clusterAgent.privateActionRunner.selfEnroll": "false",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+}
+
+func Test_PrivateActionRunner_Validation_ManualModeWithOnlyURN(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":    "true",
+			"clusterAgent.privateActionRunner.selfEnroll": "false",
+			"clusterAgent.privateActionRunner.urn":        "urn:datadog:private-action-runner:organization:123:runner:abc",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+}
+
+func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":       "true",
+			"clusterAgent.privateActionRunner.selfEnroll":    "false",
+			"clusterAgent.privateActionRunner.privateKey": "test-key",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+}
