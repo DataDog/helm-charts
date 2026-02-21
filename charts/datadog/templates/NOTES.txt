@@ -908,4 +908,31 @@ To complete the migration:
 
    helm uninstall {{ .Release.Name }} --namespace {{ .Release.Namespace }}
 
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+
+###################################################################################
+####              INFO: Private Action Runner is enabled                       ####
+###################################################################################
+{{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
+Private Action Runner is configured for self-enrollment.
+The runner will automatically register with Datadog and store its identity in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
+
+Configuration requirements for self-enrollment:
+- Leader election must be enabled (datadog.leaderElection: {{ .Values.datadog.leaderElection }})
+- API and APP keys must be configured
+{{- else }}
+Private Action Runner is configured with manual credentials.
+
+{{- if .Values.clusterAgent.privateActionRunner.existingSecret }}
+Using existing secret: {{ .Values.clusterAgent.privateActionRunner.existingSecret }}
+Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- else }}
+Using inline credentials (URN and private key).
+For better security, consider using an existing secret by setting:
+  clusterAgent.privateActionRunner.existingSecret: <secret-name>
+{{- end }}
+{{- end }}
+
+Learn more about Private Action Runner: https://docs.datadoghq.com/workflows/private_action_runner
+
 {{- end }}

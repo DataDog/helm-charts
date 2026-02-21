@@ -344,6 +344,7 @@ spec:
             value: {{ .Values.datadog.profiling.enabled | quote }}
           {{- end }}
           {{- if .Values.clusterAgent.privateActionRunner.enabled }}
+          {{- include "validate-private-action-runner-config" . }}
           - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
             value: {{ .Values.clusterAgent.privateActionRunner.enabled | quote }}
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
