@@ -1258,6 +1258,22 @@ false
 {{- end -}}
 
 {{/*
+Validate Private Action Runner configuration
+*/}}
+{{- define "validate-private-action-runner-config" -}}
+{{- if .Values.clusterAgent.privateActionRunner.enabled -}}
+{{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
+{{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
+{{- end -}}
+{{- if not .Values.clusterAgent.privateActionRunner.selfEnroll -}}
+{{- if and (not .Values.clusterAgent.privateActionRunner.existingSecret) (or (not .Values.clusterAgent.privateActionRunner.urn) (not .Values.clusterAgent.privateActionRunner.privateKey)) -}}
+{{- fail "Private Action Runner: when selfEnroll is disabled, you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return orchestratorExplorer customResources list with conditional addition of datadogpodautoscalers.
 */}}
 {{- define "orchestratorExplorer-custom-resources" -}}
