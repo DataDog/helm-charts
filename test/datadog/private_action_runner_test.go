@@ -128,7 +128,7 @@ func Test_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
 		Overrides: map[string]string{
 			"clusterAgent.privateActionRunner.enabled":        "true",
 			"clusterAgent.privateActionRunner.selfEnroll":     "false",
-			"clusterAgent.privateActionRunner.existingSecret": "my-par-secret",
+			"clusterAgent.privateActionRunner.identityFromExistingSecret": "my-par-secret",
 		},
 	})
 	require.NoError(t, err)
@@ -265,7 +265,7 @@ func Test_PrivateActionRunner_Validation_ManualModeWithoutCredentials(t *testing
 	})
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }
 
 func Test_PrivateActionRunner_Validation_ManualModeWithOnlyURN(t *testing.T) {
@@ -282,7 +282,7 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyURN(t *testing.T) {
 	})
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }
 
 func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing.T) {
@@ -299,5 +299,5 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 	})
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.existingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
+	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }

@@ -355,17 +355,17 @@ spec:
           - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_SECRET_NAME
             value: {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
           {{- end }}
-          {{- if and (not .Values.clusterAgent.privateActionRunner.selfEnroll) (or .Values.clusterAgent.privateActionRunner.urn .Values.clusterAgent.privateActionRunner.existingSecret) }}
-          {{- if .Values.clusterAgent.privateActionRunner.existingSecret }}
+          {{- if and (not .Values.clusterAgent.privateActionRunner.selfEnroll) (or .Values.clusterAgent.privateActionRunner.urn .Values.clusterAgent.privateActionRunner.identityFromExistingSecret) }}
+          {{- if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
           - name: DD_PRIVATE_ACTION_RUNNER_URN
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.clusterAgent.privateActionRunner.existingSecret }}
+                name: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
                 key: urn
           - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.clusterAgent.privateActionRunner.existingSecret }}
+                name: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
                 key: private_key
           {{- else }}
           {{- if .Values.clusterAgent.privateActionRunner.urn }}

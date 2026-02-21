@@ -923,13 +923,13 @@ Configuration requirements for self-enrollment:
 {{- else }}
 Private Action Runner is configured with manual credentials.
 
-{{- if .Values.clusterAgent.privateActionRunner.existingSecret }}
-Using existing secret: {{ .Values.clusterAgent.privateActionRunner.existingSecret }}
+{{- if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
 Ensure the secret contains both 'urn' and 'private_key' keys.
 {{- else }}
 Using inline credentials (URN and private key).
 For better security, consider using an existing secret by setting:
-  clusterAgent.privateActionRunner.existingSecret: <secret-name>
+  clusterAgent.privateActionRunner.identityFromExistingSecret: <secret-name>
 {{- end }}
 {{- end }}
 
