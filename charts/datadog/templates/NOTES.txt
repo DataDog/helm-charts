@@ -933,6 +933,6 @@ For better security, consider using an existing secret by setting:
 {{- end }}
 {{- end }}
 
-Learn more about Private Action Runner: https://docs.datadoghq.com/workflows/private_action_runner
+Learn more about Private Action Runner: https://docs.datadoghq.com/actions/private_actions/
 
 {{- end }}
