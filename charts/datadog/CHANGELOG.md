@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.175.0
+
+* Add Private Action Runner support in Cluster Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
+
 ## 3.174.0
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).

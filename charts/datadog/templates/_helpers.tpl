@@ -1250,10 +1250,26 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (((.Values.datadog.autoscaling).workload).enabled)) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled)) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate Private Action Runner configuration
+*/}}
+{{- define "validate-private-action-runner-config" -}}
+{{- if .Values.clusterAgent.privateActionRunner.enabled -}}
+{{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
+{{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
+{{- end -}}
+{{- if not .Values.clusterAgent.privateActionRunner.selfEnroll -}}
+{{- if and (not .Values.clusterAgent.privateActionRunner.identityFromExistingSecret) (or (not .Values.clusterAgent.privateActionRunner.urn) (not .Values.clusterAgent.privateActionRunner.privateKey)) -}}
+{{- fail "Private Action Runner: when selfEnroll is disabled, you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey" }}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
