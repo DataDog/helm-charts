@@ -700,9 +700,9 @@ datadog:
 
   ## Host Profiler related configuration for the host-profiler in Agent Daemonset. Note this is experimental and subject to change
   hostProfiler:
-    # datadog.hostProfiler.enabled -- Enable the Host Profiler
+    # datadog.hostProfiler.enabled -- Enable the Host Profiler. This feature is experimental and subject to change.
     enabled: false
-    # datadog.hostProfiler.image -- Image the Host Profiler. This parameter will be removed once official image is available.
+    # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
     # datadog.hostProfiler.config -- Host Profiler configuration
     config: null
