@@ -156,7 +156,7 @@ false
 Return true if the Host Profiler needs to be deployed
 */}}
 {{- define "should-enable-host-profiler" -}}
-{{- if and .Values.datadog.hostProfiler.enabled (eq .Values.targetSystem "linux") -}}
+{{- if and .Values.datadog.hostProfiler.enabled (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) -}}
 true
 {{- else -}}
 false
