@@ -929,6 +929,9 @@ datadog:
     # datadog.systemProbe.maxTrackedConnections -- the maximum number of tracked connections
     maxTrackedConnections: 131072
 
+    # datadog.systemProbe.maxConnectionStateBuffered -- Maximum number of concurrent connections for Cloud Network Monitoring
+    maxConnectionStateBuffered:
+
     # datadog.systemProbe.conntrackMaxStateSize -- the maximum size of the userspace conntrack cache
     conntrackMaxStateSize: 131072  # 2 * maxTrackedConnections by default, per  https://github.com/DataDog/datadog-agent/blob/d1c5de31e1bba72dfac459aed5ff9562c3fdcc20/pkg/process/config/config.go#L229
 
@@ -994,7 +997,7 @@ datadog:
       #   <HELM_VALUE>: <LABEL_NAME>
 
   networkMonitoring:
-    # datadog.networkMonitoring.enabled -- Enable network performance monitoring
+    # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
 
   networkPath:
@@ -1332,6 +1335,20 @@ datadog:
   operator:
     # datadog.operator.enabled -- Enable the Datadog Operator.
     enabled: true
+
+        # datadog.operator.migration.enabled -- Enable migration of Agent workloads to be managed by the Datadog Operator.
+    # Creates a DatadogAgent manifest based on current release's values.yaml.
+    migration:
+      enabled: false
+
+      # datadog.operator.migration.preview -- Set to true to preview the DatadogAgent manifest mapped from the
+      # Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper`
+      # container logs in the migration job.
+      preview: false
+
+      # datadog.operator.migration.userValues -- Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest.
+      # Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml
+      userValues: ""
 
 # Configuration related to Dynamic Instrumentation for Go services.
   dynamicInstrumentationGo:
@@ -1877,7 +1894,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.19
+    tag: 1.1.21
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2773,12 +2790,10 @@ operator:
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
-    # Note: The Datadog Agent controller will be enabled by default in a future release.
-    enabled: false
+    enabled: true
 
   datadogAgentInternal:
     # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
-    # Note: The Datadog Agent Internal controller will be enabled by default in a future release.
     enabled: false
 
   datadogDashboard:
@@ -2798,9 +2813,12 @@ operator:
     enabled: false
 
   datadogCRDs:
+    # operator.datadogCRDs.keepCrds -- Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true.
+    keepCrds: false
+
     crds:
       # operator.datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
-      datadogAgents: false
+      datadogAgents: true
       # operator.datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
       datadogMonitors: true
       # operator.datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
