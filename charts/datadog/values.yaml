@@ -714,19 +714,19 @@ datadog:
     enabled: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
-    # datadog.hostProfiler.config -- Host Profiler configuration
+    # datadog.hostProfiler.config -- Host Profiler configuration (experimental)
     config: null
-    # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration
+    # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration (experimental)
     configMap:
-      # datadog.hostProfiler.configMap.name -- Name of the existing ConfigMap that contains the Host Profiler configuration
+      # datadog.hostProfiler.configMap.name -- Name of the existing ConfigMap that contains the Host Profiler configuration (experimental)
       name: null
-      # datadog.hostProfiler.configMap.items -- Items within the ConfigMap that contain Host Profiler configuration
+      # datadog.hostProfiler.configMap.items -- Items within the ConfigMap that contain Host Profiler configuration (experimental)
       items:
       #   - key: host-profiler-config.yaml
       #     path: host-profiler-config.yaml
       #   - key: host-profiler-config-two.yaml
       #     path: host-profiler-config-two.yaml
-      # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration
+      # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration (experimental)
       key: host-profiler-config.yaml
 
   ## OTel collector related configuration for the otel-agent in Agent Daemonset

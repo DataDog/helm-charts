@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.175.0](https://img.shields.io/badge/Version-3.174.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.175.0](https://img.shields.io/badge/Version-3.175.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -814,13 +814,13 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
-| datadog.hostProfiler.config | string | `nil` | Host Profiler configuration |
-| datadog.hostProfiler.configMap | object | `{"items":null,"key":"host-profiler-config.yaml","name":null}` | Use an existing ConfigMap for Host Profiler configuration |
-| datadog.hostProfiler.configMap.items | string | `nil` | Items within the ConfigMap that contain Host Profiler configuration |
-| datadog.hostProfiler.configMap.key | string | `"host-profiler-config.yaml"` | Key within the ConfigMap that contains the Host Profiler configuration |
-| datadog.hostProfiler.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Host Profiler configuration |
-| datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler |
-| datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter will be removed once official image is available. |
+| datadog.hostProfiler.config | string | `nil` | Host Profiler configuration (experimental) |
+| datadog.hostProfiler.configMap | object | `{"items":null,"key":"host-profiler-config.yaml","name":null}` | Use an existing ConfigMap for Host Profiler configuration (experimental) |
+| datadog.hostProfiler.configMap.items | string | `nil` | Items within the ConfigMap that contain Host Profiler configuration (experimental) |
+| datadog.hostProfiler.configMap.key | string | `"host-profiler-config.yaml"` | Key within the ConfigMap that contains the Host Profiler configuration (experimental) |
+| datadog.hostProfiler.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Host Profiler configuration (experimental) |
+| datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
+| datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
