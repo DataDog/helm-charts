@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.23.0](https://img.shields.io/badge/Version-1.23.0-informational?style=flat-square) ![AppVersion: v1.18.0](https://img.shields.io/badge/AppVersion-v1.18.0-informational?style=flat-square)
+![Version: 1.25.0](https://img.shields.io/badge/Version-1.25.0-informational?style=flat-square) ![AppVersion: v1.19.0](https://img.shields.io/badge/AppVersion-v1.19.0-informational?style=flat-square)
 
 ## Overview
 
@@ -323,7 +323,7 @@ If actions requiring credentials fail:
 | deployment.metadata.annotations | object | `{}` | Annotations to add to the deployment metadata |
 | deployment.metadata.labels | object | `{}` | Labels to add to the deployment metadata |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.18.0"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.19.0"}` | Current Datadog Private Action Runner image |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
 | runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","httpTimeoutSeconds":30,"modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","tags":[],"taskTimeoutSeconds":0,"urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
@@ -340,6 +340,8 @@ If actions requiring credentials fail:
 | runner.configDirectory | string | `"/etc/dd-action-runner/config"` | The directory containing the Datadog Private Action Runner configuration |
 | runner.credentialFiles | list | `[]` | List of credential files to be used by the Datadog Private Action Runner |
 | runner.credentialSecrets | list | `[]` | References to kubernetes secrets that contain credentials to be used by the Datadog Private Action Runner |
+| runner.customCaCert | object | `{"configMapName":""}` | Custom CA certificate configuration for trusting internal/private CAs |
+| runner.customCaCert.configMapName | string | `""` | Name of a ConfigMap containing the PEM-encoded CA certificate(s) |
 | runner.env | list | `[]` | Environment variables to be passed to the Datadog Private Action Runner |
 | runner.kubernetesActions | object | `{"configMaps":[],"controllerRevisions":[],"cronJobs":[],"customObjects":[],"customResourceDefinitions":[],"daemonSets":[],"deployments":[],"endpoints":[],"events":[],"jobs":[],"limitRanges":[],"namespaces":[],"nodes":[],"persistentVolumeClaims":[],"persistentVolumes":[],"podTemplates":[],"pods":["get","list"],"replicaSets":[],"replicationControllers":[],"resourceQuotas":[],"serviceAccounts":[],"services":[],"statefulSets":[]}` | Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account |
 | runner.kubernetesActions.configMaps | list | `[]` | Actions related to configMaps (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple") |

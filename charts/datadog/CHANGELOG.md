@@ -1,8 +1,67 @@
 # Datadog changelog
+## 3.175.0
+
+* Add experimental support for host profiler.
+
+## 3.174.0
+
+* Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
+## 3.173.1
+
+* Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
+
+## 3.173.0
+
+* [CONTP] feat(rbac): Add endpointslices read permissions to node agent ([#2399](https://github.com/DataDog/helm-charts/pull/2399)).
+
+## 3.172.0
+
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
+
+## 3.171.2
+
+* Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.
+
+## 3.171.1
+
+* Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
+
+## 3.171.0
+
+* Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
+
+## 3.170.2
+
+* [datadog/datadog] Update default Agent version to 7.75.4 ([#2390](https://github.com/DataDog/helm-charts/pull/2390)).
+
+## 3.170.1
+
+* Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
+## 3.170.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.169.0
+
+* Update Datadog Operator dependency to 2.18.0 for Operator image tag 1.23.0.
+
+## 3.168.0
+
+* Update datadog-csi-driver chart dependency version.
 
 ## 3.167.0
 
-* Add experimental support for host profiler.
+* Add new config option to allow sending CWS events directly from the system-probe
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
+## 3.166.4
+
+* Update datadog-csi-driver chart dependency version.
 
 ## 3.166.3
 

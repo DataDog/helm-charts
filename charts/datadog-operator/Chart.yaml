@@ -1,7 +1,7 @@
 apiVersion: v2
 name: datadog-operator
-version: 2.18.0-dev.2
-appVersion: 1.23.0-rc.2
+version: 2.19.0-dev.4
+appVersion: 1.24.0-rc.2
 description: Datadog Operator
 keywords:
 - monitoring
@@ -17,7 +17,7 @@ maintainers:
   email: support@datadoghq.com
 dependencies:
 - name: datadog-crds
-  version: 2.16.0-dev.2
+  version: 2.17.0-dev.1
   alias: datadogCRDs
   repository: https://helm.datadoghq.com
   condition: installCRDs

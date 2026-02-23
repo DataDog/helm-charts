@@ -31,6 +31,9 @@ data:
       enable_oom_kill: {{ $.Values.datadog.systemProbe.enableOOMKill }}
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
+      {{- if $.Values.datadog.systemProbe.maxConnectionStateBuffered }}
+      max_connection_state_buffered: {{ $.Values.datadog.systemProbe.maxConnectionStateBuffered }}
+      {{- end }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
@@ -94,6 +97,7 @@ data:
 {{- end }}
 {{- end }}
       use_secruntime_track: {{ $.Values.datadog.securityAgent.runtime.useSecruntimeTrack }}
+      direct_send_from_system_probe: {{ $.Values.datadog.securityAgent.runtime.directSendFromSystemProbe }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d

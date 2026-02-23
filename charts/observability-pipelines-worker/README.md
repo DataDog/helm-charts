@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.13.2](https://img.shields.io/badge/Version-2.13.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.13.2](https://img.shields.io/badge/AppVersion-2.13.2-informational?style=flat-square)
+![Version: 2.13.4](https://img.shields.io/badge/Version-2.13.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.13.2](https://img.shields.io/badge/AppVersion-2.13.2-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -129,6 +129,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | persistence.enabled | bool | `false` | If **true**, create and use PersistentVolumeClaims. |
 | persistence.existingClaim | string | `""` | Name of an existing PersistentVolumeClaim to use. |
 | persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Specify the finalizers of PersistentVolumeClaims. |
+| persistence.retentionPolicy | object | `{}` | Set the PVC retention policy. See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention |
 | persistence.selector | object | `{}` | Specify the selectors for PersistentVolumeClaims. |
 | persistence.size | string | `"10Gi"` | Specify the size of PersistentVolumeClaims. |
 | persistence.storageClassName | string | `nil` | Specify the storageClassName for PersistentVolumeClaims. |
@@ -151,7 +152,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | service.ipFamilies | list | `[]` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.ipFamilyPolicy | string | `""` | Configure [IPv4/IPv6 dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/). |
 | service.loadBalancerIP | string | `""` | Specify the [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer). |
-| service.ports | array | `nil` | Manually set the ServicePort array, overriding automated generation of ServicePorts. |
+| service.ports | array | `[]` | Manually set the ServicePort array, overriding automated generation of ServicePorts. |
 | service.topologyKeys | array | `nil` | Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology). |
 | service.type | string | `"ClusterIP"` | Specify the type for the Service. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the ServiceAccount, if `serviceAccount.create` is **true**. |

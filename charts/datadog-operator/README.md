@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.18.0-dev.2](https://img.shields.io/badge/Version-2.18.0--dev.2-informational?style=flat-square) ![AppVersion: 1.23.0-rc.2](https://img.shields.io/badge/AppVersion-1.23.0--rc.2-informational?style=flat-square)
+![Version: 2.19.0-dev.4](https://img.shields.io/badge/Version-2.19.0--dev.4-informational?style=flat-square) ![AppVersion: 1.24.0-rc.2](https://img.shields.io/badge/AppVersion-1.24.0--rc.2-informational?style=flat-square)
 
 ## Values
 
@@ -12,7 +12,7 @@
 | appKey | string | `nil` | Your Datadog APP key |
 | appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one |
 | clusterName | string | `nil` | Set a unique cluster name reporting from the Datadog Operator. |
-| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false}` | Set specific configuration for the cluster role |
+| clusterRole | object | `{"allowCreatePodsExec":false,"allowReadAllResources":false,"kubeletFineGrainedAuthorization":false}` | Set specific configuration for the cluster role |
 | collectOperatorMetrics | bool | `true` | Configures an openmetrics check to collect operator metrics |
 | containerSecurityContext | object | `{}` | A security context defines privileges and access control settings for a container. |
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
@@ -39,7 +39,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"gcr.io/datadoghq/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.23.0-rc.2"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.24.0-rc.2"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -48,7 +48,7 @@
 | maximumGoroutines | string | `nil` | Override default goroutines threshold for the health check failure. |
 | metricsPort | int | `8383` | Port used for OpenMetrics endpoint |
 | nameOverride | string | `""` | Override name of app |
-| nodeSelector | object | `{}` | Allows to schedule Datadog Operator on specific nodes |
+| nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Allows to schedule Datadog Operator on specific nodes |
 | operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |

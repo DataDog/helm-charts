@@ -13,7 +13,7 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  tag: 1.0.0
+  tag: 1.2.0
 
   # image.repository -- Override default registry + image.name for CSI driver
   repository: gcr.io/datadoghq/csi-driver
@@ -70,6 +70,23 @@ apm:
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
+
+# nodeSelector -- Configure the nodeSelector for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# nodeAffinity -- Configure the nodeAffinity for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+nodeAffinity: {}
+# updateStrategy -- Allow the DaemonSet to perform a rolling update on helm update
+
+## Ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: "10%"
 
 # securityContext -- Configure the security context for the csi driver daemonset pods.
 securityContext: {}

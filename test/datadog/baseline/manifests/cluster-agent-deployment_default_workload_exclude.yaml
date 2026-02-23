@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -124,6 +124,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+    datadoghq.com/component: endpoint-config
   name: datadog-endpoint-config
   namespace: datadog-agent
 ---
@@ -160,7 +161,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -1268,7 +1269,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.22.0
+    app.kubernetes.io/version: 1.23.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1302,7 +1303,7 @@ spec:
             - -introspectionEnabled=false
             - -datadogAgentProfileEnabled=false
             - -datadogMonitorEnabled=false
-            - -datadogAgentEnabled=false
+            - -datadogAgentEnabled=true
             - -datadogSLOEnabled=false
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
@@ -1321,9 +1322,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.22.0
+          image: gcr.io/datadoghq/operator:1.23.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -1511,7 +1516,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.75.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.4
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1584,7 +1589,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.75.0
+          image: gcr.io/datadoghq/cluster-agent:7.75.4
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
