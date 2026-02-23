@@ -21,7 +21,7 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value). Other available registries: registry.datadoghq.com/datadog, docker.io/datadog
+# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value)
 
 ## Currently we offer Datadog Agent images on:
 ## GCR US - use gcr.io/datadoghq
@@ -30,7 +30,6 @@ commonLabels: {}
 ## Azure - use datadoghq.azurecr.io
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
-## Datadog - use registry.datadoghq.com/datadog
 ## If you are on GKE Autopilot, you must use a gcr.io variant registry.
 
 registry:  # gcr.io/datadoghq
