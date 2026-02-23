@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.24.0-rc.1
+  tag: 1.24.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -132,7 +132,8 @@ resources: {}
 #   memory: 128Mi
 
 # nodeSelector -- Allows to schedule Datadog Operator on specific nodes
-nodeSelector: {}
+nodeSelector:
+  kubernetes.io/os: linux
 # tolerations -- Allows to schedule Datadog Operator on tainted nodes
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
