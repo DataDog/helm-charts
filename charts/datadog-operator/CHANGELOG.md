@@ -1,9 +1,5 @@
 # Changelog
 
-## 2.19.0-dev.5
-
-* [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
-
 ## 2.19.0-dev.4
 
 * Update Datadog Operator chart for 1.24.0-rc.2.
