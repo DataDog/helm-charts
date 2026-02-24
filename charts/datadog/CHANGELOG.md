@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.174.1
+
+* Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
+
 ## 3.174.0
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).

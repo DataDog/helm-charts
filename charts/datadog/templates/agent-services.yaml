@@ -93,12 +93,14 @@ spec:
       port: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
       targetPort: {{ .Values.datadog.otlp.receiver.protocols.grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
       name: otlpgrpcport
+      appProtocol: grpc
 {{- end }}
 {{- if .Values.datadog.otlp.receiver.protocols.http.enabled }}
     - protocol: TCP
       port: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
       targetPort: {{ .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
       name: otlphttpport
+      appProtocol: http
  {{- end }}
 {{- if eq (include "should-enable-otel-agent" .) "true" }}
 {{- range .Values.datadog.otelCollector.ports }}
