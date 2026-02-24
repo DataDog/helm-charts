@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.174.1
+
+* Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
 ## 3.174.0
 
 * Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
