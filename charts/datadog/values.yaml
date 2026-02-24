@@ -258,6 +258,13 @@ datadog:
     # datadog.kubeStateMetricsCore.tags -- List of static tags to attach to all KSM metrics
     tags: []
 
+    # datadog.kubeStateMetricsCore.namespaces -- Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces.
+    ## When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole.
+    ## Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole.
+    namespaces: []
+    # - default
+    # - kube-system
+
   ## Manage Cluster checks feature
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/

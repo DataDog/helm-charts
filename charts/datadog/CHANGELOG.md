@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.175.0
+## 3.176.0
 
 * Support 'image_volume' for apm.instrumentation.injectionMode
+
+## 3.175.1
+
+* [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
+## 3.175.0
+
+* [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
 
 ## 3.174.0
 
