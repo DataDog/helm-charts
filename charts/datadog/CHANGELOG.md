@@ -1,8 +1,8 @@
 # Datadog changelog
 
-## 3.174.1
+## 3.175.0
 
-* Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+* [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
 
 ## 3.174.0
 
