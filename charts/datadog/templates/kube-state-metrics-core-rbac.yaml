@@ -1,4 +1,203 @@
 {{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.rbac.create }}
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if .Values.datadog.kubeStateMetricsCore.namespaces }}
+{{- /* Namespace-restricted mode:
+     - ClusterRole "*-ksm-core-namespaced" holds namespace-scoped resource rules (defined once, reused per namespace).
+     - RoleBinding per namespace references that ClusterRole, scoping it to that namespace only.
+     - ClusterRole "*-ksm-core" holds cluster-scoped resource rules (nodes, PVs, etc.).
+     - ClusterRoleBinding "*-ksm-core" grants cluster-scoped access.
+*/}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-ksm-core-namespaced
+rules:
+- apiGroups:
+  - ""
+  resources:
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
+  - secrets
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMaps }}
+  - configmaps
+{{- end }}
+  - pods
+  - services
+  - resourcequotas
+  - replicationcontrollers
+  - limitranges
+  - persistentvolumeclaims
+  - endpoints
+  - events
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  - daemonsets
+  - deployments
+  - replicasets
+{{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
+  - controllerrevisions
+{{- end }}
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - list
+  - watch
+{{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
+- apiGroups:
+  - autoscaling.k8s.io
+  resources:
+  - verticalpodautoscalers
+  verbs:
+  - list
+  - watch
+{{- end }}
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - list
+  - watch
+{{- range .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+- apiGroups:
+    - {{ .groupVersionKind.group }}
+  resources:
+    - {{ if .groupVersionKind.resource }}
+        {{ .groupVersionKind.resource | lower }}
+      {{ else }}
+        {{ if eq .groupVersionKind.kind "*" }}
+          "*"
+        {{ else }}
+          {{ .groupVersionKind.kind | lower }}s
+        {{ end }}
+      {{ end }}
+  verbs:
+    - list
+    - watch
+{{- end }}
+{{- range .Values.datadog.kubeStateMetricsCore.namespaces }}
+---
+apiVersion: {{ template "rbac.apiVersion" $ }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+  name: {{ template "datadog.fullname" $ }}-ksm-core
+  namespace: {{ . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" $ }}-ksm-core-namespaced
+subjects:
+  - kind: ServiceAccount
+    {{- if $.Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+    name: {{ template "datadog.fullname" $ }}-cluster-checks
+    {{- else }}
+    name: {{ template "datadog.fullname" $ }}-cluster-agent
+    {{- end }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+---
+{{- /* ClusterRole for cluster-scoped resources (nodes, PVs, storageclasses, etc.) */}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-ksm-core
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - persistentvolumes
+  - namespaces
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  - volumeattachments
+  verbs:
+  - list
+  - watch
+- apiGroups:
+    - apiextensions.k8s.io
+  resources:
+    - customresourcedefinitions
+  verbs:
+    - list
+    - watch
+{{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
+- apiGroups:
+    - apiregistration.k8s.io
+  resources:
+    - apiservices
+  verbs:
+    - list
+    - watch
+{{- end }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-ksm-core
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-ksm-core
+subjects:
+  - kind: ServiceAccount
+    {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+    name: {{ template "datadog.fullname" . }}-cluster-checks
+    {{- else }}
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    {{- end }}
+    namespace: {{ .Release.Namespace }}
+---
+{{- else }}
+{{- /* No namespace restriction: full ClusterRole + ClusterRoleBinding for all resources */}}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -45,8 +244,6 @@ rules:
   - daemonsets
   - deployments
   - replicasets
-{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
-{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
 {{- if or $doNotCheckTag (semverCompare ">=7.72.0" $imageTag) }}
   - controllerrevisions
 {{- end }}
@@ -152,4 +349,5 @@ subjects:
     {{- end }}
     namespace: {{ .Release.Namespace }}
 ---
+{{- end }}
 {{- end }}

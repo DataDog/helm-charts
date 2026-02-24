@@ -1,8 +1,24 @@
 # Datadog changelog
 
-## 3.173.1
+## 3.175.2
 
 * Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
+## 3.175.1
+
+* [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
+## 3.175.0
+
+* [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
+
+## 3.174.0
+
+* Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
+## 3.173.1
+
+* Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
 
 ## 3.173.0
 
@@ -19,7 +35,6 @@
 ## 3.171.1
 
 * Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
-
 
 ## 3.171.0
 

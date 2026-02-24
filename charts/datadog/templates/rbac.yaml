@@ -160,6 +160,16 @@ rules:
   - ksh/metrics
   verbs:
   - get
+{{- if .Values.datadog.operator.migration.enabled }}
+- apiGroups:
+    - datadoghq.com
+  resources:
+    - datadogagents
+  verbs:
+    - get
+    - patch
+    - create
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

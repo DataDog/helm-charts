@@ -351,6 +351,7 @@ rules:
   - watch
 - apiGroups:
   - "datadoghq.com"
+  - eks.amazonaws.com
   - karpenter.azure.com
   - karpenter.k8s.aws
   - karpenter.sh
@@ -602,6 +603,7 @@ rules:
   - watch
   - patch
 - apiGroups:
+  - eks.amazonaws.com
   - karpenter.k8s.aws
   resources:
   - '*'
