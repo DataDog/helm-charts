@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.5
+
+* Update Datadog Operator chart for RBACs for 1.24.0-rc.2.
+
 ## 2.19.0-dev.4
 
 * Update Datadog Operator chart for 1.24.0-rc.2.
