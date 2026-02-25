@@ -1479,7 +1479,7 @@ clusterAgent:
   # Enable the metricsProvider to be able to scale based on metrics in Datadog
   metricsProvider:
     # clusterAgent.metricsProvider.enabled -- Set this to true to enable Metrics Provider
-    enabled: false
+    enabled: true
 
     # clusterAgent.metricsProvider.registerAPIService -- Set this to false to disable external metrics registration as an APIService
     registerAPIService: true
@@ -1492,7 +1492,7 @@ clusterAgent:
     # clusterAgent.metricsProvider.useDatadogMetrics -- Enable usage of DatadogMetric CRD to autoscale on arbitrary Datadog queries
 
     ## Note: It will install DatadogMetrics CRD automatically (it may conflict with previous installations)
-    useDatadogMetrics: false
+    useDatadogMetrics: true
 
     # clusterAgent.metricsProvider.createReaderRbac -- Create `external-metrics-reader` RBAC automatically (to allow HPA to read data from Cluster Agent)
     createReaderRbac: true
