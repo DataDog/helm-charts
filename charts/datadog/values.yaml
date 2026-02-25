@@ -1723,6 +1723,38 @@ clusterAgent:
   # clusterAgent.healthPort -- Port number to use in the Cluster Agent for the healthz endpoint
   healthPort: 5556
 
+  privateActionRunner:
+    # clusterAgent.privateActionRunner.enabled -- Enable the Private Action Runner to execute workflow actions
+    enabled: false
+
+    # clusterAgent.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
+    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
+    ## and store its identity in a Kubernetes secret. Requires leader election to be enabled.
+    selfEnroll: true
+
+    # clusterAgent.privateActionRunner.identitySecretName -- Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled
+    ## The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key
+    ## RBAC permissions are granted specifically for this secret name
+    identitySecretName: "datadog-private-action-runner-identity"
+
+    # clusterAgent.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
+    ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>
+    urn:  # "urn:datadog:private-action-runner:organization:123456:runner:abc-def"
+
+    # clusterAgent.privateActionRunner.privateKey -- Private key for the Private Action Runner (required if selfEnroll is false)
+    ## This key is used to authenticate the runner with Datadog
+    privateKey:  # "<PRIVATE_KEY>"
+
+    # clusterAgent.privateActionRunner.identityFromExistingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
+    ## The secret should contain 'urn' and 'private_key' keys
+    ## If set, this parameter takes precedence over "urn" and "privateKey"
+    identityFromExistingSecret:  # "<PAR_SECRET_NAME>"
+
+    # clusterAgent.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
+    actionsAllowlist: []
+    #   - "com.datadoghq.http.request"
+    #   - "com.datadoghq.kubernetes.core.*"
+
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
