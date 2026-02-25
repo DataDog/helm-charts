@@ -24,6 +24,7 @@ commonLabels: {}
 # registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value)
 
 ## Currently we offer Datadog Agent images on:
+## Datadog - use registry.datadoghq.com
 ## GCR US - use gcr.io/datadoghq
 ## GCR Europe - use eu.gcr.io/datadoghq
 ## GCR Asia - use asia.gcr.io/datadoghq
@@ -257,6 +258,13 @@ datadog:
 
     # datadog.kubeStateMetricsCore.tags -- List of static tags to attach to all KSM metrics
     tags: []
+
+    # datadog.kubeStateMetricsCore.namespaces -- Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces.
+    ## When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole.
+    ## Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole.
+    namespaces: []
+    # - default
+    # - kube-system
 
   ## Manage Cluster checks feature
 
@@ -613,7 +621,7 @@ datadog:
         enabled: true
 
       # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
-      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver)
+      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+)
       # Empty by default so the Cluster Agent can apply its own defaults.
       injectionMode: ""
 
