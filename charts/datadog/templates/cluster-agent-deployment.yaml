@@ -280,6 +280,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
             value: "true"
           {{- end }}
+          {{- if .Values.clusterAgent.admissionController.autoInstrumentation.containerRegistry }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY
+            value: {{ .Values.clusterAgent.admissionController.autoInstrumentation.containerRegistry | quote }}
+          {{- end }}
           - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
           {{- if .Values.clusterAgent.admissionController.containerRegistry }}
             value: {{ .Values.clusterAgent.admissionController.containerRegistry | quote }}

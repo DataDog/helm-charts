@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.175.2](https://img.shields.io/badge/Version-3.175.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.176.0](https://img.shields.io/badge/Version-3.176.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -589,6 +589,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.agentSidecarInjection.profiles | list | `[]` | Defines the sidecar configuration override, currently only one profile is supported. |
 | clusterAgent.admissionController.agentSidecarInjection.provider | string | `nil` | Used by the admission controller to add infrastructure provider-specific configurations to the Agent sidecar. |
 | clusterAgent.admissionController.agentSidecarInjection.selectors | list | `[]` | Defines the pod selector for sidecar injection, currently only one rule is supported. |
+| clusterAgent.admissionController.autoInstrumentation.containerRegistry | string | `nil` | Override the default registry for auto instrumentation. # This allows you to override the default registry for the init container that is used to inject the Agent sidecar. # ref: https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/single-step-apm/kubernetes/?tab=agentv764recommended#change-the-default-image-registry |
 | clusterAgent.admissionController.configMode | string | `nil` | The kind of configuration to be injected, it can be "hostip", "service", "socket" or "csi". |
 | clusterAgent.admissionController.containerRegistry | string | `nil` | Override the default registry for the admission controller. |
 | clusterAgent.admissionController.cwsInstrumentation.enabled | bool | `false` | Enable the CWS Instrumentation admission controller endpoint. |
