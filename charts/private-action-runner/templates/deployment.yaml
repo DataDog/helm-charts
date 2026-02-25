@@ -3,8 +3,15 @@ kind: Deployment
 metadata:
   name: {{ include "chart.fullname" . }}
   namespace: {{ $.Release.Namespace }}
+  {{- with .Values.deployment.metadata.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     {{- include "chart.labels" . | nindent 4 }}
+    {{- with .Values.deployment.metadata.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   minReadySeconds: 10
   replicas: {{ $.Values.runner.replicas }}
@@ -17,6 +24,9 @@ spec:
         {{- include "chart.labels" . | nindent 8 }}
       annotations:
         checksum/values: {{ $.Values | toJson | sha256sum }}
+        {{- with .Values.runner.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "chart.fullname" . }}
       containers:
@@ -51,9 +61,18 @@ spec:
             - name: scripts
               mountPath: /home/scriptuser
             {{- end }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: custom-ca-cert
+              mountPath: /etc/dd-action-runner/config/ca-certificates
+              readOnly: true
+            {{- end }}
           env:
             - name: DD_PRIVATE_RUNNER_CONFIG_DIR
               value: {{ $.Values.runner.configDirectory }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: SSL_CERT_DIR
+              value: /etc/dd-action-runner/config/ca-certificates
+            {{- end }}
           {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
           {{- if $.Values.runner.runnerIdentitySecret }}
           envFrom:
@@ -90,4 +109,13 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "chart.fullname" . }}-scripts
+        {{- end }}
+        {{- if $.Values.runner.customCaCert.configMapName }}
+        - name: custom-ca-cert
+          configMap:
+            name: {{ $.Values.runner.customCaCert.configMapName }}
+        {{- else if $.Values.runner.customCaCert.secretName }}
+        - name: custom-ca-cert
+          secret:
+            secretName: {{ $.Values.runner.customCaCert.secretName }}
         {{- end }}

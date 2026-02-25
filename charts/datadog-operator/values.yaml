@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: gcr.io/datadoghq/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.22.0-rc.1
+  tag: 1.24.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -86,7 +86,7 @@ datadogAgent:
   enabled: true
 datadogAgentInternal:
   # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
-  enabled: false
+  enabled: true
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
   enabled: false
@@ -132,7 +132,8 @@ resources: {}
 #   memory: 128Mi
 
 # nodeSelector -- Allows to schedule Datadog Operator on specific nodes
-nodeSelector: {}
+nodeSelector:
+  kubernetes.io/os: linux
 # tolerations -- Allows to schedule Datadog Operator on tainted nodes
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
@@ -165,6 +166,8 @@ datadogCRDs:
     datadogGenericResources: false
     # datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
     datadogAgentProfiles: false
+    # datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
+    datadogAgentInternals: true
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
@@ -266,3 +269,11 @@ clusterRole:
 
   # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
   allowCreatePodsExec: false
+
+  # kubeletFineGrainedAuthorization -- When set to true, the operator cluster role will not include the nodes/proxy resource.
+  # WARNING: The following requirements must be met:
+  # - the Kubernetes feature gate `KubeletFineGrainedAuthz` (false in 1.32, true in 1.33+ by default)
+  # - Datadog Operator version 1.20.0 or later
+  # - adding the annotation `agent.datadoghq.com/fine-grained-kubelet-authorization-enabled: "true"` on your `DatadogAgent` resource. (ref: https://github.com/DataDog/datadog-operator/pull/2188)
+  # Without any of these requirements, your Datadog Agent will not function properly.
+  kubeletFineGrainedAuthorization: false

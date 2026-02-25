@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.15.0
+  tag: v1.19.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
@@ -21,18 +21,32 @@ service:
   # -- Annotations to add to the service
   annotations: {}
 
+# -- Deployment configuration
+deployment:
+  metadata:
+    # -- Annotations to add to the deployment metadata
+    annotations: {}
+    # -- Labels to add to the deployment metadata
+    labels: {}
+
 runner:
   # -- Type of kubernetes role to create (either "Role" or "ClusterRole")
   roleType: "Role"
   # -- Number of pod instances for the Datadog Private Action Runner
   replicas: 1
+  # -- Annotations to add to the pod template
+  podAnnotations: {}
   # -- The directory containing the Datadog Private Action Runner configuration
   configDirectory: "/etc/dd-action-runner/config"
   # -- Configure whether to use a separate kubernetes secret for the credentials and the config
   useSeparateSecretForCredentials: false
+  # -- Reference to a kubernetes secrets that contains the runner identity.
+  # When used, this replaces config.urn and config.privateKey
+  runnerIdentitySecret: ""
   # -- Configuration for the Datadog Private Action Runner
   config:
-    # -- Base URL of the Datadog app
+    # -- Datadog site URL.
+    # See https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
     ddBaseURL: "https://app.datadoghq.com"
     # -- The runner's URN from the enrollment page
     urn: "CHANGE_ME_URN_FROM_CONFIG"
@@ -50,6 +64,10 @@ runner:
     actionsAllowlist: []
     # -- List of tags to be added to metrics and logs published by the runner. The tags must be specified in a 'key:value' format.
     tags: []
+    # -- Global timeout for task executions. Use 0 for no timeout.
+    taskTimeoutSeconds: 0
+    # -- Global http client timeout for http based actions.
+    httpTimeoutSeconds: 30
   # -- Environment variables to be passed to the Datadog Private Action Runner
   env: []
   # -- Allow the private action runner pods to schedule on selected nodes
@@ -62,8 +80,6 @@ runner:
   livenessProbe: {}
   # -- ReadinessProbe settings
   readinessProbe: {}
-  # -- Reference to a kubernetes secrets that contains the runner identity
-  runnerIdentitySecret: ""
   # -- Add Kubernetes actions to the `config.actionsAllowlist` and corresponding permissions for the service account
   kubernetesActions:
     # -- Actions related to controllerRevisions (options: "get", "list", "create", "update", "patch", "delete", "deleteMultiple")
@@ -136,6 +152,10 @@ runner:
   scriptFiles: []
   # script files provided here will be mounted in /home/scriptuser/
   # see examples/values.yaml for examples on how to specify scripts
+  # -- Custom CA certificate configuration for trusting internal/private CAs
+  customCaCert:
+    # -- Name of a ConfigMap containing the PEM-encoded CA certificate(s)
+    configMapName: ""
 
   # -- Pod Security configuration
   podSecurity:

@@ -35,3 +35,108 @@ jobs:
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           CR_SKIP_EXISTING: true # Ignore chart changes when version was not updated (documentation)
+          CR_GENERATE_RELEASE_NOTES: true
+      - name: Check if datadog chart was modified  
+        id: datadog_modified
+        run: |
+          # Check if any files in charts/datadog/ were modified in this push
+          if git diff --name-only HEAD~1 HEAD | grep -q "^charts/datadog/"; then
+            echo "datadog_chart_modified=true" >> "$GITHUB_OUTPUT"
+            echo "Datadog chart was modified in this push"
+          else
+            echo "datadog_chart_modified=false" >> "$GITHUB_OUTPUT"
+            echo "Datadog chart was not modified in this push"
+          fi
+      - name: Check if datadog agent version changed
+        id: agent_image_tag_change
+        # Only check agent version for the datadog chart
+        if: steps.datadog_modified.outputs.datadog_chart_modified == 'true'
+        run: |
+          # Default to no change detected
+          echo "agent_changed=false" >> "$GITHUB_OUTPUT"
+          
+          # Get the previous agent version
+          old_version=$(git show HEAD~1:charts/datadog/values.yaml | yq e '.agents.image.tag' - 2>/dev/null)
+          if [[ -z "$old_version" ]]; then
+            echo "Unable to get agent image version from previous commit"
+            exit 0
+          fi
+          
+          # Get the current agent version
+          new_version=$(yq e '.agents.image.tag' charts/datadog/values.yaml 2>/dev/null)
+          if [[ -z "$new_version" ]]; then
+            echo "Unable to get agent image version from current values.yaml"
+            exit 0
+          fi
+          
+          # Compare versions - only set to true if they're different
+          if [[ "$old_version" != "$new_version" ]]; then
+            echo "Agent version changed from $old_version to $new_version"
+            echo "agent_changed=true" >> "$GITHUB_OUTPUT"
+            echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+          else
+            echo "Agent version unchanged: $old_version"
+          fi
+      - name: Enhance datadog chart release with agent release notes
+        if: steps.agent_image_tag_change.outputs.agent_changed == 'true'
+        run: |
+          # Get the chart version for this commit to construct the expected release tag
+          chart_version=$(yq e '.version' charts/datadog/Chart.yaml 2>/dev/null)
+          if [[ -z "$chart_version" ]]; then
+            echo "Unable to get chart version from Chart.yaml"
+            exit 0
+          fi
+          
+          expected_release_tag="datadog-${chart_version}"
+          echo "Looking for release: $expected_release_tag"
+          
+          # Poll for the specific release to be created (up to 5 minutes)
+          max_attempts=10  # 5 minutes with 30-second intervals
+          attempt=0
+          
+          while [[ $attempt -lt $max_attempts ]]; do
+            # Check if the expected release exists in GitHub
+            if gh release view "$expected_release_tag" >/dev/null 2>&1; then
+              echo "Found release: $expected_release_tag (attempt $((attempt + 1)))"
+              latest_datadog_chart_tag="$expected_release_tag"
+              break
+            fi
+            
+            attempt=$((attempt + 1))
+            echo "Waiting for release $expected_release_tag to be created... (attempt $attempt/$max_attempts)"
+            sleep 30
+          done
+          
+          if [[ $attempt -eq $max_attempts ]]; then
+            echo "Timeout: Release $expected_release_tag not found after 5 minutes"
+            exit 0
+          fi
+          
+          if [[ -n "$latest_datadog_chart_tag" ]]; then
+            echo "Enhancing release notes for $latest_datadog_chart_tag"
+            
+            new_version="${{ steps.agent_image_tag_change.outputs.new_version }}"
+            
+            # Get current release notes
+            current_notes=$(gh release view "$latest_datadog_chart_tag" --json body -q .body 2>/dev/null || echo "")
+            
+            # Add agent release notes link with version change info
+            enhanced_notes="${current_notes}
+
+          ---
+
+          **🚀 Datadog Agent Version Update**
+
+          This release updates the default Datadog Agent to \`${new_version}\`.
+
+          **📋 What's New in Agent ${new_version}**
+          For information about new features, bug fixes, and improvements in this agent version, see the [Datadog Agent ${new_version} Release Notes](https://github.com/DataDog/datadog-agent/releases/tag/${new_version})."
+            
+            # Update the release notes
+            gh release edit "$latest_datadog_chart_tag" --notes "$enhanced_notes"
+            echo "Enhanced release notes for $latest_datadog_chart_tag with agent version update to $new_version"
+          else
+            echo "No datadog release found to enhance"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

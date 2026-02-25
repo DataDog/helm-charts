@@ -100,6 +100,14 @@
               "items": {
                 "type": "string"
               }
+            },
+            "taskTimeoutSeconds": {
+              "type": "number",
+              "description": "Global timeout for task executions. Use 0 for no timeout."
+            },
+            "httpTimeoutSeconds": {
+              "type": "number",
+              "description": "Global http client timeout for http based actions."
             }
           },
           "required": ["ddBaseURL", "modes"],
@@ -144,6 +152,10 @@
         "readinessProbe": {
           "type": "object",
           "description": "Readiness Probe configuration"
+        },
+        "podAnnotations": {
+          "type": "object",
+          "description": "Annotations to add to the pod template"
         },
         "runnerIdentitySecret": {
           "type": "string",
@@ -416,6 +428,17 @@
             "additionalProperties": false
           }
         },
+        "customCaCert": {
+          "type": "object",
+          "description": "Custom CA certificate configuration for trusting internal/private CAs",
+          "properties": {
+            "configMapName": {
+              "type": "string",
+              "description": "Name of a ConfigMap containing the PEM-encoded CA certificate(s)"
+            }
+          },
+          "additionalProperties": false
+        },
         "podSecurity": {
           "type": "object",
           "description": "Pod Security configuration",
@@ -481,6 +504,28 @@
         "annotations": {
           "type": "object",
           "description": "Annotations to add to the service"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deployment": {
+      "type": "object",
+      "description": "Deployment configuration for the Datadog Private Action Runner",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "description": "Deployment metadata configuration",
+          "properties": {
+            "annotations": {
+              "type": "object",
+              "description": "Annotations to add to the deployment metadata"
+            },
+            "labels": {
+              "type": "object",
+              "description": "Labels to add to the deployment metadata"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

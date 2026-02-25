@@ -1,0 +1,16 @@
+{{- if or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview }}
+{{- if .Values.datadog.operator.migration.userValues }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-values-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  annotations:
+    checksum/migration-config: {{ .Values.datadog.operator.migration.userValues | sha256sum }}
+data:
+  values.yaml: |-
+{{ .Values.datadog.operator.migration.userValues | indent 4 }}
+{{- end }}
+{{- end }}

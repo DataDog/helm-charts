@@ -13,7 +13,7 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  tag: 1.0.0
+  tag: 1.2.0
 
   # image.repository -- Override default registry + image.name for CSI driver
   repository: gcr.io/datadoghq/csi-driver
@@ -41,16 +41,55 @@ registrar:
     # registrar.image.pullPolicy -- CSI registrar image pullPolicy
     pullPolicy: IfNotPresent
 
+  # registrar.securityContext -- CSI registrar securityContext
+  securityContext: {}
+
+driver:
+  # driver.securityContext -- CSI driver securityContext
+  securityContext:
+    readOnlyRootFilesystem: true
+    privileged: true
+
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.apm.hostSocketPath`
   apmHostSocketPath: /var/run/datadog/apm.socket
 
-  # dsdHostSocketPath -- Host path of the apm socket.
+  # dsdHostSocketPath -- Host path of the dsd socket.
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
+
+## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
+## Note: SSI is not yet supported on GKE Autopilot. SSI-related configurations
+## are not rendered when running on GKE Autopilot clusters.
+apm:
+  # apm.enabled -- Enable APM/SSI support for the CSI driver.
+  enabled: true
 
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
+
+# nodeSelector -- Configure the nodeSelector for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# nodeAffinity -- Configure the nodeAffinity for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+nodeAffinity: {}
+# updateStrategy -- Allow the DaemonSet to perform a rolling update on helm update
+
+## Ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: "10%"
+
+# securityContext -- Configure the security context for the csi driver daemonset pods.
+securityContext: {}
+
+# annotations -- Configure the annotations for the csi driver daemonset pods.
+annotations: {}

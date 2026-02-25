@@ -187,6 +187,19 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                "injectionMode": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": ["auto", "init_container", "csi"]
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ],
+                  "description": "The injection mode to use for libraries injection. Set to \"\" (unset) to let the Cluster Agent apply its own default. 'csi' is experimental and requires Cluster Agent 7.76.0+ and Datadog CSI Driver."
                 }
               },
               "additionalProperties": false,

@@ -25,6 +25,7 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
+    httpTimeoutSeconds: 30
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -78,10 +79,10 @@ metadata:
   name: scc-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.25.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.19.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -93,18 +94,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.19.0
+        helm.sh/chart: private-action-runner-1.25.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: scc-test
-        app.kubernetes.io/version: "v1.15.0"
+        app.kubernetes.io/version: "v1.19.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: b59e7e7e973254b8f89ea81fb02f8e8adacb8ca6671be8adc6427418b1b2ff24
+        checksum/values: b6382af99a1f199e82aed3f8b43640667f9282975a518e6afcc375ed39b9fab9
     spec:
       serviceAccountName: scc-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.15.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.19.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -133,10 +134,10 @@ apiVersion: security.openshift.io/v1
 metadata:
   name: scc-test-private-action-runner
   labels:
-    helm.sh/chart: private-action-runner-1.19.0
+    helm.sh/chart: private-action-runner-1.25.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
-    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/version: "v1.19.0"
     app.kubernetes.io/managed-by: Helm
 users:
 - system:serviceaccount:datadog-agent:scc-test-private-action-runner

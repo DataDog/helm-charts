@@ -53,19 +53,38 @@ Create the name of the service account to use
 
 {{/*
 Return the value for a given data key in the datadog endpoint-config ConfigMap.
-Looks up the ConfigMap by exact name based on the release name to avoid
-concatenating values from multiple ConfigMaps when multiple Datadog releases
-exist in the same namespace.
+Tries <releaseName>-endpoint-config by name first (standard installs), then falls
+back to label-based discovery (aliased installs). If multiple ConfigMaps match,
+picks the alphabetically first by name for deterministic behavior.
+TODO: make the target aliased endpoint-config configMap user-configurable.
 */}}
 {{- define "get-endpoint-config-data-key" -}}
 {{- $ctx := index . 0 }}
 {{- $key := index . 1 }}
 {{- $ns := $ctx.Release.Namespace -}}
-{{- $cmName := printf "%s-endpoint-config" $ctx.Release.Name -}}
-{{- $cm := lookup "v1" "ConfigMap" $ns $cmName -}}
-{{- if $cm }}
-  {{- get $cm.data $key -}}
-{{- end }}
+{{- $cm := lookup "v1" "ConfigMap" $ns (printf "%s-endpoint-config" $ctx.Release.Name) -}}
+{{- if not $cm -}}
+  {{- $matchingCMs := dict -}}
+  {{- $matchingNames := list -}}
+  {{- $allCMs := lookup "v1" "ConfigMap" $ns "" -}}
+  {{- if $allCMs -}}
+    {{- range $item := $allCMs.items -}}
+      {{- $labels := default dict $item.metadata.labels -}}
+      {{- if and (eq (default "" (get $labels "datadoghq.com/component")) "endpoint-config") (eq (default "" (get $labels "app.kubernetes.io/instance")) $ctx.Release.Name) -}}
+        {{- $matchingNames = append $matchingNames $item.metadata.name -}}
+        {{- $_ := set $matchingCMs $item.metadata.name $item -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $matchingNames -}}
+    {{- $sorted := sortAlpha $matchingNames -}}
+    {{- $winner := index $sorted 0 -}}
+    {{- $cm = get $matchingCMs $winner -}}
+  {{- end -}}
+{{- end -}}
+{{- if $cm -}}
+  {{- default "" (get $cm.data $key) -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -156,6 +175,6 @@ Check operator image tag version.
 {{- $parts := split "@" $tag -}}
 {{- index $parts "_0"}}
 {{- else -}}
-{{ "1.22.0-rc.1" }}
+{{ "1.24.0-rc.2" }}
 {{- end -}}
 {{- end -}}

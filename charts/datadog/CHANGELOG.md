@@ -1,8 +1,166 @@
 # Datadog changelog
 
-## 3.160.0
+## 3.176.0
 
 * Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentation.containerRegistry`.
+## 3.175.2
+
+* Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
+## 3.175.1
+
+* [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
+## 3.175.0
+
+* [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
+
+## 3.174.0
+
+* Add Helm-Operator migration Kubernetes job. This feature is in preview ([#2319](https://github.com/DataDog/helm-charts/pull/2319)).
+
+## 3.173.1
+
+* Fix endpoint-config ConfigMap name collision when the datadog chart is deployed as multiple aliased sub-charts in a wrapper chart.
+
+## 3.173.0
+
+* [CONTP] feat(rbac): Add endpointslices read permissions to node agent ([#2399](https://github.com/DataDog/helm-charts/pull/2399)).
+
+## 3.172.0
+
+* Add `datadog.systemProbe.maxConnectionStateBuffered` option to configure the maximum number of concurrent connections for Cloud Network Monitoring.
+
+## 3.171.2
+
+* Update `fips.image.tag` to `1.1.21` fixing CVEs and updating packages.
+
+## 3.171.1
+
+* Remove unnecessary `namespace` metadata from the ClusterRole used for the autoscaling feature
+
+## 3.171.0
+
+* Add native `secretBackend.type` and `secretBackend.config` fields for configuring built-in secret backend types.
+
+## 3.170.2
+
+* [datadog/datadog] Update default Agent version to 7.75.4 ([#2390](https://github.com/DataDog/helm-charts/pull/2390)).
+
+## 3.170.1
+
+* Add a warning note to the documentation for `datadog.securityAgent.runtime.useSecruntimeTrack`.
+
+## 3.170.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.169.0
+
+* Update Datadog Operator dependency to 2.18.0 for Operator image tag 1.23.0.
+
+## 3.168.0
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.167.0
+
+* Add new config option to allow sending CWS events directly from the system-probe
+
+## 3.166.5
+
+* Conditionally set env vars to match datadog-operator: logs, prometheusScrape, process-agent
+
+## 3.166.4
+
+* Update datadog-csi-driver chart dependency version.
+
+## 3.166.3
+
+* [CXP-2640][helm] Remove envvar ovveride for controlling whether process checks run in core or process agent ([#2339](https://github.com/DataDog/helm-charts/pull/2339)).
+
+## 3.166.2
+
+* Remove RBAC grants when App & API Protection is not enabled.
+
+## 3.166.1
+
+* Disable trace-loader on GKE Autopilot.
+
+## 3.166.0
+
+* change injectionMode default value from 'auto' to '' ([#2331](https://github.com/DataDog/helm-charts/pull/2331)).
+
+## 3.165.1
+
+* Update `fips.image.tag` to `1.1.19` fixing CVEs and updating packages.
+
+## 3.165.0
+
+* Deprecate `securityAgent.runtime.fimEnabled` config value.
+
+## 3.164.1
+
+* Rename `kubernetesKubeServiceNewBehavior` to `kubernetesKubeServiceIgnoreReadiness`. *Note: This feature requires Cluster Agent `7.76.0` that is not released yet.*
+
+## 3.164.0
+
+* Bump default Datadog Operator image tag to 1.22.0.
+* [BREAKING] Temporarily disable datadogGenericResource and datadogSLO controllers by default.
+
+## 3.163.1
+
+* Update default Agent version to 7.75.0 ([#2326](https://github.com/DataDog/helm-charts/pull/2326)).
+
+## 3.163.0
+
+* [AGTMETRICS-393] Update Agent Data Plane support to reflect new "Data Plane" terminology. ([#2313](https://github.com/DataDog/helm-charts/pull/2313)).
+
+## 3.162.0
+
+* Add injectionMode option for APM instrumentation ([#2308](https://github.com/DataDog/helm-charts/pull/2308)).
+
+## 3.161.2
+
+* Update Cluster Agent RBAC to allow watch on `*.karpenter.sh` if cluster scaling is enabled.
+
+## 3.161.1
+
+* Update Cluster Agent RBAC to allow list/watch on `source.toolkit.fluxcd.io/*`, `kustomize.toolkit.fluxcd.io/*`, `argoproj.io/*` if the orchestrator check is enabled.
+
+## 3.161.0
+
+* Update Datadog Operator dependency to 2.17.0 for image tag 1.22.0.
+
+  Datadog Operator chart v2.17.0 [release notes](https://github.com/DataDog/helm-charts/releases/tag/datadog-operator-2.17.0).
+
+  Datadog Operator v1.22.0 [release notes](https://github.com/DataDog/datadog-operator/releases/tag/v1.22.0).
+
+## 3.160.4
+
+* Add "watch" permission for role bindings and cluster role bindings in the Cluster Agent RBAC when the CSPM feature is enabled.
+
+## 3.160.3
+
+* Update `fips.image.tag` to `1.1.18` fixing CVEs and updating packages.
+
+
+## 3.160.2
+
+* Add DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS flag to alter `kube_service` tag behavior.
+
+## 3.160.1
+
+* Update default Agent version to 7.74.0 ([#2285](https://github.com/DataDog/helm-charts/pull/2285)).
+
+## 3.160.0
+
+* Use agent version as default image tag for DDOT Gateway when `otelAgentGateway.image.tag` is not specified.
+* Remove an unreleased field from DDOT gateway default config: `extensions.datadog.deployment_type`.
+
+## 3.159.1
+
+* Add support for wildcards in `kind` field of KSM RBAC.
 
 ## 3.159.0
 

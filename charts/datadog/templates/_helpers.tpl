@@ -135,6 +135,20 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Return the endpoint-config ConfigMap name.
+For non-aliased installs (standalone or primary sub-chart), uses the default
+<releaseName>-endpoint-config name. For aliased sub-chart instances, prepends
+the alias to produce a unique name: <alias>-<releaseName>-endpoint-config.
+*/}}
+{{- define "datadog.endpointConfigName" -}}
+{{- if eq .Chart.Name "datadog" -}}
+{{- printf "%s-endpoint-config" .Release.Name -}}
+{{- else -}}
+{{- printf "%s-%s-endpoint-config" .Chart.Name .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "datadog.chart" -}}
@@ -154,13 +168,40 @@ false
 
 {{/*
 Return true if Agent Data Plane needs to be deployed
+
+This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
+data pipeline enabled
 */}}
-{{- define "should-enable-agent-data-plane" -}}
-{{- if and .Values.datadog.agentDataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- define "should-enable-data-plane" -}}
+{{- $adpVersion := .Values.datadog.dataPlane.image.tag -}}
+{{- if not (semverCompare ">=0.1.29" $adpVersion) -}}
+{{- fail "Agent Data Plane 0.1.29 or newer is required to enable the Data Plane feature." -}}
+{{- end -}}
+{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
+{{- else -}}
+{{- fail "One or more data pipelines must be enabled when the Data Plane feature is enabled." -}}
+{{- end -}}
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return env var settings for Core Agent when Data Plane feature is enabled
+*/}}
+{{- define "core-agent-data-plane-env" -}}
+# If we're running 7.74.x or earlier, disable DogStatsD explicitly on the Core Agent if ADP has the DSD pipeline
+# enabled. If ADP isn't handling DogStatsD, then we don't need to modify the value.
+{{- if not (semverCompare "^6.75.0-0 || ^7.75.0-0" (include "get-agent-version" .)) -}}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled }}
+- name: DD_USE_DOGSTATSD
+  value: "false"
+{{- end }}
+{{- end }}
+- name: DD_DATA_PLANE_DOGSTATSD_ENABLED
+  value: {{ .Values.datadog.dataPlane.dogstatsd.enabled | quote }}
 {{- end -}}
 
 {{/*
@@ -471,8 +512,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
 Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 */}}
 {{- define "ddot-collector-gateway-image" -}}
+  {{- $imageTag := .Values.otelAgentGateway.image.tag -}}
+  {{- if not $imageTag -}}
+    {{- $imageTag = include "get-agent-version" . -}}
+  {{- end -}}
   {{- if not .Values.otelAgentGateway.image.doNotCheckTag -}}
-    {{- $imageTag := .Values.otelAgentGateway.image.tag | toString -}}
+    {{- $imageTag = $imageTag | toString -}}
     {{- if or (hasSuffix "-full" $imageTag) (eq .Values.otelAgentGateway.image.tagSuffix "full") -}}
       {{- fail "`-full` image is not supported in otel agent gateway" -}}
     {{- end -}}
@@ -480,14 +525,15 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
       {{- fail "Agent version 7.67.0 and before are not supported in otel agent gateway" -}}
     {{- end -}}
   {{- end -}}
-  {{ include "image-path" (dict "root" .Values "image" .Values.otelAgentGateway.image) }}
+  {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
+  {{ include "image-path" (dict "root" .Values "image" $image) }}
 {{- end -}}
 
 {{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
@@ -514,7 +560,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -580,7 +626,19 @@ false
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
-{{- if and (not .Values.providers.gke.gdc) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
+{{- if and (not .Values.providers.gke.gdc) .Values.datadog.securityAgent.runtime.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if security-agent should handle CWS integration.
+This considers both runtime security features AND whether direct send from system-probe is enabled.
+*/}}
+{{- define "should-enable-security-agent-cws-integration" -}}
+{{- if and .Values.datadog.securityAgent.runtime.enabled (not .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -696,9 +754,12 @@ false
 {{/*
 Return true if trace-loader should be used for the trace-agent container.
 trace-loader is available in agent versions >= 7.75.0.
+trace-loader is not supported on GKE Autopilot.
 */}}
 {{- define "use-trace-loader" -}}
-{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- if .Values.providers.gke.autopilot -}}
+false
+{{- else if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
 {{- if semverCompare ">=7.75.0-0" $version -}}
 true
@@ -997,8 +1058,8 @@ false
 Return true if secret RBACs are needed for secret backend.
 */}}
 {{- define "need-secret-permissions" -}}
-{{- if .Values.datadog.secretBackend.command -}}
-{{- if and .Values.datadog.secretBackend.enableGlobalPermissions (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh") -}}
+{{- if .Values.datadog.secretBackend.enableGlobalPermissions -}}
+{{- if or (and .Values.datadog.secretBackend.command (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh")) .Values.datadog.secretBackend.type -}}
 true
 {{- end -}}
 {{- else -}}
@@ -1012,6 +1073,9 @@ Returns env vars correctly quoted and valueFrom respected
 {{- define "additional-env-entries" -}}
 {{- if . -}}
 {{- range . }}
+{{- if not .name }}
+{{- fail "env var entry must have a 'name' field" }}
+{{- end }}
 - name: {{ .name }}
 {{- if .value }}
   value: {{ .value | quote }}
@@ -1522,4 +1586,55 @@ etcd.yaml: |-
       ssl_verify: false
       tls_cert: "/etc/etcd-certs/tls.crt"
       tls_private_key: "/etc/etcd-certs/tls.key"
+{{- end -}}
+
+
+{{/*
+  Returns true if the DatadogAgent CRD is installed.
+*/}}
+{{- define "datadogagents-crd-ready" }}
+{{- if $.Capabilities.APIVersions.Has "datadoghq.com/v2alpha1/DatadogAgent" }}
+true
+{{- end }}
+{{- end -}}
+
+
+{{/*
+  Returns true if Helm->DDA migration is supported.
+*/}}
+{{- define "migration-supported" }}
+{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) (or (.Values.operator.image.doNotCheckTag) ( semverCompare ">=1.22.0" .Values.operator.image.tag )) }}
+true
+{{- end }}
+{{- end }}
+
+
+{{/*
+This helper computes the Deployment name for the operator when installed as a subchart of the datadog chart.
+
+The Operator subchart dependency uses hardcoded alias = "operator", so the subchart sees .Chart.Name = "operator" (not "datadog-operator").
+Release.Name = parent (datadog chart) release name.
+
+The logic follows the Operator chart's `datadog-operator.fullname` helper:
+  1. If operator.fullnameOverride is set, use that value
+  2. Otherwise, use operator.nameOverride (default "operator") as <name>
+  3. If the <name> is contained in Release.Name, use Release.Name
+  4. Otherwise, use Release.Name-<name>
+
+Examples (assuming no overrides):
+  - datadog chart release "datadog" → operator Deployment "datadog-operator"
+  - datadog chart release "dd" → operator Deployment "dd-operator"
+  - datadog chart release "my-datadog" → operator Deployment "my-datadog-operator"
+*/}}
+{{- define "operator-subchart-deployment-name" -}}
+{{- if .Values.operator.fullnameOverride -}}
+{{- .Values.operator.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default "operator" .Values.operator.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}

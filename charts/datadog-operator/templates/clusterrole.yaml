@@ -60,7 +60,9 @@ rules:
   - nodes/logs
   - nodes/metrics
   - nodes/pods
+  {{- if not .Values.clusterRole.kubeletFineGrainedAuthorization }}
   - nodes/proxy
+  {{- end }}
   - nodes/spec
   - nodes/stats
   verbs:
@@ -121,6 +123,14 @@ rules:
   - statefulsets
   verbs:
   - get
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - applications
+  - applicationsets
+  verbs:
   - list
   - watch
 - apiGroups:
@@ -276,6 +286,7 @@ rules:
   - watch
 - apiGroups:
   - datadoghq.com
+  - eks.amazonaws.com
   - karpenter.azure.com
   resources:
   - '*'
@@ -290,6 +301,7 @@ rules:
   - list
   - watch
 - apiGroups:
+  - eks.amazonaws.com
   - external.metrics.k8s.io
   - karpenter.k8s.aws
   resources:
@@ -337,6 +349,13 @@ rules:
   - list
   - patch
   - update
+  - watch
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
+  verbs:
+  - list
   - watch
 - apiGroups:
   - metrics.eks.amazonaws.com
@@ -429,6 +448,18 @@ rules:
   verbs:
   - use
 - apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - externalartifacts
+  - gitrepositories
+  - helmcharts
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - storage.k8s.io
   resources:
   - storageclasses
@@ -444,6 +475,40 @@ rules:
   - ksh/metrics
   verbs:
   - get
+{{- if .Values.datadogAgentInternal.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
 {{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - ""

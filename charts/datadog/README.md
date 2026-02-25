@@ -1,6 +1,9 @@
 # Datadog
 
-![Version: 3.160.0](https://img.shields.io/badge/Version-3.160.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.176.0](https://img.shields.io/badge/Version-3.176.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+
+> [!WARNING]
+> The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds the Datadog Agent to all nodes in your cluster via a DaemonSet. It also optionally depends on the [kube-state-metrics chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics). For more information about monitoring Kubernetes with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/).
 
@@ -29,15 +32,13 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.4.3 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.17.0-dev.2 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.9.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.18.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
 
-By default, the Datadog Agent runs in a DaemonSet. It can alternatively run inside a Deployment for special use cases.
-
-**Note:** simultaneous DaemonSet + Deployment installation within a single release will be deprecated in a future version, requiring two releases to achieve this.
+By default, the Datadog Agent runs as a DaemonSet to ensure it runs on every node in your cluster. For alternative deployment patterns, consider using the [Datadog Operator](https://docs.datadoghq.com/containers/datadog_operator/). Supporting the Agent as a deployment has been removed since version 2.0.0 of our Helm chart.
 
 ### Installing the Datadog Chart
 
@@ -541,7 +542,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.73.0"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.75.4"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
@@ -629,7 +630,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.73.0"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.75.4"` | Cluster Agent image tag to use |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
@@ -688,7 +689,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.73.0"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.75.4"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
@@ -719,12 +720,6 @@ helm install <RELEASE_NAME> \
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
-| datadog.agentDataPlane.enabled | bool | `false` | Whether or not Agent Data Plane is enabled |
-| datadog.agentDataPlane.image.digest | string | `""` | Define Agent Data Plane image digest to use, takes precedence over tag if specified |
-| datadog.agentDataPlane.image.name | string | `"agent-data-plane"` | Agent Data Plane image name to use (relative to `registry`) |
-| datadog.agentDataPlane.image.pullPolicy | string | `"IfNotPresent"` | Agent Data Plane image pull policy |
-| datadog.agentDataPlane.image.repository | string | `nil` | Override default registry + image.name for Agent Data Plane |
-| datadog.agentDataPlane.image.tag | string | `"0.1.11"` | Define the Agent Data Plane version to use |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |
@@ -733,6 +728,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces. |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster. |
 | datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces. |
+| datadog.apm.instrumentation.injectionMode | string | `""` | The injection mode to use for libraries injection. Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver) Empty by default so the Cluster Agent can apply its own defaults. |
 | datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
 | datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (preview). |
 | datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. |
@@ -777,6 +773,13 @@ helm install <RELEASE_NAME> \
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts. |
+| datadog.dataPlane.dogstatsd.enabled | bool | `false` | Whether or not DogStatsD is enabled in the data plane |
+| datadog.dataPlane.enabled | bool | `false` | Whether or not the data plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The data plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
+| datadog.dataPlane.image.digest | string | `""` | Define the data plane image digest to use, takes precedence over tag if specified |
+| datadog.dataPlane.image.name | string | `"agent-data-plane"` | Data plane image name to use (relative to `registry`) |
+| datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Data plane image pull policy |
+| datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for data plane |
+| datadog.dataPlane.image.tag | string | `"0.1.30"` | Define the data plane version to use |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
@@ -818,6 +821,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.enabled | bool | `true` | Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+) |
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
+| datadog.kubeStateMetricsCore.namespaces | list | `[]` | Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces. # When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole. # Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole. |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |
@@ -836,6 +840,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.sourceDetectionEnabled | bool | `false` | Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+). |
 | datadog.kubernetesEvents.unbundleEvents | bool | `false` | Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+). |
+| datadog.kubernetesKubeServiceIgnoreReadiness | bool | `false` | Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+). |
 | datadog.kubernetesResourcesAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Annotations to Datadog Tags |
 | datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
 | datadog.kubernetesUseEndpointSlices | bool | `false` | Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+). |
@@ -849,7 +854,7 @@ helm install <RELEASE_NAME> \
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
-| datadog.networkMonitoring.enabled | bool | `false` | Enable network performance monitoring |
+| datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
 | datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
 | datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
 | datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |
@@ -861,6 +866,9 @@ helm install <RELEASE_NAME> \
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
 | datadog.operator.enabled | bool | `true` | Enable the Datadog Operator. |
+| datadog.operator.migration.enabled | bool | `false` | Enable migration of Agent workloads to be managed by the Datadog Operator. Creates a DatadogAgent manifest based on current release's values.yaml. |
+| datadog.operator.migration.preview | bool | `false` | Set to true to preview the DatadogAgent manifest mapped from the Helm release's values.yaml. Mapped DatadogAgent manifest can be viewed by checking the `dda-mapper` container logs in the migration job. |
+| datadog.operator.migration.userValues | string | `""` | Provide datadog chart values as a YAML string to be mapped to the DatadogAgent manifest. Use --set-file to pass the file contents: helm install datadog ./charts/datadog --set-file datadog.operator.migration.userValues=myValues.yaml -f myValues.yaml |
 | datadog.orchestratorExplorer.container_scrubbing | object | `{"enabled":true}` | Enable the scrubbing of containers in the kubernetes resource YAML for sensitive information |
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
@@ -911,10 +919,12 @@ helm install <RELEASE_NAME> \
 | datadog.secretAnnotations | object | `{}` |  |
 | datadog.secretBackend.arguments | string | `nil` | Configure the secret backend command arguments (space-separated strings). |
 | datadog.secretBackend.command | string | `nil` | Configure the secret backend command, path to the secret backend binary. |
-| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"`. |
+| datadog.secretBackend.config | object | `{}` | Additional configuration for the secret backend type. |
+| datadog.secretBackend.enableGlobalPermissions | bool | `true` | Whether to create a global permission allowing Datadog agents to read all secrets when `datadog.secretBackend.command` is set to `"/readsecret_multiple_providers.sh"` or `datadog.secretBackend.type` is set. |
 | datadog.secretBackend.refreshInterval | string | `nil` | [PREVIEW] Configure the secret backend command refresh interval in seconds. |
 | datadog.secretBackend.roles | list | `[]` | Creates roles for Datadog to read the specified secrets - replacing `datadog.secretBackend.enableGlobalPermissions`. |
 | datadog.secretBackend.timeout | string | `nil` | Configure the secret backend command timeout in seconds. |
+| datadog.secretBackend.type | string | `nil` | Configure the built-in secret backend type. Alternative to command; when set, the Agent uses the built-in backend to resolve secrets. Requires Agent 7.70+. |
 | datadog.securityAgent.compliance.checkInterval | string | `"20m"` | Compliance check run interval |
 | datadog.securityAgent.compliance.configMap | string | `nil` | Contains CSPM compliance benchmarks that will be used |
 | datadog.securityAgent.compliance.containerInclude | string | `nil` | Include containers in CSPM monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
@@ -928,16 +938,17 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.runtime.activityDump.tracedCgroupsCount | int | `3` | Set to the number of containers that should be traced concurrently |
 | datadog.securityAgent.runtime.containerExclude | string | `nil` |  |
 | datadog.securityAgent.runtime.containerInclude | string | `nil` | Include containers in runtime security monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
+| datadog.securityAgent.runtime.directSendFromSystemProbe | bool | `false` | Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent. When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled). |
 | datadog.securityAgent.runtime.enabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) |
 | datadog.securityAgent.runtime.enforcement.enabled | bool | `true` | Set to false to disable CWS runtime enforcement |
-| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring |
+| datadog.securityAgent.runtime.fimEnabled | bool | `false` | Set to true to enable Cloud Workload Security (CWS) File Integrity Monitoring DEPRECATED. This option has no effect. Cloud Workload Security is now only controlled by datadog.securityAgent.runtime.enabled. |
 | datadog.securityAgent.runtime.network.enabled | bool | `true` | Set to true to enable the collection of CWS network events |
 | datadog.securityAgent.runtime.policies.configMap | string | `nil` | Contains CWS policies that will be used |
 | datadog.securityAgent.runtime.securityProfile.anomalyDetection.enabled | bool | `true` | Set to true to enable CWS runtime drift events |
 | datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled | bool | `true` | Set to true to enable CWS runtime auto suppression |
 | datadog.securityAgent.runtime.securityProfile.enabled | bool | `true` | Set to true to enable CWS runtime security profiles |
 | datadog.securityAgent.runtime.syscallMonitor.enabled | bool | `false` | Set to true to enable the Syscall monitoring (recommended for troubleshooting only) |
-| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer |
+| datadog.securityAgent.runtime.useSecruntimeTrack | bool | `true` | Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support. |
 | datadog.securityContext | object | `{"runAsUser":0}` | Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment |
 | datadog.serviceMonitoring.enabled | bool | `false` | Enable Universal Service Monitoring |
 | datadog.serviceMonitoring.http2MonitoringEnabled | string | `nil` | Enable HTTP2 & gRPC monitoring for Universal Service Monitoring (Requires Agent 7.53.0+ and kernel 5.2 or later). Empty values use the default setting in the datadog agent. |
@@ -959,6 +970,7 @@ helm install <RELEASE_NAME> \
 | datadog.systemProbe.enableDefaultOsReleasePaths | bool | `true` | enable default os-release files mount |
 | datadog.systemProbe.enableOOMKill | bool | `false` | Enable the OOM kill eBPF-based check |
 | datadog.systemProbe.enableTCPQueueLength | bool | `false` | Enable the TCP queue length eBPF-based check |
+| datadog.systemProbe.maxConnectionStateBuffered | string | `nil` | Maximum number of concurrent connections for Cloud Network Monitoring |
 | datadog.systemProbe.maxTrackedConnections | int | `131072` | the maximum number of tracked connections |
 | datadog.systemProbe.mountPackageManagementDirs | list | `[]` | Enables mounting of specific package management directories when runtime compilation is enabled |
 | datadog.systemProbe.runtimeCompilationAssetDir | string | `"/var/tmp/datadog-agent/system-probe"` | Specify a directory for runtime compilation assets to live in |
@@ -977,7 +989,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.17"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.21"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
@@ -992,19 +1004,22 @@ helm install <RELEASE_NAME> \
 | kube-state-metrics.serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. |
 | kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
-| operator.datadogAgent.enabled | bool | `false` | Enables Datadog Agent controller Note: The Datadog Agent controller will be enabled by default in a future release. |
-| operator.datadogCRDs.crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| operator.datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
+| operator.datadogAgentInternal.enabled | bool | `false` | Enables the Datadog Agent Internal controller |
+| operator.datadogCRDs.crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
+| operator.datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
 | operator.datadogCRDs.crds.datadogGenericResources | bool | `true` | Set to true to deploy the DatadogGenericResource CRD |
 | operator.datadogCRDs.crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | operator.datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | operator.datadogCRDs.crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | operator.datadogCRDs.crds.datadogSLOs | bool | `true` | Set to true to deploy the DatadogSLO CRD |
+| operator.datadogCRDs.keepCrds | bool | `false` | Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true. |
 | operator.datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
-| operator.datadogGenericResource.enabled | bool | `true` | Enables the Datadog Generic Resource controller |
+| operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
-| operator.datadogSLO.enabled | bool | `true` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.21.0"` | Define the Datadog Operator version to use |
+| operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
+| operator.image.tag | string | `"1.23.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
@@ -1036,7 +1051,7 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.image.pullPolicy | string | `"IfNotPresent"` | otel Agent image pullPolicy |
 | otelAgentGateway.image.pullSecrets | list | `[]` | otel Agent repository pullSecret (ex: specify docker registry credentials) |
 | otelAgentGateway.image.repository | string | `nil` | Override the image repository to override default registry |
-| otelAgentGateway.image.tag | string | `"7.71.2"` | Override the image tag of otel agent |
+| otelAgentGateway.image.tag | string | `""` | Override the image tag of otel agent |
 | otelAgentGateway.image.tagSuffix | string | `""` | Suffix to append to image tag of otel agent |
 | otelAgentGateway.initContainers.resources | string | `nil` | Resource requests and limits for init containers |
 | otelAgentGateway.initContainers.securityContext | string | `nil` | Allows you to overwrite the default container SecurityContext for init containers |

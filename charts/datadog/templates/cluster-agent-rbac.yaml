@@ -307,6 +307,7 @@ rules:
   - rolebindings
   verbs:
   - list
+  - watch
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -350,6 +351,7 @@ rules:
   - watch
 - apiGroups:
   - "datadoghq.com"
+  - eks.amazonaws.com
   - karpenter.azure.com
   - karpenter.k8s.aws
   - karpenter.sh
@@ -362,12 +364,36 @@ rules:
   - argoproj.io
   resources:
   - rollouts
+  - applications
+  - applicationsets
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - helmcharts
+  - externalartifacts
+  - gitrepositories
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
   verbs:
   - list
   - watch
   - get
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
+{{- if .Values.datadog.appsec.injector.enabled }}
 # Used by datadog.appsec.injector feature
 - apiGroups:
     - "gateway.networking.k8s.io"
@@ -404,6 +430,7 @@ rules:
     - get
     - create
     - delete
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
@@ -516,7 +543,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
-  namespace: {{ .Release.Namespace }}
 rules:
 # Ability to generate events
 - apiGroups:
@@ -574,8 +600,10 @@ rules:
   - delete
   - get
   - list
+  - watch
   - patch
 - apiGroups:
+  - eks.amazonaws.com
   - karpenter.k8s.aws
   resources:
   - '*'
@@ -609,7 +637,6 @@ metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
   name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
-  namespace: {{ .Release.Namespace }}
 
 {{- $groupedResources := dict }}
 {{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}

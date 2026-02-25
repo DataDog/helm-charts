@@ -1,4 +1,4 @@
-{{- if .Values.crds.datadogAgentInternal }}
+{{- if .Values.crds.datadogAgentInternals }}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -1163,6 +1163,12 @@ spec:
                                 Default: true
                               type: boolean
                           type: object
+                        runInSystemProbe:
+                          description: |-
+                            RunInSystemProbe configures CSPM to send payloads directly from the system-probe, without using the security-agent.
+                            This is an experimental feature. Contact support before using.
+                            Default: false
+                          type: boolean
                       type: object
                     cws:
                       description: CWS (Cloud Workload Security) configuration.
@@ -1228,6 +1234,14 @@ spec:
                             Enabled enables Cloud Workload Security.
                             Default: false
                           type: boolean
+                        enforcement:
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled enables Enforcement for Cloud Workload Security.
+                                Default: true
+                              type: boolean
+                          type: object
                         network:
                           properties:
                             enabled:
@@ -1340,6 +1354,7 @@ spec:
                         tagCardinality:
                           description: |-
                             TagCardinality configures tag cardinality for the metrics collected using origin detection (`low`, `orchestrator` or `high`).
+                            This setting only applies when OriginDetectionEnabled is true.
                             See also: https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
                             Cardinality default: low
                           type: string
@@ -1851,6 +1866,11 @@ spec:
                             CollectDNSStats enables DNS stat collection.
                             Default: false
                           type: boolean
+                        directSend:
+                          description: |-
+                            DirectSend enables CNM/USM to send data directly to the backend
+                            Default: false
+                          type: boolean
                         enableConntrack:
                           description: |-
                             EnableConntrack enables the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data.
@@ -2014,6 +2034,11 @@ spec:
                             Enabled enables the OTel Agent Gateway.
                             Default: false
                           type: boolean
+                        featureGates:
+                          description: |-
+                            FeatureGates are the feature gates to pass to the OTel collector as a comma-separated list.
+                            Example: "component.UseLocalHostAsDefaultHost,connector.datadogconnector.NativeIngest"
+                          type: string
                         ports:
                           description: |-
                             Ports contains the ports that the OTel Collector is listening on.
@@ -7992,6 +8017,54 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                otelAgentGateway:
+                  description: The actual state of the OTel Agent Gateway as a deployment.
+                  properties:
+                    availableReplicas:
+                      description: Total number of available pods (ready for at least minReadySeconds) targeted by this Deployment.
+                      format: int32
+                      type: integer
+                    currentHash:
+                      description: CurrentHash is the stored hash of the Deployment.
+                      type: string
+                    deploymentName:
+                      description: DeploymentName corresponds to the name of the Deployment.
+                      type: string
+                    generatedToken:
+                      description: |-
+                        GeneratedToken corresponds to the generated token if any token was provided in the Credential configuration when ClusterAgent is
+                        enabled.
+                      type: string
+                    lastUpdate:
+                      description: LastUpdate is the last time the status was updated.
+                      format: date-time
+                      type: string
+                    readyReplicas:
+                      description: Total number of ready pods targeted by this Deployment.
+                      format: int32
+                      type: integer
+                    replicas:
+                      description: Total number of non-terminated pods targeted by this Deployment (their labels match the selector).
+                      format: int32
+                      type: integer
+                    state:
+                      description: State corresponds to the Deployment state.
+                      type: string
+                    status:
+                      description: Status corresponds to the Deployment computed status.
+                      type: string
+                    unavailableReplicas:
+                      description: |-
+                        Total number of unavailable pods targeted by this Deployment. This is the total number of
+                        pods that are still required for the Deployment to have 100% available capacity. They may
+                        either be pods that are running but not yet available or pods that still have not been created.
+                      format: int32
+                      type: integer
+                    updatedReplicas:
+                      description: Total number of non-terminated pods targeted by this Deployment that have the desired template spec.
+                      format: int32
+                      type: integer
+                  type: object
                 remoteConfigConfiguration:
                   description: RemoteConfigConfiguration stores the configuration received from RemoteConfig.
                   properties:
@@ -9095,6 +9168,12 @@ spec:
                                     Default: true
                                   type: boolean
                               type: object
+                            runInSystemProbe:
+                              description: |-
+                                RunInSystemProbe configures CSPM to send payloads directly from the system-probe, without using the security-agent.
+                                This is an experimental feature. Contact support before using.
+                                Default: false
+                              type: boolean
                           type: object
                         cws:
                           description: CWS (Cloud Workload Security) configuration.
@@ -9160,6 +9239,14 @@ spec:
                                 Enabled enables Cloud Workload Security.
                                 Default: false
                               type: boolean
+                            enforcement:
+                              properties:
+                                enabled:
+                                  description: |-
+                                    Enabled enables Enforcement for Cloud Workload Security.
+                                    Default: true
+                                  type: boolean
+                              type: object
                             network:
                               properties:
                                 enabled:
@@ -9272,6 +9359,7 @@ spec:
                             tagCardinality:
                               description: |-
                                 TagCardinality configures tag cardinality for the metrics collected using origin detection (`low`, `orchestrator` or `high`).
+                                This setting only applies when OriginDetectionEnabled is true.
                                 See also: https://docs.datadoghq.com/getting_started/tagging/assigning_tags/?tab=containerizedenvironments#environment-variables
                                 Cardinality default: low
                               type: string
@@ -9783,6 +9871,11 @@ spec:
                                 CollectDNSStats enables DNS stat collection.
                                 Default: false
                               type: boolean
+                            directSend:
+                              description: |-
+                                DirectSend enables CNM/USM to send data directly to the backend
+                                Default: false
+                              type: boolean
                             enableConntrack:
                               description: |-
                                 EnableConntrack enables the system-probe agent to connect to the netlink/conntrack subsystem to add NAT information to connection data.
@@ -9946,6 +10039,11 @@ spec:
                                 Enabled enables the OTel Agent Gateway.
                                 Default: false
                               type: boolean
+                            featureGates:
+                              description: |-
+                                FeatureGates are the feature gates to pass to the OTel collector as a comma-separated list.
+                                Example: "component.UseLocalHostAsDefaultHost,connector.datadogconnector.NativeIngest"
+                              type: string
                             ports:
                               description: |-
                                 Ports contains the ports that the OTel Collector is listening on.

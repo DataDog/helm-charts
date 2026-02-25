@@ -1,12 +1,70 @@
 # Changelog
 
+## 2.19.0-dev.5
+
+* Update Datadog Operator chart for RBACs for 1.24.0-rc.2.
+
+## 2.19.0-dev.4
+
+* Update Datadog Operator chart for 1.24.0-rc.2.
+
+## 2.19.0-dev.3
+
+* Add label-based discovery to the endpoint-config ConfigMap lookup to support aliased datadog chart installations.
+* Add `kubernetes.io/os: linux` nodeSelector to the operator deployment to prevent scheduling on Windows nodes.
+
+## 2.19.0-dev.2
+
+* Adds `clusterRole.kubeletFineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
+
+## 2.19.0-dev.1
+
+* Update Datadog Operator chart for 1.24.0-rc.1.
+
+## 2.18.1
+
+* Update Datadog Operator chart for 1.23.1.
+
+## 2.18.0
+
+* Update Datadog Operator chart for 1.23.0.
+
+## 2.18.0-dev.4
+
+* Update Datadog Operator chart for 1.23.0-rc.3.
+
+## 2.18.0-dev.3
+
+* Add POD_NAMESPACE environment variable via downward API.
+
+## 2.18.0-dev.2
+
+* Update Datadog Operator chart for 1.23.0-rc.2.
+
+## 2.18.0-dev.1
+
+* Update Datadog Operator chart for 1.23.0-rc.1.
+
+## 2.17.0
+
+* Update Datadog Operator chart for 1.22.0.
+* Enable DatadogAgentInternal controller and CRD.
+* Add ClusterRole RBAC permissions for DatadogAgentInternal. 
+* Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
+
+## 2.17.0-dev.3
+
+* Update Datadog Operator chart for 1.22.0-rc.3.
+* Enable DatadogAgentInternal controller and CRD.
+* Add ClusterRole RBAC permissions for DatadogAgentInternal. 
+
 ## 2.17.0-dev.2
 
 * Fix endpoint-config ConfigMap lookup to use exact name instead of suffix matching, preventing value concatenation when multiple Datadog releases exist in the same namespace.
 
 ## 2.17.0-dev.1
 
-* Update Datadog Operator chart for to 1.22.0-rc.1.
+* Update Datadog Operator chart for 1.22.0-rc.1.
 
 ## 2.16.0
 
