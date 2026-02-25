@@ -2,7 +2,7 @@
 
 ## 3.160.0
 
-* Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentationContainerRegistry`.
+* Add the ability to override the auto instrumentation container registry via `clusterAgent.admissionController.autoInstrumentation.containerRegistry`.
 
 ## 3.159.0
 
