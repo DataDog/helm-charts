@@ -4,6 +4,10 @@
 
 * Support 'image_volume' for apm.instrumentation.injectionMode
 
+## 3.175.2
+
+* Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
 ## 3.175.1
 
 * [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
