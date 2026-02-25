@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.175.3
+* Remove comments for deprecated autodiscovery configurations under `agents.customAgentConfig`.
+
 ## 3.175.2
 
 * Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
