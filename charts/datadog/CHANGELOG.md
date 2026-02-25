@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.176.1
+
+* Include the Datadog Extension by default in daemon otel agents when DDOT Gateway is enabled.
+
 ## 3.176.0
 
 * Support 'image_volume' for apm.instrumentation.injectionMode
