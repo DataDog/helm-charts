@@ -380,7 +380,7 @@ spec:
           {{- end }}
           {{- if .Values.clusterAgent.privateActionRunner.actionsAllowlist }}
           - name: DD_PRIVATE_ACTION_RUNNER_ACTIONS_ALLOWLIST
-            value: {{ .Values.clusterAgent.privateActionRunner.actionsAllowlist | toJson | quote }}
+            value: {{ .Values.clusterAgent.privateActionRunner.actionsAllowlist | join "," | quote }}
           {{- end }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
