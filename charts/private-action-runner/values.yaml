@@ -8,7 +8,7 @@ $schema: ./values.schema.json
 # -- Current Datadog Private Action Runner image
 image:
   repository: gcr.io/datadoghq/private-action-runner
-  tag: v1.19.0
+  tag: v1.20.0
   pullPolicy: IfNotPresent
 
 # nameOverride -- Override name of app
