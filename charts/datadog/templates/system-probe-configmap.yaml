@@ -44,6 +44,12 @@ data:
     network_config:
       enabled: {{ $.Values.datadog.networkMonitoring.enabled }}
       conntrack_init_timeout: {{ $.Values.datadog.systemProbe.conntrackInitTimeout }}
+      {{- if $.Values.datadog.networkMonitoring.dnsMonitoringPorts }}
+      dns_monitoring_ports:
+        {{- range $.Values.datadog.networkMonitoring.dnsMonitoringPorts }}
+        - {{ . }}
+        {{- end }}
+      {{- end }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
       {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
