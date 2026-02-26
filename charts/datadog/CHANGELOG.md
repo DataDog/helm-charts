@@ -3,6 +3,11 @@
 
 * Add experimental support for host profiler.
 
+
+## 3.178.0
+
+* Add `datadog.networkMonitoring.dnsMonitoringPorts` option to configure custom DNS monitoring ports for network performance monitoring.
+
 ## 3.177.0
 
 * Add Private Action Runner support in Cluster Agent with configuration options for self-enrollment, manual credentials, and existing secrets.

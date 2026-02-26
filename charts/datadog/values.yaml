@@ -1029,6 +1029,10 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
 
+    # datadog.networkMonitoring.dnsMonitoringPorts -- List of ports to monitor for DNS traffic
+    # @default -- `[53]` (set by agent)
+    dnsMonitoringPorts: []
+
   networkPath:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
