@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 3.177.0
+
+* Add Private Action Runner support in Cluster Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.176.1
+
+* Include the Datadog Extension by default in daemon otel agents when DDOT Gateway is enabled.
+
+## 3.176.0
+
+* Support 'image_volume' for apm.instrumentation.injectionMode
+
+## 3.175.2
+
+* Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
 ## 3.175.1
 
 * [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
@@ -7,6 +23,7 @@
 ## 3.175.0
 
 * [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
+
 
 ## 3.174.0
 

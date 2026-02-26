@@ -96,6 +96,11 @@ func TestAPMConfigValidation(t *testing.T) {
 			values:  "injection_mode_csi_with_driver.yaml",
 			isValid: true,
 		},
+		{
+			name:    "injectionMode image_volume",
+			values:  "injection_mode_image_volume.yaml",
+			isValid: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -145,6 +150,14 @@ func Test_apm_injectionMode_envVar_only_when_explicitly_configured(t *testing.T)
 			},
 			wantPresent: true,
 			wantValue:   "init_container",
+		},
+		{
+			name: "explicit injectionMode image_volume - env var is set",
+			overrides: map[string]string{
+				"datadog.apm.instrumentation.injectionMode": "image_volume",
+			},
+			wantPresent: true,
+			wantValue:   "image_volume",
 		},
 	}
 
