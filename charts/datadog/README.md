@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.175.2](https://img.shields.io/badge/Version-3.175.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.177.0](https://img.shields.io/badge/Version-3.177.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -650,6 +650,13 @@ helm install <RELEASE_NAME> \
 | clusterAgent.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Cluster Agent pods |
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
+| clusterAgent.privateActionRunner.actionsAllowlist | list | `[]` | List of actions executable by the Private Action Runner |
+| clusterAgent.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner to execute workflow actions |
+| clusterAgent.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
+| clusterAgent.privateActionRunner.identitySecretName | string | `"datadog-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled # The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key # RBAC permissions are granted specifically for this secret name |
+| clusterAgent.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
+| clusterAgent.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a Kubernetes secret. Requires leader election to be enabled. |
+| clusterAgent.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | clusterAgent.rbac.flareAdditionalPermissions | bool | `true` | If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace |
@@ -727,7 +734,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.disabledNamespaces | list | `[]` | Disable injecting the Datadog APM libraries into pods in specific namespaces. |
 | datadog.apm.instrumentation.enabled | bool | `false` | Enable injecting the Datadog APM libraries into all pods in the cluster. |
 | datadog.apm.instrumentation.enabledNamespaces | list | `[]` | Enable injecting the Datadog APM libraries into pods in specific namespaces. |
-| datadog.apm.instrumentation.injectionMode | string | `""` | The injection mode to use for libraries injection. Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver) Empty by default so the Cluster Agent can apply its own defaults. |
+| datadog.apm.instrumentation.injectionMode | string | `""` | The injection mode to use for libraries injection. Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+) Empty by default so the Cluster Agent can apply its own defaults. |
 | datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
 | datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (preview). |
 | datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. |

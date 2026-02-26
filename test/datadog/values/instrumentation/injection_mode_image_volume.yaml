@@ -1,0 +1,8 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      injectionMode: image_volume
+
+
