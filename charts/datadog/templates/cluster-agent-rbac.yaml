@@ -351,6 +351,7 @@ rules:
   - watch
 - apiGroups:
   - "datadoghq.com"
+  - eks.amazonaws.com
   - karpenter.azure.com
   - karpenter.k8s.aws
   - karpenter.sh
@@ -494,6 +495,38 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: Role
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames:
+    - {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
+  verbs: ["get", "update", "create"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: "{{ template "datadog.fullname" . }}-private-action-runner"
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
 
 {{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
@@ -602,6 +635,7 @@ rules:
   - watch
   - patch
 - apiGroups:
+  - eks.amazonaws.com
   - karpenter.k8s.aws
   resources:
   - '*'

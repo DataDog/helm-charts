@@ -79,7 +79,7 @@
     - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
       # Exclude infra attribute or prometheus in Daemonset in Gateway setup.
       # Users must explicitly add infra attribute and prometheus if they need in Gateway, to avoid potential duplications
-      value: "health_check,zpages,pprof,ddflare"
+      value: "health_check,zpages,pprof,ddflare,datadog"
     {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL

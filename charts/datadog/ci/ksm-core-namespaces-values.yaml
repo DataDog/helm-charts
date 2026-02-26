@@ -1,0 +1,16 @@
+# Test values for kubeStateMetricsCore with namespace restriction.
+# Verifies that namespace-scoped RBAC (RoleBinding per namespace + shared ClusterRole)
+# and the check config are generated correctly when namespaces is set.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  kubeStateMetricsCore:
+    enabled: true
+    namespaces:
+      - default
+      - kube-system
+
+clusterAgent:
+  enabled: true
