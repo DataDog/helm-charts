@@ -1,7 +1,27 @@
 # Datadog changelog
 
-## 3.175.3
+## 3.178.2
 * Remove comments for deprecated autodiscovery configurations under `agents.customAgentConfig`.
+
+## 3.178.1
+
+* [datadog/datadog] Update default Agent version to 7.76.1 ([#2420](https://github.com/DataDog/helm-charts/pull/2420)).
+
+## 3.178.0
+
+* Add `datadog.networkMonitoring.dnsMonitoringPorts` option to configure custom DNS monitoring ports for network performance monitoring.
+
+## 3.177.0
+
+* Add Private Action Runner support in Cluster Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.176.1
+
+* Include the Datadog Extension by default in daemon otel agents when DDOT Gateway is enabled.
+
+## 3.176.0
+
+* Support 'image_volume' for apm.instrumentation.injectionMode
 
 ## 3.175.2
 
