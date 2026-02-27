@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.178.1
+
+* [datadog/datadog] Update default Agent version to 7.76.1 ([#2420](https://github.com/DataDog/helm-charts/pull/2420)).
 
 ## 3.178.0
 
