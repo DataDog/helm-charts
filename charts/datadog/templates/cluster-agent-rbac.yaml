@@ -576,6 +576,20 @@ rules:
   - pods
   verbs:
   - patch
+# In-place resize: patching pod resources via resize subresource (K8s 1.33+)
+- apiGroups:
+  - ""
+  resources:
+  - pods/resize
+  verbs:
+  - patch
+# In-place resize: evicting pods that cannot resize in-place
+- apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
 # Triggering rollout on Deployments
 - apiGroups:
   - apps
