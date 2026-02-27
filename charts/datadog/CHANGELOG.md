@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.178.0
+## 3.178.1
 
 * Add `datadog.networkMonitoring.dnsMonitoringPorts` option to configure custom DNS monitoring ports for network performance monitoring.
 
