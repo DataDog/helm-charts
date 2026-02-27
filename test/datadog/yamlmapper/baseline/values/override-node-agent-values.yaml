@@ -1,0 +1,34 @@
+# Test values for Node Agent component override mappings
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  useHostPID: true
+
+agents:
+  priorityClassName: datadog-agent-critical
+  resources:
+    requests:
+      cpu: 150m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+  image:
+    name: agent
+    tag: 7.75.0
+    pullPolicy: Always
+  
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+  
+  useHostNetwork: false
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+
