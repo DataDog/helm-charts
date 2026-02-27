@@ -192,7 +192,7 @@
                   "anyOf": [
                     {
                       "type": "string",
-                      "enum": ["auto", "init_container", "csi"]
+                      "enum": ["auto", "init_container", "csi", "image_volume"]
                     },
                     {
                       "type": "string",
