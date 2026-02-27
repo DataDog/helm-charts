@@ -9,18 +9,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/kubernetes/k8sapply"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/e2e"
+	gcpkubernetes "github.com/DataDog/datadog-agent/test/e2e-framework/testing/provisioners/gcp/kubernetes"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/stretchr/testify/require"
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
-
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
 )
 
 type gkeSuite struct {
