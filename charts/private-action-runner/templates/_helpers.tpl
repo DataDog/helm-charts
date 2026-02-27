@@ -50,6 +50,16 @@ app.kubernetes.io/name: {{ include "chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "chart.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "chart.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
 
 {{- define "chart.credentialFiles" -}}
 {{- if hasKey $.Values.runner "credentialFiles" }}

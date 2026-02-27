@@ -26,6 +26,19 @@
       },
       "required": ["repository", "tag"]
     },
+    "imagePullSecrets": {
+      "type": "array",
+      "description": "Datadog Private Action Runner repository pullSecret (ex: specify docker registry credentials)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the image pull secret"
+          }
+        }
+      }
+    },
     "nameOverride": {
       "type": "string",
       "description": "Override the name of the chart"
@@ -33,6 +46,25 @@
     "fullnameOverride": {
       "type": "string",
       "description": "Override the full name of the chart"
+    },
+    "serviceAccount": {
+      "type": "object",
+      "description": "Service Account configuration",
+      "properties": {
+        "create": {
+          "type": "boolean",
+          "description": "Specifies whether a service account should be created"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the service account to use. If not set and create is true, a name is generated using the fullname template"
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the service account"
+        }
+      },
+      "additionalProperties": false
     },
     "runner": {
       "type": "object",

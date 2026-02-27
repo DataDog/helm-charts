@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 1.26.0
+
+* Add `imagePullSecrets` support for using private container registries
+* Add `serviceAccount.create`, `serviceAccount.name`, and `serviceAccount.annotations` configuration options
+* Fix dead links in documentation (workflow -> actions URLs)
+
 ## 1.25.0
 
 * Bump private actions runner version to v1.19.0!

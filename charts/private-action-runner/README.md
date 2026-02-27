@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.25.0](https://img.shields.io/badge/Version-1.25.0-informational?style=flat-square) ![AppVersion: v1.19.0](https://img.shields.io/badge/AppVersion-v1.19.0-informational?style=flat-square)
+![Version: 1.26.0](https://img.shields.io/badge/Version-1.26.0-informational?style=flat-square) ![AppVersion: v1.19.0](https://img.shields.io/badge/AppVersion-v1.19.0-informational?style=flat-square)
 
 ## Overview
 
@@ -31,7 +31,7 @@ helm repo update
 
 ### Create a Private Action Runner in Datadog
 
-1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners) in your Datadog account
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/actions/private-action-runners) in your Datadog account
 2. Click "New Private Action Runner"
 3. Configure your runner and select the list of actions you want to enable
 4. Select "Kubernetes" as the deployment method
@@ -94,7 +94,7 @@ helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 
 To enable Kubernetes actions:
 
-1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections)
+1. Go to the [Workflow connections page](https://app.datadoghq.com/actions/connections)
 2. Create a new connection, select your private action runner, and use **Service account authentication**
 3. Enable the actions you want in your `values.yaml` file:
 
@@ -324,6 +324,7 @@ If actions requiring credentials fail:
 | deployment.metadata.labels | object | `{}` | Labels to add to the deployment metadata |
 | fullnameOverride | string | `""` | Override the full qualified app name |
 | image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.19.0"}` | Current Datadog Private Action Runner image |
+| imagePullSecrets | list | `[]` | Datadog Private Action Runner repository pullSecret (ex: specify docker registry credentials) |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
 | runner.config | object | `{"actionsAllowlist":[],"allowIMDSEndpoint":false,"ddBaseURL":"https://app.datadoghq.com","httpTimeoutSeconds":30,"modes":["workflowAutomation","appBuilder"],"port":9016,"privateKey":"CHANGE_ME_PRIVATE_KEY_FROM_CONFIG","tags":[],"taskTimeoutSeconds":0,"urn":"CHANGE_ME_URN_FROM_CONFIG"}` | Configuration for the Datadog Private Action Runner |
@@ -391,3 +392,7 @@ If actions requiring credentials fail:
 | runner.useSeparateSecretForCredentials | bool | `false` | Configure whether to use a separate kubernetes secret for the credentials and the config |
 | service | object | `{"annotations":{}}` | Service configuration |
 | service.annotations | object | `{}` | Annotations to add to the service |
+| serviceAccount | object | `{"annotations":{},"create":true,"name":""}` | Service Account configuration |
+| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |

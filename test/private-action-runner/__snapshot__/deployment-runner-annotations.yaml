@@ -5,6 +5,12 @@ kind: ServiceAccount
 metadata:
   name: deployment-runner-test-private-action-runner
   namespace: datadog-agent
+  labels:
+    helm.sh/chart: private-action-runner-1.26.0
+    app.kubernetes.io/name: private-action-runner
+    app.kubernetes.io/instance: deployment-runner-test
+    app.kubernetes.io/version: "v1.19.0"
+    app.kubernetes.io/managed-by: Helm
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
@@ -81,7 +87,7 @@ metadata:
   annotations:
     example.com/owner: platform-team
   labels:
-    helm.sh/chart: private-action-runner-1.25.0
+    helm.sh/chart: private-action-runner-1.26.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-runner-test
     app.kubernetes.io/version: "v1.19.0"
@@ -96,13 +102,13 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.25.0
+        helm.sh/chart: private-action-runner-1.26.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-runner-test
         app.kubernetes.io/version: "v1.19.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 7c7b9a2b604cabf8a6b50b552ea50bdcbcccd736f3feea4e94c14f4818d55967
+        checksum/values: 8782f12ec4238f94f85e35201a727d62fe2e16e8c7c24460b2d909552f91bcd5
         prometheus.io/scrape: "true"
     spec:
       serviceAccountName: deployment-runner-test-private-action-runner

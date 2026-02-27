@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "chart.labels" . | nindent 4 }}
 users:
-- system:serviceaccount:{{ .Release.Namespace }}:{{ include "chart.fullname" . }}
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "chart.serviceAccountName" . }}
 priority: 10 # same priority as anyuid SCC
 allowHostPorts: false
 allowHostPID: false
