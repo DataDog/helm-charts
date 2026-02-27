@@ -716,6 +716,27 @@ datadog:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
 
+  ## Host Profiler related configuration for the host-profiler in Agent Daemonset. Note this is experimental and subject to change
+  hostProfiler:
+    # datadog.hostProfiler.enabled -- Enable the Host Profiler. This feature is experimental and subject to change.
+    enabled: false
+    # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
+    image: ""
+    # datadog.hostProfiler.config -- Host Profiler configuration (experimental)
+    config: null
+    # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration (experimental)
+    configMap:
+      # datadog.hostProfiler.configMap.name -- Name of the existing ConfigMap that contains the Host Profiler configuration (experimental)
+      name: null
+      # datadog.hostProfiler.configMap.items -- Items within the ConfigMap that contain Host Profiler configuration (experimental)
+      items:
+      #   - key: host-profiler-config.yaml
+      #     path: host-profiler-config.yaml
+      #   - key: host-profiler-config-two.yaml
+      #     path: host-profiler-config-two.yaml
+      # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration (experimental)
+      key: host-profiler-config.yaml
+
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector
@@ -2235,6 +2256,41 @@ agents:
       ports: []
 
       # agents.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
+      volumeMounts: []
+      #   - name: <VOLUME_NAME>
+      #     mountPath: <CONTAINER_PATH>
+      #     readOnly: true
+
+    hostProfiler:
+      # agents.containers.hostProfiler.env -- Additional environment variables for the host-profiler container
+      env: []
+
+      # agents.containers.hostProfiler.envFrom -- Set environment variables specific to host-profiler from configMaps and/or secrets
+      envFrom: []
+      #   - configMapRef:
+      #       name: <CONFIGMAP_NAME>
+      #   - secretRef:
+      #       name: <SECRET_NAME>
+
+      # agents.containers.hostProfiler.envDict -- Set environment variables specific to host-profiler defined in a dict
+      envDict: {}
+      #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+      # agents.containers.hostProfiler.resources -- Resource requests and limits for the host-profiler container
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 200Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 200Mi
+
+      # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
+      securityContext:
+        readOnlyRootFilesystem: true
+        privileged: true
+
+      # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
       #   - name: <VOLUME_NAME>
       #     mountPath: <CONTAINER_PATH>

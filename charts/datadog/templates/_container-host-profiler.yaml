@@ -1,0 +1,73 @@
+{{- define "container-host-profiler" -}}
+- name: host-profiler
+  image: "{{ include "ddot-ebpf-image" . }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
+  command:
+    - "/opt/datadog-agent/embedded/bin/full-host-profiler"
+    - "run"
+    - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
+  args:
+    {{- if .Values.datadog.hostProfiler.configMap.items }}
+    {{- range .Values.datadog.hostProfiler.configMap.items }}
+    - "--config={{ template "datadog.hostprofilerconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
+    - "--config={{ template "datadog.hostprofilerconfPath" . }}/host-profiler-config.yaml"
+    {{- end }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+  resources:
+{{ toYaml .Values.agents.containers.hostProfiler.resources | indent 4 }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.hostProfiler.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.hostProfiler.envFrom }}
+{{ .Values.agents.containers.hostProfiler.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    - name: DD_AGENT_IPC_PORT
+      value: "5009"
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "60"
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.hostProfiler.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.hostProfiler.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.hostProfiler.envDict | indent 4 }}
+  volumeMounts:
+    - name: tracingfs
+      mountPath: /sys/kernel/tracing
+      readOnly: false
+    - name: hostprofilerconfig
+      mountPath: {{ template "datadog.hostprofilerconfPath" . }}
+      readOnly: true
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: true
+    {{- end }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW for tmp directory
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.hostProfiler.volumeMounts }}
+{{ toYaml .Values.agents.containers.hostProfiler.volumeMounts | indent 4 }}
+{{- end }}
+{{- end -}}
