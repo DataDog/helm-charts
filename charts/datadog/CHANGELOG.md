@@ -1,5 +1,5 @@
 # Datadog changelog
-## 3.178.0
+## 3.179.0
 
 * Add experimental support for host profiler.
 
