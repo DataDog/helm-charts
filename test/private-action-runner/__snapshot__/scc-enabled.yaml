@@ -79,10 +79,10 @@ metadata:
   name: scc-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.25.0
+    helm.sh/chart: private-action-runner-1.26.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
-    app.kubernetes.io/version: "v1.19.0"
+    app.kubernetes.io/version: "v1.20.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -94,18 +94,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.25.0
+        helm.sh/chart: private-action-runner-1.26.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: scc-test
-        app.kubernetes.io/version: "v1.19.0"
+        app.kubernetes.io/version: "v1.20.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: b6382af99a1f199e82aed3f8b43640667f9282975a518e6afcc375ed39b9fab9
+        checksum/values: ef9baf42abef9ae9a5c8b24da17341e5709e108c99a9d9292ee0a60e0b632d8e
     spec:
       serviceAccountName: scc-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.19.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.20.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -134,10 +134,10 @@ apiVersion: security.openshift.io/v1
 metadata:
   name: scc-test-private-action-runner
   labels:
-    helm.sh/chart: private-action-runner-1.25.0
+    helm.sh/chart: private-action-runner-1.26.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scc-test
-    app.kubernetes.io/version: "v1.19.0"
+    app.kubernetes.io/version: "v1.20.0"
     app.kubernetes.io/managed-by: Helm
 users:
 - system:serviceaccount:datadog-agent:scc-test-private-action-runner

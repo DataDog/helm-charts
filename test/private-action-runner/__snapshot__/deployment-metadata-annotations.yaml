@@ -82,10 +82,10 @@ metadata:
     deployment.kubernetes.io/revision: "1"
     example.com/owner: platform-team
   labels:
-    helm.sh/chart: private-action-runner-1.25.0
+    helm.sh/chart: private-action-runner-1.26.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-test
-    app.kubernetes.io/version: "v1.19.0"
+    app.kubernetes.io/version: "v1.20.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -97,18 +97,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.25.0
+        helm.sh/chart: private-action-runner-1.26.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-metadata-test
-        app.kubernetes.io/version: "v1.19.0"
+        app.kubernetes.io/version: "v1.20.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 3022d153ffef7a308a0c1743d878e0d429a21367f9b80fed7f2cc91ee7d7cc92
+        checksum/values: c3561ba59c4a4c4f18a381fd157d41207bd6013b42b1714f9fe5621f71a56106
     spec:
       serviceAccountName: deployment-metadata-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.19.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.20.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
