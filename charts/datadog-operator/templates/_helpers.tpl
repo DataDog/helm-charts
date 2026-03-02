@@ -175,7 +175,7 @@ Otherwise, auto-enabled for sites that have been validated for the new registry.
 {{- if kindIs "bool" .Values.useDatadogRegistry -}}
   {{- .Values.useDatadogRegistry -}}
 {{- else -}}
-  {{- $enabledSites := list "ap1.datadoghq.com" -}}
+  {{- $enabledSites := list "ap1.datadoghq.com" "us3.datadoghq.com" -}}
   {{- has .Values.site $enabledSites -}}
 {{- end -}}
 {{- end -}}
