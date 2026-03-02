@@ -1008,6 +1008,10 @@ datadog:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
 
+    # datadog.networkMonitoring.dnsMonitoringPorts -- List of ports to monitor for DNS traffic
+    # @default -- `[53]` (set by agent)
+    dnsMonitoringPorts: []
+
   networkPath:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
@@ -1386,7 +1390,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.75.4
+    tag: 7.76.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1977,7 +1981,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.75.4
+    tag: 7.76.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2521,15 +2525,6 @@ agents:
   ## ref: https://github.com/DataDog/datadog-agent/blob/main/pkg/config/config_template.yaml
   ## Note the `agents.useConfigMap` needs to be set to `true` for this parameter to be taken into account.
   customAgentConfig: {}
-  #   # Autodiscovery for Kubernetes
-  #   listeners:
-  #     - name: kubelet
-  #   config_providers:
-  #     - name: kubelet
-  #       polling: true
-  #     # needed to support legacy docker label config templates
-  #     - name: docker
-  #       polling: true
   #
   #   # Enable java cgroup handling. Only one of those options should be enabled,
   #   # depending on the agent version you are using along that chart.
@@ -2585,7 +2580,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.75.4
+    tag: 7.76.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
