@@ -1,0 +1,12 @@
+{{- if and (eq (include "should-enable-host-profiler" .) "true") (not .Values.datadog.hostProfiler.configMap.name) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "agents-install-host-profiler-configmap-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "datadog.labels" . | nindent 4 }}
+  annotations:
+    checksum/host-profiler-config: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
+data: {{ include "host-profiler-config-configmap-content" . | nindent 2 }}
+{{- end }}
