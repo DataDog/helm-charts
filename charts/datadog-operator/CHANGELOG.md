@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.6
+
+* [BARX-1655] Add useDatadogRegistry feature flag, enable for ap1 ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+
 ## 2.19.0-dev.5
 
 * Update Datadog Operator chart for RBACs for 1.24.0-rc.2.

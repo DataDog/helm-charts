@@ -102,6 +102,10 @@ datadogSLO:
 remoteConfiguration:
   # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
   enabled: false
+# useDatadogRegistry -- If set, explicitly enables or disables registry.datadoghq.com as the default
+# container image registry for agent images managed by the operator. When not set, automatically enabled
+# for supported sites. Set to false to opt out.
+useDatadogRegistry:
 
 deployment:
   # deployment.annotations -- Allows setting additional annotations for the deployment resource
