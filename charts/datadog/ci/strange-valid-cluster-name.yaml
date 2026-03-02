@@ -1,0 +1,6 @@
+datadog:
+  clusterName: 01.23.45.67.89.kubernetes-cluster.example.com_kubernetes-cluster.example.80chars
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false

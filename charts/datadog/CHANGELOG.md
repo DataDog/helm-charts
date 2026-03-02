@@ -1,4 +1,8 @@
 # Datadog changelog
+## 3.179.1
+
+* Allow cluster names to contain underscores and start with a digit.
+
 ## 3.179.0
 
 * Add experimental support for host profiler.
