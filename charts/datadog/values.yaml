@@ -459,8 +459,8 @@ datadog:
     unbundleEvents: false
     # datadog.kubernetesEvents.collectedEventTypes -- Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true.
     collectedEventTypes:
-    # - kind: <kubernetes resource kind> # (optional if `source`` is provided)
-    #   source: <controller name> # (optional if `kind`` is provided)
+    # - kind: <kubernetes resource kind> # (optional if `source` is provided)
+    #   source: <controller name> # (optional if `kind` is provided)
     #   reasons: # (optional) if empty accept all event reasons
     #   - <kubernetes event reason>
       - kind: Pod
