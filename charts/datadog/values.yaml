@@ -2525,15 +2525,6 @@ agents:
   ## ref: https://github.com/DataDog/datadog-agent/blob/main/pkg/config/config_template.yaml
   ## Note the `agents.useConfigMap` needs to be set to `true` for this parameter to be taken into account.
   customAgentConfig: {}
-  #   # Autodiscovery for Kubernetes
-  #   listeners:
-  #     - name: kubelet
-  #   config_providers:
-  #     - name: kubelet
-  #       polling: true
-  #     # needed to support legacy docker label config templates
-  #     - name: docker
-  #       polling: true
   #
   #   # Enable java cgroup handling. Only one of those options should be enabled,
   #   # depending on the agent version you are using along that chart.
