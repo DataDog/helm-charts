@@ -101,10 +101,15 @@ true
 {{- $clusterName := tpl .Values.datadog.clusterName . -}}
 {{- $length := len $clusterName -}}
 {{- if (gt $length 80)}}
-{{- fail "Your `clusterName` isn't valid it has to be below 81 chars." -}}
+{{- fail "Your `clusterName` isn't valid, it must be 80 characters or less." -}}
 {{- end}}
-{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" $clusterName) -}}
-{{- fail "Your `clusterName` isn't valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
+{{- if not (regexMatch "^([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?\\.)*([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?)$" $clusterName) -}}
+{{- fail "Your `clusterName` isn't valid, it must: \n"+
+					"\t- contain only lowercase letters, numbers, dots, hyphens and underscores, \n"+
+					"\t- start with an alphanumeric character, \n"+
+					"\t- end with an alphanumeric character, and\n"+
+					"\t- be a valid FQDN (without trailing period)."
+-}}
 {{- end -}}
 {{- end -}}
 
