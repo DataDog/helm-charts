@@ -65,6 +65,7 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| useDatadogRegistry | string | `nil` | If set, explicitly enables or disables registry.datadoghq.com as the default container image registry for agent images managed by the operator. When not set, automatically enabled for supported sites. Set to false to opt out. |
 | volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
 | volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
