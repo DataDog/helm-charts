@@ -31,7 +31,7 @@ helm repo update
 
 ### Create a Private Action Runner in Datadog
 
-1. Go to the [Private Action Runner tab](https://app.datadoghq.com/workflow/private-action-runners) in your Datadog account
+1. Go to the [Private Action Runner tab](https://app.datadoghq.com/actions/private-action-runners) in your Datadog account
 2. Click "New Private Action Runner"
 3. Configure your runner and select the list of actions you want to enable
 4. Select "Kubernetes" as the deployment method
@@ -95,7 +95,7 @@ helm upgrade <RELEASE_NAME> datadog/private-action-runner -f values.yaml
 
 To enable Kubernetes actions:
 
-1. Go to the [Workflow connections page](https://app.datadoghq.com/workflow/connections)
+1. Go to the [Workflow connections page](https://app.datadoghq.com/actions/connections)
 2. Create a new connection, select your private action runner, and use **Service account authentication**
 3. Enable the actions you want in your `values.yaml` file:
 
