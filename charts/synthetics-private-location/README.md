@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 0.17.21](https://img.shields.io/badge/Version-0.17.21-informational?style=flat-square) ![AppVersion: 1.65.0](https://img.shields.io/badge/AppVersion-1.65.0-informational?style=flat-square)
+![Version: 0.17.22](https://img.shields.io/badge/Version-0.17.22-informational?style=flat-square) ![AppVersion: 1.65.0](https://img.shields.io/badge/AppVersion-1.65.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations/?tab=helmchart).
 
@@ -26,6 +26,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
+| automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials |
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worker for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
