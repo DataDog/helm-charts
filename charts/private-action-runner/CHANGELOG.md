@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.27.0
+
+* Bump private actions runner version to v1.20.0!
+
 ## 1.26.0
 
 * Add `imagePullSecrets` support for using private container registries
