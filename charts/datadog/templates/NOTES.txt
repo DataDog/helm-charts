@@ -467,6 +467,16 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 
 {{- end }}
 
+{{- if .Values.datadog.hostProfiler.enabled }}
+
+######################################################################################################
+####   WARNING: Host Profiler is not supported on GKE Autopilot   ####
+######################################################################################################
+
+{{- fail "Host Profiler is not supported on GKE Autopilot. The option 'datadog.hostProfiler.enabled' must be set to 'false'." }}
+
+{{- end }}
+
 {{- end }}
 
 {{- if .Values.providers.gke.autopilot }}

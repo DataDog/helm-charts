@@ -53,6 +53,9 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
         checksum/otel-config: {{ include "otel-agent-config-configmap-content" . | sha256sum }}
         {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+        checksum/host-profiler-config: {{ include "host-profiler-config-configmap-content" . | sha256sum }}
+        {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
@@ -158,6 +161,9 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
           {{- include "container-otel-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+          {{- include "container-host-profiler" . | nindent 6 }}
+        {{- end }}
         {{- if eq (include "should-enable-data-plane" .) "true" }}
           {{- include "container-agent-data-plane" . | nindent 6 }}
         {{- end }}
@@ -218,6 +224,29 @@ spec:
           items:
             - key: otel-config.yaml
               path: otel-config.yaml
+          {{- end }}
+      {{- end }}
+      {{- if eq (include "should-enable-host-profiler" .) "true" }}
+      - name: hostprofilerconfig
+        configMap:
+          {{- if .Values.datadog.hostProfiler.configMap.name }}
+          name: {{ .Values.datadog.hostProfiler.configMap.name }}
+          {{- if .Values.datadog.hostProfiler.configMap.items }}
+          items:
+            {{- range .Values.datadog.hostProfiler.configMap.items }}
+            - key: {{ .key }}
+              path: {{ .path }}
+            {{- end }}
+          {{- else if .Values.datadog.hostProfiler.configMap.key }}
+          items:
+            - key: {{ .Values.datadog.hostProfiler.configMap.key }}
+              path: host-profiler-config.yaml
+          {{- end }}
+          {{- else }}
+          name: {{ include "agents-install-host-profiler-configmap-name" . }}
+          items:
+            - key: host-profiler-config.yaml
+              path: host-profiler-config.yaml
           {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
