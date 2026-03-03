@@ -102,86 +102,66 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "useDatadogRegistry enabled for matching site",
+			name: "useDatadogRegistry unset: only ASIA override is set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"site": "ap1.datadoghq.com",
-				},
+				Overrides:   map[string]string{},
 			},
 			assertions: func(t *testing.T, manifest string) {
 				var deployment appsv1.Deployment
 				common.Unmarshal(t, manifest, &deployment)
-				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				env := FindEnvVarByName(operatorContainer.Env, "DD_USE_DATADOG_REGISTRY")
-				assert.NotNil(t, env, "DD_USE_DATADOG_REGISTRY should be set for ap1")
-				assert.Equal(t, "true", env.Value)
+				env := deployment.Spec.Template.Spec.Containers[0].Env
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should not be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should not be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
 			},
 			skipTest: SkipTest,
 		},
 		{
-			name: "useDatadogRegistry not set for non-matching site",
+			name: "useDatadogRegistry false: no overrides set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
-					"site": "datadoghq.com",
-				},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				env := FindEnvVarByName(operatorContainer.Env, "DD_USE_DATADOG_REGISTRY")
-				assert.Nil(t, env, "DD_USE_DATADOG_REGISTRY should not be set for datadoghq.com")
-			},
-			skipTest: SkipTest,
-		},
-		{
-			name: "useDatadogRegistry explicit true overrides site",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"site":                 "datadoghq.com",
-					"useDatadogRegistry": "true",
-				},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				env := FindEnvVarByName(operatorContainer.Env, "DD_USE_DATADOG_REGISTRY")
-				assert.NotNil(t, env, "DD_USE_DATADOG_REGISTRY should be set when explicitly enabled")
-				assert.Equal(t, "true", env.Value)
-			},
-			skipTest: SkipTest,
-		},
-		{
-			name: "useDatadogRegistry explicit false overrides site",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"site":                 "ap1.datadoghq.com",
 					"useDatadogRegistry": "false",
 				},
 			},
 			assertions: func(t *testing.T, manifest string) {
 				var deployment appsv1.Deployment
 				common.Unmarshal(t, manifest, &deployment)
-				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				env := FindEnvVarByName(operatorContainer.Env, "DD_USE_DATADOG_REGISTRY")
-				assert.Nil(t, env, "DD_USE_DATADOG_REGISTRY should not be set when explicitly disabled")
+				env := deployment.Spec.Template.Spec.Containers[0].Env
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should not be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should not be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should not be set")
+				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "useDatadogRegistry true: all overrides set",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"useDatadogRegistry": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				env := deployment.Spec.Template.Spec.Containers[0].Env
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should be set")
 			},
 			skipTest: SkipTest,
 		},
