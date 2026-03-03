@@ -323,6 +323,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTOR_IMAGE_TAG
             value: {{ .Values.datadog.apm.instrumentation.injector.imageTag | quote }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.injectionMode }}
+          - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
+            value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
@@ -338,6 +342,46 @@ spec:
           {{- if not (eq .Values.datadog.profiling.enabled nil) }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PROFILING_ENABLED
             value: {{ .Values.datadog.profiling.enabled | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.privateActionRunner.enabled }}
+          {{- include "validate-private-action-runner-config" . }}
+          - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
+            value: {{ .Values.clusterAgent.privateActionRunner.enabled | quote }}
+          {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
+          - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
+            value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
+          - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_USE_K8S_SECRET
+            value: "true"
+          - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_SECRET_NAME
+            value: {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
+          {{- end }}
+          {{- if and (not .Values.clusterAgent.privateActionRunner.selfEnroll) (or .Values.clusterAgent.privateActionRunner.urn .Values.clusterAgent.privateActionRunner.identityFromExistingSecret) }}
+          {{- if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+          - name: DD_PRIVATE_ACTION_RUNNER_URN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+                key: urn
+          - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+                key: private_key
+          {{- else }}
+          {{- if .Values.clusterAgent.privateActionRunner.urn }}
+          - name: DD_PRIVATE_ACTION_RUNNER_URN
+            value: {{ .Values.clusterAgent.privateActionRunner.urn | quote }}
+          {{- end }}
+          {{- if .Values.clusterAgent.privateActionRunner.privateKey }}
+          - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+            value: {{ .Values.clusterAgent.privateActionRunner.privateKey | quote }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.clusterAgent.privateActionRunner.actionsAllowlist }}
+          - name: DD_PRIVATE_ACTION_RUNNER_ACTIONS_ALLOWLIST
+            value: {{ .Values.clusterAgent.privateActionRunner.actionsAllowlist | join "," | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
@@ -373,7 +417,7 @@ spec:
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
-            value: {{ .Values.datadog.kubernetesKubeServiceNewBehavior | quote }}
+            value: {{ .Values.datadog.kubernetesKubeServiceIgnoreReadiness | quote }}
           - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
             value: {{ .Values.datadog.kubernetesEvents.sourceDetectionEnabled | quote }}
           - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME

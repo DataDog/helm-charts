@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.0
+
+* Set csi driver image to `1.2.0`
+
+## 0.8.0
+
+* Support configuring `NodeAffinity` and `NodeSelector` in datadog csi driver chart.
+
+## 0.7.0
+
+* [CONTP-1250] feat(csi_driver): Make updateStrategy configurable and increase default strategy. ([#2369](https://github.com/DataDog/helm-charts/pull/2369)).
+
+## 0.6.0
+
+* Add `apm.enabled` configuration option to enable/disable APM/SSI support (not yet supported on GKE Autopilot)
+
+## 0.5.0
+
+* [CONTP-719] Expose security context and annotation configurations ([#2317](https://github.com/DataDog/helm-charts/pull/2317)).
+
 ## 0.4.4
 
 * Support the definition of tolerations
@@ -39,11 +59,11 @@
 
 ## 0.3.0
 
-* Support configuring different host socket paths for apm and dogstatsd sockets. 
- 
+* Support configuring different host socket paths for apm and dogstatsd sockets.
+
 ## 0.2.0
 
-* Support configuring apm and dogstatsd sockets hostpaths. 
+* Support configuring apm and dogstatsd sockets hostpaths.
 
 ## 0.1.0
 

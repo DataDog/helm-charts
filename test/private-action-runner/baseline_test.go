@@ -78,11 +78,14 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/private-action-runner",
 				Values:      []string{"../../charts/private-action-runner/values.yaml"},
 				OverridesJson: map[string]string{
-					"fullnameOverride":                `"custom-full-name"`,
-					"runner.env":                      `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
-					"runner.config.allowIMDSEndpoint": `true`,
-					"runner.config.tags":              `["foo:bar", "bar:baz"]`,
-					"image.pullPolicy":                `"Always"`,
+					"fullnameOverride":                  `"custom-full-name"`,
+					"runner.env":                        `[ {"name": "FOO", "value": "foo"}, {"name": "BAR", "value": "bar"} ]`,
+					"runner.config.allowIMDSEndpoint":   `true`,
+					"runner.config.tags":                `["foo:bar", "bar:baz"]`,
+					"runner.config.taskTimeoutSeconds":  `25`,
+					"runner.config.httpTimeoutSeconds":  `10`,
+					"runner.customCaCert.configMapName": `"my-ca-cert"`,
+					"image.pullPolicy":                  `"Always"`,
 				},
 			},
 			snapshotName: "config-overrides",
@@ -164,6 +167,59 @@ func Test_baseline_manifests(t *testing.T) {
 			assertions:   verifyPrivateActionRunner,
 		},
 		{
+			name: "Deployment metadata annotations",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-metadata-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.annotations": `{"example.com/owner": "platform-team", "deployment.kubernetes.io/revision": "1"}`,
+				},
+			},
+			snapshotName: "deployment-metadata-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Deployment metadata labels",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-metadata-labels-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.labels": `{"custom-label": "custom-value", "environment": "production"}`,
+				},
+			},
+			snapshotName: "deployment-metadata-labels",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Runner pod annotations",
+			command: common.HelmCommand{
+				ReleaseName: "runner-pod-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"runner.podAnnotations": `{"prometheus.io/scrape": "true", "prometheus.io/port": "9016"}`,
+				},
+			},
+			snapshotName: "pod-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Deployment metadata and runner pod annotations",
+			command: common.HelmCommand{
+				ReleaseName: "deployment-runner-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"deployment.metadata.annotations": `{"example.com/owner": "platform-team"}`,
+					"runner.podAnnotations":           `{"prometheus.io/scrape": "true"}`,
+				},
+			},
+			snapshotName: "deployment-runner-annotations",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
 			name: "SecurityContextConstraints enabled",
 			command: common.HelmCommand{
 				ReleaseName: "scc-test",
@@ -177,6 +233,63 @@ func Test_baseline_manifests(t *testing.T) {
 				},
 			},
 			snapshotName: "scc-enabled",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "imagePullSecrets configured",
+			command: common.HelmCommand{
+				ReleaseName: "image-pull-secrets-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"imagePullSecrets": `[{"name": "cloudsmith-registry-secret"}, {"name": "docker-registry-secret"}]`,
+				},
+			},
+			snapshotName: "image-pull-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "ServiceAccount with custom name and annotations",
+			command: common.HelmCommand{
+				ReleaseName: "custom-sa-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"serviceAccount.create":      `true`,
+					"serviceAccount.name":        `"my-custom-runner-sa"`,
+					"serviceAccount.annotations": `{"iam.amazonaws.com/role": "arn:aws:iam::123456789012:role/my-role", "eks.amazonaws.com/role-arn": "arn:aws:iam::123456789012:role/my-role"}`,
+				},
+			},
+			snapshotName: "custom-service-account",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Use existing ServiceAccount",
+			command: common.HelmCommand{
+				ReleaseName: "existing-sa-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"serviceAccount.create": `false`,
+					"serviceAccount.name":   `"existing-service-account"`,
+				},
+			},
+			snapshotName: "existing-service-account",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "imagePullSecrets with custom ServiceAccount",
+			command: common.HelmCommand{
+				ReleaseName: "combined-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"imagePullSecrets":           `[{"name": "my-registry-secret"}]`,
+					"serviceAccount.name":        `"custom-sa"`,
+					"serviceAccount.annotations": `{"example.com/annotation": "value"}`,
+				},
+			},
+			snapshotName: "image-pull-secrets-with-custom-sa",
 			assertions:   verifyPrivateActionRunner,
 		},
 	}

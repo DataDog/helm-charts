@@ -1,0 +1,12 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  dataPlane:
+    enabled: true
+    dogstatsd:
+      enabled: true
+
+agents:
+  image:
+    tag: 7.75.0

@@ -1,5 +1,45 @@
 # Datadog changelog
 
+## 1.26.0
+
+* Add `imagePullSecrets` support for using private container registries
+* Add `serviceAccount.create`, `serviceAccount.name`, and `serviceAccount.annotations` configuration options
+* Fix dead links in documentation (workflow -> actions URLs)
+
+## 1.25.0
+
+* Bump private actions runner version to v1.19.0!
+
+## 1.24.0
+
+* Add support for `customCaCert`
+
+## 1.23.0
+
+* Bump private runner version to 1.18.0
+
+## 1.22.0
+
+* Add `deployment.metadata.annotations` to add custom annotations to the Deployment resource
+* Add `deployment.metadata.labels` to add custom labels to the Deployment resource
+* Add `runner.podAnnotations` to add custom annotations to pod templates
+
+## 1.21.2
+
+* Update charts description
+
+## 1.21.1
+
+* Bump private runner version to 1.17.1
+
+## 1.21.0
+
+* Bump private runner version to 1.17.0
+* Add `taskTimeoutSeconds` and `httpTimeoutSeconds` configuration properties
+
+## 1.20.1
+* Update default `values.yaml` comments
+
 ## 1.20.0
 
 * Bump private runner version to 1.16.0

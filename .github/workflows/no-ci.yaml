@@ -2,7 +2,14 @@ name: No chart lint and test needed
 on:
   pull_request:
     paths-ignore:
-      - 'charts/**'
+      - "charts/**/Chart.yaml"
+      - "charts/**/Chart.lock"
+      - "charts/**/requirements.yaml"
+      - "charts/**/requirements.lock"
+      - "charts/**/values.yaml"
+      - "charts/**/values.schema.json"
+      - "charts/**/templates/**"
+      - "charts/**/*.tpl"
 jobs:
   pr-validated:
     name: pr-validated

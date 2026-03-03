@@ -1,4 +1,33 @@
+
 # Changelog
+
+## 2.13.4
+
+- Add support for Kubernetes `persistentVolumeClaimRetentionPolicy` in StatefulSet and values.yaml. Users can now configure PVC retention policy via `persistence.retentionPolicy`.
+
+## 2.13.3
+
+- Set service.ports to empty list to fix nil issue
+
+## 2.13.2
+
+- Official image `2.13.2`
+
+## 2.13.1
+
+- Official image `2.13.1`
+
+## 2.13.0
+
+- Official image `2.13.0`
+
+## 2.12.3
+
+- Change the default podManagementPolicy to Parallel
+
+## 2.12.2
+
+- Add clarifying note to values.yaml configuration for custom secrets management
 
 ## 2.12.1
 

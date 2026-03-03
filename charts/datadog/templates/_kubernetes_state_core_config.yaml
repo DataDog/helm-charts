@@ -60,6 +60,10 @@ kubernetes_state_core.yaml.default: |-
           resources:
 {{ .Values.datadog.kubeStateMetricsCore.collectCrMetrics | toYaml | indent 12 }}
 {{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.namespaces }}
+      namespaces:
+{{ .Values.datadog.kubeStateMetricsCore.namespaces | toYaml | indent 8 }}
+{{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.tags }}
       tags:
 {{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}

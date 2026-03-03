@@ -14,6 +14,8 @@ runner:
     port: 9016
     actionsAllowlist:
       - com.datadoghq.http.request
+    # taskTimeoutSeconds: 0 # Global timeout for task executions. Use 0 for no timeout.
+    # httpTimeoutSeconds: 30 # Global http client timeout for http based actions.
   # Use a "Role" to scope the permissions to the runner's namespace or a "ClusterRole" to give permissions to the entire cluster
   roleType: "Role"
   useSeparateSecretForCredentials: true
@@ -238,6 +240,11 @@ runner:
     # a kubernetes secret containing a single credentials file mounted at /etc/dd-action-runner/config/credentials/jenkins/<filename-from-secret> see https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/README.md
     # - secretName: jenkins-secret
     #   directoryName: jenkins
+
+  # Custom CA certificate for trusting internal/private CAs
+  # First create a ConfigMap: kubectl create configmap my-ca-cert --from-file=ca.crt=./my-custom-ca.pem
+  # customCaCert:
+  #   configMapName: my-ca-cert
 
   # script files provided here will be mounted in /home/scriptuser/
   scriptFiles:

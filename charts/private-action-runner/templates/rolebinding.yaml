@@ -9,5 +9,5 @@ roleRef:
   name: {{ include "chart.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "chart.fullname" . }}
+    name: {{ include "chart.serviceAccountName" . }}
     namespace: {{ $.Release.Namespace }}

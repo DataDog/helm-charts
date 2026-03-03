@@ -7,7 +7,6 @@ datadog:
   securityAgent:
     runtime:
       enabled: false
-      fimEnabled: true
   networkMonitoring:
     enabled: true
   systemProbe:

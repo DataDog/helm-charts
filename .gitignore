@@ -6,3 +6,4 @@ vendor/
 .vscode
 go.work*
 .DS_Store
+.zed

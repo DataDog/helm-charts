@@ -1,15 +1,15 @@
 {{- define "container-agent-data-plane" -}}
 - name: agent-data-plane
-  image: "{{ include "image-path" (dict "root" .Values "image" .Values.datadog.agentDataPlane.image) }}"
-  imagePullPolicy: {{ .Values.datadog.agentDataPlane.image.pullPolicy }}
-  command: ["agent-data-plane", "run", "--config={{ template "datadog.confPath" . }}/datadog.yaml"]
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agentDataPlane.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.datadog.dataPlane.image) }}"
+  imagePullPolicy: {{ .Values.datadog.dataPlane.image.pullPolicy }}
+  command: ["agent-data-plane", "--config", "{{ template "datadog.confPath" . }}/datadog.yaml", "run"]
   resources:
 {{- if and (empty .Values.agents.containers.agentDataPlane.resources) .Values.providers.gke.autopilot -}}
 {{ include "default-container-resources" . | indent 4 }}
 {{- else }}
 {{ toYaml .Values.agents.containers.agentDataPlane.resources | indent 4 }}
 {{- end }}
+{{- if .Values.datadog.dataPlane.dogstatsd.enabled }}
   ports:
   - containerPort: {{ .Values.datadog.dogstatsd.port }}
     {{- if .Values.datadog.dogstatsd.useHostPort }}
@@ -17,7 +17,7 @@
     {{- end }}
     name: dogstatsdport
     protocol: UDP
-
+{{- end }}
 {{- if .Values.agents.containers.agentDataPlane.ports }}
 {{ toYaml .Values.agents.containers.agentDataPlane.ports | indent 2 }}
 {{- end }}
@@ -32,20 +32,23 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
-    {{- include "containers-dogstatsd-env" . | nindent 4 }}
     {{- if .Values.datadog.logLevel }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agentDataPlane.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
-    - name: DD_API_LISTEN_ADDRESS
+    - name: DD_DATA_PLANE_REMOTE_AGENT_ENABLED
+      value: "true"
+    - name: DD_DATA_PLANE_USE_NEW_CONFIG_STREAM_ENDPOINT
+      value: "true"
+    - name: DD_DATA_PLANE_API_LISTEN_ADDRESS
     {{- $unprivilegedApiPort := .Values.agents.containers.agentDataPlane.unprivilegedApiPort }}
       value: "tcp://0.0.0.0:{{ $unprivilegedApiPort }}"
-    - name: DD_SECURE_API_LISTEN_ADDRESS
+    - name: DD_DATA_PLANE_SECURE_API_LISTEN_ADDRESS
     {{- $privilegedApiPort := .Values.agents.containers.agentDataPlane.privilegedApiPort }}
       value: "tcp://0.0.0.0:{{ $privilegedApiPort }}"
-    - name: DD_TELEMETRY_ENABLED
+    - name: DD_DATA_PLANE_TELEMETRY_ENABLED
       value: "true"
-    - name: DD_PROMETHEUS_LISTEN_ADDR
+    - name: DD_DATA_PLANE_TELEMETRY_LISTEN_ADDR
     {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
       value: "tcp://127.0.0.1:{{ $telemetryApiPort }}"
     {{- include "additional-env-entries" .Values.agents.containers.agentDataPlane.env | indent 4 }}

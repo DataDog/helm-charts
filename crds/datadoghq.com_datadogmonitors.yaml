@@ -28,7 +28,7 @@ spec:
           jsonPath: .status.monitorStateLastUpdateTime
           name: last state sync
           type: string
-        - jsonPath: .status.syncStatus
+        - jsonPath: .status.monitorStateSyncStatus
           name: sync status
           type: string
         - jsonPath: .metadata.creationTimestamp
