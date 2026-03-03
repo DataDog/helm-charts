@@ -634,6 +634,7 @@ rules:
   - list
   - watch
   - patch
+  - update
 - apiGroups:
   - eks.amazonaws.com
   - karpenter.k8s.aws
