@@ -1,11 +1,12 @@
 # Datadog changelog
+
+## 3.180.0
+
+* Update Cluster Agent RBAC to include `update` verb when autoscaling is enabled.
+
 ## 3.179.0
 
 * Add experimental support for host profiler.
-
-## 3.179.0
-
-* Update Cluster Agent RBAC to include `update` verb when autoscaling is enabled.
 
 ## 3.178.2
 * Remove comments for deprecated autodiscovery configurations under `agents.customAgentConfig`.
