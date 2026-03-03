@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.7
+
+* Switch operator image to registry.datadoghq.com ([#2430](https://github.com/DataDog/helm-charts/pull/2430)).
+
 ## 2.19.0-dev.6
 
 * Add registryMigration.mode setting with per-region DD_REGISTRY_OVERRIDE_* env vars, enable ASIA override by default ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).

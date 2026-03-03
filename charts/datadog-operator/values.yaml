@@ -45,7 +45,7 @@ appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
-  repository: gcr.io/datadoghq/operator
+  repository: registry.datadoghq.com/operator
   # image.tag -- Define the Datadog Operator version to use
   tag: 1.24.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
