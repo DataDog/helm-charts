@@ -40,7 +40,7 @@ kubectl get sts
 ```
 Delete the stateful set with `--cascade=ophan`
 ```
-kubectl delete sts opw-observability-pipelines-worker --cascade=orphan
+kubectl delete sts [Statefule Set Name] --cascade=orphan
 ```
 Run recommended helm ugrade
 ```
