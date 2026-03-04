@@ -53,6 +53,7 @@
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
+| registryMigration.mode | string | `"auto"` | Controls registry.datadoghq.com overrides for agent images. "auto" (default): enable overrides for sites where this is enabled by default. "all": enable all per-site overrides (DD_REGISTRY_OVERRIDE_*). "none": disable all overrides. |
 | remoteConfiguration.enabled | bool | `false` | If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set. |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
@@ -65,7 +66,6 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
-| registryMigration.mode | string | `"auto"` | Controls registry.datadoghq.com overrides for agent images. "auto" (default): enable overrides for sites where this is enabled by default. "all": enable all per-site overrides (DD_REGISTRY_OVERRIDE_*). "none": disable all overrides. |
 | volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
 | volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
