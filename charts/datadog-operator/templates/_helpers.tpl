@@ -167,15 +167,10 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 {{- end -}}
 
 {{/*
-Return "all" if useDatadogRegistry is explicitly true (enable all overrides),
-"false" if explicitly false (disable all), or "auto" when not set (per-site defaults).
+Return the registry migration mode: "auto", "all", or "none".
 */}}
 {{- define "datadog-registry-mode" -}}
-{{- if kindIs "bool" .Values.useDatadogRegistry -}}
-  {{- if .Values.useDatadogRegistry -}}all{{- else -}}false{{- end -}}
-{{- else -}}
-  {{- "auto" -}}
-{{- end -}}
+{{- default "auto" .Values.registryMigration.mode -}}
 {{- end -}}
 
 {{/*

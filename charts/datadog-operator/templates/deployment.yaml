@@ -121,7 +121,7 @@ spec:
             - name: DD_URL
               value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
-            {{- $registryMode := include "datadog-registry-mode" . -}}
+            {{- $registryMode := include "datadog-registry-mode" . }}
             {{- if or (eq $registryMode "auto") (eq $registryMode "all") }}
             - name: DD_REGISTRY_OVERRIDE_ASIA
               value: "true"

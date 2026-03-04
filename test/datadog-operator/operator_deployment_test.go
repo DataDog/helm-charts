@@ -102,7 +102,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "useDatadogRegistry unset: only ASIA override is set",
+			name: "registryMigration auto: only ASIA override is set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -122,14 +122,14 @@ func Test_operator_chart(t *testing.T) {
 			skipTest: SkipTest,
 		},
 		{
-			name: "useDatadogRegistry false: no overrides set",
+			name: "registryMigration none: no overrides set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
-					"useDatadogRegistry": "false",
+					"registryMigration.mode": "none",
 				},
 			},
 			assertions: func(t *testing.T, manifest string) {
@@ -144,14 +144,14 @@ func Test_operator_chart(t *testing.T) {
 			skipTest: SkipTest,
 		},
 		{
-			name: "useDatadogRegistry true: all overrides set",
+			name: "registryMigration all: all overrides set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
-					"useDatadogRegistry": "true",
+					"registryMigration.mode": "all",
 				},
 			},
 			assertions: func(t *testing.T, manifest string) {

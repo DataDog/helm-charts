@@ -102,10 +102,12 @@ datadogSLO:
 remoteConfiguration:
   # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
   enabled: false
-# useDatadogRegistry -- Controls registry.datadoghq.com overrides for agent images managed by the
-# operator. When not set, enables overrides only for some sites (currently Asia). Set to true
-# to enable all per-site overrides (DD_REGISTRY_OVERRIDE_*). Set to false to disable all overrides.
-useDatadogRegistry:
+registryMigration:
+  # registryMigration.mode -- Controls registry.datadoghq.com overrides for agent images.
+  # "auto" (default): enable overrides for sites where this is enabled by default.
+  # "all": enable all per-site overrides (DD_REGISTRY_OVERRIDE_*).
+  # "none": disable all overrides.
+  mode: "auto"
 
 deployment:
   # deployment.annotations -- Allows setting additional annotations for the deployment resource
