@@ -25,6 +25,28 @@
 
 - Change the default podManagementPolicy to Parallel
 
+The update to `podManagmentPolicy` may cause the following error if your original values.yaml file included a different `podManagementPolicy`
+
+    Error: UPGRADE FAILED: StatefulSet.apps "opw-observability-pipelines-worker" is invalid: 
+    spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'ordinals', 
+    'template', 'updateStrategy', 'revisionHistoryLimit', 'persistentVolumeClaimRetentionPolicy' 
+    and 'minReadySeconds' are forbidden
+
+To use our recommended yaml settings, delete the stateful set while preserving the pods using the `--cascade=orphan` option and then run the helm upgrade command.
+
+Get Stateful Set name
+```
+kubectl get sts
+```
+Delete the stateful set with `--cascade=ophan`
+```
+kubectl delete sts opw-observability-pipelines-worker --cascade=orphan
+```
+Run recommended helm ugrade
+```
+/* Run recommended helm upgrade command */
+```
+
 ## 2.12.2
 
 - Add clarifying note to values.yaml configuration for custom secrets management
