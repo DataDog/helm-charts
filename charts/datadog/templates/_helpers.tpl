@@ -104,7 +104,7 @@ true
 {{- fail "Your `clusterName` isn't valid, it must be 80 characters or less." -}}
 {{- end}}
 {{- if not (regexMatch "^([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?\\.)*([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?)$" $clusterName) -}}
-{{- fail "Your `clusterName` isn't valid, it must: \n- contain only lowercase letters, numbers, dots, hyphens and underscores, \n- start with an alphanumeric character, \n- end with an alphanumeric character, and\n- be a valid FQDN (without trailing period)." -}}
+{{- fail "Your `clusterName` isn't valid, it must: \n- contain only lowercase letters, numbers, dots, hyphens and underscores, \n- start with an alphanumeric character, \n- end with an alphanumeric character, and\n- be FQDN-like, without a trailing period." -}}
 {{- end -}}
 {{- end -}}
 
