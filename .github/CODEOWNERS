@@ -7,7 +7,7 @@
 
 # Charts
 charts/cloudprem                                       @DataDog/logs-cloudprem
-charts/datadog-crds                                    @DataDog/container-ecosystems
+charts/datadog-crds                                    @DataDog/container-ecosystems @DataDog/container-platform
 charts/datadog-csi-driver                              @Datadog/container-platform @DataDog/container-helm-chart-maintainers
 charts/datadog-operator                                @DataDog/container-ecosystems @DataDog/container-platform
 charts/extended-daemon-set                             @DataDog/container-ecosystems @DataDog/container-platform
