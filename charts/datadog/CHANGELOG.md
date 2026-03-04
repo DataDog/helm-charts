@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.181.0
+
+* [datadog/chart] Support DCA Sidecar TLS Config ([#2432](https://github.com/DataDog/helm-charts/pull/2432)).
+
 ## 3.180.0
 
 * Update Cluster Agent RBAC to include `update` verb when autoscaling is enabled.
