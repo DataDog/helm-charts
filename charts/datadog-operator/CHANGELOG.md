@@ -2,7 +2,7 @@
 
 ## 2.19.0-dev.6
 
-* [BARX-1655] Add useDatadogRegistry feature flag, enable for ap1 ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+* Add useDatadogRegistry feature flag with per-region DD_REGISTRY_OVERRIDE_* env vars, enable ASIA override by default ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
 
 ## 2.19.0-dev.5
 

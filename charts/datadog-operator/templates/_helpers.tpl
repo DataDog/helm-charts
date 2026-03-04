@@ -167,16 +167,14 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 {{- end -}}
 
 {{/*
-Return "true" if the operator should use registry.datadoghq.com as the default image registry.
-When useDatadogRegistry is explicitly set (bool), that value is used.
-Otherwise, auto-enabled for sites that have been validated for the new registry.
+Return "all" if useDatadogRegistry is explicitly true (enable all overrides),
+"false" if explicitly false (disable all), or "auto" when not set (per-site defaults).
 */}}
-{{- define "use-datadog-registry" -}}
+{{- define "datadog-registry-mode" -}}
 {{- if kindIs "bool" .Values.useDatadogRegistry -}}
-  {{- .Values.useDatadogRegistry -}}
+  {{- if .Values.useDatadogRegistry -}}all{{- else -}}false{{- end -}}
 {{- else -}}
-  {{- $enabledSites := list "ap1.datadoghq.com" -}}
-  {{- has .Values.site $enabledSites -}}
+  {{- "auto" -}}
 {{- end -}}
 {{- end -}}
 
