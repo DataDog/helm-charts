@@ -458,16 +458,29 @@ Return the proper registry based on datadog.site (requires .Values to be passed 
 {{- $site := default "datadoghq.com" .datadog.site -}}
 {{- if .registry -}}
 {{- .registry -}}
-{{- else if eq $site "datadoghq.eu" -}}
-eu.gcr.io/datadoghq
 {{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
+{{- else -}}
+{{- $migrationMode := default "" .registryMigrationMode -}}
+{{- $migratedSite := false -}}
+{{- if eq $migrationMode "all" -}}
+{{- $migratedSite = true -}}
+{{- else if eq $migrationMode "auto" -}}
+{{- if eq $site "ap1.datadoghq.com" -}}
+{{- $migratedSite = true -}}
+{{- end -}}
+{{- end -}}
+{{- if and $migratedSite (not .providers.gke.autopilot) -}}
+registry.datadoghq.com
+{{- else if eq $site "datadoghq.eu" -}}
+eu.gcr.io/datadoghq
 {{- else if eq $site "ap1.datadoghq.com" -}}
 asia.gcr.io/datadoghq
 {{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
 datadoghq.azurecr.io
 {{- else -}}
 gcr.io/datadoghq
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
