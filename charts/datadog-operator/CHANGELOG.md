@@ -1,12 +1,16 @@
 # Changelog
 
-## 2.19.0-dev.7
+## 2.19.0-dev.8
 
 * Switch operator image to registry.datadoghq.com ([#2430](https://github.com/DataDog/helm-charts/pull/2430)).
 
+## 2.19.0-dev.7
+
+* Add `registryMigrationMode` to control gradual migration of Agent image pulls to `registry.datadoghq.com`. Defaults to "auto", which currently enables this behaviour for the AP1 datacenter (when `global.site: ap1.datadoghq.com`). More sites will be enabled in future releases. Set it to "" to disable. ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+
 ## 2.19.0-dev.6
 
-* Add registryMigration.mode setting with per-region DD_REGISTRY_OVERRIDE_* env vars, enable ASIA override by default ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+* Update Datadog Operator chart for RBACs for 1.24.0-rc.4.
 
 ## 2.19.0-dev.5
 

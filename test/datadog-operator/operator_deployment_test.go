@@ -122,14 +122,14 @@ func Test_operator_chart(t *testing.T) {
 			skipTest: SkipTest,
 		},
 		{
-			name: "registryMigration none: no overrides set",
+			name: "registryMigration disabled: no overrides set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
-					"registryMigration.mode": "none",
+					"registryMigrationMode": "",
 				},
 			},
 			assertions: func(t *testing.T, manifest string) {
@@ -151,7 +151,7 @@ func Test_operator_chart(t *testing.T) {
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
-					"registryMigration.mode": "all",
+					"registryMigrationMode": "all",
 				},
 			},
 			assertions: func(t *testing.T, manifest string) {
@@ -208,7 +208,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator:1.24.0-rc.2", operatorContainer.Image)
+	assert.Equal(t, "registry.datadoghq.com/operator:1.24.0-rc.4", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
