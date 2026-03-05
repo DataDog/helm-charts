@@ -3,7 +3,10 @@ helm-docs
 kubeconform
 .idea
 vendor/
-.vscode
 go.work*
 .DS_Store
 .zed
+
+# VSCode Profiles
+.vscode/*
+!.vscode/extensions.json

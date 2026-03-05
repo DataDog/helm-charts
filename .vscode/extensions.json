@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "helm-ls.helm-ls",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml"
+    ]
+}
