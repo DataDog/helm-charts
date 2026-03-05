@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0
+
+* [CONTP-1363] enhance(rbac): Add get endpointslices resource permission ([#2440](https://github.com/DataDog/helm-charts/pull/2440)).
+
 ## 2.19.0-dev.7
 
 * Add `registryMigrationMode` to control gradual migration of Agent image pulls to `registry.datadoghq.com`. Defaults to "auto", which currently enables this behaviour for the AP1 datacenter (when `global.site: ap1.datadoghq.com`). More sites will be enabled in future releases. Set it to "" to disable. ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
