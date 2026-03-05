@@ -1638,6 +1638,14 @@ clusterAgent:
       # clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled -- Enable communication between Agent sidecars and the Cluster Agent.
       clusterAgentCommunicationEnabled: true
 
+      # clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification -- TLS verification configuration for sidecar-to-cluster-agent communication.
+      clusterAgentTlsVerification:
+        # clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled -- Enable TLS verification for Agent sidecars communicating with the Cluster Agent.
+        enabled: false
+
+        # clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap -- Enable automatic creation of a ConfigMap containing the Cluster Agent's CA certificate in namespaces where sidecar injection occurs.
+        copyCaConfigMap: false
+
       # clusterAgent.admissionController.agentSidecarInjection.containerRegistry -- Override the default registry for the sidecar Agent.
       containerRegistry:
 

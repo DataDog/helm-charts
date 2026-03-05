@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.180.0](https://img.shields.io/badge/Version-3.180.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.181.0](https://img.shields.io/badge/Version-3.181.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -588,6 +588,9 @@ helm install <RELEASE_NAME> \
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
 | clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled | bool | `true` | Enable communication between Agent sidecars and the Cluster Agent. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification | object | `{"copyCaConfigMap":false,"enabled":false}` | TLS verification configuration for sidecar-to-cluster-agent communication. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap | bool | `false` | Enable automatic creation of a ConfigMap containing the Cluster Agent's CA certificate in namespaces where sidecar injection occurs. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled | bool | `false` | Enable TLS verification for Agent sidecars communicating with the Cluster Agent. |
 | clusterAgent.admissionController.agentSidecarInjection.containerRegistry | string | `nil` | Override the default registry for the sidecar Agent. |
 | clusterAgent.admissionController.agentSidecarInjection.enabled | bool | `false` | Enables Datadog Agent sidecar injection. |
 | clusterAgent.admissionController.agentSidecarInjection.imageName | string | `nil` |  |
