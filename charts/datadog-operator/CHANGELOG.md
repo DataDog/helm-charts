@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0-dev.7
+
+* Add `registryMigrationMode` to control gradual migration of Agent image pulls to `registry.datadoghq.com`. Defaults to "auto", which currently enables this behaviour for the AP1 datacenter (when `global.site: ap1.datadoghq.com`). More sites will be enabled in future releases. Set it to "" to disable. ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+
 ## 2.19.0-dev.6
 
 * Update Datadog Operator chart for RBACs for 1.24.0-rc.4.
