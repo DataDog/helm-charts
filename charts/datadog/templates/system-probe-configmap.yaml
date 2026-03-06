@@ -322,6 +322,8 @@ data:
             "setitimer",
             "setns",
             "setpgid",
+            "setresgid",
+            "setresuid",
             "setrlimit",
             "setsid",
             "setsidaccept4",
