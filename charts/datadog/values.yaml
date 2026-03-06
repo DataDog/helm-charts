@@ -21,7 +21,7 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value)
+# registry -- Registry to use for all Agent images (default depends on datadog.site and registryMigrationMode values)
 
 ## Currently we offer Datadog Agent images on:
 ## Datadog - use registry.datadoghq.com
@@ -34,6 +34,19 @@ commonLabels: {}
 ## If you are on GKE Autopilot, you must use a gcr.io variant registry.
 
 registry:  # gcr.io/datadoghq
+
+# registryMigrationMode -- Controls gradual migration of default image registry to
+# registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR).
+# This setting has no effect when `registry` is explicitly set.
+# GKE Autopilot clusters are excluded and always use gcr.io/datadoghq.
+# US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog.
+# US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
+
+## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
+##   Currently enabled: AP1 (ap1.datadoghq.com).
+## "all": enable registry.datadoghq.com for all sites (AP1, EU, US1, US5).
+## "": disable migration, keeping site-specific registries.
+registryMigrationMode: "auto"
 
 datadog:
   # datadog.apiKey -- Your Datadog API key

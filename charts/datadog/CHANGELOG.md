@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.182.0
+
+* Add `registryMigrationMode` to control gradual migration of default image registry to `registry.datadoghq.com`, replacing site-specific regional mirrors (GCR, ACR). Defaults to `"auto"`, which currently enables `registry.datadoghq.com` for the AP1 site (`ap1.datadoghq.com`). More sites will be enabled in future releases. Set to `""` to disable. GKE Autopilot, US1-FED, and US3 clusters are excluded.
+
 ## 3.181.0
 
 * [datadog/chart] Support DCA Sidecar TLS Config ([#2432](https://github.com/DataDog/helm-charts/pull/2432)).
