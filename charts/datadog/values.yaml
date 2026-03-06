@@ -40,10 +40,11 @@ registry:  # gcr.io/datadoghq
 # This setting has no effect when `registry` is explicitly set.
 # GKE Autopilot clusters are excluded and always use gcr.io/datadoghq.
 # US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog.
+# US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
 ##   Currently enabled: AP1 (ap1.datadoghq.com).
-## "all": enable registry.datadoghq.com for all sites (AP1, EU, US1, US3, US5).
+## "all": enable registry.datadoghq.com for all sites (AP1, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
 

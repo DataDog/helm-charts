@@ -55,12 +55,12 @@ func TestRegistryMigrationMode(t *testing.T) {
 			expectedRegistry: "registry.datadoghq.com",
 		},
 		{
-			name: "all mode with us3 site uses registry.datadoghq.com",
+			name: "all mode with us3 site keeps datadoghq.azurecr.io",
 			overrides: map[string]string{
 				"datadog.site":          "us3.datadoghq.com",
 				"registryMigrationMode": "all",
 			},
-			expectedRegistry: "registry.datadoghq.com",
+			expectedRegistry: "datadoghq.azurecr.io",
 		},
 		{
 			name: "all mode with ap1 site uses registry.datadoghq.com",
