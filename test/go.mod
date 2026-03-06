@@ -5,7 +5,7 @@ go 1.24.9
 require (
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/DataDog/datadog-agent/test/new-e2e v0.72.2
-	github.com/DataDog/test-infra-definitions v0.0.6-0.20251119093242-958482005014
+	github.com/DataDog/test-infra-definitions v0.0.6
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
 	github.com/pulumi/pulumi/sdk/v3 v3.190.0
