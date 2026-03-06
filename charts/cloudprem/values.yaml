@@ -100,7 +100,7 @@ securityContext:
   runAsUser: 1005
 
 # If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
-tracingEnabled: true
+tracingEnabled: false
 
 dogstatsdServer:
   host:
@@ -112,10 +112,14 @@ dogstatsdServer:
   port: 8125
 
 # Additional global env
+# Legacy map format (e.g. environment: { KEY: VALUE }) is also supported for backward compatibility.
 environment:
-  NO_COLOR: true
-  QW_DISABLE_TELEMETRY: true
-  QW_LOG_FORMAT: json
+  - name: NO_COLOR
+    value: "true"
+  - name: QW_DISABLE_TELEMETRY
+    value: "true"
+  - name: QW_LOG_FORMAT
+    value: json
 
 environmentFrom: []
   # - secretRef:
@@ -153,13 +157,17 @@ tolerations: []
 affinity: {}
 
 searcher:
+  # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  podSize: xlarge
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 2
 
   # Extra env for searcher
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   extraEnvFrom: []
     # - secretRef:
     #     name: quickwit-searcher
@@ -172,13 +180,13 @@ searcher:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources:
-    limits:
-      cpu: 4
-      memory: 16Gi
-    requests:
-      cpu: 4
-      memory: 16Gi
+  resources: {}
+  #   limits:
+  #     cpu: 4
+  #     memory: 16Gi
+  #   requests:
+  #     cpu: 4
+  #     memory: 16Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -236,6 +244,8 @@ searcher:
   serviceAnnotations: {}
 
   # serviceType: ClusterIP
+  # restNodePort:
+  # grpcNodePort:
 
   # searcher.nodeSelector -- Configure
   # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
@@ -293,12 +303,16 @@ searcher:
 
 indexer:
   enabled: true
+  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  podSize: xlarge
   # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 2
 
   # Extra env for indexer
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   extraEnvFrom: []
     # - secretRef:
     #     name: quickwit-indexer
@@ -311,14 +325,14 @@ indexer:
   # extraVolumeMounts -- Additional volumes to mount into Quickwit containers.
   extraVolumeMounts: []
 
-  resources:
-    # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
-    limits:
-      cpu: 4
-      memory: 16Gi
-    requests:
-      cpu: 4
-      memory: 16Gi
+  resources: {}
+  #   # See https://docs.datadoghq.com/cloudprem/configure/cluster_sizing/
+  #   limits:
+  #     cpu: 4
+  #     memory: 16Gi
+  #   requests:
+  #     cpu: 4
+  #     memory: 16Gi
 
   ## Pod distruption budget
   podDisruptionBudget: {}
@@ -363,6 +377,8 @@ indexer:
   serviceAnnotations: {}
 
   # serviceType: ClusterIP
+  # restNodePort:
+  # grpcNodePort:
 
   # indexer.nodeSelector -- Configure
   # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
@@ -439,8 +455,10 @@ metastore:
   replicaCount: 2
 
   # Extra env for metastore
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   # This is the recommended way to inject `QW_METASTORE_URI` when using the postgres metastore (see https://quickwit.io/docs/configuration/metastore-config)
   extraEnvFrom: []
     # - secretRef:
@@ -467,7 +485,7 @@ metastore:
     # maxUnavailable: 1
     # minAvailable: 2
 
-  updateStrategy: {}
+  strategy: {}
     # type: RollingUpdate
 
   startupProbe:
@@ -500,6 +518,8 @@ metastore:
   serviceAnnotations: {}
 
   # serviceType: ClusterIP
+  # restNodePort:
+  # grpcNodePort:
 
   # metastore.nodeSelector -- Configure
   # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
@@ -523,8 +543,10 @@ control_plane:
   enabled: true
 
   # Extra env for control plane
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   extraEnvFrom: []
     # - secretRef:
     #     name: quickwit-control-plane
@@ -544,6 +566,11 @@ control_plane:
     requests:
       cpu: 2
       memory: 4Gi
+
+  ## Pod distruption budget
+  podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # minAvailable: 2
 
   startupProbe:
     httpGet:
@@ -575,6 +602,8 @@ control_plane:
   serviceAnnotations: {}
 
   # serviceType: ClusterIP
+  # restNodePort:
+  # grpcNodePort:
 
   # control_plane.nodeSelector -- Configure
   # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
@@ -599,8 +628,10 @@ janitor:
   enabled: true
 
   # Extra env for janitor
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   extraEnvFrom: []
     # - secretRef:
     #     name: quickwit-janitor
@@ -651,6 +682,8 @@ janitor:
   serviceAnnotations: {}
 
   # serviceType: ClusterIP
+  # restNodePort:
+  # grpcNodePort:
 
   # janitor.nodeSelector -- Configure
   # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
@@ -676,8 +709,10 @@ bootstrap:
   enabled: true
 
   # Extra env for bootstrap jobs
-  extraEnv: {}
-    # KEY: VALUE
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
   extraEnvFrom: []
     # - secretRef:
     #     name: quickwit-bootstrap
@@ -711,6 +746,9 @@ bootstrap:
     extraVolumeMounts: []
 
   indexes:
+    # Override command for starting container
+    command: []
+
     # initContainers -- Init containers to be executed before the index creation.
     initContainers: []
 
