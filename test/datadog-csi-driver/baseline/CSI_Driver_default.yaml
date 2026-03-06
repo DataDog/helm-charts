@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: csi-node-driver
-          image: "gcr.io/datadoghq/csi-driver:1.2.0"
+          image: "gcr.io/datadoghq/csi-driver:1.2.1"
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
