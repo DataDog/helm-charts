@@ -88,12 +88,16 @@
       readOnly: true
 {{- end }}
 {{- if .Values.datadog.securityAgent.runtime.enabled }}
+{{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
+{{- end }}
+{{- if (eq (include "should-add-host-path-for-etc-group" .) "true") }}
     - name: group
       mountPath: /etc/group
       readOnly: true
+{{- end }}
 {{- end }}
     {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
   {{- if (eq (include "should-add-host-path-for-os-release-paths" .) "true") }}
