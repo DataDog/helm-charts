@@ -552,6 +552,11 @@ datadog:
     ## ref: https://github.com/DataDog/docker-dd-agent#tracing-from-the-host
     enabled: false
 
+    # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all Kubernetes deployments (beta).
+    ## This feature is in beta. It requires Cluster Agent 7.46+.
+    instrumentation:
+      enabled: false
+
     # datadog.apm.port -- Override the trace Agent port
 
     ## Note: Make sure your client is sending to the same UDP port.
