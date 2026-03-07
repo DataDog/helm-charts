@@ -3,6 +3,25 @@
   "title": "Values",
   "type": "object",
   "properties": {
+    "clusterAgent": { "type": "object", "additionalProperties": true },
+    "existingClusterAgent": { "type": "object", "additionalProperties": true },
+    "fips": { "type": "object", "additionalProperties": true },
+    "kube-state-metrics": { "type": "object", "additionalProperties": true },
+    "nameOverride": { "type": ["string", "null"] },
+    "fullnameOverride": { "type": ["string", "null"] },
+    "agents": { "type": "object", "additionalProperties": true },
+    "commonLabels": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "providers": { "type": "object", "additionalProperties": true },
+    "registry": { "type": ["object", "null"], "additionalProperties": true },
+    "remoteConfiguration": { "type": "object", "additionalProperties": true },
+    "clusterChecksRunner": { "type": "object", "additionalProperties": true },
+    "datadog-crds": { "type": "object", "additionalProperties": true },
+    "otelAgentGateway": { "type": "object", "additionalProperties": true },
+    "targetSystem": { "type": ["string", "null"] },
+    "useFIPSAgent": { "type": "boolean" },
     "datadog": {
       "type": "object",
       "properties": {
@@ -145,25 +164,18 @@
                               "type": "string"
                             },
                             "value": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": ["string", "null"]
                             },
                             "valueFrom": {
                               "$ref": "#/$defs/k8s.api.envVarSource"
                             }
                           },
-                          "required": [
-                            "name"
-                          ],
+                          "required": ["name"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -265,6 +277,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "$defs": {
     "stringArray": {
       "type": "array",
@@ -288,12 +301,7 @@
           },
           "operator": {
             "type": "string",
-            "enum": [
-              "In",
-              "NotIn",
-              "Exists",
-              "DoesNotExist"
-            ]
+            "enum": ["In", "NotIn", "Exists", "DoesNotExist"]
           },
           "values": {
             "type": "array",
@@ -303,10 +311,7 @@
             "minItems": 1
           }
         },
-        "required": [
-          "key",
-          "operator"
-        ],
+        "required": ["key", "operator"],
         "additionalProperties": false
       }
     },
@@ -314,9 +319,7 @@
       "description": "EnvVarSource represents a source for the value of an EnvVar.",
       "properties": {
         "secretKeyRef": {
-          "required": [
-            "key"
-          ],
+          "required": ["key"],
           "description": "SecretKeySelector selects a key of a Secret.",
           "properties": {
             "optional": {
@@ -324,10 +327,7 @@
               "description": "Specify whether the Secret or it's key must be defined"
             },
             "name": {
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
             },
             "key": {
@@ -337,9 +337,7 @@
           }
         },
         "fieldRef": {
-          "required": [
-            "fieldPath"
-          ],
+          "required": ["fieldPath"],
           "description": "ObjectFieldSelector selects an APIVersioned field of an object.",
           "properties": {
             "fieldPath": {
@@ -347,18 +345,13 @@
               "description": "Path of the field to select in the specified API version."
             },
             "apiVersion": {
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "description": "Version of the schema the FieldPath is written in terms of, defaults to \"v1\"."
             }
           }
         },
         "configMapKeyRef": {
-          "required": [
-            "key"
-          ],
+          "required": ["key"],
           "description": "Selects a key from a ConfigMap.",
           "properties": {
             "optional": {
@@ -366,10 +359,7 @@
               "description": "Specify whether the ConfigMap or it's key must be defined"
             },
             "name": {
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names"
             },
             "key": {
@@ -379,16 +369,11 @@
           }
         },
         "resourceFieldRef": {
-          "required": [
-            "resource"
-          ],
+          "required": ["resource"],
           "description": "ResourceFieldSelector represents container resources (cpu, memory) and their output format",
           "properties": {
             "containerName": {
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "description": "Container name: required for volumes, optional for env vars"
             },
             "resource": {
@@ -398,10 +383,7 @@
             "divisor": {
               "oneOf": [
                 {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": ["string", "null"]
                 },
                 {
                   "type": "integer"
