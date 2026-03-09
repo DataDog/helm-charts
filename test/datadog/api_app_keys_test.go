@@ -167,11 +167,18 @@ func Test_daemonsetApiKey(t *testing.T) {
 		assert.Equal(t, "api-key", env.ValueFrom.SecretKeyRef.Key)
 	})
 
-	t.Run("daemonset does not render when neither datadog.apiKey nor datadog.apiKeyExistingSecret is set", func(t *testing.T) {
-		cmd := baseCmd
-		// No apiKey overrides — matches the default values.yaml where both are empty.
-		_, err := common.RenderChart(t, cmd)
-		assert.Error(t, err, "expected render to fail when no apiKey is configured")
+	t.Run("daemonset absent when neither datadog.apiKey nor datadog.apiKeyExistingSecret is set", func(t *testing.T) {
+		// Render the full chart without ShowOnly so we get valid output even when the
+		// daemonset template is gated out. Asserting on the error from --show-only would
+		// rely on a Helm implementation detail rather than chart correctness.
+		cmd := common.HelmCommand{
+			ReleaseName: "datadog",
+			ChartPath:   "../../charts/datadog",
+			Values:      []string{"../../charts/datadog/values.yaml"},
+		}
+		manifest, err := common.RenderChart(t, cmd)
+		require.NoError(t, err)
+		assert.NotContains(t, manifest, "kind: DaemonSet", "expected no DaemonSet when no apiKey is configured")
 	})
 }
 
