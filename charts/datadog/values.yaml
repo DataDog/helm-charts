@@ -38,7 +38,7 @@ registry:  # gcr.io/datadoghq
 # registryMigrationMode -- Controls gradual migration of default image registry to
 # registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR).
 # This setting has no effect when `registry` is explicitly set.
-# GKE Autopilot and GKE GDC clusters are excluded and always use gcr.io/datadoghq.
+# GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant.
 # US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog.
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
