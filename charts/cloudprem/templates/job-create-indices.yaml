@@ -51,9 +51,8 @@ spec:
         {{- end }}
         env:
           {{- include "quickwit.environment" $ | nindent 10 }}
-          {{- range $key, $value := $.Values.bootstrap.extraEnv }}
-          - name: "{{ $key }}"
-            value: "{{ $value }}"
+          {{- with (include "quickwit.extraEnv" $.Values.bootstrap.extraEnv) }}
+          {{- . | nindent 10 }}
           {{- end }}
         {{- if or ($.Values.environmentFrom) ($.Values.bootstrap.extraEnvFrom) }}
         envFrom:
@@ -96,7 +95,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge $.Values.affinity $.Values.bootstrap.affinity }}
+      {{- with merge (dict) $.Values.bootstrap.affinity $.Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}

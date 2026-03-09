@@ -178,6 +178,12 @@ Quickwit environment
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
+{{ if semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version }}
+- name: QW_AVAILABILITY_ZONE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['topology.kubernetes.io/zone']
+{{- end }}
 - name: QW_PEER_SEEDS
   value: {{ include "quickwit.fullname" . }}-headless
 - name: QW_ADVERTISE_ADDRESS
@@ -252,8 +258,28 @@ Quickwit environment
 - name: IMAGE_TAG
   value: {{ .Values.image.tag }}
 {{- end }}
-{{- range $key, $value := .Values.environment }}
-- name: "{{ $key }}"
-  value: "{{ $value }}"
+{{- with (include "quickwit.extraEnv" .Values.environment) }}
+{{ . }}
 {{- end }}
+{{- end }}
+
+{{/*
+Render extra environment variables supporting both map and list formats.
+Map format (legacy): { KEY: VALUE }
+List format (recommended): [{ name: KEY, value: VALUE, valueFrom: ... }]
+*/}}
+{{- define "quickwit.extraEnv" -}}
+{{- if kindIs "map" . -}}
+{{- $envList := list -}}
+{{- range $key, $value := . -}}
+{{- $envList = append $envList (dict "name" $key "value" ($value | toString)) -}}
+{{- end -}}
+{{- if $envList -}}
+{{- toYaml $envList -}}
+{{- end -}}
+{{- else -}}
+{{- with . -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end -}}
 {{- end }}
