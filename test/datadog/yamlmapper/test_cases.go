@@ -198,13 +198,13 @@ var negativeTestCases = []NegativeTestCase{
 	{
 		Name:           "unsupported-helm-key",
 		ValuesFile:     valuesDir + "/unsupported-key-values.yaml",
-		ExpectedErrMsg: "error",
+		ExpectedErrMsg: "mapping completed with",
 		Description:    "Mapper should error when values file contains unmapped/unsupported Helm keys",
 	},
 	{
 		Name:           "multiple-unsupported-keys",
 		ValuesFile:     valuesDir + "/multiple-unsupported-keys-values.yaml",
-		ExpectedErrMsg: "error",
+		ExpectedErrMsg: "mapping completed with",
 		Description:    "Mapper should error when values file contains multiple unmapped keys",
 	},
 }

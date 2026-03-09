@@ -146,7 +146,7 @@ func createPriorityClasses(t *testing.T, kubectlOptions *k8s.KubectlOptions, cla
 	}
 }
 
-// createTestResources creates all required k8s resourcesfor a test case.
+// createTestResources creates all required k8s resources for a test case.
 // Returns a cleanup function that removes all created resources.
 func createTestResources(t *testing.T, kubectlOptions *k8s.KubectlOptions, tc *ResourceDependentTestCase) func() {
 	if tc == nil {
@@ -182,6 +182,7 @@ func createTestResources(t *testing.T, kubectlOptions *k8s.KubectlOptions, tc *R
 // ### Validation Helpers
 
 func validateExpectedPodsAgainstValues(t *testing.T, valuesPath string, expected ExpectedComponentPods) {
+	t.Helper()
 	data, err := os.ReadFile(valuesPath)
 	require.NoError(t, err, "Failed to read values file: %s", valuesPath)
 
@@ -213,6 +214,7 @@ func validateExpectedPodsAgainstValues(t *testing.T, valuesPath string, expected
 }
 
 func validateExpectedPodCount(t *testing.T, name string, enabled *bool, replicas *int, expected int, valuesPath string) {
+	t.Helper()
 	if enabled != nil {
 		if *enabled && expected == 0 {
 			t.Fatalf("Values file enables %s but expected count is 0: %s", name, valuesPath)
@@ -228,6 +230,7 @@ func validateExpectedPodCount(t *testing.T, name string, enabled *bool, replicas
 
 // assertBaseValuesCoverage verifies that all base values files are covered by a test case.
 func assertBaseValuesCoverage(t *testing.T) {
+	t.Helper()
 	entries, err := os.ReadDir(valuesDir)
 	require.NoError(t, err, "Failed to read values directory")
 
@@ -256,6 +259,16 @@ func assertBaseValuesCoverage(t *testing.T) {
 
 	if len(missing) > 0 {
 		t.Fatalf("Base values coverage mismatch: missing=%v", missing)
+	}
+
+	var uncovered []string
+	for name := range filesOnDisk {
+		if _, ok := seen[name]; !ok {
+			uncovered = append(uncovered, name)
+		}
+	}
+	if len(uncovered) > 0 {
+		t.Fatalf("Values files on disk have no test case in baseTestCases: %v", uncovered)
 	}
 }
 
@@ -289,22 +302,45 @@ func installOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace
 }
 
 // applyDDAAndWaitForAgents applies the DDA manifest and waits for operator-managed agents to be ready.
-func applyDDAAndWaitForAgents(t *testing.T, kubectlOptions *k8s.KubectlOptions, ddaFilePath string) error {
+func applyDDAAndWaitForAgents(t *testing.T, kubectlOptions *k8s.KubectlOptions, ddaFilePath string, expected ExpectedComponentPods) error {
 	err := k8s.RunKubectlE(t, kubectlOptions, []string{"apply", "-f", ddaFilePath}...)
 	if err != nil {
 		t.Logf("Failed to apply DDA: %v", err)
 		return err
 	}
 
-	expectedPods := expectedDsCount(t, kubectlOptions)
+	agentPods := expectedDsCount(t, kubectlOptions)
 	err = k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{
 		LabelSelector: operatorAgentLabelSelector,
 		FieldSelector: "status.phase=Running",
-	}, expectedPods, operatorDeployRetries, operatorDeploySleep)
+	}, agentPods, operatorDeployRetries, operatorDeploySleep)
 	if err != nil {
 		t.Logf("Failed to wait for operator agent pods: %v", err)
 		return err
 	}
+
+	if expected.ClusterAgent > 0 {
+		err = k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{
+			LabelSelector: operatorClusterAgentLabelSelector,
+			FieldSelector: "status.phase=Running",
+		}, expected.ClusterAgent, operatorDeployRetries, operatorDeploySleep)
+		if err != nil {
+			t.Logf("Failed to wait for operator cluster-agent pods: %v", err)
+			return err
+		}
+	}
+
+	if expected.ClusterChecksRunner > 0 {
+		err = k8s.WaitUntilNumPodsCreatedE(t, kubectlOptions, metav1.ListOptions{
+			LabelSelector: operatorCCRLabelSelector,
+			FieldSelector: "status.phase=Running",
+		}, expected.ClusterChecksRunner, operatorDeployRetries, operatorDeploySleep)
+		if err != nil {
+			t.Logf("Failed to wait for operator cluster-checks-runner pods: %v", err)
+			return err
+		}
+	}
+
 	return nil
 }
 

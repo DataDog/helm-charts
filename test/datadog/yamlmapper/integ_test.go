@@ -7,7 +7,6 @@ package yamlmapper
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"testing"
 
@@ -75,7 +74,7 @@ func runValuesToDDAMappingTest(t *testing.T, valuesPath string, expectedPods Exp
 
 	// run mapper against values.yaml to generate DDA
 	ddaFilePath, err := runMapper(t, valuesPath)
-	require.NoError(t, err, fmt.Sprintf("Mapper returned error: %s", err))
+	require.NoError(t, err, "mapper returned unexpected error")
 
 	// log the mapped DDA file contents
 	ddaFileContents, err := os.ReadFile(ddaFilePath)
@@ -128,7 +127,7 @@ func installAndVerifyOperatorAgent(t *testing.T, ctx *TestContext, kubectlOption
 	err := installOperator(t, ctx.KubectlOptions, ctx.Namespace, ctx.TestCleanupRegistry)
 	require.NoError(t, err, "Failed to install operator")
 	
-	err = applyDDAAndWaitForAgents(t, ctx.KubectlOptions, ddaFilePath)
+	err = applyDDAAndWaitForAgents(t, ctx.KubectlOptions, ddaFilePath, expectedPods)
 	require.NoError(t, err, "Failed to apply DDA and wait for operator-managed agents")
 
 	operatorAgentConf := getOperatorAgentConf(t, kubectlOptions)

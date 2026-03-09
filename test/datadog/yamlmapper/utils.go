@@ -176,6 +176,12 @@ func normalizeDataWithPath(m map[string]interface{}, parentPath string) {
 			m[k] = fmt.Sprintf("%v", val)
 		case map[string]interface{}:
 			normalizeDataWithPath(val, currentPath)
+		case []interface{}:
+			for _, elem := range val {
+				if nested, ok := elem.(map[string]interface{}); ok {
+					normalizeDataWithPath(nested, currentPath)
+				}
+			}
 		}
 	}
 }
@@ -253,12 +259,12 @@ func getAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions, labelSelecto
 
 // getHelmAgentConf retrieves the agent config from a helm-installed agent pod
 func getHelmAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions) string {
-	return getAgentConf(t, kubectlOptions, helmAgentLabelSelector, 10)
+	return getAgentConf(t, kubectlOptions, helmAgentLabelSelector, defaultPodRetries)
 }
 
 // getOperatorAgentConf retrieves the agent config from an operator-installed agent pod
 func getOperatorAgentConf(t *testing.T, kubectlOptions *k8s.KubectlOptions) string {
-	return getAgentConf(t, kubectlOptions, operatorAgentLabelSelector, 5)
+	return getAgentConf(t, kubectlOptions, operatorAgentLabelSelector, defaultPodRetries)
 }
 
 // =============================================================================
