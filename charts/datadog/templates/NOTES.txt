@@ -956,7 +956,7 @@ Learn more about Private Action Runner: https://docs.datadoghq.com/actions/priva
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
-{{- if and $migratedSite (not .Values.registry) (ne $site "ddog-gov.com") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) }}
+{{- if and $migratedSite (not .Values.registry) (ne $site "ddog-gov.com") (ne $site "us3.datadoghq.com") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) }}
 
 ###################################################################################
 ####               NOTICE: Registry migration                                  ####
