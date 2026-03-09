@@ -460,7 +460,7 @@ Return the proper registry based on datadog.site (requires .Values to be passed 
 {{- .registry -}}
 {{- else if eq $site "ddog-gov.com" -}}
 public.ecr.aws/datadog
-{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) -}}
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) (not .providers.gke.gdc) -}}
 datadoghq.azurecr.io
 {{- else -}}
 {{- $migrationMode := default "" .registryMigrationMode -}}

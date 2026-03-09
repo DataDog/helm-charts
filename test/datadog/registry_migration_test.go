@@ -133,6 +133,18 @@ func TestRegistryMigration(t *testing.T) {
 		assert.Equal(t, "my-custom-registry.example.com", registry)
 	})
 
+	// GKE GDC on US3 should fall through to gcr.io, not datadoghq.azurecr.io.
+	t.Run("US3/GKE GDC: uses gcr.io not azurecr", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.site":                 "us3.datadoghq.com",
+			"registryMigrationMode":        "auto",
+			"providers.gke.gdc":            "true",
+		})
+		assert.Equal(t, "gcr.io/datadoghq", registry)
+	})
+
 	// GKE Autopilot and GKE GDC always bypass migration, even with mode=all.
 	for _, provider := range []struct {
 		name string
