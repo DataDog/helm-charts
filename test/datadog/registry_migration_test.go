@@ -10,19 +10,20 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 )
 
-// TestRegistryMigrationMode tests the registry helper with default values.
-// In auto mode, AP1 is migrated because datadog.apm.enabled defaults to false.
-func TestRegistryMigrationMode(t *testing.T) {
+// TestRegistryMigration tests the registry helper under all combinations of site,
+// migration mode, and relevant overrides (APM, GKE Autopilot/GDC, explicit registry).
+func TestRegistryMigration(t *testing.T) {
+	// Site × mode matrix.
+	// In auto mode, AP1 migrates because datadog.apm.enabled defaults to false.
 	sites := []struct {
 		name         string
-		site         string // empty = default (datadoghq.com)
-		wantAuto     string // expected registry in "auto" mode (with default APM enabled)
-		wantAll      string // expected registry in "all" mode
-		wantDisabled string // expected registry when migration is disabled ("")
+		site         string // empty = default (datadoghq.com / US1)
+		wantAuto     string
+		wantAll      string
+		wantDisabled string
 	}{
 		{
 			name:         "US1 (default)",
-			site:         "",
 			wantAuto:     "gcr.io/datadoghq",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "gcr.io/datadoghq",
@@ -75,25 +76,24 @@ func TestRegistryMigrationMode(t *testing.T) {
 	modes := []struct {
 		name  string
 		value string
+		want  func(s struct {
+			name, site, wantAuto, wantAll, wantDisabled string
+		}) string
 	}{
-		{"auto", "auto"},
-		{"all", "all"},
-		{"disabled", ""},
+		{"auto", "auto", func(s struct{ name, site, wantAuto, wantAll, wantDisabled string }) string {
+			return s.wantAuto
+		}},
+		{"all", "all", func(s struct{ name, site, wantAuto, wantAll, wantDisabled string }) string {
+			return s.wantAll
+		}},
+		{"disabled", "", func(s struct{ name, site, wantAuto, wantAll, wantDisabled string }) string {
+			return s.wantDisabled
+		}},
 	}
 
 	for _, site := range sites {
 		t.Run(site.name, func(t *testing.T) {
 			for _, mode := range modes {
-				var expected string
-				switch mode.name {
-				case "auto":
-					expected = site.wantAuto
-				case "all":
-					expected = site.wantAll
-				case "disabled":
-					expected = site.wantDisabled
-				}
-
 				t.Run("mode="+mode.name, func(t *testing.T) {
 					overrides := map[string]string{
 						"datadog.apiKeyExistingSecret": "datadog-secret",
@@ -103,29 +103,14 @@ func TestRegistryMigrationMode(t *testing.T) {
 					if site.site != "" {
 						overrides["datadog.site"] = site.site
 					}
-
-					registry := renderAndExtractRegistry(t, overrides)
-					assert.Equal(t, expected, registry)
+					assert.Equal(t, mode.want(site), renderAndExtractRegistry(t, overrides))
 				})
 			}
 		})
 	}
-}
 
-// TestRegistryMigrationAPMCondition tests that auto mode on AP1 only migrates
-// when datadog.apm.enabled is false (the default).
-func TestRegistryMigrationAPMCondition(t *testing.T) {
-	t.Run("apm.enabled=false (default): migrates", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.site":                 "ap1.datadoghq.com",
-			"registryMigrationMode":        "auto",
-		})
-		assert.Equal(t, "registry.datadoghq.com", registry)
-	})
-
-	t.Run("apm.enabled=true: no migration", func(t *testing.T) {
+	// APM gating: auto mode on AP1 only migrates when apm.enabled is false (the default).
+	t.Run("AP1/auto/apm-enabled: no migration", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
 			"datadog.apiKeyExistingSecret": "datadog-secret",
 			"datadog.appKeyExistingSecret": "datadog-secret",
@@ -135,64 +120,48 @@ func TestRegistryMigrationAPMCondition(t *testing.T) {
 		})
 		assert.Equal(t, "asia.gcr.io/datadoghq", registry)
 	})
-}
 
-func TestRegistryMigrationOverrides(t *testing.T) {
-	t.Run("explicit registry takes precedence", func(t *testing.T) {
+	// Explicit registry always takes precedence over migration.
+	t.Run("explicit registry overrides migration", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
 			"datadog.apiKeyExistingSecret": "datadog-secret",
 			"datadog.appKeyExistingSecret": "datadog-secret",
 			"datadog.site":                 "ap1.datadoghq.com",
-
 			"registryMigrationMode":        "auto",
 			"registry":                     "my-custom-registry.example.com",
 		})
 		assert.Equal(t, "my-custom-registry.example.com", registry)
 	})
 
-	t.Run("GKE Autopilot bypasses migration for ap1", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.site":                 "ap1.datadoghq.com",
-
-			"registryMigrationMode":        "auto",
-			"providers.gke.autopilot":      "true",
+	// GKE Autopilot and GKE GDC always bypass migration, even with mode=all.
+	for _, provider := range []struct {
+		name string
+		key  string
+	}{
+		{"GKE Autopilot", "providers.gke.autopilot"},
+		{"GKE GDC", "providers.gke.gdc"},
+	} {
+		t.Run(provider.name+"/ap1/auto: bypasses migration", func(t *testing.T) {
+			registry := renderAndExtractRegistry(t, map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+				"datadog.site":                 "ap1.datadoghq.com",
+				"registryMigrationMode":        "auto",
+				provider.key:                   "true",
+			})
+			assert.Equal(t, "asia.gcr.io/datadoghq", registry)
 		})
-		assert.Equal(t, "asia.gcr.io/datadoghq", registry)
-	})
 
-	t.Run("GKE Autopilot bypasses migration for default site", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"registryMigrationMode":        "all",
-			"providers.gke.autopilot":      "true",
+		t.Run(provider.name+"/default/all: bypasses migration", func(t *testing.T) {
+			registry := renderAndExtractRegistry(t, map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+				"registryMigrationMode":        "all",
+				provider.key:                   "true",
+			})
+			assert.Equal(t, "gcr.io/datadoghq", registry)
 		})
-		assert.Equal(t, "gcr.io/datadoghq", registry)
-	})
-
-	t.Run("GKE GDC bypasses migration for ap1", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.site":                 "ap1.datadoghq.com",
-
-			"registryMigrationMode":        "auto",
-			"providers.gke.gdc":            "true",
-		})
-		assert.Equal(t, "asia.gcr.io/datadoghq", registry)
-	})
-
-	t.Run("GKE GDC bypasses migration for default site", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"registryMigrationMode":        "all",
-			"providers.gke.gdc":            "true",
-		})
-		assert.Equal(t, "gcr.io/datadoghq", registry)
-	})
+	}
 }
 
 func renderAndExtractRegistry(t *testing.T, overrides map[string]string) string {
