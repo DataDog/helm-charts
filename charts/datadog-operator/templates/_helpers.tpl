@@ -167,6 +167,17 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 {{- end -}}
 
 {{/*
+Return the registry migration mode.
+*/}}
+{{- define "datadog-registry-mode" -}}
+{{- $mode := .Values.registryMigrationMode -}}
+{{- if and $mode (not (has $mode (list "auto" "all"))) -}}
+  {{- fail (printf "registryMigrationMode must be \"auto\" or \"all\". Got: %q" $mode) -}}
+{{- end -}}
+{{- $mode -}}
+{{- end -}}
+
+{{/*
 Check operator image tag version.
 */}}
 {{- define "check-image-tag" -}}
@@ -175,6 +186,6 @@ Check operator image tag version.
 {{- $parts := split "@" $tag -}}
 {{- index $parts "_0"}}
 {{- else -}}
-{{ "1.24.0-rc.2" }}
+{{ "1.24.0-rc.4" }}
 {{- end -}}
 {{- end -}}

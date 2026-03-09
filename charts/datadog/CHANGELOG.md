@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.181.1
+
+* [datadog] Update system-probe seccomp profile to fix container creation issue on OpenShift
+
+## 3.181.0
+
+* [datadog/chart] Support DCA Sidecar TLS Config ([#2432](https://github.com/DataDog/helm-charts/pull/2432)).
+
 ## 3.180.0
 
 * Update Cluster Agent RBAC to include `update` verb when autoscaling is enabled.
