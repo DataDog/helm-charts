@@ -24,6 +24,7 @@
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
+    - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
 
 ## 2.12.2
 
