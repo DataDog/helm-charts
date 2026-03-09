@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.1
+
+* Rollback: disable `registryMigrationMode` (set default to `""`) and revert operator image repository to `gcr.io/datadoghq/operator`.
+
 ## 2.19.0-dev.8
 
 * Switch operator image to registry.datadoghq.com ([#2430](https://github.com/DataDog/helm-charts/pull/2430)).
