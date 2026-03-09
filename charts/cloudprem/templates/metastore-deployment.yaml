@@ -58,9 +58,8 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- range $key, $value := .Values.metastore.extraEnv }}
-            - name: "{{ $key }}"
-              value: "{{ $value }}"
+            {{- with (include "quickwit.extraEnv" .Values.metastore.extraEnv) }}
+            {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.metastore.extraEnvFrom) }}
           envFrom:
@@ -115,7 +114,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with  merge .Values.affinity .Values.metastore.affinity }}
+      {{- with merge (dict) .Values.metastore.affinity .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
