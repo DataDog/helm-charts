@@ -275,6 +275,14 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: {{ .Values.clusterAgent.admissionController.port | quote }}
+          {{- if .Values.clusterAgent.admissionController.probe.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_PROBE_INTERVAL
+            value: {{ .Values.clusterAgent.admissionController.probe.interval | quote }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_GRACE_PERIOD
+            value: {{ .Values.clusterAgent.admissionController.probe.gracePeriod | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
