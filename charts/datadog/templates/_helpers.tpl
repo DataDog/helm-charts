@@ -456,6 +456,10 @@ Return the proper registry based on datadog.site (requires .Values to be passed 
 */}}
 {{- define "registry" -}}
 {{- $site := default "datadoghq.com" .datadog.site -}}
+{{- $migrationMode := default "" .registryMigrationMode -}}
+{{- if and (ne $migrationMode "") (ne $migrationMode "auto") (ne $migrationMode "all") -}}
+{{- fail (printf "Invalid registryMigrationMode %q: must be \"auto\", \"all\", or \"\"" $migrationMode) -}}
+{{- end -}}
 {{- if .registry -}}
 {{- .registry -}}
 {{- else if eq $site "ddog-gov.com" -}}
@@ -463,10 +467,6 @@ public.ecr.aws/datadog
 {{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) (not .providers.gke.gdc) -}}
 datadoghq.azurecr.io
 {{- else -}}
-{{- $migrationMode := default "" .registryMigrationMode -}}
-{{- if and (ne $migrationMode "") (ne $migrationMode "auto") (ne $migrationMode "all") -}}
-{{- fail (printf "Invalid registryMigrationMode %q: must be \"auto\", \"all\", or \"\"" $migrationMode) -}}
-{{- end -}}
 {{- $migratedSite := false -}}
 {{- if eq $migrationMode "all" -}}
 {{- $migratedSite = true -}}

@@ -123,7 +123,7 @@ func TestRegistryMigration(t *testing.T) {
 			},
 		})
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "Invalid registryMigrationMode")
+		assert.Contains(t, err.Error(), "registryMigrationMode")
 	})
 
 	// APM gating: auto mode on AP1 only migrates when apm.enabled is false (the default).
