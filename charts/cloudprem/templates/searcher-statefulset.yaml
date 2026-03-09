@@ -66,9 +66,8 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- range $key, $value := .Values.searcher.extraEnv }}
-            - name: "{{ $key }}"
-              value: "{{ $value }}"
+            {{- with (include "quickwit.extraEnv" .Values.searcher.extraEnv) }}
+            {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.searcher.extraEnvFrom) }}
           envFrom:
@@ -101,7 +100,17 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
-            {{- toYaml .Values.searcher.resources | nindent 14 }}
+            {{- if .Values.searcher.resources }}
+              {{- toYaml .Values.searcher.resources | nindent 14 }}
+            {{- else }}
+              {{- $sizingMap := .Files.Get "sizing-map.yaml" | fromYaml }}
+              {{- $podSize := .Values.searcher.podSize }}
+              {{- if not (hasKey $sizingMap $podSize) }}
+                {{- fail (printf "Invalid searcher.podSize '%s'. Valid sizes: %s" $podSize (keys $sizingMap | sortAlpha | join ", ")) }}
+              {{- end }}
+              {{- $resources := (index $sizingMap $podSize).resources }}
+              {{- toYaml $resources | nindent 14 }}
+            {{- end }}
           {{- if .Values.searcher.lifecycleHooks }}
           lifecycle:
             {{- toYaml .Values.searcher.lifecycleHooks | nindent 14 }}
@@ -132,7 +141,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with  merge .Values.affinity .Values.searcher.affinity }}
+      {{- with merge (dict) .Values.searcher.affinity .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
