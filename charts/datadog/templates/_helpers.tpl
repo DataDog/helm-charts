@@ -464,6 +464,9 @@ public.ecr.aws/datadog
 datadoghq.azurecr.io
 {{- else -}}
 {{- $migrationMode := default "" .registryMigrationMode -}}
+{{- if and (ne $migrationMode "") (ne $migrationMode "auto") (ne $migrationMode "all") -}}
+{{- fail (printf "Invalid registryMigrationMode %q: must be \"auto\", \"all\", or \"\"" $migrationMode) -}}
+{{- end -}}
 {{- $migratedSite := false -}}
 {{- if eq $migrationMode "all" -}}
 {{- $migratedSite = true -}}

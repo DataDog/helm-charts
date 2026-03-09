@@ -109,6 +109,23 @@ func TestRegistryMigration(t *testing.T) {
 		})
 	}
 
+	// Invalid registryMigrationMode values must be rejected with an error.
+	t.Run("invalid mode: fails fast", func(t *testing.T) {
+		_, err := common.RenderChart(t, common.HelmCommand{
+			ReleaseName: "datadog",
+			ChartPath:   "../../charts/datadog",
+			ShowOnly:    []string{"templates/daemonset.yaml"},
+			Values:      []string{"../../charts/datadog/values.yaml"},
+			Overrides: map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+				"registryMigrationMode":        "Auto",
+			},
+		})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "Invalid registryMigrationMode")
+	})
+
 	// APM gating: auto mode on AP1 only migrates when apm.enabled is false (the default).
 	t.Run("AP1/auto/apm-enabled: no migration", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
