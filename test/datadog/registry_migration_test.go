@@ -10,11 +10,13 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 )
 
+// TestRegistryMigrationMode tests the registry helper with default values.
+// In auto mode, AP1 is migrated because datadog.apm.enabled defaults to false.
 func TestRegistryMigrationMode(t *testing.T) {
 	sites := []struct {
 		name         string
 		site         string // empty = default (datadoghq.com)
-		wantAuto     string // expected registry in "auto" mode
+		wantAuto     string // expected registry in "auto" mode (with default APM enabled)
 		wantAll      string // expected registry in "all" mode
 		wantDisabled string // expected registry when migration is disabled ("")
 	}{
@@ -54,6 +56,7 @@ func TestRegistryMigrationMode(t *testing.T) {
 			wantDisabled: "public.ecr.aws/datadog",
 		},
 		{
+			// apm.enabled defaults to false, so auto mode migrates AP1.
 			name:         "AP1",
 			site:         "ap1.datadoghq.com",
 			wantAuto:     "registry.datadoghq.com",
@@ -109,12 +112,38 @@ func TestRegistryMigrationMode(t *testing.T) {
 	}
 }
 
+// TestRegistryMigrationAPMCondition tests that auto mode on AP1 only migrates
+// when datadog.apm.enabled is false (the default).
+func TestRegistryMigrationAPMCondition(t *testing.T) {
+	t.Run("apm.enabled=false (default): migrates", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.site":                 "ap1.datadoghq.com",
+			"registryMigrationMode":        "auto",
+		})
+		assert.Equal(t, "registry.datadoghq.com", registry)
+	})
+
+	t.Run("apm.enabled=true: no migration", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.site":                 "ap1.datadoghq.com",
+			"datadog.apm.enabled":          "true",
+			"registryMigrationMode":        "auto",
+		})
+		assert.Equal(t, "asia.gcr.io/datadoghq", registry)
+	})
+}
+
 func TestRegistryMigrationOverrides(t *testing.T) {
 	t.Run("explicit registry takes precedence", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
 			"datadog.apiKeyExistingSecret": "datadog-secret",
 			"datadog.appKeyExistingSecret": "datadog-secret",
 			"datadog.site":                 "ap1.datadoghq.com",
+
 			"registryMigrationMode":        "auto",
 			"registry":                     "my-custom-registry.example.com",
 		})
@@ -126,6 +155,7 @@ func TestRegistryMigrationOverrides(t *testing.T) {
 			"datadog.apiKeyExistingSecret": "datadog-secret",
 			"datadog.appKeyExistingSecret": "datadog-secret",
 			"datadog.site":                 "ap1.datadoghq.com",
+
 			"registryMigrationMode":        "auto",
 			"providers.gke.autopilot":      "true",
 		})
@@ -138,6 +168,28 @@ func TestRegistryMigrationOverrides(t *testing.T) {
 			"datadog.appKeyExistingSecret": "datadog-secret",
 			"registryMigrationMode":        "all",
 			"providers.gke.autopilot":      "true",
+		})
+		assert.Equal(t, "gcr.io/datadoghq", registry)
+	})
+
+	t.Run("GKE GDC bypasses migration for ap1", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.site":                 "ap1.datadoghq.com",
+
+			"registryMigrationMode":        "auto",
+			"providers.gke.gdc":            "true",
+		})
+		assert.Equal(t, "asia.gcr.io/datadoghq", registry)
+	})
+
+	t.Run("GKE GDC bypasses migration for default site", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"registryMigrationMode":        "all",
+			"providers.gke.gdc":            "true",
 		})
 		assert.Equal(t, "gcr.io/datadoghq", registry)
 	})

@@ -468,11 +468,11 @@ datadoghq.azurecr.io
 {{- if eq $migrationMode "all" -}}
 {{- $migratedSite = true -}}
 {{- else if eq $migrationMode "auto" -}}
-{{- if eq $site "ap1.datadoghq.com" -}}
+{{- if and (eq $site "ap1.datadoghq.com") (not .datadog.apm.enabled) -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
-{{- if and $migratedSite (not .providers.gke.autopilot) -}}
+{{- if and $migratedSite (not (or .providers.gke.autopilot .providers.gke.gdc)) -}}
 registry.datadoghq.com
 {{- else if eq $site "datadoghq.eu" -}}
 eu.gcr.io/datadoghq
