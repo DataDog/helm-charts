@@ -2,7 +2,7 @@
 
 ## 3.182.1
 
-* Add log volume to fhp ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
+* Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
 
 ## 3.182.0
 
