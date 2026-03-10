@@ -272,6 +272,6 @@ func filterKeysRecursive(yamlMap *map[string]interface{}, keys map[string]interf
 
 func CurrentContext(t *testing.T) string {
 	val, err := k8s.RunKubectlAndGetOutputE(t, k8s.NewKubectlOptions("", "", ""), "config", "current-context")
-	require.Nil(t, err)
+	require.NoError(t, err)
 	return val
 }

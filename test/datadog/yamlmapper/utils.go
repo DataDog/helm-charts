@@ -1,3 +1,8 @@
+// Unless explicitly stated otherwise all files in this repository are licensed
+// under the Apache License Version 2.0.
+// This product includes software developed at Datadog (https://www.datadoghq.com/).
+// Copyright 2024-present Datadog, Inc.
+
 package yamlmapper
 
 import (
@@ -26,6 +31,10 @@ const (
 	mapperWarningsStrictEnv = "YAMLMAPPER_WARNINGS_STRICT"   // enable strict mapper warnings
 
 	ddaCRDName              = "datadogagents.datadoghq.com"
+
+	// forceDeleteThreshold is the fraction of retries elapsed before attempting to force-delete
+	// a stuck terminating namespace by removing its finalizers.
+	forceDeleteThreshold = 0.7
 )
 
 // requiredCRDs lists the CRDs that must be present for integration tests to run
@@ -40,10 +49,10 @@ var requiredCRDs = []string{
 
 func validateEnv(t *testing.T) {
 	// Check cluster context is not production
-	context := common.CurrentContext(t)
-	t.Log("Checking current context:", context)
-	if strings.Contains(strings.ToLower(context), "staging") ||
-		strings.Contains(strings.ToLower(context), "prod") {
+	clusterContext := common.CurrentContext(t)
+	t.Log("Checking current context:", clusterContext)
+	if strings.Contains(strings.ToLower(clusterContext), "staging") ||
+		strings.Contains(strings.ToLower(clusterContext), "prod") {
 		t.Fatal("Make sure context is pointing to local cluster")
 	}
 
@@ -75,17 +84,19 @@ Or use the Makefile target:
 	t.Log("All required CRDs are present")
 }
 
+// isEnvTruthy returns true if the named environment variable is set to "1", "true", or "yes" (case-insensitive).
+func isEnvTruthy(env string) bool {
+	v := os.Getenv(env)
+	return strings.EqualFold(v, "1") || strings.EqualFold(v, "true") || strings.EqualFold(v, "yes")
+}
+
 func isAgentConfStrict() bool {
-	return strings.EqualFold(os.Getenv(agentConfStrictEnv), "1") ||
-		strings.EqualFold(os.Getenv(agentConfStrictEnv), "true") ||
-		strings.EqualFold(os.Getenv(agentConfStrictEnv), "yes")
+	return isEnvTruthy(agentConfStrictEnv)
 }
 
 // isMapperWarningsStrict returns true if mapper warnings should cause test failures
 func isMapperWarningsStrict() bool {
-	return strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "1") ||
-		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "true") ||
-		strings.EqualFold(os.Getenv(mapperWarningsStrictEnv), "yes")
+	return isEnvTruthy(mapperWarningsStrictEnv)
 }
 
 // =============================================================================
@@ -495,8 +506,8 @@ func waitForNamespaceDeletion(t *testing.T, namespace string, timeout time.Durat
 			phase, _ := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "namespace", namespace, "-o", "jsonpath={.status.phase}")
 			if strings.TrimSpace(phase) == "Terminating" {
 				t.Logf("Namespace %s is terminating, waiting...", namespace)
-				// If stuck terminating for a while (>70% of timeout), try to force delete by removing finalizers
-				if !forceDeleteAttempted && retryCount > int(float64(maxRetries)*0.7) {
+				// If stuck terminating past the threshold, try to force delete by removing finalizers
+				if !forceDeleteAttempted && retryCount > int(float64(maxRetries)*forceDeleteThreshold) {
 					t.Logf("Attempting to force delete stuck namespace %s by removing finalizers", namespace)
 					forceDeleteAttempted = true
 
@@ -622,9 +633,7 @@ func findStaleNamespaces(ctx context.Context) []string {
 }
 
 func isStaleCleanupEnabled() bool {
-	return strings.EqualFold(os.Getenv(staleCleanupEnabledEnv), "1") ||
-		strings.EqualFold(os.Getenv(staleCleanupEnabledEnv), "true") ||
-		strings.EqualFold(os.Getenv(staleCleanupEnabledEnv), "yes")
+	return isEnvTruthy(staleCleanupEnabledEnv)
 }
 
 func isSafeContext() bool {

@@ -6,7 +6,6 @@
 package yamlmapper
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/DataDog/helm-charts/test/common"
@@ -21,7 +20,7 @@ func TestMapperNegativeCases(t *testing.T) {
 			require.Error(t, err, "Expected mapper to return an error for %s, but it succeeded", tc.Name)
 
 			if tc.ExpectedErrMsg != "" {
-				require.Contains(t, strings.ToLower(err.Error()), strings.ToLower(tc.ExpectedErrMsg),
+				require.Contains(t, err.Error(), tc.ExpectedErrMsg,
 					"Error message should contain expected substring for %s", tc.Name)
 			}
 

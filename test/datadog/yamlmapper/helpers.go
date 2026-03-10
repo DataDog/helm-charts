@@ -264,6 +264,28 @@ func assertBaseValuesCoverage(t *testing.T) {
 		t.Fatalf("Base values coverage mismatch: missing=%v", missing)
 	}
 
+	// Check for duplicates in testCasesWithDependencies.
+	seenDeps := map[string]int{}
+	for _, tc := range testCasesWithDependencies {
+		seenDeps[tc.Name]++
+	}
+	for name, count := range seenDeps {
+		if count > 1 {
+			t.Fatalf("Duplicate dependency test case entry for %s", name)
+		}
+	}
+
+	// Check for duplicates in negativeTestCases.
+	seenNeg := map[string]int{}
+	for _, tc := range negativeTestCases {
+		seenNeg[tc.Name]++
+	}
+	for name, count := range seenNeg {
+		if count > 1 {
+			t.Fatalf("Duplicate negative test case entry for %s", name)
+		}
+	}
+
 	// Build the full set of files referenced by any test across all slices.
 	allReferenced := make(map[string]struct{}, len(seen))
 	for name := range seen {
@@ -531,9 +553,11 @@ func getOperatorVersionFromRequirements() (string, error) {
 // ### Mapper Helpers
 
 // getMappingPath returns the absolute path to the mapping file.
-func getMappingPath() string {
+func getMappingPath(t *testing.T) string {
+	t.Helper()
 	absPath, err := filepath.Abs(mappingFileName)
 	if err != nil {
+		t.Logf("Warning: could not resolve absolute path for mapping file %q: %v; using relative path", mappingFileName, err)
 		return mappingFileName
 	}
 	return absPath
@@ -545,7 +569,7 @@ func runMapper(t *testing.T, valuesPath string) (string, error) {
 	destFilePath := ddaOutputPath(valuesPath)
 	ensureDDAOutputDirExists(t)
 
-	mappingFilePath := getMappingPath()
+	mappingFilePath := getMappingPath(t)
 	t.Logf("Using mapping file: %s", mappingFilePath)
 
 	absValuesPath, err := filepath.Abs(valuesPath)
@@ -580,7 +604,7 @@ func runMapperExpectError(t *testing.T, valuesPath string) error {
 	destFilePath := ddaOutputPath(valuesPath)
 	ensureDDAOutputDirExists(t)
 
-	mappingFilePath := getMappingPath()
+	mappingFilePath := getMappingPath(t)
 	absValuesPath, err := filepath.Abs(valuesPath)
 	require.NoError(t, err, "Failed to get absolute path for values file: %s", valuesPath)
 

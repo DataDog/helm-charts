@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 )
 
@@ -94,7 +93,7 @@ func runValuesToDDAMappingTest(t *testing.T, valuesPath string, expectedPods Exp
 	interTestDelay(t, defaultContainerdDelay)
 
 	// install Operator, deploy DDA, and verify that Operator-managed deployment matches Helm deployment
-	installAndVerifyOperatorAgent(t, ctx, ctx.KubectlOptions, ddaFilePath, helmAgentConf, expectedPods, expectedContainers)
+	installAndVerifyOperatorAgent(t, ctx, ddaFilePath, helmAgentConf, expectedPods, expectedContainers)
 }
 
 // installAndVerifyHelmAgent installs the Helm chart, verifies pods are healthy, and captures the agent config.
@@ -123,17 +122,17 @@ func installAndVerifyHelmAgent(t *testing.T, ctx *TestContext, valuesPath string
 }
 
 // installAndVerifyOperatorAgent installs the Operator, applies the DDA, and verifies that the Operator-managed deployment matches the original Helm deployment.
-func installAndVerifyOperatorAgent(t *testing.T, ctx *TestContext, kubectlOptions *k8s.KubectlOptions, ddaFilePath string, helmAgentConf string, expectedPods ExpectedComponentPods, expectedContainers ExpectedComponentContainers) {
+func installAndVerifyOperatorAgent(t *testing.T, ctx *TestContext, ddaFilePath string, helmAgentConf string, expectedPods ExpectedComponentPods, expectedContainers ExpectedComponentContainers) {
 	err := installOperator(t, ctx.KubectlOptions, ctx.Namespace, ctx.TestCleanupRegistry)
 	require.NoError(t, err, "Failed to install operator")
-	
+
 	err = applyDDAAndWaitForAgents(t, ctx.KubectlOptions, ddaFilePath, expectedPods)
 	require.NoError(t, err, "Failed to apply DDA and wait for operator-managed agents")
 
-	operatorAgentConf := getOperatorAgentConf(t, kubectlOptions)
+	operatorAgentConf := getOperatorAgentConf(t, ctx.KubectlOptions)
 	require.NotEmpty(t, operatorAgentConf, "Failed to get agent conf from operator-installed agent")
 
 	verifyAgentConfEqual(t, helmAgentConf, operatorAgentConf)
-	assertExpectedPodHealth(t, kubectlOptions, expectedPods, operatorPodSelectors())
-	verifyContainers(t, kubectlOptions, expectedContainers, operatorPodSelectors())
+	assertExpectedPodHealth(t, ctx.KubectlOptions, expectedPods, operatorPodSelectors())
+	verifyContainers(t, ctx.KubectlOptions, expectedContainers, operatorPodSelectors())
 }
