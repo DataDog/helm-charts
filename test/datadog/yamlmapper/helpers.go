@@ -228,7 +228,11 @@ func validateExpectedPodCount(t *testing.T, name string, enabled *bool, replicas
 	}
 }
 
-// assertBaseValuesCoverage verifies that all base values files are covered by a test case.
+// assertBaseValuesCoverage verifies that:
+// 1. Every test case in baseTestCases has a corresponding file in the values directory.
+// 2. There are no duplicate entries in baseTestCases.
+// 3. Every file in the values directory is referenced by at least one test case across
+//    all test slices (baseTestCases, testCasesWithDependencies, negativeTestCases).
 func assertBaseValuesCoverage(t *testing.T) {
 	t.Helper()
 	entries, err := os.ReadDir(valuesDir)
@@ -242,6 +246,7 @@ func assertBaseValuesCoverage(t *testing.T) {
 		filesOnDisk[entry.Name()] = struct{}{}
 	}
 
+	// Check forward: every baseTestCase has a file on disk, with no duplicates.
 	seen := map[string]int{}
 	var missing []string
 	for _, tc := range baseTestCases {
@@ -250,25 +255,38 @@ func assertBaseValuesCoverage(t *testing.T) {
 			missing = append(missing, tc.Name)
 		}
 	}
-
 	for name, count := range seen {
 		if count > 1 {
 			t.Fatalf("Duplicate base test case entry for %s", name)
 		}
 	}
-
 	if len(missing) > 0 {
 		t.Fatalf("Base values coverage mismatch: missing=%v", missing)
 	}
 
+	// Build the full set of files referenced by any test across all slices.
+	allReferenced := make(map[string]struct{}, len(seen))
+	for name := range seen {
+		allReferenced[name] = struct{}{}
+	}
+	for _, tc := range testCasesWithDependencies {
+		allReferenced[filepath.Base(tc.ValuesFile)] = struct{}{}
+	}
+	for _, tc := range negativeTestCases {
+		allReferenced[filepath.Base(tc.ValuesFile)] = struct{}{}
+	}
+	// invalid-yaml-values.yaml is referenced directly in TestInvalidYAMLChartInstall.
+	allReferenced[invalidYAMLValuesFile] = struct{}{}
+
+	// Check inverse: every file on disk is referenced by some test.
 	var uncovered []string
 	for name := range filesOnDisk {
-		if _, ok := seen[name]; !ok {
+		if _, ok := allReferenced[name]; !ok {
 			uncovered = append(uncovered, name)
 		}
 	}
 	if len(uncovered) > 0 {
-		t.Fatalf("Values files on disk have no test case in baseTestCases: %v", uncovered)
+		t.Fatalf("Values files on disk have no test case: %v", uncovered)
 	}
 }
 

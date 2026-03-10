@@ -44,8 +44,9 @@ const (
 
 // Directory paths for values files
 const (
-	valuesDir     = "baseline/values"
-	mappingFileName   = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+	valuesDir           = "baseline/values"
+	mappingFileName     = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+	invalidYAMLValuesFile = "invalid-yaml-values.yaml" // referenced directly in TestInvalidYAMLChartInstall
 )
 
 // =============================================================================
