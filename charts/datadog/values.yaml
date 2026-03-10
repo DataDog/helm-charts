@@ -46,7 +46,7 @@ registry:  # gcr.io/datadoghq
 ##   Currently enabled: AP1 (ap1.datadoghq.com).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
-registryMigrationMode: "auto"
+registryMigrationMode: ""
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
