@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.19.0
+
+* Update Datadog Operator chart for 1.24.0
+* Switch operator image to registry.datadoghq.com ([#2430](https://github.com/DataDog/helm-charts/pull/2430)).
+* Add `registryMigrationMode` to control gradual migration of Agent image pulls to `registry.datadoghq.com`. Defaults to "auto", which currently enables this behaviour for the AP1 datacenter (when `global.site: ap1.datadoghq.com`). More sites will be enabled in future releases. Set it to "" to disable. ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+* Add label-based discovery to the endpoint-config ConfigMap lookup to support aliased datadog chart installations.
+* Add `kubernetes.io/os: linux` nodeSelector to the operator deployment to prevent scheduling on Windows nodes.
+* Adds `clusterRole.kubeletFineGrainedAuthorization` flag to not provide `nodes/proxy` to the Operator `ClusterRole` when set to `true`. **WARNING**: this flag has multiple requirements. Please refer to `values.yaml` for additional details.
+
+
+## 2.19.0-dev.8
+
+* Switch operator image to registry.datadoghq.com ([#2430](https://github.com/DataDog/helm-charts/pull/2430)).
+
+## 2.19.0-dev.7
+
+* Add `registryMigrationMode` to control gradual migration of Agent image pulls to `registry.datadoghq.com`. Defaults to "auto", which currently enables this behaviour for the AP1 datacenter (when `global.site: ap1.datadoghq.com`). More sites will be enabled in future releases. Set it to "" to disable. ([#2421](https://github.com/DataDog/helm-charts/pull/2421)).
+
+## 2.19.0-dev.6
+
+* Update Datadog Operator chart for RBACs for 1.24.0-rc.4.
+
 ## 2.19.0-dev.5
 
 * Update Datadog Operator chart for RBACs for 1.24.0-rc.2.

@@ -45,9 +45,9 @@ appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
 image:
   # image.repository -- Repository to use for Datadog Operator image
-  repository: gcr.io/datadoghq/operator
+  repository: registry.datadoghq.com/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.24.0-rc.2
+  tag: 1.24.0
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -102,6 +102,18 @@ datadogSLO:
 remoteConfiguration:
   # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
   enabled: false
+# registryMigrationMode -- Controls gradual migration of Agent image pulls to
+# registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables
+# are added to the Datadog Operator deployment to pull Agent images from the global
+# CDN-backed registry.datadoghq.com based on the global.site setting, unless
+# global.registry is specified in the DatadogAgent custom resource (which takes precedence).
+# This has no effect on sites not covered by the active overrides.
+# More sites will be enabled by default in future helm-chart releases.
+# "auto" (default): enable overrides for sites where migration is rolled out.
+#   Currently enabled: AP1 (ap1.datadoghq.com).
+# "all": enable all per-site overrides (AP1, US1, EU1, US3).
+# "" or unset: disable all overrides.
+registryMigrationMode: "auto"
 
 deployment:
   # deployment.annotations -- Allows setting additional annotations for the deployment resource

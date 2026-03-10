@@ -478,6 +478,9 @@ rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get", "list", "watch", "update", "create"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "update", "create"]
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: RoleBinding

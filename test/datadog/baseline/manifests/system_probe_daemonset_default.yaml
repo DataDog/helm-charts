@@ -313,6 +313,8 @@ data:
             "setitimer",
             "setns",
             "setpgid",
+            "setresgid",
+            "setresuid",
             "setrlimit",
             "setsid",
             "setsidaccept4",
@@ -1371,6 +1373,14 @@ rules:
       - get
       - list
       - watch
+      - update
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
       - update
       - create
 ---

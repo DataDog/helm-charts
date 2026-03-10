@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+* Set csi driver image to `1.2.1`
+
 ## 0.9.0
 
 * Set csi driver image to `1.2.0`
