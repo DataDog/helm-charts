@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.183.1
+
+* Rollback: set `registryMigrationMode` default to `""` to revert AP1 registry migration back to `asia.gcr.io/datadoghq`.
+
 ## 3.183.0
 
 * Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.
