@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.183.0
+
+* Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.
+
 ## 3.182.0
 
 * Add `registryMigrationMode` to control gradual migration of default image registry to `registry.datadoghq.com`, replacing site-specific regional mirrors (GCR, ACR). Defaults to `"auto"`, which currently enables `registry.datadoghq.com` for the AP1 site (`ap1.datadoghq.com`) when `datadog.apm.enabled` is `false` (the default). More sites will be enabled in future releases. Set to `""` to disable. GKE Autopilot, GKE GDC, US1-FED, and US3 clusters are excluded.
