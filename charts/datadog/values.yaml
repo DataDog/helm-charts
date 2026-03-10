@@ -737,6 +737,81 @@ datadog:
       # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration (experimental)
       key: host-profiler-config.yaml
 
+  ## Host Profiler Standalone related configuration. Deploys a standalone DaemonSet with only the host-profiler container (no Agent). Mutually exclusive with datadog.hostProfiler.enabled. Note this is experimental and subject to change
+  hostProfilerStandalone:
+    # datadog.hostProfilerStandalone.enabled -- Enable the standalone Host Profiler DaemonSet. This feature is experimental and subject to change.
+    enabled: false
+    # datadog.hostProfilerStandalone.image -- Image for the standalone Host Profiler. This parameter is experimental and will be removed once official image is available.
+    image: ""
+    # datadog.hostProfilerStandalone.config -- Standalone Host Profiler configuration (experimental)
+    config: null
+    # datadog.hostProfilerStandalone.configMap -- Use an existing ConfigMap for standalone Host Profiler configuration (experimental)
+    configMap:
+      # datadog.hostProfilerStandalone.configMap.name -- Name of the existing ConfigMap that contains the standalone Host Profiler configuration (experimental)
+      name: null
+      # datadog.hostProfilerStandalone.configMap.items -- Items within the ConfigMap that contain standalone Host Profiler configuration (experimental)
+      items:
+      #   - key: host-profiler-config.yaml
+      #     path: host-profiler-config.yaml
+      #   - key: host-profiler-config-two.yaml
+      #     path: host-profiler-config-two.yaml
+      # datadog.hostProfilerStandalone.configMap.key -- Key within the ConfigMap that contains the standalone Host Profiler configuration (experimental)
+      key: host-profiler-config.yaml
+
+    # datadog.hostProfilerStandalone.tolerations -- Tolerations for the standalone host-profiler DaemonSet
+    tolerations: []
+
+    # datadog.hostProfilerStandalone.nodeSelector -- Additional node selector labels for the standalone host-profiler DaemonSet
+    nodeSelector: {}
+
+    # datadog.hostProfilerStandalone.volumes -- Additional volumes for the standalone host-profiler DaemonSet
+    volumes: []
+    #   - hostPath:
+    #       path: <HOST_PATH>
+    #     name: <VOLUME_NAME>
+
+    containers:
+      hostProfiler:
+        # datadog.hostProfilerStandalone.containers.hostProfiler.imagePullPolicy -- Image pull policy for the standalone host-profiler container
+        imagePullPolicy: IfNotPresent
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.env -- Additional environment variables for the standalone host-profiler container
+        env: []
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.envFrom -- Set environment variables for the standalone host-profiler from configMaps and/or secrets
+        envFrom: []
+        #   - configMapRef:
+        #       name: <CONFIGMAP_NAME>
+        #   - secretRef:
+        #       name: <SECRET_NAME>
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.envDict -- Set environment variables for the standalone host-profiler defined in a dict
+        envDict: {}
+        #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.resources -- Resource requests and limits for the standalone host-profiler container
+        resources: {}
+        #  requests:
+        #    cpu: 100m
+        #    memory: 200Mi
+        #  limits:
+        #    cpu: 100m
+        #    memory: 200Mi
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.securityContext -- SecurityContext for the standalone host-profiler container
+        securityContext:
+          readOnlyRootFilesystem: true
+          privileged: true
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.logLevel -- Log level for the standalone host-profiler container
+        logLevel: ""
+
+        # datadog.hostProfilerStandalone.containers.hostProfiler.volumeMounts -- Additional volume mounts for the standalone host-profiler container
+        volumeMounts: []
+        #   - name: <VOLUME_NAME>
+        #     mountPath: <CONTAINER_PATH>
+        #     readOnly: true
+
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
     # datadog.otelCollector.enabled -- Enable the OTel Collector

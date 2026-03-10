@@ -1,0 +1,58 @@
+{{- define "container-host-profiler-standalone" -}}
+- name: host-profiler
+  image: "{{ include "ddot-ebpf-standalone-image" . }}"
+  imagePullPolicy: {{ .Values.datadog.hostProfilerStandalone.containers.hostProfiler.imagePullPolicy }}
+  command:
+    - "/opt/datadog-agent/embedded/bin/full-host-profiler"
+    - "run"
+  args:
+    {{- if .Values.datadog.hostProfilerStandalone.configMap.items }}
+    {{- range .Values.datadog.hostProfilerStandalone.configMap.items }}
+    - "--config={{ template "datadog.hostprofilerconfPath" $ }}/{{ .path }}"
+    {{- end }}
+    {{- else }}
+    - "--config={{ template "datadog.hostprofilerconfPath" . }}/host-profiler-config.yaml"
+    {{- end }}
+{{ include "generate-security-context" (dict "securityContext" .Values.datadog.hostProfilerStandalone.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+  resources:
+{{ toYaml .Values.datadog.hostProfilerStandalone.containers.hostProfiler.resources | indent 4 }}
+{{- if .Values.datadog.hostProfilerStandalone.containers.hostProfiler.envFrom }}
+  envFrom:
+{{ .Values.datadog.hostProfilerStandalone.containers.hostProfiler.envFrom | toYaml | indent 4 }}
+{{- end }}
+  env:
+    - name: DD_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ template "datadog.apiSecretName" . }}
+          key: api-key
+    - name: DD_HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    {{- if .Values.datadog.site }}
+    - name: DD_SITE
+      value: {{ .Values.datadog.site | quote }}
+    {{- end }}
+    - name: DD_AGENT_IPC_PORT
+      value: "0"
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "0"
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.datadog.hostProfilerStandalone.containers.hostProfiler.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- include "additional-env-entries" .Values.datadog.hostProfilerStandalone.containers.hostProfiler.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.datadog.hostProfilerStandalone.containers.hostProfiler.envDict | indent 4 }}
+  volumeMounts:
+    - name: tracingfs
+      mountPath: /sys/kernel/tracing
+      readOnly: false
+    - name: hostprofilerstandaloneconfig
+      mountPath: {{ template "datadog.hostprofilerconfPath" . }}
+      readOnly: true
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW for tmp directory
+    {{- if .Values.datadog.hostProfilerStandalone.containers.hostProfiler.volumeMounts }}
+{{ toYaml .Values.datadog.hostProfilerStandalone.containers.hostProfiler.volumeMounts | indent 4 }}
+    {{- end }}
+{{- end -}}
