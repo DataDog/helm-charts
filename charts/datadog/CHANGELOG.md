@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.184.0
+
+* Extend `registryMigrationMode: "auto"` to AP2 (`ap2.datadoghq.com`) users.
+
 ## 3.183.0
 
 * Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.

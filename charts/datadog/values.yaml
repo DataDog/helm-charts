@@ -43,7 +43,7 @@ registry:  # gcr.io/datadoghq
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
-##   Currently enabled: AP1 (ap1.datadoghq.com).
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
