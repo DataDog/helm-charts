@@ -3,11 +3,13 @@ on:
   push:
     paths:
       - 'test/datadog/**'
+      - 'test/common/**'
       - 'charts/datadog/**'
       - '.github/workflows/go-test-yamlmapper.yaml'
   pull_request:
     paths:
       - 'test/datadog/**'
+      - 'test/common/**'
       - 'charts/datadog/**'
       - '.github/workflows/go-test-yamlmapper.yaml'
 
