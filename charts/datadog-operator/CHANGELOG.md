@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.19.1
+## 2.20.0
 
 * Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_EU`, migrating EU1 (`datadoghq.eu`) Agent image pulls to `registry.datadoghq.com`.
 
