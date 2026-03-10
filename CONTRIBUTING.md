@@ -71,6 +71,64 @@ make test
 ```
 You can run tests from IDE too (tested with VScode) as long as the environment variables are configured properly.
 
+#### YAML Mapper Integration Tests
+
+The YAML mapper integration tests validate the migration path from the Datadog Helm chart to the DatadogAgent CRD (used by the Datadog Operator). Each test:
+1. Installs the `datadog` Helm chart with a values file.
+2. Runs the YAML mapper to produce a `DatadogAgent` CR from those same values.
+3. Installs the Datadog Operator and applies the generated CR.
+4. Compares the live agent configuration (`agent config --all`) between both installations to verify the mapper produces an equivalent result.
+
+**Prerequisites**
+* A local Kubernetes cluster (e.g. Kind). **Do not run against a staging or production cluster.**
+* `kubectl` context pointing at the test cluster.
+* Helm repos added:
+  ```shell
+  helm repo add datadog https://helm.datadoghq.com
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  ```
+  Run `helm repo update` if you have recently bumped the `datadog-operator` version in `charts/datadog/requirements.yaml` and need to pull the updated chart.
+* Datadog CRDs installed in the cluster:
+  ```shell
+  make setup-mapper-crds
+  ```
+* The `datadog` chart dependencies built:
+  ```shell
+  helm dependency build ./charts/datadog
+  ```
+* Environment variables (optional):
+  * `API_KEY` and `APP_KEY` — not required; all test values files use hardcoded dummy keys. If set, an additional Datadog secret is created in each test namespace.
+
+**Running the tests**
+
+```shell
+# Standard mode: log agent config diffs but don't fail on them
+make integ-test-mapper
+
+# Strict mode (used in CI): fail if helm vs operator agent config differs
+make integ-test-mapper-strict
+
+# Run a specific test by name
+make integ-test-mapper GOTEST_RUN=TestBaseValues
+```
+
+**Environment variables**
+
+| Variable | Default | Description |
+|---|---|---|
+| `YAMLMAPPER_AGENT_CONF_STRICT` | `0` | Fail tests if the Helm and Operator agent configs differ |
+| `YAMLMAPPER_WARNINGS_STRICT` | `0` | Fail tests if the mapper emits any warnings |
+| `YAMLMAPPER_CLEANUP_STALE` | `0` | Clean up leftover test namespaces from previous interrupted runs (safe for local clusters only) |
+
+**Cleanup**
+
+Each test creates a uniquely named namespace and cleans it up on completion. If a test run is interrupted (e.g. Ctrl+C), stale namespaces prefixed with `datadog-agent-` may remain. Re-run with `YAMLMAPPER_CLEANUP_STALE=true` to automatically remove them, or delete manually with `kubectl delete namespace`.
+
+To remove the CRDs installed by `setup-mapper-crds`:
+```shell
+make cleanup-mapper-crds
+```
+
 #### End-to-End Tests
 The helm-charts end-to-end (E2E) tests run on [Pulumi][pulumi]-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`test-infra-definitions`][test-infra-repo] and [`datadog-agent`][agent-e2e-source] E2E frameworks.
 
