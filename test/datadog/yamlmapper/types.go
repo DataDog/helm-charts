@@ -16,8 +16,8 @@ import (
 
 const (
 	ddaOutputDir      = "baseline/dda"
-	operatorChartPath = "../../../charts/datadog-operator"
-	datadogChartPath  = "../../../charts/datadog"
+	operatorChartRef = "datadog/datadog-operator" // remote chart from the datadog helm repo
+	datadogChartPath = "../../../charts/datadog"
 
 	apiKeyEnv = "API_KEY"
 	appKeyEnv = "APP_KEY"
@@ -44,8 +44,8 @@ const (
 
 // Directory paths for values files
 const (
-	valuesDir           = "baseline/values"
-	mappingFileName     = "mapping_datadog_helm_to_datadogagent_crd.yaml"
+	valuesDir             = "baseline/values"
+	mappingFileName       = "../../../charts/datadog/files/mapping_datadog_helm_to_datadogagent_crd.yaml"
 	invalidYAMLValuesFile = "invalid-yaml-values.yaml" // referenced directly in TestInvalidYAMLChartInstall
 )
 

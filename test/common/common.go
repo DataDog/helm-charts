@@ -26,6 +26,8 @@ type HelmCommand struct {
 	ReleaseName   string
 	Namespace     string
 	ChartPath     string
+	Remote        bool              // if true, ChartPath is a remote chart reference (e.g. "repo/chart") and is used as-is
+	Version       string            // chart version; only used when Remote is true
 	ShowOnly      []string          // helm template `-s, --show-only` flag
 	Values        []string          // helm template `-f, --values` flag
 	Overrides     map[string]string // helm template `--set` flag
@@ -67,12 +69,21 @@ func RenderChart(t *testing.T, cmd HelmCommand) (string, error) {
 }
 
 func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmCommand) (cleanupFunc func()) {
-	helmChartPath, err := filepath.Abs(cmd.ChartPath)
-	require.NoError(t, err)
+	var helmChartPath string
+	if cmd.Remote {
+		helmChartPath = cmd.ChartPath
+	} else {
+		var err error
+		helmChartPath, err = filepath.Abs(cmd.ChartPath)
+		require.NoError(t, err)
+	}
 
 	// --wait and --timeout for clean state transitions between chart installs
 	// 3m timeout to wait for readiness probes
 	extraArgs := []string{"--wait", "--timeout", "3m"}
+	if cmd.Remote && cmd.Version != "" {
+		extraArgs = append(extraArgs, "--version", cmd.Version)
+	}
 	if len(cmd.ExtraArgs) > 0 {
 		extraArgs = append(extraArgs, cmd.ExtraArgs...)
 	}

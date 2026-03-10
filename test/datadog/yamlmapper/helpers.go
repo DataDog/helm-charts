@@ -292,11 +292,19 @@ func assertBaseValuesCoverage(t *testing.T) {
 
 // ### Operator Installation
 
-// installOperator installs the datadog-operator chart and waits for it to be ready
+// installOperator installs the datadog-operator chart from the remote Datadog Helm repo
+// at the version pinned in charts/datadog/requirements.yaml, and waits for it to be ready.
 func installOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace string, cleanup *TestCleanupRegistry) error {
+	operatorVersion, err := getOperatorVersionFromRequirements()
+	if err != nil {
+		return fmt.Errorf("failed to read operator version from requirements.yaml: %w", err)
+	}
+
 	operatorInstallCmd := common.HelmCommand{
 		ReleaseName: releaseDatadogOperator,
-		ChartPath:   operatorChartPath,
+		ChartPath:   operatorChartRef,
+		Remote:      true,
+		Version:     operatorVersion,
 		Overrides: map[string]string{
 			"installCRDs":        "false", // CRDs managed externally (CI or locally)
 			"watchNamespaces[0]": namespace,
@@ -311,7 +319,7 @@ func installOperator(t *testing.T, kubectlOptions *k8s.KubectlOptions, namespace
 	})
 	require.Len(t, operatorDeployments, 1, "Expected 1 deployment, got %d", len(operatorDeployments))
 
-	err := k8s.WaitUntilDeploymentAvailableE(t, kubectlOptions, operatorDeployments[0].Name, operatorDeployRetries, operatorDeploySleep)
+	err = k8s.WaitUntilDeploymentAvailableE(t, kubectlOptions, operatorDeployments[0].Name, operatorDeployRetries, operatorDeploySleep)
 	if err != nil {
 		t.Logf("Failed to wait for operator deployment: %v", err)
 		return err
@@ -485,6 +493,39 @@ func containerNames(containers []corev1.Container) []string {
 		names[i] = c.Name
 	}
 	return names
+}
+
+// ### Operator Helpers
+
+// requirementsYAML is the minimal structure needed to parse charts/datadog/requirements.yaml.
+type requirementsYAML struct {
+	Dependencies []struct {
+		Name    string `yaml:"name"`
+		Version string `yaml:"version"`
+	} `yaml:"dependencies"`
+}
+
+// getOperatorVersionFromRequirements reads the datadog-operator version pinned in
+// charts/datadog/requirements.yaml so the test always installs the same version the chart ships.
+func getOperatorVersionFromRequirements() (string, error) {
+	reqPath, err := filepath.Abs("../../../charts/datadog/requirements.yaml")
+	if err != nil {
+		return "", err
+	}
+	data, err := os.ReadFile(reqPath)
+	if err != nil {
+		return "", err
+	}
+	var req requirementsYAML
+	if err := yaml.Unmarshal(data, &req); err != nil {
+		return "", err
+	}
+	for _, dep := range req.Dependencies {
+		if dep.Name == "datadog-operator" {
+			return dep.Version, nil
+		}
+	}
+	return "", fmt.Errorf("datadog-operator not found in requirements.yaml")
 }
 
 // ### Mapper Helpers
