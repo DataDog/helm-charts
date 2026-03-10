@@ -102,7 +102,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "registryMigration auto: only ASIA override is set",
+			name: "registryMigration auto: ASIA and EU overrides are set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -115,8 +115,8 @@ func Test_operator_chart(t *testing.T) {
 				common.Unmarshal(t, manifest, &deployment)
 				env := deployment.Spec.Template.Spec.Containers[0].Env
 				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should be set")
 				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should not be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should not be set")
 				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
 			},
 			skipTest: SkipTest,
