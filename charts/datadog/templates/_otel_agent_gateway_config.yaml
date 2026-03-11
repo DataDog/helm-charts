@@ -27,7 +27,7 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
         api:
           key: ${env:DD_API_KEY}
           site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
-{{- if or .Values.otelAgentGateway.image.doNotCheckTag (semverCompare ">=7.75.0" $gatewayImageTag) }}
+{{- if or .Values.otelAgentGateway.image.doNotCheckTag (semverCompare ">=7.75.0-0" $gatewayImageTag) }}
         deployment_type: gateway
 {{- end }}
     service:
