@@ -1308,17 +1308,6 @@ false
 {{- end -}}
 
 {{/*
-Returns whether Remote Configuration should be enabled in the cluster checks runner
-*/}}
-{{- define "clusterChecksRunner-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled .Values.clusterChecksRunner.remoteConfiguration.enabled (not .Values.providers.gke.gdc) -}}
-true
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
-{{/*
 Validate Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
