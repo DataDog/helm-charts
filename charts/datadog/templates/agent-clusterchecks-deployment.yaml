@@ -194,7 +194,7 @@ spec:
           - name: DD_APM_ENABLED
             value: "false"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "false"
+            value: {{ include "clusterChecksRunner-remoteConfiguration-enabled" . | quote }}
           - name: DD_HOSTNAME
             valueFrom:
               fieldRef:
