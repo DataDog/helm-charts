@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+* Update Docker image to `v0.1.22`
+
 ## 0.2.1
 
 * Add support for annotations on indexer PersistentVolumeClaim (`indexer.persistentVolume.annotations`)
