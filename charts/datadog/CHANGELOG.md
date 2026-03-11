@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.185.2
+
+* Clamoriniere/fix/talos etc group volumemount ([#2474](https://github.com/DataDog/helm-charts/pull/2474)).
+
 ## 3.185.1
 
 * [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
