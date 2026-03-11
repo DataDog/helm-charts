@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.183.1
+
+* [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
+
 ## 3.183.0
 
 * Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.
