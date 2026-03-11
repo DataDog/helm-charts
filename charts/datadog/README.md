@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.187.0](https://img.shields.io/badge/Version-3.187.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.188.0](https://img.shields.io/badge/Version-3.188.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -722,6 +722,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
+| clusterChecksRunner.remoteConfiguration.enabled | bool | `true` | Enable remote configuration on the Cluster Checks Runner. Set to false to disable remote configuration on the Cluster Checks Runner. |
 | clusterChecksRunner.replicas | int | `2` | Number of Cluster Checks Runner instances |
 | clusterChecksRunner.resources | object | `{}` | Datadog clusterchecks-agent resource requests and limits. |
 | clusterChecksRunner.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
