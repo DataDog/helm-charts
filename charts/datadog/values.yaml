@@ -3257,6 +3257,27 @@ otelAgentGateway:
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
 
+      # otelAgentGateway.containers.otelAgent.healthPort -- Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension)
+      healthPort: 13133
+
+      # otelAgentGateway.containers.otelAgent.livenessProbe -- Override default otel-agent-gateway liveness probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      livenessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # otelAgentGateway.containers.otelAgent.readinessProbe -- Override default otel-agent-gateway readiness probe settings
+      # @default -- Every 15s / 6 KO / 1 OK
+      readinessProbe:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
   ## Provide OTel Collector RBAC configuration in Gateway
   rbac:
     # otelAgentGateway.rbac.create -- If true, check OTel Collector config for k8sattributes processor

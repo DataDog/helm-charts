@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.186.0
+
+* Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes use HTTP GET on port 13133 (OTel `health_check` extension) by default. Port and probe settings are configurable via `otelAgentGateway.containers.otelAgent.healthPort`, `otelAgentGateway.containers.otelAgent.livenessProbe`, and `otelAgentGateway.containers.otelAgent.readinessProbe`.
+
 ## 3.185.0
 
 * Bump Datadog Operator chart dependency to 2.19.1, image tag to 1.24.0.

@@ -18,11 +18,14 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
             flush_timeout: 10s
     processors:
     extensions:
+      health_check:
+        endpoint: 0.0.0.0:{{ .Values.otelAgentGateway.containers.otelAgent.healthPort }}
       datadog:
         api:
           key: ${env:DD_API_KEY}
           site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
     service:
+      extensions: [health_check]
       pipelines:
         traces:
           receivers: [otlp]
