@@ -1993,7 +1993,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_EU
               value: "true"
-          image: registry.datadoghq.com/operator:1.23.0
+          image: registry.datadoghq.com/operator:1.24.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
