@@ -1543,6 +1543,19 @@ false
 {{- end -}}
 
 {{/*
+  Returns true if the host file /etc/group should be mounted, else return false.
+*/}}
+{{- define "should-add-host-path-for-etc-group" -}}
+  {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if .Values.providers.talos.enabled -}}
+    false
+  {{- else -}}
+    true
+  {{- end -}}
+{{- end -}}
+
+{{/*
   Returns true if the agent is running as the root user (UID 0), else return false
 */}}
 {{- define "is-agent-user-root" -}}
