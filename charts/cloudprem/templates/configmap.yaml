@@ -1,4 +1,16 @@
-{{- $config := .Values.config }}
+{{- $sizingMap := .Files.Get "sizing-map.yaml" | fromYaml }}
+{{- $sizingDefaults := dict }}
+{{- if not .Values.indexer.resources }}
+  {{- $indexerPodSize := .Values.indexer.podSize }}
+  {{- $_ := set $sizingDefaults "indexer" (index $sizingMap $indexerPodSize).config.indexer }}
+  {{- $_ := set $sizingDefaults "ingest_api" (index $sizingMap $indexerPodSize).config.ingest_api }}
+{{- end }}
+{{- if not .Values.searcher.resources }}
+  {{- $searcherPodSize := .Values.searcher.podSize }}
+  {{- $_ := set $sizingDefaults "searcher" (index $sizingMap $searcherPodSize).config.searcher }}
+{{- end }}
+{{- $config := merge (dict) (.Values.config | default dict) $sizingDefaults }}
+
 {{- $ingress := .Values.ingress.public }}
 {{- $mtlsHeader := "X-Amzn-Mtls-Clientcert" }}
 

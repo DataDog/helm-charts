@@ -3,6 +3,11 @@
   "title": "Values",
   "type": "object",
   "properties": {
+    "registryMigrationMode": {
+      "type": "string",
+      "enum": ["", "auto", "all"],
+      "description": "Controls gradual migration of the default image registry to registry.datadoghq.com."
+    },
     "datadog": {
       "type": "object",
       "properties": {
