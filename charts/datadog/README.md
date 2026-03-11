@@ -1042,7 +1042,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.23.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.24.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
