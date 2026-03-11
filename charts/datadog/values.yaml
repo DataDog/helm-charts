@@ -2651,6 +2651,11 @@ clusterChecksRunner:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   enabled: false
 
+  remoteConfiguration:
+    # clusterChecksRunner.remoteConfiguration.enabled -- Enable remote configuration on the Cluster Checks Runner.
+    # Set to false to disable remote configuration on the Cluster Checks Runner.
+    enabled: true
+
   ## Define the Datadog image to work with.
   image:
     # clusterChecksRunner.image.name -- Datadog Agent image name to use (relative to `registry`)
