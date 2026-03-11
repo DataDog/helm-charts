@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.183.1
+## 3.185.1
 
 * [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
+
+## 3.185.0
+
+* Bump Datadog Operator chart dependency to 2.19.1, image tag to 1.24.0.
+
+## 3.184.0
+
+* Extend `registryMigrationMode: "auto"` to AP2 (`ap2.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
 
 ## 3.183.0
 
