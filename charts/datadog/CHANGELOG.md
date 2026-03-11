@@ -4,6 +4,10 @@
 
 * Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes are **opt-in** (`enabled: false` by default). Set `otelAgentGateway.containers.otelAgent.livenessProbe.enabled: true` and/or `otelAgentGateway.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `otelAgentGateway.containers.otelAgent.healthPort`). The OTel config must expose the `health_check` extension on that port; the generated default config (used when `otelAgentGateway.config` and `otelAgentGateway.configMap` are unset) does this automatically.
 
+## 3.185.1
+
+* [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
+
 ## 3.185.0
 
 * Bump Datadog Operator chart dependency to 2.19.1, image tag to 1.24.0.
