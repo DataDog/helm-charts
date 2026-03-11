@@ -254,12 +254,14 @@ spec:
       {{- if .Values.otelAgentGateway.volumeMounts }}
 {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
       {{- end }}
+{{- if .Values.otelAgentGateway.containers.otelAgent.livenessProbe.enabled }}
         livenessProbe:
-{{- $live := .Values.otelAgentGateway.containers.otelAgent.livenessProbe }}
-{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" $live) | indent 10 }}
+{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" (omit .Values.otelAgentGateway.containers.otelAgent.livenessProbe "enabled")) | indent 10 }}
+{{- end }}
+{{- if .Values.otelAgentGateway.containers.otelAgent.readinessProbe.enabled }}
         readinessProbe:
-{{- $ready := .Values.otelAgentGateway.containers.otelAgent.readinessProbe }}
-{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" $ready) | indent 10 }}
+{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" (omit .Values.otelAgentGateway.containers.otelAgent.readinessProbe "enabled")) | indent 10 }}
+{{- end }}
       volumes:
       - name: varlog
         emptyDir: {}

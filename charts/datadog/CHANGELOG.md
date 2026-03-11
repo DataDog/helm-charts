@@ -2,7 +2,7 @@
 
 ## 3.186.0
 
-* Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes use HTTP GET on port 13133 (OTel `health_check` extension) by default. Port and probe settings are configurable via `otelAgentGateway.containers.otelAgent.healthPort`, `otelAgentGateway.containers.otelAgent.livenessProbe`, and `otelAgentGateway.containers.otelAgent.readinessProbe`.
+* Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes are **opt-in** (`enabled: false` by default). Set `otelAgentGateway.containers.otelAgent.livenessProbe.enabled: true` and/or `otelAgentGateway.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `otelAgentGateway.containers.otelAgent.healthPort`). The OTel config must expose the `health_check` extension on that port; the generated default config (used when `otelAgentGateway.config` and `otelAgentGateway.configMap` are unset) does this automatically.
 
 ## 3.185.0
 

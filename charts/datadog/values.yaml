@@ -3260,18 +3260,22 @@ otelAgentGateway:
       # otelAgentGateway.containers.otelAgent.healthPort -- Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension)
       healthPort: 13133
 
-      # otelAgentGateway.containers.otelAgent.livenessProbe -- Override default otel-agent-gateway liveness probe settings
-      # @default -- Every 15s / 6 KO / 1 OK
+      # otelAgentGateway.containers.otelAgent.livenessProbe -- otel-agent-gateway liveness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
       livenessProbe:
+        enabled: false
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
         successThreshold: 1
         failureThreshold: 6
 
-      # otelAgentGateway.containers.otelAgent.readinessProbe -- Override default otel-agent-gateway readiness probe settings
-      # @default -- Every 15s / 6 KO / 1 OK
+      # otelAgentGateway.containers.otelAgent.readinessProbe -- otel-agent-gateway readiness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
       readinessProbe:
+        enabled: false
         initialDelaySeconds: 15
         periodSeconds: 15
         timeoutSeconds: 5
