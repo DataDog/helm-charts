@@ -471,7 +471,7 @@ datadoghq.azurecr.io
 {{- if eq $migrationMode "all" -}}
 {{- $migratedSite = true -}}
 {{- else if eq $migrationMode "auto" -}}
-{{- if eq $site "ap1.datadoghq.com" -}}
+{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
