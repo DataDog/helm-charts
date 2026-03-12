@@ -251,10 +251,10 @@ func Test_agent_install_job_script_appSecret_removal_when_unset(t *testing.T) {
 	))
 	require.NoError(t, err)
 
-	// When app key is not set, the script should have the awk-based removal branch
-	// guarded by a grep check for the placeholder token
-	assert.Contains(t, manifest, "grep -q '__DD_APP_SECRET_NAME__'")
-	assert.Contains(t, manifest, "awk ")
+	// When app key is not set, the script should have the awk-based removal
+	// that only drops appSecret blocks containing the placeholder token
+	assert.Contains(t, manifest, "/appSecret:/")
+	assert.Contains(t, manifest, "__DD_APP_SECRET_NAME__")
 }
 
 func Test_agent_install_job_inherits_nodeSelector(t *testing.T) {

@@ -57,11 +57,23 @@ spec:
                 sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               else
                 echo "No app key configured, removing placeholder appSecret stanza..."
-                # Only strip the appSecret block if it contains the placeholder.
-                # Custom configs with real secret references are left untouched.
-                if grep -q '__DD_APP_SECRET_NAME__' /tmp/agent-config.yaml; then
-                  awk 'BEGIN{s=0;n=-1}/appSecret:/{match($0,/^[ \t]*/);n=RLENGTH;s=1;next}s&&/^[ \t]/{match($0,/^[ \t]*/);if(RLENGTH>n)next;s=0;n=-1}{print}' /tmp/agent-config.yaml > /tmp/agent-config.tmp && mv /tmp/agent-config.tmp /tmp/agent-config.yaml
-                fi
+                # Buffer each appSecret: block (the key line plus more-indented
+                # children). Drop it only when the buffer contains the placeholder
+                # token; print it unchanged otherwise. This preserves real
+                # appSecret stanzas in multi-document or mixed configs.
+                awk '
+                  /appSecret:/ {
+                    match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
+                  }
+                  buf!="" {
+                    match($0,/^[ \t]*/);
+                    if(RLENGTH>n){ buf=buf $0 ORS; next }
+                    if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;
+                    buf=""; n=-1
+                  }
+                  { print }
+                  END { if(buf!="" && buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf }
+                ' /tmp/agent-config.yaml > /tmp/agent-config.tmp && mv /tmp/agent-config.tmp /tmp/agent-config.yaml
               fi
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
