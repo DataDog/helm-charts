@@ -1,0 +1,47 @@
+{{- if .Values.installAgents }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}-agent-install
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}-agent-install
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+  - apiGroups: ["datadoghq.com"]
+    resources: ["datadogagents"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}-agent-install
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "datadog-operator.fullname" . }}-agent-install
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "datadog-operator.fullname" . }}-agent-install
+    namespace: {{ .Release.Namespace }}
+{{- end }}
