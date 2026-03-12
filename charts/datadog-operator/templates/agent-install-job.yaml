@@ -30,8 +30,10 @@ spec:
               value: {{ .Values.agentConfigUrl | default $defaultUrl | quote }}
             - name: API_SECRET_NAME
               value: {{ include "datadog-operator.apiKeySecretName" . | quote }}
+            {{- if eq (include "should-set-dd-app-key" .) "true" }}
             - name: APP_SECRET_NAME
               value: {{ include "datadog-operator.appKeySecretName" . | quote }}
+            {{- end }}
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}
           command:
@@ -50,8 +52,14 @@ spec:
               fi
               echo "Substituting placeholder values..."
               sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
-              sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
+              if [ -n "${APP_SECRET_NAME:-}" ]; then
+                sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
+              else
+                echo "No app key configured, removing appSecret block..."
+                sed -i '/__DD_APP_SECRET_NAME__/d' /tmp/agent-config.yaml
+                sed -i '/appSecret:/,/keyName:/d' /tmp/agent-config.yaml
+              fi
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
