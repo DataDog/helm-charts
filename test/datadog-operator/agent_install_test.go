@@ -310,6 +310,43 @@ func Test_agent_install_job_inherits_nodeSelector(t *testing.T) {
 	assert.Equal(t, "linux", nodeSelector["kubernetes.io/os"])
 }
 
+func Test_agent_install_job_propagates_imagePullSecrets(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.OverridesJson = map[string]string{
+		"imagePullSecrets": `[{"name": "my-registry-secret"}]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	pullSecrets := job.Spec.Template.Spec.ImagePullSecrets
+	require.Equal(t, 1, len(pullSecrets))
+	assert.Equal(t, "my-registry-secret", pullSecrets[0].Name)
+}
+
+func Test_agent_install_job_no_imagePullSecrets_when_unset(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	assert.Empty(t, job.Spec.Template.Spec.ImagePullSecrets)
+}
+
 // --- Namespace resolution tests ---
 
 func Test_agent_install_namespace_defaults_to_release(t *testing.T) {
