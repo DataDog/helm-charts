@@ -57,10 +57,11 @@ spec:
                 sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               else
                 echo "No app key configured, removing placeholder appSecret stanza..."
-                # Remove the appSecret block only when it contains the placeholder.
-                # Matches "appSecret:" and all more-indented child lines, but only
-                # deletes the block if __DD_APP_SECRET_NAME__ appears within it.
-                python3 -c "import re; fp='/tmp/agent-config.yaml'; t=open(fp).read(); open(fp,'w').write(re.sub(r'^([ \t]*)appSecret:\s*\n(?:\1[ \t]+.*\n)*',lambda m:'' if '__DD_APP_SECRET_NAME__' in m.group(0) else m.group(0),t,flags=re.MULTILINE))"
+                # Only strip the appSecret block if it contains the placeholder.
+                # Custom configs with real secret references are left untouched.
+                if grep -q '__DD_APP_SECRET_NAME__' /tmp/agent-config.yaml; then
+                  awk 'BEGIN{s=0;n=-1}/appSecret:/{match($0,/^[ \t]*/);n=RLENGTH;s=1;next}s&&/^[ \t]/{match($0,/^[ \t]*/);if(RLENGTH>n)next;s=0;n=-1}{print}' /tmp/agent-config.yaml > /tmp/agent-config.tmp && mv /tmp/agent-config.tmp /tmp/agent-config.yaml
+                fi
               fi
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
