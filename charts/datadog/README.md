@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.185.1](https://img.shields.io/badge/Version-3.185.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.187.0](https://img.shields.io/badge/Version-3.187.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -1061,7 +1061,10 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container |
 | otelAgentGateway.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict |
 | otelAgentGateway.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets |
+| otelAgentGateway.containers.otelAgent.healthPort | int | `13133` | Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension) |
+| otelAgentGateway.containers.otelAgent.livenessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway liveness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
 | otelAgentGateway.containers.otelAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
+| otelAgentGateway.containers.otelAgent.readinessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway readiness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
 | otelAgentGateway.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | otelAgentGateway.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | otelAgentGateway.deploymentAnnotations | object | `{}` | Annotations to add to the otel-agent Gateway Deployment |

@@ -471,7 +471,7 @@ datadoghq.azurecr.io
 {{- if eq $migrationMode "all" -}}
 {{- $migratedSite = true -}}
 {{- else if eq $migrationMode "auto" -}}
-{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") -}}
+{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
@@ -1539,6 +1539,19 @@ false
     true
   {{- else -}}
     false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the host file /etc/group should be mounted, else return false.
+*/}}
+{{- define "should-add-host-path-for-etc-group" -}}
+  {{- if ne .Values.targetSystem "linux" -}}
+    false
+  {{- else if .Values.providers.talos.enabled -}}
+    false
+  {{- else -}}
+    true
   {{- end -}}
 {{- end -}}
 
