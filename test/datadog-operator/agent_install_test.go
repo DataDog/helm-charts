@@ -42,6 +42,19 @@ func splitManifests(manifest string) []string {
 	return docs
 }
 
+// --- Validation tests ---
+
+func Test_agent_install_fails_without_api_key(t *testing.T) {
+	_, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+		},
+		nil,
+	))
+	require.Error(t, err, "should fail when installAgents is true but no API key source is configured")
+	assert.Contains(t, err.Error(), "no API key source")
+}
+
 // --- installAgents=false (default) ---
 
 func Test_agent_install_disabled_by_default(t *testing.T) {

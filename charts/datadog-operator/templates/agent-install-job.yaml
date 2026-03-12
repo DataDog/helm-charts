@@ -1,4 +1,7 @@
 {{- if .Values.installAgents }}
+{{- if ne (include "should-set-dd-api-key" .) "true" -}}
+  {{- fail "installAgents is true but no API key source is configured. Set apiKey, apiKeyExistingSecret, or provide an endpoint-config ConfigMap with api-key-secret-name." -}}
+{{- end -}}
 {{- $defaultUrl := "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml" }}
 apiVersion: batch/v1
 kind: Job
