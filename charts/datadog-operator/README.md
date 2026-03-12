@@ -1,12 +1,16 @@
 # Datadog Operator
 
-![Version: 2.20.0-dev.1](https://img.shields.io/badge/Version-2.20.0--dev.1-informational?style=flat-square) ![AppVersion: 1.25.0-rc.1](https://img.shields.io/badge/AppVersion-1.25.0--rc.1-informational?style=flat-square)
+![Version: 2.20.0-dev.2](https://img.shields.io/badge/Version-2.20.0--dev.2-informational?style=flat-square) ![AppVersion: 1.25.0-rc.1](https://img.shields.io/badge/AppVersion-1.25.0--rc.1-informational?style=flat-square)
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Operator PODs |
+| agentConfigUrl | string | `""` | URL to a DatadogAgent custom resource YAML file. Used when installAgents is true. The YAML file supports placeholder substitution for credential references:   __DD_API_SECRET_NAME__  - replaced with the API key secret name from this chart   __DD_APP_SECRET_NAME__  - replaced with the App key secret name from this chart   __DD_NAMESPACE__        - replaced with the release namespace If not specified, uses the default configuration from the Datadog integrations-management repository. |
+| agentInstallJob.image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the agent install job image |
+| agentInstallJob.image.repository | string | `"bitnami/kubectl"` | Repository for the agent install job image |
+| agentInstallJob.image.tag | string | `"1.31"` | Tag for the agent install job image |
 | apiKey | string | `nil` | Your Datadog API key |
 | apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one |
 | appKey | string | `nil` | Your Datadog APP key |
@@ -41,6 +45,7 @@
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
 | image.tag | string | `"1.25.0-rc.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
+| installAgents | bool | `false` | When true, automatically deploys Datadog Agents by creating a DatadogAgent custom resource. The agent configuration is fetched from agentConfigUrl. Runs as a post-install/post-upgrade Helm hook. Requires apiKey (or apiKeyExistingSecret) to be set. |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
 | livenessProbe | object | `{"initialDelaySeconds":15,"periodSeconds":10}` | Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator. |
