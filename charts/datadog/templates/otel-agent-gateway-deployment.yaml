@@ -190,7 +190,7 @@ spec:
               fieldRef:
                 fieldPath: spec.nodeName
           - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-            value: "health_check,zpages,pprof,datadog" # exclude infra attribute, prometheus and DD flare
+            value: "zpages,pprof,datadog" # exclude infra attribute, prometheus and DD flare; health_check is configured explicitly in the OTel config
 
           # A subset of components-common-env that makes sense to otel agent in gateway
           {{- if .Values.datadog.site }}
@@ -254,6 +254,14 @@ spec:
       {{- if .Values.otelAgentGateway.volumeMounts }}
 {{ toYaml .Values.otelAgentGateway.volumeMounts | indent 10 }}
       {{- end }}
+{{- if .Values.otelAgentGateway.containers.otelAgent.livenessProbe.enabled }}
+        livenessProbe:
+{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" (omit .Values.otelAgentGateway.containers.otelAgent.livenessProbe "enabled")) | indent 10 }}
+{{- end }}
+{{- if .Values.otelAgentGateway.containers.otelAgent.readinessProbe.enabled }}
+        readinessProbe:
+{{ include "probe.http" (dict "path" "/" "port" .Values.otelAgentGateway.containers.otelAgent.healthPort "settings" (omit .Values.otelAgentGateway.containers.otelAgent.readinessProbe "enabled")) | indent 10 }}
+{{- end }}
       volumes:
       - name: varlog
         emptyDir: {}
