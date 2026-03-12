@@ -6,7 +6,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "datadog-operator.fullname" . }}-agent-install
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
@@ -19,10 +19,10 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "datadog-operator.name" . }}-agent-install
+        app.kubernetes.io/name: {{ include "datadog-operator.agentInstallName" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ include "datadog-operator.fullname" . }}-agent-install
+      serviceAccountName: {{ include "datadog-operator.agentInstallFullname" . }}
       restartPolicy: OnFailure
       containers:
         - name: agent-install

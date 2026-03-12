@@ -68,6 +68,27 @@ func Test_agent_install_disabled_by_default(t *testing.T) {
 
 // --- Job template tests ---
 
+func Test_agent_install_name_label_within_63_chars(t *testing.T) {
+	// nameOverride at 63 chars (the max from the name helper) + "-agent-install" = 77,
+	// which must be truncated back to 63.
+	longName := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" // 63 chars
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"nameOverride":  longName,
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nameLabel := job.Spec.Template.Labels["app.kubernetes.io/name"]
+	assert.LessOrEqual(t, len(nameLabel), 63, "app.kubernetes.io/name label must be <= 63 chars, got %d: %q", len(nameLabel), nameLabel)
+	assert.False(t, strings.HasSuffix(nameLabel, "-"), "label value should not end with a hyphen")
+}
+
 func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
 	manifest, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
