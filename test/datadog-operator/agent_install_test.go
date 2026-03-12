@@ -1,0 +1,370 @@
+package datadog_operator
+
+import (
+	"strings"
+	"testing"
+
+	"github.com/DataDog/helm-charts/test/common"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+)
+
+const (
+	defaultAgentConfigURL = "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml"
+)
+
+func baseHelmCommand(overrides map[string]string, showOnly []string) common.HelmCommand {
+	return common.HelmCommand{
+		ReleaseName: "datadog-operator",
+		ChartPath:   "../../charts/datadog-operator",
+		ShowOnly:    showOnly,
+		Values:      []string{"../../charts/datadog-operator/values.yaml"},
+		Overrides:   overrides,
+	}
+}
+
+// splitManifests splits a multi-document YAML string into individual documents.
+func splitManifests(manifest string) []string {
+	manifest = strings.TrimPrefix(manifest, "---")
+	parts := strings.Split(manifest, "\n---")
+	var docs []string
+	for _, p := range parts {
+		trimmed := strings.TrimSpace(p)
+		if trimmed != "" {
+			docs = append(docs, trimmed)
+		}
+	}
+	return docs
+}
+
+// --- installAgents=false (default) ---
+
+func Test_agent_install_disabled_by_default(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{},
+		nil, // render all templates
+	))
+	require.NoError(t, err)
+	assert.NotContains(t, manifest, "agent-install", "agent-install resources should not be rendered when installAgents is false")
+}
+
+// --- Job template tests ---
+
+func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	assert.Equal(t, "datadog-operator-agent-install", job.Name)
+	assert.Equal(t, "post-install,post-upgrade", job.Annotations["helm.sh/hook"])
+	assert.Equal(t, "1", job.Annotations["helm.sh/hook-weight"])
+	assert.Equal(t, "before-hook-creation,hook-succeeded", job.Annotations["helm.sh/hook-delete-policy"])
+	assert.Equal(t, int32(5), *job.Spec.BackoffLimit)
+
+	container := job.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "bitnami/kubectl:1.31", container.Image)
+}
+
+func Test_agent_install_job_default_config_url(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	urlEnv := findEnvVar(env, "AGENT_CONFIG_URL")
+	require.NotNil(t, urlEnv)
+	assert.Equal(t, defaultAgentConfigURL, urlEnv.Value)
+}
+
+func Test_agent_install_job_custom_config_url(t *testing.T) {
+	customURL := "https://example.com/my-custom-config.yaml"
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"agentConfigUrl": customURL,
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	urlEnv := findEnvVar(env, "AGENT_CONFIG_URL")
+	require.NotNil(t, urlEnv)
+	assert.Equal(t, customURL, urlEnv.Value)
+}
+
+func Test_agent_install_job_api_secret_from_apiKey(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	apiEnv := findEnvVar(env, "API_SECRET_NAME")
+	require.NotNil(t, apiEnv)
+	assert.Equal(t, "datadog-operator-apikey", apiEnv.Value)
+}
+
+func Test_agent_install_job_api_secret_from_existing_secret(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":       "true",
+			"apiKeyExistingSecret": "my-api-secret",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	apiEnv := findEnvVar(env, "API_SECRET_NAME")
+	require.NotNil(t, apiEnv)
+	assert.Equal(t, "my-api-secret", apiEnv.Value)
+}
+
+func Test_agent_install_job_no_app_secret_when_appKey_unset(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	appEnv := findEnvVar(env, "APP_SECRET_NAME")
+	assert.Nil(t, appEnv, "APP_SECRET_NAME should not be set when no app key is configured")
+}
+
+func Test_agent_install_job_app_secret_from_appKey(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"appKey":        "test-app-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	appEnv := findEnvVar(env, "APP_SECRET_NAME")
+	require.NotNil(t, appEnv, "APP_SECRET_NAME should be set when appKey is configured")
+	assert.Equal(t, "datadog-operator-appkey", appEnv.Value)
+}
+
+func Test_agent_install_job_app_secret_from_existing_secret(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":       "true",
+			"apiKey":              "test-api-key",
+			"appKeyExistingSecret": "my-app-secret",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	env := job.Spec.Template.Spec.Containers[0].Env
+	appEnv := findEnvVar(env, "APP_SECRET_NAME")
+	require.NotNil(t, appEnv, "APP_SECRET_NAME should be set when appKeyExistingSecret is configured")
+	assert.Equal(t, "my-app-secret", appEnv.Value)
+}
+
+func Test_agent_install_job_script_substitutes_api_key(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	assert.Contains(t, manifest, `sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g"`)
+	assert.Contains(t, manifest, `sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g"`)
+}
+
+func Test_agent_install_job_script_appSecret_branch_when_set(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"appKey":        "test-app-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	// When app key is set, the script should have the substitution branch
+	assert.Contains(t, manifest, `sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g"`)
+}
+
+func Test_agent_install_job_script_appSecret_removal_when_unset(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	// When app key is not set, the script should have the python3 removal branch
+	assert.Contains(t, manifest, "python3 -c")
+	assert.Contains(t, manifest, "__DD_APP_SECRET_NAME__")
+}
+
+func Test_agent_install_job_inherits_nodeSelector(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+
+	nodeSelector := job.Spec.Template.Spec.NodeSelector
+	assert.Equal(t, "linux", nodeSelector["kubernetes.io/os"])
+}
+
+// --- RBAC template tests ---
+
+func Test_agent_install_rbac_uses_namespaced_role(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-rbac.yaml"},
+	))
+	require.NoError(t, err)
+
+	// Must be Role/RoleBinding, not ClusterRole/ClusterRoleBinding
+	assert.Contains(t, manifest, "kind: Role")
+	assert.Contains(t, manifest, "kind: RoleBinding")
+	assert.NotContains(t, manifest, "kind: ClusterRole")
+	assert.NotContains(t, manifest, "kind: ClusterRoleBinding")
+
+	docs := splitManifests(manifest)
+	require.Equal(t, 3, len(docs), "RBAC template should render 3 documents: ServiceAccount, Role, RoleBinding")
+
+	// Parse ServiceAccount
+	var sa corev1.ServiceAccount
+	common.Unmarshal(t, docs[0], &sa)
+	assert.Equal(t, "datadog-operator-agent-install", sa.Name)
+	assert.Equal(t, "post-install,post-upgrade", sa.Annotations["helm.sh/hook"])
+
+	// Parse Role
+	var role rbacv1.Role
+	common.Unmarshal(t, docs[1], &role)
+	assert.Equal(t, "datadog-operator-agent-install", role.Name)
+	require.Equal(t, 1, len(role.Rules))
+	assert.Equal(t, []string{"datadoghq.com"}, role.Rules[0].APIGroups)
+	assert.Equal(t, []string{"datadogagents"}, role.Rules[0].Resources)
+	assert.Equal(t, []string{"get", "list", "create", "update", "patch"}, role.Rules[0].Verbs)
+
+	// Parse RoleBinding
+	var rb rbacv1.RoleBinding
+	common.Unmarshal(t, docs[2], &rb)
+	assert.Equal(t, "datadog-operator-agent-install", rb.Name)
+	assert.Equal(t, "Role", rb.RoleRef.Kind)
+	assert.Equal(t, "datadog-operator-agent-install", rb.RoleRef.Name)
+	require.Equal(t, 1, len(rb.Subjects))
+	assert.Equal(t, "ServiceAccount", rb.Subjects[0].Kind)
+	assert.Equal(t, "datadog-operator-agent-install", rb.Subjects[0].Name)
+}
+
+func Test_agent_install_rbac_hook_annotations(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-rbac.yaml"},
+	))
+	require.NoError(t, err)
+
+	docs := splitManifests(manifest)
+	require.Equal(t, 3, len(docs))
+
+	// All three resources should have hook-weight "0" (before the job at weight "1")
+	for _, doc := range docs {
+		assert.Contains(t, doc, `"helm.sh/hook-weight": "0"`)
+		assert.Contains(t, doc, `"helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded`)
+	}
+}
+
+func Test_agent_install_rbac_not_rendered_when_disabled(t *testing.T) {
+	_, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{},
+		[]string{"templates/agent-install-rbac.yaml"},
+	))
+	// When installAgents is false, the template produces no output.
+	// helm template --show-only returns an error for empty templates.
+	assert.Error(t, err)
+}
+
+func Test_agent_install_job_not_rendered_when_disabled(t *testing.T) {
+	_, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	assert.Error(t, err)
+}
+
+// --- Helper ---
+
+func findEnvVar(envs []corev1.EnvVar, name string) *corev1.EnvVar {
+	for i, env := range envs {
+		if env.Name == name {
+			return &envs[i]
+		}
+	}
+	return nil
+}
