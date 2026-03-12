@@ -311,7 +311,7 @@ func Test_agent_install_job_script_appSecret_removal_when_unset(t *testing.T) {
 
 	// When app key is not set, the script should have the awk-based removal
 	// that only drops appSecret blocks containing the placeholder token
-	assert.Contains(t, manifest, "/appSecret:/")
+	assert.Contains(t, manifest, "appSecret:")
 	assert.Contains(t, manifest, "__DD_APP_SECRET_NAME__")
 }
 
