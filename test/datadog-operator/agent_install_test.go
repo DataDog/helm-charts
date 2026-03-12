@@ -86,7 +86,29 @@ func Test_agent_install_name_label_within_63_chars(t *testing.T) {
 	common.Unmarshal(t, manifest, &job)
 	nameLabel := job.Spec.Template.Labels["app.kubernetes.io/name"]
 	assert.LessOrEqual(t, len(nameLabel), 63, "app.kubernetes.io/name label must be <= 63 chars, got %d: %q", len(nameLabel), nameLabel)
-	assert.False(t, strings.HasSuffix(nameLabel, "-"), "label value should not end with a hyphen")
+	assert.True(t, strings.HasSuffix(nameLabel, "-agent-install"), "label must preserve -agent-install suffix, got %q", nameLabel)
+}
+
+func Test_agent_install_fullname_preserves_suffix(t *testing.T) {
+	// A 63-char fullnameOverride should be truncated to 49 before appending
+	// -agent-install, producing a 63-char name that doesn't collide with
+	// the unsuffixed fullname.
+	longFullname := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" // 63 chars
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":    "true",
+			"apiKey":           "test-api-key",
+			"fullnameOverride": longFullname,
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	assert.LessOrEqual(t, len(job.Name), 63)
+	assert.True(t, strings.HasSuffix(job.Name, "-agent-install"), "resource name must preserve -agent-install suffix, got %q", job.Name)
+	assert.NotEqual(t, longFullname, job.Name, "hook name must not collide with unsuffixed fullname")
 }
 
 func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {

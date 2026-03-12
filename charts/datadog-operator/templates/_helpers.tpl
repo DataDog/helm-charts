@@ -26,16 +26,22 @@ If release name contains chart name it will be used as a full name.
 
 {{/*
 Name label value for agent-install resources, truncated to 63 chars.
+The base name is truncated to 49 chars first so the "-agent-install"
+suffix (14 chars) is always preserved and never collides with the
+unsuffixed name.
 */}}
 {{- define "datadog-operator.agentInstallName" -}}
-{{- printf "%s-agent-install" (include "datadog-operator.name" .) | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-agent-install" (include "datadog-operator.name" . | trunc 49 | trimSuffix "-") -}}
 {{- end -}}
 
 {{/*
-Fully qualified name for agent-install resources.
+Fully qualified name for agent-install resources, truncated to 63 chars.
+The base fullname is truncated to 49 chars first so the "-agent-install"
+suffix (14 chars) is always preserved and never collides with the
+unsuffixed fullname.
 */}}
 {{- define "datadog-operator.agentInstallFullname" -}}
-{{- printf "%s-agent-install" (include "datadog-operator.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-agent-install" (include "datadog-operator.fullname" . | trunc 49 | trimSuffix "-") -}}
 {{- end -}}
 
 {{/*
