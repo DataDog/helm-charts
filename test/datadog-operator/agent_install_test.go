@@ -1,6 +1,8 @@
 package datadog_operator
 
 import (
+	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
@@ -357,6 +359,116 @@ func Test_agent_install_job_not_rendered_when_disabled(t *testing.T) {
 		[]string{"templates/agent-install-job.yaml"},
 	))
 	assert.Error(t, err)
+}
+
+// --- appSecret awk removal logic tests ---
+//
+// These tests execute the actual awk program from the hook script against
+// fixture inputs to verify runtime behavior.
+
+// The awk program embedded in agent-install-job.yaml. Kept in sync manually;
+// if the template changes, update this constant and the tests will catch
+// regressions in the new logic.
+const appSecretAwk = `
+/appSecret:/ {
+  match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
+}
+buf!="" {
+  match($0,/^[ \t]*/);
+  if(RLENGTH>n){ buf=buf $0 ORS; next }
+  if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;
+  buf=""; n=-1
+}
+{ print }
+END { if(buf!="" && buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf }
+`
+
+// runAwk writes input to a temp file, runs awk, and returns the output.
+func runAwk(t *testing.T, input string) string {
+	t.Helper()
+	tmpFile, err := os.CreateTemp("", "awk-test-*.yaml")
+	require.NoError(t, err)
+	defer os.Remove(tmpFile.Name())
+
+	_, err = tmpFile.WriteString(input)
+	require.NoError(t, err)
+	require.NoError(t, tmpFile.Close())
+
+	cmd := exec.Command("awk", appSecretAwk, tmpFile.Name())
+	out, err := cmd.CombinedOutput()
+	require.NoError(t, err, "awk failed: %s", string(out))
+	return string(out)
+}
+
+func Test_awk_removes_placeholder_appSecret_block(t *testing.T) {
+	input := `spec:
+  global:
+    credentials:
+      apiSecret:
+        secretName: my-api-secret
+        keyName: api-key
+      appSecret:
+        secretName: __DD_APP_SECRET_NAME__
+        keyName: app-key
+  features:
+    apm:
+      enabled: true
+`
+	output := runAwk(t, input)
+	assert.NotContains(t, output, "appSecret")
+	assert.NotContains(t, output, "__DD_APP_SECRET_NAME__")
+	assert.Contains(t, output, "apiSecret")
+	assert.Contains(t, output, "my-api-secret")
+	assert.Contains(t, output, "apm")
+}
+
+func Test_awk_preserves_real_appSecret_block(t *testing.T) {
+	input := `spec:
+  global:
+    credentials:
+      appSecret:
+        secretName: my-real-secret
+        keyName: app-key
+`
+	output := runAwk(t, input)
+	assert.Contains(t, output, "appSecret")
+	assert.Contains(t, output, "my-real-secret")
+	assert.Contains(t, output, "keyName: app-key")
+}
+
+func Test_awk_mixed_config_removes_only_placeholder_block(t *testing.T) {
+	input := `spec:
+  global:
+    credentials:
+      appSecret:
+        secretName: __DD_APP_SECRET_NAME__
+        keyName: app-key
+---
+spec:
+  global:
+    credentials:
+      appSecret:
+        secretName: real-secret-for-other-resource
+        keyName: app-key
+`
+	output := runAwk(t, input)
+	assert.NotContains(t, output, "__DD_APP_SECRET_NAME__", "placeholder block should be removed")
+	assert.Contains(t, output, "real-secret-for-other-resource", "real appSecret block should be preserved")
+}
+
+func Test_awk_no_appSecret_passes_through(t *testing.T) {
+	input := `spec:
+  global:
+    credentials:
+      apiSecret:
+        secretName: my-api-secret
+        keyName: api-key
+  features:
+    apm:
+      enabled: true
+`
+	output := runAwk(t, input)
+	assert.Equal(t, input, output, "input with no appSecret should pass through unchanged")
 }
 
 // --- Helper ---
