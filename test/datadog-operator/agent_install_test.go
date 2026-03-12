@@ -586,7 +586,7 @@ func Test_agent_install_job_not_rendered_when_disabled(t *testing.T) {
 // if the template changes, update this constant and the tests will catch
 // regressions in the new logic.
 const appSecretAwk = `
-/appSecret:/ {
+/^[ \t]*appSecret:/ {
   match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
 }
 buf!="" {
@@ -685,6 +685,27 @@ func Test_awk_no_appSecret_passes_through(t *testing.T) {
 `
 	output := runAwk(t, input)
 	assert.Equal(t, input, output, "input with no appSecret should pass through unchanged")
+}
+
+func Test_awk_does_not_match_keys_containing_appSecret(t *testing.T) {
+	input := `spec:
+  myappSecret:
+    secretName: __DD_APP_SECRET_NAME__
+    keyName: app-key
+  appSecretConfig:
+    value: something
+  global:
+    credentials:
+      appSecret:
+        secretName: __DD_APP_SECRET_NAME__
+        keyName: app-key
+`
+	output := runAwk(t, input)
+	// The real appSecret block should be removed
+	assert.NotContains(t, output, "      appSecret:")
+	// But myappSecret and appSecretConfig must survive (not anchored to appSecret:)
+	assert.Contains(t, output, "myappSecret:", "keys containing 'appSecret' as a substring should not be matched")
+	assert.Contains(t, output, "appSecretConfig:", "keys starting with 'appSecret' but not exact should not be matched")
 }
 
 // --- Helper ---

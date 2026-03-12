@@ -69,7 +69,7 @@ spec:
                 # token; print it unchanged otherwise. This preserves real
                 # appSecret stanzas in multi-document or mixed configs.
                 awk '
-                  /appSecret:/ {
+                  /^[ \t]*appSecret:/ {
                     match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
                   }
                   buf!="" {
