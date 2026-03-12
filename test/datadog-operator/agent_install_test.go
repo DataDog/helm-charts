@@ -276,6 +276,150 @@ func Test_agent_install_job_inherits_nodeSelector(t *testing.T) {
 	assert.Equal(t, "linux", nodeSelector["kubernetes.io/os"])
 }
 
+// --- Namespace resolution tests ---
+
+func Test_agent_install_namespace_defaults_to_release(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.Namespace = "my-release-ns"
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nsEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "NAMESPACE")
+	require.NotNil(t, nsEnv)
+	assert.Equal(t, "my-release-ns", nsEnv.Value)
+}
+
+func Test_agent_install_namespace_from_watchNamespacesAgent(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.Namespace = "release-ns"
+	cmd.OverridesJson = map[string]string{
+		"watchNamespacesAgent": `["agents-ns", "other-ns"]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nsEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "NAMESPACE")
+	require.NotNil(t, nsEnv)
+	assert.Equal(t, "agents-ns", nsEnv.Value, "should use first entry from watchNamespacesAgent when release ns is not watched")
+}
+
+func Test_agent_install_namespace_release_ns_in_watchNamespacesAgent(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.Namespace = "release-ns"
+	cmd.OverridesJson = map[string]string{
+		"watchNamespacesAgent": `["release-ns", "other-ns"]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nsEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "NAMESPACE")
+	require.NotNil(t, nsEnv)
+	assert.Equal(t, "release-ns", nsEnv.Value, "should prefer release namespace when it is in the watch list")
+}
+
+func Test_agent_install_namespace_watchAll(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.Namespace = "release-ns"
+	cmd.OverridesJson = map[string]string{
+		"watchNamespacesAgent": `[""]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nsEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "NAMESPACE")
+	require.NotNil(t, nsEnv)
+	assert.Equal(t, "release-ns", nsEnv.Value, "should use release namespace when watching all namespaces")
+}
+
+func Test_agent_install_namespace_fallback_to_watchNamespaces(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	)
+	cmd.Namespace = "release-ns"
+	cmd.OverridesJson = map[string]string{
+		"watchNamespaces": `["monitoring"]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	nsEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "NAMESPACE")
+	require.NotNil(t, nsEnv)
+	assert.Equal(t, "monitoring", nsEnv.Value, "should fall back to watchNamespaces when watchNamespacesAgent is not set")
+}
+
+func Test_agent_install_rbac_targets_watched_namespace(t *testing.T) {
+	cmd := baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-rbac.yaml"},
+	)
+	cmd.Namespace = "release-ns"
+	cmd.OverridesJson = map[string]string{
+		"watchNamespacesAgent": `["agents-ns"]`,
+	}
+	manifest, err := common.RenderChart(t, cmd)
+	require.NoError(t, err)
+
+	docs := splitManifests(manifest)
+	require.Equal(t, 3, len(docs))
+
+	// ServiceAccount stays in release namespace (where the pod runs)
+	var sa corev1.ServiceAccount
+	common.Unmarshal(t, docs[0], &sa)
+	assert.Equal(t, "release-ns", sa.Namespace)
+
+	// Role is in the target (watched) namespace
+	var role rbacv1.Role
+	common.Unmarshal(t, docs[1], &role)
+	assert.Equal(t, "agents-ns", role.Namespace)
+
+	// RoleBinding is in the target namespace, subject points to release namespace SA
+	var rb rbacv1.RoleBinding
+	common.Unmarshal(t, docs[2], &rb)
+	assert.Equal(t, "agents-ns", rb.Namespace)
+	assert.Equal(t, "release-ns", rb.Subjects[0].Namespace)
+}
+
 // --- RBAC template tests ---
 
 func Test_agent_install_rbac_uses_namespaced_role(t *testing.T) {

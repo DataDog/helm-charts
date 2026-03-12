@@ -178,6 +178,34 @@ Return the registry migration mode.
 {{- end -}}
 
 {{/*
+Return the namespace where the agent-install Job should create the DatadogAgent.
+Priority:
+1. watchNamespacesAgent — if set, the operator only watches these namespaces for
+   DatadogAgent resources. Use the release namespace if it's in the list (or the
+   list contains "" meaning all namespaces), otherwise use the first entry.
+2. watchNamespaces — same logic as above (general watch scope).
+3. Release namespace — default when neither is set (the operator watches its own
+   namespace via the metadata.namespace downward API ref).
+*/}}
+{{- define "datadog-operator.agentInstallNamespace" -}}
+{{- if .Values.watchNamespacesAgent -}}
+  {{- if or (has "" .Values.watchNamespacesAgent) (has .Release.Namespace .Values.watchNamespacesAgent) -}}
+    {{- .Release.Namespace -}}
+  {{- else -}}
+    {{- index .Values.watchNamespacesAgent 0 -}}
+  {{- end -}}
+{{- else if .Values.watchNamespaces -}}
+  {{- if or (has "" .Values.watchNamespaces) (has .Release.Namespace .Values.watchNamespaces) -}}
+    {{- .Release.Namespace -}}
+  {{- else -}}
+    {{- index .Values.watchNamespaces 0 -}}
+  {{- end -}}
+{{- else -}}
+  {{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Check operator image tag version.
 */}}
 {{- define "check-image-tag" -}}

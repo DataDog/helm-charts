@@ -35,7 +35,7 @@ spec:
               value: {{ include "datadog-operator.appKeySecretName" . | quote }}
             {{- end }}
             - name: NAMESPACE
-              value: {{ .Release.Namespace | quote }}
+              value: {{ include "datadog-operator.agentInstallNamespace" . | quote }}
           command:
             - /bin/sh
             - -c
