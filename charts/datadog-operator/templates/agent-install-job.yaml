@@ -56,9 +56,8 @@ spec:
               if [ -n "${APP_SECRET_NAME:-}" ]; then
                 sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               else
-                echo "No app key configured, removing appSecret block..."
+                echo "No app key configured, removing placeholder references..."
                 sed -i '/__DD_APP_SECRET_NAME__/d' /tmp/agent-config.yaml
-                sed -i '/appSecret:/,/keyName:/d' /tmp/agent-config.yaml
               fi
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
