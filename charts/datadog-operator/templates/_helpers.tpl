@@ -179,30 +179,23 @@ Return the registry migration mode.
 
 {{/*
 Return the namespace where the agent-install Job should create the DatadogAgent.
-Priority:
-1. watchNamespacesAgent — if set, the operator only watches these namespaces for
-   DatadogAgent resources. Use the release namespace if it's in the list (or the
-   list contains "" meaning all namespaces), otherwise use the first entry.
-2. watchNamespaces — same logic as above (general watch scope).
-3. Release namespace — default when neither is set (the operator watches its own
-   namespace via the metadata.namespace downward API ref).
+Always returns .Release.Namespace because chart-managed credential Secrets
+(secret_api_key.yaml, secret_application_key.yaml) are created there and the
+DatadogAgent credential schema references secrets by name only (no cross-namespace).
+Fails at template time if the operator is configured to not watch the release
+namespace for DatadogAgent resources, since the CR would never be reconciled.
 */}}
 {{- define "datadog-operator.agentInstallNamespace" -}}
 {{- if .Values.watchNamespacesAgent -}}
-  {{- if or (has "" .Values.watchNamespacesAgent) (has .Release.Namespace .Values.watchNamespacesAgent) -}}
-    {{- .Release.Namespace -}}
-  {{- else -}}
-    {{- index .Values.watchNamespacesAgent 0 -}}
+  {{- if not (or (has "" .Values.watchNamespacesAgent) (has .Release.Namespace .Values.watchNamespacesAgent)) -}}
+    {{- fail (printf "installAgents is true but watchNamespacesAgent %v does not include the release namespace %q where credential Secrets are created. Add %q to watchNamespacesAgent or remove installAgents." .Values.watchNamespacesAgent .Release.Namespace .Release.Namespace) -}}
   {{- end -}}
 {{- else if .Values.watchNamespaces -}}
-  {{- if or (has "" .Values.watchNamespaces) (has .Release.Namespace .Values.watchNamespaces) -}}
-    {{- .Release.Namespace -}}
-  {{- else -}}
-    {{- index .Values.watchNamespaces 0 -}}
+  {{- if not (or (has "" .Values.watchNamespaces) (has .Release.Namespace .Values.watchNamespaces)) -}}
+    {{- fail (printf "installAgents is true but watchNamespaces %v does not include the release namespace %q where credential Secrets are created. Add %q to watchNamespaces or remove installAgents." .Values.watchNamespaces .Release.Namespace .Release.Namespace) -}}
   {{- end -}}
-{{- else -}}
-  {{- .Release.Namespace -}}
 {{- end -}}
+{{- .Release.Namespace -}}
 {{- end -}}
 
 {{/*

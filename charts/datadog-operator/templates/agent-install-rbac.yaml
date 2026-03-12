@@ -1,5 +1,4 @@
 {{- if .Values.installAgents }}
-{{- $targetNs := include "datadog-operator.agentInstallNamespace" . }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -16,7 +15,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "datadog-operator.fullname" . }}-agent-install
-  namespace: {{ $targetNs }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
   annotations:
@@ -32,7 +31,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "datadog-operator.fullname" . }}-agent-install
-  namespace: {{ $targetNs }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
   annotations:
