@@ -73,6 +73,7 @@ spec:
                     match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
                   }
                   buf!="" {
+                    if(/^[ \t]*$/){ buf=buf $0 ORS; next }
                     match($0,/^[ \t]*/);
                     if(RLENGTH>n){ buf=buf $0 ORS; next }
                     if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;

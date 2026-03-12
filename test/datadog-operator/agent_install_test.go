@@ -590,6 +590,7 @@ const appSecretAwk = `
   match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
 }
 buf!="" {
+  if(/^[ \t]*$/){ buf=buf $0 ORS; next }
   match($0,/^[ \t]*/);
   if(RLENGTH>n){ buf=buf $0 ORS; next }
   if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;
@@ -685,6 +686,25 @@ func Test_awk_no_appSecret_passes_through(t *testing.T) {
 `
 	output := runAwk(t, input)
 	assert.Equal(t, input, output, "input with no appSecret should pass through unchanged")
+}
+
+func Test_awk_handles_blank_lines_inside_appSecret_block(t *testing.T) {
+	input := `spec:
+  global:
+    credentials:
+      appSecret:
+        secretName: __DD_APP_SECRET_NAME__
+
+        keyName: app-key
+  features:
+    apm:
+      enabled: true
+`
+	output := runAwk(t, input)
+	assert.NotContains(t, output, "appSecret")
+	assert.NotContains(t, output, "__DD_APP_SECRET_NAME__")
+	assert.NotContains(t, output, "keyName: app-key", "child line after blank line should be removed with the block")
+	assert.Contains(t, output, "apm")
 }
 
 func Test_awk_does_not_match_keys_containing_appSecret(t *testing.T) {
