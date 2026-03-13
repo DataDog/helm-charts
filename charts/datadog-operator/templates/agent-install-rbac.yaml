@@ -18,14 +18,6 @@ rules:
   - apiGroups: ["datadoghq.com"]
     resources: ["datadogagents"]
     verbs: ["get", "list", "create", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["serviceaccounts"]
-    verbs: ["delete"]
-    resourceNames: [{{ include "datadog-operator.agentInstallFullname" . | quote }}]
-  - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["roles", "rolebindings"]
-    verbs: ["delete"]
-    resourceNames: [{{ include "datadog-operator.agentInstallFullname" . | quote }}]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

@@ -40,8 +40,6 @@ spec:
             {{- end }}
             - name: NAMESPACE
               value: {{ include "datadog-operator.agentInstallNamespace" . | quote }}
-            - name: INSTALL_NAME
-              value: {{ include "datadog-operator.agentInstallFullname" . | quote }}
           command:
             - /bin/sh
             - -c
@@ -95,13 +93,6 @@ spec:
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
-              echo "Cleaning up installer RBAC..."
-              # Delete binding first (revokes permissions but token stays valid
-              # for in-flight requests), then role, then SA last so the job
-              # retains its identity until the other deletions complete.
-              kubectl delete rolebinding "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
-              kubectl delete role "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
-              kubectl delete serviceaccount "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
