@@ -587,6 +587,30 @@ false
 {{- end -}}
 
 {{/*
+Return true if a system-probe feature other than discovery is enabled.
+*/}}
+{{- define "system-probe-feature-except-discovery" -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if system-probe-lite should be used instead of full system-probe.
+This is the case when discovery and useSystemProbeLite are enabled, and no other
+system-probe feature requires the full binary.
+*/}}
+{{- define "should-use-system-probe-lite" -}}
+{{- if and .Values.datadog.discovery.enabled .Values.datadog.discovery.useSystemProbeLite (eq (include "system-probe-feature-except-discovery" .) "false") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the system-probe container should be created.
 */}}
 {{- define "should-enable-system-probe" -}}
