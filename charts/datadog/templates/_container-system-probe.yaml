@@ -3,7 +3,11 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.systemProbe.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.systemProbe.seccomp "kubeversion" .Capabilities.KubeVersion.Version "apparmor" (and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.systemProbe.apparmor) "mknod" (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) "kill" .Values.datadog.securityAgent.runtime.enforcement.enabled) | nindent 2 }}
+{{- if eq (include "should-use-system-probe-lite" .) "true" }}
+  command: ["/bin/sh", "-c", "system-probe-lite --socket /var/run/sysprobe/sysprobe.sock --log-level ${DD_LOG_LEVEL:-info} || {{ if eq (include "discovery-explicitly-enabled" .) "true" }}system-probe --config=/etc/datadog-agent/system-probe.yaml{{ else }}sleep infinity{{ end }}"]
+{{- else }}
   command: ["system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]
+{{- end }}
 {{- if .Values.agents.containers.systemProbe.ports }}
   ports:
 {{ toYaml .Values.agents.containers.systemProbe.ports | indent 2 }}

@@ -1094,6 +1094,18 @@ datadog:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery
     enabled:  # false
 
+    # datadog.discovery.enabledByDefault -- (bool) When true, discovery is considered enabled
+    # even if `enabled` is not explicitly set. This allows distinguishing between users who
+    # explicitly opted in (fallback: system-probe) vs discovery being on by default
+    # (fallback: sleep infinity to avoid running the heavy system-probe).
+    # This will be changed to true in the future to enable discovery by default.
+    enabledByDefault: false
+
+    # datadog.discovery.useSystemProbeLite -- (bool) Use system-probe-lite for discovery.
+    # When true, and discovery is the only system-probe feature enabled,
+    # the lightweight system-probe-lite binary is used instead of full system-probe.
+    useSystemProbeLite:  # false
+
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
       enabled: true

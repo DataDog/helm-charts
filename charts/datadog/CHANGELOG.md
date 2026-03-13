@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.188.0
+
+* Add system-probe-lite support for discovery in Helm chart ([#2479](https://github.com/DataDog/helm-charts/pull/2479)).
+
 ## 3.187.0
 
 * Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.

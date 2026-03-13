@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.187.0](https://img.shields.io/badge/Version-3.187.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.188.0](https://img.shields.io/badge/Version-3.188.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -799,7 +799,9 @@ helm install <RELEASE_NAME> \
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery |
+| datadog.discovery.enabledByDefault | bool | `false` | When true, discovery is considered enabled even if `enabled` is not explicitly set. This allows distinguishing between users who explicitly opted in (fallback: system-probe) vs discovery being on by default (fallback: sleep infinity to avoid running the heavy system-probe). This will be changed to true in the future to enable discovery by default. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
+| datadog.discovery.useSystemProbeLite | bool | `nil` | Use system-probe-lite for discovery. When true, and discovery is the only system-probe feature enabled, the lightweight system-probe-lite binary is used instead of full system-probe. |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |

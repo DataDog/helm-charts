@@ -576,10 +576,59 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 {{- end -}}
 
 {{/*
+Return true if discovery should be considered active.
+enabled=true → true; enabled=nil + enabledByDefault=true → true; enabled=false → false.
+*/}}
+{{- define "discovery-enabled" -}}
+{{- if .Values.datadog.discovery.enabled -}}
+true
+{{- else if and (kindIs "invalid" .Values.datadog.discovery.enabled) .Values.datadog.discovery.enabledByDefault -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or (eq (include "system-probe-feature-except-discovery" .) "true") (eq (include "discovery-enabled" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a system-probe feature other than discovery is enabled.
+*/}}
+{{- define "system-probe-feature-except-discovery" -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if system-probe-lite should be used instead of full system-probe.
+This is the case when discovery and useSystemProbeLite are enabled, and no other
+system-probe feature requires the full binary.
+*/}}
+{{- define "should-use-system-probe-lite" -}}
+{{- if and (eq (include "discovery-enabled" .) "true") .Values.datadog.discovery.useSystemProbeLite (eq (include "system-probe-feature-except-discovery" .) "false") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the user explicitly set discovery.enabled to true (not nil/unset).
+*/}}
+{{- define "discovery-explicitly-enabled" -}}
+{{- if and (not (kindIs "invalid" .Values.datadog.discovery.enabled)) .Values.datadog.discovery.enabled -}}
 true
 {{- else -}}
 false
