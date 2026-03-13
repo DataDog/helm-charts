@@ -954,6 +954,8 @@ Learn more about Private Action Runner: https://docs.datadoghq.com/actions/priva
 {{- else if eq $migrationMode "auto" -}}
 {{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") -}}
 {{- $migratedSite = true -}}
+{{- else if and (eq $site "datadoghq.eu") (not .Values.datadog.apm.enabled) -}}
+{{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
 {{- if and $migratedSite (not .Values.registry) (ne $site "ddog-gov.com") (ne $site "us3.datadoghq.com") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) }}
