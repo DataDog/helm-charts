@@ -96,9 +96,9 @@ spec:
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
               echo "Cleaning up installer RBAC..."
-              kubectl delete rolebinding "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found
-              kubectl delete role "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found
-              kubectl delete serviceaccount "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found
+              kubectl delete serviceaccount "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
+              kubectl delete rolebinding "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
+              kubectl delete role "$INSTALL_NAME" -n "$NAMESPACE" --ignore-not-found || true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
