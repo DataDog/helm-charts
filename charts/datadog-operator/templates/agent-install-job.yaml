@@ -47,6 +47,16 @@ spec:
             - -c
             - |
               set -e
+              echo "Waiting for RBAC permissions to propagate..."
+              retries=0
+              until kubectl auth can-i create datadogagents.datadoghq.com -n "$NAMESPACE" 2>/dev/null; do
+                retries=$((retries + 1))
+                if [ "$retries" -ge 30 ]; then
+                  echo "Error: timed out waiting for RBAC permissions"
+                  exit 1
+                fi
+                sleep 2
+              done
               echo "Downloading agent config from $AGENT_CONFIG_URL..."
               if command -v curl >/dev/null 2>&1; then
                 curl -fsSL "$AGENT_CONFIG_URL" -o /tmp/agent-config.yaml
