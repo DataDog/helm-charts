@@ -271,6 +271,53 @@
     {{- end }}
     - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
       value: {{ .Values.datadog.kubernetesKubeServiceIgnoreReadiness | quote }}
+    {{- if .Values.datadog.privateActionRunner.enabled }}
+    {{- include "validate-node-private-action-runner-config" . }}
+    {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
+    - name: DD_APP_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ template "datadog.appKeySecretName" . }}
+          key: app-key
+    {{- end }}
+    - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
+      value: {{ .Values.datadog.privateActionRunner.enabled | quote }}
+    {{- if .Values.datadog.privateActionRunner.selfEnroll }}
+    - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
+      value: {{ .Values.datadog.privateActionRunner.selfEnroll | quote }}
+    - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_USE_K8S_SECRET
+      value: "true"
+    - name: DD_PRIVATE_ACTION_RUNNER_IDENTITY_SECRET_NAME
+      value: {{ .Values.datadog.privateActionRunner.identitySecretName | quote }}
+    {{- end }}
+    {{- if and (not .Values.datadog.privateActionRunner.selfEnroll) (or .Values.datadog.privateActionRunner.urn .Values.datadog.privateActionRunner.identityFromExistingSecret) }}
+    {{- if .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+    - name: DD_PRIVATE_ACTION_RUNNER_URN
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: urn
+    - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: private_key
+    {{- else }}
+    {{- if .Values.datadog.privateActionRunner.urn }}
+    - name: DD_PRIVATE_ACTION_RUNNER_URN
+      value: {{ .Values.datadog.privateActionRunner.urn | quote }}
+    {{- end }}
+    {{- if .Values.datadog.privateActionRunner.privateKey }}
+    - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+      value: {{ .Values.datadog.privateActionRunner.privateKey | quote }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.privateActionRunner.actionsAllowlist }}
+    - name: DD_PRIVATE_ACTION_RUNNER_ACTIONS_ALLOWLIST
+      value: {{ .Values.datadog.privateActionRunner.actionsAllowlist | join "," | quote }}
+    {{- end }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
     {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
