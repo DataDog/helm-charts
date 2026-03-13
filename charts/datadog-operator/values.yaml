@@ -249,6 +249,28 @@ watchNamespacesAgentProfile: []
 # watchNamespacesAgentProfile:
 # - ""
 
+# installAgents -- When true, automatically deploys Datadog Agents by creating a DatadogAgent
+# custom resource. The agent configuration is fetched from agentConfigUrl.
+# Requires apiKey (or apiKeyExistingSecret) to be set.
+installAgents: false
+
+# agentConfigUrl -- URL to a DatadogAgent custom resource YAML file. Used when installAgents is true.
+# The YAML file supports placeholder substitution for credential references:
+#   __DD_API_SECRET_NAME__  - replaced with the API key secret name from this chart
+#   __DD_APP_SECRET_NAME__  - replaced with the App key secret name from this chart
+#   __DD_NAMESPACE__        - replaced with the release namespace
+# If not specified, uses the default configuration from the Datadog integrations-management repository.
+agentConfigUrl: ""
+
+agentInstallJob:
+  image:
+    # agentInstallJob.image.repository -- Repository for the agent install job image
+    repository: bitnami/kubectl
+    # agentInstallJob.image.tag -- Tag for the agent install job image
+    tag: "1.31"
+    # agentInstallJob.image.pullPolicy -- Pull policy for the agent install job image
+    pullPolicy: IfNotPresent
+
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
 containerSecurityContext: {}
 

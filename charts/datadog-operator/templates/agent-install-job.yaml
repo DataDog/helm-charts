@@ -1,0 +1,104 @@
+{{- if .Values.installAgents }}
+{{- if ne (include "should-set-dd-api-key" .) "true" -}}
+  {{- fail "installAgents is true but no API key source is configured. Set apiKey, apiKeyExistingSecret, or provide an endpoint-config ConfigMap with api-key-secret-name." -}}
+{{- end -}}
+{{- $defaultUrl := "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-%d" (include "datadog-operator.agentInstallFullname" .) .Release.Revision }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "datadog-operator.agentInstallName" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "datadog-operator.agentInstallFullname" . }}
+      restartPolicy: OnFailure
+      containers:
+        - name: agent-install
+          image: "{{ .Values.agentInstallJob.image.repository }}:{{ .Values.agentInstallJob.image.tag }}"
+          imagePullPolicy: {{ .Values.agentInstallJob.image.pullPolicy }}
+          env:
+            - name: AGENT_CONFIG_URL
+              value: {{ .Values.agentConfigUrl | default $defaultUrl | quote }}
+            - name: API_SECRET_NAME
+              value: {{ include "datadog-operator.apiKeySecretName" . | quote }}
+            {{- if eq (include "should-set-dd-app-key" .) "true" }}
+            - name: APP_SECRET_NAME
+              value: {{ include "datadog-operator.appKeySecretName" . | quote }}
+            {{- end }}
+            - name: NAMESPACE
+              value: {{ include "datadog-operator.agentInstallNamespace" . | quote }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Waiting for RBAC permissions to propagate..."
+              retries=0
+              until kubectl auth can-i create datadogagents.datadoghq.com -n "$NAMESPACE" 2>/dev/null; do
+                retries=$((retries + 1))
+                if [ "$retries" -ge 30 ]; then
+                  echo "Error: timed out waiting for RBAC permissions"
+                  exit 1
+                fi
+                sleep 2
+              done
+              echo "Downloading agent config from $AGENT_CONFIG_URL..."
+              if command -v curl >/dev/null 2>&1; then
+                curl -fsSL "$AGENT_CONFIG_URL" -o /tmp/agent-config.yaml
+              elif command -v wget >/dev/null 2>&1; then
+                wget -q -O /tmp/agent-config.yaml "$AGENT_CONFIG_URL"
+              else
+                echo "Error: neither curl nor wget found"
+                exit 1
+              fi
+              echo "Substituting placeholder values..."
+              sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
+              sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
+              if [ -n "${APP_SECRET_NAME:-}" ]; then
+                sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
+              else
+                echo "No app key configured, removing placeholder appSecret stanza..."
+                # Buffer each appSecret: block (the key line plus more-indented
+                # children). Drop it only when the buffer contains the placeholder
+                # token; print it unchanged otherwise. This preserves real
+                # appSecret stanzas in multi-document or mixed configs.
+                awk '
+                  /^[ \t]*appSecret:/ {
+                    match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
+                  }
+                  buf!="" {
+                    if(/^[ \t]*$/){ buf=buf $0 ORS; next }
+                    match($0,/^[ \t]*/);
+                    if(RLENGTH>n){ buf=buf $0 ORS; next }
+                    if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;
+                    buf=""; n=-1
+                  }
+                  { print }
+                  END { if(buf!="" && buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf }
+                ' /tmp/agent-config.yaml > /tmp/agent-config.tmp && mv /tmp/agent-config.tmp /tmp/agent-config.yaml
+              fi
+              echo "Applying agent configuration..."
+              kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
+              echo "Agent configuration applied successfully."
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

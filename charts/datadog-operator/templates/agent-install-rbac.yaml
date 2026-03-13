@@ -1,0 +1,37 @@
+{{- if .Values.installAgents }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+rules:
+  - apiGroups: ["datadoghq.com"]
+    resources: ["datadogagents"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "datadog-operator.agentInstallFullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

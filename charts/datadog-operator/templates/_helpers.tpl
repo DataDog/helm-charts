@@ -25,6 +25,27 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Name label value for agent-install resources, truncated to 63 chars.
+The base name is truncated to 49 chars first so the "-agent-install"
+suffix (14 chars) is always preserved and never collides with the
+unsuffixed name.
+*/}}
+{{- define "datadog-operator.agentInstallName" -}}
+{{- printf "%s-agent-install" (include "datadog-operator.name" . | trunc 49 | trimSuffix "-") -}}
+{{- end -}}
+
+{{/*
+Fully qualified name for agent-install resources.
+The base fullname is truncated to 45 chars so that after appending
+"-agent-install" (14 chars) the result is 59 chars, leaving room for
+a revision suffix (e.g. "-123") while staying within the 63-char
+DNS label limit for Job names.
+*/}}
+{{- define "datadog-operator.agentInstallFullname" -}}
+{{- printf "%s-agent-install" (include "datadog-operator.fullname" . | trunc 45 | trimSuffix "-") -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "datadog-operator.chart" -}}
@@ -175,6 +196,27 @@ Return the registry migration mode.
   {{- fail (printf "registryMigrationMode must be \"auto\" or \"all\". Got: %q" $mode) -}}
 {{- end -}}
 {{- $mode -}}
+{{- end -}}
+
+{{/*
+Return the namespace where the agent-install Job should create the DatadogAgent.
+Always returns .Release.Namespace because chart-managed credential Secrets
+(secret_api_key.yaml, secret_application_key.yaml) are created there and the
+DatadogAgent credential schema references secrets by name only (no cross-namespace).
+Fails at template time if the operator is configured to not watch the release
+namespace for DatadogAgent resources, since the CR would never be reconciled.
+*/}}
+{{- define "datadog-operator.agentInstallNamespace" -}}
+{{- if .Values.watchNamespacesAgent -}}
+  {{- if not (or (has "" .Values.watchNamespacesAgent) (has .Release.Namespace .Values.watchNamespacesAgent)) -}}
+    {{- fail (printf "installAgents is true but watchNamespacesAgent %v does not include the release namespace %q where credential Secrets are created. Add %q to watchNamespacesAgent or remove installAgents." .Values.watchNamespacesAgent .Release.Namespace .Release.Namespace) -}}
+  {{- end -}}
+{{- else if .Values.watchNamespaces -}}
+  {{- if not (or (has "" .Values.watchNamespaces) (has .Release.Namespace .Values.watchNamespaces)) -}}
+    {{- fail (printf "installAgents is true but watchNamespaces %v does not include the release namespace %q where credential Secrets are created. Add %q to watchNamespaces or remove installAgents." .Values.watchNamespaces .Release.Namespace .Release.Namespace) -}}
+  {{- end -}}
+{{- end -}}
+{{- .Release.Namespace -}}
 {{- end -}}
 
 {{/*
