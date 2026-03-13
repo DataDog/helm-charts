@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 3.190.0
+
+* Extend `registryMigrationMode: "auto"` to EU1 (`datadoghq.eu`) users with `datadog.apm.enabled: false` (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
 ## 3.189.0
 
 * Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
-
 
 ## 3.187.0
 
