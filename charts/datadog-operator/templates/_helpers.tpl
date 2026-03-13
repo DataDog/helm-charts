@@ -35,13 +35,14 @@ unsuffixed name.
 {{- end -}}
 
 {{/*
-Fully qualified name for agent-install resources, truncated to 63 chars.
-The base fullname is truncated to 49 chars first so the "-agent-install"
-suffix (14 chars) is always preserved and never collides with the
-unsuffixed fullname.
+Fully qualified name for agent-install resources.
+The base fullname is truncated to 45 chars so that after appending
+"-agent-install" (14 chars) the result is 59 chars, leaving room for
+a revision suffix (e.g. "-123") while staying within the 63-char
+DNS label limit for Job names.
 */}}
 {{- define "datadog-operator.agentInstallFullname" -}}
-{{- printf "%s-agent-install" (include "datadog-operator.fullname" . | trunc 49 | trimSuffix "-") -}}
+{{- printf "%s-agent-install" (include "datadog-operator.fullname" . | trunc 45 | trimSuffix "-") -}}
 {{- end -}}
 
 {{/*
