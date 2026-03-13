@@ -126,9 +126,9 @@ func TestFIPSFullImageVersionGuard(t *testing.T) {
 		{
 			name: "FIPS with full image and version below 7.78 and doNotCheckTag should use fips-full image",
 			overrides: map[string]string{
-				"useFIPSAgent":              "true",
-				"agents.image.tagSuffix":    "full",
-				"agents.image.tag":          "7.77.0",
+				"useFIPSAgent":               "true",
+				"agents.image.tagSuffix":     "full",
+				"agents.image.tag":           "7.77.0",
 				"agents.image.doNotCheckTag": "true",
 			},
 			expectError:   false,

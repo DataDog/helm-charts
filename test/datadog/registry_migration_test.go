@@ -219,10 +219,10 @@ func TestRegistryMigration(t *testing.T) {
 // is excluded from migration and always uses site-specific registries regardless of registryMigrationMode.
 func TestAdmissionControllerContainerRegistry(t *testing.T) {
 	tests := []struct {
-		name          string
-		site          string
-		mode          string
-		wantRegistry  string
+		name         string
+		site         string
+		mode         string
+		wantRegistry string
 	}{
 		// Migration must not affect the admission controller registry.
 		{name: "US1/auto", site: "", mode: "auto", wantRegistry: "gcr.io/datadoghq"},

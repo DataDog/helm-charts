@@ -38,7 +38,7 @@ func Test_gdcConfigs(t *testing.T) {
 					"datadog.logs.containerCollectAll":        "true",
 					"datadog.logs.containerCollectUsingFiles": "true",
 					"datadog.logs.autoMultiLineDetection":     "true",
-					"providers.gke.gdc":                      "true",
+					"providers.gke.gdc":                       "true",
 				},
 			},
 			assertions: verifyDaemonsetGDCConstraints,

@@ -641,4 +641,3 @@ func Test_NodeAgent_PrivateActionRunner_NotSupported_OnAutopilot(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "Private Action Runner is not supported on GKE Autopilot")
 }
-

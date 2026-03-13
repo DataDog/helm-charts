@@ -1,0 +1,5 @@
+datadog:
+  apiKey: "xxxxx"
+  appKey: "xxxxx"
+  discovery:
+    enabled: true

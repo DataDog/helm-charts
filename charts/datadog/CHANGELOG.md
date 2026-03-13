@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.0
+
+* Add system-probe-lite support for discovery in Helm chart ([#2479](https://github.com/DataDog/helm-charts/pull/2479)).
+
 ## 3.200.0
 
 * Bump Datadog Operator chart dependency to 2.21.0.
