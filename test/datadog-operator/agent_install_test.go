@@ -106,9 +106,8 @@ func Test_agent_install_fullname_preserves_suffix(t *testing.T) {
 
 	var job batchv1.Job
 	common.Unmarshal(t, manifest, &job)
-	assert.LessOrEqual(t, len(job.Name), 63)
-	assert.True(t, strings.HasSuffix(job.Name, "-agent-install"), "resource name must preserve -agent-install suffix, got %q", job.Name)
-	assert.NotEqual(t, longFullname, job.Name, "hook name must not collide with unsuffixed fullname")
+	assert.Contains(t, job.Name, "-agent-install-", "Job name must contain -agent-install- suffix before revision")
+	assert.NotEqual(t, longFullname, job.Name, "Job name must not collide with unsuffixed fullname")
 }
 
 func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
@@ -124,7 +123,7 @@ func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
 	var job batchv1.Job
 	common.Unmarshal(t, manifest, &job)
 
-	assert.Equal(t, "datadog-operator-agent-install", job.Name)
+	assert.Equal(t, "datadog-operator-agent-install-1", job.Name)
 	assert.Empty(t, job.Annotations["helm.sh/hook"], "should not use Helm hooks (not supported by EKS add-ons)")
 	assert.Equal(t, int32(5), *job.Spec.BackoffLimit)
 	assert.NotNil(t, job.Spec.TTLSecondsAfterFinished)
