@@ -722,7 +722,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
-| clusterChecksRunner.remoteConfiguration.enabled | bool | `true` | Enable remote configuration on the Cluster Checks Runner. Set to false to disable remote configuration on the Cluster Checks Runner. |
+| clusterChecksRunner.remoteConfiguration.enabled | bool | `false` | Enable remote configuration on the Cluster Checks Runner. Set to true to enable remote configuration on the Cluster Checks Runner. |
 | clusterChecksRunner.replicas | int | `2` | Number of Cluster Checks Runner instances |
 | clusterChecksRunner.resources | object | `{}` | Datadog clusterchecks-agent resource requests and limits. |
 | clusterChecksRunner.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |

@@ -2008,7 +2008,7 @@ spec:
             - name: DD_APM_ENABLED
               value: "false"
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_HOSTNAME
               valueFrom:
                 fieldRef:

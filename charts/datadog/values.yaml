@@ -2653,8 +2653,8 @@ clusterChecksRunner:
 
   remoteConfiguration:
     # clusterChecksRunner.remoteConfiguration.enabled -- Enable remote configuration on the Cluster Checks Runner.
-    # Set to false to disable remote configuration on the Cluster Checks Runner.
-    enabled: true
+    # Set to true to enable remote configuration on the Cluster Checks Runner.
+    enabled: false
 
   ## Define the Datadog image to work with.
   image:
