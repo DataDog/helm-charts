@@ -1636,6 +1636,18 @@ clusterAgent:
       # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
       enabled: false
 
+    probe:
+      # clusterAgent.admissionController.probe.enabled -- Enable the admission controller connectivity probe.
+      ## The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server.
+      ## (Requires Cluster Agent 7.78.0+).
+      enabled: true
+
+      # clusterAgent.admissionController.probe.interval -- Seconds between probe executions.
+      interval: 60
+
+      # clusterAgent.admissionController.probe.gracePeriod -- Seconds to wait at startup before the first probe.
+      gracePeriod: 60
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
