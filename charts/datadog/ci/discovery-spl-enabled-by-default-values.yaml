@@ -1,0 +1,6 @@
+datadog:
+  apiKey: "xxxxx"
+  appKey: "xxxxx"
+  discovery:
+    enabledByDefault: true
+    useSystemProbeLite: true
