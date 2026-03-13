@@ -45,7 +45,7 @@
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
 | image.tag | string | `"1.25.0-rc.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
-| installAgents | bool | `false` | When true, automatically deploys Datadog Agents by creating a DatadogAgent custom resource. The agent configuration is fetched from agentConfigUrl. Runs as a post-install/post-upgrade Helm hook. Requires apiKey (or apiKeyExistingSecret) to be set. |
+| installAgents | bool | `false` | When true, automatically deploys Datadog Agents by creating a DatadogAgent custom resource. The agent configuration is fetched from agentConfigUrl. Requires apiKey (or apiKeyExistingSecret) to be set. |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
 | livenessProbe | object | `{"initialDelaySeconds":15,"periodSeconds":10}` | Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator. |

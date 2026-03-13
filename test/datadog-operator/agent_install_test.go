@@ -125,10 +125,10 @@ func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
 	common.Unmarshal(t, manifest, &job)
 
 	assert.Equal(t, "datadog-operator-agent-install", job.Name)
-	assert.Equal(t, "post-install,post-upgrade", job.Annotations["helm.sh/hook"])
-	assert.Equal(t, "1", job.Annotations["helm.sh/hook-weight"])
-	assert.Equal(t, "before-hook-creation,hook-succeeded", job.Annotations["helm.sh/hook-delete-policy"])
+	assert.Empty(t, job.Annotations["helm.sh/hook"], "should not use Helm hooks (not supported by EKS add-ons)")
 	assert.Equal(t, int32(5), *job.Spec.BackoffLimit)
+	assert.NotNil(t, job.Spec.TTLSecondsAfterFinished)
+	assert.Equal(t, int32(300), *job.Spec.TTLSecondsAfterFinished)
 
 	container := job.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, "bitnami/kubectl:1.31", container.Image)
@@ -517,7 +517,6 @@ func Test_agent_install_rbac_uses_namespaced_role(t *testing.T) {
 	var sa corev1.ServiceAccount
 	common.Unmarshal(t, docs[0], &sa)
 	assert.Equal(t, "datadog-operator-agent-install", sa.Name)
-	assert.Equal(t, "post-install,post-upgrade", sa.Annotations["helm.sh/hook"])
 
 	// Parse Role
 	var role rbacv1.Role
@@ -539,7 +538,7 @@ func Test_agent_install_rbac_uses_namespaced_role(t *testing.T) {
 	assert.Equal(t, "datadog-operator-agent-install", rb.Subjects[0].Name)
 }
 
-func Test_agent_install_rbac_hook_annotations(t *testing.T) {
+func Test_agent_install_rbac_no_hook_annotations(t *testing.T) {
 	manifest, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
 			"installAgents": "true",
@@ -549,14 +548,10 @@ func Test_agent_install_rbac_hook_annotations(t *testing.T) {
 	))
 	require.NoError(t, err)
 
-	docs := splitManifests(manifest)
-	require.Equal(t, 3, len(docs))
-
-	// All three resources should have hook-weight "0" (before the job at weight "1")
-	for _, doc := range docs {
-		assert.Contains(t, doc, `"helm.sh/hook-weight": "0"`)
-		assert.Contains(t, doc, `"helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded`)
-	}
+	// No Helm hook annotations (not supported by EKS add-ons)
+	assert.NotContains(t, manifest, "helm.sh/hook")
+	assert.NotContains(t, manifest, "helm.sh/hook-weight")
+	assert.NotContains(t, manifest, "helm.sh/hook-delete-policy")
 }
 
 func Test_agent_install_rbac_not_rendered_when_disabled(t *testing.T) {
@@ -579,7 +574,7 @@ func Test_agent_install_job_not_rendered_when_disabled(t *testing.T) {
 
 // --- appSecret awk removal logic tests ---
 //
-// These tests execute the actual awk program from the hook script against
+// These tests execute the actual awk program from the job script against
 // fixture inputs to verify runtime behavior.
 
 // The awk program embedded in agent-install-job.yaml. Kept in sync manually;

@@ -250,8 +250,8 @@ watchNamespacesAgentProfile: []
 # - ""
 
 # installAgents -- When true, automatically deploys Datadog Agents by creating a DatadogAgent
-# custom resource. The agent configuration is fetched from agentConfigUrl. Runs as a
-# post-install/post-upgrade Helm hook. Requires apiKey (or apiKeyExistingSecret) to be set.
+# custom resource. The agent configuration is fetched from agentConfigUrl.
+# Requires apiKey (or apiKeyExistingSecret) to be set.
 installAgents: false
 
 # agentConfigUrl -- URL to a DatadogAgent custom resource YAML file. Used when installAgents is true.

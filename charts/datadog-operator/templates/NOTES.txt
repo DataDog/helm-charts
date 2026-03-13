@@ -57,8 +57,8 @@ Please check Operator README for more details https://github.com/DataDog/datadog
 ####               Agent installation enabled.                            ####
 ##############################################################################
 
-A DatadogAgent custom resource will be created automatically via a post-install
-hook Job. The agent configuration is fetched from:
+A DatadogAgent custom resource will be created automatically via a Job.
+The agent configuration is fetched from:
   {{ .Values.agentConfigUrl | default "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml" }}
 
     {{- if (and (not .Values.apiKeyExistingSecret) (not .Values.apiKey)) }}
