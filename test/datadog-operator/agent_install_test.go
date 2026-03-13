@@ -315,6 +315,27 @@ func Test_agent_install_job_script_appSecret_removal_when_unset(t *testing.T) {
 	assert.Contains(t, manifest, "__DD_APP_SECRET_NAME__")
 }
 
+func Test_agent_install_job_script_cleans_up_rbac(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	assert.Contains(t, manifest, `kubectl delete rolebinding "$INSTALL_NAME"`)
+	assert.Contains(t, manifest, `kubectl delete role "$INSTALL_NAME"`)
+	assert.Contains(t, manifest, `kubectl delete serviceaccount "$INSTALL_NAME"`)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	installNameEnv := findEnvVar(job.Spec.Template.Spec.Containers[0].Env, "INSTALL_NAME")
+	require.NotNil(t, installNameEnv)
+	assert.Equal(t, "datadog-operator-agent-install", installNameEnv.Value)
+}
+
 func Test_agent_install_job_inherits_nodeSelector(t *testing.T) {
 	manifest, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
@@ -522,10 +543,21 @@ func Test_agent_install_rbac_uses_namespaced_role(t *testing.T) {
 	var role rbacv1.Role
 	common.Unmarshal(t, docs[1], &role)
 	assert.Equal(t, "datadog-operator-agent-install", role.Name)
-	require.Equal(t, 1, len(role.Rules))
+	require.Equal(t, 3, len(role.Rules))
+	// Rule 0: datadogagents CRUD
 	assert.Equal(t, []string{"datadoghq.com"}, role.Rules[0].APIGroups)
 	assert.Equal(t, []string{"datadogagents"}, role.Rules[0].Resources)
 	assert.Equal(t, []string{"get", "list", "create", "update", "patch"}, role.Rules[0].Verbs)
+	// Rule 1: self-cleanup — delete own ServiceAccount, scoped by resourceNames
+	assert.Equal(t, []string{""}, role.Rules[1].APIGroups)
+	assert.Equal(t, []string{"serviceaccounts"}, role.Rules[1].Resources)
+	assert.Equal(t, []string{"delete"}, role.Rules[1].Verbs)
+	assert.Equal(t, []string{"datadog-operator-agent-install"}, role.Rules[1].ResourceNames)
+	// Rule 2: self-cleanup — delete own Role and RoleBinding, scoped by resourceNames
+	assert.Equal(t, []string{"rbac.authorization.k8s.io"}, role.Rules[2].APIGroups)
+	assert.Equal(t, []string{"roles", "rolebindings"}, role.Rules[2].Resources)
+	assert.Equal(t, []string{"delete"}, role.Rules[2].Verbs)
+	assert.Equal(t, []string{"datadog-operator-agent-install"}, role.Rules[2].ResourceNames)
 
 	// Parse RoleBinding
 	var rb rbacv1.RoleBinding
