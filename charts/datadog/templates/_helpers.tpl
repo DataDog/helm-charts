@@ -178,6 +178,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the standalone Host Profiler DaemonSet needs to be deployed
+*/}}
+{{- define "should-enable-host-profiler-standalone" -}}
+{{- if and .Values.datadog.hostProfilerStandalone.enabled (eq .Values.targetSystem "linux") (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if Agent Data Plane needs to be deployed
 
 This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
@@ -925,6 +936,21 @@ datadog-agent-fips-config
 
 {{- define "agents-install-host-profiler-configmap-name" -}}
 {{ template "datadog.fullname" . }}-host-profiler-config
+{{- end -}}
+
+{{- define "agents-install-host-profiler-standalone-configmap-name" -}}
+{{ template "datadog.fullname" . }}-host-profiler-standalone-config
+{{- end -}}
+
+{{/*
+Return the ddot-ebpf standalone image path
+*/}}
+{{- define "ddot-ebpf-standalone-image" -}}
+{{- if .Values.datadog.hostProfilerStandalone.image -}}
+{{ .Values.datadog.hostProfilerStandalone.image }}
+{{- else -}}
+datadog/ddot-ebpf-dev:nightly-latest
+{{- end -}}
 {{- end -}}
 
 {{/*
