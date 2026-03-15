@@ -383,6 +383,12 @@ spec:
             value: {{ .Values.clusterAgent.privateActionRunner.actionsAllowlist | join "," | quote }}
           {{- end }}
           {{- end }}
+          {{- if .Values.datadog.apm.instrumentation.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APM_ENABLED
+            value: "true"
+          {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED
             value: {{ .Values.datadog.clusterChecks.enabled | quote }}
