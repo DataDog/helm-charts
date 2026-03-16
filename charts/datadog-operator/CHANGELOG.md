@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.20.0-dev.2
+## 2.19.2
+
+* Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_DEFAULT`, migrating US1 (`datadoghq.com`) and US5 (`us5.datadoghq.com`) Agent image pulls to `registry.datadoghq.com`.
+
+## 2.19.1
 
 * Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_EU`, migrating EU1 (`datadoghq.eu`) Agent image pulls to `registry.datadoghq.com`.
 
