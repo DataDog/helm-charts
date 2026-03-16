@@ -3,10 +3,10 @@
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   {{- if eq .Values.targetSystem "linux" }}
-  command: ["/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E={{ template "datadog.confPath" . }}/privateactionrunner.yaml"]
+  command: ["/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E=/etc/privateactionrunner/privateactionrunner.yaml"]
   {{- end -}}
   {{- if eq .Values.targetSystem "windows" }}
-  command: ["privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E={{ template "datadog.confPath" . }}/privateactionrunner.yaml"]
+  command: ["privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E=/etc/privateactionrunner/privateactionrunner.yaml"]
   {{- end -}}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.privateActionRunner.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
@@ -64,8 +64,7 @@
       readOnly: false
     {{- end }}
     - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
-      mountPath: {{ template "datadog.confPath" . }}/privateactionrunner.yaml
-      subPath: privateactionrunner.yaml
+      mountPath: /etc/privateactionrunner
       readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
     - name: tmpdir
