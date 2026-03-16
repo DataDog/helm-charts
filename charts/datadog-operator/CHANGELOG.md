@@ -2,11 +2,7 @@
 
 ## 2.20.0
 
-* Extend registryMigrationMode auto to US1/US5 (DD_REGISTRY_OVERRIDE_DEFAULT) ([#2483](https://github.com/DataDog/helm-charts/pull/2483)).
-
-## 2.20.0-dev.1
-
-* Update Datadog Operator chart for 1.25.0-rc.1.
+* Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_DEFAULT`, migrating US1 (`datadoghq.com`) and US5 (`us5.datadoghq.com`) Agent image pulls to `registry.datadoghq.com` ([#2483](https://github.com/DataDog/helm-charts/pull/2483)).
 
 ## 2.19.1
 
