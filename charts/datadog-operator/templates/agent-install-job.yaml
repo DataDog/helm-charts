@@ -36,10 +36,6 @@ spec:
           image: "{{ .Values.agentInstallJob.image.repository }}:{{ .Values.agentInstallJob.image.tag }}"
           imagePullPolicy: {{ .Values.agentInstallJob.image.pullPolicy }}
           env:
-            {{- if .Values.agentConfigUrl }}
-            - name: AGENT_CONFIG_URL
-              value: {{ .Values.agentConfigUrl | quote }}
-            {{- end }}
             - name: API_SECRET_NAME
               value: {{ include "datadog-operator.apiKeySecretName" . | quote }}
             {{- if eq (include "should-set-dd-app-key" .) "true" }}
@@ -48,12 +44,10 @@ spec:
             {{- end }}
             - name: NAMESPACE
               value: {{ include "datadog-operator.agentInstallNamespace" . | quote }}
-          {{- if not .Values.agentConfigUrl }}
           volumeMounts:
             - name: agent-config
               mountPath: /etc/agent-config
               readOnly: true
-          {{- end }}
           command:
             - /bin/sh
             - -c
@@ -69,20 +63,8 @@ spec:
                 fi
                 sleep 2
               done
-              {{- if .Values.agentConfigUrl }}
-              echo "Downloading agent config from $AGENT_CONFIG_URL..."
-              if command -v curl >/dev/null 2>&1; then
-                curl -fsSL "$AGENT_CONFIG_URL" -o /tmp/agent-config.yaml
-              elif command -v wget >/dev/null 2>&1; then
-                wget -q -O /tmp/agent-config.yaml "$AGENT_CONFIG_URL"
-              else
-                echo "Error: neither curl nor wget found"
-                exit 1
-              fi
-              {{- else }}
               echo "Using bundled agent configuration..."
               cp /etc/agent-config/agent-config.yaml /tmp/agent-config.yaml
-              {{- end }}
               echo "Substituting placeholder values..."
               sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
               sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
@@ -90,10 +72,6 @@ spec:
                 sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               else
                 echo "No app key configured, removing placeholder appSecret stanza..."
-                # Buffer each appSecret: block (the key line plus more-indented
-                # children). Drop it only when the buffer contains the placeholder
-                # token; print it unchanged otherwise. This preserves real
-                # appSecret stanzas in multi-document or mixed configs.
                 awk '
                   /^[ \t]*appSecret:/ {
                     match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
@@ -112,12 +90,10 @@ spec:
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
-      {{- if not .Values.agentConfigUrl }}
       volumes:
         - name: agent-config
           configMap:
             name: {{ include "datadog-operator.agentInstallFullname" . }}
-      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

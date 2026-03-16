@@ -1,4 +1,4 @@
-{{- if and .Values.installAgents (not .Values.agentConfigUrl) }}
+{{- if .Values.installAgents }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
