@@ -286,7 +286,6 @@ func Test_agent_install_job_script_substitutes_api_key(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Contains(t, manifest, `sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g"`)
-	assert.Contains(t, manifest, `sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g"`)
 	assert.Contains(t, manifest, "kubectl auth can-i create datadogagents", "script should wait for RBAC propagation before proceeding")
 }
 

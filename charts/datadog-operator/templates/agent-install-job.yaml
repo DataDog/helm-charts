@@ -65,7 +65,6 @@ spec:
               done
               cp /etc/agent-config/agent-config.yaml /tmp/agent-config.yaml
               sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
-              sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
               {{- if eq (include "should-set-dd-app-key" .) "true" }}
               sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               {{- end }}

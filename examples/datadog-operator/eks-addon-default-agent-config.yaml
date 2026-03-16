@@ -5,7 +5,6 @@
 # is performed by the agent-install Job:
 #   __DD_API_SECRET_NAME__  - Kubernetes Secret name containing the Datadog API key
 #   __DD_APP_SECRET_NAME__  - Kubernetes Secret name containing the Datadog App key
-#   __DD_NAMESPACE__        - Target namespace for the DatadogAgent resource
 apiVersion: datadoghq.com/v2alpha1
 kind: DatadogAgent
 metadata:
