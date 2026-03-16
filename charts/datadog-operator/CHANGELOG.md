@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.20.0
+
+* Extend registryMigrationMode auto to US1/US5 (DD_REGISTRY_OVERRIDE_DEFAULT) ([#2483](https://github.com/DataDog/helm-charts/pull/2483)).
+
 ## 2.20.0-dev.1
 
 * Update Datadog Operator chart for 1.25.0-rc.1.
