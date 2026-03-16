@@ -8,7 +8,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-%d" (include "datadog-operator.agentInstallFullname" .) .Release.Revision | trunc 63 | trimSuffix "-" }}
+  {{- $revision := printf "%d" .Release.Revision }}
+  name: {{ printf "%s-%s" (include "datadog-operator.agentInstallFullname" . | trunc (int (sub 62 (len $revision))) | trimSuffix "-") $revision }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
