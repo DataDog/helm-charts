@@ -554,6 +554,38 @@ func Test_agent_install_rbac_no_hook_annotations(t *testing.T) {
 	assert.NotContains(t, manifest, "helm.sh/hook-delete-policy")
 }
 
+func Test_agent_install_rbac_skips_sa_when_serviceAccount_create_false(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":        "true",
+			"apiKey":               "test-api-key",
+			"serviceAccount.create": "false",
+		},
+		[]string{"templates/agent-install-rbac.yaml"},
+	))
+	require.NoError(t, err)
+	docs := splitManifests(manifest)
+	// Only Role and RoleBinding, no standalone ServiceAccount document
+	require.Equal(t, 2, len(docs))
+	assert.Contains(t, docs[0], "kind: Role")
+	assert.Contains(t, docs[1], "kind: RoleBinding")
+}
+
+func Test_agent_install_rbac_skips_role_when_rbac_create_false(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"rbac.create":   "false",
+		},
+		[]string{"templates/agent-install-rbac.yaml"},
+	))
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "kind: ServiceAccount")
+	assert.NotContains(t, manifest, "kind: Role")
+	assert.NotContains(t, manifest, "kind: RoleBinding")
+}
+
 func Test_agent_install_rbac_not_rendered_when_disabled(t *testing.T) {
 	_, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{},
