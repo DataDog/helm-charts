@@ -126,8 +126,8 @@ func Test_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
 		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"clusterAgent.privateActionRunner.enabled":        "true",
-			"clusterAgent.privateActionRunner.selfEnroll":     "false",
+			"clusterAgent.privateActionRunner.enabled":                    "true",
+			"clusterAgent.privateActionRunner.selfEnroll":                 "false",
 			"clusterAgent.privateActionRunner.identityFromExistingSecret": "my-par-secret",
 		},
 	})
@@ -292,8 +292,8 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"clusterAgent.privateActionRunner.enabled":       "true",
-			"clusterAgent.privateActionRunner.selfEnroll":    "false",
+			"clusterAgent.privateActionRunner.enabled":    "true",
+			"clusterAgent.privateActionRunner.selfEnroll": "false",
 			"clusterAgent.privateActionRunner.privateKey": "test-key",
 		},
 	})
@@ -301,8 +301,6 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }
-
-// ===== Node Agent (DaemonSet) PAR Tests =====
 
 func Test_NodeAgent_PrivateActionRunner_Disabled(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
