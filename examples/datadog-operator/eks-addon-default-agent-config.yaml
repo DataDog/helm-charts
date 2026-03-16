@@ -1,9 +1,8 @@
 # Default DatadogAgent configuration for EKS add-on automatic agent installation.
 #
-# This file is intended to be published to the integrations-management repository at:
-#   https://github.com/DataDog/integrations-management/blob/main/eks-addon/default-datadog-agent.yaml
-#
-# Placeholder substitution is performed by the agent-install Job:
+# This is the reference copy of the config bundled in the chart's
+# agent-default-config.yaml ConfigMap template. Placeholder substitution
+# is performed by the agent-install Job:
 #   __DD_API_SECRET_NAME__  - Kubernetes Secret name containing the Datadog API key
 #   __DD_APP_SECRET_NAME__  - Kubernetes Secret name containing the Datadog App key
 #   __DD_NAMESPACE__        - Target namespace for the DatadogAgent resource
