@@ -1,4 +1,5 @@
 {{- define "container-private-action-runner" -}}
+{{- include "validate-node-private-action-runner-config" . }}
 - name: private-action-runner
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
@@ -32,6 +33,18 @@
         secretKeyRef:
           name: {{ template "datadog.appKeySecretName" . }}
           key: app-key
+    {{- end }}
+    {{- if and (not .Values.datadog.privateActionRunner.selfEnroll) .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+    - name: DD_PRIVATE_ACTION_RUNNER_URN
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: urn
+    - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: private_key
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET

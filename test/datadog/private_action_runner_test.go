@@ -302,6 +302,16 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }
 
+// findPARContainer finds the private-action-runner container in the DaemonSet
+func findPARContainer(daemonset appsv1.DaemonSet) *corev1.Container {
+	for i := range daemonset.Spec.Template.Spec.Containers {
+		if daemonset.Spec.Template.Spec.Containers[i].Name == "private-action-runner" {
+			return &daemonset.Spec.Template.Spec.Containers[i]
+		}
+	}
+	return nil
+}
+
 func Test_NodeAgent_PrivateActionRunner_Disabled(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
@@ -317,16 +327,16 @@ func Test_NodeAgent_PrivateActionRunner_Disabled(t *testing.T) {
 
 	var daemonset appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &daemonset)
-	envVars := selectPAREnvVars(daemonset.Spec.Template.Spec.Containers[0].Env)
 
-	assert.Empty(t, envVars[DDPAREnabled], "PAR should not be enabled on node agent")
+	parContainer := findPARContainer(daemonset)
+	assert.Nil(t, parContainer, "PAR container should not exist when disabled")
 }
 
 func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml", "templates/rbac.yaml"},
+		ShowOnly:    []string{"templates/daemonset.yaml", "templates/rbac.yaml", "templates/private-action-runner-configmap.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
 			"datadog.apiKeyExistingSecret":           "datadog-secret",
@@ -339,16 +349,13 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 
 	var daemonset appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &daemonset)
-	envVars := selectPAREnvVars(daemonset.Spec.Template.Spec.Containers[0].Env)
 
-	assert.Equal(t, "true", envVars[DDPAREnabled])
-	assert.Equal(t, "true", envVars[DDPARSelfEnroll])
-	assert.Empty(t, envVars[DDPARURN], "URN should not be set in self-enroll mode")
-	assert.Empty(t, envVars[DDPARPrivateKey], "Private key should not be set in self-enroll mode")
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
 
 	// Verify DD_APP_KEY is injected for self-enrollment
 	foundAppKey := false
-	for _, envVar := range daemonset.Spec.Template.Spec.Containers[0].Env {
+	for _, envVar := range parContainer.Env {
 		if envVar.Name == "DD_APP_KEY" {
 			foundAppKey = true
 			assert.NotNil(t, envVar.ValueFrom, "DD_APP_KEY should use valueFrom")
@@ -356,19 +363,23 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 			assert.Equal(t, "app-key", envVar.ValueFrom.SecretKeyRef.Key)
 		}
 	}
-	assert.True(t, foundAppKey, "DD_APP_KEY should be present when PAR is enabled with appKeyExistingSecret")
+	assert.True(t, foundAppKey, "DD_APP_KEY should be present on PAR container")
+
+	// Verify ConfigMap contains self-enroll config
+	assert.Contains(t, manifest, "self_enroll: true")
+	assert.Contains(t, manifest, "identity_use_k8s_secret: true")
+	assert.Contains(t, manifest, "datadog-node-private-action-runner-identity")
 
 	// Verify PAR RBAC is created
 	assert.Contains(t, manifest, "kind: Role")
 	assert.Contains(t, manifest, "datadog-node-private-action-runner")
-	assert.Contains(t, manifest, "datadog-node-private-action-runner-identity")
 }
 
 func Test_NodeAgent_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
+		ShowOnly:    []string{"templates/daemonset.yaml", "templates/private-action-runner-configmap.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
 			"datadog.apiKeyExistingSecret":           "datadog-secret",
@@ -382,12 +393,14 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
 
 	var daemonset appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &daemonset)
-	envVars := selectPAREnvVars(daemonset.Spec.Template.Spec.Containers[0].Env)
 
-	assert.Equal(t, "true", envVars[DDPAREnabled])
-	assert.Empty(t, envVars[DDPARSelfEnroll])
-	assert.Equal(t, "urn:datadog:private-action-runner:organization:123:runner:abc", envVars[DDPARURN])
-	assert.Equal(t, "test-private-key", envVars[DDPARPrivateKey])
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	// Verify ConfigMap contains manual credentials
+	assert.Contains(t, manifest, "self_enroll: false")
+	assert.Contains(t, manifest, "urn:datadog:private-action-runner:organization:123:runner:abc")
+	assert.Contains(t, manifest, "test-private-key")
 }
 
 func Test_NodeAgent_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
@@ -407,28 +420,29 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T)
 
 	var daemonset appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &daemonset)
-	container := daemonset.Spec.Template.Spec.Containers[0]
 
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	// Verify URN and private key env vars reference the existing secret
 	var urnEnv, privateKeyEnv *corev1.EnvVar
-	for i := range container.Env {
-		if container.Env[i].Name == DDPARURN {
-			urnEnv = &container.Env[i]
+	for i := range parContainer.Env {
+		if parContainer.Env[i].Name == DDPARURN {
+			urnEnv = &parContainer.Env[i]
 		}
-		if container.Env[i].Name == DDPARPrivateKey {
-			privateKeyEnv = &container.Env[i]
+		if parContainer.Env[i].Name == DDPARPrivateKey {
+			privateKeyEnv = &parContainer.Env[i]
 		}
 	}
 
-	require.NotNil(t, urnEnv, "URN env var should exist")
-	require.NotNil(t, privateKeyEnv, "Private key env var should exist")
+	require.NotNil(t, urnEnv, "URN env var should exist on PAR container")
+	require.NotNil(t, privateKeyEnv, "Private key env var should exist on PAR container")
 
 	assert.NotNil(t, urnEnv.ValueFrom, "URN should use valueFrom")
-	assert.NotNil(t, urnEnv.ValueFrom.SecretKeyRef, "URN should reference secret")
 	assert.Equal(t, "my-par-secret", urnEnv.ValueFrom.SecretKeyRef.Name)
 	assert.Equal(t, "urn", urnEnv.ValueFrom.SecretKeyRef.Key)
 
 	assert.NotNil(t, privateKeyEnv.ValueFrom, "Private key should use valueFrom")
-	assert.NotNil(t, privateKeyEnv.ValueFrom.SecretKeyRef, "Private key should reference secret")
 	assert.Equal(t, "my-par-secret", privateKeyEnv.ValueFrom.SecretKeyRef.Name)
 	assert.Equal(t, "private_key", privateKeyEnv.ValueFrom.SecretKeyRef.Key)
 }
@@ -437,7 +451,7 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_WithActionsAllowlist(t *testing.
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
+		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
 			"datadog.apiKeyExistingSecret": "datadog-secret",
@@ -450,13 +464,9 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_WithActionsAllowlist(t *testing.
 	})
 	require.NoError(t, err)
 
-	var daemonset appsv1.DaemonSet
-	common.Unmarshal(t, manifest, &daemonset)
-	envVars := selectPAREnvVars(daemonset.Spec.Template.Spec.Containers[0].Env)
-
-	assert.Equal(t, "true", envVars[DDPAREnabled])
-	assert.Contains(t, envVars[DDPARActionsAllowlist], "com.datadoghq.http.request")
-	assert.Contains(t, envVars[DDPARActionsAllowlist], "com.datadoghq.traceroute")
+	// Verify ConfigMap contains the actions allowlist
+	assert.Contains(t, manifest, "com.datadoghq.http.request")
+	assert.Contains(t, manifest, "com.datadoghq.traceroute")
 }
 
 func Test_NodeAgent_PrivateActionRunner_RBAC(t *testing.T) {
