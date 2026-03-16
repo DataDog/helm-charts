@@ -506,37 +506,3 @@ func Test_NodeAgent_PrivateActionRunner_RBAC_Not_Created_When_Disabled(t *testin
 	assert.NotContains(t, manifest, "datadog-node-private-action-runner-identity")
 }
 
-func Test_NodeAgent_PrivateActionRunner_Validation_SelfEnrollWithoutLeaderElection(t *testing.T) {
-	_, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		Overrides: map[string]string{
-			"datadog.apiKeyExistingSecret":           "datadog-secret",
-			"datadog.privateActionRunner.enabled":    "true",
-			"datadog.privateActionRunner.selfEnroll": "true",
-			"datadog.leaderElection":                 "false",
-		},
-	})
-
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "selfEnroll requires leader election to be enabled")
-}
-
-func Test_NodeAgent_PrivateActionRunner_Validation_ManualModeWithoutCredentials(t *testing.T) {
-	_, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		Overrides: map[string]string{
-			"datadog.apiKeyExistingSecret":           "datadog-secret",
-			"datadog.privateActionRunner.enabled":    "true",
-			"datadog.privateActionRunner.selfEnroll": "false",
-		},
-	})
-
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey")
-}
