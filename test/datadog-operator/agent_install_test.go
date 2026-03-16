@@ -369,6 +369,23 @@ func Test_agent_install_job_no_imagePullSecrets_when_unset(t *testing.T) {
 	assert.Empty(t, job.Spec.Template.Spec.ImagePullSecrets)
 }
 
+func Test_agent_install_job_uses_operator_sa_when_create_false(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":        "true",
+			"apiKey":               "test-api-key",
+			"serviceAccount.create": "false",
+			"serviceAccount.name":   "my-preprovisioned-sa",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	assert.Equal(t, "my-preprovisioned-sa", job.Spec.Template.Spec.ServiceAccountName)
+}
+
 // --- Namespace resolution tests ---
 
 func Test_agent_install_namespace_defaults_to_release(t *testing.T) {

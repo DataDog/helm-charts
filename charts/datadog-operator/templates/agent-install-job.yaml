@@ -23,7 +23,11 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "datadog-operator.agentInstallFullname" . }}
+      {{- else }}
+      serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
+      {{- end }}
       restartPolicy: OnFailure
       containers:
         - name: agent-install
