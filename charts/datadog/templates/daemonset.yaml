@@ -167,6 +167,9 @@ spec:
         {{- if eq (include "should-enable-data-plane" .) "true" }}
           {{- include "container-agent-data-plane" . | nindent 6 }}
         {{- end }}
+        {{- if .Values.datadog.privateActionRunner.enabled }}
+          {{- include "container-private-action-runner" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
@@ -187,6 +190,11 @@ spec:
           name: {{ include "agents-install-info-configmap-name" . }}
       - name: config
         emptyDir: {}
+      {{- if .Values.datadog.privateActionRunner.enabled }}
+      - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
+        configMap:
+          name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:

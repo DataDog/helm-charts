@@ -2242,6 +2242,32 @@ agents:
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+    privateActionRunner:
+      # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
+      env: []
+
+      # agents.containers.privateActionRunner.envFrom -- Set environment variables specific to private-action-runner from configMaps and/or secrets
+      envFrom: []
+
+      # agents.containers.privateActionRunner.envDict -- Set environment variables specific to private-action-runner defined in a dict
+      envDict: {}
+
+      # agents.containers.privateActionRunner.logLevel -- Set logging verbosity for the private-action-runner container
+      logLevel:
+
+      # agents.containers.privateActionRunner.resources -- Resource requests and limits for the private-action-runner container.
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 128Mi
+
+      # agents.containers.privateActionRunner.securityContext -- Specify securityContext on the private-action-runner container.
+      securityContext:
+        readOnlyRootFilesystem: true
+
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []

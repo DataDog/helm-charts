@@ -1,0 +1,36 @@
+{{- if .Values.datadog.privateActionRunner.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-privateactionrunner
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+data:
+  privateactionrunner.yaml: |
+    private_action_runner:
+      enabled: true
+      {{- if .Values.datadog.privateActionRunner.selfEnroll }}
+      self_enroll: true
+      identity_use_k8s_secret: true
+      identity_secret_name: {{ .Values.datadog.privateActionRunner.identitySecretName | quote }}
+      {{- else }}
+      self_enroll: false
+      {{- if .Values.datadog.privateActionRunner.urn }}
+      urn: {{ .Values.datadog.privateActionRunner.urn | quote }}
+      {{- end }}
+      {{- if .Values.datadog.privateActionRunner.privateKey }}
+      private_key: {{ .Values.datadog.privateActionRunner.privateKey | quote }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.datadog.privateActionRunner.actionsAllowlist }}
+      actions_allowlist:
+        {{- range .Values.datadog.privateActionRunner.actionsAllowlist }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+{{- end }}
