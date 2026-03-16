@@ -2,6 +2,9 @@
 {{- if ne (include "should-set-dd-api-key" .) "true" -}}
   {{- fail "installAgents is true but no API key source is configured. Set apiKey, apiKeyExistingSecret, or provide an endpoint-config ConfigMap with api-key-secret-name." -}}
 {{- end -}}
+{{- if not .Values.datadogAgent.enabled -}}
+  {{- fail "installAgents is true but datadogAgent.enabled is false. The operator will not reconcile the DatadogAgent resource. Set datadogAgent.enabled=true or disable installAgents." -}}
+{{- end -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

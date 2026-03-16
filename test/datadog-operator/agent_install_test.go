@@ -52,6 +52,19 @@ func Test_agent_install_fails_without_api_key(t *testing.T) {
 	assert.Contains(t, err.Error(), "no API key source")
 }
 
+func Test_agent_install_fails_when_datadogAgent_disabled(t *testing.T) {
+	_, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":       "true",
+			"apiKey":              "test-api-key",
+			"datadogAgent.enabled": "false",
+		},
+		nil,
+	))
+	require.Error(t, err, "should fail when installAgents is true but datadogAgent controller is disabled")
+	assert.Contains(t, err.Error(), "datadogAgent.enabled")
+}
+
 // --- installAgents=false (default) ---
 
 func Test_agent_install_disabled_by_default(t *testing.T) {
