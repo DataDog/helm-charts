@@ -69,8 +69,9 @@ spec:
               sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
               {{- end }}
               echo "Applying agent configuration..."
-              if kubectl get datadogagents.datadoghq.com datadog-agent -n "$NAMESPACE" >/dev/null 2>&1; then
-                echo "DatadogAgent already exists, skipping to preserve user customizations."
+              existing=$(kubectl get datadogagents.datadoghq.com -n "$NAMESPACE" -o name 2>/dev/null)
+              if [ -n "$existing" ]; then
+                echo "DatadogAgent already exists ($existing), skipping to preserve user customizations."
               else
                 kubectl create -f /tmp/agent-config.yaml -n "$NAMESPACE"
                 echo "DatadogAgent created successfully."
