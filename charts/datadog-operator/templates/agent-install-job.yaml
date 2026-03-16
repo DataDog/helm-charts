@@ -6,7 +6,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-%d" (include "datadog-operator.agentInstallFullname" .) .Release.Revision }}
+  name: {{ printf "%s-%d" (include "datadog-operator.agentInstallFullname" .) .Release.Revision | trunc 63 | trimSuffix "-" }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
