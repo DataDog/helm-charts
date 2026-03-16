@@ -35,7 +35,11 @@ roleRef:
   name: {{ include "datadog-operator.agentInstallFullname" . }}
 subjects:
   - kind: ServiceAccount
+    {{- if .Values.serviceAccount.create }}
     name: {{ include "datadog-operator.agentInstallFullname" . }}
+    {{- else }}
+    name: {{ include "datadog-operator.serviceAccountName" . }}
+    {{- end }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
 {{- end }}
