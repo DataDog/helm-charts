@@ -177,6 +177,36 @@ func Test_agent_install_configmap_contains_default_agent_cr(t *testing.T) {
 	assert.Contains(t, manifest, "agent-config.yaml")
 	assert.Contains(t, manifest, "__DD_API_SECRET_NAME__")
 	assert.Contains(t, manifest, "kind: DatadogAgent")
+	// Default should not include site or endpoint
+	assert.NotContains(t, manifest, "site:")
+	assert.NotContains(t, manifest, "endpoint:")
+}
+
+func Test_agent_install_configmap_includes_site_when_set(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"site":          "datadoghq.eu",
+		},
+		[]string{"templates/agent-default-config.yaml"},
+	))
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "site: datadoghq.eu")
+}
+
+func Test_agent_install_configmap_includes_endpoint_url_when_dd_url_set(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"dd_url":        "https://custom.intake.example.com",
+		},
+		[]string{"templates/agent-default-config.yaml"},
+	))
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "endpoint:")
+	assert.Contains(t, manifest, "url: https://custom.intake.example.com")
 }
 
 func Test_agent_install_job_api_secret_from_apiKey(t *testing.T) {

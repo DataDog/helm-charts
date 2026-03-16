@@ -14,6 +14,13 @@ data:
       name: datadog-agent
     spec:
       global:
+        {{- if or .Values.site (eq (include "is-valid-endpoint-config-data" (list . "dd-site")) "true") }}
+        site: {{ default .Values.site (include "get-endpoint-config-data-key" (list . "dd-site")) }}
+        {{- end }}
+        {{- if or .Values.dd_url (eq (include "is-valid-endpoint-config-data" (list . "dd-url")) "true") }}
+        endpoint:
+          url: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
+        {{- end }}
         credentials:
           apiSecret:
             secretName: __DD_API_SECRET_NAME__
