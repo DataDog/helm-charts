@@ -546,7 +546,7 @@ datadog:
     # datadog.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
     actionsAllowlist: []
     #   - "com.datadoghq.http.request"
-    #   - "com.datadoghq.kubernetes.core.*"
+    #   - "com.datadoghq.gitlab.branches.*"
 
   ## Enable logs agent and provide custom configs
   logs:
