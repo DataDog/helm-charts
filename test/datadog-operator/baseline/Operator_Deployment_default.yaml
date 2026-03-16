@@ -60,6 +60,8 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_EU
               value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
           args:
             - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
