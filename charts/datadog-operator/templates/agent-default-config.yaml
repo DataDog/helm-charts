@@ -18,9 +18,11 @@ data:
           apiSecret:
             secretName: __DD_API_SECRET_NAME__
             keyName: api-key
+          {{- if eq (include "should-set-dd-app-key" .) "true" }}
           appSecret:
             secretName: __DD_APP_SECRET_NAME__
             keyName: app-key
+          {{- end }}
       features:
         liveContainerCollection:
           enabled: true

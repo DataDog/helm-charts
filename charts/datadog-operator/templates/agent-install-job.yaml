@@ -63,30 +63,12 @@ spec:
                 fi
                 sleep 2
               done
-              echo "Using bundled agent configuration..."
               cp /etc/agent-config/agent-config.yaml /tmp/agent-config.yaml
-              echo "Substituting placeholder values..."
               sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
               sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
-              if [ -n "${APP_SECRET_NAME:-}" ]; then
-                sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
-              else
-                echo "No app key configured, removing placeholder appSecret stanza..."
-                awk '
-                  /^[ \t]*appSecret:/ {
-                    match($0,/^[ \t]*/); n=RLENGTH; buf=$0 ORS; next
-                  }
-                  buf!="" {
-                    if(/^[ \t]*$/){ buf=buf $0 ORS; next }
-                    match($0,/^[ \t]*/);
-                    if(RLENGTH>n){ buf=buf $0 ORS; next }
-                    if(buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf;
-                    buf=""; n=-1
-                  }
-                  { print }
-                  END { if(buf!="" && buf !~ /__DD_APP_SECRET_NAME__/) printf "%s",buf }
-                ' /tmp/agent-config.yaml > /tmp/agent-config.tmp && mv /tmp/agent-config.tmp /tmp/agent-config.yaml
-              fi
+              {{- if eq (include "should-set-dd-app-key" .) "true" }}
+              sed -i "s/__DD_APP_SECRET_NAME__/$APP_SECRET_NAME/g" /tmp/agent-config.yaml
+              {{- end }}
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
