@@ -2,7 +2,6 @@
 {{- if ne (include "should-set-dd-api-key" .) "true" -}}
   {{- fail "installAgents is true but no API key source is configured. Set apiKey, apiKeyExistingSecret, or provide an endpoint-config ConfigMap with api-key-secret-name." -}}
 {{- end -}}
-{{- $defaultUrl := "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml" }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -34,8 +33,10 @@ spec:
           image: "{{ .Values.agentInstallJob.image.repository }}:{{ .Values.agentInstallJob.image.tag }}"
           imagePullPolicy: {{ .Values.agentInstallJob.image.pullPolicy }}
           env:
+            {{- if .Values.agentConfigUrl }}
             - name: AGENT_CONFIG_URL
-              value: {{ .Values.agentConfigUrl | default $defaultUrl | quote }}
+              value: {{ .Values.agentConfigUrl | quote }}
+            {{- end }}
             - name: API_SECRET_NAME
               value: {{ include "datadog-operator.apiKeySecretName" . | quote }}
             {{- if eq (include "should-set-dd-app-key" .) "true" }}
@@ -44,6 +45,12 @@ spec:
             {{- end }}
             - name: NAMESPACE
               value: {{ include "datadog-operator.agentInstallNamespace" . | quote }}
+          {{- if not .Values.agentConfigUrl }}
+          volumeMounts:
+            - name: agent-config
+              mountPath: /etc/agent-config
+              readOnly: true
+          {{- end }}
           command:
             - /bin/sh
             - -c
@@ -59,6 +66,7 @@ spec:
                 fi
                 sleep 2
               done
+              {{- if .Values.agentConfigUrl }}
               echo "Downloading agent config from $AGENT_CONFIG_URL..."
               if command -v curl >/dev/null 2>&1; then
                 curl -fsSL "$AGENT_CONFIG_URL" -o /tmp/agent-config.yaml
@@ -68,6 +76,10 @@ spec:
                 echo "Error: neither curl nor wget found"
                 exit 1
               fi
+              {{- else }}
+              echo "Using bundled agent configuration..."
+              cp /etc/agent-config/agent-config.yaml /tmp/agent-config.yaml
+              {{- end }}
               echo "Substituting placeholder values..."
               sed -i "s/__DD_API_SECRET_NAME__/$API_SECRET_NAME/g" /tmp/agent-config.yaml
               sed -i "s/__DD_NAMESPACE__/$NAMESPACE/g" /tmp/agent-config.yaml
@@ -97,6 +109,12 @@ spec:
               echo "Applying agent configuration..."
               kubectl apply -f /tmp/agent-config.yaml -n "$NAMESPACE"
               echo "Agent configuration applied successfully."
+      {{- if not .Values.agentConfigUrl }}
+      volumes:
+        - name: agent-config
+          configMap:
+            name: {{ include "datadog-operator.agentInstallFullname" . }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

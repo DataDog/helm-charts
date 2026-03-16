@@ -1,0 +1,36 @@
+{{- if and .Values.installAgents (not .Values.agentConfigUrl) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "datadog-operator.agentInstallFullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+data:
+  agent-config.yaml: |
+    apiVersion: datadoghq.com/v2alpha1
+    kind: DatadogAgent
+    metadata:
+      name: datadog-agent
+    spec:
+      global:
+        credentials:
+          apiSecret:
+            secretName: __DD_API_SECRET_NAME__
+            keyName: api-key
+          appSecret:
+            secretName: __DD_APP_SECRET_NAME__
+            keyName: app-key
+      features:
+        liveContainerCollection:
+          enabled: true
+        liveProcessCollection:
+          enabled: true
+        logCollection:
+          enabled: true
+          containerCollectAll: true
+        apm:
+          enabled: true
+        npm:
+          enabled: true
+{{- end }}

@@ -14,9 +14,6 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 )
 
-const (
-	defaultAgentConfigURL = "https://raw.githubusercontent.com/DataDog/integrations-management/main/eks-addon/default-datadog-agent.yaml"
-)
 
 func baseHelmCommand(overrides map[string]string, showOnly []string) common.HelmCommand {
 	return common.HelmCommand{
@@ -133,7 +130,7 @@ func Test_agent_install_job_rendered_with_apiKey(t *testing.T) {
 	assert.Equal(t, "bitnami/kubectl:1.31", container.Image)
 }
 
-func Test_agent_install_job_default_config_url(t *testing.T) {
+func Test_agent_install_job_uses_bundled_config_by_default(t *testing.T) {
 	manifest, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
 			"installAgents": "true",
@@ -146,10 +143,46 @@ func Test_agent_install_job_default_config_url(t *testing.T) {
 	var job batchv1.Job
 	common.Unmarshal(t, manifest, &job)
 
+	// No AGENT_CONFIG_URL env var when using bundled config
 	env := job.Spec.Template.Spec.Containers[0].Env
 	urlEnv := findEnvVar(env, "AGENT_CONFIG_URL")
-	require.NotNil(t, urlEnv)
-	assert.Equal(t, defaultAgentConfigURL, urlEnv.Value)
+	assert.Nil(t, urlEnv, "AGENT_CONFIG_URL should not be set when using bundled config")
+
+	// ConfigMap volume should be mounted
+	require.Equal(t, 1, len(job.Spec.Template.Spec.Volumes))
+	assert.Equal(t, "agent-config", job.Spec.Template.Spec.Volumes[0].Name)
+	assert.NotNil(t, job.Spec.Template.Spec.Volumes[0].ConfigMap)
+
+	require.Equal(t, 1, len(job.Spec.Template.Spec.Containers[0].VolumeMounts))
+	assert.Equal(t, "/etc/agent-config", job.Spec.Template.Spec.Containers[0].VolumeMounts[0].MountPath)
+	assert.True(t, job.Spec.Template.Spec.Containers[0].VolumeMounts[0].ReadOnly)
+}
+
+func Test_agent_install_default_configmap_created(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+		},
+		[]string{"templates/agent-default-config.yaml"},
+	))
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "kind: ConfigMap")
+	assert.Contains(t, manifest, "agent-config.yaml")
+	assert.Contains(t, manifest, "__DD_API_SECRET_NAME__")
+	assert.Contains(t, manifest, "kind: DatadogAgent")
+}
+
+func Test_agent_install_no_configmap_when_url_set(t *testing.T) {
+	_, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents":  "true",
+			"apiKey":         "test-api-key",
+			"agentConfigUrl": "https://example.com/config.yaml",
+		},
+		[]string{"templates/agent-default-config.yaml"},
+	))
+	assert.Error(t, err, "ConfigMap should not be rendered when agentConfigUrl is set")
 }
 
 func Test_agent_install_job_custom_config_url(t *testing.T) {
