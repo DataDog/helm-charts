@@ -22,7 +22,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      {{- if .Values.serviceAccount.create }}
+      {{- if and .Values.serviceAccount.create .Values.rbac.create }}
       serviceAccountName: {{ include "datadog-operator.agentInstallFullname" . }}
       {{- else }}
       serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}

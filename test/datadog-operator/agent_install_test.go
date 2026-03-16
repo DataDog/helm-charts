@@ -402,7 +402,7 @@ func Test_agent_install_job_no_imagePullSecrets_when_unset(t *testing.T) {
 	assert.Empty(t, job.Spec.Template.Spec.ImagePullSecrets)
 }
 
-func Test_agent_install_job_uses_operator_sa_when_create_false(t *testing.T) {
+func Test_agent_install_job_uses_operator_sa_when_sa_create_false(t *testing.T) {
 	manifest, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
 			"installAgents":        "true",
@@ -417,6 +417,24 @@ func Test_agent_install_job_uses_operator_sa_when_create_false(t *testing.T) {
 	var job batchv1.Job
 	common.Unmarshal(t, manifest, &job)
 	assert.Equal(t, "my-preprovisioned-sa", job.Spec.Template.Spec.ServiceAccountName)
+}
+
+func Test_agent_install_job_uses_operator_sa_when_rbac_create_false(t *testing.T) {
+	manifest, err := common.RenderChart(t, baseHelmCommand(
+		map[string]string{
+			"installAgents": "true",
+			"apiKey":        "test-api-key",
+			"rbac.create":   "false",
+		},
+		[]string{"templates/agent-install-job.yaml"},
+	))
+	require.NoError(t, err)
+
+	var job batchv1.Job
+	common.Unmarshal(t, manifest, &job)
+	// When rbac.create=false, the dedicated SA has no bindings so the Job
+	// must fall back to the operator's SA.
+	assert.Equal(t, "datadog-operator", job.Spec.Template.Spec.ServiceAccountName)
 }
 
 // --- Namespace resolution tests ---
@@ -621,8 +639,10 @@ func Test_agent_install_rbac_skips_sa_when_serviceAccount_create_false(t *testin
 	assert.Contains(t, docs[1], "kind: RoleBinding")
 }
 
-func Test_agent_install_rbac_skips_role_when_rbac_create_false(t *testing.T) {
-	manifest, err := common.RenderChart(t, baseHelmCommand(
+func Test_agent_install_rbac_nothing_when_rbac_create_false(t *testing.T) {
+	// When rbac.create=false, no Role/RoleBinding are created and the
+	// dedicated SA is also skipped (it would have no bindings).
+	_, err := common.RenderChart(t, baseHelmCommand(
 		map[string]string{
 			"installAgents": "true",
 			"apiKey":        "test-api-key",
@@ -630,10 +650,7 @@ func Test_agent_install_rbac_skips_role_when_rbac_create_false(t *testing.T) {
 		},
 		[]string{"templates/agent-install-rbac.yaml"},
 	))
-	require.NoError(t, err)
-	assert.Contains(t, manifest, "kind: ServiceAccount")
-	assert.NotContains(t, manifest, "kind: Role")
-	assert.NotContains(t, manifest, "kind: RoleBinding")
+	assert.Error(t, err, "no resources should be rendered when rbac.create=false")
 }
 
 func Test_agent_install_rbac_not_rendered_when_disabled(t *testing.T) {
