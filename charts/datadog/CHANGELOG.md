@@ -2,7 +2,7 @@
 
 ## 3.189.0
 
-* Add Private Action Runner support for the node agent. PAR runs as a standalone sidecar container in the DaemonSet, matching the Datadog Operator approach. Configuration is passed via a ConfigMap (`privateactionrunner.yaml`). Supports self-enrollment, manual credentials, and existing Kubernetes secrets. Enable with `datadog.privateActionRunner.enabled: true`.
+* Add Private Action Runner support in Node Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
 
 ## 3.187.0
 
