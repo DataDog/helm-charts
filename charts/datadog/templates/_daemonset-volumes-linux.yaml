@@ -231,11 +231,7 @@
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
-{{- else if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
-- hostPath:
-    path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
-{{- else }}
+{{- else if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
 - name: datadogrun
   emptyDir: {}
 {{- end }}
