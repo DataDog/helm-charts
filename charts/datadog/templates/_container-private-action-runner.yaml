@@ -1,4 +1,5 @@
 {{- define "container-private-action-runner" -}}
+{{- include "validate-node-private-action-runner-config" . }}
 - name: private-action-runner
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}

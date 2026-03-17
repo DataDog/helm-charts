@@ -920,25 +920,44 @@ To complete the migration:
 
 {{- end }}
 
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if or .Values.clusterAgent.privateActionRunner.enabled .Values.datadog.privateActionRunner.enabled }}
 
 ###################################################################################
 ####              INFO: Private Action Runner is enabled                       ####
 ###################################################################################
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+
+Cluster Agent Private Action Runner:
 {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
-Private Action Runner is configured for self-enrollment.
-The runner will automatically register with Datadog and store its identity in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
-
+  Private Action Runner is configured for self-enrollment.
+  The runner will automatically register with Datadog and store its identity
+  in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
+{{- else if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+  Private Action Runner is configured with manual credentials.
+  Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+  Ensure the secret contains both 'urn' and 'private_key' keys.
 {{- else }}
-Private Action Runner is configured with manual credentials.
+  Private Action Runner is configured with inline credentials (URN and private key).
+  For better security, consider using an existing secret by setting:
+    clusterAgent.privateActionRunner.identityFromExistingSecret: <secret-name>
+{{- end }}
+{{- end }}
 
-{{- if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
-Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
-Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if .Values.datadog.privateActionRunner.enabled }}
+
+Node Agent Private Action Runner (sidecar):
+{{- if .Values.datadog.privateActionRunner.selfEnroll }}
+  Private Action Runner is configured for self-enrollment.
+  The runner will automatically register with Datadog and store its identity
+  in the Kubernetes secret: {{ .Values.datadog.privateActionRunner.identitySecretName }}
+{{- else if .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+  Private Action Runner is configured with manual credentials.
+  Using existing secret: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+  Ensure the secret contains both 'urn' and 'private_key' keys.
 {{- else }}
-Using inline credentials (URN and private key).
-For better security, consider using an existing secret by setting:
-  clusterAgent.privateActionRunner.identityFromExistingSecret: <secret-name>
+  Private Action Runner is configured with inline credentials (URN and private key).
+  For better security, consider using an existing secret by setting:
+    datadog.privateActionRunner.identityFromExistingSecret: <secret-name>
 {{- end }}
 {{- end }}
 
