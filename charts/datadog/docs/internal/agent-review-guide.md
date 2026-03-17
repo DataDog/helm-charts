@@ -41,12 +41,17 @@ Resource names are derived from the Helm release name via `{{ template "datadog.
 
 ## 3. CHANGELOG and Version Bump Requirements
 
-Every chart change requires all of the following. Flag PRs missing any:
+PRs that modify chart templates, values, or chart behaviour require:
 
-1. Version bump in `charts/datadog/Chart.yaml` (patch for fixes/docs, minor for new features)
+1. Version bump in `charts/datadog/Chart.yaml` (patch for fixes, minor for new features) — use label `datadog/patch-version` or `datadog/minor-version`
 2. Entry in `charts/datadog/CHANGELOG.md`
 3. Updated README via `.github/helm-docs.sh`
 4. Updated baseline manifests via `make update-test-baselines-datadog-agent`
+
+PRs that only change CI/tooling, tests, or documentation (no chart template or values changes) may use `datadog/no-version-bump` and do not require a `Chart.yaml` or `CHANGELOG.md` update. Do not flag these as missing a version bump.
+
+All PRs require:
+
 5. All commits signed and showing as "Verified" on GitHub (GPG, SSH, or S/MIME)
 
 ---
