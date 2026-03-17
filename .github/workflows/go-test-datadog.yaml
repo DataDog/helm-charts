@@ -3,11 +3,15 @@ on:
   push:
     paths:
       - 'test/datadog/**'
-      - 'charts/datadog/**'
+      - 'charts/datadog/requirements.*'
+      - 'charts/datadog/values.*'
+      - 'charts/datadog/templates/**'
   pull_request:
     paths:
       - 'test/datadog/**'
-      - 'charts/datadog/**'
+      - 'charts/datadog/requirements.*'
+      - 'charts/datadog/values.*'
+      - 'charts/datadog/templates/**'
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
