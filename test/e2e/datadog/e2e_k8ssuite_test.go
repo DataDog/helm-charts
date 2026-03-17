@@ -108,7 +108,7 @@ func (s *k8sSuite) testGenericK8sLogs() {
 
 			assert.NoError(c, err)
 
-			s.verifyAPILogs()
+			s.verifyAPILogs(c)
 		}, 5*time.Minute, 15*time.Second, "could not valid logs collection in time")
 	})
 }
@@ -208,15 +208,15 @@ clusterChecksRunner:
 	})
 }
 
-func (s *k8sSuite) verifyAPILogs() {
+func (s *k8sSuite) verifyAPILogs(c *assert.CollectT) {
 	logs, err := s.Env().FakeIntake.Client().FilterLogs("agent")
-	s.Assert().NoError(err)
-	s.Assert().NotEmptyf(logs, fmt.Sprintf("Expected fake intake-ingested logs to not be empty: %s", err))
+	assert.NoError(c, err)
+	assert.NotEmptyf(c, logs, fmt.Sprintf("Expected fake intake-ingested logs to not be empty: %s", err))
 }
 
 func (s *k8sSuite) verifyKSMCheck(c *assert.CollectT) {
 	ksmCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes_state.node.ready")
-	s.Assert().NoError(err)
+	assert.NoError(c, err)
 	require.NotEmpty(c, ksmCheckRun)
 	assert.Equal(c, 0, ksmCheckRun[0].Status, fmt.Sprintf("KSM check status should be running: %s", ksmCheckRun[0].Message))
 
