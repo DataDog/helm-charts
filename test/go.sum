@@ -40,6 +40,8 @@ github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYx
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49/go.mod h1:SvsjzyJlSg0rKsqYgdcFxeEVflx3ZNAyFfkUHP0TxXg=
 github.com/DataDog/test-infra-definitions v0.0.6-0.20251119093242-958482005014 h1:wfpfuDb1/ipgnZkL+gqSIW/+i3PDsh4eS3mwjik4RMw=
 github.com/DataDog/test-infra-definitions v0.0.6-0.20251119093242-958482005014/go.mod h1:0AI8pYB1wDsD+brkIZh7SJiSaZMHUdCMThD7GZHgShQ=
+github.com/DataDog/test-infra-definitions v0.0.7-0.20260317184906-cb1074153bcd h1:iOW24s3HtTaCCqtizpS0vXu0bZ5cHWZL8h6+fbAM8lc=
+github.com/DataDog/test-infra-definitions v0.0.7-0.20260317184906-cb1074153bcd/go.mod h1:0AI8pYB1wDsD+brkIZh7SJiSaZMHUdCMThD7GZHgShQ=
 github.com/DataDog/zstd v1.5.6 h1:LbEglqepa/ipmmQJUDnSsfvA8e8IStVcGaFWDuxvGOY=
 github.com/DataDog/zstd v1.5.6/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
 github.com/DataDog/zstd_0 v0.0.0-20210310093942-586c1286621f h1:5Vuo4niPKFkfwW55jV4vY0ih3VQ9RaQqeqY67fvRn8A=
@@ -426,6 +428,16 @@ github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2 h1:mHiPVwdSQp5VjpvCdPy52FeMiNcscKvJP
 github.com/pulumi/pulumi-aws/sdk/v6 v6.66.2/go.mod h1:C+L8LtajPSwGsZiGgknkCwClUzXk+ZXzSGkOZTQMp3U=
 github.com/pulumi/pulumi-awsx/sdk/v2 v2.19.0 h1:jil2EBzZnKsRDrLfvx2gnAaq17HQLrTbpPsIb3h+98U=
 github.com/pulumi/pulumi-awsx/sdk/v2 v2.19.0/go.mod h1:r+K4M7jnLqvvQDeR/0mBRq2EPZaqsDg24Ciy3ml/thA=
+github.com/pulumi/pulumi-azure-native-sdk/authorization/v2 v2.81.0 h1:Njext/i2DuW6k9qMj7WJmIBuw7PLZ8ccTYEtU3PbX5s=
+github.com/pulumi/pulumi-azure-native-sdk/authorization/v2 v2.81.0/go.mod h1:ef8sOceyTKmnts+QOHAymAVLWXNtKljgl27oOYcq978=
+github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.81.0 h1:xvUrVxwjfhaZCeohnMQN/cTSFKfZGIXsneEWFbtdBXY=
+github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.81.0/go.mod h1:1HK2Eltgq1lFSts/sI1RZE5Mw12qyKdBsszqcnTpbd4=
+github.com/pulumi/pulumi-azure-native-sdk/containerservice/v2 v2.81.0 h1:eQ0/SzOhXcKwESbc0Ahujeo4kI/Y88ghAxblRrcYe6U=
+github.com/pulumi/pulumi-azure-native-sdk/containerservice/v2 v2.81.0/go.mod h1:vsCzO0onkZpFxJWaGsGtFxiD3nV08/P8pNK2wAkTe7w=
+github.com/pulumi/pulumi-azure-native-sdk/managedidentity/v2 v2.81.0 h1:bA2AUo2Mtpyitew41O24kw7wqBqVAhOkUx9Zj4gkTas=
+github.com/pulumi/pulumi-azure-native-sdk/managedidentity/v2 v2.81.0/go.mod h1:cH/JouDXyXfBGvPFBjedwNK9EDYTbWeJmEnoj13Pnpk=
+github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.81.0 h1:RST/rJXeyqqedEkYvS3QvipKwfimvfkbYTai51dz+sI=
+github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.81.0/go.mod h1:pGBaaI/HvyNybS+QVtr5r96IXMepBJpeKg4cXkcIt7U=
 github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0 h1:kGzTe5+RY9/i8dqzV5OyUUxkKgFZE2Fc9QR6t48ec7A=
 github.com/pulumi/pulumi-azure-native-sdk/v2 v2.81.0/go.mod h1:UtcE2JL42940vODuX0oAYmBqWIMRIaRhEDBaQGyr+vA=
 github.com/pulumi/pulumi-command/sdk v1.0.1 h1:ZuBSFT57nxg/fs8yBymUhKLkjJ6qmyN3gNvlY/idiN0=
@@ -438,6 +450,8 @@ github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0 h1:21oSj+TKlKTzQcxN9Hik7iSNNHPUQXN4s
 github.com/pulumi/pulumi-gcp/sdk/v7 v7.38.0/go.mod h1:YaEZms1NgXFqGhObKVofcAeWXu2V+3t/BAXdHQZq7fU=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0 h1:TZ/XhzF+3/jRiGsjlJHCWhXcU5E5tbXU8O0DKnPmFic=
 github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.23.0/go.mod h1:jOdpeNeRvY4iN+W8aDP5+HyqrM7hXsxa9paPsmjQFfY=
+github.com/pulumi/pulumi-libvirt/sdk v0.5.4 h1:7nS8ATK0Iml+yid80BrkW8WDynzwWYevx0cLpbPOYdM=
+github.com/pulumi/pulumi-libvirt/sdk v0.5.4/go.mod h1:HPx6S9mhaHpSHTKDVERTMaziKEpSqY8Trm+m2z1iJ3k=
 github.com/pulumi/pulumi-random/sdk/v4 v4.18.4 h1:mkZ3nB3xLTFZ8Fbh50bXTxiroGpjSyonTFcKovLxWME=
 github.com/pulumi/pulumi-random/sdk/v4 v4.18.4/go.mod h1:BBVUyqFkhCbwvUSnDjubH5b+SeJeoMQH4COGNKaaoUI=
 github.com/pulumi/pulumi-tls/sdk/v4 v4.11.1 h1:tXemWrzeVTqG8zq6hBdv1TdPFXjgZ+dob63a/6GlF1o=
