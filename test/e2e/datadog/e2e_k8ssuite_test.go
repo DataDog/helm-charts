@@ -76,8 +76,8 @@ func (s *k8sSuite) testGenericK8sKubeletCheck() {
 			// assert.Equal(c, 0, kubeletCheckRun[0].Status, fmt.Sprintf("kubelet check status should be running: %s", kubeletCheckRun[0].Message))
 
 			kubeletMetricSeries, err := s.Env().FakeIntake.Client().FilterMetrics("kubernetes.cpu.usage.total", matchOpts...)
-			s.Assert().NoError(err)
-			s.Assert().NotEmptyf(kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
+			assert.NoError(c, err)
+			assert.NotEmptyf(c, kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
 
 		}, 5*time.Minute, 15*time.Second, "could not validate kubelet check in time")
 
@@ -92,7 +92,7 @@ func (s *k8sSuite) testGenericK8sLogs() {
 		// Verify logs collection on agent pod
 		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
 			agentPods, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-			s.Assert().NoError(err)
+			assert.NoError(c, err)
 
 			var agent corev1.Pod
 			containsAgent := false
