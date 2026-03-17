@@ -936,6 +936,11 @@ Cluster Agent Private Action Runner:
   Private Action Runner is configured with manual credentials.
   Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
   Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if or .Values.clusterAgent.privateActionRunner.urn .Values.clusterAgent.privateActionRunner.privateKey }}
+
+  WARNING: clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey are ignored
+  when clusterAgent.privateActionRunner.identityFromExistingSecret is set.
+{{- end }}
 {{- else }}
   Private Action Runner is configured with inline credentials (URN and private key).
   For better security, consider using an existing secret by setting:
@@ -953,6 +958,11 @@ Node Agent Private Action Runner (sidecar):
   Private Action Runner is configured with manual credentials.
   Using existing secret: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
   Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if or .Values.datadog.privateActionRunner.urn .Values.datadog.privateActionRunner.privateKey }}
+
+  WARNING: datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey are ignored
+  when datadog.privateActionRunner.identityFromExistingSecret is set.
+{{- end }}
 {{- else }}
   Private Action Runner is configured with inline credentials (URN and private key).
   For better security, consider using an existing secret by setting:
