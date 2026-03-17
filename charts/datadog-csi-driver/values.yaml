@@ -66,6 +66,13 @@ apm:
   # apm.enabled -- Enable APM/SSI support for the CSI driver.
   enabled: true
 
+  # apm.registryAllowList -- List of allowed container registries for DatadogLibrary CSI volumes.
+  # When empty, all registries are allowed (default). When non-empty, only the listed registries
+  # are permitted as sources for instrumentation libraries.
+  registryAllowList: []
+  #   - public.ecr.aws/datadog
+  #   - gcr.io/datadoghq
+
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/

@@ -1,0 +1,4 @@
+apm:
+  registryAllowList:
+    - public.ecr.aws/datadog
+    - gcr.io/datadoghq

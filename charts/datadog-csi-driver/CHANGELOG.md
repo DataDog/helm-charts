@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+* Add `apm.registryAllowList` configuration option to restrict which container registries are allowed as sources for DatadogLibrary CSI volumes.
+
 ## 0.9.1
 
 * Set csi driver image to `1.2.1`
