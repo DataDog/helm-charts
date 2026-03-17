@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.188.0](https://img.shields.io/badge/Version-3.188.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.189.0](https://img.shields.io/badge/Version-3.189.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -509,6 +509,12 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
+| agents.containers.privateActionRunner.env | list | `[]` | Additional environment variables for the private-action-runner container |
+| agents.containers.privateActionRunner.envFrom | list | `[]` | Set environment variables specific to private-action-runner from configMaps and/or secrets |
+| agents.containers.privateActionRunner.envDict | object | `{}` | Set environment variables specific to private-action-runner defined in a dict |
+| agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
+| agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container |
+| agents.containers.privateActionRunner.securityContext | object | `{"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -932,6 +938,13 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.serviceEndpoints | bool | `false` | Enable generating dedicated checks for service endpoints. |
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. DEPRECATED: Consider using remoteConfiguration.enabled instead |
+| datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
+| datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner. Requires leader election to be enabled. |
+| datadog.privateActionRunner.identitySecretName | string | `"datadog-node-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled |
+| datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) |
+| datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) |
+| datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key |
+| datadog.privateActionRunner.actionsAllowlist | list | `[]` | List of actions executable by the Private Action Runner |
 | datadog.sbom.containerImage.analyzers | list | `["os"]` | List of analyzers to use for container image SBOM generation |
 | datadog.sbom.containerImage.containerExclude | string | `nil` | Exclude containers from SBOM generation, as a space-separated list |
 | datadog.sbom.containerImage.containerInclude | string | `nil` | Include containers in SBOM generation, as a space-separated list. If a container matches an include rule, it’s always included in SBOM generation |

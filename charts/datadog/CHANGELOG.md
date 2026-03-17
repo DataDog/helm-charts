@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.189.0
+
+* Add Private Action Runner support for the node agent. PAR runs as a standalone sidecar container in the DaemonSet, matching the Datadog Operator approach. Configuration is passed via a ConfigMap (`privateactionrunner.yaml`). Supports self-enrollment, manual credentials, and existing Kubernetes secrets. Enable with `datadog.privateActionRunner.enabled: true`.
+
+## 3.188.0
+
+* Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
 ## 3.187.0
 
 * Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
