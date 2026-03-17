@@ -58,6 +58,19 @@ Every chart change requires all of the following. Flag PRs missing any:
 
 ---
 
-## 5. GKE Autopilot and GDC Constraints
+## 5. CODEOWNERS — add new team-owned templates
+
+If a PR introduces a new team-specific template (e.g. `_container-<feature>.yaml`, `<feature>-configmap.yaml`), the author should add it to `.github/CODEOWNERS` under their team. This allows future PRs that only touch those files to be approved and merged by that team without requiring `@DataDog/container-helm-chart-maintainers` sign-off.
+
+Example: if `@DataDog/some-team` adds `charts/datadog/templates/_container-some-feature.yaml`, add:
+```
+charts/datadog/templates/_container-some-feature.yaml  @DataDog/some-team
+```
+
+**Reviewer action:** If a PR adds new `charts/datadog/templates/` files with a clear team owner but does not update CODEOWNERS, flag it.
+
+---
+
+## 6. GKE Autopilot and GDC Constraints
 
 If the PR touches DaemonSet volumes, hostPaths, capabilities, containers, or securityContext fields, also consult [gke-constraints-review-guide.md](gke-constraints-review-guide.md).
