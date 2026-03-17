@@ -948,8 +948,7 @@ Cluster Agent Private Action Runner:
 Node Agent Private Action Runner (sidecar):
 {{- if .Values.datadog.privateActionRunner.selfEnroll }}
   Private Action Runner is configured for self-enrollment.
-  The runner will automatically register with Datadog and store its identity
-  in the Kubernetes secret: {{ .Values.datadog.privateActionRunner.identitySecretName }}
+  The runner will automatically register with Datadog and store its identity in a local file.
 {{- else if .Values.datadog.privateActionRunner.identityFromExistingSecret }}
   Private Action Runner is configured with manual credentials.
   Using existing secret: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}

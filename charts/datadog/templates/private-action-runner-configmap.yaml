@@ -16,8 +16,6 @@ data:
       enabled: true
       {{- if .Values.datadog.privateActionRunner.selfEnroll }}
       self_enroll: true
-      identity_use_k8s_secret: true
-      identity_secret_name: {{ .Values.datadog.privateActionRunner.identitySecretName | quote }}
       {{- else }}
       self_enroll: false
       {{- if .Values.datadog.privateActionRunner.urn }}

@@ -237,36 +237,4 @@ roleRef:
   name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
   apiGroup: ""
 {{- end }} # end range $role := .Values.datadog.secretBackend.roles
-{{- if .Values.datadog.privateActionRunner.enabled }}
----
-apiVersion: {{ template "rbac.apiVersion" . }}
-kind: Role
-metadata:
-  labels:
-{{ include "datadog.labels" . | indent 4 }}
-  name: {{ template "datadog.fullname" . }}-node-private-action-runner
-  namespace: {{ .Release.Namespace }}
-rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  resourceNames:
-    - {{ .Values.datadog.privateActionRunner.identitySecretName | quote }}
-  verbs: ["get", "update", "create"]
----
-apiVersion: {{ template "rbac.apiVersion" . }}
-kind: RoleBinding
-metadata:
-  labels:
-{{ include "datadog.labels" . | indent 4 }}
-  name: "{{ template "datadog.fullname" . }}-node-private-action-runner"
-  namespace: {{ .Release.Namespace }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: {{ template "datadog.fullname" . }}-node-private-action-runner
-subjects:
-  - kind: ServiceAccount
-    name: {{ include "agents.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
-{{- end }}
 {{- end -}}

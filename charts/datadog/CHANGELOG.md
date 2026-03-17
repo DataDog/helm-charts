@@ -2,7 +2,7 @@
 
 ## 3.189.0
 
-* Add Private Action Runner support in Node Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
 
 ## 3.187.0
 

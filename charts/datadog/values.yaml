@@ -522,13 +522,8 @@ datadog:
 
     # datadog.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
     ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
-    ## and store its identity in a Kubernetes secret. Requires leader election to be enabled.
+    ## and store its identity in a local file. Requires leader election to be enabled.
     selfEnroll: true
-
-    # datadog.privateActionRunner.identitySecretName -- Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled
-    ## The node agent will create and manage this secret for storing the enrolled runner's URN and private key
-    ## RBAC permissions are granted specifically for this secret name
-    identitySecretName: "datadog-node-private-action-runner-identity"
 
     # datadog.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
     ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>

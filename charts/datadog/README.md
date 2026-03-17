@@ -939,8 +939,7 @@ helm install <RELEASE_NAME> \
 | datadog.prometheusScrape.version | int | `2` | Version of the openmetrics check to schedule by default. |
 | datadog.remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration. DEPRECATED: Consider using remoteConfiguration.enabled instead |
 | datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
-| datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner. Requires leader election to be enabled. |
-| datadog.privateActionRunner.identitySecretName | string | `"datadog-node-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled |
+| datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner. The runner stores its identity in a local file. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) |
 | datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) |
 | datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key |

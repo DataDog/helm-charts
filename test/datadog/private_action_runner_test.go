@@ -336,7 +336,7 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml", "templates/rbac.yaml", "templates/private-action-runner-configmap.yaml"},
+		ShowOnly:    []string{"templates/daemonset.yaml", "templates/private-action-runner-configmap.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
 			"datadog.apiKeyExistingSecret":           "datadog-secret",
@@ -365,14 +365,10 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 	}
 	assert.True(t, foundAppKey, "DD_APP_KEY should be present on PAR container")
 
-	// Verify ConfigMap contains self-enroll config
+	// Verify ConfigMap contains self-enroll config (identity stored in local file, not k8s secret)
 	assert.Contains(t, manifest, "self_enroll: true")
-	assert.Contains(t, manifest, "identity_use_k8s_secret: true")
-	assert.Contains(t, manifest, "datadog-node-private-action-runner-identity")
-
-	// Verify PAR RBAC is created
-	assert.Contains(t, manifest, "kind: Role")
-	assert.Contains(t, manifest, "datadog-node-private-action-runner")
+	assert.NotContains(t, manifest, "identity_use_k8s_secret")
+	assert.NotContains(t, manifest, "identity_secret_name")
 }
 
 func Test_NodeAgent_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
@@ -469,40 +465,60 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_WithActionsAllowlist(t *testing.
 	assert.Contains(t, manifest, "com.datadoghq.traceroute")
 }
 
-func Test_NodeAgent_PrivateActionRunner_RBAC(t *testing.T) {
+func Test_NodeAgent_PrivateActionRunner_SelfEnroll_WithoutLeaderElection(t *testing.T) {
+	// Node agent stores identity in a local file, not a k8s secret, so leader election is not required
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/rbac.yaml"},
+		ShowOnly:    []string{"templates/daemonset.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"datadog.privateActionRunner.enabled":            "true",
-			"datadog.privateActionRunner.identitySecretName": "my-custom-secret",
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.appKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+			"datadog.leaderElection":                 "false",
 		},
 	})
 	require.NoError(t, err)
 
-	assert.Contains(t, manifest, "kind: Role")
-	assert.Contains(t, manifest, "name: datadog-node-private-action-runner")
-	assert.Contains(t, manifest, "my-custom-secret")
-	assert.Contains(t, manifest, "resources: [\"secrets\"]")
-	assert.Contains(t, manifest, "verbs: [\"get\", \"update\", \"create\"]")
-	assert.Contains(t, manifest, "kind: RoleBinding")
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist even without leader election")
 }
 
-func Test_NodeAgent_PrivateActionRunner_RBAC_Not_Created_When_Disabled(t *testing.T) {
+func Test_NodeAgent_PrivateActionRunner_Validation_ManualModeWithoutCredentials(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "false",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "when selfEnroll is disabled, you must provide either")
+}
+
+func Test_NodeAgent_PrivateActionRunner_No_RBAC_Created(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
 		ShowOnly:    []string{"templates/rbac.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"datadog.privateActionRunner.enabled": "false",
+			"datadog.privateActionRunner.enabled": "true",
 		},
 	})
 	require.NoError(t, err)
 
-	assert.NotContains(t, manifest, "name: datadog-node-private-action-runner")
-	assert.NotContains(t, manifest, "datadog-node-private-action-runner-identity")
+	// Node agent PAR stores identity in a local file, not a k8s secret — no RBAC needed
+	assert.NotContains(t, manifest, "node-private-action-runner")
 }
 
