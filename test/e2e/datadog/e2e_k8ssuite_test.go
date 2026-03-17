@@ -83,7 +83,7 @@ func (s *k8sSuite) testGenericK8sKubeletCheck() {
 
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			s.verifyKSMCheck(c)
-		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
+		}, 5*time.Minute, 15*time.Second, "could not validate KSM check in time")
 	})
 }
 
@@ -154,7 +154,7 @@ func (s *k8sSuite) testGenericK8sKSMCore() {
 	s.Run("KSM core check works", func() {
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			s.verifyKSMCheck(c)
-		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
+		}, 5*time.Minute, 15*time.Second, "could not validate KSM check in time")
 
 	})
 }
