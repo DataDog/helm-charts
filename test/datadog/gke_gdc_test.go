@@ -5,11 +5,13 @@ import (
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	"testing"
 )
 
-var allowedHostPaths = map[string]interface{}{
+// hostPaths permitted in GKE Distributed Cloud (GDC) environments.
+// GDC is more restricted than GKE Autopilot: /proc, /sys/fs/cgroup, and most
+// system-level paths are not available.
+var allowedGDCHostPaths = map[string]interface{}{
 	"/var/datadog/logs":   nil,
 	"/var/log/pods":       nil,
 	"/var/log/containers": nil,
@@ -36,10 +38,28 @@ func Test_gdcConfigs(t *testing.T) {
 					"datadog.logs.containerCollectAll":        "true",
 					"datadog.logs.containerCollectUsingFiles": "true",
 					"datadog.logs.autoMultiLineDetection":     "true",
-					"providers.gke.gdc":                       "true",
+					"providers.gke.gdc":                      "true",
 				},
 			},
-			assertions: verifyDaemonsetGDCMinimal,
+			assertions: verifyDaemonsetGDCConstraints,
+		},
+		{
+			// Validates that disabling logs does not introduce a datadogrun emptyDir:
+			// GDC must always use pointerdir (hostPath) since datadogrun is not allowed.
+			name: "logs disabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.doNotCheckTag":   "true",
+					"providers.gke.gdc":            "true",
+				},
+			},
+			assertions: verifyDaemonsetGDCConstraints,
 		},
 	}
 
@@ -52,47 +72,46 @@ func Test_gdcConfigs(t *testing.T) {
 	}
 }
 
-func verifyDaemonsetGDCMinimal(t *testing.T, manifest string) {
+// verifyDaemonsetGDCConstraints checks that the rendered DaemonSet complies with GDC
+// constraints: only 1 container, no forbidden volumes, all hostPaths within the allowed
+// set, no hostPorts, and all volumeMounts reference defined volumes.
+func verifyDaemonsetGDCConstraints(t *testing.T, manifest string) {
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
-	agentContainer := &corev1.Container{}
 
-	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
-
-	for _, container := range ds.Spec.Template.Spec.Containers {
-		if container.Name == "agent" {
-			agentContainer = &container
-		}
-	}
-
-	assert.NotNil(t, agentContainer)
-
-	var validHostPath = true
-	for _, volume := range ds.Spec.Template.Spec.Volumes {
-		if volume.HostPath != nil {
-			_, validHostPath = allowedHostPaths[volume.HostPath.Path]
-			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
-		}
-	}
+	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers), "GDC only supports the core agent container")
 
 	volumeNames := common.GetVolumeNames(ds)
-	for _, container := range ds.Spec.Template.Spec.Containers {
-		for _, volumeMount := range container.VolumeMounts {
-			assert.True(t, common.Contains(volumeMount.Name, volumeNames),
-				fmt.Sprintf("Found unexpected volumeMount `%s` in container `%s`", volumeMount.Name, container.Name))
+
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		// datadogrun emptyDir is not allowed in GDC; pointerdir (hostPath) must be used
+		assert.NotEqual(t, "datadogrun", volume.Name,
+			"volume datadogrun is not allowed in GDC; use pointerdir instead")
+		if volume.HostPath != nil {
+			_, allowed := allowedGDCHostPaths[volume.HostPath.Path]
+			assert.True(t, allowed, fmt.Sprintf("volume %q uses hostPath %q which is not allowed in GDC", volume.Name, volume.HostPath.Path))
 		}
 	}
 
-	validPorts := true
 	for _, container := range ds.Spec.Template.Spec.Containers {
-		if container.Ports != nil {
-			for _, port := range container.Ports {
-				if port.HostPort > 0 {
-					validPorts = false
-					break
-				}
-			}
+		for _, port := range container.Ports {
+			assert.Equal(t, int32(0), port.HostPort,
+				fmt.Sprintf("container %q has hostPort %d which is not allowed in GDC", container.Name, port.HostPort))
+		}
+		for _, vm := range container.VolumeMounts {
+			assert.True(t, common.Contains(vm.Name, volumeNames),
+				fmt.Sprintf("container %q has volumeMount %q with no matching volume", container.Name, vm.Name))
 		}
 	}
-	assert.True(t, validPorts, "Daemonset has restricted hostPort mounted.")
+
+	for _, initContainer := range ds.Spec.Template.Spec.InitContainers {
+		for _, port := range initContainer.Ports {
+			assert.Equal(t, int32(0), port.HostPort,
+				fmt.Sprintf("init container %q has hostPort %d which is not allowed in GDC", initContainer.Name, port.HostPort))
+		}
+		for _, vm := range initContainer.VolumeMounts {
+			assert.True(t, common.Contains(vm.Name, volumeNames),
+				fmt.Sprintf("init container %q has volumeMount %q with no matching volume", initContainer.Name, vm.Name))
+		}
+	}
 }

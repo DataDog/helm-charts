@@ -5,10 +5,11 @@ import (
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	"testing"
 )
 
+// hostPaths permitted in GKE Autopilot AllowlistedV2Workload mode (GKE < 1.32.1-gke.1729000).
+// This mode only supports the core agent container; system-probe is not available.
 var allowlistedV2WorkloadExemptedHostPaths = map[string]interface{}{
 	"/var/log/pods":                     nil,
 	"/var/log/containers":               nil,
@@ -20,7 +21,8 @@ var allowlistedV2WorkloadExemptedHostPaths = map[string]interface{}{
 	"/var/run/containerd":               nil,
 }
 
-// Test_autopilotAllowlistedV2WorkloadConfigs tests the GKE Autopilot with AllowlistedV2Workload minimal configuration.
+// Test_autopilotAllowlistedV2WorkloadConfigs tests GKE Autopilot in AllowlistedV2Workload
+// (legacy) mode. HELM_FORCE_RENDER=false simulates clusters without WorkloadAllowlist CRDs.
 func Test_autopilotAllowlistedV2WorkloadConfigs(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -57,39 +59,38 @@ func Test_autopilotAllowlistedV2WorkloadConfigs(t *testing.T) {
 func verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal(t *testing.T, manifest string) {
 	var ds appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &ds)
-	agentContainer := &corev1.Container{}
 
 	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
 	assert.Equal(t, ds.Spec.Template.Spec.Containers[0].Name, "agent")
 
-	assert.NotNil(t, agentContainer)
+	volumeNames := common.GetVolumeNames(ds)
 
-	var validHostPath = true
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {
-			_, validHostPath = allowlistedV2WorkloadExemptedHostPaths[volume.HostPath.Path]
-			assert.True(t, validHostPath, fmt.Sprintf("DaemonSet has restricted hostPath mounted: %s ", volume.HostPath.Path))
+			_, allowed := allowlistedV2WorkloadExemptedHostPaths[volume.HostPath.Path]
+			assert.True(t, allowed, fmt.Sprintf("volume %q uses hostPath %q which is not allowed in AllowlistedV2Workload mode", volume.Name, volume.HostPath.Path))
 		}
 	}
 
-	volumeNames := common.GetVolumeNames(ds)
 	for _, container := range ds.Spec.Template.Spec.Containers {
-		for _, volumeMount := range container.VolumeMounts {
-			assert.True(t, common.Contains(volumeMount.Name, volumeNames),
-				fmt.Sprintf("Found unexpected volumeMount `%s` in container `%s`", volumeMount.Name, container.Name))
+		for _, port := range container.Ports {
+			assert.Equal(t, int32(0), port.HostPort,
+				fmt.Sprintf("container %q has hostPort %d which is not allowed", container.Name, port.HostPort))
+		}
+		for _, vm := range container.VolumeMounts {
+			assert.True(t, common.Contains(vm.Name, volumeNames),
+				fmt.Sprintf("container %q has volumeMount %q with no matching volume", container.Name, vm.Name))
 		}
 	}
 
-	validPorts := true
-	for _, container := range ds.Spec.Template.Spec.Containers {
-		if container.Ports != nil {
-			for _, port := range container.Ports {
-				if port.HostPort > 0 {
-					validPorts = false
-					break
-				}
-			}
+	for _, initContainer := range ds.Spec.Template.Spec.InitContainers {
+		for _, port := range initContainer.Ports {
+			assert.Equal(t, int32(0), port.HostPort,
+				fmt.Sprintf("init container %q has hostPort %d which is not allowed", initContainer.Name, port.HostPort))
+		}
+		for _, vm := range initContainer.VolumeMounts {
+			assert.True(t, common.Contains(vm.Name, volumeNames),
+				fmt.Sprintf("init container %q has volumeMount %q with no matching volume", initContainer.Name, vm.Name))
 		}
 	}
-	assert.True(t, validPorts, "DaemonSet has restricted hostPort mounted.")
 }
