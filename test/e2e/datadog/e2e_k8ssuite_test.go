@@ -11,6 +11,7 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -180,8 +181,11 @@ clusterChecksRunner:
 			agentOpts = append(agentOpts, kubernetesagentparams.WithGKEAutopilot())
 		}
 
+		currentDir, _ := os.Getwd()
 		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
 			gcpkubernetes.WithGKEOptions(gkeOpts...),
+			gcpkubernetes.WithWorkloadApp(
+				k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{currentDir, "manifests", "autodiscovery-annotation.yaml"}, "/")})),
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(agentOpts...)))
 
