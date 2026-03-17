@@ -9,7 +9,9 @@ import (
 )
 
 // hostPaths permitted in GKE Autopilot AllowlistedV2Workload mode (GKE < 1.32.1-gke.1729000).
-// This mode only supports the core agent container; system-probe is not available.
+// The allowlist also permits process-agent and trace-agent, but the current chart runs
+// these in-process inside the core agent container, so only 1 container is rendered.
+// system-probe and otel-agent are not permitted by the allowlist.
 var allowlistedV2WorkloadExemptedHostPaths = map[string]interface{}{
 	"/var/log/pods":                     nil,
 	"/var/log/containers":               nil,
