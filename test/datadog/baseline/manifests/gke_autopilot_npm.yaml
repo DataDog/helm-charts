@@ -1753,6 +1753,8 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: pointerdir
         - command:
             - process-agent
             - -config=/etc/datadog-agent/datadog.yaml
