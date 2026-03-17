@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.188.1
+
+* Fix GKE Autopilot and GDC installs broken by PR #2218 and PR #2262. Gates `datadogrun` emptyDir volume/volumeMount (using `pointerdir` hostPath instead) and `KILL` capability on `system-probe` for Autopilot and GDC environments until these changes are added to the Datadog WorkloadAllowlist.
+
 ## 3.187.0
 
 * Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.

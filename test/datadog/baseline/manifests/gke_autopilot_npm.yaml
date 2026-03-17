@@ -1753,8 +1753,6 @@ spec:
             - mountPath: /etc/passwd
               name: passwd
               readOnly: true
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
         - command:
             - process-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -1927,7 +1925,6 @@ spec:
                 - IPC_LOCK
                 - CHOWN
                 - DAC_READ_SEARCH
-                - KILL
             privileged: false
             readOnlyRootFilesystem: true
             seccompProfile:
@@ -2123,8 +2120,9 @@ spec:
         - hostPath:
             path: /var/run/containerd
           name: runtimesocketdir
-        - emptyDir: {}
-          name: datadogrun
+        - hostPath:
+            path: /var/autopilot/addon/datadog/logs
+          name: pointerdir
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

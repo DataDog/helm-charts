@@ -364,7 +364,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
-    {{- else }}
+    {{- else if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
     - name: datadogrun
       mountPath: /opt/datadog-agent/run
     {{- end }}

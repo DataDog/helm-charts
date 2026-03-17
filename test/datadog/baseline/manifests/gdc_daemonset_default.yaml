@@ -1470,8 +1470,6 @@ spec:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: false
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:
@@ -1560,8 +1558,9 @@ spec:
           name: tmpdir
         - emptyDir: {}
           name: s6-run
-        - emptyDir: {}
-          name: datadogrun
+        - hostPath:
+            path: /var/datadog/logs
+          name: pointerdir
         - name: kubelet-cert-volume
           secret:
             secretName: datadog-kubelet-cert
