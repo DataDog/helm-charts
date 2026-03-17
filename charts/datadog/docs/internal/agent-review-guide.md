@@ -65,7 +65,7 @@ All PRs require:
 
 ## 5. CODEOWNERS — add new team-owned templates
 
-If a PR introduces a new team-specific template (e.g. `_container-<feature>.yaml`, `<feature>-configmap.yaml`), the author should add it to `.github/CODEOWNERS` under their team. This allows future PRs that only touch those files to be approved and merged by that team without requiring `@DataDog/container-helm-chart-maintainers` sign-off.
+If a PR introduces a new team-specific template (e.g. `_container-<feature>.yaml`, `<feature>-configmap.yaml`), the author should add it to `.github/CODEOWNERS` under their team. This ensures correct ownership is recorded for future review requests.
 
 Example: if `@DataDog/some-team` adds `charts/datadog/templates/_container-some-feature.yaml`, add:
 ```
