@@ -4,14 +4,12 @@ package datadog
 
 import (
 	"context"
-	"os"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/stretchr/testify/require"
 
 	"github.com/stretchr/testify/assert"
@@ -34,12 +32,8 @@ func TestGKESuite(t *testing.T) {
 	}
 
 	assert.NoError(t, err)
-	currentDir, err := os.Getwd()
-	assert.NoError(t, err)
 
 	e2e.Run(t, &gkeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
-		gcpkubernetes.WithWorkloadApp(
-			k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{currentDir, "manifests", "autodiscovery-annotation.yaml"}, "/")})),
 		gcpkubernetes.WithExtraConfigParams(runnerConfig),
 		gcpkubernetes.WithAgentOptions(
 			kubernetesagentparams.WithHelmRepoURL(""),

@@ -9,12 +9,10 @@ import (
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -30,13 +28,9 @@ func TestGKEAutopilotSuite(t *testing.T) {
 		t.Skipf("Skipping test, problem setting up stack config: %s", err)
 	}
 	assert.NoError(t, err)
-	currentDir, err := os.Getwd()
-	assert.NoError(t, err)
 
 	e2e.Run(t, &gkeAutopilotSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
 		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-		gcpkubernetes.WithWorkloadApp(
-			k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{currentDir, "manifests", "autodiscovery-annotation.yaml"}, "/")})),
 		gcpkubernetes.WithExtraConfigParams(config),
 		gcpkubernetes.WithAgentOptions(
 			kubernetesagentparams.WithGKEAutopilot(),

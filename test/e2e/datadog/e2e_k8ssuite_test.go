@@ -14,7 +14,9 @@ import (
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
 	"path/filepath"
@@ -41,6 +43,51 @@ func (s *k8sSuite) SetupSuite() {
 	}
 	s.DefaultConfig = config
 	s.Assert().NotEmpty(datadogChartPath())
+	s.deployNginxWorkload()
+}
+
+// deployNginxWorkload creates the nginx deployment via client-go instead of
+// Pulumi, so that UpdateEnv (Pulumi stack update) won't try to delete it.
+func (s *k8sSuite) deployNginxWorkload() {
+	k8sClient := s.Env().KubernetesCluster.Client()
+	replicas := int32(1)
+	deployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "nginx-deployment",
+			Namespace: "datadog",
+			Labels:    map[string]string{"app": "nginx"},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{"app": "nginx", "e2e": "autodiscovery"},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{"app": "nginx", "e2e": "autodiscovery"},
+					Annotations: map[string]string{
+						"ad.datadoghq.com/nginx.check_names":  `["http_check"]`,
+						"ad.datadoghq.com/nginx.init_configs": `[{}]`,
+						"ad.datadoghq.com/nginx.instances":    `[{"name": "http_custom_identifier", "url": "http://www.google.com"}]`,
+						"ad.datadoghq.com/tolerate-unready":   "true",
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{{
+						Name:  "nginx",
+						Image: "nginx:1.14.2",
+						Ports: []corev1.ContainerPort{{ContainerPort: 80, Protocol: corev1.ProtocolTCP}},
+					}},
+				},
+			},
+		},
+	}
+
+	_, err := k8sClient.AppsV1().Deployments("datadog").Create(context.TODO(), deployment, metav1.CreateOptions{})
+	if errors.IsAlreadyExists(err) {
+		_, err = k8sClient.AppsV1().Deployments("datadog").Update(context.TODO(), deployment, metav1.UpdateOptions{})
+	}
+	s.Require().NoError(err, "failed to deploy nginx workload")
 }
 
 func datadogChartPath() string {
