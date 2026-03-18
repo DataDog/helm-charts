@@ -2,6 +2,8 @@
 
 Actionable guidance for reviewing PRs to `charts/datadog`. Covers what CI cannot catch automatically.
 
+> **Scope rule:** Focus only on the changes introduced by the PR under review. Do not flag pre-existing issues in unchanged code — those are out of scope and distract from the actual review.
+
 ---
 
 ## 1. Helm Chart Upgrade Compatibility — Breaking Value Changes
@@ -61,6 +63,8 @@ All PRs require:
 - Unit tests: `make unit-test-datadog` — must pass before merge.
 - Baseline manifests in `test/datadog/baseline/manifests/` are golden files. Unexpected diffs signal unintended side effects.
 
+**Reviewer action:** When baseline manifest diffs are present, spot-check the rendered YAML for Kubernetes correctness — missing required fields (e.g., `name`, `containers`, `selector`), invalid field types, mismatched label selectors between a workload's `spec.selector.matchLabels` and its pod template `metadata.labels`, or malformed volume/mount definitions. These errors pass Helm rendering but fail at apply time.
+
 ---
 
 ## 5. CODEOWNERS — add new team-owned templates
@@ -76,6 +80,21 @@ charts/datadog/templates/_container-some-feature.yaml  @DataDog/some-team
 
 ---
 
-## 6. GKE Autopilot and GDC Constraints
+## 6. Avoid Redundant Additions — Prefer Template Simplification
+
+When a PR adds new logic, conditionals, or helpers, check whether the same outcome could be achieved by simplifying or reusing existing template code.
+
+| Pattern to flag | Preferred alternative |
+|---|---|
+| New helper that duplicates logic already in an existing helper | Extend or parameterise the existing helper |
+| Duplicated `if`/`else` blocks across multiple templates | Extract to a shared named template in `_helpers.tpl` |
+| New template file for a feature that could be a conditional block in an existing file | Add the block to the existing file with a feature gate |
+| Copy-pasted value mappings (e.g., env vars, volume mounts) that already exist in another container template | Refactor into a shared partial |
+
+**Reviewer action:** Before approving new template code, verify that no existing helper or partial already covers the same logic. Suggest the approach that is simplest to read, maintain, and reuse.
+
+---
+
+## 7. GKE Autopilot and GDC Constraints
 
 If the PR touches DaemonSet volumes, hostPaths, capabilities, containers, or securityContext fields, also consult [gke-constraints-review-guide.md](gke-constraints-review-guide.md).
