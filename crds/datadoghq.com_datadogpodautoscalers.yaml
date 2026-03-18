@@ -88,14 +88,51 @@ spec:
                           DatadogPodAutoscalerContainerConstraints defines constraints that should always be respected for a container.
                           If no constraints are set, it enables resource scaling for all containers without any constraints.
                         properties:
+                          controlledResources:
+                            description: |-
+                              Specifies the resources for which recommendations will be computed.
+                              If not specified, it defaults to CPU and Memory.
+                              If an empty list is provided, no resource will be controlled (equivalent to Enabled=false).
+                            items:
+                              description: ResourceName is the name identifying various resources in a ResourceList.
+                              type: string
+                            type: array
+                          controlledValues:
+                            description: |-
+                              Specifies whether recommendations are made to Requests and Limits (RequestsAndLimits) or Requests only (RequestsOnly).
+                              The default is "RequestsAndLimits".
+                            enum:
+                              - RequestsAndLimits
+                              - RequestsOnly
+                            type: string
                           enabled:
                             description: Enabled, if false, allows one to disable resource autoscaling for the container. Defaults to true.
                             type: boolean
+                          maxAllowed:
+                            additionalProperties:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: MaxAllowed is the upper limit for the requests of the container.
+                            type: object
+                          minAllowed:
+                            additionalProperties:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: MinAllowed is the lower limit for the requests of the container.
+                            type: object
                           name:
                             description: Name is the name of the container. Can be "*" to apply to all containers.
                             type: string
                           requests:
-                            description: Requests defines the constraints for the requests of the container.
+                            description: |-
+                              Requests defines the constraints for the requests of the container.
+                              WARNING: Deprecated
                             properties:
                               maxAllowed:
                                 additionalProperties:
@@ -123,14 +160,13 @@ spec:
                     maxReplicas:
                       description: MaxReplicas is the upper limit for the number of POD replicas. Needs to be >= minReplicas.
                       format: int32
+                      minimum: 1
                       type: integer
                     minReplicas:
                       description: MinReplicas is the lower limit for the number of pod replicas. Needs to be >= 1. Defaults to 1.
                       format: int32
                       minimum: 1
                       type: integer
-                  required:
-                    - maxReplicas
                   type: object
                 owner:
                   description: |-
@@ -319,6 +355,7 @@ spec:
                             description: Name is the name of the resource.
                             enum:
                               - cpu
+                              - memory
                             type: string
                           value:
                             description: Value is the value of the objective
@@ -489,6 +526,7 @@ spec:
                             description: Name is the name of the resource.
                             enum:
                               - cpu
+                              - memory
                             type: string
                           value:
                             description: Value is the value of the objective.
@@ -950,14 +988,51 @@ spec:
                           DatadogPodAutoscalerContainerConstraints defines constraints that should always be respected for a container.
                           If no constraints are set, it enables resource scaling for all containers without any constraints.
                         properties:
+                          controlledResources:
+                            description: |-
+                              Specifies the resources for which recommendations will be computed.
+                              If not specified, it defaults to CPU and Memory.
+                              If an empty list is provided, no resource will be controlled (equivalent to Enabled=false).
+                            items:
+                              description: ResourceName is the name identifying various resources in a ResourceList.
+                              type: string
+                            type: array
+                          controlledValues:
+                            description: |-
+                              Specifies whether recommendations are made to Requests and Limits (RequestsAndLimits) or Requests only (RequestsOnly).
+                              The default is "RequestsAndLimits".
+                            enum:
+                              - RequestsAndLimits
+                              - RequestsOnly
+                            type: string
                           enabled:
                             description: Enabled, if false, allows one to disable resource autoscaling for the container. Defaults to true.
                             type: boolean
+                          maxAllowed:
+                            additionalProperties:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: MaxAllowed is the upper limit for the requests of the container.
+                            type: object
+                          minAllowed:
+                            additionalProperties:
+                              anyOf:
+                                - type: integer
+                                - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            description: MinAllowed is the lower limit for the requests of the container.
+                            type: object
                           name:
                             description: Name is the name of the container. Can be "*" to apply to all containers.
                             type: string
                           requests:
-                            description: Requests defines the constraints for the requests of the container.
+                            description: |-
+                              Requests defines the constraints for the requests of the container.
+                              WARNING: Deprecated
                             properties:
                               maxAllowed:
                                 additionalProperties:
@@ -985,14 +1060,13 @@ spec:
                     maxReplicas:
                       description: MaxReplicas is the upper limit for the number of POD replicas. Needs to be >= minReplicas.
                       format: int32
+                      minimum: 1
                       type: integer
                     minReplicas:
                       description: MinReplicas is the lower limit for the number of pod replicas. Needs to be >= 1. Defaults to 1.
                       format: int32
                       minimum: 1
                       type: integer
-                  required:
-                    - maxReplicas
                   type: object
                 fallback:
                   default: {}
@@ -1031,6 +1105,7 @@ spec:
                                     description: Name is the name of the resource.
                                     enum:
                                       - cpu
+                                      - memory
                                     type: string
                                   value:
                                     description: Value is the value of the objective
@@ -1201,6 +1276,7 @@ spec:
                                     description: Name is the name of the resource.
                                     enum:
                                       - cpu
+                                      - memory
                                     type: string
                                   value:
                                     description: Value is the value of the objective.
@@ -1277,6 +1353,7 @@ spec:
                             description: Name is the name of the resource.
                             enum:
                               - cpu
+                              - memory
                             type: string
                           value:
                             description: Value is the value of the objective
@@ -1447,6 +1524,7 @@ spec:
                             description: Name is the name of the resource.
                             enum:
                               - cpu
+                              - memory
                             type: string
                           value:
                             description: Value is the value of the objective.

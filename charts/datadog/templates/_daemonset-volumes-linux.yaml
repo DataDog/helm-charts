@@ -190,10 +190,12 @@
   name: host-rpm-dir
 {{- end }}
 {{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
+{{- if and (eq (include "should-add-host-path-for-etc-group" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /etc/group
   name: group
+{{- end }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
 {{- if .Values.datadog.securityAgent.compliance.configMap }}
 - name: complianceconfigdir
   configMap:

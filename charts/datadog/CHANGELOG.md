@@ -1,8 +1,39 @@
 # Datadog changelog
-
-## 3.182.1
+## 3.190.1
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
+
+## 3.190.0
+
+* Extend `registryMigrationMode: "auto"` to EU1 (`datadoghq.eu`) users with `datadog.apm.enabled: false` (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.189.0
+
+* Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
+
+## 3.187.0
+
+* Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.186.0
+
+* Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes are **opt-in** (`enabled: false` by default). Set `otelAgentGateway.containers.otelAgent.livenessProbe.enabled: true` and/or `otelAgentGateway.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `otelAgentGateway.containers.otelAgent.healthPort`). The OTel config must expose the `health_check` extension on that port; the generated default config (used when `otelAgentGateway.config` and `otelAgentGateway.configMap` are unset) does this automatically.
+
+## 3.185.1
+
+* [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
+
+## 3.185.0
+
+* Bump Datadog Operator chart dependency to 2.19.1, image tag to 1.24.0.
+
+## 3.184.0
+
+* Extend `registryMigrationMode: "auto"` to AP2 (`ap2.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.183.0
+
+* Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.
 
 ## 3.182.0
 

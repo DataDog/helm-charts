@@ -43,7 +43,7 @@ registry:  # gcr.io/datadoghq
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
-##   Currently enabled: AP1 (ap1.datadoghq.com) when datadog.apm.enabled is false (the default).
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu, when datadog.apm.enabled is false).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
@@ -493,6 +493,10 @@ datadog:
       - kind: CronJob
         reasons:
           - SawCompletedJob
+    # datadog.kubernetesEvents.maxEventsPerRun -- Maximum number of events you wish to collect per check run.
+    maxEventsPerRun:
+    # datadog.kubernetesEvents.kubernetesEventResyncPeriodS -- Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern
+    kubernetesEventResyncPeriodS:
 
   clusterTagger:
     # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
@@ -2651,6 +2655,11 @@ clusterChecksRunner:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   enabled: false
 
+  remoteConfiguration:
+    # clusterChecksRunner.remoteConfiguration.enabled -- Enable remote configuration on the Cluster Checks Runner.
+    # Set to true to enable remote configuration on the Cluster Checks Runner.
+    enabled: false
+
   ## Define the Datadog image to work with.
   image:
     # clusterChecksRunner.image.name -- Datadog Agent image name to use (relative to `registry`)
@@ -2898,7 +2907,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.23.0
+    tag: 1.24.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3256,6 +3265,31 @@ otelAgentGateway:
       # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
+
+      # otelAgentGateway.containers.otelAgent.healthPort -- Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension)
+      healthPort: 13133
+
+      # otelAgentGateway.containers.otelAgent.livenessProbe -- otel-agent-gateway liveness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      livenessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # otelAgentGateway.containers.otelAgent.readinessProbe -- otel-agent-gateway readiness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      readinessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
 
   ## Provide OTel Collector RBAC configuration in Gateway
   rbac:
