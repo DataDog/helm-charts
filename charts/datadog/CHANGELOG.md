@@ -8,6 +8,10 @@
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
 
+## 3.192.0
+
+* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
 ## 3.191.0
 
 * Extend `registryMigrationMode: "auto"` to all EU1 (`datadoghq.eu`) users regardless of APM configuration. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
