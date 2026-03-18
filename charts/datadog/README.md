@@ -758,13 +758,23 @@ helm install <RELEASE_NAME> \
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
-| datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio) |
+| datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway) |
 | datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
+| datadog.appsec.injector.mode | string | `"sidecar"` | Deployment mode for the AppSec processor. Valid values: "sidecar", "external" |
 | datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
 | datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
 | datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |
 | datadog.appsec.injector.processor.service.namespace | string | `""` | Namespace where the AppSec processor service is deployed |
-| datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
+| datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
+| datadog.appsec.injector.sidecar.bodyParsingSizeLimit | int | `0` | Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely. |
+| datadog.appsec.injector.sidecar.healthPort | int | `8081` | Health check port for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.image | string | `"ghcr.io/datadog/dd-trace-go/service-extensions-callout"` | Container image for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.imageTag | string | `"v2.6.0"` | Image tag for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.port | int | `8080` | Listening port for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.resources.limits.cpu | string | `""` | Optional CPU limit for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.resources.limits.memory | string | `""` | Optional memory limit for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.resources.requests.cpu | string | `"10m"` | CPU request for the AppSec sidecar processor |
+| datadog.appsec.injector.sidecar.resources.requests.memory | string | `"128Mi"` | Memory request for the AppSec sidecar processor |
 | datadog.asm.iast.enabled | bool | `false` | Enable Application Security Management Interactive Application Security Testing by injecting `DD_IAST_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.threats.enabled | bool | `false` | Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster |
