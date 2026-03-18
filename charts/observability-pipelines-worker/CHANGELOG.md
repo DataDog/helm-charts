@@ -1,5 +1,10 @@
-
 # Changelog
+
+## 2.14.1
+
+- Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:
+  - Removed incorrect placement inside `volumeClaimTemplates[].spec.resources`; this is a StatefulSet `spec`-level field, not a PVC spec field.
+  - Gated the field behind the same condition as `volumeClaimTemplates` (`persistence.enabled=true` and no `persistence.existingClaim`), so it is never emitted when no chart-managed PVC template exists.
 
 ## 2.14.0
 
@@ -28,7 +33,7 @@
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
-    - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
+  - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
 
 ## 2.12.2
 
