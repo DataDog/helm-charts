@@ -214,7 +214,8 @@ func (s *k8sSuite) verifyKSMCheck(c *assert.CollectT) {
 	ksmCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes_state.node.ready")
 	assert.NoError(c, err)
 	require.NotEmpty(c, ksmCheckRun)
-	assert.Equal(c, 0, ksmCheckRun[0].Status, fmt.Sprintf("KSM check status should be running: %s", ksmCheckRun[0].Message))
+	// Status 0 = OK, 1 = WARNING (e.g. Autopilot node reporting Ready=unknown during scale-up)
+	assert.LessOrEqual(c, ksmCheckRun[0].Status, 1, fmt.Sprintf("KSM check status should be OK or WARNING: %s", ksmCheckRun[0].Message))
 
 	metricNames, err := s.Env().FakeIntake.Client().GetMetricNames()
 	assert.NoError(c, err)
