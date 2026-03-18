@@ -2,9 +2,9 @@
 
 ## 2.14.1
 
-- Improved Helm template logic for `persistentVolumeClaimRetentionPolicy`:
-  - Now defaults to `Retain` if not set in values.yaml.
-  - Supports custom values (`Delete`, etc.) for both StatefulSet and PVC templates.
+- Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:
+  - Removed incorrect placement inside `volumeClaimTemplates[].spec.resources`; this is a StatefulSet `spec`-level field, not a PVC spec field.
+  - Gated the field behind the same condition as `volumeClaimTemplates` (`persistence.enabled=true` and no `persistence.existingClaim`), so it is never emitted when no chart-managed PVC template exists.
 
 ## 2.14.0
 
