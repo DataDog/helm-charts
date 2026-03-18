@@ -42,6 +42,9 @@
     {{- include "additional-env-entries" .Values.agents.containers.hostProfiler.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.hostProfiler.envDict | indent 4 }}
   volumeMounts:
+    - name: logdatadog                                                                                                                                                 
+      mountPath: {{ template "datadog.logDirectoryPath" . }}                                                                                                           
+      readOnly: false                                                                                                                   
     - name: tracingfs
       mountPath: /sys/kernel/tracing
       readOnly: false
