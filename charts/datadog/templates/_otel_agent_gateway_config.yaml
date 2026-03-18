@@ -1,4 +1,9 @@
 {{- define "otel-agent-gateway-config-configmap-content" -}}
+{{- $gatewayImageTag := .Values.otelAgentGateway.image.tag -}}
+{{- if not $gatewayImageTag -}}
+  {{- $gatewayImageTag = include "get-agent-version" . -}}
+{{- end -}}
+{{- $gatewayImageTag = $gatewayImageTag | toString -}}
 otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .Values.otelAgentGateway.config | indent 4 }}
   {{- else }} |
     receivers:
@@ -18,11 +23,17 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
             flush_timeout: 10s
     processors:
     extensions:
+      health_check:
+        endpoint: 0.0.0.0:{{ .Values.otelAgentGateway.containers.otelAgent.healthPort }}
       datadog:
         api:
           key: ${env:DD_API_KEY}
           site: {{ .Values.datadog.site | default "datadoghq.com" | quote }}
+{{- if or .Values.otelAgentGateway.image.doNotCheckTag (semverCompare ">=7.75.0-0" $gatewayImageTag) }}
+        deployment_type: gateway
+{{- end }}
     service:
+      extensions: [health_check, datadog]
       pipelines:
         traces:
           receivers: [otlp]

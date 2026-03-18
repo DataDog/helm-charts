@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.19.1
+    helm.sh/chart: datadog-operator-2.21.0-dev.1
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.24.0"
+    app.kubernetes.io/version: "1.25.0-rc.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
-          image: "registry.datadoghq.com/operator:1.24.0"
+          image: "registry.datadoghq.com/operator:1.25.0-rc.1"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
@@ -59,6 +59,8 @@ spec:
             - name: DD_REGISTRY_OVERRIDE_ASIA
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_EU
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
           args:
             - "-supportExtendedDaemonset=false"
