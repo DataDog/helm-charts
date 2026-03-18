@@ -473,6 +473,8 @@ datadoghq.azurecr.io
 {{- else if eq $migrationMode "auto" -}}
 {{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") -}}
 {{- $migratedSite = true -}}
+{{- else if and (eq $site "datadoghq.eu") (not .datadog.apm.enabled) -}}
+{{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
 {{- if and $migratedSite (not (or .providers.gke.autopilot .providers.gke.gdc)) -}}
