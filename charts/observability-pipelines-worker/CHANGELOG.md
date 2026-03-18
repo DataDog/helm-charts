@@ -1,5 +1,10 @@
-
 # Changelog
+
+## 2.14.1
+
+- Improved Helm template logic for `persistentVolumeClaimRetentionPolicy`:
+  - Now defaults to `Retain` if not set in values.yaml.
+  - Supports custom values (`Delete`, etc.) for both StatefulSet and PVC templates.
 
 ## 2.14.0
 
@@ -28,7 +33,7 @@
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
-    - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
+  - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
 
 ## 2.12.2
 
