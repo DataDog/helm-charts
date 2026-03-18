@@ -32,3 +32,24 @@ jobs:
           script: |
             const script = require('./.github/scripts/bump-chart-version.js')
             await script({github, context, core, exec})
+
+  validate-chart-version:
+    runs-on: ubuntu-latest
+    # Run after bump-chart-version so that any fixup commit it pushes is visible
+    # when we fetch content via pr.head.ref (branch name resolves to latest HEAD).
+    needs: [bump-chart-version]
+    # Run even if the bump job failed — validation gives independent, actionable feedback.
+    if: ${{ !cancelled() }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate chart version, CHANGELOG, and README badge
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const script = require('./.github/scripts/validate-chart-version.js')
+            await script({github, context, core})

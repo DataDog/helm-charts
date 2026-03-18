@@ -2,6 +2,7 @@
 
 module.exports = async ({github, context, core, exec}) => {
   const fs = require('fs');
+  const { parseVersion, computeBumpedVersion } = require('./chart-version-utils');
 
   const pr = context.payload.pull_request;
   if (!pr) {
@@ -22,33 +23,6 @@ module.exports = async ({github, context, core, exec}) => {
   // Gather all file changes and individual commit messages.
   const fileChanges = [];
   const commitMessages = [];
-
-  // Helper to parse a semver string (e.g., "1.2.3" or "1.2.3-dev.4") into an object
-  // Supports: major.minor.patch[-prerelease]
-  // Pre-release can contain alphanumeric characters and dots
-  // Note: Build metadata (e.g., +build.123) is not supported
-  function parseVersion(versionStr) {
-    // Match semver pattern with optional pre-release (e.g., -dev.4)
-    const match = versionStr.match(/^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?$/);
-    if (!match) {
-      throw new Error(`Invalid version format: ${versionStr}. Expected format: major.minor.patch[-prerelease]`);
-    }
-    return {
-      major: parseInt(match[1], 10),
-      minor: parseInt(match[2], 10),
-      patch: parseInt(match[3], 10),
-      prerelease: match[4] || null
-    };
-  }
-
-  // Helper to produce a semver string
-  function makeVersion({ major, minor, patch, prerelease }) {
-    let version = `${major}.${minor}.${patch}`;
-    if (prerelease) {
-      version += `-${prerelease}`;
-    }
-    return version;
-  }
 
   // Get the list of charts that need a version bump (or changelog update)
   const chartsToBump = [];
@@ -144,45 +118,13 @@ module.exports = async ({github, context, core, exec}) => {
     }
 
     // Calculate the desired version based on bump type.
-    let desiredParsed = { ...baseParsed };
-    
-    // Skip version bump calculation for no-version-bump label
-    if (bumpType === 'no-version-bump') {
-      core.info(`No version bump requested for '${chartName}' (no-version-bump label).`);
-      // desiredParsed stays the same as baseParsed
+    let desiredVersion;
+    try {
+      desiredVersion = computeBumpedVersion(baseParsed, bumpType);
+    } catch (error) {
+      core.setFailed(`Could not compute bumped version for ${chartName}: ${error.message}`);
+      return;
     }
-    // If the base version is a pre-release, handle based on bump type
-    else if (baseParsed.prerelease) {
-      core.info(`Base version '${baseVersion}' is a pre-release version.`);
-      
-      if (bumpType === 'minor-version') {
-        // For minor-version, drop the pre-release suffix to promote to full release
-        core.info(`Promoting pre-release to full release version (dropping pre-release suffix).`);
-        desiredParsed.prerelease = null;
-      } else if (bumpType === 'patch-version') {
-        // For patch-version, bump the pre-release number
-        // Expected format: <letters>.<number> (e.g., dev.2, alpha.1, beta.5)
-        const prereleaseMatch = baseParsed.prerelease.match(/^([a-zA-Z]+)\.(\d+)$/);
-        if (prereleaseMatch) {
-          const prereleasePrefix = prereleaseMatch[1];
-          const prereleaseNumber = parseInt(prereleaseMatch[2], 10);
-          desiredParsed.prerelease = `${prereleasePrefix}.${prereleaseNumber + 1}`;
-          core.info(`Bumping pre-release number from ${baseParsed.prerelease} to ${desiredParsed.prerelease}`);
-        } else {
-          core.setFailed(`Pre-release format '${baseParsed.prerelease}' for ${chartName} is not supported for patch bumping. Expected format: '<letters>.<number>' (e.g., 'dev.2', 'alpha.1'). Unsupported formats include: 'rc1', 'dev-2', 'beta.1.2'.`);
-          return;
-        }
-      }
-    } else {
-      // Standard semver bump for non-pre-release versions
-      if (bumpType === 'patch-version') {
-        desiredParsed.patch += 1;
-      } else if (bumpType === 'minor-version') {
-        desiredParsed.minor += 1;
-        desiredParsed.patch = 0;
-      }
-    }
-    const desiredVersion = makeVersion(desiredParsed);
     core.info(`Desired version for '${chartName}' is '${desiredVersion}'.`);
 
     // If the Chart.yaml version is not what we expect, update it.
