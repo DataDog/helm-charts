@@ -493,6 +493,10 @@ datadog:
       - kind: CronJob
         reasons:
           - SawCompletedJob
+    # datadog.kubernetesEvents.maxEventsPerRun -- Maximum number of events you wish to collect per check run.
+    maxEventsPerRun: 
+    # datadog.kubernetesEvents.kubernetesEventResyncPeriodS -- Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern
+    kubernetesEventResyncPeriodS: 
 
   clusterTagger:
     # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
