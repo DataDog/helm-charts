@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.188.0
+## 3.189.0
 
 * Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
 
