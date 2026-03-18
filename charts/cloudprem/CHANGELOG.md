@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.2.2
+
+* Update Docker image to `v0.1.22`
+
+## 0.2.1
+
+* Add support for annotations on indexer PersistentVolumeClaim (`indexer.persistentVolume.annotations`)
+* Propagate global `annotations` and `podAnnotations` to index/source creation jobs
+* Conditionally render services based on component `enabled` flag
+* Merge upstream Quickwit Helm chart version 0.8.3
+
+## 0.2.0
+
+* Update Docker image to `v0.1.21`
+* Add auto-configuration based on pod size (`podSize`)
+* Merge upstream Quickwit Helm chart version 0.8.1
+  * **Breaking:** Component-specific `affinity` values (e.g. `searcher.affinity`) now take precedence over global `affinity`. Previously, global values took precedence.
+
+## 0.1.15
+
+* Read availability zone using Kubernetes Downward API
+* Disable self-export and ingest of traces by default
+
 ## 0.1.14
 
 * Add support for PodDisruptionBudget for metastore

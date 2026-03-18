@@ -945,3 +945,33 @@ For better security, consider using an existing secret by setting:
 Learn more about Private Action Runner: https://docs.datadoghq.com/actions/private_actions/
 
 {{- end }}
+
+{{- $site := default "datadoghq.com" .Values.datadog.site -}}
+{{- $migrationMode := default "" .Values.registryMigrationMode -}}
+{{- $migratedSite := false -}}
+{{- if eq $migrationMode "all" -}}
+{{- $migratedSite = true -}}
+{{- else if eq $migrationMode "auto" -}}
+{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") -}}
+{{- $migratedSite = true -}}
+{{- else if and (eq $site "datadoghq.eu") (not .Values.datadog.apm.enabled) -}}
+{{- $migratedSite = true -}}
+{{- end -}}
+{{- end -}}
+{{- if and $migratedSite (not .Values.registry) (ne $site "ddog-gov.com") (ne $site "us3.datadoghq.com") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) }}
+
+###################################################################################
+####               NOTICE: Registry migration                                  ####
+###################################################################################
+
+Agent images for site {{ $site }} are now pulled from registry.datadoghq.com
+instead of the previous site-specific registry.
+
+To revert to the previous registry, set registryMigrationMode to "" in your values:
+
+    helm upgrade {{ .Release.Name }} datadog/datadog \
+        --set registryMigrationMode=""
+
+For more details, see: https://docs.datadoghq.com/containers/guide/changing_container_registry/
+
+{{- end }}

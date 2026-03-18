@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.180.0](https://img.shields.io/badge/Version-3.180.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.190.1](https://img.shields.io/badge/Version-3.190.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -33,7 +33,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.13.1 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.9.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.18.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.19.1 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -588,6 +588,9 @@ helm install <RELEASE_NAME> \
 | agents.volumes | list | `[]` | Specify additional volumes to mount in the dd-agent container |
 | clusterAgent.additionalLabels | object | `{}` | Adds labels to the Cluster Agent deployment and pods |
 | clusterAgent.admissionController.agentSidecarInjection.clusterAgentCommunicationEnabled | bool | `true` | Enable communication between Agent sidecars and the Cluster Agent. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification | object | `{"copyCaConfigMap":false,"enabled":false}` | TLS verification configuration for sidecar-to-cluster-agent communication. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap | bool | `false` | Enable automatic creation of a ConfigMap containing the Cluster Agent's CA certificate in namespaces where sidecar injection occurs. |
+| clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled | bool | `false` | Enable TLS verification for Agent sidecars communicating with the Cluster Agent. |
 | clusterAgent.admissionController.agentSidecarInjection.containerRegistry | string | `nil` | Override the default registry for the sidecar Agent. |
 | clusterAgent.admissionController.agentSidecarInjection.enabled | bool | `false` | Enables Datadog Agent sidecar injection. |
 | clusterAgent.admissionController.agentSidecarInjection.imageName | string | `nil` |  |
@@ -719,6 +722,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterChecksRunner.rbac.dedicated is true |
 | clusterChecksRunner.rbac.serviceAccountName | string | `"default"` | Specify a preexisting ServiceAccount to use if clusterChecksRunner.rbac.create is false |
 | clusterChecksRunner.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
+| clusterChecksRunner.remoteConfiguration.enabled | bool | `false` | Enable remote configuration on the Cluster Checks Runner. Set to true to enable remote configuration on the Cluster Checks Runner. |
 | clusterChecksRunner.replicas | int | `2` | Number of Cluster Checks Runner instances |
 | clusterChecksRunner.resources | object | `{}` | Datadog clusterchecks-agent resource requests and limits. |
 | clusterChecksRunner.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
@@ -857,6 +861,8 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
+| datadog.kubernetesEvents.kubernetesEventResyncPeriodS | string | `nil` | Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern |
+| datadog.kubernetesEvents.maxEventsPerRun | string | `nil` | Maximum number of events you wish to collect per check run. |
 | datadog.kubernetesEvents.sourceDetectionEnabled | bool | `false` | Enable this to map Kubernetes events to integration sources based on controller names. (Requires Cluster Agent 7.56.0+). |
 | datadog.kubernetesEvents.unbundleEvents | bool | `false` | Allow unbundling kubernetes events, 1:1 mapping between Kubernetes and Datadog events. (Requires Cluster Agent 7.42.0+). |
 | datadog.kubernetesKubeServiceIgnoreReadiness | bool | `false` | Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+). |
@@ -1039,7 +1045,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.23.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.24.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
@@ -1058,7 +1064,10 @@ helm install <RELEASE_NAME> \
 | otelAgentGateway.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container |
 | otelAgentGateway.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict |
 | otelAgentGateway.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets |
+| otelAgentGateway.containers.otelAgent.healthPort | int | `13133` | Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension) |
+| otelAgentGateway.containers.otelAgent.livenessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway liveness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
 | otelAgentGateway.containers.otelAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
+| otelAgentGateway.containers.otelAgent.readinessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway readiness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
 | otelAgentGateway.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | otelAgentGateway.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | otelAgentGateway.deploymentAnnotations | object | `{}` | Annotations to add to the otel-agent Gateway Deployment |
@@ -1106,7 +1115,8 @@ helm install <RELEASE_NAME> \
 | providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
 | providers.openshift.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the OpenShift cluster. Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace. To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in: `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -` |
 | providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |
-| registry | string | `nil` | Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value) |
+| registry | string | `nil` | Registry to use for all Agent images (default depends on datadog.site and registryMigrationMode values) |
+| registryMigrationMode | string | `"auto"` | Controls gradual migration of default image registry to registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR). This setting has no effect when `registry` is explicitly set. GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant. US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog. US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io. |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 | useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. |

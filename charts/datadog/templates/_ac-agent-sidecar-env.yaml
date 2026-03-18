@@ -9,6 +9,14 @@
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
   value: "false"
 {{- end }}
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_TLS_VERIFICATION_ENABLED
+  value: "true"
+{{- if .Values.clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap }}
+- name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_TLS_VERIFICATION_COPY_CA_CONFIGMAP
+  value: "true"
+{{- end }}
+{{- end }}
 {{- if .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
 - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROVIDER
   value: {{ .Values.clusterAgent.admissionController.agentSidecarInjection.provider }}
