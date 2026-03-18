@@ -11,7 +11,6 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -52,17 +51,17 @@ func datadogChartPath() string {
 
 func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sKubeletCheck()
+	s.testGenericK8sKSMCore()
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
-	s.testGenericK8sKSMCore()
 	s.testGenericK8sKSMCoreCCR(true)
 }
 
 func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sKubeletCheck()
+	s.testGenericK8sKSMCore()
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
-	s.testGenericK8sKSMCore()
 	s.testGenericK8sKSMCoreCCR(false)
 }
 
@@ -81,10 +80,6 @@ func (s *k8sSuite) testGenericK8sKubeletCheck() {
 			assert.NotEmptyf(c, kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
 
 		}, 5*time.Minute, 15*time.Second, "could not validate kubelet check in time")
-
-		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
-			s.verifyKSMCheck(c)
-		}, 5*time.Minute, 15*time.Second, "could not validate KSM check in time")
 	})
 }
 
@@ -181,11 +176,8 @@ clusterChecksRunner:
 			agentOpts = append(agentOpts, kubernetesagentparams.WithGKEAutopilot())
 		}
 
-		currentDir, _ := os.Getwd()
 		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
 			gcpkubernetes.WithGKEOptions(gkeOpts...),
-			gcpkubernetes.WithWorkloadApp(
-				k8sapply.K8sAppDefinition(k8sapply.YAMLWorkload{Name: "nginx", Path: strings.Join([]string{currentDir, "manifests", "autodiscovery-annotation.yaml"}, "/")})),
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(agentOpts...)))
 
