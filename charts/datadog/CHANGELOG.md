@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.191.1
+## 3.192.0
 
 * fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
 
