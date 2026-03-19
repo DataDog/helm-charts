@@ -1,12 +1,16 @@
 # Datadog changelog
 
-## 3.191.0
+## 3.192.0
 
 * Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
 
 ## 3.190.1
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
+
+## 3.191.0
+
+* Extend `registryMigrationMode: "auto"` to all EU1 (`datadoghq.eu`) users regardless of APM configuration. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
 
 ## 3.190.0
 
