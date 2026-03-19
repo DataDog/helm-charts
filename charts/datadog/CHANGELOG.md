@@ -27,6 +27,10 @@
 
 * Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
 
+## 3.188.0
+
+* Enable remote configuration by default on cluster check runners ([#2473](https://github.com/DataDog/helm-charts/pull/2473)).
+
 ## 3.187.0
 
 * Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
