@@ -1,4 +1,8 @@
 # Datadog changelog
+## 3.192.0
+
+* Pass CSI driver registry allow list to the cluster-agent and CSI driver for `DatadogLibrary` volumes ([#2488](https://github.com/DataDog/helm-charts/pull/2488)).
+
 ## 3.190.1
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
