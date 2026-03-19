@@ -1,8 +1,11 @@
 # Datadog changelog
-
-## 3.191.2
+## 3.192.1
 
 * Add IPC env vars to core agent when full host profiler is enabled.
+
+## 3.192.0
+
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
 
 ## 3.191.1
 
