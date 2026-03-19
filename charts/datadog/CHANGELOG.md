@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.190.2
+## 3.191.1
 
 * Fix GKE Autopilot and GDC installs: gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true`, as it is not included in the Datadog WorkloadAllowlist v1.0.3.
 
