@@ -6,9 +6,17 @@
 // All GitHub API calls for PR content use `pr.head.ref` (branch name, not SHA) so
 // that any commit pushed by the bump job is visible to this validation.
 
-const { parseVersion, makeVersion, computeBumpedVersion } = require('./chart-version-utils');
+// These patterns mirror the `paths:` trigger in ci.yaml exactly.
+const CI_PATH_PATTERNS = [
+  /^charts\/([^/]+)\/Chart\.[^/]+$/,        // Chart.yaml, Chart.lock
+  /^charts\/([^/]+)\/requirements\.[^/]+$/, // requirements.yaml, requirements.lock
+  /^charts\/([^/]+)\/values\.[^/]+$/,        // values.yaml, values.schema.json
+  /^charts\/([^/]+)\/templates\/.+$/,        // templates/**
+];
 
 module.exports = async ({github, context, core}) => {
+  const { parseVersion, makeVersion, computeBumpedVersion, isSequentialBump, computeNextPrerelease, decodeFileContent } = require('./chart-version-utils');
+
   const pr = context.payload.pull_request;
   if (!pr) {
     core.setFailed("No pull request found in context payload.");
@@ -17,30 +25,15 @@ module.exports = async ({github, context, core}) => {
 
   const { owner, repo } = context.repo;
 
-  // Fresh label fetch — labels may have changed since the workflow was triggered.
-  const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
-    owner,
-    repo,
-    issue_number: pr.number
-  });
-  const labelNames = labelData.map(l => l.name);
-
-  // Get all files changed in this PR (paginate to handle large PRs).
-  const files = await github.paginate(github.rest.pulls.listFiles, {
-    owner,
-    repo,
-    pull_number: pr.number
-  });
+  // Fetch labels and changed files in parallel — both are needed before we can proceed.
+  const [{ data: labelData }, files] = await Promise.all([
+    github.rest.issues.listLabelsOnIssue({ owner, repo, issue_number: pr.number }),
+    github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: pr.number })
+  ]);
+  // Use a Set for O(1) label lookups in the per-chart loop.
+  const labelNames = new Set(labelData.map(l => l.name));
 
   // Determine which charts have ci.yaml-relevant file changes.
-  // These patterns mirror the `paths:` trigger in ci.yaml exactly.
-  const CI_PATH_PATTERNS = [
-    /^charts\/([^/]+)\/Chart\.[^/]+$/,        // Chart.yaml, Chart.lock
-    /^charts\/([^/]+)\/requirements\.[^/]+$/, // requirements.yaml, requirements.lock
-    /^charts\/([^/]+)\/values\.[^/]+$/,        // values.yaml, values.schema.json
-    /^charts\/([^/]+)\/templates\/.+$/,        // templates/**
-  ];
-
   const changedCharts = new Set();
   for (const file of files) {
     for (const pattern of CI_PATH_PATTERNS) {
@@ -75,7 +68,7 @@ module.exports = async ({github, context, core}) => {
 
     // Charts with no-version-bump label are intentionally skipping a version bump
     // (e.g. docs-only changes). The bump job handles reverting any CHANGELOG drift.
-    if (labelNames.includes(`${chartName}/no-version-bump`)) {
+    if (labelNames.has(`${chartName}/no-version-bump`)) {
       core.info(`Skipping '${chartName}': no-version-bump label present.`);
       continue;
     }
@@ -89,7 +82,7 @@ module.exports = async ({github, context, core}) => {
         path: `charts/${chartName}/Chart.yaml`,
         ref: mergeBaseSHA
       });
-      const content = Buffer.from(file.data.content, file.data.encoding).toString();
+      const content = decodeFileContent(file.data);
       const m = content.match(/^version:\s+(\S+)/m);
       if (!m) {
         core.warning(`No 'version:' found in base Chart.yaml for '${chartName}'. Skipping.`);
@@ -117,7 +110,7 @@ module.exports = async ({github, context, core}) => {
         path: `charts/${chartName}/Chart.yaml`,
         ref: pr.head.ref
       });
-      const content = Buffer.from(file.data.content, file.data.encoding).toString();
+      const content = decodeFileContent(file.data);
       const m = content.match(/^version:\s+(\S+)/m);
       if (!m) {
         errors.push(`'${chartName}': no 'version:' found in PR Chart.yaml.`);
@@ -152,8 +145,8 @@ module.exports = async ({github, context, core}) => {
       continue;
     }
 
-    const hasPatchLabel = labelNames.includes(`${chartName}/patch-version`);
-    const hasMinorLabel = labelNames.includes(`${chartName}/minor-version`);
+    const hasPatchLabel = labelNames.has(`${chartName}/patch-version`);
+    const hasMinorLabel = labelNames.has(`${chartName}/minor-version`);
 
     // --- Check B: version correctness ---
     if (hasPatchLabel || hasMinorLabel) {
@@ -202,7 +195,7 @@ module.exports = async ({github, context, core}) => {
         path: `charts/${chartName}/CHANGELOG.md`,
         ref: pr.head.ref
       });
-      const content = Buffer.from(file.data.content, file.data.encoding).toString();
+      const content = decodeFileContent(file.data);
       if (!content.split('\n').some(line => line.trim() === `## ${prVersion}`)) {
         errors.push(`'${chartName}': CHANGELOG.md does not contain an entry for version ${prVersion}.`);
       }
@@ -220,7 +213,7 @@ module.exports = async ({github, context, core}) => {
         path: `charts/${chartName}/README.md`,
         ref: pr.head.ref
       });
-      const content = Buffer.from(file.data.content, file.data.encoding).toString();
+      const content = decodeFileContent(file.data);
       if (!content.includes(`![Version: ${prVersion}]`)) {
         errors.push(
           `'${chartName}': README.md version badge does not reflect version ${prVersion}. ` +
@@ -242,53 +235,3 @@ module.exports = async ({github, context, core}) => {
     core.info("All chart version validations passed.");
   }
 };
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-// Return the next pre-release version string (for use in error hints), or null
-// if the format is not the expected <letters>.<number> pattern.
-function computeNextPrerelease(base) {
-  if (!base.prerelease) return null;
-  const m = base.prerelease.match(/^([a-zA-Z]+)\.(\d+)$/);
-  if (!m) return null;
-  return makeVersion({ ...base, prerelease: `${m[1]}.${parseInt(m[2], 10) + 1}` });
-}
-
-// Check whether a version bump is "sequential" (no skipped versions).
-//
-// Valid transitions from a STABLE base (no prerelease):
-//   X.Y.Z   → X.Y.(Z+1)          patch bump (stable)
-//   X.Y.Z   → X.(Y+1).0          minor bump (stable)
-//   X.Y.Z   → X.Y.(Z+1)-pre.N    patch bump into a pre-release cycle
-//   X.Y.Z   → X.(Y+1).0-pre.N    minor bump into a pre-release cycle
-//
-// Valid transitions from a PRE-RELEASE base:
-//   X.Y.Z-pre.N → X.Y.Z              finalize the pre-release (drop suffix)
-//   X.Y.Z-pre.N → X.Y.Z-pre.(N+1)   bump pre-release number by exactly 1 (same prefix)
-//
-// Everything else is considered non-sequential.
-function isSequentialBump(base, pr) {
-  if (!base.prerelease) {
-    // Stable base: the non-prerelease part of PR must be a single patch or minor step.
-    const isPatch = pr.major === base.major && pr.minor === base.minor && pr.patch === base.patch + 1;
-    const isMinor = pr.major === base.major && pr.minor === base.minor + 1 && pr.patch === 0;
-    return isPatch || isMinor;
-  }
-
-  // Pre-release base.
-  if (!pr.prerelease) {
-    // Only valid: finalize by dropping the suffix (X.Y.Z-pre.N → X.Y.Z).
-    return pr.major === base.major && pr.minor === base.minor && pr.patch === base.patch;
-  }
-
-  // Both pre-release: version number must be identical, same prefix, number +1 only.
-  if (pr.major !== base.major || pr.minor !== base.minor || pr.patch !== base.patch) {
-    return false;
-  }
-  const bm = base.prerelease.match(/^([a-zA-Z]+)\.(\d+)$/);
-  const pm = pr.prerelease.match(/^([a-zA-Z]+)\.(\d+)$/);
-  if (!bm || !pm || bm[1] !== pm[1]) return false;
-  return parseInt(pm[2], 10) === parseInt(bm[2], 10) + 1;
-}
