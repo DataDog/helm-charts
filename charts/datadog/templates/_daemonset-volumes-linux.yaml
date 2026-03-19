@@ -227,7 +227,7 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
