@@ -1689,7 +1689,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1843,7 +1843,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1945,7 +1945,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -2023,7 +2023,7 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2138,7 +2138,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2177,7 +2177,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2204,7 +2204,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2528,7 +2528,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: gcr.io/datadoghq
+              value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
@@ -2593,7 +2593,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.76.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2666,7 +2666,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
