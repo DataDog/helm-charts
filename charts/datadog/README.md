@@ -760,7 +760,7 @@ helm install <RELEASE_NAME> \
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
 | datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway) |
 | datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
-| datadog.appsec.injector.mode | string | `"sidecar"` | Deployment mode for the AppSec processor. Valid values: "sidecar", "external" |
+| datadog.appsec.injector.mode | string | `""` | Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly. |
 | datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
 | datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
 | datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |

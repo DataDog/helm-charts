@@ -505,8 +505,10 @@ spec:
           - name: DD_APPSEC_PROXY_PROXIES
             value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
           {{- end }}
+          {{- if .Values.datadog.appsec.injector.mode }}
           - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_MODE
             value: {{ .Values.datadog.appsec.injector.mode | quote }}
+          {{- end }}
           {{- /* Sidecar config is always passed to the cluster agent regardless of mode so it
                knows the full sidecar spec. In "external" mode the agent uses a separately
                deployed processor instead, but still needs these values for reference. */}}

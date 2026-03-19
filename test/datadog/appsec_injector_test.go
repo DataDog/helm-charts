@@ -91,7 +91,6 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 		ddAppsecProxyEnabledEnvVar:      "true",
 		ddAppsecProxyAutoDetectEnvVar:   "true",
 		ddAppsecInjectorEnabledEnvVar:   "true",
-		ddAppsecInjectorModeEnvVar:      "sidecar",
 		ddAppsecSidecarImageEnvVar:      "ghcr.io/datadog/dd-trace-go/service-extensions-callout",
 		ddAppsecSidecarImageTagEnvVar:   "v2.6.0",
 		ddAppsecSidecarPortEnvVar:       "8080",
@@ -108,6 +107,7 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 	}
 
 	for _, envVarName := range []string{
+		ddAppsecInjectorModeEnvVar, // mode defaults to empty — agent uses its own default
 		ddAppsecProxyProxiesEnvVar,
 		ddAppsecProcessorAddressEnvVar,
 		ddAppsecProcessorServiceNameEnvVar,

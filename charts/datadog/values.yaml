@@ -684,8 +684,8 @@ datadog:
       # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway)
       autoDetect: true
 
-      # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external"
-      mode: sidecar
+      # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
+      mode: ""
 
       # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway"
       # When autoDetect is true, detected proxies are added to this list

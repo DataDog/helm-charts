@@ -282,6 +282,7 @@
                 "mode": {
                   "type": "string",
                   "enum": [
+                    "",
                     "external",
                     "sidecar"
                   ]
