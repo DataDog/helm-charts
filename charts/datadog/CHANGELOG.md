@@ -1,4 +1,7 @@
 # Datadog changelog
+## 3.192.1
+
+* Add IPC env vars to core agent when full host profiler is enabled.
 
 ## 3.192.0
 
