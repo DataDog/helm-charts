@@ -1289,7 +1289,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (.Values.datadog.remoteConfiguration.enabled) (not .Values.providers.gke.gdc) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled)) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -1308,7 +1308,7 @@ false
 {{- end -}}
 
 {{/*
-Validate Private Action Runner configuration
+Validate Cluster Agent Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
 {{- if .Values.clusterAgent.privateActionRunner.enabled -}}
@@ -1318,6 +1318,19 @@ Validate Private Action Runner configuration
 {{- if not .Values.clusterAgent.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.clusterAgent.privateActionRunner.identityFromExistingSecret) (or (not .Values.clusterAgent.privateActionRunner.urn) (not .Values.clusterAgent.privateActionRunner.privateKey)) -}}
 {{- fail "Private Action Runner: when selfEnroll is disabled, you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate Node Agent Private Action Runner configuration
+*/}}
+{{- define "validate-node-private-action-runner-config" -}}
+{{- if .Values.datadog.privateActionRunner.enabled -}}
+{{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
+{{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
+{{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}
 {{- end -}}
 {{- end -}}
 {{- end -}}

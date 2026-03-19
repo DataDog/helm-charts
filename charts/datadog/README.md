@@ -509,6 +509,12 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
+| agents.containers.privateActionRunner.env | list | `[]` | Additional environment variables for the private-action-runner container |
+| agents.containers.privateActionRunner.envDict | object | `{}` | Set environment variables specific to private-action-runner defined in a dict |
+| agents.containers.privateActionRunner.envFrom | list | `[]` | Set environment variables specific to private-action-runner from configMaps and/or secrets |
+| agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
+| agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container. |
+| agents.containers.privateActionRunner.securityContext | object | `{"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -932,6 +938,12 @@ helm install <RELEASE_NAME> \
 | datadog.otlp.receiver.protocols.http.useHostPort | bool | `true` | Enable the Host Port for the OTLP/HTTP endpoint |
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
+| datadog.privateActionRunner.actionsAllowlist | list | `[]` | List of actions executable by the Private Action Runner |
+| datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
+| datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
+| datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
+| datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
+| datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |

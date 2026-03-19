@@ -2,15 +2,17 @@
 
 ## 3.192.0
 
+* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.191.1
+
 * fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
 
 ## 3.190.1
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
-
-## 3.192.0
-
-* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
 
 ## 3.191.0
 
