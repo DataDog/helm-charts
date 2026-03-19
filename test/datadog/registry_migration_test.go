@@ -45,7 +45,7 @@ func TestRegistryMigration(t *testing.T) {
 		{
 			name:         "EU1",
 			site:         "datadoghq.eu",
-			wantAuto:     "eu.gcr.io/datadoghq",
+			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "eu.gcr.io/datadoghq",
 		},
