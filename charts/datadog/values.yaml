@@ -43,7 +43,7 @@ registry:  # gcr.io/datadoghq
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
-##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu, when datadog.apm.enabled is false).
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
@@ -519,6 +519,33 @@ datadog:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
+
+  privateActionRunner:
+    # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
+    enabled: false
+
+    # datadog.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
+    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
+    ## and store its identity in a local file. Requires leader election to be enabled.
+    selfEnroll: true
+
+    # datadog.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
+    ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>
+    urn:  # "urn:datadog:private-action-runner:organization:123456:runner:abc-def"
+
+    # datadog.privateActionRunner.privateKey -- Private key for the Private Action Runner (required if selfEnroll is false)
+    ## This key is used to authenticate the runner with Datadog
+    privateKey:  # "<PRIVATE_KEY>"
+
+    # datadog.privateActionRunner.identityFromExistingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
+    ## The secret should contain 'urn' and 'private_key' keys
+    ## If set, this parameter takes precedence over "urn" and "privateKey"
+    identityFromExistingSecret:  # "<PAR_SECRET_NAME>"
+
+    # datadog.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
+    actionsAllowlist: []
+    #   - "com.datadoghq.http.request"
+    #   - "com.datadoghq.gitlab.branches.*"
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -2213,6 +2240,32 @@ agents:
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+    privateActionRunner:
+      # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
+      env: []
+
+      # agents.containers.privateActionRunner.envFrom -- Set environment variables specific to private-action-runner from configMaps and/or secrets
+      envFrom: []
+
+      # agents.containers.privateActionRunner.envDict -- Set environment variables specific to private-action-runner defined in a dict
+      envDict: {}
+
+      # agents.containers.privateActionRunner.logLevel -- Set logging verbosity for the private-action-runner container
+      logLevel:
+
+      # agents.containers.privateActionRunner.resources -- Resource requests and limits for the private-action-runner container.
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 128Mi
+
+      # agents.containers.privateActionRunner.securityContext -- Specify securityContext on the private-action-runner container.
+      securityContext:
+        readOnlyRootFilesystem: true
 
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
