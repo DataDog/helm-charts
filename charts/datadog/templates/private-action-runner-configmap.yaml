@@ -1,4 +1,4 @@
-{{- if .Values.datadog.privateActionRunner.enabled }}
+{{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
