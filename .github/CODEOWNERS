@@ -19,6 +19,8 @@ charts/datadog/templates/_otel*                        @DataDog/opentelemetry-ag
 charts/datadog/templates/otel*                         @DataDog/opentelemetry-agent @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/_system-probe-init.yaml       @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
 charts/datadog/templates/system-probe-configmap.yaml   @DataDog/ebpf-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/_container-private-action-runner.yaml @DataDog/action-platform @DataDog/container-helm-chart-maintainers
+charts/datadog/templates/private-action-runner-configmap.yaml @DataDog/action-platform @DataDog/container-helm-chart-maintainers
 charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
 charts/private-action-runner                           @DataDog/action-platform
