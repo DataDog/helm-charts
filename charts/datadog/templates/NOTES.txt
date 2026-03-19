@@ -477,6 +477,16 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 
 {{- end }}
 
+{{- if .Values.datadog.privateActionRunner.enabled }}
+
+############################################################################################################
+####   WARNING: Private Action Runner is not supported on GKE Autopilot / GDC   ####
+############################################################################################################
+
+{{- fail "Private Action Runner is not supported on GKE Autopilot / GDC environments. The option 'datadog.privateActionRunner.enabled' must be set to 'false'." }}
+
+{{- end }}
+
 {{- end }}
 
 {{- if .Values.providers.gke.autopilot }}
