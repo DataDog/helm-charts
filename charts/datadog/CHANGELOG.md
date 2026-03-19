@@ -1,11 +1,14 @@
 # Datadog changelog
-## 3.193.0
-
-* Add IPC env vars to core agent when full host profiler is enabled.
 
 ## 3.193.0
 
 * Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
+## 3.192.1
+
+* Add IPC env vars to core agent when full host profiler is enabled.
+
+## 3.192.0
 
 * Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
 
