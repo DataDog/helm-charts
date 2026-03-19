@@ -1754,7 +1754,8 @@ spec:
               name: passwd
               readOnly: true
             - mountPath: /opt/datadog-agent/run
-              name: datadogrun
+              name: pointerdir
+              readOnly: false
         - command:
             - process-agent
             - -config=/etc/datadog-agent/datadog.yaml
@@ -2123,8 +2124,9 @@ spec:
         - hostPath:
             path: /var/run/containerd
           name: runtimesocketdir
-        - emptyDir: {}
-          name: datadogrun
+        - hostPath:
+            path: /var/autopilot/addon/datadog/logs
+          name: pointerdir
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
