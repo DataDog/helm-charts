@@ -1,4 +1,8 @@
 # Datadog changelog
+
+## 3.191.0
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
 ## 3.190.1
 
 * Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
