@@ -1,9 +1,12 @@
 # Datadog changelog
 
-## 3.191.1
+## 3.191.2
 
 * Add IPC env vars to core agent when full host profiler is enabled.
 
+## 3.191.1
+
+* fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
 
 ## 3.190.1
 
