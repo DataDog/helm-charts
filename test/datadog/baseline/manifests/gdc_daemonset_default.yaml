@@ -1471,7 +1471,8 @@ spec:
               name: auth-token
               readOnly: false
             - mountPath: /opt/datadog-agent/run
-              name: datadogrun
+              name: pointerdir
+              readOnly: false
             - mountPath: /certs
               name: kubelet-cert-volume
       initContainers:
