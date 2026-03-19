@@ -1,4 +1,4 @@
-name: Bump Chart Version
+name: Chart Version
 
 on:
   pull_request:
