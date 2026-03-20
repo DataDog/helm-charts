@@ -21,7 +21,7 @@ targetSystem: "linux"
 commonLabels: {}
 # team_name: dev
 
-# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | datadoghq.azurecr.io | public.ecr.aws/datadog] depending on datadog.site value)
+# registry -- Registry to use for all Agent images (default depends on datadog.site and registryMigrationMode values)
 
 ## Currently we offer Datadog Agent images on:
 ## Datadog - use registry.datadoghq.com
@@ -34,6 +34,19 @@ commonLabels: {}
 ## If you are on GKE Autopilot, you must use a gcr.io variant registry.
 
 registry:  # gcr.io/datadoghq
+
+# registryMigrationMode -- Controls gradual migration of default image registry to
+# registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR).
+# This setting has no effect when `registry` is explicitly set.
+# GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant.
+# US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog.
+# US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
+
+## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu).
+## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
+## "": disable migration, keeping site-specific registries.
+registryMigrationMode: "auto"
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
@@ -480,6 +493,10 @@ datadog:
       - kind: CronJob
         reasons:
           - SawCompletedJob
+    # datadog.kubernetesEvents.maxEventsPerRun -- Maximum number of events you wish to collect per check run.
+    maxEventsPerRun:
+    # datadog.kubernetesEvents.kubernetesEventResyncPeriodS -- Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern
+    kubernetesEventResyncPeriodS:
 
   clusterTagger:
     # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
@@ -502,6 +519,33 @@ datadog:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
+
+  privateActionRunner:
+    # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
+    enabled: false
+
+    # datadog.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
+    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
+    ## and store its identity in a local file. Requires leader election to be enabled.
+    selfEnroll: true
+
+    # datadog.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
+    ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>
+    urn:  # "urn:datadog:private-action-runner:organization:123456:runner:abc-def"
+
+    # datadog.privateActionRunner.privateKey -- Private key for the Private Action Runner (required if selfEnroll is false)
+    ## This key is used to authenticate the runner with Datadog
+    privateKey:  # "<PRIVATE_KEY>"
+
+    # datadog.privateActionRunner.identityFromExistingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
+    ## The secret should contain 'urn' and 'private_key' keys
+    ## If set, this parameter takes precedence over "urn" and "privateKey"
+    identityFromExistingSecret:  # "<PAR_SECRET_NAME>"
+
+    # datadog.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
+    actionsAllowlist: []
+    #   - "com.datadoghq.http.request"
+    #   - "com.datadoghq.gitlab.branches.*"
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -664,15 +708,42 @@ datadog:
       # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
       enabled: false
 
-      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway)
       autoDetect: true
 
-      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
+      mode: ""
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway"
       # When autoDetect is true, detected proxies are added to this list
       # When autoDetect is false, only proxies in this list are enabled
       proxies: []
-      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
-      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+      # - envoy-gateway: Configures Envoy Gateway resources for AppSec injection
+      # - istio: Watches Istio-managed Kubernetes Gateway API GatewayClasses for AppSec injection
+      # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
+
+      sidecar:
+        # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
+        image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
+        # datadog.appsec.injector.sidecar.imageTag -- Image tag for the AppSec sidecar processor
+        imageTag: "v2.6.0"
+        # datadog.appsec.injector.sidecar.port -- Listening port for the AppSec sidecar processor
+        port: 8080
+        # datadog.appsec.injector.sidecar.healthPort -- Health check port for the AppSec sidecar processor
+        healthPort: 8081
+        # datadog.appsec.injector.sidecar.bodyParsingSizeLimit -- Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely.
+        bodyParsingSizeLimit: 0
+        resources:
+          requests:
+            # datadog.appsec.injector.sidecar.resources.requests.cpu -- CPU request for the AppSec sidecar processor
+            cpu: "10m"
+            # datadog.appsec.injector.sidecar.resources.requests.memory -- Memory request for the AppSec sidecar processor
+            memory: "128Mi"
+          limits:
+            # datadog.appsec.injector.sidecar.resources.limits.cpu -- Optional CPU limit for the AppSec sidecar processor
+            cpu: ""
+            # datadog.appsec.injector.sidecar.resources.limits.memory -- Optional memory limit for the AppSec sidecar processor
+            memory: ""
 
       processor:
         # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
@@ -2209,6 +2280,32 @@ agents:
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+    privateActionRunner:
+      # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
+      env: []
+
+      # agents.containers.privateActionRunner.envFrom -- Set environment variables specific to private-action-runner from configMaps and/or secrets
+      envFrom: []
+
+      # agents.containers.privateActionRunner.envDict -- Set environment variables specific to private-action-runner defined in a dict
+      envDict: {}
+
+      # agents.containers.privateActionRunner.logLevel -- Set logging verbosity for the private-action-runner container
+      logLevel:
+
+      # agents.containers.privateActionRunner.resources -- Resource requests and limits for the private-action-runner container.
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 128Mi
+
+      # agents.containers.privateActionRunner.securityContext -- Specify securityContext on the private-action-runner container.
+      securityContext:
+        readOnlyRootFilesystem: true
+
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []
@@ -2650,6 +2747,11 @@ clusterChecksRunner:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   enabled: false
 
+  remoteConfiguration:
+    # clusterChecksRunner.remoteConfiguration.enabled -- Enable remote configuration on the Cluster Checks Runner.
+    # Set to true to enable remote configuration on the Cluster Checks Runner.
+    enabled: false
+
   ## Define the Datadog image to work with.
   image:
     # clusterChecksRunner.image.name -- Datadog Agent image name to use (relative to `registry`)
@@ -2897,7 +2999,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.23.0
+    tag: 1.24.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3255,6 +3357,31 @@ otelAgentGateway:
       # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
+
+      # otelAgentGateway.containers.otelAgent.healthPort -- Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension)
+      healthPort: 13133
+
+      # otelAgentGateway.containers.otelAgent.livenessProbe -- otel-agent-gateway liveness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      livenessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # otelAgentGateway.containers.otelAgent.readinessProbe -- otel-agent-gateway readiness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      readinessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
 
   ## Provide OTel Collector RBAC configuration in Gateway
   rbac:

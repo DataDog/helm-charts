@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.24.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -406,7 +406,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.24.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -524,6 +524,14 @@ rules:
       - statefulsets
     verbs:
       - get
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+      - applicationsets
+    verbs:
       - list
       - watch
   - apiGroups:
@@ -679,6 +687,7 @@ rules:
       - watch
   - apiGroups:
       - datadoghq.com
+      - eks.amazonaws.com
       - karpenter.azure.com
     resources:
       - '*'
@@ -693,6 +702,7 @@ rules:
       - list
       - watch
   - apiGroups:
+      - eks.amazonaws.com
       - external.metrics.k8s.io
       - karpenter.k8s.aws
     resources:
@@ -740,6 +750,13 @@ rules:
       - list
       - patch
       - update
+      - watch
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
+    verbs:
+      - list
       - watch
   - apiGroups:
       - metrics.eks.amazonaws.com
@@ -831,6 +848,18 @@ rules:
       - securitycontextconstraints
     verbs:
       - use
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+      - externalartifacts
+      - gitrepositories
+      - helmcharts
+      - helmrepositories
+      - ocirepositories
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - storage.k8s.io
     resources:
@@ -2171,7 +2200,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.24.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2230,7 +2259,11 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.23.0
+            - name: DD_REGISTRY_OVERRIDE_ASIA
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_EU
+              value: "true"
+          image: registry.datadoghq.com/operator:1.24.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2245,6 +2278,8 @@ spec:
               protocol: TCP
           resources: {}
           volumeMounts: null
+      nodeSelector:
+        kubernetes.io/os: linux
       serviceAccountName: datadog-operator
       volumes: null
 ---

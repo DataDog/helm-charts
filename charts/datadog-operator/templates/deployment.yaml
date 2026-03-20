@@ -125,12 +125,12 @@ spec:
             {{- if or (eq $registryMode "auto") (eq $registryMode "all") }}
             - name: DD_REGISTRY_OVERRIDE_ASIA
               value: "true"
-            {{- end }}
-            {{- if eq $registryMode "all" }}
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
             - name: DD_REGISTRY_OVERRIDE_EU
               value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
+            {{- end }}
+            {{- if eq $registryMode "all" }}
             - name: DD_REGISTRY_OVERRIDE_AZURE
               value: "true"
             {{- end }}

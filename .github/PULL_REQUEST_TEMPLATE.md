@@ -8,9 +8,10 @@
 
 #### Checklist
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
-- [ ] All commits are signed (see: [signing commits][1])
+- [ ] All commits are signed and show as "Verified" on GitHub (see: [signing commits][1])
 - [ ] Chart Version semver bump label has been added (use `<chartName>/minor-version`, `<chartName>/patch-version`, or `<chartName>/no-version-bump`)
 - [ ] For `datadog` or `datadog-operator` chart or value changes, update the test baselines (run: `make update-test-baselines`)
+- [ ] For `datadog` chart changes, received ✅ from a member of your team
 
 GitHub CI takes care of the below, but are still required:
 - [ ] Documentation has been updated with helm-docs (run: `.github/helm-docs.sh`)

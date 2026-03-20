@@ -56,6 +56,9 @@ spec:
         {{- if eq (include "should-enable-host-profiler" .) "true" }}
         checksum/host-profiler-config: {{ include "host-profiler-config-configmap-content" . | sha256sum }}
         {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+        checksum/privateactionrunner-config: {{ include (print $.Template.BasePath "/private-action-runner-configmap.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
@@ -167,6 +170,9 @@ spec:
         {{- if eq (include "should-enable-data-plane" .) "true" }}
           {{- include "container-agent-data-plane" . | nindent 6 }}
         {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+          {{- include "container-private-action-runner" . | nindent 6 }}
+        {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
           {{ include "containers-init-windows" . | nindent 6 }}
@@ -187,6 +193,11 @@ spec:
           name: {{ include "agents-install-info-configmap-name" . }}
       - name: config
         emptyDir: {}
+      {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+      - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
+        configMap:
+          name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:

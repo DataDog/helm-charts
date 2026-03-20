@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.2
+
+* Update Docker image to `v0.1.22`
+
+## 0.2.1
+
+* Add support for annotations on indexer PersistentVolumeClaim (`indexer.persistentVolume.annotations`)
+* Propagate global `annotations` and `podAnnotations` to index/source creation jobs
+* Conditionally render services based on component `enabled` flag
+* Merge upstream Quickwit Helm chart version 0.8.3
+
 ## 0.2.0
 
 * Update Docker image to `v0.1.21`

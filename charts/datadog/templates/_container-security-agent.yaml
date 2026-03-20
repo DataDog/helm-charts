@@ -108,9 +108,11 @@
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
+    {{- if (eq (include "should-add-host-path-for-etc-group" .) "true") }}
     - name: group
       mountPath: /etc/group
       readOnly: true
+    {{- end }}
     - name: hostroot
       mountPath: /host/root
       readOnly: true
