@@ -1,0 +1,82 @@
+{{- define "container-private-action-runner" -}}
+{{- include "validate-node-private-action-runner-config" . }}
+- name: private-action-runner
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  command: ["/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E=/etc/privateactionrunner/privateactionrunner.yaml"]
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.privateActionRunner.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+  resources:
+{{ toYaml .Values.agents.containers.privateActionRunner.resources | indent 4 }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.privateActionRunner.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.privateActionRunner.envFrom }}
+{{ .Values.agents.containers.privateActionRunner.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.privateActionRunner.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- if or .Values.datadog.appKey .Values.datadog.appKeyExistingSecret }}
+    - name: DD_APP_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ template "datadog.appKeySecretName" . }}
+          key: app-key
+    {{- end }}
+    {{- if and (not .Values.datadog.privateActionRunner.selfEnroll) .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+    - name: DD_PRIVATE_ACTION_RUNNER_URN
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: urn
+    - name: DD_PRIVATE_ACTION_RUNNER_PRIVATE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+          key: private_key
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+    {{- end }}
+    {{- include "additional-env-entries" .Values.agents.containers.privateActionRunner.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.privateActionRunner.envDict | indent 4 }}
+  volumeMounts:
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: false
+    {{- end }}
+    - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
+      mountPath: /etc/privateactionrunner
+      readOnly: true
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false
+    {{- if not .Values.providers.gke.gdc }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
+    {{- end }}
+    {{- end }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+{{- end -}}

@@ -1,8 +1,24 @@
 # Datadog changelog
 
-## 3.191.1
+## 3.193.1
 
 * Fix GKE Autopilot and GDC installs: gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true`, as it is not included in the Datadog WorkloadAllowlist v1.0.3.
+
+## 3.193.0
+
+* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
+## 3.192.1
+
+* Add IPC env vars to core agent when full host profiler is enabled.
+
+## 3.192.0
+
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.191.1
+
+* fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
 
 ## 3.190.1
 
@@ -19,6 +35,10 @@
 ## 3.189.0
 
 * Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
+
+## 3.188.0
+
+* Enable remote configuration by default on cluster check runners ([#2473](https://github.com/DataDog/helm-charts/pull/2473)).
 
 ## 3.187.0
 
