@@ -708,15 +708,42 @@ datadog:
       # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
       enabled: false
 
-      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway)
       autoDetect: true
 
-      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
+      mode: ""
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway"
       # When autoDetect is true, detected proxies are added to this list
       # When autoDetect is false, only proxies in this list are enabled
       proxies: []
-      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
-      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+      # - envoy-gateway: Configures Envoy Gateway resources for AppSec injection
+      # - istio: Watches Istio-managed Kubernetes Gateway API GatewayClasses for AppSec injection
+      # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
+
+      sidecar:
+        # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
+        image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
+        # datadog.appsec.injector.sidecar.imageTag -- Image tag for the AppSec sidecar processor
+        imageTag: "v2.6.0"
+        # datadog.appsec.injector.sidecar.port -- Listening port for the AppSec sidecar processor
+        port: 8080
+        # datadog.appsec.injector.sidecar.healthPort -- Health check port for the AppSec sidecar processor
+        healthPort: 8081
+        # datadog.appsec.injector.sidecar.bodyParsingSizeLimit -- Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely.
+        bodyParsingSizeLimit: 0
+        resources:
+          requests:
+            # datadog.appsec.injector.sidecar.resources.requests.cpu -- CPU request for the AppSec sidecar processor
+            cpu: "10m"
+            # datadog.appsec.injector.sidecar.resources.requests.memory -- Memory request for the AppSec sidecar processor
+            memory: "128Mi"
+          limits:
+            # datadog.appsec.injector.sidecar.resources.limits.cpu -- Optional CPU limit for the AppSec sidecar processor
+            cpu: ""
+            # datadog.appsec.injector.sidecar.resources.limits.memory -- Optional memory limit for the AppSec sidecar processor
+            memory: ""
 
       processor:
         # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
