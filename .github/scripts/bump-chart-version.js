@@ -2,7 +2,7 @@
 
 module.exports = async ({github, context, core, exec}) => {
   const fs = require('fs');
-  const { parseVersion, computeBumpedVersion } = require('./chart-version-utils');
+  const { parseVersion, computeBumpedVersion, decodeFileContent } = require('./chart-version-utils');
 
   const pr = context.payload.pull_request;
   if (!pr) {
@@ -69,7 +69,7 @@ module.exports = async ({github, context, core, exec}) => {
       core.setFailed(`Could not get base Chart.yaml for ${chartName}: ${error.message}`);
       return;
     }
-    const baseContent = Buffer.from(baseChartFile.data.content, baseChartFile.data.encoding).toString();
+    const baseContent = decodeFileContent(baseChartFile.data);
     const baseVersionMatch = baseContent.match(/^version:\s+(\S+)/m);
     if (!baseVersionMatch) {
       core.setFailed(`No 'version:' found in base branch Chart.yaml for ${chartName}. Skipping…`);
@@ -100,7 +100,7 @@ module.exports = async ({github, context, core, exec}) => {
       core.setFailed(`Could not get PR Chart.yaml for ${chartName}: ${error.message}`);
       return;
     }
-    const prContent = Buffer.from(prChartFile.data.content, prChartFile.data.encoding).toString();
+    const prContent = decodeFileContent(prChartFile.data);
     const prVersionMatch = prContent.match(/^version:\s+(\S+)/m);
     if (!prVersionMatch) {
       core.setFailed(`No 'version:' found in PR Chart.yaml for ${chartName}. Skipping…`);
@@ -176,7 +176,7 @@ module.exports = async ({github, context, core, exec}) => {
     if (bumpType === 'no-version-bump') {
       if (prChangelog.data.sha !== baseChangelog.data.sha) {
         core.info(`Reverting CHANGELOG.md for '${chartName}' to merge-base version (no-version-bump).`);
-        const baseChangelogContent = Buffer.from(baseChangelog.data.content, baseChangelog.data.encoding).toString();
+        const baseChangelogContent = decodeFileContent(baseChangelog.data);
         fileChanges.push({
           path: `charts/${chartName}/CHANGELOG.md`,
           content: baseChangelogContent
@@ -191,7 +191,7 @@ module.exports = async ({github, context, core, exec}) => {
   
     // Get the changelog content and check if it has already been modified in this branch.
     let newChangelogContent;
-    const changelogContent = Buffer.from(prChangelog.data.content, prChangelog.data.encoding).toString();
+    const changelogContent = decodeFileContent(prChangelog.data);
     const lines = changelogContent.split('\n');
     const versionHeaderIdx = lines.findIndex(line => line.trim().startsWith('##'));
     
@@ -268,7 +268,7 @@ module.exports = async ({github, context, core, exec}) => {
   
     // Compare local README.md file with HEAD to check if it has been modified by helm-docs.sh
     const localReadmeContent = fs.readFileSync(`charts/${chart.chartName}/README.md`, { encoding: 'utf-8' });
-    if (localReadmeContent !== Buffer.from(prReadme.data.content, prReadme.data.encoding).toString()) {
+    if (localReadmeContent !== decodeFileContent(prReadme.data)) {
       fileChanges.push({
         path: `charts/${chart.chartName}/README.md`,
         content: localReadmeContent
