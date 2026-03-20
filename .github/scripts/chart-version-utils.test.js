@@ -16,19 +16,27 @@ const {
 // ---------------------------------------------------------------------------
 
 test('parseVersion: stable version', () => {
-  assert.deepEqual(parseVersion('1.2.3'), { major: 1, minor: 2, patch: 3, prerelease: null });
+  assert.deepEqual(parseVersion('1.2.3'), { major: 1, minor: 2, patch: 3, prerelease: null, vPrefix: false });
 });
 
 test('parseVersion: pre-release version', () => {
-  assert.deepEqual(parseVersion('1.2.3-dev.4'), { major: 1, minor: 2, patch: 3, prerelease: 'dev.4' });
+  assert.deepEqual(parseVersion('1.2.3-dev.4'), { major: 1, minor: 2, patch: 3, prerelease: 'dev.4', vPrefix: false });
 });
 
 test('parseVersion: zeros', () => {
-  assert.deepEqual(parseVersion('0.0.0'), { major: 0, minor: 0, patch: 0, prerelease: null });
+  assert.deepEqual(parseVersion('0.0.0'), { major: 0, minor: 0, patch: 0, prerelease: null, vPrefix: false });
 });
 
 test('parseVersion: alpha pre-release', () => {
-  assert.deepEqual(parseVersion('3.187.0-alpha.1'), { major: 3, minor: 187, patch: 0, prerelease: 'alpha.1' });
+  assert.deepEqual(parseVersion('3.187.0-alpha.1'), { major: 3, minor: 187, patch: 0, prerelease: 'alpha.1', vPrefix: false });
+});
+
+test('parseVersion: v-prefixed version', () => {
+  assert.deepEqual(parseVersion('v0.3.2'), { major: 0, minor: 3, patch: 2, prerelease: null, vPrefix: true });
+});
+
+test('parseVersion: YAML-quoted version', () => {
+  assert.deepEqual(parseVersion('"2.14.1"'), { major: 2, minor: 14, patch: 1, prerelease: null, vPrefix: false });
 });
 
 test('parseVersion: invalid - missing patch', () => {
@@ -63,6 +71,10 @@ test('makeVersion: zeros', () => {
   assert.equal(makeVersion({ major: 0, minor: 0, patch: 0, prerelease: null }), '0.0.0');
 });
 
+test('makeVersion: v-prefixed', () => {
+  assert.equal(makeVersion({ major: 0, minor: 3, patch: 2, prerelease: null, vPrefix: true }), 'v0.3.2');
+});
+
 // ---------------------------------------------------------------------------
 // computeBumpedVersion
 // ---------------------------------------------------------------------------
@@ -93,6 +105,14 @@ test('computeBumpedVersion: pre-release + minor-version promotes to full release
 
 test('computeBumpedVersion: pre-release + no-version-bump unchanged', () => {
   assert.equal(computeBumpedVersion(parseVersion('1.2.3-dev.4'), 'no-version-bump'), '1.2.3-dev.4');
+});
+
+test('computeBumpedVersion: v-prefixed + patch-version preserves v prefix', () => {
+  assert.equal(computeBumpedVersion(parseVersion('v0.3.2'), 'patch-version'), 'v0.3.3');
+});
+
+test('computeBumpedVersion: v-prefixed + minor-version preserves v prefix', () => {
+  assert.equal(computeBumpedVersion(parseVersion('v0.3.2'), 'minor-version'), 'v0.4.0');
 });
 
 test('computeBumpedVersion: pre-release patch-version throws on unsupported format rc1', () => {

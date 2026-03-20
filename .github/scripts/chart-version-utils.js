@@ -3,28 +3,39 @@
 // Supported pre-release format: <letters>.<number> (e.g. dev.2, alpha.1).
 const PRERELEASE_FORMAT = /^([a-zA-Z]+)\.(\d+)$/;
 
-// Parse a semver string (e.g. "1.2.3" or "1.2.3-dev.4") into its components.
-// Supports: major.minor.patch[-prerelease]
+// Parse a semver string into its components.
+// Supports: [v]major.minor.patch[-prerelease] and YAML-quoted versions (e.g. "2.14.1").
+// The optional leading 'v' is preserved in the vPrefix field and restored by makeVersion.
 // Pre-release can contain alphanumeric characters and dots.
 // Note: build metadata (e.g. +build.123) is not supported.
 function parseVersion(versionStr) {
-  const match = versionStr.match(/^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?$/);
+  // Strip surrounding YAML quotes (e.g. version: "2.14.1") and optional leading 'v'.
+  let str = versionStr.trim().replace(/^["'](.*)["']$/, '$1');
+  const vPrefix = str.startsWith('v');
+  if (vPrefix) str = str.slice(1);
+
+  const match = str.match(/^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?$/);
   if (!match) {
-    throw new Error(`Invalid version format: ${versionStr}. Expected format: major.minor.patch[-prerelease]`);
+    throw new Error(`Invalid version format: ${versionStr}. Expected format: [v]major.minor.patch[-prerelease]`);
   }
   return {
     major: parseInt(match[1], 10),
     minor: parseInt(match[2], 10),
     patch: parseInt(match[3], 10),
-    prerelease: match[4] || null
+    prerelease: match[4] || null,
+    vPrefix
   };
 }
 
 // Produce a semver string from its components.
-function makeVersion({ major, minor, patch, prerelease }) {
+// Restores the leading 'v' if vPrefix is true (e.g. for charts that use v0.3.2 format).
+function makeVersion({ major, minor, patch, prerelease, vPrefix }) {
   let version = `${major}.${minor}.${patch}`;
   if (prerelease) {
     version += `-${prerelease}`;
+  }
+  if (vPrefix) {
+    version = `v${version}`;
   }
   return version;
 }
