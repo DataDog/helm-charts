@@ -1698,7 +1698,7 @@ clusterAgent:
       # clusterAgent.admissionController.probe.enabled -- Enable the admission controller connectivity probe.
       ## The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server.
       ## (Requires Cluster Agent 7.78.0+).
-      enabled: true
+      enabled: false
 
       # clusterAgent.admissionController.probe.interval -- Seconds between probe executions.
       interval: 60

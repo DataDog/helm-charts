@@ -615,7 +615,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.admissionController.mutation | object | `{"enabled":true}` | Mutation Webhook configuration options |
 | clusterAgent.admissionController.mutation.enabled | bool | `true` | Enabled enables the Admission Controller mutation webhook. Default: true. (Requires Agent 7.59.0+). |
 | clusterAgent.admissionController.port | int | `8000` | Set port of cluster-agent admission controller service |
-| clusterAgent.admissionController.probe.enabled | bool | `true` | Enable the admission controller connectivity probe. # The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server. # (Requires Cluster Agent 7.78.0+). |
+| clusterAgent.admissionController.probe.enabled | bool | `false` | Enable the admission controller connectivity probe. # The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server. # (Requires Cluster Agent 7.78.0+). |
 | clusterAgent.admissionController.probe.gracePeriod | int | `60` | Seconds to wait at startup before the first probe. |
 | clusterAgent.admissionController.probe.interval | int | `60` | Seconds between probe executions. |
 | clusterAgent.admissionController.remoteInstrumentation.enabled | bool | `false` | Enable polling and applying library injection using Remote Config. # This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+. # Enabling this feature grants the Cluster Agent the permissions to patch Deployment objects in the cluster. |
