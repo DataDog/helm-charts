@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+* Add support for annotations on searcher PersistentVolumeClaim (`searcher.persistentVolume.annotations`)
+* Fix default environment variables (`NO_COLOR`, `QW_DISABLE_TELEMETRY`, `QW_LOG_FORMAT`) not being applied
+* Merge upstream Quickwit Helm chart version 0.8.4
+
 ## 0.2.2
 
 * Update Docker image to `v0.1.22`
