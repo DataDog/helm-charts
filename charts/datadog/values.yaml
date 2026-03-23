@@ -43,7 +43,7 @@ registry:  # gcr.io/datadoghq
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
-##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu).
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com, when APM is disabled).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
@@ -1693,6 +1693,18 @@ clusterAgent:
     kubernetesAdmissionEvents:
       # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
       enabled: false
+
+    probe:
+      # clusterAgent.admissionController.probe.enabled -- Enable the admission controller connectivity probe.
+      ## The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server.
+      ## (Requires Cluster Agent 7.78.0+).
+      enabled: false
+
+      # clusterAgent.admissionController.probe.interval -- Seconds between probe executions.
+      interval: 60
+
+      # clusterAgent.admissionController.probe.gracePeriod -- Seconds to wait at startup before the first probe.
+      gracePeriod: 60
 
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.

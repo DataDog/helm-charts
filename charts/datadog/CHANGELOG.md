@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.193.1
+## 3.195.1
 
-* Fix GKE Autopilot and GDC installs: gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true`, as it is not included in the Datadog WorkloadAllowlist v1.0.3.
+* Gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true` and `securityAgent.runtime.enabled=true`.
+
+## 3.195.0
+
+* Extend `registryMigrationMode: "auto"` to US1 (`datadoghq.com`) users with APM disabled (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.194.0
+
+* [CONTP-1361] add admission controller probe configuration ([#2449](https://github.com/DataDog/helm-charts/pull/2449)).
 
 ## 3.193.0
 
