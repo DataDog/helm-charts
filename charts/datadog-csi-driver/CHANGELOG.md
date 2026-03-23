@@ -2,7 +2,7 @@
 
 ## 0.10.0
 
-* Add `apm.registryAllowList` configuration option to restrict which container registries are allowed as sources for DatadogLibrary CSI volumes.
+* Registry allow list configuration moved to the main `datadog` chart (`clusterAgent.admissionController.containerRegistryAllowList`). The check is now enforced by the admission controller for all injection modes (init container, image volume, and CSI).
 
 ## 0.9.1
 

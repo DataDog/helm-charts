@@ -327,10 +327,9 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
             value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
           {{- end }}
-          {{- $csiValues := index .Values "datadog-csi-driver" }}
-          {{- if and $csiValues (hasKey $csiValues "apm") $csiValues.apm.registryAllowList }}
-          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CSI_REGISTRY_ALLOW_LIST
-            value: {{ join "," $csiValues.apm.registryAllowList | quote }}
+          {{- if .Values.clusterAgent.admissionController.containerRegistryAllowList }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST
+            value: {{ join "," .Values.clusterAgent.admissionController.containerRegistryAllowList | quote }}
           {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED

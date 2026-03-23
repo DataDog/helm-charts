@@ -1619,6 +1619,14 @@ clusterAgent:
     ## not otherwise specified.
     containerRegistry:
 
+    # clusterAgent.admissionController.containerRegistryAllowList -- Restrict which registries can be used for APM library injection.
+
+    ## When non-empty, libraries from registries not in this list will not be injected by the admission controller.
+    ## An empty list allows all registries (default).
+    containerRegistryAllowList: []
+    #   - public.ecr.aws/datadog
+    #   - gcr.io/datadoghq
+
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
       ## This feature is in beta, and enables Remote Config in the Cluster Agent. It also requires Cluster Agent version 7.43+.

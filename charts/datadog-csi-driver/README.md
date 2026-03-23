@@ -16,7 +16,6 @@ Datadog CSI Driver helm chart
 |-----|------|---------|-------------|
 | annotations | object | `{}` | Configure the annotations for the csi driver daemonset pods. |
 | apm.enabled | bool | `true` | Enable APM/SSI support for the CSI driver. |
-| apm.registryAllowList | list | `[]` | List of allowed container registries for DatadogLibrary CSI volumes. When empty, all registries are allowed (default). When non-empty, only the listed registries are permitted as sources for instrumentation libraries. |
 | driver.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | CSI driver securityContext |
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
