@@ -507,6 +507,10 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "%s-%s" $tagSuffix .image.tagSuffix -}}
 {{- end -}}
+{{/* Fall back to non-FIPS when the -full image FIPS variant is not available (requires 7.78.0+) */}}
+{{- if and (eq $tagSuffix "-fips-full") (not .root.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" (dict "Values" .root))) -}}
+{{- $tagSuffix = "-full" -}}
+{{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
