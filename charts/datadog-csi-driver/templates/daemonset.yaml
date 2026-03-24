@@ -41,6 +41,10 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.driver.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 5000
               protocol: TCP
@@ -84,6 +88,10 @@ spec:
           imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
           {{- with .Values.registrar.securityContext }}
           securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.registrar.resources }}
+          resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           args:
