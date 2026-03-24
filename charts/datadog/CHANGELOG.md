@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.195.3
+
+* TON-XXXX: Update Default Agent Version to 7.77.1 ([#2507](https://github.com/DataDog/helm-charts/pull/2507)).
+
 ## 3.195.2
 
 * Disable `registryMigrationMode` by setting default to `""`, reverting all sites to their previous site-specific registries. This is a rollback due to stale `v1` tags on `registry.datadoghq.com` causing outdated tracer versions to be injected.
