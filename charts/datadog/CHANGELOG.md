@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.196.0
+
+* `registryMigrationMode: "auto"` now migrates all sites, making it equivalent to `"all"`. Previously, unknown sites fell back to their regional registry under `"auto"`. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
 ## 3.195.1
 
 * Gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true` and `securityAgent.runtime.enabled=true`.

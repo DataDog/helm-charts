@@ -14,7 +14,6 @@ import (
 // migration mode, and relevant overrides (APM, GKE Autopilot/GDC, explicit registry).
 func TestRegistryMigration(t *testing.T) {
 	// Site × mode matrix.
-	// In auto mode, AP1 migrates because datadog.apm.enabled defaults to false.
 	sites := []struct {
 		name         string
 		site         string // empty = default (datadoghq.com / US1)
@@ -23,7 +22,6 @@ func TestRegistryMigration(t *testing.T) {
 		wantDisabled string
 	}{
 		{
-			// apm.enabled defaults to false, so auto mode migrates US1.
 			name:         "US1 (default)",
 			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
@@ -68,6 +66,14 @@ func TestRegistryMigration(t *testing.T) {
 		{
 			name:         "AP2",
 			site:         "ap2.datadoghq.com",
+			wantAuto:     "registry.datadoghq.com",
+			wantAll:      "registry.datadoghq.com",
+			wantDisabled: "gcr.io/datadoghq",
+		},
+		{
+			// Unknown sites are migrated in both auto and all modes.
+			name:         "unknown site",
+			site:         "custom.datadoghq.com",
 			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "gcr.io/datadoghq",
@@ -125,39 +131,6 @@ func TestRegistryMigration(t *testing.T) {
 		})
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "registryMigrationMode")
-	})
-
-	// AP1 auto migration applies regardless of APM configuration.
-	t.Run("AP1/auto/apm-enabled: migrates", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.site":                 "ap1.datadoghq.com",
-			"datadog.apm.enabled":          "true",
-			"registryMigrationMode":        "auto",
-		})
-		assert.Equal(t, "registry.datadoghq.com", registry)
-	})
-
-	// US1 auto migration is gated on APM being disabled (both legacy and modern fields).
-	t.Run("US1/auto/apm-enabled: does not migrate", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.apm.enabled":          "true",
-			"registryMigrationMode":        "auto",
-		})
-		assert.Equal(t, "gcr.io/datadoghq", registry)
-	})
-
-	t.Run("US1/auto/apm-portEnabled: does not migrate", func(t *testing.T) {
-		registry := renderAndExtractRegistry(t, map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-			"datadog.apm.portEnabled":      "true",
-			"registryMigrationMode":        "auto",
-		})
-		assert.Equal(t, "gcr.io/datadoghq", registry)
 	})
 
 	// Explicit registry always takes precedence over migration.
