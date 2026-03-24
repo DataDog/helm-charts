@@ -14,4 +14,4 @@ registrar:
       memory: 128Mi
     requests:
       cpu: 10m
-      memory: 128Miß
+      memory: 128Mi
