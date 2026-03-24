@@ -43,12 +43,38 @@ registrar:
 
   # registrar.securityContext -- CSI registrar securityContext
   securityContext: {}
+  
+  # registrar.resources -- Set resources requests/limits for Datadog CSI Driver Registrar PODs
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 driver:
   # driver.securityContext -- CSI driver securityContext
   securityContext:
     readOnlyRootFilesystem: true
     privileged: true
+
+  # driver.resources -- Set resources requests/limits for Datadog CSI Driver PODs
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
