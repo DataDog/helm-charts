@@ -1493,7 +1493,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: registry.datadoghq.com
+              value: gcr.io/datadoghq
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED
@@ -1568,7 +1568,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.76.1
+          image: gcr.io/datadoghq/cluster-agent:7.76.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1641,7 +1641,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.76.1
+          image: gcr.io/datadoghq/cluster-agent:7.76.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
