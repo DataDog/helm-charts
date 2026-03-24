@@ -1,0 +1,17 @@
+driver:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+registrar:
+  resources:
+    limits:
+      cpu: 10m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 128Miß
