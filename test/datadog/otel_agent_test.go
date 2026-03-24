@@ -99,8 +99,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.67.0")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.67.0")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
 			},
 		},
 		{
@@ -120,8 +120,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.68.0")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.68.0")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.68.0")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.68.0")
 			},
 		},
 		{
@@ -160,8 +160,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.67.0-full")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.67.0")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/ddot-collector:7.67.0")
 			},
 		},
 		{
@@ -182,8 +182,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 			},
 		},
 		{
@@ -203,8 +203,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.67.0")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/agent:7.67.0")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0")
 			},
 		},
 		{
@@ -225,8 +225,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 			},
 		},
 		{
@@ -246,8 +246,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.67.0-full")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/agent:7.67.0-full")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.67.0-full")
 			},
 		},
 		{
@@ -285,8 +285,8 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 			expectError: false,
 			assertion: func(t *testing.T, manifest string) {
-				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
-				verifyOtelImage(t, manifest, "registry.datadoghq.com/agent:7.66.0-full")
+				verifyAgentImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
+				verifyOtelImage(t, manifest, "gcr.io/datadoghq/agent:7.66.0-full")
 			},
 		},
 	}
