@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.195.2
+
+* Disable `registryMigrationMode` by setting default to `""`, reverting all sites to their previous site-specific registries. This is a rollback due to stale `v1` tags on `registry.datadoghq.com` causing outdated tracer versions to be injected.
+
 ## 3.195.1
 
 * Gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true` and `securityAgent.runtime.enabled=true`.
