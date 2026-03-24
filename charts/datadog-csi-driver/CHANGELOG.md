@@ -1,4 +1,7 @@
 # Changelog
+## 0.9.2
+
+* Support configuring `resources` for the driver and registrar containers
 
 ## 0.9.1
 
