@@ -65,6 +65,9 @@ jobs:
         uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
+      - name: Annotate on lint failure
+        if: failure()
+        run: echo "::error::Chart lint failed. A chart syntax issue was found — check the 'Run chart-testing (lint)' step above for details and fix the reported YAML/chart errors."
 
   lint-docs:
     runs-on: ubuntu-latest
@@ -77,6 +80,9 @@ jobs:
           fetch-depth: 0
       - name: Run helm-docs
         run: .github/helm-docs.sh
+      - name: Annotate on docs failure
+        if: failure()
+        run: echo "::error::helm-docs check failed. The chart's README.md is out of date — run 'helm-docs' locally (or '.github/helm-docs.sh') and commit the updated README.md."
 
   kubeconform-chart:
     runs-on: ubuntu-latest
@@ -115,6 +121,9 @@ jobs:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
           CHANGED_CHARTS: ${{needs.changed.outputs.charts}}
         run: .github/kubeconform.sh
+      - name: Annotate on kubeconform failure
+        if: failure()
+        run: echo "::error::kubeconform validation failed for Kubernetes ${{ matrix.k8s }}. One or more rendered templates contain invalid Kubernetes fields — check the 'Run kubeconform' step above and fix the reported field errors."
 
   install-chart:
     name: install-chart
@@ -161,7 +170,16 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
       - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml
+        run: ct install --config .github/ct.yaml 2>&1 | tee /tmp/ct-install.log; exit ${PIPESTATUS[0]}
+      - name: Annotate on install failure
+        if: failure()
+        run: |
+          failing_file=$(grep -oE "charts/[^/]+/ci/[^ ]+-values\.yaml" /tmp/ct-install.log | tail -1)
+          if [[ -n "$failing_file" ]]; then
+            echo "::error::Chart install failed for values file: ${failing_file}. Check the 'Run chart-testing (install)' step above for details."
+          else
+            echo "::error::Chart install failed. Check the 'Run chart-testing (install)' step above for details."
+          fi
 
   pr-validated:
     name: pr-validated

@@ -46,3 +46,6 @@ jobs:
         run: |
           helm dependency build ./charts/datadog
           make unit-test-datadog
+      - name: Annotate on test failure
+        if: failure()
+        run: echo "::error::Datadog Go tests failed. Investigate the failed tests in the 'run Go tests' step above. If baseline snapshots are out of date, run 'make update-test-baselines-datadog-agent' locally and commit the updated files."
