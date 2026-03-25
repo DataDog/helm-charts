@@ -64,10 +64,16 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
       - name: Run chart-testing (lint)
-        run: ct lint --config .github/ct.yaml
+        run: ct lint --config .github/ct.yaml 2>&1 | tee /tmp/ct-lint.log; exit ${PIPESTATUS[0]}
       - name: Notify on lint failure
         if: failure()
-        run: echo "::error::Chart lint failed. A chart syntax issue was found — check the 'Run chart-testing (lint)' step for details and fix the reported YAML/chart errors."
+        run: |
+          detail=$(grep -oP "✖︎ \S+ =>[^\n]+" /tmp/ct-lint.log | head -5 | tr '\n' ' ')
+          if [[ -n "$detail" ]]; then
+            echo "::error::Chart lint failed: ${detail}— check the 'Run chart-testing (lint)' step for details and fix the reported YAML/chart errors."
+          else
+            echo "::error::Chart lint failed. A chart syntax issue was found — check the 'Run chart-testing (lint)' step for details and fix the reported YAML/chart errors."
+          fi
 
   lint-docs:
     runs-on: ubuntu-latest
