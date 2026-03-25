@@ -3260,10 +3260,10 @@ otelAgentGateway:
   shareProcessNamespace: false
 
   # otelAgentGateway.lifecycle -- Configure the lifecycle of the otel-agent
-  lifecycle: {}
-    # preStop:
-    #   exec:
-    #     command: ["/bin/sh", "-c", "sleep 70"]
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 70"]
 
   # otelAgentGateway.terminationGracePeriodSeconds -- (int) Configure the termination grace period for the otel-agent
   terminationGracePeriodSeconds:  # 70
