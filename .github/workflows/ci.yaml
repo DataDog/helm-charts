@@ -85,10 +85,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run helm-docs
-        run: .github/helm-docs.sh
-      - name: Notify on docs failure
-        if: failure()
-        run: echo "::error::helm-docs check failed. The chart's README.md is out of date — run `.github/helm-docs.sh` locally and commit the updated README.md."
+        run: |
+          if ! .github/helm-docs.sh; then
+            changed=$(git diff --name-only | tr '\n' ' ')
+            echo "::error::README.md is out of date (${changed})— run \`.github/helm-docs.sh\` locally and commit the updated file(s)."
+            exit 1
+          fi
 
   kubeconform-chart:
     runs-on: ubuntu-latest
