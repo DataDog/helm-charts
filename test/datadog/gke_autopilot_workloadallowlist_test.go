@@ -56,6 +56,11 @@ var workloadAllowlistExemptedHostPaths = map[string]interface{}{
 	"/etc/rhsm":        nil,
 }
 
+// DUMMY: deliberate failure to validate CI annotation output — remove before merging.
+func Test_annotationValidationDummy(t *testing.T) {
+	assert.Equal(t, "trigger", "annotation-test", "deliberate failure: validating CI annotation output")
+}
+
 // Test_autopilotWorkloadAllowlistConfigs tests GKE Autopilot with WorkloadAllowlist.
 // HELM_FORCE_RENDER=true simulates a cluster with WorkloadAllowlist CRDs available
 // (GKE >= 1.32.1-gke.1729000). On real clusters the CRDs are detected automatically.
