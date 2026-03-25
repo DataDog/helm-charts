@@ -2205,7 +2205,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: gcr.io/datadoghq
+              value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
