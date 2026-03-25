@@ -1493,7 +1493,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: registry.datadoghq.com
+              value: gcr.io/datadoghq
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED

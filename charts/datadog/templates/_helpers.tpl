@@ -484,6 +484,28 @@ gcr.io/datadoghq
 {{- end -}}
 
 {{/*
+Return the site-specific registry, always ignoring registryMigrationMode.
+Used for resources that are not yet ready for registry.datadoghq.com (e.g. APM instrumentation libraries).
+Requires .Values to be passed as .
+*/}}
+{{- define "registry-no-migration" -}}
+{{- $site := default "datadoghq.com" .datadog.site -}}
+{{- if .registry -}}
+{{- .registry -}}
+{{- else if eq $site "ddog-gov.com" -}}
+public.ecr.aws/datadog
+{{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) (not .providers.gke.gdc) -}}
+datadoghq.azurecr.io
+{{- else if eq $site "datadoghq.eu" -}}
+eu.gcr.io/datadoghq
+{{- else if eq $site "ap1.datadoghq.com" -}}
+asia.gcr.io/datadoghq
+{{- else -}}
+gcr.io/datadoghq
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
