@@ -1449,7 +1449,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1593,7 +1593,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1682,7 +1682,7 @@ spec:
               value: "true"
             - name: DD_DATA_PLANE_TELEMETRY_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: registry.datadoghq.com/agent-data-plane:0.1.30
+          image: gcr.io/datadoghq/agent-data-plane:0.1.30
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
@@ -1742,7 +1742,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1781,7 +1781,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.75.0
+          image: gcr.io/datadoghq/agent:7.75.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2048,7 +2048,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: registry.datadoghq.com
+              value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
@@ -2113,7 +2113,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.76.1
+          image: gcr.io/datadoghq/cluster-agent:7.77.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2186,7 +2186,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.76.1
+          image: gcr.io/datadoghq/cluster-agent:7.77.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
