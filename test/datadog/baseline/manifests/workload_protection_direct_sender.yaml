@@ -2378,7 +2378,7 @@ spec:
             - name: DD_COLLECT_KUBERNETES_EVENTS
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
-              value: "false"
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
