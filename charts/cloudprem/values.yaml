@@ -113,13 +113,7 @@ dogstatsdServer:
 
 # Additional global env
 # Legacy map format (e.g. environment: { KEY: VALUE }) is also supported for backward compatibility.
-environment:
-  - name: NO_COLOR
-    value: "true"
-  - name: QW_DISABLE_TELEMETRY
-    value: "true"
-  - name: QW_LOG_FORMAT
-    value: json
+environment: []
 
 environmentFrom: []
   # - secretRef:
@@ -195,6 +189,7 @@ searcher:
 
   persistentVolume:
     enabled: false
+    annotations: {}
     # storage: "1Gi"
     # storageClass: ""
 
@@ -448,6 +443,7 @@ indexer:
 
   persistentVolume:
     enabled: false
+    annotations: {}
     # storage: "1Gi"
     # storageClass: ""
 

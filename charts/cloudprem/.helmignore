@@ -21,6 +21,8 @@
 .idea/
 *.tmproj
 .vscode/
+# Tests
+tests/
 # Bazel
 BUILD*
 MODULE*

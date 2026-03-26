@@ -1,6 +1,6 @@
 # Datadog Private Action Runner
 
-![Version: 1.27.1](https://img.shields.io/badge/Version-1.27.1-informational?style=flat-square) ![AppVersion: v1.20.1](https://img.shields.io/badge/AppVersion-v1.20.1-informational?style=flat-square)
+![Version: 1.28.0](https://img.shields.io/badge/Version-1.28.0-informational?style=flat-square) ![AppVersion: v1.21.0](https://img.shields.io/badge/AppVersion-v1.21.0-informational?style=flat-square)
 
 ## Overview
 
@@ -323,7 +323,7 @@ If actions requiring credentials fail:
 | deployment.metadata.annotations | object | `{}` | Annotations to add to the deployment metadata |
 | deployment.metadata.labels | object | `{}` | Labels to add to the deployment metadata |
 | fullnameOverride | string | `""` | Override the full qualified app name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.20.1"}` | Current Datadog Private Action Runner image |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"gcr.io/datadoghq/private-action-runner","tag":"v1.21.0"}` | Current Datadog Private Action Runner image |
 | imagePullSecrets | list | `[]` | Datadog Private Action Runner repository pullSecret (ex: specify docker registry credentials) |
 | nameOverride | string | `""` | Override name of app |
 | runner.affinity | object | `{}` | Kubernetes affinity settings for the runner pods |
