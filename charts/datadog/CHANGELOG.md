@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.197.0
+
+* Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
+
 ## 3.196.0
 
 * [CONTP-1259] Enable kubernetes use endpointslice config by default ([#2503](https://github.com/DataDog/helm-charts/pull/2503)).
