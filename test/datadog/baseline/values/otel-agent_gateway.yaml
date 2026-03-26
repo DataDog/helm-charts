@@ -4,5 +4,7 @@ datadog:
 
   otelCollector:
     enabled: true
+clusterAgent:
+  enabled: false
 otelAgentGateway:
   enabled: true
