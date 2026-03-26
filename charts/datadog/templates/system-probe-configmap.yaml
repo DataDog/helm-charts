@@ -138,7 +138,7 @@ data:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
         dir: /var/run/sysprobe/runtime-security/profiles
       enforcement:
-        enabled: {{ $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+        enabled: {{ and $.Values.datadog.securityAgent.runtime.enabled $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
     dynamic_instrumentation:
       enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
 
@@ -247,7 +247,7 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
-            {{- if .Values.datadog.securityAgent.runtime.enforcement.enabled }}
+            {{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.enforcement.enabled }}
             "kill",
             {{- end }}
             "listen",

@@ -126,8 +126,8 @@ func Test_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
 		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"clusterAgent.privateActionRunner.enabled":        "true",
-			"clusterAgent.privateActionRunner.selfEnroll":     "false",
+			"clusterAgent.privateActionRunner.enabled":                    "true",
+			"clusterAgent.privateActionRunner.selfEnroll":                 "false",
 			"clusterAgent.privateActionRunner.identityFromExistingSecret": "my-par-secret",
 		},
 	})
@@ -292,8 +292,8 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		Overrides: map[string]string{
-			"clusterAgent.privateActionRunner.enabled":       "true",
-			"clusterAgent.privateActionRunner.selfEnroll":    "false",
+			"clusterAgent.privateActionRunner.enabled":    "true",
+			"clusterAgent.privateActionRunner.selfEnroll": "false",
 			"clusterAgent.privateActionRunner.privateKey": "test-key",
 		},
 	})
@@ -301,3 +301,224 @@ func Test_PrivateActionRunner_Validation_ManualModeWithOnlyPrivateKey(t *testing
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey")
 }
+
+// findPARContainer finds the private-action-runner container in the DaemonSet
+func findPARContainer(daemonset appsv1.DaemonSet) *corev1.Container {
+	for i := range daemonset.Spec.Template.Spec.Containers {
+		if daemonset.Spec.Template.Spec.Containers[i].Name == "private-action-runner" {
+			return &daemonset.Spec.Template.Spec.Containers[i]
+		}
+	}
+	return nil
+}
+
+func Test_NodeAgent_PrivateActionRunner_Disabled(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":        "datadog-secret",
+			"datadog.privateActionRunner.enabled": "false",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	assert.Nil(t, parContainer, "PAR container should not exist when disabled")
+}
+
+func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml", "templates/private-action-runner-configmap.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.appKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	// Verify DD_APP_KEY is injected for self-enrollment
+	foundAppKey := false
+	for _, envVar := range parContainer.Env {
+		if envVar.Name == "DD_APP_KEY" {
+			foundAppKey = true
+			assert.NotNil(t, envVar.ValueFrom, "DD_APP_KEY should use valueFrom")
+			assert.Equal(t, "datadog-secret", envVar.ValueFrom.SecretKeyRef.Name)
+			assert.Equal(t, "app-key", envVar.ValueFrom.SecretKeyRef.Key)
+		}
+	}
+	assert.True(t, foundAppKey, "DD_APP_KEY should be present on PAR container")
+
+	// Verify ConfigMap contains self-enroll config (identity stored in local file, not k8s secret)
+	assert.Contains(t, manifest, "self_enroll: true")
+	assert.NotContains(t, manifest, "identity_use_k8s_secret")
+	assert.NotContains(t, manifest, "identity_secret_name")
+}
+
+func Test_NodeAgent_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml", "templates/private-action-runner-configmap.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "false",
+			"datadog.privateActionRunner.urn":        "urn:datadog:private-action-runner:organization:123:runner:abc",
+			"datadog.privateActionRunner.privateKey": "test-private-key",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	// Verify ConfigMap contains manual credentials
+	assert.Contains(t, manifest, "self_enroll: false")
+	assert.Contains(t, manifest, "urn:datadog:private-action-runner:organization:123:runner:abc")
+	assert.Contains(t, manifest, "test-private-key")
+}
+
+func Test_NodeAgent_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":                           "datadog-secret",
+			"datadog.privateActionRunner.enabled":                    "true",
+			"datadog.privateActionRunner.selfEnroll":                 "false",
+			"datadog.privateActionRunner.identityFromExistingSecret": "my-par-secret",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	// Verify URN and private key env vars reference the existing secret
+	var urnEnv, privateKeyEnv *corev1.EnvVar
+	for i := range parContainer.Env {
+		if parContainer.Env[i].Name == DDPARURN {
+			urnEnv = &parContainer.Env[i]
+		}
+		if parContainer.Env[i].Name == DDPARPrivateKey {
+			privateKeyEnv = &parContainer.Env[i]
+		}
+	}
+
+	require.NotNil(t, urnEnv, "URN env var should exist on PAR container")
+	require.NotNil(t, privateKeyEnv, "Private key env var should exist on PAR container")
+
+	assert.NotNil(t, urnEnv.ValueFrom, "URN should use valueFrom")
+	assert.Equal(t, "my-par-secret", urnEnv.ValueFrom.SecretKeyRef.Name)
+	assert.Equal(t, "urn", urnEnv.ValueFrom.SecretKeyRef.Key)
+
+	assert.NotNil(t, privateKeyEnv.ValueFrom, "Private key should use valueFrom")
+	assert.Equal(t, "my-par-secret", privateKeyEnv.ValueFrom.SecretKeyRef.Name)
+	assert.Equal(t, "private_key", privateKeyEnv.ValueFrom.SecretKeyRef.Key)
+}
+
+func Test_NodeAgent_PrivateActionRunner_Enabled_WithActionsAllowlist(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+		},
+		OverridesJson: map[string]string{
+			"datadog.privateActionRunner.enabled":          `true`,
+			"datadog.privateActionRunner.selfEnroll":       `true`,
+			"datadog.privateActionRunner.actionsAllowlist": `["com.datadoghq.http.request", "com.datadoghq.traceroute"]`,
+		},
+	})
+	require.NoError(t, err)
+
+	// Verify ConfigMap contains the actions allowlist
+	assert.Contains(t, manifest, "com.datadoghq.http.request")
+	assert.Contains(t, manifest, "com.datadoghq.traceroute")
+}
+
+func Test_NodeAgent_PrivateActionRunner_SelfEnroll_WithoutLeaderElection(t *testing.T) {
+	// Node agent stores identity in a local file, not a k8s secret, so leader election is not required
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.appKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+			"datadog.leaderElection":                 "false",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist even without leader election")
+}
+
+func Test_NodeAgent_PrivateActionRunner_Validation_ManualModeWithoutCredentials(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "false",
+		},
+	})
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "when selfEnroll is disabled, you must provide either")
+}
+
+func Test_NodeAgent_PrivateActionRunner_No_RBAC_Created(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.privateActionRunner.enabled": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	// Node agent PAR stores identity in a local file, not a k8s secret — no RBAC needed
+	assert.NotContains(t, manifest, "node-private-action-runner")
+}
+

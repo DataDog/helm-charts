@@ -275,6 +275,14 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: {{ .Values.clusterAgent.admissionController.port | quote }}
+          {{- if .Values.clusterAgent.admissionController.probe.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_PROBE_INTERVAL
+            value: {{ .Values.clusterAgent.admissionController.probe.interval | quote }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_GRACE_PERIOD
+            value: {{ .Values.clusterAgent.admissionController.probe.gracePeriod | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
@@ -504,6 +512,37 @@ spec:
           {{- if .Values.datadog.appsec.injector.proxies }}
           - name: DD_APPSEC_PROXY_PROXIES
             value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.mode }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_MODE
+            value: {{ .Values.datadog.appsec.injector.mode | quote }}
+          {{- end }}
+          {{- /* Sidecar config is always passed to the cluster agent regardless of mode so it
+               knows the full sidecar spec. In "external" mode the agent uses a separately
+               deployed processor instead, but still needs these values for reference. */}}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_IMAGE
+            value: {{ .Values.datadog.appsec.injector.sidecar.image | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_IMAGE_TAG
+            value: {{ .Values.datadog.appsec.injector.sidecar.imageTag | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_PORT
+            value: {{ .Values.datadog.appsec.injector.sidecar.port | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_HEALTH_PORT
+            value: {{ .Values.datadog.appsec.injector.sidecar.healthPort | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_REQUESTS_CPU
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.cpu | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_REQUESTS_MEMORY
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.memory | quote }}
+          {{- if .Values.datadog.appsec.injector.sidecar.resources.limits.cpu }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_LIMITS_CPU
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.limits.cpu | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.sidecar.resources.limits.memory }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_LIMITS_MEMORY
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.limits.memory | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.sidecar.bodyParsingSizeLimit }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_BODY_PARSING_SIZE_LIMIT
+            value: {{ .Values.datadog.appsec.injector.sidecar.bodyParsingSizeLimit | quote }}
           {{- end }}
           {{- if .Values.datadog.appsec.injector.processor.port }}
           - name: DD_APPSEC_PROXY_PROCESSOR_PORT
