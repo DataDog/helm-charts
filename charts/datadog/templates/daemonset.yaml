@@ -197,6 +197,14 @@ spec:
       - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
         configMap:
           name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- if not .Values.providers.gke.gdc }}
+      - name: host-osrelease
+        hostPath:
+          path: /etc/os-release
+      - name: host-varlog
+        hostPath:
+          path: /var/log
+      {{- end }}
       {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd

@@ -67,6 +67,18 @@
       mountPath: /tmp
       readOnly: false
     {{- if not .Values.providers.gke.gdc }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: host-osrelease
+      mountPath: /host/etc/os-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: host-varlog
+      mountPath: /host/var/log
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
