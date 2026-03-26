@@ -522,3 +522,142 @@ func Test_NodeAgent_PrivateActionRunner_No_RBAC_Created(t *testing.T) {
 	assert.NotContains(t, manifest, "node-private-action-runner")
 }
 
+func Test_NodeAgent_PrivateActionRunner_HostMounts(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+
+	mountsByName := map[string]corev1.VolumeMount{}
+	for _, m := range parContainer.VolumeMounts {
+		mountsByName[m.Name] = m
+	}
+
+	procdirMount, ok := mountsByName["procdir"]
+	require.True(t, ok, "procdir volume mount should be present")
+	assert.Equal(t, "/host/proc", procdirMount.MountPath)
+	assert.True(t, procdirMount.ReadOnly)
+
+	osReleaseMount, ok := mountsByName["host-osrelease"]
+	require.True(t, ok, "host-osrelease volume mount should be present")
+	assert.Equal(t, "/host/etc/os-release", osReleaseMount.MountPath)
+	assert.True(t, osReleaseMount.ReadOnly)
+
+	varLogMount, ok := mountsByName["host-varlog"]
+	require.True(t, ok, "host-varlog volume mount should be present")
+	assert.Equal(t, "/host/var/log", varLogMount.MountPath)
+	assert.True(t, varLogMount.ReadOnly)
+}
+
+func Test_NodeAgent_PrivateActionRunner_HostVolumes(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	volumesByName := map[string]corev1.Volume{}
+	for _, v := range daemonset.Spec.Template.Spec.Volumes {
+		volumesByName[v.Name] = v
+	}
+
+	osReleaseVol, ok := volumesByName["host-osrelease"]
+	require.True(t, ok, "host-osrelease volume should be declared")
+	require.NotNil(t, osReleaseVol.HostPath)
+	assert.Equal(t, "/etc/os-release", osReleaseVol.HostPath.Path)
+
+	varLogVol, ok := volumesByName["host-varlog"]
+	require.True(t, ok, "host-varlog volume should be declared")
+	require.NotNil(t, varLogVol.HostPath)
+	assert.Equal(t, "/var/log", varLogVol.HostPath.Path)
+}
+
+func Test_NodeAgent_PrivateActionRunner_SecurityContext(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var daemonset appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &daemonset)
+
+	parContainer := findPARContainer(daemonset)
+	require.NotNil(t, parContainer, "PAR container should exist")
+	require.NotNil(t, parContainer.SecurityContext, "PAR container should have a security context")
+
+	require.NotNil(t, parContainer.SecurityContext.ReadOnlyRootFilesystem)
+	assert.True(t, *parContainer.SecurityContext.ReadOnlyRootFilesystem)
+
+	require.NotNil(t, parContainer.SecurityContext.Capabilities)
+	assert.Contains(t, parContainer.SecurityContext.Capabilities.Add, corev1.Capability("NET_RAW"))
+}
+
+func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		OverridesJson: map[string]string{
+			"datadog.privateActionRunner.enabled":                    `true`,
+			"datadog.privateActionRunner.selfEnroll":                 `true`,
+			"datadog.privateActionRunner.restrictedShellAllowedPaths": `["/var/log", "/tmp"]`,
+		},
+	})
+	require.NoError(t, err)
+
+	assert.Contains(t, manifest, "restricted_shell_allowed_paths")
+	assert.Contains(t, manifest, "/var/log")
+	assert.Contains(t, manifest, "/tmp")
+}
+
+func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths_Default(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	// Default value /var/log should be present
+	assert.Contains(t, manifest, "restricted_shell_allowed_paths")
+	assert.Contains(t, manifest, "/var/log")
+}
+
