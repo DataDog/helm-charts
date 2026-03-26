@@ -93,3 +93,11 @@ securityContext: {}
 
 # annotations -- Configure the annotations for the csi driver daemonset pods.
 annotations: {}
+
+# global -- Global values shared across charts when this chart is used as a sub-chart.
+# When installed standalone, these values have no effect.
+global:
+  # global.containerRegistryAllowList -- Restrict which registries can be used for APM library injection.
+  ## When non-empty, only libraries from the listed registries will be injected via the CSI driver.
+  ## This value is typically set in the parent `datadog` chart as a Helm global.
+  containerRegistryAllowList: []
