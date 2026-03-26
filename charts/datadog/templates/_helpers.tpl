@@ -507,6 +507,10 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "%s-%s" $tagSuffix .image.tagSuffix -}}
 {{- end -}}
+{{/* Fall back to non-FIPS when the -full image FIPS variant is not available (requires 7.78.0+) */}}
+{{- if and (eq $tagSuffix "-fips-full") (not .root.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" (dict "Values" .root))) -}}
+{{- $tagSuffix = "-full" -}}
+{{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
 {{- else -}}
@@ -538,7 +542,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
-      {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
+      {{- $ddotImage := dict "name" "ddot-collector" "tag" (include "get-agent-version" .) -}}
+      {{- if and (eq (include "use-fips-images" .Values) "true") (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
+        {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
+      {{- else -}}
+        {{ include "image-path" (dict "root" .Values "image" $ddotImage) }}
+      {{- end -}}
     {{- end -}}
   {{- else -}}
     {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
@@ -574,7 +583,11 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
     {{- end -}}
   {{- end -}}
   {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
-  {{ include "image-path" (dict "root" .Values "image" $image) }}
+  {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.otelAgentGateway.image.doNotCheckTag) (semverCompare "<7.78.0" $imageTag) -}}
+    {{ include "registry" .Values }}/ddot-collector:{{ $imageTag }}
+  {{- else -}}
+    {{ include "image-path" (dict "root" .Values "image" $image) }}
+  {{- end -}}
 {{- end -}}
 
 {{/*

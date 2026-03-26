@@ -1,0 +1,13 @@
+agents:
+  image:
+    tagSuffix: full
+clusterAgent:
+  image:
+    tagSuffix: full
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+    useStandaloneImage: false
