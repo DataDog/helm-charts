@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.196.0
+
+* [CONTP-1259] Enable kubernetes use endpointslice config by default ([#2503](https://github.com/DataDog/helm-charts/pull/2503)).
+
 ## 3.195.3
 
 * TON-XXXX: Update Default Agent Version to 7.77.1 ([#2507](https://github.com/DataDog/helm-charts/pull/2507)).
