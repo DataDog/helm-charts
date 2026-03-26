@@ -2,7 +2,7 @@
 
 ## 0.10.0
 
-* Registry allow list configuration moved to the main `datadog` chart (`clusterAgent.admissionController.containerRegistryAllowList`). The check is now enforced by the admission controller for all injection modes (init container, image volume, and CSI).
+* Registry allow list is now configured via `global.containerRegistryAllowList` in the parent `datadog` chart. When set, the CSI driver enforces the list via `DD_REGISTRY_ALLOW_LIST` and the admission controller enforces it via `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST`. Both layers must be satisfied for injection to proceed.
 
 ## 0.9.1
 

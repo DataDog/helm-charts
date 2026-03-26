@@ -5,6 +5,14 @@
 ## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
 ## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
 
+# global.containerRegistryAllowList -- Restrict which registries can be used for APM library injection.
+## When non-empty, only libraries from the listed registries will be injected. Enforced by both the
+## admission controller webhook and the CSI driver. An empty list allows all registries (default).
+global:
+  containerRegistryAllowList: []
+  #   - public.ecr.aws/datadog
+  #   - gcr.io/datadoghq
+
 # nameOverride -- Override name of app
 nameOverride:  # ""
 
@@ -1618,14 +1626,6 @@ clusterAgent:
     ## The clusterAgent uses this configuration for apm.instrumentation, agentSidecar, and cwsInstrumentation, if
     ## not otherwise specified.
     containerRegistry:
-
-    # clusterAgent.admissionController.containerRegistryAllowList -- Restrict which registries can be used for APM library injection.
-
-    ## When non-empty, libraries from registries not in this list will not be injected by the admission controller.
-    ## An empty list allows all registries (default).
-    containerRegistryAllowList: []
-    #   - public.ecr.aws/datadog
-    #   - gcr.io/datadoghq
 
     remoteInstrumentation:
       # clusterAgent.admissionController.remoteInstrumentation.enabled -- Enable polling and applying library injection using Remote Config.
