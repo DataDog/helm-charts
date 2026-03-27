@@ -207,7 +207,7 @@ data:
 kind: ConfigMap
 metadata:
   annotations:
-    checksum/otel-gateway-config: a206b62269789921918c0f6bbc57dbdd7a0bc5ad99ca3f7a0a87cc4f9627111e
+    checksum/otel-gateway-config: d55a1dd7b1d932cdb00f3296e230c6d6b008df9d9429c7e281f888ac79e15dc0
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
@@ -1172,7 +1172,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.77.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1312,7 +1312,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.77.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1400,7 +1400,7 @@ spec:
               value: health_check,zpages,pprof,ddflare,datadog
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.77.1
+          image: registry.datadoghq.com/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1451,7 +1451,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.77.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1494,7 +1494,7 @@ spec:
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
               value: configmap
-          image: gcr.io/datadoghq/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.77.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1684,7 +1684,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/otel-gateway-config: 821d151299fe41168fb59d151e13d3c39f28440d3f881675f03ed91e8431e10d
+        checksum/otel-gateway-config: bc2470aacb84829ad855851b06c43304246f385c222a8acf9ce29c8e59a4d178
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog-otel-agent-gateway
@@ -1734,7 +1734,7 @@ spec:
               value: "0"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/ddot-collector:7.77.1
+          image: registry.datadoghq.com/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1765,7 +1765,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/ddot-collector:7.77.1
+          image: registry.datadoghq.com/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
