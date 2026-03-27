@@ -9,6 +9,7 @@ const {
   computeBumpedVersion,
   isSequentialBump,
   computeNextPrerelease,
+  extractVersionFromChart,
 } = require('./chart-version-utils');
 
 // ---------------------------------------------------------------------------
@@ -218,4 +219,24 @@ test('computeNextPrerelease: returns null for unsupported pre-release format rc1
 
 test('computeNextPrerelease: returns null for unsupported format beta.1.2', () => {
   assert.equal(computeNextPrerelease({ major: 1, minor: 2, patch: 3, prerelease: 'beta.1.2' }), null);
+});
+
+// ---------------------------------------------------------------------------
+// extractVersionFromChart
+// ---------------------------------------------------------------------------
+
+test('extractVersionFromChart: bare version', () => {
+  assert.equal(extractVersionFromChart('apiVersion: v2\nversion: 1.2.3\nappVersion: 1.0.0'), '1.2.3');
+});
+
+test('extractVersionFromChart: YAML-quoted version', () => {
+  assert.equal(extractVersionFromChart('apiVersion: v2\nversion: "2.14.1"\nappVersion: 1.0.0'), '2.14.1');
+});
+
+test('extractVersionFromChart: v-prefixed version', () => {
+  assert.equal(extractVersionFromChart('apiVersion: v2\nversion: v0.3.2\nappVersion: 1.0.0'), 'v0.3.2');
+});
+
+test('extractVersionFromChart: returns null when version field is missing', () => {
+  assert.equal(extractVersionFromChart('apiVersion: v2\nappVersion: 1.0.0'), null);
 });
