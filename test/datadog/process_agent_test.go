@@ -193,7 +193,37 @@ func Test_processAgentConfigs(t *testing.T) {
 					"agents.image.doNotCheckTag":   "true",
 				},
 			},
-			assertions: verifyLinuxRunInCoreAgentOld,
+			assertions: verifyDefaultDaemonset,
+		},
+		{
+			name: "agent >= 7.78 -- envvar not injected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.tag":             "7.78.0",
+				},
+			},
+			assertions: verifyLinuxRunInCoreAgentEnvvarRemoved,
+		},
+		{
+			name: "agent 7.77 -- envvar still injected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.tag":             "7.77.0",
+				},
+			},
+			assertions: verifyDefaultDaemonset,
 		},
 		{
 			name: "enable process checks in core agent -- env var override",
@@ -460,6 +490,20 @@ func verifyLinuxRunInCoreAgentOld(t *testing.T, manifest string) {
 	assertDefaultCommonProcessEnvs(t, processEnvs)
 	assert.Equal(t, "false", coreEnvs[DDProcessRunInCoreAgentEnabled])
 	assert.True(t, getPasswdMount(t, processAgentContainer.VolumeMounts))
+}
+
+func verifyLinuxRunInCoreAgentEnvvarRemoved(t *testing.T, manifest string) {
+	var deployment appsv1.DaemonSet
+	common.Unmarshal(t, manifest, &deployment)
+	coreAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "agent")
+	assert.True(t, ok)
+	coreEnvs := getEnvVarMap(coreAgentContainer.Env)
+	assertDefaultCommonProcessEnvs(t, coreEnvs)
+	assert.Equal(t, "", coreEnvs[DDProcessRunInCoreAgentEnabled])
+	assert.True(t, getPasswdMount(t, coreAgentContainer.VolumeMounts))
+
+	_, ok = getContainer(t, deployment.Spec.Template.Spec.Containers, "process-agent")
+	assert.False(t, ok)
 }
 
 func verifyUnprivilegedAgentHandling(t *testing.T, manifest string) {

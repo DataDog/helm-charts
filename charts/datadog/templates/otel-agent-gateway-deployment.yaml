@@ -216,8 +216,10 @@ spec:
             value: "false"
           - name: DD_PROCESS_AGENT_ENABLED
             value: "false"
+          {{- if eq (include "needs-run-in-core-agent-envvar" .) "true" }}
           - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
+          {{- end }}
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_INVENTORIES_ENABLED
