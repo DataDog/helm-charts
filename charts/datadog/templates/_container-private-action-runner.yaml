@@ -67,11 +67,15 @@
       mountPath: /tmp
       readOnly: false
     {{- if not .Values.providers.gke.gdc }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
+    {{- end }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- if not .Values.providers.gke.autopilot }}
     - name: host-osrelease
       mountPath: /host/etc/os-release
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -80,10 +84,6 @@
       mountPath: /host/var/log
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-    {{- end }}
-    - name: dsdsocket
-      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-      readOnly: false
     {{- end }}
     {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
