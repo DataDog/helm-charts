@@ -31,10 +31,4 @@ data:
         - {{ . | quote }}
         {{- end }}
       {{- end }}
-      {{- if .Values.datadog.privateActionRunner.restrictedShellAllowedPaths }}
-      restricted_shell_allowed_paths:
-        {{- range .Values.datadog.privateActionRunner.restrictedShellAllowedPaths }}
-        - {{ . | quote }}
-        {{- end }}
-      {{- end }}
 {{- end }}

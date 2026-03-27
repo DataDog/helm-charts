@@ -547,10 +547,6 @@ datadog:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.gitlab.branches.*"
 
-    # datadog.privateActionRunner.restrictedShellAllowedPaths -- List of host paths accessible to the restricted shell (rshell) action bundle
-    restrictedShellAllowedPaths:
-      - /var/log
-
   ## Enable logs agent and provide custom configs
   logs:
     # datadog.logs.enabled -- Enables this to activate Datadog Agent log collection

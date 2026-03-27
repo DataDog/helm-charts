@@ -624,25 +624,6 @@ func Test_NodeAgent_PrivateActionRunner_SecurityContext(t *testing.T) {
 	assert.Contains(t, parContainer.SecurityContext.Capabilities.Add, corev1.Capability("NET_RAW"))
 }
 
-func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths(t *testing.T) {
-	manifest, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		OverridesJson: map[string]string{
-			"datadog.privateActionRunner.enabled":                     `true`,
-			"datadog.privateActionRunner.selfEnroll":                  `true`,
-			"datadog.privateActionRunner.restrictedShellAllowedPaths": `["/var/log", "/tmp"]`,
-		},
-	})
-	require.NoError(t, err)
-
-	assert.Contains(t, manifest, "restricted_shell_allowed_paths")
-	assert.Contains(t, manifest, "/var/log")
-	assert.Contains(t, manifest, "/tmp")
-}
-
 func Test_NodeAgent_PrivateActionRunner_NotSupported_OnAutopilot(t *testing.T) {
 	// PAR is blocked on GKE Autopilot via NOTES.txt validation — the chart errors before rendering
 	_, err := common.RenderChart(t, common.HelmCommand{
@@ -661,20 +642,3 @@ func Test_NodeAgent_PrivateActionRunner_NotSupported_OnAutopilot(t *testing.T) {
 	assert.Contains(t, err.Error(), "Private Action Runner is not supported on GKE Autopilot")
 }
 
-func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths_Default(t *testing.T) {
-	manifest, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		Overrides: map[string]string{
-			"datadog.privateActionRunner.enabled":    "true",
-			"datadog.privateActionRunner.selfEnroll": "true",
-		},
-	})
-	require.NoError(t, err)
-
-	// Default value /var/log should be present
-	assert.Contains(t, manifest, "restricted_shell_allowed_paths")
-	assert.Contains(t, manifest, "/var/log")
-}
