@@ -631,8 +631,8 @@ func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths(t *testing.T
 		ShowOnly:    []string{"templates/private-action-runner-configmap.yaml"},
 		Values:      []string{"../../charts/datadog/values.yaml"},
 		OverridesJson: map[string]string{
-			"datadog.privateActionRunner.enabled":                    `true`,
-			"datadog.privateActionRunner.selfEnroll":                 `true`,
+			"datadog.privateActionRunner.enabled":                     `true`,
+			"datadog.privateActionRunner.selfEnroll":                  `true`,
 			"datadog.privateActionRunner.restrictedShellAllowedPaths": `["/var/log", "/tmp"]`,
 		},
 	})
@@ -678,4 +678,3 @@ func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths_Default(t *t
 	assert.Contains(t, manifest, "restricted_shell_allowed_paths")
 	assert.Contains(t, manifest, "/var/log")
 }
-
