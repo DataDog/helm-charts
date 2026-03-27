@@ -197,7 +197,7 @@ spec:
       - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
         configMap:
           name: {{ template "datadog.fullname" . }}-privateactionrunner
-      {{- if not .Values.providers.gke.gdc }}
+      {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
       - name: host-osrelease
         hostPath:
           path: /etc/os-release

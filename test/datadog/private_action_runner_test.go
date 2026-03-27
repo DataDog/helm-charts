@@ -643,6 +643,24 @@ func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths(t *testing.T
 	assert.Contains(t, manifest, "/tmp")
 }
 
+func Test_NodeAgent_PrivateActionRunner_NotSupported_OnAutopilot(t *testing.T) {
+	// PAR is blocked on GKE Autopilot via NOTES.txt validation — the chart errors before rendering
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/daemonset.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":           "datadog-secret",
+			"datadog.privateActionRunner.enabled":    "true",
+			"datadog.privateActionRunner.selfEnroll": "true",
+			"providers.gke.autopilot":                "true",
+		},
+	})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "Private Action Runner is not supported on GKE Autopilot")
+}
+
 func Test_NodeAgent_PrivateActionRunner_RestrictedShellAllowedPaths_Default(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
