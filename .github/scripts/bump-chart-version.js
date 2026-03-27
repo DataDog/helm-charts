@@ -2,7 +2,7 @@
 
 module.exports = async ({github, context, core, exec}) => {
   const fs = require('fs');
-  const { parseVersion, computeBumpedVersion, decodeFileContent } = require('./chart-version-utils');
+  const { parseVersion, computeBumpedVersion, decodeFileContent, extractVersionFromChart } = require('./chart-version-utils');
 
   const pr = context.payload.pull_request;
   if (!pr) {
@@ -70,15 +70,13 @@ module.exports = async ({github, context, core, exec}) => {
       return;
     }
     const baseContent = decodeFileContent(baseChartFile.data);
-    const baseVersionMatch = baseContent.match(/^version:\s+(\S+)/m);
-    if (!baseVersionMatch) {
+    const baseVersion = extractVersionFromChart(baseContent);
+    if (!baseVersion) {
       core.setFailed(`No 'version:' found in base branch Chart.yaml for ${chartName}. Skipping…`);
       return;
     }
-    const baseVersion = baseVersionMatch[1].trim();
     core.info(`Base version for '${chartName}' is '${baseVersion}'.`);
-    
-    // Validate base version format
+
     let baseParsed;
     try {
       baseParsed = parseVersion(baseVersion);
@@ -101,21 +99,12 @@ module.exports = async ({github, context, core, exec}) => {
       return;
     }
     const prContent = decodeFileContent(prChartFile.data);
-    const prVersionMatch = prContent.match(/^version:\s+(\S+)/m);
-    if (!prVersionMatch) {
+    const prVersion = extractVersionFromChart(prContent);
+    if (!prVersion) {
       core.setFailed(`No 'version:' found in PR Chart.yaml for ${chartName}. Skipping…`);
       return;
     }
-    const prVersion = prVersionMatch[1].trim();
     core.info(`PR version for '${chartName}' is '${prVersion}'.`);
-    
-    // Validate PR version format
-    try {
-      parseVersion(prVersion);
-    } catch (error) {
-      core.setFailed(`Invalid PR version format '${prVersion}' for ${chartName}: ${error.message}`);
-      return;
-    }
 
     // Calculate the desired version based on bump type.
     let desiredVersion;
