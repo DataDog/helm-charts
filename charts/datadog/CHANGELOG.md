@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.197.1
+
+* feat: rename hostprofiler receiver to profiling ([#2519](https://github.com/DataDog/helm-charts/pull/2519)).
+
 ## 3.197.0
 
 * Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
