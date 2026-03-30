@@ -206,8 +206,7 @@ data:
           exporters: [datadog]
 kind: ConfigMap
 metadata:
-  annotations:
-    checksum/otel-gateway-config: d55a1dd7b1d932cdb00f3296e230c6d6b008df9d9429c7e281f888ac79e15dc0
+  annotations: {}
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
@@ -1683,8 +1682,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations:
-        checksum/otel-gateway-config: bc2470aacb84829ad855851b06c43304246f385c222a8acf9ce29c8e59a4d178
+      annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog-otel-agent-gateway

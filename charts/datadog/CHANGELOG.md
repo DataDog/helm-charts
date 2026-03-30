@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.197.2
+## 3.197.3
 
 * feat: rename hostprofiler receiver to profiling ([#2519](https://github.com/DataDog/helm-charts/pull/2519)).
+
+## 3.197.2
+
+* [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
 
 ## 3.197.1
 
