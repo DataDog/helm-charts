@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.197.3
+
+* Rollback: disable `registryMigrationMode` (standby) ([#2511](https://github.com/DataDog/helm-charts/pull/2511) revert).
+
 ## 3.197.2
 
 * [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
@@ -10,7 +14,6 @@
   * **Migrated in `auto` mode**: AP1, AP2, US5, EU1, and US1 **without APM** (`datadog.apm.enabled=false` and `datadog.apm.portEnabled=false`). Agent, Cluster Agent, and init container images are pulled from `registry.datadoghq.com`.
   * **Not migrated in `auto` mode (requires `all`)**: US1 with APM enabled. Will be enabled in a follow-up PR.
   * **Not migrated at all in this PR**: `DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`, which controls images injected by the admission controller (APM library injection, Agent sidecar injection, CWS instrumentation). These images will be migrated in a follow-up PR.
-
 ## 3.197.0
 
 * Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).

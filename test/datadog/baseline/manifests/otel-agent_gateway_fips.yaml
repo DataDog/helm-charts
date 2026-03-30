@@ -1171,7 +1171,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.77.1-fips
+          image: gcr.io/datadoghq/agent:7.77.1-fips
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1311,7 +1311,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.77.1-fips
+          image: gcr.io/datadoghq/agent:7.77.1-fips
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1399,7 +1399,7 @@ spec:
               value: health_check,zpages,pprof,ddflare,datadog
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.77.1
+          image: gcr.io/datadoghq/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1450,7 +1450,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.77.1-fips
+          image: gcr.io/datadoghq/agent:7.77.1-fips
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1493,7 +1493,7 @@ spec:
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
               value: configmap
-          image: registry.datadoghq.com/agent:7.77.1-fips
+          image: gcr.io/datadoghq/agent:7.77.1-fips
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1682,7 +1682,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
         app: datadog-otel-agent-gateway
@@ -1732,7 +1731,7 @@ spec:
               value: "0"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.77.1
+          image: gcr.io/datadoghq/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1763,7 +1762,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/ddot-collector:7.77.1
+          image: gcr.io/datadoghq/ddot-collector:7.77.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
