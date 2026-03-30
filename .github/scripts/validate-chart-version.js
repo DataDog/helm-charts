@@ -15,7 +15,7 @@ const CI_PATH_PATTERNS = [
 ];
 
 module.exports = async ({github, context, core}) => {
-  const { parseVersion, makeVersion, computeBumpedVersion, isSequentialBump, computeNextPrerelease, decodeFileContent } = require('./chart-version-utils');
+  const { parseVersion, makeVersion, computeBumpedVersion, isSequentialBump, computeNextPrerelease, decodeFileContent, extractVersionFromChart } = require('./chart-version-utils');
 
   const pr = context.payload.pull_request;
   if (!pr) {
@@ -83,12 +83,11 @@ module.exports = async ({github, context, core}) => {
         ref: mergeBaseSHA
       });
       const content = decodeFileContent(file.data);
-      const m = content.match(/^version:\s+(\S+)/m);
-      if (!m) {
+      baseVersion = extractVersionFromChart(content);
+      if (!baseVersion) {
         core.warning(`No 'version:' found in base Chart.yaml for '${chartName}'. Skipping.`);
         continue;
       }
-      baseVersion = m[1].trim();
     } catch (e) {
       if (e.status === 404) {
         // New chart with no prior Chart.yaml — nothing to compare against.
@@ -111,12 +110,11 @@ module.exports = async ({github, context, core}) => {
         ref: pr.head.ref
       });
       const content = decodeFileContent(file.data);
-      const m = content.match(/^version:\s+(\S+)/m);
-      if (!m) {
+      prVersion = extractVersionFromChart(content);
+      if (!prVersion) {
         errors.push(`'${chartName}': no 'version:' found in PR Chart.yaml.`);
         continue;
       }
-      prVersion = m[1].trim();
     } catch (e) {
       errors.push(`'${chartName}': failed to fetch PR Chart.yaml: ${e.message}`);
       continue;

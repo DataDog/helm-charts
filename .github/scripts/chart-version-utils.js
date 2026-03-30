@@ -136,4 +136,15 @@ function decodeFileContent(fileData) {
   return Buffer.from(fileData.content, fileData.encoding).toString();
 }
 
-module.exports = { parseVersion, makeVersion, computeBumpedVersion, isSequentialBump, computeNextPrerelease, decodeFileContent };
+// Extract and normalize the version from a Chart.yaml file's raw text content.
+// Returns the canonical version string (e.g. "2.14.1", "v0.3.2"), or null if
+// no 'version:' field is found. Throws if the version string is not valid semver.
+// Using this helper ensures YAML-quoted values (version: "2.14.1") and v-prefixed
+// values (version: v0.3.2) are handled consistently across all scripts.
+function extractVersionFromChart(content) {
+  const m = content.match(/^version:\s+(\S+)/m);
+  if (!m) return null;
+  return makeVersion(parseVersion(m[1].trim()));
+}
+
+module.exports = { parseVersion, makeVersion, computeBumpedVersion, isSequentialBump, computeNextPrerelease, decodeFileContent, extractVersionFromChart };
