@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.197.1](https://img.shields.io/badge/Version-3.197.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.197.2](https://img.shields.io/badge/Version-3.197.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -514,7 +514,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.privateActionRunner.envFrom | list | `[]` | Set environment variables specific to private-action-runner from configMaps and/or secrets |
 | agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
 | agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container. |
-| agents.containers.privateActionRunner.securityContext | object | `{"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
+| agents.containers.privateActionRunner.securityContext | object | `{"capabilities":{"add":["NET_RAW"]},"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
