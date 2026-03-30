@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.197.2
+
+* [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
+
 ## 3.197.1
 
 * Re-enable `registryMigrationMode: "auto"` after rollback (#2457) with the following scope:
