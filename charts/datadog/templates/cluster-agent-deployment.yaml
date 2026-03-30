@@ -292,7 +292,7 @@ spec:
           {{- if .Values.clusterAgent.admissionController.containerRegistry }}
             value: {{ .Values.clusterAgent.admissionController.containerRegistry | quote }}
           {{- else }}
-            value: {{ include "registry" (omit .Values "registryMigrationMode") | quote }}
+            value: {{ include "registry" .Values | quote }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.cwsInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_CWS_INSTRUMENTATION_ENABLED
