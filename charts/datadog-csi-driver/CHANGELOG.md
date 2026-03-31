@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+* Add `priorityClassName` support for CSI driver daemonset pods (default: `""`).
+
 ## 0.9.1
 
 * Set csi driver image to `1.2.1`
