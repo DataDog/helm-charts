@@ -25,7 +25,7 @@ Datadog CSI Driver helm chart
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
 | nodeAffinity | object | `{}` | Configure the nodeAffinity for the csi driver daemonset pods. |
 | nodeSelector | object | `{}` | Configure the nodeSelector for the csi driver daemonset pods. |
-| priorityClassName | string | `"system-cluster-critical"` | Name of the priorityClass to apply to the CSI damonset pods |
+| priorityClassName | string | `""` | Name of the priorityClass to apply to the CSI damonset pods |
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
