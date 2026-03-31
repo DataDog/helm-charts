@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.197.3
+## 3.198.1
 
 * feat: rename hostprofiler receiver to profiling ([#2519](https://github.com/DataDog/helm-charts/pull/2519)).
+
+## 3.198.0
+
+* Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
 
 ## 3.197.2
 
