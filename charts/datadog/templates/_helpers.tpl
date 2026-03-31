@@ -467,16 +467,7 @@ public.ecr.aws/datadog
 {{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) (not .providers.gke.gdc) -}}
 datadoghq.azurecr.io
 {{- else -}}
-{{- $migratedSite := false -}}
-{{- if eq $migrationMode "all" -}}
-{{- $migratedSite = true -}}
-{{- else if eq $migrationMode "auto" -}}
-{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") (eq $site "datadoghq.eu") -}}
-{{- $migratedSite = true -}}
-{{- else if and (eq $site "datadoghq.com") (not (or .datadog.apm.enabled .datadog.apm.portEnabled)) -}}
-{{- $migratedSite = true -}}
-{{- end -}}
-{{- end -}}
+{{- $migratedSite := or (eq $migrationMode "auto") (eq $migrationMode "all") -}}
 {{- if and $migratedSite (not (or .providers.gke.autopilot .providers.gke.gdc)) -}}
 registry.datadoghq.com
 {{- else if eq $site "datadoghq.eu" -}}
