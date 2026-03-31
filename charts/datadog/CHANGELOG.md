@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.198.0
+
+* Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
+
 ## 3.197.2
 
 * [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
