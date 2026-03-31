@@ -27,7 +27,7 @@ image:
   pullSecrets: []
   #   - name: "<REG_SECRET>"
 # priorityClassName -- Name of the priorityClass to apply to the CSI damonset pods
-priorityClassName: "system-node-critical"
+priorityClassName: "" # use system-node-critical for highest priority.
 ## Configure the CSI registrar to use as a sidecar container
 registrar:
 
