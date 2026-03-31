@@ -26,8 +26,11 @@ image:
   ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   pullSecrets: []
   #   - name: "<REG_SECRET>"
-# priorityClassName -- Name of the priorityClass to apply to the CSI damonset pods
-priorityClassName: "" # use system-node-critical for highest priority.
+
+# priorityClassName -- Name of the priorityClass to apply to the CSI daemonset pods
+# use system-node-critical for highest priority.
+priorityClassName: ""
+
 ## Configure the CSI registrar to use as a sidecar container
 registrar:
 
