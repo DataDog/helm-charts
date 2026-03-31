@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.2
+
+- Official image `2.14.1`
+
 ## 2.14.1
 
 - Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:

@@ -801,6 +801,34 @@ To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
+{{- if and .Values.useFIPSAgent (eq .Values.agents.image.tagSuffix "full") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+useFIPSAgent is set to true, but the FIPS variant of the -full agent
+image is only available from version 7.78.0 onward.
+The non-FIPS full image is being used instead.
+
+To use the FIPS variant, upgrade the agent to 7.78.0+:
+  agents.image.tag: "7.78.0"
+{{- end }}
+
+{{- $nodeOtelFipsFallback := and .Values.useFIPSAgent .Values.datadog.otelCollector.enabled .Values.datadog.otelCollector.useStandaloneImage (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
+{{- $gatewayImageTag := default (include "get-agent-version" .) .Values.otelAgentGateway.image.tag -}}
+{{- $gatewayFipsFallback := and .Values.useFIPSAgent .Values.otelAgentGateway.enabled (not .Values.otelAgentGateway.image.doNotCheckTag) (semverCompare "<7.78.0" $gatewayImageTag) -}}
+{{- if or $nodeOtelFipsFallback $gatewayFipsFallback }}
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+useFIPSAgent is set to true, but the FIPS variant of the ddot-collector
+image is only available from version 7.78.0 onward (used by both the
+node OTel collector and the gateway).
+The non-FIPS ddot-collector image is being used instead.
+
+To use the FIPS variant, upgrade the agent to 7.78.0+:
+  agents.image.tag: "7.78.0"
+{{- end }}
+
 {{- if .Values.clusterAgent.admissionController.configMode }}
 {{- if and (not .Values.datadog.csi.enabled) (eq .Values.clusterAgent.admissionController.configMode "csi") }}
 ################################################################

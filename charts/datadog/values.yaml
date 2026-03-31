@@ -46,7 +46,7 @@ registry:  # gcr.io/datadoghq
 ##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com, when APM is disabled).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
-registryMigrationMode: ""
+registryMigrationMode: "auto"
 
 datadog:
   # datadog.apiKey -- Your Datadog API key
@@ -2305,6 +2305,8 @@ agents:
       # agents.containers.privateActionRunner.securityContext -- Specify securityContext on the private-action-runner container.
       securityContext:
         readOnlyRootFilesystem: true
+        capabilities:
+          add: ["NET_RAW"]
 
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
