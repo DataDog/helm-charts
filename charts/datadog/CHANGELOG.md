@@ -1,8 +1,10 @@
 # Datadog changelog
 
-## 3.198.0
+## 3.199.0
 
 * [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.
+
+## 3.198.0
 
 * Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
 
