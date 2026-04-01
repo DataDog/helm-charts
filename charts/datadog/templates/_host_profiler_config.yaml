@@ -9,7 +9,7 @@ host-profiler-config.yaml: {{- if .Values.datadog.hostProfiler.config }} {{ toYa
         protocols:
           grpc:
           http:
-      hostprofiler:
+      profiling:
         symbol_uploader:
           enabled: true
     processors:
@@ -43,7 +43,7 @@ host-profiler-config.yaml: {{- if .Values.datadog.hostProfiler.config }} {{ toYa
       extensions: [hpflare/default]
       pipelines:
         profiles:
-          receivers: [hostprofiler]
+          receivers: [profiling]
           # infraattributes/default is automatically removed when the Agent Core is not available
           # resourcedetection is automatically removed when the Agent Core is available
           processors: [infraattributes/default, resourcedetection]
