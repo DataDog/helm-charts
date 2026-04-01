@@ -507,9 +507,9 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "%s-%s" $tagSuffix .image.tagSuffix -}}
 {{- end -}}
-{{/* Fall back to non-FIPS when the -full image FIPS variant is not available (requires 7.78.0+) */}}
+{{/* Guard: -fips-full images are only available from 7.78.0 */}}
 {{- if and (eq $tagSuffix "-fips-full") (not .root.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" (dict "Values" .root))) -}}
-{{- $tagSuffix = "-full" -}}
+{{- fail "The FIPS variant of the -full agent image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+ or set useFIPSAgent to false." -}}
 {{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
@@ -544,7 +544,7 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- end -}}
       {{- $ddotImage := dict "name" "ddot-collector" "tag" (include "get-agent-version" .) -}}
       {{- if and (eq (include "use-fips-images" .Values) "true") (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
-        {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
+        {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+ or set useFIPSAgent to false." -}}
       {{- else -}}
         {{ include "image-path" (dict "root" .Values "image" $ddotImage) }}
       {{- end -}}
@@ -584,7 +584,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
   {{- end -}}
   {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
   {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.otelAgentGateway.image.doNotCheckTag) (semverCompare "<7.78.0" $imageTag) -}}
-    {{ include "registry" .Values }}/ddot-collector:{{ $imageTag }}
+    {{- fail "The standalone FIPS ddot-collector gateway image is not available before 7.78.0. Upgrade agents.image.tag (or otelAgentGateway.image.tag) to 7.78.0+ or set useFIPSAgent to false." -}}
   {{- else -}}
     {{ include "image-path" (dict "root" .Values "image" $image) }}
   {{- end -}}
