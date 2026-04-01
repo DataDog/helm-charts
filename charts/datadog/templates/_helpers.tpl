@@ -543,7 +543,7 @@ Return a remote otel-agent based on `.Values` (passed as .)
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
       {{- $ddotImage := dict "name" "ddot-collector" "tag" (include "get-agent-version" .) -}}
-      {{- if and (eq (include "use-fips-images" .Values) "true") (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
+      {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
         {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+ or set useFIPSAgent to false." -}}
       {{- else -}}
         {{ include "image-path" (dict "root" .Values "image" $ddotImage) }}
