@@ -846,7 +846,9 @@ Otherwise, `socket` config mode will be used.
 #################################################################
 You have set `datadog.processAgent.runInCoreAgent` to `false`.
 However, this configuration is deprecated.
-If the agent version is 7.60+, the following features will run in the core agent: Live Processes, Live Containers, Process Discovery.
+For agent versions 7.60–7.77, process checks run in the core agent.
+For agent versions 7.78+, the `process_config.run_in_core_agent.enabled` config key has been removed
+and process checks always run in the core agent on Linux.
 {{- end }}
 
 {{- if and (ne (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) }}

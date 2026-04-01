@@ -193,23 +193,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"agents.image.doNotCheckTag":   "true",
 				},
 			},
-			assertions: verifyLinuxRunInCoreAgentOld,
-		},
-		{
-			name: "enable process checks in core agent -- env var override",
-			command: common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				ShowOnly:    []string{"templates/daemonset.yaml"},
-				Values:      []string{"../../charts/datadog/values.yaml", "values/process-run-in-core-envvars.yaml"},
-				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":           "datadog-secret",
-					"datadog.appKeyExistingSecret":           "datadog-secret",
-					"agents.image.doNotCheckTag":             "true",
-					"datadog.processAgent.processCollection": "true",
-				},
-			},
-			assertions: verifyLinuxRunInCoreAgent,
+			assertions: verifyDefaultDaemonset,
 		},
 		{
 			name: "language detection on process agent",

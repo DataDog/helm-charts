@@ -216,8 +216,6 @@ spec:
             value: "false"
           - name: DD_PROCESS_AGENT_ENABLED
             value: "false"
-          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-            value: "false"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
           - name: DD_INVENTORIES_ENABLED
