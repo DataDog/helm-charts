@@ -1,0 +1,11 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+clusterAgent:
+  enabled: false
+otelAgentGateway:
+  enabled: true
+useFIPSAgent: true
