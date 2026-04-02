@@ -271,7 +271,7 @@ Defaults are stored as a list (not a dict) to guarantee deterministic rendering 
 and avoid spurious rollouts from manifest drift.
 */}}
 {{- define "quickwit.environmentDefaults" -}}
-{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "json") -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
 {{- $envs := list -}}
 {{- $keys := list -}}
 {{- if kindIs "map" . -}}

@@ -470,7 +470,6 @@ metastore:
 
   resources:
     limits:
-      cpu: 2
       memory: 4Gi
     requests:
       cpu: 2
@@ -557,7 +556,6 @@ control_plane:
 
   resources:
     limits:
-      cpu: 2
       memory: 4Gi
     requests:
       cpu: 2
@@ -642,7 +640,6 @@ janitor:
 
   resources:
     limits:
-      cpu: 2
       memory: 4Gi
     requests:
       cpu: 2
