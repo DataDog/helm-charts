@@ -1,3 +1,6 @@
+agents:
+  image:
+    tag: 7.78.0
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
