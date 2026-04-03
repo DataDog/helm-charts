@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.200.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
 ## 3.199.1
 
 * [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
