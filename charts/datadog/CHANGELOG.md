@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.199.1
+
+* [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
+
 ## 3.199.0
 
 * [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.
