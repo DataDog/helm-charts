@@ -4,7 +4,7 @@
 
 - Official image `2.15.0`
 
-## 2.14.2
+## 2.14.1
 
 - Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:
   - Removed incorrect placement inside `volumeClaimTemplates[].spec.resources`; this is a StatefulSet `spec`-level field, not a PVC spec field.
