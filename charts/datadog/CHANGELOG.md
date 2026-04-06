@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.199.2
+
+* DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
+
 ## 3.199.1
 
 * [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).

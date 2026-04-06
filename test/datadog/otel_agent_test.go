@@ -269,6 +269,68 @@ func Test_ddotCollectorImage(t *testing.T) {
 			errorMessage: "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0.",
 		},
 		{
+			name: "useStandaloneImage true with FIPS and version below 7.78 should fail",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"useFIPSAgent":                             "true",
+					"agents.image.tag":                         "7.77.0",
+				},
+			},
+			expectError:  true,
+			errorMessage: "The standalone FIPS ddot-collector image is not available before 7.78.0",
+		},
+		{
+			name: "useStandaloneImage true with FIPS and version 7.78 should use fips image",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"useFIPSAgent":                             "true",
+					"agents.image.tag":                         "7.78.0",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.78.0-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with FIPS and version below 7.78 and doNotCheckTag should succeed",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"useFIPSAgent":                             "true",
+					"agents.image.tag":                         "7.77.0",
+					"agents.image.doNotCheckTag":               "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.77.0-fips")
+			},
+		},
+		{
 			name: "useStandaloneImage true with -full suffix in tag and version < 7.67.0 should use agent image",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
@@ -318,6 +380,144 @@ func verifyOtelImage(t *testing.T, manifest string, expectedImage string) {
 	assert.True(t, ok, "should find otel-agent container")
 
 	assert.Equal(t, expectedImage, otelAgentContainer.Image, "should use exact expected otel image")
+}
+
+func Test_ddotCollectorGatewayImage(t *testing.T) {
+	tests := []struct {
+		name         string
+		command      common.HelmCommand
+		expectError  bool
+		errorMessage string
+		assertion    func(t *testing.T, manifest string)
+	}{
+		{
+			name: "gateway with FIPS and version below 7.78 should fail",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/otel-agent-gateway-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"otelAgentGateway.enabled":     "true",
+					"useFIPSAgent":                 "true",
+					"agents.image.tag":             "7.77.0",
+				},
+			},
+			expectError:  true,
+			errorMessage: "The standalone FIPS ddot-collector gateway image is not available before 7.78.0",
+		},
+		{
+			name: "gateway with FIPS and version 7.78 should use fips image",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/otel-agent-gateway-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"otelAgentGateway.enabled":     "true",
+					"useFIPSAgent":                 "true",
+					"agents.image.tag":             "7.78.0",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyGatewayImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.78.0-fips")
+			},
+		},
+		{
+			name: "gateway with FIPS and version below 7.78 and doNotCheckTag should succeed",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/otel-agent-gateway-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":          "datadog-secret",
+					"datadog.appKeyExistingSecret":          "datadog-secret",
+					"otelAgentGateway.enabled":              "true",
+					"useFIPSAgent":                          "true",
+					"agents.image.tag":                      "7.77.0",
+					"otelAgentGateway.image.doNotCheckTag":  "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyGatewayImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.77.0-fips")
+			},
+		},
+		{
+			name: "gateway with FIPS and custom image tag and version below 7.78 should fail",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/otel-agent-gateway-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":   "datadog-secret",
+					"datadog.appKeyExistingSecret":   "datadog-secret",
+					"otelAgentGateway.enabled":       "true",
+					"useFIPSAgent":                   "true",
+					"agents.image.tag":               "7.80.0",
+					"otelAgentGateway.image.tag":     "7.77.0",
+				},
+			},
+			expectError:  true,
+			errorMessage: "The standalone FIPS ddot-collector gateway image is not available before 7.78.0",
+		},
+		{
+			name: "gateway with FIPS and custom image tag above 7.78 should use fips image",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/otel-agent-gateway-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"otelAgentGateway.enabled":     "true",
+					"useFIPSAgent":                 "true",
+					"agents.image.tag":             "7.76.0",
+					"otelAgentGateway.image.tag":   "7.78.0",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyGatewayImage(t, manifest, "registry.datadoghq.com/ddot-collector:7.78.0-fips")
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, tt.command)
+
+			if tt.expectError {
+				assert.Error(t, err, "expected an error but got none")
+				if err != nil {
+					assert.Contains(t, err.Error(), tt.errorMessage, "error message should contain expected text")
+				}
+			} else {
+				assert.NoError(t, err, "expected no error but got: %v", err)
+				if err == nil && tt.assertion != nil {
+					tt.assertion(t, manifest)
+				}
+			}
+		})
+	}
+}
+
+func verifyGatewayImage(t *testing.T, manifest string, expectedImage string) {
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+
+	otelAgentContainer, ok := getContainer(t, deployment.Spec.Template.Spec.Containers, "otel-agent")
+	assert.True(t, ok, "should find otel-agent container")
+
+	assert.Equal(t, expectedImage, otelAgentContainer.Image, "should use exact expected gateway image")
 }
 
 func verifyAgentImage(t *testing.T, manifest string, expectedImage string) {
