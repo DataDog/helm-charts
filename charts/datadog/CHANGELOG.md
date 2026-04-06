@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.200.0
+
+* Bump Datadog Operator chart dependency to 2.21.0.
+* Bump Datadog CRD chart dependency to 2.18.0.
+* Bump Operator image tag to 1.25.0.
+
 ## 3.199.2
 
 * DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
