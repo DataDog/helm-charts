@@ -1161,7 +1161,7 @@ Return true if runtime compilation is enabled in the system-probe
 {{- if .Values.providers.talos.enabled -}}
 {{- /* Talos does not support runtime compilation */ -}}
 false
-{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
+{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and (eq (include "discovery-enabled" .) "true") .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
