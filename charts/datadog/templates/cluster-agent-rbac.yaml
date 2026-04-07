@@ -391,6 +391,72 @@ rules:
   - list
   - watch
   - get
+{{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
+# Gateway API, service mesh, and ingress controller CRDs for internet-reachability analysis
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gateways
+  - httproutes
+  - grpcroutes
+  - tlsroutes
+  - listenersets
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  - gateways
+  - destinationrules
+  - serviceentries
+  - sidecars
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - gateway.envoyproxy.io
+  - traefik.containo.us
+  - policy.linkerd.io
+  - consul.hashicorp.com
+  - mesh.consul.hashicorp.com
+  - kuma.io
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - k8s.nginx.org
+  resources:
+  - virtualservers
+  - virtualserverroutes
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - traefik.io
+  resources:
+  - ingressroutes
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - configuration.konghq.com
+  - core.haproxy.org
+  - ingress.v1.haproxy.org
+  - ingress.v3.haproxy.org
+  resources:
+  - "*"
+  verbs:
+  - list
+  - watch
+{{- end }}
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 {{- if .Values.datadog.appsec.injector.enabled }}
