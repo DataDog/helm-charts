@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
-	yaml "gopkg.in/yaml.v3"
 
 	"github.com/DataDog/helm-charts/test/common"
 )
@@ -30,9 +30,9 @@ func systemProbeConfigmapCmd(overrides map[string]string) common.HelmCommand {
 
 func Test_systemProbeConfigmap_discovery(t *testing.T) {
 	tests := []struct {
-		name                    string
-		overrides               map[string]string
-		expectDiscoveryEnabled  *bool
+		name                   string
+		overrides              map[string]string
+		expectDiscoveryEnabled *bool
 	}{
 		{
 			name: "discovery.enabled=false with other SP feature -- discovery block rendered as false",
