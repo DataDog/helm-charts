@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.200.2
+## 3.201.0
 
 * Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
 
