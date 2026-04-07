@@ -389,13 +389,6 @@ C:/ProgramData/Datadog
 {{- end -}}
 {{- end -}}
 
-{{/*
-Return host profiler config path
-*/}}
-{{- define "datadog.hostprofilerconfPath" -}}
-/etc/host-profiler
-{{- end -}}
-
 
 {{/*
 Return agent host mount root
@@ -927,10 +920,6 @@ datadog-agent-fips-config
 
 {{- define "agents-install-otel-gateway-configmap-name" -}}
 {{ template "datadog.fullname" . }}-otel-gateway-config
-{{- end -}}
-
-{{- define "agents-install-host-profiler-configmap-name" -}}
-{{ template "datadog.fullname" . }}-host-profiler-config
 {{- end -}}
 
 {{/*

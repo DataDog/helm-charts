@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
 ## 3.200.1
 
 * Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
