@@ -1005,7 +1005,7 @@ Learn more about Private Action Runner: https://docs.datadoghq.com/actions/priva
 {{- else if eq $migrationMode "auto" -}}
 {{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") (eq $site "datadoghq.eu") -}}
 {{- $migratedSite = true -}}
-{{- else if and (eq $site "datadoghq.com") (not (or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled)) -}}
+{{- else if eq $site "datadoghq.com" -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}

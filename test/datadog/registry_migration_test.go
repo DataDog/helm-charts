@@ -14,7 +14,6 @@ import (
 // migration mode, and relevant overrides (APM, GKE Autopilot/GDC, explicit registry).
 func TestRegistryMigration(t *testing.T) {
 	// Site × mode matrix.
-	// In auto mode, AP1 migrates because datadog.apm.enabled defaults to false.
 	sites := []struct {
 		name         string
 		site         string // empty = default (datadoghq.com / US1)
@@ -23,7 +22,6 @@ func TestRegistryMigration(t *testing.T) {
 		wantDisabled string
 	}{
 		{
-			// apm.enabled defaults to false, so auto mode migrates US1.
 			name:         "US1 (default)",
 			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
@@ -58,7 +56,6 @@ func TestRegistryMigration(t *testing.T) {
 			wantDisabled: "public.ecr.aws/datadog",
 		},
 		{
-			// apm.enabled defaults to false, so auto mode migrates AP1.
 			name:         "AP1",
 			site:         "ap1.datadoghq.com",
 			wantAuto:     "registry.datadoghq.com",
@@ -139,7 +136,7 @@ func TestRegistryMigration(t *testing.T) {
 		assert.Equal(t, "registry.datadoghq.com", registry)
 	})
 
-	// US1 auto migration applies regardless of APM configuration.
+	// US1 auto migration is unconditional — APM config has no effect.
 	t.Run("US1/auto/apm-enabled: migrates", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
 			"datadog.apiKeyExistingSecret": "datadog-secret",
