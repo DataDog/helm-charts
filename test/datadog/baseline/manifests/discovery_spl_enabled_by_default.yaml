@@ -1966,6 +1966,10 @@ spec:
               mountPropagation: None
               name: procdir
               readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true

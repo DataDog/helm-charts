@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	yaml "gopkg.in/yaml.v3"
 
@@ -83,3 +84,62 @@ func Test_systemProbeConfigmap_discovery(t *testing.T) {
 }
 
 func boolPtr(b bool) *bool { return &b }
+
+func Test_systemProbeContainer_cgroupsMount(t *testing.T) {
+	tests := []struct {
+		name              string
+		overrides         map[string]string
+		expectCgroupMount bool
+	}{
+		{
+			name: "enabledByDefault=true -- cgroups mount present",
+			overrides: map[string]string{
+				"datadog.discovery.enabledByDefault": "true",
+			},
+			expectCgroupMount: true,
+		},
+		{
+			name: "discovery.enabled=true -- cgroups mount present",
+			overrides: map[string]string{
+				"datadog.discovery.enabled": "true",
+			},
+			expectCgroupMount: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Overrides: func() map[string]string {
+					m := map[string]string{
+						"datadog.apiKeyExistingSecret": "datadog-secret",
+						"datadog.appKeyExistingSecret": "datadog-secret",
+					}
+					for k, v := range tt.overrides {
+						m[k] = v
+					}
+					return m
+				}(),
+			})
+			require.NoError(t, err, "couldn't render template")
+
+			var ds appsv1.DaemonSet
+			common.Unmarshal(t, manifest, &ds)
+
+			spContainer, found := getContainer(t, ds.Spec.Template.Spec.Containers, "system-probe")
+			require.True(t, found, "system-probe container should exist")
+
+			hasCgroups := false
+			for _, vm := range spContainer.VolumeMounts {
+				if vm.Name == "cgroups" {
+					hasCgroups = true
+					break
+				}
+			}
+			assert.Equal(t, tt.expectCgroupMount, hasCgroups, "unexpected cgroups mount presence")
+		})
+	}
+}
