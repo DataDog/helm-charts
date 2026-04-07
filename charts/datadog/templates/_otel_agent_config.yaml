@@ -29,7 +29,7 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [infraattributes,]
+          processors: [infraattributes]
           exporters: [otlphttp, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
