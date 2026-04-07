@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.200.1
+
+* Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
+
 ## 3.200.0
 
 * Bump Datadog Operator chart dependency to 2.21.0.
