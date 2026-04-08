@@ -198,7 +198,7 @@ func verifyAutopilotWorkloadAllowlistConstraints(t *testing.T, manifest string) 
 		}
 		if container.Name == "system-probe" {
 			assert.Equal(t, []string{"system-probe", "--config=/etc/datadog-agent/system-probe.yaml"}, container.Command,
-				"system-probe-lite is not supported on GKE Autopilot")
+				"system-probe command is not in the Datadog WorkloadAllowlist")
 		}
 	}
 
