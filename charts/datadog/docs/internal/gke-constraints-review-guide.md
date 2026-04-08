@@ -50,6 +50,59 @@ BPF, CHOWN, DAC_READ_SEARCH, IPC_LOCK, NET_ADMIN, NET_BROADCAST, NET_RAW, SYS_AD
 
 **Reviewer action:** Flag any PR that introduces `datadogrun` emptyDir for Autopilot/GDC environments.
 
+### Container command and args constraints
+
+The WorkloadAllowlist specifies the exact `command` and allowed `args` patterns for each container. Both are evaluated by the Warden webhook independently.
+
+**Container commands** (must match exactly):
+
+| Container | Required command |
+|---|---|
+| `agent` | `["agent", "run"]` |
+| `process-agent` | `["process-agent", "-config=/etc/datadog-agent/datadog.yaml"]` |
+| `trace-agent` | `["trace-agent", "-config=/etc/datadog-agent/datadog.yaml"]` |
+| `system-probe` | `["system-probe", "--config=/etc/datadog-agent/system-probe.yaml"]` |
+| `otel-agent` | `["otel-agent", "--core-config=/etc/datadog-agent/datadog.yaml", "--sync-delay=30s"]` |
+| `init-config` (init) | `["bash", "-c"]` |
+| `init-volume` (init) | `["bash", "-c"]` |
+| `seccomp-setup` (init) | `["cp", "/etc/config/system-probe-seccomp.json", "/host/var/lib/kubelet/seccomp/system-probe"]` |
+
+**Containers with args constraints** (each arg must match an allowed RE2 pattern):
+
+| Container | Allowed arg patterns |
+|---|---|
+| `otel-agent` | `^--config=/etc/otel-agent/.*.yaml$` (each config arg); no other args allowed |
+
+**Example of a real incident (CONS-8218):** `datadog.otelCollector.featureGates` adds `--feature-gates=...` to otel-agent args. This arg does not match the WLA's `^--config=...` pattern, causing Warden to reject the DaemonSet on all GKE Autopilot clusters where this value is set.
+
+**Reviewer action:** If a PR changes a container's `command` or adds new `args` (including conditionally via `.Values.*`), verify:
+1. The change is gated with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the Datadog WorkloadAllowlist CR is updated, OR
+2. A corresponding Datadog WorkloadAllowlist CR update is submitted to cover the new command/args.
+
+### All WorkloadAllowlist-evaluated fields
+
+The Warden webhook evaluates the following fields under `matchingCriteria`. Any field present in the Datadog WorkloadAllowlist CR that doesn't match the rendered workload causes a rejection.
+
+**Per-container fields** (applies to `containers[]` and `initContainers[]`):
+- `name` — container name
+- `image` — image reference (RE2 regex in the WLA)
+- `command[]` — exact entrypoint command
+- `args[]` — argument patterns (RE2 regex in the WLA)
+- `env[]` — environment variable names (RE2 regex in the WLA)
+- `envFrom[]` — ConfigMap/Secret ref names
+- `securityContext.capabilities` — `add`/`drop` capability lists
+- `securityContext.privileged` — privileged mode flag
+- `securityContext.appArmorProfile` — AppArmor profile type
+- `volumeMounts[]` — mount paths and names
+- `lifecycle`, `livenessProbe`, `readinessProbe`, `startupProbe` — exec commands
+
+**Pod-level fields:**
+- `hostNetwork`, `hostIPC`, `hostPID`, `hostUsers`
+- `securityContext`
+- `volumes[]` — volume names and hostPath paths
+
+**Reviewer action:** Any PR that changes a field listed above — even fields not currently constrained by the Datadog WorkloadAllowlist CR — should be reviewed against the WLA to confirm it won't cause a mismatch. When in doubt, test with `HELM_FORCE_RENDER=true` and `providers.gke.autopilot=true`.
+
 ### The gating pattern
 
 New features that add hostPaths, capabilities, or volumes not yet in the WorkloadAllowlist must be gated:
