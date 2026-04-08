@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.18.1
+
+Drop `description` fields from `datadogagentinternals` and `datadogagentprofiles`.
+
 ## 2.18.0
 
 * Update CRDs from Datadog Operator v1.25.0.

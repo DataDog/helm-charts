@@ -1,9 +1,5 @@
 # Datadog changelog
 
-## 3.201.1
-
-Drop `description` fields from `datadogagentinternals` and `datadogagentprofiles`.
-
 ## 3.201.0
 
 * Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
