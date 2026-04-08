@@ -1,0 +1,56 @@
+name: GKE Baseline Change Alert
+
+on:
+  pull_request:
+    paths:
+      - 'test/datadog/baseline/manifests/gke_*.yaml'
+      - 'test/datadog/baseline/manifests/gdc_*.yaml'
+
+# Minimal permissions: only need to read PR metadata and write comments.
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post GKE Autopilot/GDC baseline change warning
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const marker = '<!-- gke-baseline-alert -->';
+            const body = [
+              marker,
+              '## :warning: GKE Autopilot / GDC Baseline Manifests Changed',
+              '',
+              'This PR modifies GKE Autopilot or GDC baseline manifest snapshots. Before merging, confirm:',
+              '',
+              '- [ ] GKE Autopilot/GKE GDC baseline manifest diffs have been reviewed and confirmed to be supported in GKE Autopilot and the latest Datadog WorkloadAllowlist CR',
+              '',
+              'If changes introduce constraints not yet covered by the Datadog WorkloadAllowlist CR, gate them with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the WorkloadAllowlist CR is updated.',
+              'See [`gke-constraints-review-guide.md`](charts/datadog/docs/internal/gke-constraints-review-guide.md) for the full constraint reference.',
+            ].join('\n');
+
+            // Avoid duplicate comments on force-pushes: update existing if present.
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
