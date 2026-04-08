@@ -99,6 +99,7 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 					"datadog.envDict.HELM_FORCE_RENDER":        "true",
 					"datadog.apiKeyExistingSecret":             "datadog-secret",
 					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.discovery.enabled":                "true",
 					"providers.gke.autopilot":                  "true",
 					"datadog.networkMonitoring.enabled":        "true",
 					"datadog.serviceMonitoring.enabled":        "true",
@@ -110,6 +111,29 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "process-agent", "system-probe")
+				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+			},
+		},
+		{
+			// Discovery-only on autopilot must use regular system-probe, not system-probe-lite.
+			name: "with discovery only",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.envDict.HELM_FORCE_RENDER": "true",
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"datadog.appKeyExistingSecret":      "datadog-secret",
+					"datadog.discovery.enabled":         "true",
+					"providers.gke.autopilot":           "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				requireContainerNames(t, ds, "agent", "system-probe")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -171,6 +195,10 @@ func verifyAutopilotWorkloadAllowlistConstraints(t *testing.T, manifest string) 
 				assert.True(t, allowed,
 					fmt.Sprintf("container %q adds capability %q not in the Datadog WorkloadAllowlist", container.Name, cap))
 			}
+		}
+		if container.Name == "system-probe" {
+			assert.Equal(t, []string{"system-probe", "--config=/etc/datadog-agent/system-probe.yaml"}, container.Command,
+				"system-probe-lite is not supported on GKE Autopilot")
 		}
 	}
 
