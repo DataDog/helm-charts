@@ -632,7 +632,7 @@ This is the case when discovery is enabled and no other system-probe feature
 requires the full binary.
 */}}
 {{- define "should-use-system-probe-lite" -}}
-{{- if and (eq (include "discovery-enabled" .) "true") (eq (include "system-probe-feature-except-discovery" .) "false") -}}
+{{- if and (eq (include "discovery-enabled" .) "true") (eq (include "system-probe-feature-except-discovery" .) "false") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
 true
 {{- else -}}
 false

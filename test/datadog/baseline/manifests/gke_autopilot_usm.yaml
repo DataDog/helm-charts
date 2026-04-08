@@ -1753,9 +1753,8 @@ spec:
               name: pointerdir
               readOnly: false
         - command:
-            - /bin/sh
-            - -c
-            - system-probe-lite run --socket /var/run/sysprobe/sysprobe.sock --log-level ${DD_LOG_LEVEL:-info} || system-probe --config=/etc/datadog-agent/system-probe.yaml
+            - system-probe
+            - --config=/etc/datadog-agent/system-probe.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
