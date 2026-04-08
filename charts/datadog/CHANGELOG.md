@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.1
+
+* [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).
+
 ## 3.201.0
 
 * Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
