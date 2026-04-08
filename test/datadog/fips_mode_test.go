@@ -95,6 +95,80 @@ func TestFIPSModeConditions(t *testing.T) {
 	}
 }
 
+func TestFIPSFullImageVersionGuard(t *testing.T) {
+	tests := []struct {
+		name          string
+		overrides     map[string]string
+		expectError   bool
+		errorMessage  string
+		expectedImage string
+	}{
+		{
+			name: "FIPS with full image and version below 7.78 should fail",
+			overrides: map[string]string{
+				"useFIPSAgent":           "true",
+				"agents.image.tagSuffix": "full",
+				"agents.image.tag":       "7.77.0",
+			},
+			expectError:  true,
+			errorMessage: "The FIPS variant of the -full agent image is not available before 7.78.0",
+		},
+		{
+			name: "FIPS with full image and version 7.78 should use fips-full image",
+			overrides: map[string]string{
+				"useFIPSAgent":           "true",
+				"agents.image.tagSuffix": "full",
+				"agents.image.tag":       "7.78.0",
+			},
+			expectError:   false,
+			expectedImage: "registry.datadoghq.com/agent:7.78.0-fips-full",
+		},
+		{
+			name: "FIPS with full image and version below 7.78 and doNotCheckTag should use fips-full image",
+			overrides: map[string]string{
+				"useFIPSAgent":              "true",
+				"agents.image.tagSuffix":    "full",
+				"agents.image.tag":          "7.77.0",
+				"agents.image.doNotCheckTag": "true",
+			},
+			expectError:   false,
+			expectedImage: "registry.datadoghq.com/agent:7.77.0-fips-full",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+			}
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+
+			if tt.expectError {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), tt.errorMessage)
+			} else {
+				require.NoError(t, err)
+				var daemonSet appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &daemonSet)
+				agentContainer, ok := getContainer(t, daemonSet.Spec.Template.Spec.Containers, "agent")
+				require.True(t, ok, "should find agent container")
+				require.Equal(t, tt.expectedImage, agentContainer.Image)
+			}
+		})
+	}
+}
+
 func checkFIPSProxy(t *testing.T, containers []corev1.Container, expectFIPSProxy bool) {
 	hasFIPSProxy := false
 	for _, container := range containers {

@@ -1,5 +1,50 @@
 # Datadog changelog
 
+## 3.201.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
+## 3.200.1
+
+* Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
+
+## 3.200.0
+
+* Bump Datadog Operator chart dependency to 2.21.0.
+* Bump Datadog CRD chart dependency to 2.18.0.
+* Bump Operator image tag to 1.25.0.
+
+## 3.199.2
+
+* DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
+
+## 3.199.1
+
+* [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
+
+## 3.199.0
+
+* [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.
+
+## 3.198.0
+
+* Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
+
+## 3.197.2
+
+* [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
+
+## 3.197.1
+
+* Re-enable `registryMigrationMode: "auto"` after rollback (#2457) with the following scope:
+  * **Migrated in `auto` mode**: AP1, AP2, US5, EU1, and US1 **without APM** (`datadog.apm.enabled=false` and `datadog.apm.portEnabled=false`). Agent, Cluster Agent, and init container images are pulled from `registry.datadoghq.com`.
+  * **Not migrated in `auto` mode (requires `all`)**: US1 with APM enabled. Will be enabled in a follow-up PR.
+  * **Not migrated at all in this PR**: `DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`, which controls images injected by the admission controller (APM library injection, Agent sidecar injection, CWS instrumentation). These images will be migrated in a follow-up PR.
+
+## 3.197.0
+
+* Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
+
 ## 3.196.0
 
 * [CONTP-1259] Enable kubernetes use endpointslice config by default ([#2503](https://github.com/DataDog/helm-charts/pull/2503)).

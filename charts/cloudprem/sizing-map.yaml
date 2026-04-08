@@ -1,7 +1,6 @@
 medium:
   resources:
     limits:
-      cpu: 1
       memory: 4Gi
     requests:
       cpu: 1
@@ -26,7 +25,6 @@ medium:
 large:
   resources:
     limits:
-      cpu: 2
       memory: 8Gi
     requests:
       cpu: 2
@@ -51,7 +49,6 @@ large:
 xlarge:
   resources:
     limits:
-      cpu: 4
       memory: 16Gi
     requests:
       cpu: 4
@@ -76,7 +73,6 @@ xlarge:
 2xlarge:
   resources:
     limits:
-      cpu: 8
       memory: 32Gi
     requests:
       cpu: 8
@@ -101,7 +97,6 @@ xlarge:
 4xlarge:
   resources:
     limits:
-      cpu: 16
       memory: 64Gi
     requests:
       cpu: 16
@@ -126,7 +121,6 @@ xlarge:
 6xlarge:
   resources:
     limits:
-      cpu: 24
       memory: 96Gi
     requests:
       cpu: 24
@@ -151,7 +145,6 @@ xlarge:
 8xlarge:
   resources:
     limits:
-      cpu: 32
       memory: 128Gi
     requests:
       cpu: 32

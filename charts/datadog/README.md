@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.196.0](https://img.shields.io/badge/Version-3.196.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.201.0](https://img.shields.io/badge/Version-3.201.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -31,9 +31,9 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | 2.13.1 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.9.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.19.1 |
+| https://helm.datadoghq.com | datadog-crds | 2.18.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.10.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.21.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -514,7 +514,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.privateActionRunner.envFrom | list | `[]` | Set environment variables specific to private-action-runner from configMaps and/or secrets |
 | agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
 | agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container. |
-| agents.containers.privateActionRunner.securityContext | object | `{"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
+| agents.containers.privateActionRunner.securityContext | object | `{"capabilities":{"add":["NET_RAW"]},"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
 | agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
 | agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
 | agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
@@ -844,11 +844,6 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
-| datadog.hostProfiler.config | string | `nil` | Host Profiler configuration (experimental) |
-| datadog.hostProfiler.configMap | object | `{"items":null,"key":"host-profiler-config.yaml","name":null}` | Use an existing ConfigMap for Host Profiler configuration (experimental) |
-| datadog.hostProfiler.configMap.items | string | `nil` | Items within the ConfigMap that contain Host Profiler configuration (experimental) |
-| datadog.hostProfiler.configMap.key | string | `"host-profiler-config.yaml"` | Key within the ConfigMap that contains the Host Profiler configuration (experimental) |
-| datadog.hostProfiler.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Host Profiler configuration (experimental) |
 | datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
@@ -951,7 +946,7 @@ helm install <RELEASE_NAME> \
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
-| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. |
+| datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. # For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux. |
 | datadog.processAgent.stripProcessArguments | bool | `false` | Set this to scrub all arguments from collected processes # Requires datadog.processAgent.processCollection to be set to true to have any effect # ref: https://docs.datadoghq.com/infrastructure/process/?tab=linuxwindows#process-arguments-scrubbing |
 | datadog.profiling.enabled | string | `nil` | Enable Continuous Profiler by injecting `DD_PROFILING_ENABLED` environment variable with the same value to all pods in the cluster Valid values are: - false: Profiler is turned off and can not be turned on by other means. - null: Profiler is turned off, but can be turned on by other means. - auto: Profiler is turned off, but the library will turn it on if the application is a good candidate for profiling. - true: Profiler is turned on. |
 | datadog.prometheusScrape.additionalConfigs | list | `[]` | Allows adding advanced openmetrics check configurations with custom discovery rules. (Requires Agent version 7.27+) |
@@ -1070,7 +1065,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.24.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.25.0"` | Define the Datadog Operator version to use |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
@@ -1141,7 +1136,7 @@ helm install <RELEASE_NAME> \
 | providers.openshift.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the OpenShift cluster. Certificates are needed to communicate with the Etcd service, which can be found in the secret `etcd-metric-client` in the `openshift-etcd-operator` namespace. To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in: `oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -` |
 | providers.talos.enabled | bool | `false` | Activate all required specificities related to Talos.dev configuration, as currently the chart cannot auto-detect Talos.dev cluster. Note: The Agent deployment requires additional privileges that are not permitted by the default pod security policy. The annotation `pod-security.kubernetes.io/enforce=privileged` must be applied to the Datadog installation Kubernetes namespace. For more information on pod security policies in Talos.dev clusters, see: https://www.talos.dev/v1.8/kubernetes-guides/configuration/pod-security/ |
 | registry | string | `nil` | Registry to use for all Agent images (default depends on datadog.site and registryMigrationMode values) |
-| registryMigrationMode | string | `""` | Controls gradual migration of default image registry to registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR). This setting has no effect when `registry` is explicitly set. GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant. US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog. US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io. |
+| registryMigrationMode | string | `"auto"` | Controls gradual migration of default image registry to registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR). This setting has no effect when `registry` is explicitly set. GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant. US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog. US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io. |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
 | useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. |

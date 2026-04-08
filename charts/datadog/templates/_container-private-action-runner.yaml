@@ -71,6 +71,20 @@
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
     {{- end }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: host-osrelease
+      mountPath: /host/etc/os-release
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: host-varlog
+      mountPath: /host/var/log
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
     {{- end }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
     {{- if .Values.datadog.kubelet.hostCAPath }}

@@ -389,13 +389,6 @@ C:/ProgramData/Datadog
 {{- end -}}
 {{- end -}}
 
-{{/*
-Return host profiler config path
-*/}}
-{{- define "datadog.hostprofilerconfPath" -}}
-/etc/host-profiler
-{{- end -}}
-
 
 {{/*
 Return agent host mount root
@@ -467,16 +460,7 @@ public.ecr.aws/datadog
 {{- else if and (eq $site "us3.datadoghq.com") (not .providers.gke.autopilot) (not .providers.gke.gdc) -}}
 datadoghq.azurecr.io
 {{- else -}}
-{{- $migratedSite := false -}}
-{{- if eq $migrationMode "all" -}}
-{{- $migratedSite = true -}}
-{{- else if eq $migrationMode "auto" -}}
-{{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") (eq $site "datadoghq.eu") -}}
-{{- $migratedSite = true -}}
-{{- else if and (eq $site "datadoghq.com") (not (or .datadog.apm.enabled .datadog.apm.portEnabled)) -}}
-{{- $migratedSite = true -}}
-{{- end -}}
-{{- end -}}
+{{- $migratedSite := or (eq $migrationMode "auto") (eq $migrationMode "all") -}}
 {{- if and $migratedSite (not (or .providers.gke.autopilot .providers.gke.gdc)) -}}
 registry.datadoghq.com
 {{- else if eq $site "datadoghq.eu" -}}
@@ -506,6 +490,10 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{- end -}}
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "%s-%s" $tagSuffix .image.tagSuffix -}}
+{{- end -}}
+{{/* Guard: -fips-full images are only available from 7.78.0 */}}
+{{- if and (eq $tagSuffix "-fips-full") (not .root.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" (dict "Values" .root))) -}}
+{{- fail "The FIPS variant of the -full agent image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+, set useFIPSAgent to false, or set agents.image.doNotCheckTag to true." -}}
 {{- end -}}
 {{- if .image.repository -}}
 {{- .image.repository -}}:{{ .image.tag }}{{ $tagSuffix }}
@@ -538,7 +526,12 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
-      {{ include "registry" .Values }}/ddot-collector:{{ include "get-agent-version" . }}
+      {{- $ddotImage := dict "name" "ddot-collector" "tag" (include "get-agent-version" .) -}}
+      {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
+        {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+, set useFIPSAgent to false, or set agents.image.doNotCheckTag to true." -}}
+      {{- else -}}
+        {{ include "image-path" (dict "root" .Values "image" $ddotImage) }}
+      {{- end -}}
     {{- end -}}
   {{- else -}}
     {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
@@ -574,7 +567,11 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
     {{- end -}}
   {{- end -}}
   {{- $image := merge (dict "tag" $imageTag) .Values.otelAgentGateway.image -}}
-  {{ include "image-path" (dict "root" .Values "image" $image) }}
+  {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.otelAgentGateway.image.doNotCheckTag) (semverCompare "<7.78.0" $imageTag) -}}
+    {{- fail "The standalone FIPS ddot-collector gateway image is not available before 7.78.0. Upgrade agents.image.tag (or otelAgentGateway.image.tag) to 7.78.0+, set useFIPSAgent to false, or set otelAgentGateway.image.doNotCheckTag to true." -}}
+  {{- else -}}
+    {{ include "image-path" (dict "root" .Values "image" $image) }}
+  {{- end -}}
 {{- end -}}
 
 {{/*
@@ -923,10 +920,6 @@ datadog-agent-fips-config
 
 {{- define "agents-install-otel-gateway-configmap-name" -}}
 {{ template "datadog.fullname" . }}-otel-gateway-config
-{{- end -}}
-
-{{- define "agents-install-host-profiler-configmap-name" -}}
-{{ template "datadog.fullname" . }}-host-profiler-config
 {{- end -}}
 
 {{/*
@@ -1447,25 +1440,17 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
-  Return value of "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" env var in core agent container.
-*/}}
-{{- define "get-process-checks-in-core-agent-envvar" -}}
-  {{- range .Values.agents.containers.agent.env -}}
-    {{- if eq .name "DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED" -}}
-      {{- .value -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-
-{{/*
   Returns true if process-related checks should run on the core agent.
+  As of Agent 7.78, process checks always run in the core agent on Linux and the
+  DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED envvar is no longer recognized.
+  The envvar is still injected for backward compatibility with agents < 7.78.
 */}}
 {{- define "should-run-process-checks-on-core-agent" -}}
   {{- if ne .Values.targetSystem "linux" -}}
     false
-  {{- else if (ne (include "get-process-checks-in-core-agent-envvar" .) "") -}}
-    {{- include "get-process-checks-in-core-agent-envvar" . -}}
-  {{- else if and (not .Values.agents.image.doNotCheckTag) (semverCompare ">=7.60.0-0" (include "get-agent-version" .)) -}}
+  {{- else if .Values.agents.image.doNotCheckTag -}}
+    true
+  {{- else if semverCompare ">=7.60.0-0" (include "get-agent-version" .) -}}
       true
   {{- else -}}
     false

@@ -48,7 +48,7 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver unit-test-ci-scripts
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
@@ -68,6 +68,10 @@ unit-test-datadog-csi-driver:
 .PHONY: unit-test-private-action-runner
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
+
+.PHONY: unit-test-ci-scripts
+unit-test-ci-scripts:
+	node --test .github/scripts/chart-version-utils.test.js
 
 .PHONY: update-test-baselines
 update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-datadog-csi-driver

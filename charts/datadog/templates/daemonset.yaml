@@ -53,9 +53,6 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
         checksum/otel-config: {{ include "otel-agent-config-configmap-content" . | sha256sum }}
         {{- end }}
-        {{- if eq (include "should-enable-host-profiler" .) "true" }}
-        checksum/host-profiler-config: {{ include "host-profiler-config-configmap-content" . | sha256sum }}
-        {{- end }}
         {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
         checksum/privateactionrunner-config: {{ include (print $.Template.BasePath "/private-action-runner-configmap.yaml") . | sha256sum }}
         {{- end }}
@@ -197,6 +194,14 @@ spec:
       - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
         configMap:
           name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+      - name: host-osrelease
+        hostPath:
+          path: /etc/os-release
+      - name: host-varlog
+        hostPath:
+          path: /var/log
+      {{- end }}
       {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd
@@ -235,29 +240,6 @@ spec:
           items:
             - key: otel-config.yaml
               path: otel-config.yaml
-          {{- end }}
-      {{- end }}
-      {{- if eq (include "should-enable-host-profiler" .) "true" }}
-      - name: hostprofilerconfig
-        configMap:
-          {{- if .Values.datadog.hostProfiler.configMap.name }}
-          name: {{ .Values.datadog.hostProfiler.configMap.name }}
-          {{- if .Values.datadog.hostProfiler.configMap.items }}
-          items:
-            {{- range .Values.datadog.hostProfiler.configMap.items }}
-            - key: {{ .key }}
-              path: {{ .path }}
-            {{- end }}
-          {{- else if .Values.datadog.hostProfiler.configMap.key }}
-          items:
-            - key: {{ .Values.datadog.hostProfiler.configMap.key }}
-              path: host-profiler-config.yaml
-          {{- end }}
-          {{- else }}
-          name: {{ include "agents-install-host-profiler-configmap-name" . }}
-          items:
-            - key: host-profiler-config.yaml
-              path: host-profiler-config.yaml
           {{- end }}
       {{- end }}
 {{- if .Values.agents.volumes }}
