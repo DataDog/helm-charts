@@ -1,5 +1,27 @@
 # Datadog changelog
 
+## 3.201.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
+## 3.200.1
+
+* Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
+
+## 3.200.0
+
+* Bump Datadog Operator chart dependency to 2.21.0.
+* Bump Datadog CRD chart dependency to 2.18.0.
+* Bump Operator image tag to 1.25.0.
+
+## 3.199.2
+
+* DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
+
+## 3.199.1
+
+* [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
+
 ## 3.199.0
 
 * [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.

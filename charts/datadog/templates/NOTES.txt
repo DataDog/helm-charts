@@ -801,33 +801,6 @@ To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
-{{- if and .Values.useFIPSAgent (eq .Values.agents.image.tagSuffix "full") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) }}
-#################################################################
-####               WARNING: Configuration notice             ####
-#################################################################
-useFIPSAgent is set to true, but the FIPS variant of the -full agent
-image is only available from version 7.78.0 onward.
-The non-FIPS full image is being used instead.
-
-To use the FIPS variant, upgrade the agent to 7.78.0+:
-  agents.image.tag: "7.78.0"
-{{- end }}
-
-{{- $nodeOtelFipsFallback := and .Values.useFIPSAgent .Values.datadog.otelCollector.enabled .Values.datadog.otelCollector.useStandaloneImage (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
-{{- $gatewayImageTag := default (include "get-agent-version" .) .Values.otelAgentGateway.image.tag -}}
-{{- $gatewayFipsFallback := and .Values.useFIPSAgent .Values.otelAgentGateway.enabled (not .Values.otelAgentGateway.image.doNotCheckTag) (semverCompare "<7.78.0" $gatewayImageTag) -}}
-{{- if or $nodeOtelFipsFallback $gatewayFipsFallback }}
-#################################################################
-####               WARNING: Configuration notice             ####
-#################################################################
-useFIPSAgent is set to true, but the FIPS variant of the ddot-collector
-image is only available from version 7.78.0 onward (used by both the
-node OTel collector and the gateway).
-The non-FIPS ddot-collector image is being used instead.
-
-To use the FIPS variant, upgrade the agent to 7.78.0+:
-  agents.image.tag: "7.78.0"
-{{- end }}
 
 {{- if .Values.clusterAgent.admissionController.configMode }}
 {{- if and (not .Values.datadog.csi.enabled) (eq .Values.clusterAgent.admissionController.configMode "csi") }}
@@ -1032,7 +1005,7 @@ Learn more about Private Action Runner: https://docs.datadoghq.com/actions/priva
 {{- else if eq $migrationMode "auto" -}}
 {{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") (eq $site "datadoghq.eu") -}}
 {{- $migratedSite = true -}}
-{{- else if and (eq $site "datadoghq.com") (not (or .Values.datadog.apm.enabled .Values.datadog.apm.portEnabled)) -}}
+{{- else if eq $site "datadoghq.com" -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}
