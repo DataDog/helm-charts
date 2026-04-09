@@ -3,8 +3,8 @@ name: GKE Baseline Change Alert
 on:
   pull_request:
     paths:
-      - 'test/datadog/baseline/manifests/gke_*.yaml'
-      - 'test/datadog/baseline/manifests/gdc_*.yaml'
+      - "test/datadog/baseline/manifests/gke_autopilot_*.yaml"
+      - "test/datadog/baseline/manifests/gdc_*.yaml"
 
 # Minimal permissions: only need to read PR metadata and write comments.
 permissions:
