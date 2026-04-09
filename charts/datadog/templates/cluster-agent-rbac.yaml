@@ -125,7 +125,7 @@ rules:
   - "get"
   - "watch"
 {{- end }}
-{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled }}
+{{- if .Values.datadog.apm.instrumentation.language_detection.enabled }}
 - apiGroups:
   - "apps"
   resources:
