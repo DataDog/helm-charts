@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.1
+
+* Loosen condition on deployment patch rbac in cluster agent to allow patching deployments with language detection annotations even if auto instrumentation disabled.
+
 ## 3.201.0
 
 * Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
