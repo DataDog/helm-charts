@@ -1338,6 +1338,7 @@ Return orchestratorExplorer customResources list with conditional addition of da
 {{- $customResources := .Values.datadog.orchestratorExplorer.customResources | default list -}}
 {{- if (((.Values.datadog.autoscaling).workload).enabled) -}}
 {{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalers" -}}
+{{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalerclusterprofiles" -}}
 {{- end -}}
 {{- $filteredResources := list -}}
 {{- range $cr := $customResources -}}
