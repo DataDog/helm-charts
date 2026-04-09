@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.19.0-dev.1
+## 2.19.0
 
 * feat(datadog-crds): update CRDs from tag v1.26.0-rc.1 ([#2559](https://github.com/DataDog/helm-charts/pull/2559)).
 
