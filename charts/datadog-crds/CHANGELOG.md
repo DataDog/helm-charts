@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0
+
+* feat(datadog-crds): update datadog autoscaling CRDs ([#2560](https://github.com/DataDog/helm-charts/pull/2560)).
+
 ## 2.18.1
 
 Drop `description` fields from `datadogagentinternals` and `datadogagentprofiles`.
