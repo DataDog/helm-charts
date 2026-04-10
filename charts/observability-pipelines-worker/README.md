@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.15.0](https://img.shields.io/badge/Version-2.15.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.0](https://img.shields.io/badge/AppVersion-2.15.0-informational?style=flat-square)
+![Version: 2.15.1](https://img.shields.io/badge/Version-2.15.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.0](https://img.shields.io/badge/AppVersion-2.15.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -99,7 +99,6 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | datadog.workerAPI.address | string | `"0.0.0.0:8686"` | Local address to bind the Worker's API to. if you change this port, you'll need to update the livenessProbe and readinessProbe |
 | datadog.workerAPI.enabled | bool | `true` | Whether to enable the Worker's API. |
-| datadog.workerAPI.playground | bool | `false` | Whether to enable the Worker's API GraphQL playground. |
 | dnsConfig | object | `{}` | Specify the [dnsConfig](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config). |
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
