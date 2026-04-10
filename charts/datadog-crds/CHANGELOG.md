@@ -2,7 +2,7 @@
 
 ## 2.19.0
 
-* feat(datadog-crds): update datadog autoscaling CRDs ([#2560](https://github.com/DataDog/helm-charts/pull/2560)).
+* Update DatadogPodAutoscaler CRD and add DatadogPodAutoscalerClusterProfile CRD.
 
 ## 2.18.1
 
