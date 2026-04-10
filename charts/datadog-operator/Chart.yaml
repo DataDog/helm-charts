@@ -1,7 +1,7 @@
 apiVersion: v2
 name: datadog-operator
-version: 2.21.1
-appVersion: 1.25.0
+version: 2.22.0-dev.1
+appVersion: 1.26.0-rc.1
 description: Datadog Operator
 keywords:
 - monitoring
