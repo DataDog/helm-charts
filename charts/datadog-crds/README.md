@@ -25,6 +25,7 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
 | crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfiles CRD |
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |
+| crds.datadogCSIDrivers | bool | `false` | Set to true to deploy the DatadogCSIDrivers CRD |
 | crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboards CRD |
 | crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResources CRD |
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
