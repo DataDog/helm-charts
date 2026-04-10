@@ -1069,6 +1069,11 @@ datadog:
     #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
     customResources: []
 
+    # datadog.orchestratorExplorer.networkCRDs.enabled -- Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection
+    # Set to true to add RBAC rules for these resources to the cluster agent
+    networkCRDs:
+      enabled: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true

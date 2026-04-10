@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.0
+
+* Add RBAC rules for Gateway API, service mesh, and ingress controller CRDs used by the orchestrator explorer for internet-reachability analysis. Opt-in via `datadog.orchestratorExplorer.networkCRDs.enabled` (default: `false`).
+
 ## 3.201.1
 
 * Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).
