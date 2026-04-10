@@ -451,6 +451,14 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          {{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_GATEWAY_API
+            value: "true"
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_SERVICE_MESH
+            value: "true"
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_INGRESS_CONTROLLERS
+            value: "true"
+          {{- end }}
           - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
             value: {{ include "language-detection-enabled" .  | quote }}
           {{- if eq  (include "should-enable-security-agent" .) "true" }}

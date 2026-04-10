@@ -429,6 +429,7 @@ rules:
   verbs:
   - list
   - watch
+  - get
 - apiGroups:
   - k8s.nginx.org
   resources:
@@ -456,6 +457,7 @@ rules:
   verbs:
   - list
   - watch
+  - get
 {{- end }}
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
