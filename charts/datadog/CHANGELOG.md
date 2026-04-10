@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
+
 ## 3.201.1
 
 * Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).
