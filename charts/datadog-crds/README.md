@@ -29,7 +29,7 @@ But the recommended Kubernetes versions are `1.16+`.
 | crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResources CRD |
 | crds.datadogMetrics | bool | `false` | Set to true to deploy the DatadogMetrics CRD |
 | crds.datadogMonitors | bool | `false` | Set to true to deploy the DatadogMonitors CRD |
-| crds.datadogPodAutoscalerClusterProfile | bool | `false` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
+| crds.datadogPodAutoscalerClusterProfiles | bool | `false` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
 | crds.datadogPodAutoscalers | bool | `false` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
