@@ -25,9 +25,9 @@ download_crd() {
     echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
     curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
 
-    if [ "$name" = "datadogagents" ] || [ "$name" = "datadogagentinternals" ] || [ "$name" = "datadogagentprofiles" ]; then
+    if [ "$name" = "datadogagents" ] || [ "$name" = "datadogagentinternals" ] || [ "$name" = "datadogagentprofiles" ] || [ "$name" = "datadogcsidrivers" ]; then
         yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
-        yq -i eval 'del(.. | select(has("description") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
+        yq -i eval 'del(.. | select(has("description") and (.description | kind == "scalar") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
     fi
 
     ifCondition="{{- if .Values.crds.$installOption }}"
