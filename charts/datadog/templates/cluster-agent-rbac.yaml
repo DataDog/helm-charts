@@ -596,12 +596,19 @@ rules:
   - create
   - patch
 {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
-# Access to own CRD
+# Access to own CRDs
 - apiGroups:
   - "datadoghq.com"
   resources:
   - "datadogpodautoscalers"
   - "datadogpodautoscalers/status"
+  verbs:
+  - "*"
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogpodautoscalerclusterprofiles"
+  - "datadogpodautoscalerclusterprofiles/status"
   verbs:
   - "*"
 # Scale subresource for all resources
