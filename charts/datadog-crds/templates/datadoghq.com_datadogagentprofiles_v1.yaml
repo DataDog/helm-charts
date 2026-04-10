@@ -60,6 +60,13 @@ spec:
                               properties:
                                 clusterAgentCommunicationEnabled:
                                   type: boolean
+                                clusterAgentTlsVerification:
+                                  properties:
+                                    copyCaConfigMap:
+                                      type: boolean
+                                    enabled:
+                                      type: boolean
+                                  type: object
                                 enabled:
                                   type: boolean
                                 image:
@@ -364,6 +371,17 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                              type: object
+                            probe:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                gracePeriod:
+                                  format: int32
+                                  type: integer
+                                interval:
+                                  format: int32
+                                  type: integer
                               type: object
                             registry:
                               type: string
@@ -1845,6 +1863,8 @@ spec:
                           type: array
                           x-kubernetes-list-type: set
                         useFIPSAgent:
+                          type: boolean
+                        useVSock:
                           type: boolean
                       type: object
                     override:

@@ -284,6 +284,7 @@ spec:
                     - event-v2 alert
                     - audit alert
                     - composite
+                    - error-tracking alert
                   type: string
               required:
                 - message
