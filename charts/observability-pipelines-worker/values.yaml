@@ -33,8 +33,6 @@ datadog:
   workerAPI:
     # datadog.workerAPI.enabled -- Whether to enable the Worker's API.
     enabled: true
-    # datadog.workerAPI.playground -- Whether to enable the Worker's API GraphQL playground.
-    playground: false
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
