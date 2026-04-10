@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.21.1
+
+* Bump `datadog-crds` chart to 2.18.1, no-op change.
+
 ## 2.21.0
 
 * Update Datadog Operator chart for 1.25.0.

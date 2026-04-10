@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.201.1
+## 3.201.2
 
 * [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).
+
+## 3.201.1
+
+* Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).
 
 ## 3.201.0
 

@@ -59,8 +59,6 @@ containers:
       {{- end }}
       - name: DD_OP_API_ENABLED
         value: {{ .Values.datadog.workerAPI.enabled | quote }}
-      - name: DD_OP_API_PLAYGROUND
-        value: {{ .Values.datadog.workerAPI.playground | quote }}
       - name: DD_OP_API_ADDRESS
         value: {{ .Values.datadog.workerAPI.address | quote }}
 {{- if .Values.env }}
