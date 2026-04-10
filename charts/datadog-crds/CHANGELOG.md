@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.20.0-dev.2
+
+* Drop `description` fields from `datadogcsidrivers` ([#2563](https://github.com/DataDog/helm-charts/pull/2563)).
+
 ## 2.20.0-dev.1
 
 * Update CRDs from Datadog Operator v1.26.0-rc.1 release candidate tag.
