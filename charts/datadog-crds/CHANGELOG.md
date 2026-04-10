@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0
+
+* Update DatadogPodAutoscaler CRD and add DatadogPodAutoscalerClusterProfile CRD.
+
 ## 2.18.1
 
 Drop `description` fields from `datadogagentinternals` and `datadogagentprofiles`.
