@@ -8,7 +8,6 @@
   {{- end }}
   command:
     - "/opt/datadog-agent/embedded/bin/full-host-profiler"
-    - "run"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
