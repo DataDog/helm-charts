@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.3
+
+* Fix Helm warning when `datadog.autoscaling.workload.enabled` is not explicitly set by changing the default value from blank to `true`.
+
 ## 3.201.2
 
 * [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).

@@ -61,6 +61,7 @@ data:
           {}
         annotations_as_tags:
           {}
+  orchestrator.yaml: "init_config:\ninstances: \n  - crd_collectors:\n      - datadoghq.com/v1alpha2/datadogpodautoscalers"
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -702,6 +703,56 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent-autoscaling
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogpodautoscalers
+      - datadogpodautoscalers/status
+    verbs:
+      - '*'
+  - apiGroups:
+      - '*'
+    resources:
+      - '*/scale'
+    verbs:
+      - update
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - patch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - patch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+    verbs:
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog-ksm-core
 rules:
   - apiGroups:
@@ -928,6 +979,24 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: datadog-operator
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent-autoscaling
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-cluster-agent-autoscaling
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1168,6 +1237,10 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
+            - name: DD_AUTOSCALING_FAILOVER_ENABLED
+              value: "true"
+            - name: DD_AUTOSCALING_FAILOVER_METRICS
+              value: container.memory.usage container.cpu.usage
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
@@ -1397,7 +1470,7 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: "kubernetes"
+              value: kubernetes
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
               value: health_check,zpages,pprof,ddflare,datadog
             - name: DD_LOG_LEVEL
@@ -1712,7 +1785,7 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: "kubernetes"
+              value: kubernetes
             - name: DD_OTELCOLLECTOR_GATEWAY_MODE
               value: "true"
             - name: DD_HOSTNAME
