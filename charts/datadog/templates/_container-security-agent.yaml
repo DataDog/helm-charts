@@ -34,8 +34,8 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.securityAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
-      value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
-    {{- if .Values.datadog.securityAgent.compliance.enabled }}
+      value: {{ eq (include "should-enable-compliance" .) "true" | quote }}
+    {{- if eq (include "should-enable-compliance" .) "true" }}
     - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
       value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
     - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
