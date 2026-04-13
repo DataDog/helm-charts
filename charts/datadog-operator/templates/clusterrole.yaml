@@ -68,6 +68,18 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - pods/resize
+  verbs:
+  - patch
+- apiGroups:
   - '*'
   resources:
   - '*/scale'
@@ -100,7 +112,11 @@ rules:
   resources:
   - controllerrevisions
   verbs:
+  - create
+  - delete
+  - get
   - list
+  - patch
   - watch
 - apiGroups:
   - apps
@@ -126,6 +142,12 @@ rules:
   - list
   - watch
 - apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - patch
+- apiGroups:
   - argoproj.io
   resources:
   - applications
@@ -138,6 +160,7 @@ rules:
   resources:
   - rollouts
   verbs:
+  - get
   - list
   - watch
   - patch
@@ -271,6 +294,8 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogpodautoscalerclusterprofiles
+  - datadogpodautoscalerclusterprofiles/status
   - datadogpodautoscalers
   - datadogpodautoscalers/status
   verbs:
@@ -577,6 +602,48 @@ rules:
   resources:
   - datadogdashboards/status
   verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogCSIDriver.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers
+  - datadogcsidrivers/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csidrivers
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resourceNames:
+  - k8s.csi.datadoghq.com
+  resources:
+  - csidrivers
+  verbs:
+  - delete
   - get
   - patch
   - update
