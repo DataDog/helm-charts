@@ -1,4 +1,3 @@
-# TEST: simulate breaking change for GKE baseline alert workflow validation
 apiVersion: v1
 kind: ServiceAccount
 metadata:

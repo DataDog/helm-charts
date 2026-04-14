@@ -48,7 +48,9 @@ BPF, CHOWN, DAC_READ_SEARCH, IPC_LOCK, NET_ADMIN, NET_BROADCAST, NET_RAW, SYS_AD
 
 `datadogrun` emptyDir is **not** allowed. The WorkloadAllowlist only permits `pointerdir` (hostPath) at `/opt/datadog-agent/run`.
 
-**Reviewer action:** Flag any PR that introduces `datadogrun` emptyDir for Autopilot/GDC environments.
+**Reviewer action:** Flag any PR that introduces a new emptyDir or hostPath volume not in the allowed list above for Autopilot/GDC environments.
+
+> **Example:** A PR adds a `datadogrun` emptyDir volume to the DaemonSet. This volume type is not in the WorkloadAllowlist, so Warden rejects the DaemonSet on all GKE Autopilot clusters.
 
 ### Container command and args constraints
 
@@ -73,7 +75,7 @@ The WorkloadAllowlist specifies the exact `command` and allowed `args` patterns 
 |---|---|
 | `otel-agent` | `^--config=/etc/otel-agent/.*.yaml$` (each config arg); no other args allowed |
 
-**Example of a real incident (CONS-8218):** `datadog.otelCollector.featureGates` adds `--feature-gates=...` to otel-agent args. This arg does not match the WLA's `^--config=...` pattern, causing Warden to reject the DaemonSet on all GKE Autopilot clusters where this value is set.
+> **Example:** A PR adds `--some-new-flag=value` to the `otel-agent` args. This arg does not match the WLA's `^--config=...` pattern, so Warden rejects the DaemonSet on all GKE Autopilot clusters where this value is set.
 
 **Reviewer action:** If a PR changes a container's `command` or adds new `args` (including conditionally via `.Values.*`), verify:
 1. The change is gated with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the Datadog WorkloadAllowlist CR is updated, OR
@@ -81,7 +83,13 @@ The WorkloadAllowlist specifies the exact `command` and allowed `args` patterns 
 
 ### All WorkloadAllowlist-evaluated fields
 
-The Warden webhook evaluates the following fields under `matchingCriteria`. Any field present in the Datadog WorkloadAllowlist CR that doesn't match the rendered workload causes a rejection.
+A DaemonSet change can break GKE Autopilot installs in two distinct ways:
+
+1. **WLA field mismatch** — The Datadog WLA CR explicitly constrains specific fields (command, args patterns, capabilities, hostPaths). If the rendered workload doesn't match, Warden rejects it. This is the "update your WLA or gate the change" failure mode.
+
+2. **Unexempted default GKE Autopilot restriction** — GKE Autopilot enforces default restrictions on all workloads (e.g. no arbitrary capabilities, no `privileged: true`, no arbitrary hostPaths). The Datadog WLA grants exemptions only for what's explicitly listed. A new config that violates a default Autopilot restriction but isn't covered by the WLA will also be rejected — even if the WLA CR doesn't mention that field at all. This failure mode is less obvious: a contributor can add a config they don't see in the WLA and assume it's unconstrained.
+
+Both risks exist for the fields listed below. The WLA CRD schema supports evaluation of:
 
 **Per-container fields** (applies to `containers[]` and `initContainers[]`):
 - `name` — container name
@@ -101,7 +109,9 @@ The Warden webhook evaluates the following fields under `matchingCriteria`. Any 
 - `securityContext`
 - `volumes[]` — volume names and hostPath paths
 
-**Reviewer action:** Any PR that changes a field listed above — even fields not currently constrained by the Datadog WorkloadAllowlist CR — should be reviewed against the WLA to confirm it won't cause a mismatch. When in doubt, test with `HELM_FORCE_RENDER=true` and `providers.gke.autopilot=true`.
+Not all fields above are necessarily present in the current Datadog WLA CR — but even absent entries can still be rejected by Autopilot's default policy if the rendered value is forbidden.
+
+**Reviewer action:** For any PR that adds or changes a field listed above, ask: (a) does it match the Datadog WLA's constraints for that field? and (b) if the WLA doesn't cover it, is this value permitted by GKE Autopilot's default policy? When in doubt, test with `HELM_FORCE_RENDER=true` and `providers.gke.autopilot=true`.
 
 ### The gating pattern
 
@@ -178,11 +188,13 @@ Test file: `test/datadog/gke_gdc_test.go`
 
 If a PR touches DaemonSet volumes, containers, or securityContext and does not update these tests, flag it as incomplete:
 
-| Test file | What it covers |
+| Test file / pattern | What it covers |
 |---|---|
 | `test/datadog/gke_autopilot_workloadallowlist_test.go` | WorkloadAllowlist (section 1) |
 | `test/datadog/gke_autopilot_allowlistedv2workload_test.go` | Legacy AllowlistedV2Workload (section 2) |
 | `test/datadog/gke_gdc_test.go` | GDC constraints (section 3) |
+| `test/datadog/baseline/manifests/gke_autopilot_*.yaml` | GKE Autopilot baseline manifests |
+| `test/datadog/baseline/manifests/gdc_*.yaml` | GDC baseline manifests |
 
 ---
 

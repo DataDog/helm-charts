@@ -26,14 +26,14 @@ jobs:
               '',
               'This PR modifies GKE Autopilot or GDC baseline manifest snapshots. Before merging, confirm:',
               '',
-              '- [ ] GKE Autopilot/GKE GDC baseline manifest diffs have been reviewed and confirmed to be supported in GKE Autopilot and the latest Datadog WorkloadAllowlist CR',
+              '- [ ] GKE Autopilot/GKE GDC baseline manifest diffs have been reviewed and confirmed to be supported in GKE Autopilot and the latest Datadog WorkloadAllowlist.',
               '',
-              'If changes introduce constraints not yet covered by the Datadog WorkloadAllowlist CR, gate them with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the WorkloadAllowlist CR is updated.',
-              'See [`gke-constraints-review-guide.md`](charts/datadog/docs/internal/gke-constraints-review-guide.md) for the full constraint reference.',
+              'If changes introduce constraints not yet covered by the Datadog WorkloadAllowlist CR, gate them with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the WorkloadAllowlist is updated.',
+              'See [`gke-constraints-review-guide.md`](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/docs/internal/gke-constraints-review-guide.md) for the full constraint reference.',
             ].join('\n');
 
             // Avoid duplicate comments on force-pushes: update existing if present.
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
