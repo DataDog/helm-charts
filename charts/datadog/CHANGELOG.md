@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.201.3
+
+* Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
+
+
+## 3.201.2
+
+* [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).
+
 ## 3.201.1
 
 * Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).

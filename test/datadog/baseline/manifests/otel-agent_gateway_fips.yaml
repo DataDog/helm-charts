@@ -1396,6 +1396,8 @@ spec:
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
+              value: "kubernetes"
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
               value: health_check,zpages,pprof,ddflare,datadog
             - name: DD_LOG_LEVEL
@@ -1709,6 +1711,8 @@ spec:
                   name: datadog-secret
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
+              value: "kubernetes"
             - name: DD_OTELCOLLECTOR_GATEWAY_MODE
               value: "true"
             - name: DD_HOSTNAME
