@@ -89,6 +89,8 @@ A DaemonSet change can break GKE Autopilot installs in two distinct ways:
 
 2. **Unexempted default GKE Autopilot restriction** — GKE Autopilot enforces default restrictions on all workloads (e.g. no arbitrary capabilities, no `privileged: true`, no arbitrary hostPaths). The Datadog WLA grants exemptions only for what's explicitly listed. A new config that violates a default Autopilot restriction but isn't covered by the WLA will also be rejected — even if the WLA CR doesn't mention that field at all. This failure mode is less obvious: a contributor can add a config they don't see in the WLA and assume it's unconstrained.
 
+   > **See also:** [GKE Autopilot security](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/autopilot-security) — documents what GKE Autopilot restricts by default (privileged containers, host namespaces, arbitrary capabilities, etc.) before any WorkloadAllowlist exemptions are applied.
+
 Both risks exist for the fields listed below. The WLA CRD schema supports evaluation of:
 
 **Per-container fields** (applies to `containers[]` and `initContainers[]`):
