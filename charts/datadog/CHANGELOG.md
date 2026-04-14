@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.4
+
+* Fix Helm warning when `datadog.autoscaling.workload.enabled` is not explicitly set by removing the field from `values.yaml`. The option can still be set via `--set datadog.autoscaling.workload.enabled=true`.
+
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
