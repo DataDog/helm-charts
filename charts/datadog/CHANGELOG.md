@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.4
+
+* Update `check-cluster-name` pre-install hook regex to allow cluster names containing underscores or starting with a digit, and improve the failure message ([#2428](https://github.com/DataDog/helm-charts/pull/2428)).
+
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
