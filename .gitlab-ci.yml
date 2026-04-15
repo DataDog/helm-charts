@@ -4,10 +4,6 @@ stages:
 
 variables:
   TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
-  # Controls flaky test behaviour in E2E tests.
-  # Set to "true" on merge queue branches to skip known-flaky tests instead of
-  # running them, so that real failures still block merges.
-  GO_TEST_SKIP_FLAKE: "false"
 
 noop:
   stage: test
@@ -19,7 +15,7 @@ noop:
 e2e:
   stage: e2e
   rules:
-    # Run on merge queue branches; skip known-flaky tests so real failures block merges.
+    # Run on merge queue branches; known-flaky test failures are ignored by the TestWasher.
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       changes:
         paths:
@@ -29,10 +25,7 @@ e2e:
           - test/e2e/**/*
         compare_to: "refs/heads/main"
       when: always
-      variables:
-        GO_TEST_SKIP_FLAKE: "true"
     # Run on main branch commits (after merge, compare to parent commit).
-    # Flaky tests run but are allowed to fail individually via the flake.Mark log sentinel.
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         paths:
@@ -90,4 +83,4 @@ e2e:
     - export GOOGLE_APPLICATION_CREDENTIALS=~/gcp-credentials.json
 
   script:
-    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci E2E_AGENT_VERSION=$E2E_AGENT_VERSION GO_TEST_SKIP_FLAKE=$GO_TEST_SKIP_FLAKE make test-e2e
+    - E2E_BUILD_TAGS=$E2E_BUILD_TAGS E2E_PROFILE=ci E2E_AGENT_VERSION=$E2E_AGENT_VERSION make test-e2e
