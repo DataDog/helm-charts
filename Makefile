@@ -8,6 +8,7 @@ E2E_KEY_PAIR_NAME=ci.helm-charts
 DD_TEAM?=container-ecosystems
 DD_TAGS?=
 E2E_BUILD_TAGS?="e2e e2e_autopilot e2e_autopilot_systemprobe e2e_autopilot_csi"
+
 ## Local profile
 E2E_PROFILE?=local
 export E2E_KEY_PAIR_NAME?=${USER}
