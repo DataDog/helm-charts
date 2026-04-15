@@ -2,6 +2,7 @@
 
 ## 2.15.1
 
+- Official image `2.15.1`
 - Remove deprecated `datadog.workerAPI.playground` config (GraphQL API replaced by gRPC)
 
 ## 2.15.0
