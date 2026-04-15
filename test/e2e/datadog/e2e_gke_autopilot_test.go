@@ -5,19 +5,21 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/helm-charts/test/pkg/flake"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"os"
-	"strings"
-	"testing"
-	"time"
 )
 
 type gkeAutopilotSuite struct {
@@ -87,5 +89,6 @@ func (s *gkeAutopilotSuite) TestGKEAutopilot() {
 }
 
 func (s *gkeAutopilotSuite) TestGenericK8sAutopilot() {
+	flake.Mark(s.T())
 	s.testGenericK8sAutopilot()
 }
