@@ -43,8 +43,12 @@ def main():
         if action == "build-fail":
             build_failed = True
 
-        # Package-level events (no Test field) are not individual test results
+        # Package-level events (no Test field) are not individual test results,
+        # but a package-level "fail" without any test means the package itself
+        # failed (e.g. early binary crash) — treat as fatal.
         if not test:
+            if action == "fail" and package:
+                build_failed = True
             continue
 
         key = (package, test)
@@ -54,12 +58,24 @@ def main():
         elif action == "fail":
             failed_tests.add(key)
 
-    # Build failures are always fatal — no test ran to produce flake markers
+    # Build or package-level failures are always fatal
     if build_failed:
-        print("\nFAIL: build failed.", file=sys.stderr)
+        print("\nFAIL: build or package-level failure.", file=sys.stderr)
         sys.exit(1)
 
-    non_flaky_failures = failed_tests - flaky_tests
+    # A subtest (e.g. TestFoo/Bar) inherits its parent's flaky marker.
+    # Check each failure against both exact match and parent test name.
+    def is_flaky(pkg, test_name):
+        if (pkg, test_name) in flaky_tests:
+            return True
+        # Check if a parent test was marked flaky (TestFoo covers TestFoo/Bar)
+        if "/" in test_name:
+            parent = test_name.split("/")[0]
+            if (pkg, parent) in flaky_tests:
+                return True
+        return False
+
+    non_flaky_failures = {(p, t) for p, t in failed_tests if not is_flaky(p, t)}
 
     if non_flaky_failures:
         print(f"\nFAIL: {len(non_flaky_failures)} non-flaky test failure(s):", file=sys.stderr)
