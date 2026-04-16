@@ -1,5 +1,8 @@
 # Datadog changelog
 
+## 3.201.5
+* Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
+
 ## 3.201.4
 
 * Update `check-cluster-name` pre-install hook regex to allow cluster names containing underscores or starting with a digit, and improve the failure message ([#2428](https://github.com/DataDog/helm-charts/pull/2428)).
