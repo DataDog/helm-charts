@@ -13,7 +13,6 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/datadog-agent/pkg/util/testutil/flake"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
 	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
@@ -89,6 +88,5 @@ func (s *gkeAutopilotSuite) TestGKEAutopilot() {
 }
 
 func (s *gkeAutopilotSuite) TestGenericK8sAutopilot() {
-	flake.Mark(s.T())
 	s.testGenericK8sAutopilot()
 }

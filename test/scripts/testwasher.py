@@ -15,8 +15,10 @@ FLAKY_SENTINEL = "flakytest: this is a known flaky test"
 
 
 def main():
-    flaky_tests = set()   # (package, test) that logged the sentinel
-    failed_tests = set()  # (package, test) that received a "fail" action
+    flaky_tests = set()       # (package, test) that logged the sentinel
+    failed_tests = set()     # (package, test) that received a "fail" action
+    tested_packages = set()  # packages that had at least one test-level event
+    failed_packages = set()  # packages that had a package-level "fail" (no Test)
     build_failed = False
 
     for line in sys.stdin:
@@ -43,13 +45,15 @@ def main():
         if action == "build-fail":
             build_failed = True
 
-        # Package-level events (no Test field) are not individual test results,
-        # but a package-level "fail" without any test means the package itself
-        # failed (e.g. early binary crash) — treat as fatal.
+        # Package-level events (no Test field) are not individual test results.
+        # Track package-level fails separately — they are only fatal if the
+        # package had no individual test events (indicating an early crash).
         if not test:
             if action == "fail" and package:
-                build_failed = True
+                failed_packages.add(package)
             continue
+
+        tested_packages.add(package)
 
         key = (package, test)
 
@@ -58,9 +62,18 @@ def main():
         elif action == "fail":
             failed_tests.add(key)
 
-    # Build or package-level failures are always fatal
+    # Build failures are always fatal
     if build_failed:
-        print("\nFAIL: build or package-level failure.", file=sys.stderr)
+        print("\nFAIL: build failed.", file=sys.stderr)
+        sys.exit(1)
+
+    # A package-level "fail" with no individual test events means the test
+    # binary crashed before running tests — treat as fatal.
+    crashed_packages = failed_packages - tested_packages
+    if crashed_packages:
+        print(f"\nFAIL: package(s) failed without running tests:", file=sys.stderr)
+        for pkg in sorted(crashed_packages):
+            print(f"  {pkg}", file=sys.stderr)
         sys.exit(1)
 
     # A subtest (e.g. TestFoo/Bar) inherits its parent's flaky marker.
@@ -75,7 +88,28 @@ def main():
                 return True
         return False
 
+    # First pass: identify directly flaky failures (marked or inherited from parent)
     non_flaky_failures = {(p, t) for p, t in failed_tests if not is_flaky(p, t)}
+
+    # Second pass: a parent test that only failed because its subtests failed
+    # should not count as non-flaky if all its failing subtests are flaky.
+    # e.g. TestFoo fails because TestFoo/Bar (flaky) failed — TestFoo is not
+    # itself broken.
+    parents_to_remove = set()
+    for pkg, test_name in list(non_flaky_failures):
+        if "/" in test_name:
+            continue  # only check top-level tests
+        # Find all failing subtests of this parent
+        failing_children = {
+            (p, t) for p, t in failed_tests
+            if p == pkg and t.startswith(test_name + "/")
+        }
+        if not failing_children:
+            continue  # parent failed on its own, not from subtests
+        # If all failing children are flaky, the parent failure is just propagation
+        if all(is_flaky(p, t) for p, t in failing_children):
+            parents_to_remove.add((pkg, test_name))
+    non_flaky_failures -= parents_to_remove
 
     if non_flaky_failures:
         print(f"\nFAIL: {len(non_flaky_failures)} non-flaky test failure(s):", file=sys.stderr)
