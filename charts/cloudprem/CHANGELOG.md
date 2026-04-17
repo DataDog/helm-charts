@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5
+
+* Update Docker image to `v0.1.24`
+
 ## 0.2.4
 
 * Update Docker image to `v0.1.23`

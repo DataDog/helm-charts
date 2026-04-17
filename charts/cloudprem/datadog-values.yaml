@@ -1,0 +1,135 @@
+aws:
+  accountId: "127145910800"
+
+# Environment variables
+# Any environment variables defined here are available to all pods in the deployment
+environment:
+  AWS_REGION: us-east-1
+
+# Datadog configuration
+datadog:
+   # The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to. Defaults to `datadoghq.com`.
+   site: datadoghq.com
+   # The name of the existing Secret containing the Datadog API key. The secret key name must be `api-key`.
+   apiKeyExistingSecret: datadog-secret
+
+# Service account configuration
+# If `serviceAccount.create` is set to `true`, a service account is created with the specified name.
+# The service account will be annotated with the IAM role ARN if `aws.accountId` and serviceAccount.eksRoleName` are set.
+# Additional annotations can be added using serviceAccount.extraAnnotations.
+serviceAccount:
+  create: force
+  name: cloudprem
+  # The name of the IAM role to use for the service account. If set, the following annotations will be added to the service account:
+  # - eks.amazonaws.com/role-arn: arn:aws:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
+  # - eks.amazonaws.com/sts-regional-endpoints: "true"
+  eksRoleName: cloudprem
+  extraAnnotations: {}
+
+# CloudPrem configuration
+cloudprem:
+  index:
+    minShards: 300
+    retention: 30d
+
+# CloudPrem node configuration
+config:
+  default_index_root_uri: s3://testmu-datadog-poc/indexes
+
+  indexer:
+    split_store_max_num_bytes: 200G
+    split_store_max_num_splits: 10000
+
+  ingest_api:
+      max_queue_memory_usage: 8GiB
+      max_queue_disk_usage: 16GiB
+
+  searcher:
+      fast_field_cache_capacity: 10G
+      split_footer_cache_capacity: 750M
+      partial_request_cache_capacity: 375M
+      max_num_concurrent_split_searches: 75
+      aggregation_memory_limit: 500M
+
+
+# Internal ingress configuration for access within the VPC
+# The ingress provisions an Application Load Balancers (ALBs) in AWS which is created in private subnets.
+#
+# Additional annotations can be added to customize the ALB behavior.
+ingress:
+  internal:
+    enabled: true
+    name: cloudprem-internal
+    host: cloudprem.acme.internal
+    extraAnnotations:
+      alb.ingress.kubernetes.io/load-balancer-name: cloudprem-internal
+
+# Metastore configuration
+# The metastore is responsible for storing and managing index metadata.
+# It requires a PostgreSQL database connection string to be provided by a Kubernetes secret.
+# The secret should contain a key named `QW_METASTORE_URI` with a value in the format:
+# postgresql://<username>:<password>@<host>:<port>/<database>
+#
+# The metastore connection string is mounted into the pods using extraEnvFrom to reference the secret.
+metastore:
+  extraEnvFrom:
+    - secretRef:
+        name: cloudprem-metastore-uri
+
+# Indexer configuration
+# The indexer is responsible for processing and indexing incoming data it receives data from various sources (for example, Datadog Agents, log collectors)
+# and transforms it into searchable files called "splits" stored in S3.
+#
+# The indexer is horizontally scalable - you can increase `replicaCount` to handle higher indexing throughput.
+# Resource requests and limits should be tuned based on your indexing workload.
+#
+# The default values are suitable for moderate indexing loads of up to 20 MB/s per indexer pod.
+indexer:
+  replicaCount: 50
+  resources:
+    requests:
+      cpu: "6"
+      memory: "24Gi"
+    limits:
+      cpu: "6"
+      memory: "24Gi"
+  persistentVolume:
+    enabled: true
+    storage: 250Gi
+    storageClass: gp3
+  nodeSelector:
+    workload: indexer
+  tolerations:
+    - key: workload
+      value: indexer
+      effect: NoSchedule
+
+# Searcher configuration
+# The searcher is responsible for executing search queries against the indexed data stored in S3.
+# It handles search requests from Datadog's query service and returns matching results.
+#
+# The searcher is horizontally scalable - you can increase `replicaCount` to handle more concurrent searches.
+# Resource requirements for searchers are highly workload-dependent and should be determined empirically.
+# Key factors that impact searcher performance include:
+# - Query complexity (for example, number of terms, use of wildcards or regex)
+# - Query concurrency (number of simultaneous searches)
+# - Amount of data scanned per query
+# - Data access patterns (cache hit rates)
+#
+# Memory is particularly important for searchers as they cache frequently accessed index data in memory.
+searcher:
+  replicaCount: 50
+
+  resources:
+    requests:
+      cpu: "6"
+      memory: "24Gi"
+    limits:
+      cpu: "6"
+      memory: "24Gi"
+  nodeSelector:
+    workload: searcher
+  tolerations:
+    - key: workload
+      value: searcher
+      effect: NoSchedule
