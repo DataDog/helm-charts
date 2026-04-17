@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.5
+## 0.3.0
 
 * Update Docker image to `v0.1.24`
 
