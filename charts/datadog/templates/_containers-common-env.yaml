@@ -49,6 +49,18 @@
   value: /var/lib/cloud/data/instance-id
 {{- end }}
 {{- end }}
+{{- if .Values.datadog.proxy.http }}
+- name: DD_PROXY_HTTP
+  value: {{ .Values.datadog.proxy.http | quote }}
+{{- end }}
+{{- if .Values.datadog.proxy.https }}
+- name: DD_PROXY_HTTPS
+  value: {{ .Values.datadog.proxy.https | quote }}
+{{- end }}
+{{- if .Values.datadog.proxy.noProxy }}
+- name: DD_PROXY_NO_PROXY
+  value: {{ .Values.datadog.proxy.noProxy | join " " | quote }}
+{{- end }}
 {{- include "additional-env-entries" .Values.datadog.env }}
 {{- include "additional-env-dict-entries" .Values.datadog.envDict }}
 {{- if .Values.datadog.acInclude }}
