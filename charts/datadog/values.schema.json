@@ -5,11 +5,7 @@
   "properties": {
     "registryMigrationMode": {
       "type": "string",
-      "enum": [
-        "",
-        "auto",
-        "all"
-      ],
+      "enum": ["", "auto", "all"],
       "description": "Controls gradual migration of the default image registry to registry.datadoghq.com."
     },
     "datadog": {
@@ -201,12 +197,7 @@
                   "anyOf": [
                     {
                       "type": "string",
-                      "enum": [
-                        "auto",
-                        "init_container",
-                        "csi",
-                        "image_volume"
-                      ]
+                      "enum": ["auto", "init_container", "csi", "image_volume"]
                     },
                     {
                       "type": "string",
