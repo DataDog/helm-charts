@@ -19,38 +19,34 @@ import yaml
 # These are excluded from the main section and added back conditionally
 # via {{- if .Values.<feature>.enabled }} blocks.
 #
+# Each entry is (apiGroup, resource).
+#
 # When a new operator feature adds RBAC resources that should be opt-in,
-# add the resources here AND add a new conditional block to the template.
+# add the (apiGroup, resource) pairs here AND add a new conditional block
+# to the template.
+#
+# If stripping removes all resources from a rule, the entire rule is skipped.
 CONDITIONAL_RESOURCES = {
-    # datadogAgentInternal.enabled / datadogAgentProfile.enabled
-    "datadogagentinternals",
-    "datadogagentinternals/finalizers",
-    "datadogagentinternals/status",
-    # datadogAgentProfile.enabled
-    "datadogagentprofiles",
-    "datadogagentprofiles/finalizers",
-    "datadogagentprofiles/status",
-    # datadogDashboard.enabled
-    "datadogdashboards",
-    "datadogdashboards/finalizers",
-    "datadogdashboards/status",
-    # datadogCSIDriver.enabled
-    "datadogcsidrivers",
-    "datadogcsidrivers/finalizers",
-    "datadogcsidrivers/status",
-}
-
-# Entire rules to skip (resource lists that are handled by conditional blocks).
-# Each entry is (apiGroups, resources) — both as frozensets.
-CONDITIONAL_RULES = [
     # clusterRole.allowCreatePodsExec
-    (frozenset([""]), frozenset(["pods/exec"])),
-    # datadogCSIDriver.enabled — storage.k8s.io csidrivers rules
-    (frozenset(["storage.k8s.io"]), frozenset(["csidrivers"])),
-]
-
-# Resources to strip from combined rules (when mixed with non-conditional resources).
-STRIP_FROM_COMBINED = {"pods/exec"}
+    ("", "pods/exec"),
+    # datadogAgentInternal.enabled / datadogAgentProfile.enabled
+    ("datadoghq.com", "datadogagentinternals"),
+    ("datadoghq.com", "datadogagentinternals/finalizers"),
+    ("datadoghq.com", "datadogagentinternals/status"),
+    # datadogAgentProfile.enabled
+    ("datadoghq.com", "datadogagentprofiles"),
+    ("datadoghq.com", "datadogagentprofiles/finalizers"),
+    ("datadoghq.com", "datadogagentprofiles/status"),
+    # datadogDashboard.enabled
+    ("datadoghq.com", "datadogdashboards"),
+    ("datadoghq.com", "datadogdashboards/finalizers"),
+    ("datadoghq.com", "datadogdashboards/status"),
+    # datadogCSIDriver.enabled
+    ("datadoghq.com", "datadogcsidrivers"),
+    ("datadoghq.com", "datadogcsidrivers/finalizers"),
+    ("datadoghq.com", "datadogcsidrivers/status"),
+    ("storage.k8s.io", "csidrivers"),
+}
 
 
 HEADER = """\
@@ -110,25 +106,18 @@ def filter_rules(rules):
         resources = r.get("resources", [])
         verbs = r.get("verbs", [])
 
-        # Skip entire rules that match conditional block patterns
-        groups_set = frozenset(api_groups)
-        res_set = frozenset(resources)
-        skip = False
-        for cond_groups, cond_res in CONDITIONAL_RULES:
-            if groups_set == cond_groups and res_set == cond_res:
-                skip = True
-                break
-        if skip:
-            continue
-
         # Remove 'patch' from nodes verbs (handled by datadogAgentProfile)
         if api_groups == [""] and resources == ["nodes"]:
             r["verbs"] = [v for v in verbs if v != "patch"]
 
-        # Strip conditional resources from combined rules
+        # Strip conditional resources; skip rule entirely if nothing remains
         if resources:
-            new_res = [x for x in resources if x not in CONDITIONAL_RESOURCES and x not in STRIP_FROM_COMBINED]
-            if not new_res:
+            new_res = [
+                res for res in resources
+                if not any((grp, res) in CONDITIONAL_RESOURCES for grp in api_groups)
+            ]
+            # All resources in this rule are conditional; skip the entire rule
+            if len(new_res) == 0:
                 continue
             if len(new_res) != len(resources):
                 r["resources"] = new_res
