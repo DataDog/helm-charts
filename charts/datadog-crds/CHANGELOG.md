@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.20.0-dev.1
+
+* Update CRDs from Datadog Operator v1.26.0-rc.1 release candidate tag.
+
 ## 2.19.0
 
 * Update DatadogPodAutoscaler CRD and add DatadogPodAutoscalerClusterProfile CRD.
