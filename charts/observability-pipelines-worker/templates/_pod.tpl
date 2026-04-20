@@ -61,6 +61,18 @@ containers:
         value: {{ .Values.datadog.workerAPI.enabled | quote }}
       - name: DD_OP_API_ADDRESS
         value: {{ .Values.datadog.workerAPI.address | quote }}
+      {{- with .Values.datadog.proxy.http }}
+      - name: DD_PROXY_HTTP
+        value: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.datadog.proxy.https }}
+      - name: DD_PROXY_HTTPS
+        value: {{ . | quote }}
+      {{- end }}
+      {{- if .Values.datadog.proxy.noProxy }}
+      - name: DD_PROXY_NO_PROXY
+        value: {{ .Values.datadog.proxy.noProxy | join " " | quote }}
+      {{- end }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}

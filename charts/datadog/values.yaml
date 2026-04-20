@@ -153,21 +153,6 @@ datadog:
   ## Overrides the site setting defined in "site".
   dd_url:  # https://app.datadoghq.com
 
-  # datadog.proxy -- Set proxy settings for all Agents
-
-  ## ref: https://docs.datadoghq.com/agent/proxy/
-  proxy:
-    # datadog.proxy.http -- HTTP proxy URL. Sets the DD_PROXY_HTTP environment variable.
-    http:  # http://proxy.example.com:3128
-
-    # datadog.proxy.https -- HTTPS proxy URL. Sets the DD_PROXY_HTTPS environment variable.
-    https:  # https://proxy.example.com:3128
-
-    # datadog.proxy.noProxy -- List of hosts or CIDRs to bypass the proxy. Sets the DD_PROXY_NO_PROXY environment variable (space-separated).
-    noProxy: []
-    #   - localhost
-    #   - 10.0.0.0/8
-
   # datadog.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off
   logLevel: INFO
 
