@@ -5,7 +5,11 @@
   "properties": {
     "registryMigrationMode": {
       "type": "string",
-      "enum": ["", "auto", "all"],
+      "enum": [
+        "",
+        "auto",
+        "all"
+      ],
       "description": "Controls gradual migration of the default image registry to registry.datadoghq.com."
     },
     "datadog": {
@@ -197,7 +201,12 @@
                   "anyOf": [
                     {
                       "type": "string",
-                      "enum": ["auto", "init_container", "csi", "image_volume"]
+                      "enum": [
+                        "auto",
+                        "init_container",
+                        "csi",
+                        "image_volume"
+                      ]
                     },
                     {
                       "type": "string",
@@ -376,24 +385,6 @@
                 }
               },
               "additionalProperties": false
-            }
-          },
-          "additionalProperties": false
-        },
-        "proxy": {
-          "type": "object",
-          "properties": {
-            "http": {
-              "type": "string"
-            },
-            "https": {
-              "type": "string"
-            },
-            "noProxy": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
             }
           },
           "additionalProperties": false

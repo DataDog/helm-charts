@@ -46,6 +46,17 @@ datadog:
     # and correctly setup the bootstrap to point to the secrets file in `bootstrap.config`.
     # eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" }
     secretFileContents: {}
+  # datadog.proxy -- Configure proxy settings for the Worker.
+  # ref: https://docs.datadoghq.com/observability_pipelines/setup/
+  proxy:
+    # datadog.proxy.http -- HTTP proxy URL. Sets the DD_PROXY_HTTP environment variable.
+    http: ""  # http://proxy.example.com:3128
+    # datadog.proxy.https -- HTTPS proxy URL. Sets the DD_PROXY_HTTPS environment variable.
+    https: ""  # https://proxy.example.com:3128
+    # datadog.proxy.noProxy -- List of hosts or CIDRs to bypass the proxy. Sets the DD_PROXY_NO_PROXY environment variable (space-separated).
+    noProxy: []
+    #  - localhost
+    #  - 10.0.0.0/8
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
