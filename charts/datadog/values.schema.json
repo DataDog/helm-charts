@@ -379,6 +379,24 @@
             }
           },
           "additionalProperties": false
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "http": {
+              "type": "string"
+            },
+            "https": {
+              "type": "string"
+            },
+            "noProxy": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
         }
       }
     }
