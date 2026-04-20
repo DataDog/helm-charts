@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.21.0-dev.1](https://img.shields.io/badge/Version-2.21.0--dev.1-informational?style=flat-square) ![AppVersion: 1.25.0-rc.1](https://img.shields.io/badge/AppVersion-1.25.0--rc.1-informational?style=flat-square)
+![Version: 2.21.0-dev.2](https://img.shields.io/badge/Version-2.21.0--dev.2-informational?style=flat-square) ![AppVersion: 1.25.0-rc.3](https://img.shields.io/badge/AppVersion-1.25.0--rc.3-informational?style=flat-square)
 
 ## Values
 
@@ -39,7 +39,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.25.0-rc.1"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.25.0-rc.3"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |

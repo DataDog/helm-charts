@@ -139,8 +139,8 @@ rules:
   - rollouts
   verbs:
   - list
-  - watch
   - patch
+  - watch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -286,7 +286,6 @@ rules:
   - watch
 - apiGroups:
   - datadoghq.com
-  - eks.amazonaws.com
   - karpenter.azure.com
   resources:
   - '*'
@@ -312,33 +311,33 @@ rules:
   - list
   - watch
 - apiGroups:
-    - gateway.envoyproxy.io
+  - gateway.envoyproxy.io
   resources:
-    - envoyextensionpolicies
+  - envoyextensionpolicies
   verbs:
-    - create
-    - delete
-    - get
+  - create
+  - delete
+  - get
 - apiGroups:
-    - gateway.networking.k8s.io
+  - gateway.networking.k8s.io
   resources:
-    - gatewayclasses
-    - gateways
-    - httproutes
+  - gatewayclasses
+  - gateways
+  - httproutes
   verbs:
-    - get
-    - list
-    - patch
-    - watch
+  - get
+  - list
+  - patch
+  - watch
 - apiGroups:
-    - gateway.networking.k8s.io
+  - gateway.networking.k8s.io
   resources:
-    - referencegrants
+  - referencegrants
   verbs:
-    - create
-    - delete
-    - get
-    - patch
+  - create
+  - delete
+  - get
+  - patch
 - apiGroups:
   - karpenter.sh
   resources:
@@ -366,13 +365,13 @@ rules:
   verbs:
   - get
 - apiGroups:
-    - networking.istio.io
+  - networking.istio.io
   resources:
-    - envoyfilters
+  - envoyfilters
   verbs:
-    - create
-    - delete
-    - get
+  - create
+  - delete
+  - get
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -469,13 +468,6 @@ rules:
   - get
   - list
   - watch
-- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
-  - "metrics.eks.amazonaws.com"
-  resources:
-  - kcm/metrics
-  - ksh/metrics
-  verbs:
-  - get
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
