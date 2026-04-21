@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.11.0
+## 0.10.1
 
 * Fix false positive outcome in csi e2e test ([#2579](https://github.com/DataDog/helm-charts/pull/2579)).
 * Bump CSI driver version to include bug fix ([#77](https://github.com/DataDog/datadog-csi-driver/pull/77)).
