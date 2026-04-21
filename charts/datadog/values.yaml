@@ -2718,7 +2718,7 @@ agents:
     # AWS Documentation: https://docs.aws.amazon.com/eks/latest/best-practices/cost-opt-networking.html#_pod_to_pod_communication
     trafficDistribution:
       enabled: false
-      value: "PreferClose"
+      value: "PreferSameNode"
 
   # agents.lifecycle -- Configure the lifecycle of the Agent.
   # Note: The `exec` lifecycle handler is not supported in GKE Autopilot.
