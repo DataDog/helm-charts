@@ -62,6 +62,11 @@ spec:
         {{- if .Values.datadog.secretBackend.roles }}
         checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
         {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        container.apparmor.security.beta.kubernetes.io/host-profiler: {{ .Values.datadog.hostProfiler.apparmor }}
+        {{- end }}
+        {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
         {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
         container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
@@ -176,6 +181,9 @@ spec:
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
           {{- include "containers-init-linux" . | nindent 6 -}}
+        {{- end }}
+        {{- if and (eq (include "should-enable-host-profiler" .) "true") (eq .Values.datadog.hostProfiler.seccomp "localhost/host-profiler") }}
+          {{ include "host-profiler-seccomp-init" . | nindent 6 }}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
