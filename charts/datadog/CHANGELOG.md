@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.6
+
+* [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
+
 ## 3.201.5
 
 * Update Default Agent Version to 7.78.0.
