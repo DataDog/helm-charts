@@ -1,0 +1,141 @@
+{{- if and (eq (include "should-enable-host-profiler" .) "true") (eq .Values.datadog.hostProfiler.seccomp "localhost/host-profiler") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-host-profiler-security
+  namespace: {{ $.Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+data:
+  host-profiler-seccomp.json: |
+    {
+      "defaultAction": "SCMP_ACT_ERRNO",
+      "architectures": [
+        "SCMP_ARCH_X86_64",
+        "SCMP_ARCH_AARCH64"
+      ],
+      "syscalls": [
+        {
+          "names": [
+            "accept4",
+            "access",
+            "arch_prctl",
+            "bind",
+            "bpf",
+            "brk",
+            "capget",
+            "capset",
+            "chdir",
+            "chmod",
+            "clone",
+            "clone3",
+            "close",
+            "close_range",
+            "connect",
+            "dup",
+            "dup2",
+            "dup3",
+            "epoll_create1",
+            "epoll_ctl",
+            "epoll_pwait",
+            "epoll_wait",
+            "eventfd2",
+            "execve",
+            "exit",
+            "exit_group",
+            "faccessat2",
+            "fcntl",
+            "fstat",
+            "fstatfs",
+            "futex",
+            "getcwd",
+            "getdents64",
+            "getpeername",
+            "getpid",
+            "getppid",
+            "getpriority",
+            "getrandom",
+            "getsockname",
+            "getsockopt",
+            "gettid",
+            "getrlimit",
+            "gettimeofday",
+            "getuid",
+            "ioctl",
+            "listen",
+            "lseek",
+            "madvise",
+            "memfd_create",
+            "mmap",
+            "mprotect",
+            "mremap",
+            "munmap",
+            "nanosleep",
+            "newfstatat",
+            "openat",
+            "openat2",
+            "perf_event_open",
+            "pidfd_open",
+            "pidfd_send_signal",
+            "pipe2",
+            "prctl",
+            "pread64",
+            "prlimit64",
+            "process_vm_readv",
+            "read",
+            "readlinkat",
+            "recvfrom",
+            "recvmsg",
+            "restart_syscall",
+            "rseq",
+            "rt_sigaction",
+            "rt_sigprocmask",
+            "rt_sigreturn",
+            "sched_getaffinity",
+            "sched_yield",
+            "seccomp",
+            "sendmsg",
+            "sendto",
+            "set_robust_list",
+            "set_tid_address",
+            "setgid",
+            "setgroups",
+            "setpgid",
+            "setresgid",
+            "setresuid",
+            "setrlimit",
+            "setsid",
+            "setsockopt",
+            "setuid",
+            "sigaltstack",
+            "socket",
+            "socketpair",
+            "statfs",
+            "statx",
+            "tgkill",
+            "umask",
+            "uname",
+            "unlinkat",
+            "wait4",
+            "waitid",
+            "write"
+          ],
+          "action": "SCMP_ACT_ALLOW"
+        },
+        {
+          "names": [
+            "kill"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": [
+            {
+              "index": 1,
+              "value": 0,
+              "op": "SCMP_CMP_EQ"
+            }
+          ],
+          "comment": "allow process liveness check via kill(pid, 0)"
+        }
+      ]
+    }
+{{- end }}
