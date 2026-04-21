@@ -77,7 +77,6 @@ metadata:
     heritage: {{ .Release.Service | quote }}
 {{ include "datadog.labels" . | indent 4 }}
 spec:
-  trafficDistribution: PreferSameNode
   selector:
     app: {{ template "datadog.fullname" . }}
   ports:
@@ -108,6 +107,11 @@ spec:
       targetPort: {{ .containerPort }}
       name: {{ .name }}
 {{- end }}
+{{- end }}
+{{- if .Values.agents.localService.trafficDistribution.enabled }}
+  trafficDistribution: {{ .Values.agents.localService.trafficDistribution.value | default "PreferClose" }}
+{{- else }}
+  internalTrafficPolicy: Local
 {{- end }}
 {{ end }}
 
