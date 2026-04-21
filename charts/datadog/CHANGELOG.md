@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.201.6
+
+* [PROF-14062] Rename the profiler in the datadog-agent, helm, operator ([#2568](https://github.com/DataDog/helm-charts/pull/2568)).
+
+## 3.201.5
+
+* Update Default Agent Version to 7.78.0.
+
 ## 3.201.4
 
 * Update `check-cluster-name` pre-install hook regex to allow cluster names containing underscores or starting with a digit, and improve the failure message ([#2428](https://github.com/DataDog/helm-charts/pull/2428)).
