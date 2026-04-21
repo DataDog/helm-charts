@@ -109,7 +109,7 @@ spec:
 {{- end }}
 {{- end }}
 {{- if .Values.agents.localService.trafficDistribution.enabled }}
-  trafficDistribution: {{ .Values.agents.localService.trafficDistribution.value | default "PreferClose" }}
+  trafficDistribution: {{ .Values.agents.localService.trafficDistribution.value }}
 {{- else }}
   internalTrafficPolicy: Local
 {{- end }}
