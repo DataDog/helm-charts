@@ -15,7 +15,7 @@ noop:
 e2e:
   stage: e2e
   rules:
-    # Run on merge queue branches
+    # Run on merge queue branches; known-flaky test failures are ignored by the TestWasher.
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       changes:
         paths:
@@ -25,8 +25,7 @@ e2e:
           - test/e2e/**/*
         compare_to: "refs/heads/main"
       when: always
-      allow_failure: true
-    # Run on main branch commits (after merge, compare to parent commit)
+    # Run on main branch commits (after merge, compare to parent commit).
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         paths:
