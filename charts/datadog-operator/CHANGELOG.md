@@ -2,7 +2,7 @@
 
 ## 2.22.0-dev.2
 
-* Update Datadog Operator chart for 1.26.0-rc.1.
+* [No-op] Lint operator ClusterRole template
 
 ## 2.22.0-dev.1
 
