@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+* Fix false positive outcome in csi e2e test ([#2579](https://github.com/DataDog/helm-charts/pull/2579)).
+
 ## 0.10.0
 
 * Add `priorityClassName` support for CSI driver daemonset pods (default: `""`).
