@@ -3,6 +3,7 @@
 ## 3.201.6
 
 * [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
+* [PROF-14062] Rename the profiler in the datadog-agent, helm, operator ([#2568](https://github.com/DataDog/helm-charts/pull/2568)).
 
 ## 3.201.5
 
