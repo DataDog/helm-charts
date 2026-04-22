@@ -571,7 +571,7 @@ helm install <RELEASE_NAME> \
 | agents.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Agent pods |
 | agents.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
 | agents.podSecurity.seLinuxContext | object | Must run as spc_t | Provide seLinuxContext configuration for PSP/SCC |
-| agents.podSecurity.seccompProfiles | list | `["runtime/default","localhost/system-probe"]` | Allowed seccomp profiles |
+| agents.podSecurity.seccompProfiles | list | `["runtime/default","localhost/system-probe","localhost/host-profiler"]` | Allowed seccomp profiles |
 | agents.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SecurityContextConstraints resource for Agent pods |
 | agents.podSecurity.volumes | list | `["configMap","downwardAPI","emptyDir","hostPath","secret"]` | Allowed volumes types |
 | agents.priorityClassCreate | bool | `false` | Creates a priorityClass for the Datadog Agent's Daemonset pods. |
