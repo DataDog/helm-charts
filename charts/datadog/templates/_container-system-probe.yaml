@@ -33,10 +33,8 @@
     {{- if .Values.datadog.securityAgent.compliance.enabled }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
       value: "true"
-    {{- if .Values.datadog.securityAgent.compliance.runInSystemProbe }}
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
-      value: "true"
-    {{- end }}
+      value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
