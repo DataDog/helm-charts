@@ -1,4 +1,4 @@
-{{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.rbac.create }}
+{{- if and .Values.clusterAgent.enabled .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.rbac.create }}
 {{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
 {{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
 {{- if .Values.datadog.kubeStateMetricsCore.namespaces }}
