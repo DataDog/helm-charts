@@ -1045,7 +1045,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus)) -}}
+{{- if and .Values.clusterAgent.enabled (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus)) -}}
 true
 {{- else -}}
 false
@@ -1687,6 +1687,27 @@ true
 {{- end }}
 {{- end }}
 
+{{/*
+Return true if install info configmap is needed.
+*/}}
+{{- define "need-install-info" -}}
+{{- if or .Values.clusterAgent.enabled .Values.agents.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if kpi telemetry configmap is needed.
+*/}}
+{{- define "need-kpi-telemetry-conf" -}}
+{{- if or .Values.clusterAgent.enabled .Values.agents.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{/*
 This helper computes the Deployment name for the operator when installed as a subchart of the datadog chart.
