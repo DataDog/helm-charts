@@ -2194,6 +2194,7 @@ agents:
     seccompProfiles:
       - "runtime/default"
       - "localhost/system-probe"
+      - "localhost/host-profiler"
 
     apparmor:
       # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
