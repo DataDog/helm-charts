@@ -257,4 +257,12 @@
   hostPath:
     path: /sys/kernel/tracing
 {{- end }}
+{{- if .Values.datadog.kataContainersMonitoring.enabled }}
+- name: kata-vc-sbs
+  hostPath:
+    path: /run/vc/sbs
+- name: kata-run
+  hostPath:
+    path: /run/kata
+{{- end }}
 {{- end -}}
