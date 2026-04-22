@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.8
+
+* [CONS-8251] Service is not needed when node agent is disabled ([#2589](https://github.com/DataDog/helm-charts/pull/2589)).
+
 ## 3.201.7
 
 * [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
