@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.201.7](https://img.shields.io/badge/Version-3.201.7-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.202.0](https://img.shields.io/badge/Version-3.202.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -497,7 +497,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.hostProfiler.envDict | object | `{}` | Set environment variables specific to host-profiler defined in a dict |
 | agents.containers.hostProfiler.envFrom | list | `[]` | Set environment variables specific to host-profiler from configMaps and/or secrets |
 | agents.containers.hostProfiler.resources | object | `{}` | Resource requests and limits for the host-profiler container |
-| agents.containers.hostProfiler.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
+| agents.containers.hostProfiler.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_PTRACE","SYS_RESOURCE","DAC_READ_SEARCH","SYSLOG"]},"privileged":false,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
 | agents.containers.hostProfiler.volumeMounts | list | `[]` | Specify additional volumes to mount in the host-profiler container |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
@@ -566,7 +566,7 @@ helm install <RELEASE_NAME> \
 | agents.podSecurity.allowedUnsafeSysctls | list | `[]` | Allowed unsafe sysclts |
 | agents.podSecurity.apparmor.enabled | bool | `true` | If true, enable apparmor enforcement |
 | agents.podSecurity.apparmorProfiles | list | `["runtime/default","unconfined"]` | Allowed apparmor profiles |
-| agents.podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH","MKNOD"]` | Allowed capabilities |
+| agents.podSecurity.capabilities | list | `["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","AUDIT_CONTROL","AUDIT_READ","DAC_READ_SEARCH","MKNOD","SYSLOG"]` | Allowed capabilities |
 | agents.podSecurity.defaultApparmor | string | `"runtime/default"` | Default AppArmor profile for all containers but system-probe |
 | agents.podSecurity.podSecurityPolicy.create | bool | `false` | If true, create a PodSecurityPolicy resource for Agent pods |
 | agents.podSecurity.privileged | bool | `false` | If true, Allow to run privileged containers |
@@ -844,8 +844,11 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
+| datadog.hostProfiler.apparmor | string | `"unconfined"` | Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler"). # Only used when agents.podSecurity.apparmor.enabled is true. |
 | datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
+| datadog.hostProfiler.seccomp | string | `"localhost/host-profiler"` | Apply a seccomp profile to the host-profiler container (e.g. "localhost/host-profiler" or "runtime/default") |
+| datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
