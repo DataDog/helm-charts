@@ -1,0 +1,20 @@
+{{- define "host-profiler-seccomp-init" -}}
+- name: host-profiler-seccomp-setup
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  command:
+  - cp
+  - /etc/config/host-profiler-seccomp.json
+  - /host{{ .Values.datadog.hostProfiler.seccompRoot }}/host-profiler
+  volumeMounts:
+  - name: host-profiler-security
+    mountPath: /etc/config
+    readOnly: true
+  - name: host-profiler-seccomp-root
+    mountPath: /host{{ .Values.datadog.hostProfiler.seccompRoot }}
+    mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    readOnly: false # Need RW for seccomp-root
+  resources:
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+{{- end -}}
