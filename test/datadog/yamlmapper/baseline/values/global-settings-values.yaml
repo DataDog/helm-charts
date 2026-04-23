@@ -1,0 +1,62 @@
+# Test values for global settings
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  
+  # Global cluster settings
+  clusterName: my-kubernetes-cluster
+  site: datadoghq.eu
+  dd_url: https://custom-intake.datadoghq.eu
+  logLevel: DEBUG
+  
+  # Tags and env
+  tags:
+    - "env:production"
+    - "team:platform"
+    - "service:my-app"
+  env:
+    - name: DD_CUSTOM_ENV_VAR
+      value: "custom-value"
+    - name: DD_ANOTHER_VAR
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+  
+  # Kubelet configuration
+  # Note: agentCAPath has a behavioral disparity - see skipFields in utils.go for details
+  kubelet:
+    tlsVerify: false
+    agentCAPath: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    podResourcesSocketDir: /var/lib/kubelet/pod-resources
+  
+  # Container runtime sockets
+  criSocketPath: /var/run/containerd/containerd.sock
+  dockerSocketPath: /var/run/containerd/containerd.sock
+  
+  # Origin detection
+  originDetectionUnified:
+    enabled: true
+  
+  # Network policy
+  networkPolicy:
+    create: true
+    flavor: kubernetes
+
+# Name overrides
+fullnameOverride: "my-custom-datadog-agent"
+nameOverride: "custom-dd"
+
+# Registry
+registry: gcr.io/datadoghq
+
+agents:
+  image:
+    tag: 7.75.0
+
+# Cluster agent with token
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+  token: "my-custom-cluster-agent-token-32chars"
+

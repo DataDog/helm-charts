@@ -1,0 +1,19 @@
+# Test values for Dogstatsd feature mappings (hostPort mode)
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  dogstatsd:
+    useHostPort: true
+    port: 8125
+    useSocketVolume: false
+    nonLocalTraffic: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0

@@ -1,0 +1,71 @@
+# Test values for cluster agent features
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  
+  # Event Collection
+  collectEvents: true
+  kubernetesEvents:
+    unbundleEvents: true
+    collectedEventTypes:
+      - kind: Pod
+        reasons:
+          - Failed
+          - BackOff
+          - Unhealthy
+          - FailedScheduling
+          - Evicted
+      - kind: Node
+        reasons:
+          - TerminatingEvictedPod
+          - NodeNotReady
+          - Rebooted
+          - HostPortConflict
+  
+  # Helm Check
+  helmCheck:
+    enabled: true
+    collectEvents: true
+  
+  # KSM Core
+  kubeStateMetricsCore:
+    enabled: true
+  
+  # Orchestrator Explorer
+  orchestratorExplorer:
+    enabled: true
+    container_scrubbing:
+      enabled: true
+  
+  # Prometheus Scrape
+  prometheusScrape:
+    enabled: true
+    serviceEndpoints: true
+    version: 2
+    additionalConfigs:
+      - configurations:
+          - send_distribution_buckets: true
+            send_distribution_counts_as_monotonic: true
+            send_monotonic_counter: true
+        autodiscovery:
+          kubernetes_annotations:
+            include:
+              prometheus.io/scrape: "true"
+            exclude:
+              prometheus.io/scrape: "false"
+
+# Remote Configuration
+remoteConfiguration:
+  enabled: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+
