@@ -1157,6 +1157,10 @@ datadog:
     # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
 
+  kataContainersMonitoring:
+    # datadog.kataContainersMonitoring.enabled -- Enable Kata Containers core check
+    enabled: false
+
   # Software Bill of Materials configuration
   sbom:
     containerImage:

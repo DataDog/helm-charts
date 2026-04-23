@@ -318,6 +318,14 @@
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
     {{- end }}
+    {{- if .Values.datadog.kataContainersMonitoring.enabled }}
+    - name: kata-vc-sbs
+      mountPath: /host/run/vc/sbs
+      readOnly: true
+    - name: kata-run
+      mountPath: /host/run/kata
+      readOnly: true
+    {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
