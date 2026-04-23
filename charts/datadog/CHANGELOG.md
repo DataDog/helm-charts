@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.8
+
+* feat: add kata container integration support ([#2590](https://github.com/DataDog/helm-charts/pull/2590)).
+
 ## 3.201.7
 
 * [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
