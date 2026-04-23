@@ -7,7 +7,7 @@
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
   command:
-    - "/opt/datadog-agent/embedded/bin/full-host-profiler"
+    - "host-profiler"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
