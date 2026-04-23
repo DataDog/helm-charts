@@ -1342,7 +1342,7 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: kubernetes
+              value: "kubernetes"
             - name: DD_LOG_LEVEL
               value: INFO
           image: registry.datadoghq.com/agent:7.78.0-full
