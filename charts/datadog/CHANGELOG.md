@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.201.8
+## 3.202.0
 
 * feat: add kata container integration support ([#2590](https://github.com/DataDog/helm-charts/pull/2590)).
 
