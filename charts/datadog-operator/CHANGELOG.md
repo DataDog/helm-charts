@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.22.0-dev.4
+
+* Datadog-operator automountServiceAccountToken deployment file bug fix.
+
 ## 2.22.0-dev.3
 
 * [No-op] Remove metadata change notice for 1.21.0+.
