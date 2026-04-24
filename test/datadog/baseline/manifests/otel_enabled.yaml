@@ -1519,7 +1519,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1666,7 +1666,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1758,10 +1758,10 @@ spec:
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: "kubernetes"
+              value: kubernetes
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.77.1
+          image: registry.datadoghq.com/ddot-collector:7.78.0
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -1812,7 +1812,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1851,7 +1851,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.77.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2191,7 +2191,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.77.1
+          image: registry.datadoghq.com/cluster-agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2264,7 +2264,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.77.1
+          image: registry.datadoghq.com/cluster-agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

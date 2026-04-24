@@ -101,10 +101,10 @@ true
 {{- $clusterName := tpl .Values.datadog.clusterName . -}}
 {{- $length := len $clusterName -}}
 {{- if (gt $length 80)}}
-{{- fail "Your `clusterName` isn't valid it has to be below 81 chars." -}}
+{{- fail "Your `clusterName` isn't valid, it must be 80 characters or less." -}}
 {{- end}}
-{{- if not (regexMatch "^([a-z]([a-z0-9\\-]*[a-z0-9])?\\.)*([a-z]([a-z0-9\\-]*[a-z0-9])?)$" $clusterName) -}}
-{{- fail "Your `clusterName` isn't valid. It must be dot-separated tokens where a token start with a lowercase letter followed by lowercase letters, numbers, or hyphens, can only end with a with [a-z0-9] and has to be below 80 chars." -}}
+{{- if not (regexMatch "^([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?\\.)*([a-z0-9]([a-z0-9\\-_]*[a-z0-9])?)$" $clusterName) -}}
+{{- fail "Your `clusterName` isn't valid, it must: \n- contain only lowercase letters, numbers, dots, hyphens and underscores, \n- start with an alphanumeric character, \n- end with an alphanumeric character, and\n- be FQDN-like, without a trailing period." -}}
 {{- end -}}
 {{- end -}}
 
@@ -1067,7 +1067,7 @@ false
 Return true if we can enable Service Internal Traffic Policy
 */}}
 {{- define "enable-service-internal-traffic-policy" -}}
-{{- if or (semverCompare "^1.22-0" .Capabilities.KubeVersion.GitVersion) .Values.agents.localService.forceLocalServiceEnabled -}}
+{{- if and .Values.agents.enabled (or (semverCompare "^1.22-0" .Capabilities.KubeVersion.GitVersion) .Values.agents.localService.forceLocalServiceEnabled) -}}
 true
 {{- else -}}
 false

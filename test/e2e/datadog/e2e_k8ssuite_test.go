@@ -3,6 +3,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"github.com/DataDog/datadog-agent/pkg/util/testutil/flake"
 	"github.com/DataDog/datadog-agent/test/fakeintake/aggregator"
 	"github.com/DataDog/datadog-agent/test/fakeintake/client"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
@@ -67,6 +68,7 @@ func (s *k8sSuite) testGenericK8s() {
 
 func (s *k8sSuite) testGenericK8sKubeletCheck() {
 	s.Run("Kubelet check works", func() {
+		flake.Mark(s.T())
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			kubeletCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes.kubelet.check")
 			assert.NoError(c, err)
@@ -161,6 +163,10 @@ func (s *k8sSuite) testGenericK8sKSMCore() {
 
 func (s *k8sSuite) testGenericK8sKSMCoreCCR(withAutopilot bool) {
 	s.Run("KSM check works cluster check runner", func() {
+		if withAutopilot {
+			s.T().Skip("Skipping: KSM CCR is consistently broken on GKE Autopilot")
+		}
+		flake.Mark(s.T())
 		var gkeOpts []gke.Option
 		agentOpts := []kubernetesagentparams.Option{
 			kubernetesagentparams.WithHelmRepoURL(""),

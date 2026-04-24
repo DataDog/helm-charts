@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.22.0-dev.3
+
+* [No-op] Remove metadata change notice for 1.21.0+.
+
+## 2.22.0-dev.2
+
+* [No-op] Lint operator ClusterRole template
+
 ## 2.22.0-dev.1
 
 * Update Datadog Operator chart for 1.26.0-rc.1.
