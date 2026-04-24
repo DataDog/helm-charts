@@ -91,25 +91,26 @@ def main():
     # First pass: identify directly flaky failures (marked or inherited from parent)
     non_flaky_failures = {(p, t) for p, t in failed_tests if not is_flaky(p, t)}
 
-    # Second pass: a parent test that only failed because its subtests failed
-    # should not count as non-flaky if all its failing subtests are flaky.
-    # e.g. TestFoo fails because TestFoo/Bar (flaky) failed — TestFoo is not
-    # itself broken.
-    parents_to_remove = set()
-    for pkg, test_name in list(non_flaky_failures):
-        if "/" in test_name:
-            continue  # only check top-level tests
-        # Find all failing subtests of this parent
-        failing_children = {
-            (p, t) for p, t in failed_tests
-            if p == pkg and t.startswith(test_name + "/")
-        }
-        if not failing_children:
-            continue  # parent failed on its own, not from subtests
-        # If all failing children are flaky, the parent failure is just propagation
-        if all(is_flaky(p, t) for p, t in failing_children):
-            parents_to_remove.add((pkg, test_name))
-    non_flaky_failures -= parents_to_remove
+    # Second pass: iteratively propagate flaky status upward through any nesting
+    # depth. A parent test that only failed because all its failing subtests are
+    # effectively flaky should itself not count as non-flaky.
+    # e.g. TestGKEAutopilotSuite fails → TestGenericK8sAutopilot fails →
+    # Kubelet_check_works (flaky) fails: the propagation must bubble up two levels.
+    effective_flaky = set(flaky_tests)
+    changed = True
+    while changed:
+        changed = False
+        for pkg, test_name in list(non_flaky_failures):
+            failing_children = {
+                (p, t) for p, t in failed_tests
+                if p == pkg and t.startswith(test_name + "/")
+            }
+            if not failing_children:
+                continue  # parent failed on its own, not from subtests
+            if all((p, t) in effective_flaky for p, t in failing_children):
+                non_flaky_failures.discard((pkg, test_name))
+                effective_flaky.add((pkg, test_name))
+                changed = True
 
     if non_flaky_failures:
         print(f"\nFAIL: {len(non_flaky_failures)} non-flaky test failure(s):", file=sys.stderr)
