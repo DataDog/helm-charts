@@ -7,6 +7,8 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"testing"
+
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Capabilities allowed by the Datadog WorkloadAllowlist (system-probe securityContext).
@@ -143,6 +145,74 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
 			tt.assertions(t, manifest)
+		})
+	}
+}
+
+// Test_autopilotAllowlistSynchronizerPaths verifies the AllowlistSynchronizer references
+// the v1.0.4 exemption (which permits agent-data-plane) when ADP is enabled, and omits
+// it when ADP is disabled. Uses --api-versions to simulate a GKE cluster that supports
+// WorkloadAllowlist CRDs (>= 1.32.1-gke.1729000).
+func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
+	gkeCRDArgs := []string{
+		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
+		"--api-versions", "auto.gke.io/v1/WorkloadAllowlist",
+		"--kube-version", "v1.33.0",
+	}
+
+	tests := []struct {
+		name       string
+		overrides  map[string]string
+		expectV104 bool
+	}{
+		{
+			name: "without ADP",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+				"providers.gke.autopilot":      "true",
+			},
+			expectV104: false,
+		},
+		{
+			name: "with ADP enabled",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":        "datadog-secret",
+				"datadog.appKeyExistingSecret":        "datadog-secret",
+				"providers.gke.autopilot":             "true",
+				"datadog.dataPlane.enabled":           "true",
+				"datadog.dataPlane.dogstatsd.enabled": "true",
+			},
+			expectV104: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/gke_autopilot_allowlist_synchronizer.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   tt.overrides,
+				ExtraArgs:   gkeCRDArgs,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var synchronizer struct {
+				Spec struct {
+					AllowlistPaths []string `yaml:"allowlistPaths"`
+				} `yaml:"spec"`
+			}
+			assert.NoError(t, yaml.Unmarshal([]byte(manifest), &synchronizer))
+
+			const v104Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml"
+			hasV104 := common.Contains(v104Path, synchronizer.Spec.AllowlistPaths)
+			if tt.expectV104 {
+				assert.True(t, hasV104, "expected v1.0.4 exemption path when ADP is enabled")
+			} else {
+				assert.False(t, hasV104, "v1.0.4 exemption path should not be present when ADP is disabled")
+			}
 		})
 	}
 }
