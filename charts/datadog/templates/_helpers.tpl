@@ -184,10 +184,10 @@ This considers both whether or not the Data Plane feature is enabled and whether
 data pipeline enabled
 */}}
 {{- define "should-enable-data-plane" -}}
-{{- if and .Values.datadog.dataPlane.enabled (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.74.0" (include "get-agent-version" .)) -}}
+{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.74.0" (include "get-agent-version" .)) -}}
 {{- fail "Agent Data Plane requires Datadog Agent 7.74 or newer." -}}
 {{- end -}}
-{{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
 {{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
 {{- else -}}
