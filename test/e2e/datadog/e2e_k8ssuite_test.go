@@ -39,21 +39,19 @@ func (s *k8sSuite) SetupSuite() {
 	config, err := common.SetupConfig()
 	s.Require().NoError(err)
 	s.DefaultConfig = config
-	chartPath, err := datadogChartPath()
-	s.Require().NoError(err)
-	s.Assert().NotEmpty(chartPath)
+	s.Assert().NotEmpty(datadogChartPath())
 }
 
-func datadogChartPath() (string, error) {
+func datadogChartPath() string {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		return "", fmt.Errorf("getting working directory: %w", err)
+		panic(fmt.Sprintf("datadogChartPath: os.Getwd(): %v", err))
 	}
 	chartPath, err := filepath.Abs(filepath.Join(currentDir, "..", "..", "..", "charts", "datadog"))
 	if err != nil {
-		return "", fmt.Errorf("resolving chart path: %w", err)
+		panic(fmt.Sprintf("datadogChartPath: filepath.Abs(): %v", err))
 	}
-	return chartPath, nil
+	return chartPath
 }
 
 func (s *k8sSuite) testGenericK8sAutopilot() {
@@ -172,11 +170,9 @@ func (s *k8sSuite) testGenericK8sKSMCore() {
 func (s *k8sSuite) testGenericK8sKSMCoreCCR() {
 	s.Run("KSM check works cluster check runner", func() {
 		flake.Mark(s.T())
-		chartPath, err := datadogChartPath()
-		s.Require().NoError(err)
 		agentOpts := []kubernetesagentparams.Option{
 			kubernetesagentparams.WithHelmRepoURL(""),
-			kubernetesagentparams.WithHelmChartPath(chartPath),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 			kubernetesagentparams.WithHelmValues(`
 datadog:
   kubelet:
@@ -191,7 +187,7 @@ clusterChecksRunner:
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(agentOpts...)))
 
-		err = s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
+		err := s.Env().FakeIntake.Client().FlushServerAndResetAggregators()
 		s.Assert().NoError(err)
 
 		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
