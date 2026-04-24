@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.9
+
+* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+
 ## 3.201.8
 
 * Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
