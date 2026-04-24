@@ -1403,22 +1403,6 @@ datadog:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
       enabled: false
 
-    image:
-      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
-      name: agent-data-plane
-
-      # datadog.dataPlane.image.tag -- Define the data plane version to use
-      tag: 0.1.30
-
-      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
-      digest: ""
-
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
-      repository:
-
-      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
-      pullPolicy: IfNotPresent
-
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
   ## * Configure the Datadog Operator sub-chart using the values config, `operator`.

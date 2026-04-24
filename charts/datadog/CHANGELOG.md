@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
+
 ## 3.202.1
 
 * Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)

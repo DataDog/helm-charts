@@ -1683,7 +1683,7 @@ spec:
               value: "true"
             - name: DD_DATA_PLANE_TELEMETRY_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: registry.datadoghq.com/agent-data-plane:0.1.30
+          image: registry.datadoghq.com/agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
