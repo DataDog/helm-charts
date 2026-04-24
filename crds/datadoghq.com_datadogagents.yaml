@@ -4326,9 +4326,6 @@ spec:
                   x-kubernetes-list-type: map
                 experiment:
                   properties:
-                    generation:
-                      format: int64
-                      type: integer
                     id:
                       type: string
                     phase:
