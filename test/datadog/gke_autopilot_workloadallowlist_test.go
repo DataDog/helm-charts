@@ -87,6 +87,29 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 			},
 		},
 		{
+			name: "with agent-data-plane",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.envDict.HELM_FORCE_RENDER":   "true",
+					"datadog.apiKeyExistingSecret":        "datadog-secret",
+					"datadog.appKeyExistingSecret":        "datadog-secret",
+					"providers.gke.autopilot":             "true",
+					"datadog.dataPlane.enabled":           "true",
+					"datadog.dataPlane.dogstatsd.enabled": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				requireContainerNames(t, ds, "agent", "agent-data-plane")
+				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+			},
+		},
+		{
 			// Exercises system-probe features to catch hostPath and capability violations
 			// when npm/usm/enforcement are enabled (e.g. KILL from CWS enforcement).
 			name: "with system-probe",
