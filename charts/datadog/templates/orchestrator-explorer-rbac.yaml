@@ -27,12 +27,31 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - pods
+  - nodes
+  - namespaces
+  - limitranges
+  - services
   - persistentvolumes
   - persistentvolumeclaims
   - serviceaccounts
   verbs:
   - list
   - get
+  - watch
+- apiGroups:
+  - "discovery.k8s.io"
+  resources:
+  - endpointslices
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - "autoscaling"
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
   - watch
 - apiGroups:
   - "apps"
