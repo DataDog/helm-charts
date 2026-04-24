@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.9
+
+* [GKE Autopilot] Add `agent-data-plane` to WorkloadAllowlist by referencing exemption v1.0.4 when `datadog.dataPlane.enabled=true` ([#2605](https://github.com/DataDog/helm-charts/pull/2605)).
+
 ## 3.201.8
 
 * Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
