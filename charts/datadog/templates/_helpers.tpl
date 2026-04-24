@@ -15,6 +15,96 @@
 {{- $version -}}
 {{- end -}}
 
+{{/*
+  Returns the effective node-agent image tag used for discovery defaulting.
+  When the user only partially overrides agents.image settings without setting a tag,
+  the merged values still inherit the chart default Agent tag, and discovery should
+  follow that effective version.
+*/}}
+{{- define "get-effective-agent-image-tag-for-discovery" -}}
+{{- .Values.agents.image.tag | toString | trim -}}
+{{- end -}}
+
+{{/*
+  Returns a semver-ish version for discovery defaulting.
+  Discovery reuses the chart's existing agent-version resolution for supported tags.
+  If that resolution still returns a non-semver-ish value, discovery treats it as latest.
+*/}}
+{{- define "get-agent-version-for-discovery" -}}
+{{- $tag := include "get-effective-agent-image-tag-for-discovery" . | trimSuffix "-jmx" -}}
+{{- $ctx := dict "Values" (dict "agents" (dict "image" (dict "tag" $tag))) -}}
+{{- $version := include "get-agent-version" $ctx -}}
+{{- if regexMatch "^[0-9]+\\.[0-9]+(\\.[0-9]+)?([-.+][0-9A-Za-z.-]+)?$" $version -}}
+{{- $version -}}
+{{- else -}}
+latest
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if datadog.discovery.enabled was explicitly set by the user.
+*/}}
+{{- define "discovery-enabled-explicitly-set" -}}
+{{- if not (eq .Values.datadog.discovery.enabled nil) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the resolved discovery state.
+  Explicit true/false wins. When omitted, discovery is enabled only for Agent >= 7.78.0
+  after the chart's agent-version resolution. Non-semver-ish results are treated as latest.
+*/}}
+{{- define "resolved-discovery-enabled" -}}
+{{- if eq (include "discovery-enabled-explicitly-set" .) "true" -}}
+{{- .Values.datadog.discovery.enabled -}}
+{{- else -}}
+  {{- $version := include "get-agent-version-for-discovery" . -}}
+  {{- if eq $version "latest" -}}
+true
+  {{- else if semverCompare ">=7.78.0-0" $version -}}
+true
+  {{- else -}}
+false
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the discovery block should be rendered in system-probe.yaml.
+  Explicit values render the block even when set to false so nil vs false is preserved.
+*/}}
+{{- define "should-render-discovery-config" -}}
+{{- if or (eq (include "discovery-enabled-explicitly-set" .) "true") (eq (include "resolved-discovery-enabled" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true when discovery should request the system-probe-lite path.
+  This only applies on Agent versions that ship system-probe-lite (>= 7.78.0), or
+  when the resolved image version is non-semver-ish and treated as latest. Older Agents
+  keep discovery enabled without requesting it.
+*/}}
+{{- define "discovery-use-system-probe-lite" -}}
+{{- if ne (include "resolved-discovery-enabled" .) "true" -}}
+false
+{{- else -}}
+{{- $version := include "get-agent-version-for-discovery" . -}}
+{{- if eq $version "latest" -}}
+true
+{{- else if semverCompare ">=7.78.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
@@ -581,7 +671,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
 true
 {{- else -}}
 false
@@ -1099,7 +1189,7 @@ Return true if runtime compilation is enabled in the system-probe
 {{- if .Values.providers.talos.enabled -}}
 {{- /* Talos does not support runtime compilation */ -}}
 false
-{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
+{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
