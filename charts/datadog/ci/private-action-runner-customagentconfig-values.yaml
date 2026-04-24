@@ -1,0 +1,21 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+  privateActionRunner:
+    enabled: true
+    selfEnroll: false
+    urn: "urn:dd:apps:on-prem-runner:us1:123456:test-runner"
+    privateKey: "dGVzdA=="
+
+agents:
+  useConfigMap: true
+  customAgentConfig:
+    private_action_runner:
+      restricted_shell:
+        allowed_commands:
+          - "rshell:cat"
+        allowed_paths:
+          - "/host/var/log"

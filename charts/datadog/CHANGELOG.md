@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.201.9
+
+* Mount the `datadog-yaml` ConfigMap on the private-action-runner sidecar when `agents.useConfigMap: true`, so `agents.customAgentConfig` reaches the PAR process (which reads the same `datadog.yaml` as the main agent via its `-c` flag).
+
 ## 3.201.8
 
 * Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.

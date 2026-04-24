@@ -51,6 +51,12 @@
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: false
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux") }}
+    - name: datadog-yaml
+      mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
+      subPath: datadog.yaml
+      readOnly: true
+    {{- end }}
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false
