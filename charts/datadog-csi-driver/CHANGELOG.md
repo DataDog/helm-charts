@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.1
+
+* Fix false positive outcome in csi e2e test ([#2579](https://github.com/DataDog/helm-charts/pull/2579)).
+* Bump CSI driver version to include bug fix ([#77](https://github.com/DataDog/datadog-csi-driver/pull/77)).
+
+## 0.10.0
+
+* Add `priorityClassName` support for CSI driver daemonset pods (default: `""`).
+
 ## 0.9.1
 
 * Set csi driver image to `1.2.1`

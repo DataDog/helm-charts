@@ -1,5 +1,128 @@
 # Datadog changelog
 
+## 3.201.8
+
+* Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
+
+## 3.201.7
+
+* [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
+* [PROF-14062] Rename the profiler in the datadog-agent, helm, operator ([#2568](https://github.com/DataDog/helm-charts/pull/2568)).
+
+## 3.201.5
+
+* Update Default Agent Version to 7.78.0.
+
+## 3.201.4
+
+* Update `check-cluster-name` pre-install hook regex to allow cluster names containing underscores or starting with a digit, and improve the failure message ([#2428](https://github.com/DataDog/helm-charts/pull/2428)).
+
+## 3.201.3
+
+* Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
+
+
+## 3.201.2
+
+* [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).
+
+## 3.201.1
+
+* Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).
+
+## 3.201.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
+## 3.200.1
+
+* Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
+
+## 3.200.0
+
+* Bump Datadog Operator chart dependency to 2.21.0.
+* Bump Datadog CRD chart dependency to 2.18.0.
+* Bump Operator image tag to 1.25.0.
+
+## 3.199.2
+
+* DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
+
+## 3.199.1
+
+* [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
+
+## 3.199.0
+
+* [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.
+
+## 3.198.0
+
+* Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
+
+## 3.197.2
+
+* [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
+
+## 3.197.1
+
+* Re-enable `registryMigrationMode: "auto"` after rollback (#2457) with the following scope:
+  * **Migrated in `auto` mode**: AP1, AP2, US5, EU1, and US1 **without APM** (`datadog.apm.enabled=false` and `datadog.apm.portEnabled=false`). Agent, Cluster Agent, and init container images are pulled from `registry.datadoghq.com`.
+  * **Not migrated in `auto` mode (requires `all`)**: US1 with APM enabled. Will be enabled in a follow-up PR.
+  * **Not migrated at all in this PR**: `DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`, which controls images injected by the admission controller (APM library injection, Agent sidecar injection, CWS instrumentation). These images will be migrated in a follow-up PR.
+
+## 3.197.0
+
+* Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
+
+## 3.196.0
+
+* [CONTP-1259] Enable kubernetes use endpointslice config by default ([#2503](https://github.com/DataDog/helm-charts/pull/2503)).
+
+## 3.195.3
+
+* TON-XXXX: Update Default Agent Version to 7.77.1 ([#2507](https://github.com/DataDog/helm-charts/pull/2507)).
+
+## 3.195.2
+
+* Disable `registryMigrationMode` by setting default to `""`, reverting all sites to their previous site-specific registries. This is a rollback due to stale `v1` tags on `registry.datadoghq.com` causing outdated tracer versions to be injected.
+
+## 3.195.1
+
+* Gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true` and `securityAgent.runtime.enabled=true`.
+
+## 3.195.0
+
+* Extend `registryMigrationMode: "auto"` to US1 (`datadoghq.com`) users with APM disabled (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.194.0
+
+* [CONTP-1361] add admission controller probe configuration ([#2449](https://github.com/DataDog/helm-charts/pull/2449)).
+
+## 3.193.0
+
+* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
+## 3.192.1
+
+* Add IPC env vars to core agent when full host profiler is enabled.
+
+## 3.192.0
+
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.191.1
+
+* fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
+
+## 3.190.1
+
+* Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
+
+## 3.191.0
+
+* Extend `registryMigrationMode: "auto"` to all EU1 (`datadoghq.eu`) users regardless of APM configuration. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
 ## 3.190.0
 
 * Extend `registryMigrationMode: "auto"` to EU1 (`datadoghq.eu`) users with `datadog.apm.enabled: false` (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
@@ -7,6 +130,10 @@
 ## 3.189.0
 
 * Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
+
+## 3.188.0
+
+* Enable remote configuration by default on cluster check runners ([#2473](https://github.com/DataDog/helm-charts/pull/2473)).
 
 ## 3.187.0
 

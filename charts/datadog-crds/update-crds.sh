@@ -25,9 +25,9 @@ download_crd() {
     echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
     curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
 
-    if [ "$name" = "datadogagents" ]; then
+    if [ "$name" = "datadogagents" ] || [ "$name" = "datadogagentinternals" ] || [ "$name" = "datadogagentprofiles" ] || [ "$name" = "datadogcsidrivers" ]; then
         yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
-        yq -i eval 'del(.. | select(has("description") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
+        yq -i eval 'del(.. | select(has("description") and (.description | kind == "scalar") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
     fi
 
     ifCondition="{{- if .Values.crds.$installOption }}"
@@ -56,6 +56,8 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors da
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogslos datadogSLOs v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentprofiles datadogAgentProfiles v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscalers datadogPodAutoscalers v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscalerclusterprofiles datadogPodAutoscalerClusterProfiles v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogdashboards datadogDashboards v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoggenericresources datadogGenericResources v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentinternals datadogAgentInternals v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogcsidrivers datadogCSIDrivers v1

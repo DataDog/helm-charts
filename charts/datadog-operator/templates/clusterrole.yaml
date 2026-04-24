@@ -68,6 +68,18 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - pods/resize
+  verbs:
+  - patch
+- apiGroups:
   - '*'
   resources:
   - '*/scale'
@@ -100,7 +112,11 @@ rules:
   resources:
   - controllerrevisions
   verbs:
+  - create
+  - delete
+  - get
   - list
+  - patch
   - watch
 - apiGroups:
   - apps
@@ -120,10 +136,18 @@ rules:
   - apps
   resources:
   - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
   - statefulsets
   verbs:
   - get
   - list
+  - patch
   - watch
 - apiGroups:
   - argoproj.io
@@ -138,9 +162,10 @@ rules:
   resources:
   - rollouts
   verbs:
+  - get
   - list
-  - watch
   - patch
+  - watch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -271,6 +296,8 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadogpodautoscalerclusterprofiles
+  - datadogpodautoscalerclusterprofiles/status
   - datadogpodautoscalers
   - datadogpodautoscalers/status
   verbs:
@@ -286,7 +313,6 @@ rules:
   - watch
 - apiGroups:
   - datadoghq.com
-  - eks.amazonaws.com
   - karpenter.azure.com
   resources:
   - '*'
@@ -312,33 +338,33 @@ rules:
   - list
   - watch
 - apiGroups:
-    - gateway.envoyproxy.io
+  - gateway.envoyproxy.io
   resources:
-    - envoyextensionpolicies
+  - envoyextensionpolicies
   verbs:
-    - create
-    - delete
-    - get
+  - create
+  - delete
+  - get
 - apiGroups:
-    - gateway.networking.k8s.io
+  - gateway.networking.k8s.io
   resources:
-    - gatewayclasses
-    - gateways
-    - httproutes
+  - gatewayclasses
+  - gateways
+  - httproutes
   verbs:
-    - get
-    - list
-    - patch
-    - watch
+  - get
+  - list
+  - patch
+  - watch
 - apiGroups:
-    - gateway.networking.k8s.io
+  - gateway.networking.k8s.io
   resources:
-    - referencegrants
+  - referencegrants
   verbs:
-    - create
-    - delete
-    - get
-    - patch
+  - create
+  - delete
+  - get
+  - patch
 - apiGroups:
   - karpenter.sh
   resources:
@@ -366,13 +392,13 @@ rules:
   verbs:
   - get
 - apiGroups:
-    - networking.istio.io
+  - networking.istio.io
   resources:
-    - envoyfilters
+  - envoyfilters
   verbs:
-    - create
-    - delete
-    - get
+  - create
+  - delete
+  - get
 - apiGroups:
   - networking.k8s.io
   resources:
@@ -469,13 +495,6 @@ rules:
   - get
   - list
   - watch
-- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
-  - "metrics.eks.amazonaws.com"
-  resources:
-  - kcm/metrics
-  - ksh/metrics
-  verbs:
-  - get
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
@@ -577,6 +596,48 @@ rules:
   resources:
   - datadogdashboards/status
   verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogCSIDriver.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers
+  - datadogcsidrivers/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csidrivers
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resourceNames:
+  - k8s.csi.datadoghq.com
+  resources:
+  - csidrivers
+  verbs:
+  - delete
   - get
   - patch
   - update

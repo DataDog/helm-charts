@@ -33,8 +33,6 @@ datadog:
   workerAPI:
     # datadog.workerAPI.enabled -- Whether to enable the Worker's API.
     enabled: true
-    # datadog.workerAPI.playground -- Whether to enable the Worker's API GraphQL playground.
-    playground: false
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
@@ -53,7 +51,7 @@ image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 2.14.0
+  tag: 2.15.1
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:

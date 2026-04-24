@@ -3,14 +3,10 @@ name: Lint and Test Charts
 on:
   pull_request:
     paths:
-      - "charts/**/Chart.yaml"
-      - "charts/**/Chart.lock"
-      - "charts/**/requirements.yaml"
-      - "charts/**/requirements.lock"
-      - "charts/**/values.yaml"
-      - "charts/**/values.schema.json"
+      - "charts/**/Chart.*"
+      - "charts/**/requirements.*"
+      - "charts/**/values.*"
       - "charts/**/templates/**"
-      - "charts/**/*.tpl"
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:

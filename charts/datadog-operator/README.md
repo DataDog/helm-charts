@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.21.0-dev.1](https://img.shields.io/badge/Version-2.21.0--dev.1-informational?style=flat-square) ![AppVersion: 1.25.0-rc.1](https://img.shields.io/badge/AppVersion-1.25.0--rc.1-informational?style=flat-square)
+![Version: 2.22.0-dev.4](https://img.shields.io/badge/Version-2.22.0--dev.4-informational?style=flat-square) ![AppVersion: 1.26.0-rc.2](https://img.shields.io/badge/AppVersion-1.26.0--rc.2-informational?style=flat-square)
 
 ## Values
 
@@ -21,12 +21,14 @@
 | datadogCRDs.crds.datadogAgentInternals | bool | `true` | Set to true to deploy the DatadogAgentInternals CRD |
 | datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| datadogCRDs.crds.datadogCSIDrivers | bool | `false` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
+| datadogCSIDriver.enabled | bool | `false` | Enables the Datadog CSI Driver controller |
 | datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
 | datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
@@ -39,7 +41,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.25.0-rc.1"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.26.0-rc.2"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |

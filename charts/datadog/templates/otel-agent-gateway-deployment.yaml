@@ -183,6 +183,8 @@ spec:
           {{- end }}
           - name: DD_OTELCOLLECTOR_ENABLED
             value: "true"
+          - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
+            value: "kubernetes"
           - name: DD_OTELCOLLECTOR_GATEWAY_MODE
             value: "true"
           - name: DD_HOSTNAME
@@ -215,8 +217,6 @@ spec:
           - name: DD_ENABLE_METADATA_COLLECTION
             value: "false"
           - name: DD_PROCESS_AGENT_ENABLED
-            value: "false"
-          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
             value: "false"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
             value: "false"
