@@ -657,7 +657,7 @@ spec:
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             {{- end }}
-            {{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "orchestratorExplorer-add-crd-collection-config" .) "true") }}
+            {{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true") }}
             - key: orchestrator.yaml
               path: orchestrator.d/orchestrator.yaml
             {{- end }}
