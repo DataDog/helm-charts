@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.202.0](https://img.shields.io/badge/Version-3.202.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.203.0](https://img.shields.io/badge/Version-3.203.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,7 +32,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.18.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.10.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.10.1 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.21.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
@@ -672,6 +672,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner to execute workflow actions |
 | clusterAgent.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
 | clusterAgent.privateActionRunner.identitySecretName | string | `"datadog-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled # The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key # RBAC permissions are granted specifically for this secret name |
+| clusterAgent.privateActionRunner.k8sRemediationEnabled | bool | `false` | Enable k8s remediation RBAC for the Private Action Runner # When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent # permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods) # and manage ConfigMaps and Events cluster-wide. |
 | clusterAgent.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
 | clusterAgent.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a Kubernetes secret. Requires leader election to be enabled. |
 | clusterAgent.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
