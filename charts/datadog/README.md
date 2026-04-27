@@ -1042,6 +1042,7 @@ helm install <RELEASE_NAME> \
 | fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. This setting is only used for the fips-proxy sidecar. |
 | fips.use_https | bool | `false` | Option to enable https. This setting is only used for the fips-proxy sidecar. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
+| global.containerRegistryAllowList | list | `[]` | Restrict which registries can be used for APM library injection. # When non-empty, only libraries from the listed registries will be injected. Enforced by both the # admission controller webhook and the CSI driver. An empty list allows all registries (default). |
 | kube-state-metrics.image.repository | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics"` | Default kube-state-metrics image repository. |
 | kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |
 | kube-state-metrics.rbac.create | bool | `true` | If true, create & use RBAC resources |
