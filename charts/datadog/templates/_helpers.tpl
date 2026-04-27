@@ -1195,7 +1195,7 @@ securityContext:
 {{- if not (empty $securityContext) }}
 {{ toYaml $securityContext | indent 2 }}
 {{- end }}
-{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
+{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0-0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
     type: Localhost
