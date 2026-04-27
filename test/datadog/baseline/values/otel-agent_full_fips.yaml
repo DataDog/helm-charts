@@ -1,0 +1,14 @@
+agents:
+  image:
+    tag: 7.78.0
+    tagSuffix: full
+clusterAgent:
+  enabled: false
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+    useStandaloneImage: false
+useFIPSAgent: true

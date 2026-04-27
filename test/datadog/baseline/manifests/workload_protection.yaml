@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.24.0
+    app.kubernetes.io/version: 1.25.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -400,7 +400,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.24.0
+    app.kubernetes.io/version: 1.25.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -693,6 +693,7 @@ rules:
     resources:
       - endpointslices
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -1685,7 +1686,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1839,7 +1840,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1916,7 +1917,7 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2047,7 +2048,7 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: security-agent
           resources: {}
@@ -2090,7 +2091,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2129,7 +2130,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2156,7 +2157,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2257,7 +2258,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.24.0
+    app.kubernetes.io/version: 1.25.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2320,7 +2321,9 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_EU
               value: "true"
-          image: registry.datadoghq.com/operator:1.24.0
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
+          image: registry.datadoghq.com/operator:1.25.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2470,7 +2473,7 @@ spec:
             - name: DD_COLLECT_KUBERNETES_EVENTS
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
-              value: "false"
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
@@ -2515,7 +2518,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.78.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2588,7 +2591,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.78.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

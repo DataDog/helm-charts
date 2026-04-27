@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.15.1
+
+- Official image `2.15.1`
+- Remove deprecated `datadog.workerAPI.playground` config (GraphQL API replaced by gRPC)
+
+## 2.15.0
+
+- Official image `2.15.0`
+
 ## 2.14.1
 
 - Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:

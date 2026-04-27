@@ -430,6 +430,14 @@ rules:
     - get
     - create
     - delete
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - gateways
+  verbs:
+    - get
+    - list
+    - watch
 {{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}

@@ -5,7 +5,7 @@ subject: repo:DataDog/helm-charts:pull_request
 
 claim_pattern:
   event_name: "pull_request"
-  job_workflow_ref: DataDog/helm-charts/\.github/workflows/bump-chart-version\.yaml@.*
+  job_workflow_ref: DataDog/helm-charts/\.github/workflows/chart-version\.yaml@.*
 
 permissions:
   contents: write

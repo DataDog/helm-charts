@@ -33,6 +33,9 @@ spec:
       imagePullSecrets:
     {{ toYaml .Values.image.pullSecrets | indent 8 }}
       {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
       containers:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

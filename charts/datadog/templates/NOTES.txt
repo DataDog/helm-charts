@@ -477,6 +477,16 @@ On GKE Autopilot environments, SBOM Monitoring is not supported. The options 'da
 
 {{- end }}
 
+{{- if .Values.datadog.privateActionRunner.enabled }}
+
+############################################################################################################
+####   WARNING: Private Action Runner is not supported on GKE Autopilot / GDC   ####
+############################################################################################################
+
+{{- fail "Private Action Runner is not supported on GKE Autopilot / GDC environments. The option 'datadog.privateActionRunner.enabled' must be set to 'false'." }}
+
+{{- end }}
+
 {{- end }}
 
 {{- if .Values.providers.gke.autopilot }}
@@ -518,6 +528,16 @@ Certificates are needed to communicate with the Etcd service, which can be found
 To give the Datadog Agent access to these certificates, copy them into the same namespace the Datadog Agent is running in:
 
     oc get secret etcd-metric-client -n openshift-etcd-operator -o yaml | sed 's/namespace: openshift-etcd-operator/namespace: <datadog agent namespace>/'  | oc create -f -
+
+{{- end }}
+
+{{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "windows") }}
+
+############################################################################################################
+####   WARNING: Private Action Runner is not supported on Windows   ####
+############################################################################################################
+
+{{- fail "Private Action Runner is not supported on Windows. The option 'datadog.privateActionRunner.enabled' must be set to 'false'." }}
 
 {{- end }}
 
@@ -781,6 +801,7 @@ To learn more about it please refer to the following documentation:
 https://docs.datadoghq.com/agent/guide/fips-agent/
 {{- end }}
 
+
 {{- if .Values.clusterAgent.admissionController.configMode }}
 {{- if and (not .Values.datadog.csi.enabled) (eq .Values.clusterAgent.admissionController.configMode "csi") }}
 ################################################################
@@ -798,7 +819,9 @@ Otherwise, `socket` config mode will be used.
 #################################################################
 You have set `datadog.processAgent.runInCoreAgent` to `false`.
 However, this configuration is deprecated.
-If the agent version is 7.60+, the following features will run in the core agent: Live Processes, Live Containers, Process Discovery.
+For agent versions 7.60–7.77, process checks run in the core agent.
+For agent versions 7.78+, the `process_config.run_in_core_agent.enabled` config key has been removed
+and process checks always run in the core agent on Linux.
 {{- end }}
 
 {{- if and (ne (include "hpa-autoscaling-v2-supported" .) "true") (.Values.otelAgentGateway.autoscaling.enabled) }}
@@ -920,25 +943,53 @@ To complete the migration:
 
 {{- end }}
 
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if or .Values.clusterAgent.privateActionRunner.enabled .Values.datadog.privateActionRunner.enabled }}
 
 ###################################################################################
 ####              INFO: Private Action Runner is enabled                       ####
 ###################################################################################
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+
+Cluster Agent Private Action Runner:
 {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
-Private Action Runner is configured for self-enrollment.
-The runner will automatically register with Datadog and store its identity in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
+  Private Action Runner is configured for self-enrollment.
+  The runner will automatically register with Datadog and store its identity
+  in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
+{{- else if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+  Private Action Runner is configured with manual credentials.
+  Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
+  Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if or .Values.clusterAgent.privateActionRunner.urn .Values.clusterAgent.privateActionRunner.privateKey }}
 
+  WARNING: clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey are ignored
+  when clusterAgent.privateActionRunner.identityFromExistingSecret is set.
+{{- end }}
 {{- else }}
-Private Action Runner is configured with manual credentials.
+  Private Action Runner is configured with inline credentials (URN and private key).
+  For better security, consider using an existing secret by setting:
+    clusterAgent.privateActionRunner.identityFromExistingSecret: <secret-name>
+{{- end }}
+{{- end }}
 
-{{- if .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
-Using existing secret: {{ .Values.clusterAgent.privateActionRunner.identityFromExistingSecret }}
-Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if .Values.datadog.privateActionRunner.enabled }}
+
+Node Agent Private Action Runner (sidecar):
+{{- if .Values.datadog.privateActionRunner.selfEnroll }}
+  Private Action Runner is configured for self-enrollment.
+  The runner will automatically register with Datadog and store its identity in a local file.
+{{- else if .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+  Private Action Runner is configured with manual credentials.
+  Using existing secret: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+  Ensure the secret contains both 'urn' and 'private_key' keys.
+{{- if or .Values.datadog.privateActionRunner.urn .Values.datadog.privateActionRunner.privateKey }}
+
+  WARNING: datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey are ignored
+  when datadog.privateActionRunner.identityFromExistingSecret is set.
+{{- end }}
 {{- else }}
-Using inline credentials (URN and private key).
-For better security, consider using an existing secret by setting:
-  clusterAgent.privateActionRunner.identityFromExistingSecret: <secret-name>
+  Private Action Runner is configured with inline credentials (URN and private key).
+  For better security, consider using an existing secret by setting:
+    datadog.privateActionRunner.identityFromExistingSecret: <secret-name>
 {{- end }}
 {{- end }}
 
@@ -953,6 +1004,8 @@ Learn more about Private Action Runner: https://docs.datadoghq.com/actions/priva
 {{- $migratedSite = true -}}
 {{- else if eq $migrationMode "auto" -}}
 {{- if or (eq $site "ap1.datadoghq.com") (eq $site "ap2.datadoghq.com") (eq $site "us5.datadoghq.com") (eq $site "datadoghq.eu") -}}
+{{- $migratedSite = true -}}
+{{- else if eq $site "datadoghq.com" -}}
 {{- $migratedSite = true -}}
 {{- end -}}
 {{- end -}}

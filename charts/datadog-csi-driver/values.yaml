@@ -13,7 +13,7 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  tag: 1.2.1
+  tag: 1.2.2
 
   # image.repository -- Override default registry + image.name for CSI driver
   repository: gcr.io/datadoghq/csi-driver
@@ -26,6 +26,9 @@ image:
   ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   pullSecrets: []
   #   - name: "<REG_SECRET>"
+
+# priorityClassName -- Name of the priorityClass to apply to the CSI daemonset pods.
+priorityClassName: ""
 
 ## Configure the CSI registrar to use as a sidecar container
 registrar:
