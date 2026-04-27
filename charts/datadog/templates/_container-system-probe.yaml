@@ -81,7 +81,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
