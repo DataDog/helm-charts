@@ -642,3 +642,41 @@ func Test_NodeAgent_PrivateActionRunner_NotSupported_OnAutopilot(t *testing.T) {
 	assert.Contains(t, err.Error(), "Private Action Runner is not supported on GKE Autopilot")
 }
 
+func Test_PrivateActionRunner_K8sRemediation_RBAC_Created(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":               "true",
+			"clusterAgent.privateActionRunner.k8sRemediationEnabled": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	assert.Contains(t, manifest, "kind: ClusterRole")
+	assert.Contains(t, manifest, "kind: ClusterRoleBinding")
+	assert.Contains(t, manifest, "name: datadog-private-action-runner")
+	assert.Contains(t, manifest, `["deployments", "daemonsets", "statefulsets", "replicasets"]`)
+	assert.Contains(t, manifest, `["get", "list", "watch"]`)
+	assert.Contains(t, manifest, `["patch"]`)
+}
+
+func Test_PrivateActionRunner_K8sRemediation_RBAC_Not_Created_When_Disabled(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"clusterAgent.privateActionRunner.enabled":               "true",
+			"clusterAgent.privateActionRunner.k8sRemediationEnabled": "false",
+		},
+	})
+	require.NoError(t, err)
+
+	// The PAR k8s remediation ClusterRole uses inline resource format unique to that block
+	assert.NotContains(t, manifest, `["deployments", "daemonsets", "statefulsets", "replicasets"]`)
+}
+

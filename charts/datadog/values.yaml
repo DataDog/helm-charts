@@ -1858,6 +1858,12 @@ clusterAgent:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
 
+    # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
+    ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
+    ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
+    ## and manage ConfigMaps and Events cluster-wide.
+    k8sRemediationEnabled: false
+
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
