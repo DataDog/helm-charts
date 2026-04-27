@@ -16,24 +16,12 @@
 {{- end -}}
 
 {{/*
-  Returns the effective node-agent image tag used for discovery defaulting.
-  When the user only partially overrides agents.image settings without setting a tag,
-  the merged values still inherit the chart default Agent tag, and discovery should
-  follow that effective version.
-*/}}
-{{- define "get-effective-agent-image-tag-for-discovery" -}}
-{{- .Values.agents.image.tag | toString | trim -}}
-{{- end -}}
-
-{{/*
   Returns a semver-ish version for discovery defaulting.
   Discovery reuses the chart's existing agent-version resolution for supported tags.
   If that resolution still returns a non-semver-ish value, discovery treats it as latest.
 */}}
 {{- define "get-agent-version-for-discovery" -}}
-{{- $tag := include "get-effective-agent-image-tag-for-discovery" . | trimSuffix "-jmx" -}}
-{{- $ctx := dict "Values" (dict "agents" (dict "image" (dict "tag" $tag))) -}}
-{{- $version := include "get-agent-version" $ctx -}}
+{{- $version := include "get-agent-version" . -}}
 {{- if regexMatch "^[0-9]+\\.[0-9]+(\\.[0-9]+)?([-.+][0-9A-Za-z.-]+)?$" $version -}}
 {{- $version -}}
 {{- else -}}
