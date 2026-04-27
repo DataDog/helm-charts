@@ -320,13 +320,13 @@ dnsConfig: {}
 
 # livenessProbe -- Specify the livenessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# The Worker API on port 8686 is a gRPC (HTTP/2) server, so a TCP probe is used to be
+# compatible with all supported Kubernetes versions. If you modify datadog.workerAPI.address
+# to a different port, update the port here as well.
 livenessProbe:
   failureThreshold: 5
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
+  tcpSocket:
     port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10
@@ -334,13 +334,13 @@ livenessProbe:
 
 # readinessProbe -- Specify the readinessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# The Worker API on port 8686 is a gRPC (HTTP/2) server, so a TCP probe is used to be
+# compatible with all supported Kubernetes versions. If you modify datadog.workerAPI.address
+# to a different port, update the port here as well.
 readinessProbe:
   failureThreshold: 3
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
+  tcpSocket:
     port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10

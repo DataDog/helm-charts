@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.2
+
+- Switch default `livenessProbe`/`readinessProbe` from `httpGet` to `tcpSocket` on port 8686. Upstream Vector replaced the HTTP/GraphQL observability API with a gRPC server ([vectordotdev/vector#24364](https://github.com/vectordotdev/vector/pull/24364)), so the previous `httpGet :8686/health` probes were incompatible with the worker as of OPW 2.15.0+ and caused pods to enter a probe-failure restart loop.
+
 ## 2.15.1
 
 - Official image `2.15.1`
