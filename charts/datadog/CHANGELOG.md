@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.1
+
+* Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)
+
 ## 3.202.0
 
 * Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
