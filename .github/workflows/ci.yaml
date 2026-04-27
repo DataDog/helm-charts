@@ -120,8 +120,13 @@ jobs:
     name: install-chart
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # NOTE: install-chart depends only on `changed` so that a metadata-only
+    # failure in lint-chart (e.g. version-bump validation) cannot silently skip
+    # the integration test. lint-chart and lint-docs are still gated by
+    # pr-validated below, which fails (rather than being skipped) when any
+    # upstream check is not in `success` state.
     needs:
-      - lint-chart
+      - changed
       - kubeconform-chart
     strategy:
       matrix:
@@ -166,8 +171,38 @@ jobs:
   pr-validated:
     name: pr-validated
     runs-on: ubuntu-latest
+    # `if: always()` ensures this gate runs even when an upstream job fails or
+    # is skipped, so we can convert SKIPPED upstream jobs into a hard FAIL.
+    # GitHub branch protection treats SKIPPED required checks as PASSED, which
+    # has previously allowed regressions to slip through (e.g. when lint-chart
+    # failed and install-chart was skipped via its `needs:` dependency).
+    if: always()
     needs:
+      - lint-chart
+      - lint-docs
+      - kubeconform-chart
       - install-chart
     steps:
       - name: validate
-        run: echo "PR OK"
+        env:
+          LINT_CHART_RESULT: ${{ needs.lint-chart.result }}
+          LINT_DOCS_RESULT: ${{ needs.lint-docs.result }}
+          KUBECONFORM_RESULT: ${{ needs.kubeconform-chart.result }}
+          INSTALL_CHART_RESULT: ${{ needs.install-chart.result }}
+        run: |
+          set -euo pipefail
+          fail=0
+          check() {
+            if [[ "$2" != "success" ]]; then
+              echo "::error::$1 did not succeed (result: $2)"
+              fail=1
+            else
+              echo "$1: success"
+            fi
+          }
+          check lint-chart        "$LINT_CHART_RESULT"
+          check lint-docs         "$LINT_DOCS_RESULT"
+          check kubeconform-chart "$KUBECONFORM_RESULT"
+          check install-chart     "$INSTALL_CHART_RESULT"
+          [[ "$fail" -eq 0 ]] || exit 1
+          echo "PR OK"
