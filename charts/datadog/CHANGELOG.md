@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.0
+
+* Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
+
 ## 3.201.8
 
 * Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
