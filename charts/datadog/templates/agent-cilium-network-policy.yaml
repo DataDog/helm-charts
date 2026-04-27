@@ -101,6 +101,8 @@ specs:
           - matchName: "config.{{ $.Values.datadog.site }}"
           - matchName: "dbm-metrics-intake.{{ $.Values.datadog.site }}"
           - matchName: "dbquery-intake.{{ $.Values.datadog.site }}"
+          - matchName: "sourcemap-intake.{{ $.Values.datadog.site }}"
+          - matchName: "otlp.{{ $.Values.datadog.site }}"
           {{- else}}
           - matchPattern: "*-app.agent.datadoghq.com"
           - matchName: "app.datadoghq.com"
@@ -119,6 +121,8 @@ specs:
           - matchName: "config.datadoghq.com"
           - matchName: "dbm-metrics-intake.datadoghq.com"
           - matchName: "dbquery-intake.datadoghq.com"
+          - matchName: "sourcemap-intake.datadoghq.com"
+          - matchName: "otlp.datadoghq.com"
           {{- end}}
         toPorts:
           - ports:
