@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.203.0
+
+* Add `global.containerRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
 ## 3.202.1
 
 * Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)

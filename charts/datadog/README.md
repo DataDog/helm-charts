@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.202.1](https://img.shields.io/badge/Version-3.202.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.203.0](https://img.shields.io/badge/Version-3.203.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -1043,6 +1043,7 @@ helm install <RELEASE_NAME> \
 | fips.resources | object | `{}` | Resource requests and limits for the FIPS sidecar container. This setting is only used for the fips-proxy sidecar. |
 | fips.use_https | bool | `false` | Option to enable https. This setting is only used for the fips-proxy sidecar. |
 | fullnameOverride | string | `nil` | Override the full qualified app name |
+| global.containerRegistryAllowList | list | `[]` | Restrict which registries can be used for APM library injection. # When non-empty, only libraries from the listed registries will be injected. Enforced by both the # admission controller webhook and the CSI driver. An empty list allows all registries (default). |
 | kube-state-metrics.image.repository | string | `"registry.k8s.io/kube-state-metrics/kube-state-metrics"` | Default kube-state-metrics image repository. |
 | kube-state-metrics.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for KSM. KSM only supports Linux. |
 | kube-state-metrics.rbac.create | bool | `true` | If true, create & use RBAC resources |

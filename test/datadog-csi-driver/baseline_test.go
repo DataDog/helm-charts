@@ -77,3 +77,4 @@ func Test_baseline_manifests(t *testing.T) {
 func verifyCSIDriverDaemonSet(t *testing.T, baselineManifestPath, manifest string) {
 	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.DaemonSet{}, appsv1.DaemonSet{})
 }
+

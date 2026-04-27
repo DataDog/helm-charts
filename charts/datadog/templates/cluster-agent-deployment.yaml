@@ -335,6 +335,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
             value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
           {{- end }}
+          {{- if .Values.global.containerRegistryAllowList }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST
+            value: {{ join "," .Values.global.containerRegistryAllowList | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
