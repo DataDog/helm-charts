@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+* Update Docker image to `v0.1.25`
+
 ## 0.3.1
 
 * Remove unnecessary `datadog-values.yaml` file
