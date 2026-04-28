@@ -36,6 +36,10 @@
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     {{- end }}
+    {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
+    - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
+      value: "true"
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
@@ -87,7 +91,7 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
