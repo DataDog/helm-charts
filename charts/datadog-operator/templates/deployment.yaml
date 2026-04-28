@@ -178,6 +178,9 @@ spec:
           {{- if (semverCompare ">=1.18.0-0" $version) }}
             - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
           {{- end }}
+          {{- if (semverCompare ">=1.26.0-0" $version) }}
+            - "-datadogCSIDriverEnabled={{ .Values.datadogCSIDriver.enabled }}"
+          {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}

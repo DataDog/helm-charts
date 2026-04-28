@@ -27,6 +27,7 @@ var FilterKeys = map[string]interface{}{
 	"checksum/checksd-config":         nil,
 	"checksum/confd-config":           nil,
 	"checksum/otel-config":            nil,
+	"checksum/otel-gateway-config":    nil,
 	"checksum/api_key":                nil,
 	"checksum/application_key":        nil,
 	// ServiceAccount

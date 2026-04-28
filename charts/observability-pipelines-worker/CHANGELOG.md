@@ -1,5 +1,23 @@
-
 # Changelog
+
+## 2.15.2
+
+- Switch default `livenessProbe`/`readinessProbe` from `httpGet` to `tcpSocket` on port 8686. Upstream Vector replaced the HTTP/GraphQL observability API with a gRPC server ([vectordotdev/vector#24364](https://github.com/vectordotdev/vector/pull/24364)), so the previous `httpGet :8686/health` probes were incompatible with the worker as of OPW 2.15.0+ and caused pods to enter a probe-failure restart loop. The default `tcpSocket :8686` handler is injected by the chart template only when the user has not provided their own probe handler (`httpGet`/`tcpSocket`/`exec`/`grpc`) — existing user overrides are preserved as-is and not coalesced with the default. The legacy broken `httpGet :8686/health` is also stripped if it appears in the rendered values (e.g., carried over by `helm upgrade --reuse-values` from chart 2.15.0/2.15.1).
+
+## 2.15.1
+
+- Official image `2.15.1`
+- Remove deprecated `datadog.workerAPI.playground` config (GraphQL API replaced by gRPC)
+
+## 2.15.0
+
+- Official image `2.15.0`
+
+## 2.14.1
+
+- Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:
+  - Removed incorrect placement inside `volumeClaimTemplates[].spec.resources`; this is a StatefulSet `spec`-level field, not a PVC spec field.
+  - Gated the field behind the same condition as `volumeClaimTemplates` (`persistence.enabled=true` and no `persistence.existingClaim`), so it is never emitted when no chart-managed PVC template exists.
 
 ## 2.14.0
 
@@ -28,7 +46,7 @@
 ## 2.12.3
 
 - Change the default podManagementPolicy to Parallel
-    - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
+  - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
 
 ## 2.12.2
 

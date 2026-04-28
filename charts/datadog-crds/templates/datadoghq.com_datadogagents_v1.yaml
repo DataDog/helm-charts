@@ -41,6 +41,10 @@ spec:
         - jsonPath: .metadata.creationTimestamp
           name: age
           type: date
+        - jsonPath: .status.experiment.phase
+          name: experiment-phase
+          priority: 1
+          type: string
       name: v2alpha1
       schema:
         openAPIV3Schema:
@@ -64,6 +68,13 @@ spec:
                           properties:
                             clusterAgentCommunicationEnabled:
                               type: boolean
+                            clusterAgentTlsVerification:
+                              properties:
+                                copyCaConfigMap:
+                                  type: boolean
+                                enabled:
+                                  type: boolean
+                              type: object
                             enabled:
                               type: boolean
                             image:
@@ -368,6 +379,17 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                          type: object
+                        probe:
+                          properties:
+                            enabled:
+                              type: boolean
+                            gracePeriod:
+                              format: int32
+                              type: integer
+                            interval:
+                              format: int32
+                              type: integer
                           type: object
                         registry:
                           type: string
@@ -1849,6 +1871,8 @@ spec:
                       type: array
                       x-kubernetes-list-type: set
                     useFIPSAgent:
+                      type: boolean
+                    useVSock:
                       type: boolean
                   type: object
                 override:
@@ -4312,6 +4336,20 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                experiment:
+                  properties:
+                    id:
+                      type: string
+                    phase:
+                      enum:
+                        - running
+                        - stopped
+                        - rollback
+                        - timeout
+                        - promoted
+                        - aborted
+                      type: string
+                  type: object
                 otelAgentGateway:
                   properties:
                     availableReplicas:
@@ -4355,6 +4393,13 @@ spec:
                               properties:
                                 clusterAgentCommunicationEnabled:
                                   type: boolean
+                                clusterAgentTlsVerification:
+                                  properties:
+                                    copyCaConfigMap:
+                                      type: boolean
+                                    enabled:
+                                      type: boolean
+                                  type: object
                                 enabled:
                                   type: boolean
                                 image:
@@ -4659,6 +4704,17 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                              type: object
+                            probe:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                gracePeriod:
+                                  format: int32
+                                  type: integer
+                                interval:
+                                  format: int32
+                                  type: integer
                               type: object
                             registry:
                               type: string

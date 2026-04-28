@@ -59,8 +59,6 @@ containers:
       {{- end }}
       - name: DD_OP_API_ENABLED
         value: {{ .Values.datadog.workerAPI.enabled | quote }}
-      - name: DD_OP_API_PLAYGROUND
-        value: {{ .Values.datadog.workerAPI.playground | quote }}
       - name: DD_OP_API_ADDRESS
         value: {{ .Values.datadog.workerAPI.address | quote }}
 {{- if .Values.env }}
@@ -77,10 +75,27 @@ containers:
 {{ include "opw.api.containerPort" . | indent 6 }}
 {{- end }}
 {{- if .Values.livenessProbe }}
-    livenessProbe: {{ toYaml .Values.livenessProbe | trim | nindent 6 }}
+{{- $liveness := deepCopy .Values.livenessProbe }}
+{{- /* Strip the legacy broken `httpGet :8686/health` default carried over from
+     chart 2.15.0/2.15.1 by `helm upgrade --reuse-values`. The Worker API on
+     8686 is gRPC since OPW 2.15.0, so this exact handler is guaranteed broken. */}}
+{{- if and $liveness.httpGet (eq (toString $liveness.httpGet.port) "8686") (eq $liveness.httpGet.path "/health") }}
+{{- $_ := unset $liveness "httpGet" }}
+{{- end }}
+{{- if not (or $liveness.httpGet $liveness.tcpSocket $liveness.exec $liveness.grpc) }}
+{{- $_ := set $liveness "tcpSocket" (dict "port" 8686) }}
+{{- end }}
+    livenessProbe: {{ toYaml $liveness | trim | nindent 6 }}
 {{- end }}
 {{- if .Values.readinessProbe }}
-    readinessProbe: {{ toYaml .Values.readinessProbe | trim | nindent 6 }}
+{{- $readiness := deepCopy .Values.readinessProbe }}
+{{- if and $readiness.httpGet (eq (toString $readiness.httpGet.port) "8686") (eq $readiness.httpGet.path "/health") }}
+{{- $_ := unset $readiness "httpGet" }}
+{{- end }}
+{{- if not (or $readiness.httpGet $readiness.tcpSocket $readiness.exec $readiness.grpc) }}
+{{- $_ := set $readiness "tcpSocket" (dict "port" 8686) }}
+{{- end }}
+    readinessProbe: {{ toYaml $readiness | trim | nindent 6 }}
 {{- end }}
 {{- if .Values.resources }}
     resources: {{ toYaml .Values.resources | nindent 6 }}

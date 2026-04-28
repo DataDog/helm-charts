@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.3.1
+
+* Remove unnecessary `datadog-values.yaml` file
+
+## 0.3.0
+
+* Update Docker image to `v0.1.24`
+
+## 0.2.4
+
+* Update Docker image to `v0.1.23`
+* Set default `QW_LOG_FORMAT` to `DDG`
+* Remove default CPU limits from all components
+* Fix default environment variables (`NO_COLOR`, `QW_DISABLE_TELEMETRY`, `QW_LOG_FORMAT`) not being applied when `environment` is empty
+
+## 0.2.3
+
+* Add support for annotations on searcher PersistentVolumeClaim (`searcher.persistentVolume.annotations`)
+* Merge upstream Quickwit Helm chart version 0.8.4
+
 ## 0.2.2
 
 * Update Docker image to `v0.1.22`
