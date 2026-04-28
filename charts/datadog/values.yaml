@@ -2701,6 +2701,15 @@ agents:
     # This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled.
     forceLocalServiceEnabled: false
 
+    # agents.localService.trafficDistribution -- Configure the traffic distribution strategy for the internal traffic policy service.
+    # By default, the traffic distribution strategy is set to "PreferClose" which prioritizes routing traffic to the local agent
+    # on Kubernetes version from 1.30 to 1.33, only value `PreferClose` is supported. On Kubernetes 1.34+, the traffic distribution strategy can be set to `PreferSameZone` or `PreferSameNode`.
+    # Check Kubernetes documentation for more details: https://kubernetes.io/docs/reference/networking/virtual-ips/#traffic-distribution
+    # AWS Documentation: https://docs.aws.amazon.com/eks/latest/best-practices/cost-opt-networking.html#_pod_to_pod_communication
+    trafficDistribution:
+      enabled: false
+      value: "PreferSameNode"
+
   # agents.lifecycle -- Configure the lifecycle of the Agent.
   # Note: The `exec` lifecycle handler is not supported in GKE Autopilot.
   lifecycle: {}
