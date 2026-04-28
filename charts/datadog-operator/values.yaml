@@ -81,6 +81,8 @@ secretBackend:
   command: ""
   # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
   arguments: ""
+  # secretBackend.refreshInterval -- Specifies the secret backend refresh interval in seconds.
+  refreshInterval: # 0s
 datadogAgent:
   # datadogAgent.enabled -- Enables Datadog Agent controller
   enabled: true
