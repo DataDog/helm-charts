@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 
 crds:
+  # crds.annotations -- Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs
+  annotations: {}
   # crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
   datadogMetrics: false
   # crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
