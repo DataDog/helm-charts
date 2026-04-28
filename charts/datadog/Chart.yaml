@@ -1,7 +1,7 @@
 ---
 apiVersion: v1
 name: datadog
-version: 3.202.4
+version: 3.202.5
 appVersion: "7"
 description: Datadog Agent
 keywords:
@@ -9,7 +9,7 @@ keywords:
   - alerting
   - metric
 home: https://www.datadoghq.com
-icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
 sources:
   - https://app.datadoghq.com/account/settings#agent/kubernetes
   - https://github.com/DataDog/datadog-agent

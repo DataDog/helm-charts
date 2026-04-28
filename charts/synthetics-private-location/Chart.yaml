@@ -1,13 +1,13 @@
 apiVersion: v2
 name: synthetics-private-location
-version: 0.17.22
+version: 0.17.23
 appVersion: 1.66.0
 description: Datadog Synthetics Private Location
 keywords:
 - monitoring
 - synthetics
 home: https://www.datadoghq.com
-icon: https://datadog-live.imgix.net/img/dd_logo_70x75.png
+icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
 sources:
 - https://docs.datadoghq.com/synthetics/private_locations
 - https://app.datadoghq.com/synthetics/settings/private-locations

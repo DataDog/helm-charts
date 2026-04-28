@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 2.15.2
 
 - Switch default `livenessProbe`/`readinessProbe` from `httpGet` to `tcpSocket` on port 8686. Upstream Vector replaced the HTTP/GraphQL observability API with a gRPC server ([vectordotdev/vector#24364](https://github.com/vectordotdev/vector/pull/24364)), so the previous `httpGet :8686/health` probes were incompatible with the worker as of OPW 2.15.0+ and caused pods to enter a probe-failure restart loop. The default `tcpSocket :8686` handler is injected by the chart template only when the user has not provided their own probe handler (`httpGet`/`tcpSocket`/`exec`/`grpc`) — existing user overrides are preserved as-is and not coalesced with the default. The legacy broken `httpGet :8686/health` is also stripped if it appears in the rendered values (e.g., carried over by `helm upgrade --reuse-values` from chart 2.15.0/2.15.1).

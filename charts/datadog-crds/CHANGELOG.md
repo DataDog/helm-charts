@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.20.0-dev.5
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 2.20.0-dev.4
 
 * Update CRDs from Datadog Operator v1.26.0-rc.3 release candidate tag.
