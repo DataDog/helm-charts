@@ -139,8 +139,12 @@ data:
         dir: /var/run/sysprobe/runtime-security/profiles
       enforcement:
         enabled: {{ and $.Values.datadog.securityAgent.runtime.enabled $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+      compliance_module:
+        enabled: {{ $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
     dynamic_instrumentation:
       enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
+    compliance_config:
+      enabled: {{ and $.Values.datadog.securityAgent.compliance.enabled $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---

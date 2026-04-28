@@ -1223,6 +1223,10 @@ datadog:
       host_benchmarks:
         enabled: true
 
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
+      runInSystemProbe: false
+
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
       enabled: false

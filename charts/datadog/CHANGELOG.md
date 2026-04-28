@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.202.3
+## 3.202.4
 
 * Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
 
 ## 3.202.2
 
@@ -36,7 +40,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 
