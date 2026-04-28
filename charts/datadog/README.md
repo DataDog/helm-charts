@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.202.2](https://img.shields.io/badge/Version-3.202.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.202.3](https://img.shields.io/badge/Version-3.202.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -972,6 +972,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.compliance.containerInclude | string | `nil` | Include containers in CSPM monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
 | datadog.securityAgent.compliance.host_benchmarks.enabled | bool | `true` | Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+) |
+| datadog.securityAgent.compliance.runInSystemProbe | bool | `false` | Set to true to run compliance checks in system-probe instead of security-agent. When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created. |
 | datadog.securityAgent.compliance.xccdf.enabled | bool | `false` |  |
 | datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` | Set to the desired duration of a single container tracing (in minutes) |
 | datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` | Set to the size of the wait list for already traced containers |

@@ -577,7 +577,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -604,7 +604,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
+{{- if or (and .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe)) (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -659,7 +659,7 @@ false
 Return true if the compliance features should be enabled.
 */}}
 {{- define "should-enable-compliance" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
