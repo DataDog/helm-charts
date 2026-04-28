@@ -1,8 +1,11 @@
 # Datadog changelog
 
-## 3.202.4
+## 3.202.5
 
 * Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.4
+
 * TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
 
 ## 3.202.3
