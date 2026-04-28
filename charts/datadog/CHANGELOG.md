@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.202.4
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
 ## 3.202.2
 
 * Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
@@ -32,7 +40,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 0.3.2
 
 * Add RBAC for the leader election lease.
