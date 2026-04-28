@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.202.3
+
+* Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
 ## 3.202.2
 
 * Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
