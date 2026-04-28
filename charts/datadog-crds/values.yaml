@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 
 crds:
+  # crd.annotations -- Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs
+  annotations: {}
   # crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
   datadogMetrics: false
   # crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
@@ -30,11 +32,6 @@ crds:
 # For more details: https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource
 keepCrds:
 
-# crdAnnotations -- Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs.
-# Example:
-#   crdAnnotations:
-#     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-crdAnnotations: {}
 
 # nameOverride -- Override name of app
 nameOverride: ""
