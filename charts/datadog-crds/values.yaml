@@ -32,7 +32,6 @@ crds:
 # For more details: https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource
 keepCrds:
 
-
 # nameOverride -- Override name of app
 nameOverride: ""
 
