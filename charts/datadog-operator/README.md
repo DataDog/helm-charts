@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.22.0-dev.6](https://img.shields.io/badge/Version-2.22.0--dev.6-informational?style=flat-square) ![AppVersion: 1.26.0-rc.3](https://img.shields.io/badge/AppVersion-1.26.0--rc.3-informational?style=flat-square)
+![Version: 2.22.0](https://img.shields.io/badge/Version-2.22.0-informational?style=flat-square) ![AppVersion: 1.26.0-rc.3](https://img.shields.io/badge/AppVersion-1.26.0--rc.3-informational?style=flat-square)
 
 ## Values
 
@@ -61,6 +61,7 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| secretBackend.refreshInterval | string | `nil` | Specifies the secret backend refresh interval in seconds. |
 | serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.automountServiceAccountToken | bool | `true` | Specifies whether the service account token should be automatically mounted |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |

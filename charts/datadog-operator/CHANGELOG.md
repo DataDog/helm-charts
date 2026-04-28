@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.22.0
+
+* [CONTP-1511] Support backend refresh intervals in operator install ([#2617](https://github.com/DataDog/helm-charts/pull/2617)).
+
 ## 2.22.0-dev.6
 
 * TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
