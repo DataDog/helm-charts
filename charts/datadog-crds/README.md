@@ -22,7 +22,7 @@ But the recommended Kubernetes versions are `1.16+`.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| crd.annotations | object | `{}` | Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs |
+| crds.annotations | object | `{}` | Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs |
 | crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
 | crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfiles CRD |
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |

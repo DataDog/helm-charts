@@ -2,7 +2,7 @@
 
 ## 2.20.0-dev.4
 
-* Add `crd.annotations` value to allow setting custom annotations on all CRD resources (useful for ArgoCD users).
+* Add `crds.annotations` value to allow setting custom annotations on all CRD resources (useful for ArgoCD users).
 
 ## 2.20.0-dev.3
 

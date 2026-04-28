@@ -44,8 +44,8 @@ download_crd() {
     mv tmp.file "$path"
     echo '{{- end }}' >> "$path"
 
-    # Add keepCrds and crd.annotations
-    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}\n    {{- with .Values.crd.annotations }}\n    {{- toYaml . | nindent 4 }}\n    {{- end }}/' "$path"
+    # Add keepCrds and crds.annotations
+    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}\n    {{- with .Values.crds.annotations }}\n    {{- toYaml . | nindent 4 }}\n    {{- end }}/' "$path"
     rm -f "$path.bak"
 }
 

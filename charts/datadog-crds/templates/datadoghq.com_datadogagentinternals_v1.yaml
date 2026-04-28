@@ -7,7 +7,7 @@ metadata:
     {{- if .Values.keepCrds }}
     helm.sh/resource-policy: keep
     {{- end }}
-    {{- with .Values.crd.annotations }}
+    {{- with .Values.crds.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
     controller-gen.kubebuilder.io/version: v0.17.3
