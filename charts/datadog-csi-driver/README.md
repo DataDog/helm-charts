@@ -16,6 +16,7 @@ Datadog CSI Driver helm chart
 |-----|------|---------|-------------|
 | annotations | object | `{}` | Configure the annotations for the csi driver daemonset pods. |
 | apm.enabled | bool | `true` | Enable APM/SSI support for the CSI driver. |
+| driver.resources | object | `{}` | Set resources requests/limits for Datadog CSI Driver PODs |
 | driver.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | CSI driver securityContext |
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
@@ -29,6 +30,7 @@ Datadog CSI Driver helm chart
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
 | registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
+| registrar.resources | object | `{}` | Set resources requests/limits for Datadog CSI Driver Registrar PODs |
 | registrar.securityContext | object | `{}` | CSI registrar securityContext |
 | securityContext | object | `{}` | Configure the security context for the csi driver daemonset pods. |
 | sockets.apmHostSocketPath | string | `"/var/run/datadog/apm.socket"` |  |
