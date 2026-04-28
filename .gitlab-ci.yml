@@ -22,16 +22,21 @@ e2e:
           - charts/datadog/templates/**
           - charts/datadog/values.yaml
           - charts/datadog/Chart.yaml
+          - charts/datadog-csi-driver/templates/**
+          - charts/datadog-csi-driver/values.yaml
+          - charts/datadog-csi-driver/Chart.yaml
           - test/e2e/**/*
         compare_to: "refs/heads/main"
       when: always
-    # Run on main branch commits (after merge, compare to parent commit).
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         paths:
           - charts/datadog/templates/**
           - charts/datadog/values.yaml
           - charts/datadog/Chart.yaml
+          - charts/datadog-csi-driver/templates/**
+          - charts/datadog-csi-driver/values.yaml
+          - charts/datadog-csi-driver/Chart.yaml
           - test/e2e/**/*
       when: always
     - when: manual
