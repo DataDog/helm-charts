@@ -1405,9 +1405,9 @@ spec:
             - name: DD_EXPVAR_PORT
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
-              value: "false"
+              value: "true"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED

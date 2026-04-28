@@ -1,8 +1,24 @@
 # Datadog changelog
 
-## 3.202.0
+## 3.202.4
 
 * Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
+
+## 3.202.1
+
+* Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)
+
+## 3.202.0
+
+* Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
 
 ## 3.201.8
 
@@ -24,7 +40,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 

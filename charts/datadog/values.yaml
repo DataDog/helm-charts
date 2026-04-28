@@ -1223,6 +1223,10 @@ datadog:
       host_benchmarks:
         enabled: true
 
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
+      runInSystemProbe: false
+
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
       enabled: false
@@ -1402,22 +1406,6 @@ datadog:
     dogstatsd:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
       enabled: true
-
-    image:
-      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
-      name: agent-data-plane
-
-      # datadog.dataPlane.image.tag -- Define the data plane version to use
-      tag: 0.1.30
-
-      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
-      digest: ""
-
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
-      repository:
-
-      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
-      pullPolicy: IfNotPresent
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
@@ -1857,6 +1845,12 @@ clusterAgent:
     actionsAllowlist: []
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
+
+    # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
+    ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
+    ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
+    ## and manage ConfigMaps and Events cluster-wide.
+    k8sRemediationEnabled: false
 
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK

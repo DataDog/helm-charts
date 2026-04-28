@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.15.1](https://img.shields.io/badge/Version-2.15.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.1](https://img.shields.io/badge/AppVersion-2.15.1-informational?style=flat-square)
+![Version: 2.15.2](https://img.shields.io/badge/Version-2.15.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.1](https://img.shields.io/badge/AppVersion-2.15.1-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -120,7 +120,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | ingress.tls | list | `[]` | Configure TLS for the Ingress. |
 | initContainers | list | `[]` | Specify initContainers to be added. |
 | lifecycle | object | `{}` | Specify lifecycle hooks for Containers. |
-| livenessProbe | object | `{"failureThreshold":5,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
+| livenessProbe | object | `{"failureThreshold":5,"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the livenessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes version. Setting any handler in your values disables the default, so existing overrides are not coalesced with it. |
 | nameOverride | string | `""` | Override the name of the app. |
 | nodeSelector | object | `{}` | Configure [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector). |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | Specify the accessModes for PersistentVolumeClaims. |
@@ -141,7 +141,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podManagementPolicy | string | `"Parallel"` | Specify the [podManagementPolicy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). |
 | podPriorityClassName | string | `""` | Set the [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass). |
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
-| readinessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/health","port":8686,"scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). |
+| readinessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes version. Setting any handler in your values disables the default, so existing overrides are not coalesced with it. |
 | replicas | int | `1` | Specify the number of replicas to create. |
 | resources | object | `{}` | Specify resource requests and limits. |
 | securityContext | object | `{}` | Specify securityContext for Containers. |

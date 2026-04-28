@@ -320,13 +320,13 @@ dnsConfig: {}
 
 # livenessProbe -- Specify the livenessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart
+# defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API
+# is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes
+# version. Setting any handler in your values disables the default, so existing
+# overrides are not coalesced with it.
 livenessProbe:
   failureThreshold: 5
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
-    port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10
@@ -334,13 +334,13 @@ livenessProbe:
 
 # readinessProbe -- Specify the readinessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart
+# defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API
+# is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes
+# version. Setting any handler in your values disables the default, so existing
+# overrides are not coalesced with it.
 readinessProbe:
   failureThreshold: 3
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
-    port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10
