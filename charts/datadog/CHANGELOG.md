@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.202.5
+## 3.202.6
 
 * Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.5
+
+* Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
 
 ## 3.202.4
 

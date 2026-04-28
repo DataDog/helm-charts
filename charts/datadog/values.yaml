@@ -1405,7 +1405,7 @@ datadog:
 
     dogstatsd:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
-      enabled: false
+      enabled: true
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
