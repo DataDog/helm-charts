@@ -1197,6 +1197,13 @@ datadog:
       analyzers:
         - "os"
 
+    enrichment:
+      usage:
+        # datadog.sbom.enrichment.usage.enabled -- Enable runtime "package in use" SBOM enrichment.
+        # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
+        # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
+        enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
