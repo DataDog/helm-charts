@@ -645,6 +645,8 @@ rules:
   resources:
   - "datadogpodautoscalers"
   - "datadogpodautoscalers/status"
+  - "datadogpodautoscalerclusterprofiles"
+  - "datadogpodautoscalerclusterprofiles/status"
   verbs:
   - "*"
 # Scale subresource for all resources
@@ -653,8 +655,8 @@ rules:
   resources:
   - "*/scale"
   verbs:
-  - 'update'
-  - 'get'
+  - get
+  - update
 # Patching POD to add annotations. TODO: Remove when we have a better way to generate single event
 - apiGroups:
   - ""
@@ -676,19 +678,35 @@ rules:
   - pods/eviction
   verbs:
   - create
-# Triggering rollout on Deployments
+# Patching workloads to trigger rollout; list/watch for cluster profiles
 - apiGroups:
   - apps
   resources:
   - deployments
+  - statefulsets
   verbs:
+  - get
+  - list
+  - watch
   - patch
 - apiGroups:
   - argoproj.io
   resources:
   - rollouts
   verbs:
+  - get
+  - list
+  - watch
   - patch
+# List/watch namespaces for cluster profiles
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
 {{- end}}
 {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
 - apiGroups:
@@ -696,16 +714,22 @@ rules:
   resources:
   - '*'
   verbs:
-  - create
-  - delete
   - get
   - list
   - watch
+  - create
   - patch
   - update
+  - delete
+- apiGroups:
+  - karpenter.k8s.aws
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
 - apiGroups:
   - eks.amazonaws.com
-  - karpenter.k8s.aws
   resources:
   - '*'
   verbs:
