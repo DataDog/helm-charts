@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.4
+
+- Official image `2.15.2`
+
 ## 2.15.3
 
 * TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
