@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.204.0
+
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
 ## 3.203.0
 
 * Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
