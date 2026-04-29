@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.204.0
+
+* Document `datadog.autoscaling.cluster.enabled` in values.yaml (was missing since #2240).
+
 ## 3.203.0
 
 * Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
