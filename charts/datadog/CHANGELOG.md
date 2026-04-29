@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.203.0
+
+* Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
+
 ## 3.202.6
 
 * Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.

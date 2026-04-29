@@ -193,7 +193,7 @@
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}
-    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
     - name: DD_SBOM_ENABLED
       value: "true"
     {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
@@ -232,6 +232,10 @@
     - name: DD_SBOM_HOST_ANALYZERS
       value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
     {{- end }}
+    {{- end }}
+    {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
+    - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
+      value: "true"
     {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
