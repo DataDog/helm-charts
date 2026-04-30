@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.5
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
 ## 2.15.4
 
 - Official image `2.15.2`
