@@ -266,11 +266,10 @@ This considers both whether or not the Data Plane feature is enabled and whether
 data pipeline enabled
 */}}
 {{- define "should-enable-data-plane" -}}
-{{- $adpVersion := .Values.datadog.dataPlane.image.tag -}}
-{{- if not (semverCompare ">=0.1.29" $adpVersion) -}}
-{{- fail "Agent Data Plane 0.1.29 or newer is required to enable the Data Plane feature." -}}
-{{- end -}}
 {{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.74.0" (include "get-agent-version" .)) -}}
+{{- fail "Agent Data Plane requires Datadog Agent 7.74 or newer." -}}
+{{- end -}}
 {{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
 {{- else -}}
@@ -660,7 +659,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
 true
 {{- else -}}
 false
@@ -687,7 +686,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
+{{- if or (and .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe)) (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -742,7 +741,7 @@ false
 Return true if the compliance features should be enabled.
 */}}
 {{- define "should-enable-compliance" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -778,7 +777,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1491,6 +1490,17 @@ Create RBACs for custom resources
 */}}
 {{- define "should-enable-sbom-host-fs-collection" -}}
   {{- if and (.Values.datadog.sbom.host.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM enrichment "package in use" runtime detection is enabled
+*/}}
+{{- define "should-enable-sbom-enrichment-usage" -}}
+  {{- if and .Values.datadog.sbom.enrichment.usage.enabled (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     true
   {{- else -}}
     false

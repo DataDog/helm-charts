@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.202.0](https://img.shields.io/badge/Version-3.202.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.205.0](https://img.shields.io/badge/Version-3.205.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,7 +32,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.18.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.10.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.10.1 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.21.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
@@ -672,6 +672,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner to execute workflow actions |
 | clusterAgent.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
 | clusterAgent.privateActionRunner.identitySecretName | string | `"datadog-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled # The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key # RBAC permissions are granted specifically for this secret name |
+| clusterAgent.privateActionRunner.k8sRemediationEnabled | bool | `false` | Enable k8s remediation RBAC for the Private Action Runner # When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent # permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods) # and manage ConfigMaps and Events cluster-wide. |
 | clusterAgent.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
 | clusterAgent.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a Kubernetes secret. Requires leader election to be enabled. |
 | clusterAgent.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
@@ -808,13 +809,8 @@ helm install <RELEASE_NAME> \
 | datadog.containerRuntimeSupport.enabled | bool | `true` | Set this to false to disable agent access to container runtime. |
 | datadog.criSocketPath | string | `nil` | Path to the container runtime socket (if different from Docker) |
 | datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts. |
-| datadog.dataPlane.dogstatsd.enabled | bool | `false` | Whether or not DogStatsD is enabled in the data plane |
+| datadog.dataPlane.dogstatsd.enabled | bool | `true` | Whether or not DogStatsD is enabled in the data plane |
 | datadog.dataPlane.enabled | bool | `false` | Whether or not the data plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The data plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
-| datadog.dataPlane.image.digest | string | `""` | Define the data plane image digest to use, takes precedence over tag if specified |
-| datadog.dataPlane.image.name | string | `"agent-data-plane"` | Data plane image name to use (relative to `registry`) |
-| datadog.dataPlane.image.pullPolicy | string | `"IfNotPresent"` | Data plane image pull policy |
-| datadog.dataPlane.image.repository | string | `nil` | Override default registry + image.name for data plane |
-| datadog.dataPlane.image.tag | string | `"0.1.30"` | Define the data plane version to use |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
@@ -960,6 +956,7 @@ helm install <RELEASE_NAME> \
 | datadog.sbom.containerImage.enabled | bool | `false` | Enable SBOM collection for container images |
 | datadog.sbom.containerImage.overlayFSDirectScan | bool | `false` | Use experimental overlayFS direct scan |
 | datadog.sbom.containerImage.uncompressedLayersSupport | bool | `true` | Use container runtime snapshotter This should be set to true when using EKS, GKE or if containerd is configured to discard uncompressed layers. This feature will cause the SYS_ADMIN capability to be added to the Agent container. Setting this to false could cause a high error rate when generating SBOMs due to missing uncompressed layer. See https://docs.datadoghq.com/security/cloud_security_management/troubleshooting/vulnerabilities/#uncompressed-container-image-layers |
+| datadog.sbom.enrichment.usage.enabled | bool | `false` | Enable runtime "package in use" SBOM enrichment. Requires the system-probe container (auto-enabled when set to true) for eBPF-based file access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+. |
 | datadog.sbom.host.analyzers | list | `["os"]` | List of analyzers to use for host SBOM generation |
 | datadog.sbom.host.enabled | bool | `false` | Enable SBOM collection for host filesystems |
 | datadog.secretAnnotations | object | `{}` |  |
@@ -976,6 +973,7 @@ helm install <RELEASE_NAME> \
 | datadog.securityAgent.compliance.containerInclude | string | `nil` | Include containers in CSPM monitoring, as a space-separated list. If a container matches an include rule, it’s always included |
 | datadog.securityAgent.compliance.enabled | bool | `false` | Set to true to enable Cloud Security Posture Management (CSPM) |
 | datadog.securityAgent.compliance.host_benchmarks.enabled | bool | `true` | Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+) |
+| datadog.securityAgent.compliance.runInSystemProbe | bool | `false` | Set to true to run compliance checks in system-probe instead of security-agent. When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created. |
 | datadog.securityAgent.compliance.xccdf.enabled | bool | `false` |  |
 | datadog.securityAgent.runtime.activityDump.cgroupDumpTimeout | int | `20` | Set to the desired duration of a single container tracing (in minutes) |
 | datadog.securityAgent.runtime.activityDump.cgroupWaitListSize | int | `0` | Set to the size of the wait list for already traced containers |
@@ -1035,7 +1033,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.22"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.23"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |

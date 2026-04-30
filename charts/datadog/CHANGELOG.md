@@ -1,8 +1,44 @@
 # Datadog changelog
 
-## 3.202.0
+## 3.205.0
 
 * enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 3.204.0
+
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
+## 3.203.0
+
+* Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
+
+## 3.202.6
+
+* Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.5
+
+* Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.4
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
+
+## 3.202.1
+
+* Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)
+
+## 3.202.0
+
+* Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
 
 ## 3.201.8
 
@@ -24,7 +60,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 

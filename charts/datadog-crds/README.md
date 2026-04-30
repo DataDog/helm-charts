@@ -1,6 +1,6 @@
 # Datadog CRDs
 
-![Version: 2.20.0-dev.3](https://img.shields.io/badge/Version-2.20.0--dev.3-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
+![Version: 2.20.0-dev.6](https://img.shields.io/badge/Version-2.20.0--dev.6-informational?style=flat-square) ![AppVersion: 1](https://img.shields.io/badge/AppVersion-1-informational?style=flat-square)
 
 This chart was designed to allow other "datadog" charts to share `CustomResourceDefinitions` such as the `DatadogMetric`.
 
@@ -22,6 +22,7 @@ But the recommended Kubernetes versions are `1.16+`.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| crds.annotations | object | `{}` | Annotations to add to all CRD resources. Useful for tools like ArgoCD that require specific annotations on CRDs |
 | crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
 | crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfiles CRD |
 | crds.datadogAgents | bool | `false` | Set to true to deploy the DatadogAgents CRD |

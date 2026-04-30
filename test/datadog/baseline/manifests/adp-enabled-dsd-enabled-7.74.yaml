@@ -1442,6 +1442,8 @@ spec:
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1683,7 +1685,7 @@ spec:
               value: "true"
             - name: DD_DATA_PLANE_TELEMETRY_LISTEN_ADDR
               value: tcp://127.0.0.1:5102
-          image: registry.datadoghq.com/agent-data-plane:0.1.30
+          image: registry.datadoghq.com/agent:7.74.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 12
