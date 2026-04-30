@@ -364,6 +364,47 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2026-04-30T15:55:32.403074754Z"
+    dependencies:
+    - condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 2.18.0
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    - condition: datadog.csi.enabled
+      name: datadog-csi-driver
+      repository: https://helm.datadoghq.com
+      version: 0.10.1
+    - alias: operator
+      condition: datadog.operator.enabled
+      name: datadog-operator
+      repository: https://helm.datadoghq.com
+      version: 2.21.0
+    description: Datadog Agent
+    digest: 1782af42d18024f6a935c2ea2fae20859e8faeb6ad648e7b6a1bf2d4f109694b
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-3.205.0/datadog-3.205.0.tgz
+    version: 3.205.0
+  - apiVersion: v1
+    appVersion: "7"
     created: "2026-04-29T17:55:45.174278185Z"
     dependencies:
     - condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
@@ -36031,6 +36072,30 @@ entries:
           url: https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
     apiVersion: v2
     appVersion: 2.15.2
+    created: "2026-04-30T15:55:32.626824993Z"
+    description: Observability Pipelines Worker
+    digest: 8df370880891e1b7e4b994762bf98ceabb46ac62f1b2170b02bff1966d078d44
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - observability
+    - logs
+    - metrics
+    - traces
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: observability-pipelines-worker
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/observability-pipelines-worker-2.15.5/observability-pipelines-worker-2.15.5.tgz
+    version: 2.15.5
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
+    apiVersion: v2
+    appVersion: 2.15.2
     created: "2026-04-29T19:23:04.602735966Z"
     description: Observability Pipelines Worker
     digest: 154dd56a8b211f329a0ce6e4dbf27711e1810ba900a2e690765782aee3aa7652
@@ -40931,4 +40996,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-29T19:23:04.604525463Z"
+generated: "2026-04-30T15:55:32.631059968Z"
