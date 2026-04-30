@@ -77,9 +77,10 @@ data:
         {{- end }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
-    {{- if not (eq .Values.datadog.discovery.enabled nil) }}
+    {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:
-      enabled: {{ $.Values.datadog.discovery.enabled }}
+      enabled: {{ include "resolved-discovery-enabled" . }}
+      use_system_probe_lite: {{ include "discovery-use-system-probe-lite" . }}
       network_stats:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}

@@ -1136,7 +1136,7 @@ datadog:
     enabled: false
 
   discovery:
-    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
     enabled:  # false
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats

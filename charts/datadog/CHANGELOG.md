@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.205.0
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
 ## 3.204.0
 
 * Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.

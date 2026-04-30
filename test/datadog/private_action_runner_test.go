@@ -679,4 +679,3 @@ func Test_PrivateActionRunner_K8sRemediation_RBAC_Not_Created_When_Disabled(t *t
 	// The PAR k8s remediation ClusterRole uses inline resource format unique to that block
 	assert.NotContains(t, manifest, `["deployments", "daemonsets", "statefulsets", "replicasets"]`)
 }
-
