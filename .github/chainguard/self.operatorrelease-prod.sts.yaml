@@ -1,0 +1,11 @@
+issuer: https://vault.us1.ddbuild.io/v1/identity/oidc
+
+# ddtool auth whois --datacenter us1.ddbuild.io rapid-agent-delivery-operatorrelease --format json | jq -r .id
+subject: "f012f0b0-d135-9dd7-7f53-44a4d5cb50ca"
+
+claim_pattern:
+  name: "rapid-agent-delivery-operatorrelease"
+
+permissions:
+  contents: read
+  pull_requests: write
