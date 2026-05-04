@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.206.0
+
+* Bump Datadog Operator chart dependency to 2.22.0.
+* Bump Datadog CRD chart dependency to 2.20.0.
+* Bump Operator image tag to 1.26.0.
+
 ## 3.205.0
 
 * enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
