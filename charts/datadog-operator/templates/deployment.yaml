@@ -181,7 +181,7 @@ spec:
           {{- if (semverCompare ">=1.7.0-0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.18.0-0" $version) }}
+          {{- if and (semverCompare ">=1.18.0-0 <1.27.0-0" $version) (or (not .Values.image.doNotCheckTag) (not .Values.datadogAgentInternal.enabled)) }}
             - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
           {{- end }}
           {{- if (semverCompare ">=1.26.0-0" $version) }}
