@@ -49,6 +49,9 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
+      {{- if eq .Values.serviceAccount.automountServiceAccountToken false }}
+      automountServiceAccountToken: false
+      {{- end }} 
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
