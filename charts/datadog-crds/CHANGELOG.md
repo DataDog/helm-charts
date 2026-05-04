@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.20.0
+
+* Update CRDs from Datadog Operator v1.26.0.
+
 ## 2.20.0-dev.6
 
 * Add `crds.annotations` value to allow setting custom annotations on all CRD resources (useful for ArgoCD users).
