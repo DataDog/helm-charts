@@ -4,7 +4,7 @@ issuer: https://vault.us1.staging.dog/v1/identity/oidc
 subject: "1fed960d-1fe4-47de-ebb5-0992bfc0364e"
 
 claim_pattern:
-  name: "rapid-agent-delivery-operatorrelease"
+  name: "rapid-agent-delivery.operatorrelease@kubernetes.us1.staging.dog"
 
 permissions:
   contents: read
