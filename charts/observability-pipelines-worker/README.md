@@ -99,7 +99,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | datadog.proxy | object | `{"http":"","https":"","noProxy":[]}` | Configure proxy settings for the Worker. ref: https://docs.datadoghq.com/observability_pipelines/setup/ |
 | datadog.proxy.http | string | `""` | HTTP proxy URL. Sets the DD_PROXY_HTTP environment variable. |
 | datadog.proxy.https | string | `""` | HTTPS proxy URL. Sets the DD_PROXY_HTTPS environment variable. |
-| datadog.proxy.noProxy | list | `[]` | List of hosts or CIDRs to bypass the proxy. Sets the DD_PROXY_NO_PROXY environment variable (space-separated). |
+| datadog.proxy.noProxy | list | `[]` | List of hosts or CIDRs to bypass the proxy. Sets the DD_PROXY_NO_PROXY environment variable (comma-separated). |
 | datadog.site | string | `"datadoghq.com"` | The [site](https://docs.datadoghq.com/getting_started/site/) of the Datadog intake to send data to. |
 | datadog.workerAPI.address | string | `"0.0.0.0:8686"` | Local address to bind the Worker's API to. if you change this port, you'll need to update the livenessProbe and readinessProbe |
 | datadog.workerAPI.enabled | bool | `true` | Whether to enable the Worker's API. |
