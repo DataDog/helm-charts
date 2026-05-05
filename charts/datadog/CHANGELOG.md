@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.207.0
+
+* Add cluster agent RBAC permissions required for cluster-profile-aware workload autoscaling: `datadogpodautoscalerclusterprofiles` CRD access for reading and writing cluster-wide scaling profiles; `statefulsets` and `argoproj.io/rollouts` get/list/watch/patch to read workload metadata and trigger rollouts; `namespaces` get/list/watch to resolve namespace-scoped profiles.
+
 ## 3.206.0
 
 * Bump Datadog Operator chart dependency to 2.22.0.
