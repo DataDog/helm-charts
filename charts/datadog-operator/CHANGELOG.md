@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.22.2
+
+* Don't add datadogAgentInternalEnabled arg for operator >= 1.27.
+
+## 2.22.1
+
+* Datadog-operator automountServiceAccountToken deployment file bug fix.
+
 ## 2.22.0
 
 * Update Datadog Operator chart for 1.26.0.
