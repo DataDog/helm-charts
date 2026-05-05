@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -400,7 +400,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -463,6 +463,18 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+    verbs:
+      - patch
+  - apiGroups:
       - '*'
     resources:
       - '*/scale'
@@ -495,7 +507,11 @@ rules:
     resources:
       - controllerrevisions
     verbs:
+      - create
+      - delete
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - apps
@@ -515,10 +531,18 @@ rules:
       - apps
     resources:
       - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
       - statefulsets
     verbs:
       - get
       - list
+      - patch
       - watch
   - apiGroups:
       - argoproj.io
@@ -533,9 +557,10 @@ rules:
     resources:
       - rollouts
     verbs:
+      - get
       - list
-      - watch
       - patch
+      - watch
   - apiGroups:
       - authentication.k8s.io
     resources:
@@ -666,6 +691,8 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadogpodautoscalerclusterprofiles
+      - datadogpodautoscalerclusterprofiles/status
       - datadogpodautoscalers
       - datadogpodautoscalers/status
     verbs:
@@ -681,7 +708,6 @@ rules:
       - watch
   - apiGroups:
       - datadoghq.com
-      - eks.amazonaws.com
       - karpenter.azure.com
     resources:
       - '*'
@@ -864,13 +890,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - metrics.eks.amazonaws.com
-    resources:
-      - kcm/metrics
-      - ksh/metrics
-    verbs:
-      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2331,7 +2350,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2371,6 +2390,7 @@ spec:
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
+            - -datadogCSIDriverEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2396,7 +2416,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.25.0
+          image: registry.datadoghq.com/operator:1.26.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
