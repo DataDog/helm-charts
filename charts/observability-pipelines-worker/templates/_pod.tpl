@@ -71,7 +71,7 @@ containers:
       {{- end }}
       {{- if .Values.datadog.proxy.noProxy }}
       - name: DD_PROXY_NO_PROXY
-        value: {{ .Values.datadog.proxy.noProxy | join " " | quote }}
+        value: {{ .Values.datadog.proxy.noProxy | join "," | quote }}
       {{- end }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
