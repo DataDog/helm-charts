@@ -2407,11 +2407,13 @@ agents:
         privileged: false
         capabilities:
           add:
-            - SYS_ADMIN
+            - BPF
+            - PERFMON
             - SYS_PTRACE
             - SYS_RESOURCE
             - DAC_READ_SEARCH
             - SYSLOG
+            - CHECKPOINT_RESTORE
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
