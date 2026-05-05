@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.16.0
+
+* Adding PROXY and NOPROXY options to Observability Pipelines ([#2578](https://github.com/DataDog/helm-charts/pull/2578)).
+
 ## 2.15.5
 
 * enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
