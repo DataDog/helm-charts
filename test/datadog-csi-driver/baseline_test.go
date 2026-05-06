@@ -104,8 +104,8 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 		{
 			name: "explicit allow list - env var is set",
 			overrides: map[string]string{
-				"global.apmContainerRegistryAllowList[0]": "public.ecr.aws/datadog",
-				"global.apmContainerRegistryAllowList[1]": "gcr.io/datadoghq",
+				"global.apmRegistryAllowList[0]": "public.ecr.aws/datadog",
+				"global.apmRegistryAllowList[1]": "gcr.io/datadoghq",
 			},
 			wantPresent: true,
 			wantValue:   "public.ecr.aws/datadog,gcr.io/datadoghq",

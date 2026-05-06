@@ -2,7 +2,7 @@
 
 ## 0.11.0
 
-* Registry allow list is now configured via `global.apmContainerRegistryAllowList` in the parent `datadog` chart. When set, the CSI driver enforces the list via `DD_REGISTRY_ALLOW_LIST` and the admission controller enforces it via `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST`. Both layers must be satisfied for injection to proceed.
+* Registry allow list is now configured via `global.apmRegistryAllowList` in the parent `datadog` chart. When set, the CSI driver enforces the list via `DD_REGISTRY_ALLOW_LIST` and the admission controller enforces it via `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST`. Both layers must be satisfied for injection to proceed.
 
 ## 0.10.1
 

@@ -199,7 +199,7 @@ func Test_apm_injectionMode_envVar_only_when_explicitly_configured(t *testing.T)
 	}
 }
 
-func Test_apm_containerRegistryAllowList_envVar_only_when_explicitly_configured(t *testing.T) {
+func Test_apm_registryAllowList_envVar_only_when_explicitly_configured(t *testing.T) {
 	tests := []struct {
 		name        string
 		overrides   map[string]string
@@ -214,8 +214,8 @@ func Test_apm_containerRegistryAllowList_envVar_only_when_explicitly_configured(
 		{
 			name: "explicit allow list - env var is set",
 			overrides: map[string]string{
-				"global.apmContainerRegistryAllowList[0]": "public.ecr.aws/datadog",
-				"global.apmContainerRegistryAllowList[1]": "gcr.io/datadoghq",
+				"global.apmRegistryAllowList[0]": "public.ecr.aws/datadog",
+				"global.apmRegistryAllowList[1]": "gcr.io/datadoghq",
 			},
 			wantPresent: true,
 			wantValue:   "public.ecr.aws/datadog,gcr.io/datadoghq",
