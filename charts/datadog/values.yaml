@@ -1444,7 +1444,7 @@ datadog:
   # Configuration related to Workload Autoscaling
   autoscaling:
     workload:
-      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      # datadog.autoscaling.workload.enabled -- (bool) Enable Workload Autoscaling.
       enabled:
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
