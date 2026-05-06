@@ -1,8 +1,50 @@
 # Datadog changelog
 
-## 3.203.0
+## 3.208.0
 
 * Add `global.containerRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.207.0
+
+* Add cluster agent RBAC permissions required for cluster-profile-aware workload autoscaling: `datadogpodautoscalerclusterprofiles` CRD access for reading and writing cluster-wide scaling profiles; `statefulsets` and `argoproj.io/rollouts` get/list/watch/patch to read workload metadata and trigger rollouts; `namespaces` get/list/watch to resolve namespace-scoped profiles.
+
+## 3.206.0
+
+* Bump Datadog Operator chart dependency to 2.22.0.
+* Bump Datadog CRD chart dependency to 2.20.0.
+* Bump Operator image tag to 1.26.0.
+
+## 3.205.0
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 3.204.0
+
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
+## 3.203.0
+
+* Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
+
+## 3.202.6
+
+* Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.5
+
+* Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.4
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
 
 ## 3.202.1
 
@@ -32,7 +74,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 

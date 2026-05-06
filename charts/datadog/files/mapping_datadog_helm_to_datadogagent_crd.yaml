@@ -415,8 +415,8 @@ datadog.csi.enabled: ""
 datadog.dd_url: spec.global.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""
-datadog.discovery.enabled: ""
-datadog.discovery.networkStats.enabled: ""
+datadog.discovery.enabled: spec.features.serviceDiscovery.enabled
+datadog.discovery.networkStats.enabled: spec.features.serviceDiscovery.networkStats.enabled
 datadog.dockerSocketPath: spec.global.dockerSocketPath
 datadog.dogstatsd.hostSocketPath: ""
 datadog.dogstatsd.nonLocalTraffic: spec.features.dogstatsd.nonLocalTraffic
@@ -545,6 +545,7 @@ datadog.sbom.containerImage.containerInclude: ""
 datadog.sbom.containerImage.enabled: ""
 datadog.sbom.containerImage.overlayFSDirectScan: ""
 datadog.sbom.containerImage.uncompressedLayersSupport: ""
+datadog.sbom.enrichment.usage.enabled: ""
 datadog.sbom.host.analyzers: ""
 datadog.sbom.host.enabled: ""
 datadog.secretAnnotations: ""

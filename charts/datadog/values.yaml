@@ -1144,7 +1144,7 @@ datadog:
     enabled: false
 
   discovery:
-    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
     enabled:  # false
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
@@ -1205,6 +1205,13 @@ datadog:
       analyzers:
         - "os"
 
+    enrichment:
+      usage:
+        # datadog.sbom.enrichment.usage.enabled -- Enable runtime "package in use" SBOM enrichment.
+        # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
+        # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
+        enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -1230,6 +1237,10 @@ datadog:
       # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+)
       host_benchmarks:
         enabled: true
+
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
+      runInSystemProbe: false
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -1409,23 +1420,7 @@ datadog:
 
     dogstatsd:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
-      enabled: false
-
-    image:
-      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
-      name: agent-data-plane
-
-      # datadog.dataPlane.image.tag -- Define the data plane version to use
-      tag: 0.1.30
-
-      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
-      digest: ""
-
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
-      repository:
-
-      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
-      pullPolicy: IfNotPresent
+      enabled: true
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
@@ -2051,7 +2046,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.22
+    tag: 1.1.23
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -3002,7 +2997,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.25.0
+    tag: 1.26.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3049,6 +3044,8 @@ operator:
       datadogPodAutoscalers: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
       datadogAgentInternals: false
+      # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
+      datadogCSIDrivers: false
 
 datadog-crds:
   crds:

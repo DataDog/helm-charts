@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.22.0-dev.4](https://img.shields.io/badge/Version-2.22.0--dev.4-informational?style=flat-square) ![AppVersion: 1.26.0-rc.2](https://img.shields.io/badge/AppVersion-1.26.0--rc.2-informational?style=flat-square)
+![Version: 2.22.2](https://img.shields.io/badge/Version-2.22.2-informational?style=flat-square) ![AppVersion: 1.26.0](https://img.shields.io/badge/AppVersion-1.26.0-informational?style=flat-square)
 
 ## Values
 
@@ -41,7 +41,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.26.0-rc.2"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.26.0"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -61,6 +61,7 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| secretBackend.refreshInterval | string | `nil` | Specifies the secret backend refresh interval in seconds. |
 | serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.automountServiceAccountToken | bool | `true` | Specifies whether the service account token should be automatically mounted |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
