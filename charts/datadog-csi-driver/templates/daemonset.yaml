@@ -81,9 +81,9 @@ spec:
             {{- if ne (include "csi.gke-autopilot" .) "true" }}
             - name: DD_APM_ENABLED
               value: {{ .Values.apm.enabled | quote }}
-            {{- if .Values.global.containerRegistryAllowList }}
+            {{- if .Values.global.apmContainerRegistryAllowList }}
             - name: DD_REGISTRY_ALLOW_LIST
-              value: {{ join "," .Values.global.containerRegistryAllowList | quote }}
+              value: {{ join "," .Values.global.apmContainerRegistryAllowList | quote }}
             {{- end }}
             {{- end }}
         - name: csi-node-driver-registrar

@@ -2,7 +2,7 @@
 
 ## 3.208.0
 
-* Add `global.containerRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+* Add `global.apmContainerRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
 
 ## 3.207.0
 
