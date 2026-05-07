@@ -1,0 +1,137 @@
+{{- $fullname := include "quickwit.fullname" . }}
+{{- $labels := include "quickwit.labels" . }}
+{{- $ingress := .Values.intake.ingress }}
+{{- $ingressClassName := $ingress.ingressClassName }}
+{{- $signals := .Values.signals }}
+
+{{- if and .Values.intake.enabled $ingress.enabled -}}
+{{- if not (or $signals.logs.enabled $signals.metrics.enabled $signals.traces.enabled) -}}
+{{- fail "intake ingress is enabled but no signals are enabled — set at least one of signals.{logs,metrics,traces}.enabled" -}}
+{{- end -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-intake
+  labels: {{- $labels | nindent 4 }}
+  annotations:
+    {{- if eq $ingressClassName "alb" }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/scheme: {{ $ingress.albScheme | default "internal" }}
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/healthcheck-port: "8686"
+    {{- end }}
+  {{- with $ingress.extraAnnotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ $ingressClassName }}
+  {{- with $ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - http:
+        paths:
+          # OTLP HTTP endpoints (listed first to win path precedence)
+          {{- if $signals.logs.enabled }}
+          - path: /v1/logs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: otlp-http
+          {{- end }}
+          {{- if $signals.metrics.enabled }}
+          - path: /v1/metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: otlp-http
+          {{- end }}
+          {{- if $signals.traces.enabled }}
+          - path: /v1/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: otlp-http
+          {{- end }}
+          # Datadog agent endpoints
+          {{- if $signals.metrics.enabled }}
+          - path: /api/v1/series
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /api/v2/series
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /api/beta/sketches
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          {{- end }}
+          {{- if $signals.logs.enabled }}
+          - path: /api/v2/logs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /v1/input
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          {{- end }}
+          {{- if $signals.traces.enabled }}
+          - path: /v0.4/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /v0.5/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /v0.6/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /v0.7/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          {{- end }}
+      {{- with $ingress.host }}
+      host: {{ . }}
+      {{- end }}
+{{- end }}
