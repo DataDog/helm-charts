@@ -2,7 +2,7 @@
 
 ## 3.208.1
 
-* Allow `writev` and `shutdown` syscalls in the system-probe seccomp profile, required by `system-probe-lite` (Rust/hyper-based) which uses vectored writes and graceful connection shutdown.
+* Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
 
 ## 3.208.0
 
