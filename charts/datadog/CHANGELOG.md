@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.208.1
+
+* Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
+
 ## 3.208.0
 
 * Add cluster autoscaling RBAC permissions.
