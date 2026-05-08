@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.20.0'
+    helm.sh/chart: 'datadogCRDs-2.21.0-dev.1'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -633,6 +633,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            spot:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                         workload:
                           properties:
@@ -1354,6 +1359,14 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        enrichment:
+                          properties:
+                            usage:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                          type: object
                         host:
                           properties:
                             analyzers:
@@ -5085,6 +5098,11 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                                spot:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
                               type: object
                             workload:
                               properties:
@@ -5806,6 +5824,14 @@ spec:
                               type: object
                             enabled:
                               type: boolean
+                            enrichment:
+                              properties:
+                                usage:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                              type: object
                             host:
                               properties:
                                 analyzers:
