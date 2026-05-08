@@ -627,6 +627,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            spot:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                         workload:
                           properties:
@@ -1348,6 +1353,14 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        enrichment:
+                          properties:
+                            usage:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                          type: object
                         host:
                           properties:
                             analyzers:
@@ -5079,6 +5092,11 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                                spot:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
                               type: object
                             workload:
                               properties:
@@ -5800,6 +5818,14 @@ spec:
                               type: object
                             enabled:
                               type: boolean
+                            enrichment:
+                              properties:
+                                usage:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                              type: object
                             host:
                               properties:
                                 analyzers:
