@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.208.2
+
+* Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
+
 ## 3.208.1
 
 * Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
