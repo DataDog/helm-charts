@@ -286,6 +286,23 @@ rules:
 - apiGroups:
   - datadoghq.com
   resources:
+  - datadoginstrumentations
+  - extendeddaemonsetreplicasets
+  - watermarkpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadoginstrumentations/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
   - datadogmetrics
   verbs:
   - create
@@ -302,15 +319,6 @@ rules:
   - datadogpodautoscalers/status
   verbs:
   - '*'
-- apiGroups:
-  - datadoghq.com
-  resources:
-  - extendeddaemonsetreplicasets
-  - watermarkpodautoscalers
-  verbs:
-  - get
-  - list
-  - watch
 - apiGroups:
   - datadoghq.com
   - karpenter.azure.com
