@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.209.0
+
+* Add `datadog.discovery.serviceMap.enabled` to opt non-APM customers into the free Discovery Service Map mode (HTTP/HTTPS topology only, not billed). Requires Agent >= 7.78.0; Linux only. Mutually exclusive with paid USM, which wins on coexistence.
+
 ## 3.208.2
 
 * Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
