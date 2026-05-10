@@ -1143,6 +1143,10 @@ datadog:
     networkStats:
       enabled: true
 
+    # datadog.discovery.serviceMap.enabled -- (bool) Enable the free Discovery Service Map mode. When true, system-probe boots a restricted USM monitor (HTTP/HTTPS topology only, not billed) so non-APM customers can see a service-to-service dependency map. Mutually exclusive with paid USM (`datadog.serviceMonitoring.enabled`); when both are set, paid USM wins and discovery is silently disabled. Linux only. Requires Agent >= 7.78.0.
+    serviceMap:
+      enabled: false
+
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
