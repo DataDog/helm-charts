@@ -2,7 +2,7 @@
 
 ## 3.209.0
 
-* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.0`. This auto-enables service discovery (using `system-probe-lite`) by default for users on these floating tags, matching the discovery defaulting introduced in [#2598](https://github.com/DataDog/helm-charts/pull/2598) for explicit `>= 7.78.0` tags. Previously the fallback resolved below the `>= 7.78.0` threshold, silently keeping discovery off for `latest` users despite the actual `latest` image supporting it.
+* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.0`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
 
 ## 3.208.2
 
