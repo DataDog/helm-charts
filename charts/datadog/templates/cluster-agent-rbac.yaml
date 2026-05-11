@@ -621,7 +621,7 @@ subjects:
     namespace: {{ .Release.Namespace }}
 {{- end -}}
 
-{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) }}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
@@ -671,24 +671,6 @@ rules:
   - pods/resize
   verbs:
   - patch
-# In-place resize: evicting pods that cannot resize in-place
-- apiGroups:
-  - ""
-  resources:
-  - pods/eviction
-  verbs:
-  - create
-# Patching workloads to trigger rollout; list/watch for cluster profiles
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  - statefulsets
-  verbs:
-  - get
-  - list
-  - watch
-  - patch
 - apiGroups:
   - argoproj.io
   resources:
@@ -707,6 +689,26 @@ rules:
   - get
   - list
   - watch
+{{- end}}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+# Read and patch workloads for autoscaling and spot on-demand fallback
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+# Evict pods during in-place resize or spot-to-on-demand fallback
+- apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
 {{- end}}
 {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
 - apiGroups:

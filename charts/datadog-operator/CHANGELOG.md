@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.23.0-dev.1
+
+* Update Datadog Operator chart for 1.27.0-rc.1.
+
 ## 2.22.2
 
 * Don't add datadogAgentInternalEnabled arg for operator >= 1.27.

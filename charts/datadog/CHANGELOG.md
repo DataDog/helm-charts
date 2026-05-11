@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.208.0
+## 3.209.0
 
 * Add `global.apmRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.208.2
+
+* Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
+
+## 3.208.1
+
+* Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
+
+## 3.208.0
+
+* Add cluster autoscaling RBAC permissions.
 
 ## 3.207.0
 
