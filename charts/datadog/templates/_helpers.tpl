@@ -1276,7 +1276,7 @@ securityContext:
 {{- if not (empty $securityContext) }}
 {{ toYaml $securityContext | indent 2 }}
 {{- end }}
-{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
+{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0-0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
     type: Localhost
@@ -1419,6 +1419,7 @@ Return orchestratorExplorer customResources list with conditional addition of da
 {{- $customResources := .Values.datadog.orchestratorExplorer.customResources | default list -}}
 {{- if (((.Values.datadog.autoscaling).workload).enabled) -}}
 {{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalers" -}}
+{{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalerclusterprofiles" -}}
 {{- end -}}
 {{- $filteredResources := list -}}
 {{- range $cr := $customResources -}}
