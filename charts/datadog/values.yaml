@@ -3034,7 +3034,7 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
-      #  operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
+      # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
       datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
       datadogAgentInternals: false
