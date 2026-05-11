@@ -431,6 +431,7 @@ OPERATOR_CHART_VERSION=""
 DATADOG_CHART_VERSION=""
 
 [[ $# -eq 0 ]] && usage
+case "${1:-}" in -h|--help) usage ;; esac
 
 PHASE="$1"
 shift
@@ -441,7 +442,6 @@ while [[ $# -gt 0 ]]; do
         --crds-chart-version)     CRDS_CHART_VERSION="$2"; shift 2 ;;
         --operator-chart-version) OPERATOR_CHART_VERSION="$2"; shift 2 ;;
         --datadog-chart-version)  DATADOG_CHART_VERSION="$2"; shift 2 ;;
-        -h|--help)                usage ;;
         *)                        error "Unknown option: $1" ;;
     esac
 done
@@ -511,9 +511,6 @@ case "$PHASE" in
         ;;
     datadog)
         phase_datadog
-        ;;
-    -h|--help)
-        usage
         ;;
     *)
         error "Unknown phase: $PHASE (use: crds, operator, datadog)"
