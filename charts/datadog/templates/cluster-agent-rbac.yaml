@@ -639,7 +639,7 @@ rules:
   - create
   - patch
 {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
-# Access to own CRD
+# Access to own CRDs
 - apiGroups:
   - "datadoghq.com"
   resources:
