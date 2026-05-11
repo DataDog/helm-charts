@@ -70,10 +70,7 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
-  # datadog.installInfo -- Override the tool/tool_version reported in the install_info configmap
-  installInfo:
-    tool: ""
-    toolVersion: ""
+  installInfo: {}
 
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
