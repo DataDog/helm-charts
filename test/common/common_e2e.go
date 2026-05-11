@@ -16,7 +16,7 @@ var (
 	clusterAgentVersion  = agentVersion
 	defaultImageRegistry = "gcr.io/datadoghq"
 	defaultPulumiConfigs = runner.ConfigMap{
-		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
+		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.34"},
 	}
 
 	defaultCIPulumiConfigs = runner.ConfigMap{
