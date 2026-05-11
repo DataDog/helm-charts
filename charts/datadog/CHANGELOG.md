@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.209.0
+
+* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.0`. This auto-enables service discovery (using `system-probe-lite`) by default for users on these floating tags, matching the discovery defaulting introduced in [#2598](https://github.com/DataDog/helm-charts/pull/2598) for explicit `>= 7.78.0` tags. Previously the fallback resolved below the `>= 7.78.0` threshold, silently keeping discovery off for `latest` users despite the actual `latest` image supporting it.
+
 ## 3.208.2
 
 * Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
