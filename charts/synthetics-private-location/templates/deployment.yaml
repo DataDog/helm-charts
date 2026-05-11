@@ -68,6 +68,15 @@ spec:
           - mountPath: /etc/datadog
             name: worker-config
           {{- end }}
+          # s6-overlay's preinit chowns /run to the worker UID; on clusters that
+          # mount /run read-only (OpenShift, FIPS-hardened pod security standards,
+          # `securityContext.readOnlyRootFilesystem: true`) the chown fails and
+          # the container crashes with `s6-overlay-suexec: fatal: child failed
+          # with exit code 111`. Mounting an emptyDir at /run gives s6-overlay
+          # a writable runtime dir without requiring write access to the image
+          # filesystem.
+          - mountPath: /run
+            name: run
           {{- if .Values.extraVolumeMounts }}
           {{- toYaml .Values.extraVolumeMounts | nindent 10 }}
           {{- end }}
@@ -114,6 +123,8 @@ spec:
         {{- end }}
         {{- end }}
       {{- end }}
+      - name: run
+        emptyDir: {}
       {{- if .Values.extraVolumes }}
       {{- toYaml .Values.extraVolumes | nindent 6 }}
       {{- end }}
