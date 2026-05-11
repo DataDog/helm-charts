@@ -81,10 +81,13 @@ spec:
             - name: metrics
               containerPort: 8383
               protocol: TCP
+            - name: health
+              containerPort: 8081
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /healthz/
-              port: 8081
+              port: health
             initialDelaySeconds: 15
             periodSeconds: 10
           resources:

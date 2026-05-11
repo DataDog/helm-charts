@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 
 	"github.com/DataDog/helm-charts/test/common"
 )
@@ -209,6 +210,18 @@ func verifyDeployment(t *testing.T, manifest string) {
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
 	assert.Equal(t, "registry.datadoghq.com/operator:1.27.0-rc.1", operatorContainer.Image)
+	assert.ElementsMatch(t, []v1.ContainerPort{
+		{
+			Name:          "metrics",
+			ContainerPort: 8383,
+			Protocol:      v1.ProtocolTCP,
+		},
+		{
+			Name:          "health",
+			ContainerPort: 8081,
+			Protocol:      v1.ProtocolTCP,
+		},
+	}, operatorContainer.Ports)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
@@ -223,6 +236,7 @@ func verifyLivenessProbe(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+	assert.Equal(t, intstr.FromString("health"), operatorContainer.LivenessProbe.HTTPGet.Port)
 }
 
 func verifyLivenessProbeOverride(t *testing.T, manifest string) {
@@ -231,6 +245,7 @@ func verifyLivenessProbeOverride(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, "/healthz/", operatorContainer.LivenessProbe.HTTPGet.Path)
+	assert.Equal(t, intstr.FromString("health"), operatorContainer.LivenessProbe.HTTPGet.Port)
 	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.PeriodSeconds)
 	assert.Equal(t, int32(20), operatorContainer.LivenessProbe.TimeoutSeconds)
 	assert.Equal(t, int32(3), operatorContainer.LivenessProbe.FailureThreshold)
