@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.211.0
+
+* feat(datadog): default agent to 7.78.3 ([#2647](https://github.com/DataDog/helm-charts/pull/2647)).
+
 ## 3.210.0
 
 * [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
