@@ -44,8 +44,8 @@ download_crd() {
     mv tmp.file "$path"
     echo '{{- end }}' >> "$path"
 
-    # Add keepCrds annotation
-    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}/' "$path"
+    # Add keepCrds and crds.annotations
+    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}\n    {{- with .Values.crds.annotations }}\n    {{- toYaml . | nindent 4 }}\n    {{- end }}/' "$path"
     rm -f "$path.bak"
 }
 
@@ -61,3 +61,4 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogdashboards 
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoggenericresources datadogGenericResources v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentinternals datadogAgentInternals v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogcsidrivers datadogCSIDrivers v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoginstrumentations datadogInstrumentations v1

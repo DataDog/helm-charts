@@ -1,0 +1,13 @@
+{{- if and .Values.intake.enabled .Values.intake.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "quickwit.fullname" . }}-intake
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "quickwit.intake.selectorLabels" . | nindent 6 }}
+  {{- toYaml .Values.intake.podDisruptionBudget | nindent 2 }}
+{{- end -}}

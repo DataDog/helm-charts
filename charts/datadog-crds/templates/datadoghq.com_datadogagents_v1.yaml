@@ -7,6 +7,9 @@ metadata:
     {{- if .Values.keepCrds }}
     helm.sh/resource-policy: keep
     {{- end }}
+    {{- with .Values.crds.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
@@ -636,6 +639,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            spot:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                         workload:
                           properties:
@@ -1357,6 +1365,14 @@ spec:
                           type: object
                         enabled:
                           type: boolean
+                        enrichment:
+                          properties:
+                            usage:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                          type: object
                         host:
                           properties:
                             analyzers:
@@ -1437,8 +1453,135 @@ spec:
                       type: string
                     csi:
                       properties:
+                        autoManage:
+                          type: boolean
                         enabled:
                           type: boolean
+                        nodeAffinity:
+                          properties:
+                            preferredDuringSchedulingIgnoredDuringExecution:
+                              items:
+                                properties:
+                                  preference:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                      matchFields:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                    type: object
+                                    x-kubernetes-map-type: atomic
+                                  weight:
+                                    format: int32
+                                    type: integer
+                                required:
+                                  - preference
+                                  - weight
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
+                            requiredDuringSchedulingIgnoredDuringExecution:
+                              properties:
+                                nodeSelectorTerms:
+                                  items:
+                                    properties:
+                                      matchExpressions:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                      matchFields:
+                                        items:
+                                          properties:
+                                            key:
+                                              type: string
+                                            operator:
+                                              type: string
+                                            values:
+                                              items:
+                                                type: string
+                                              type: array
+                                              x-kubernetes-list-type: atomic
+                                          required:
+                                            - key
+                                            - operator
+                                          type: object
+                                        type: array
+                                        x-kubernetes-list-type: atomic
+                                    type: object
+                                    x-kubernetes-map-type: atomic
+                                  type: array
+                                  x-kubernetes-list-type: atomic
+                              required:
+                                - nodeSelectorTerms
+                              type: object
+                              x-kubernetes-map-type: atomic
+                          type: object
+                        nodeSelector:
+                          additionalProperties:
+                            type: string
+                          type: object
+                        tolerations:
+                          items:
+                            properties:
+                              effect:
+                                type: string
+                              key:
+                                type: string
+                              operator:
+                                type: string
+                              tolerationSeconds:
+                                format: int64
+                                type: integer
+                              value:
+                                type: string
+                            type: object
+                          type: array
+                          x-kubernetes-list-type: atomic
                       type: object
                     disableNonResourceRules:
                       type: boolean
@@ -4335,9 +4478,6 @@ spec:
                   x-kubernetes-list-type: map
                 experiment:
                   properties:
-                    generation:
-                      format: int64
-                      type: integer
                     id:
                       type: string
                     phase:
@@ -4964,6 +5104,11 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                                spot:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
                               type: object
                             workload:
                               properties:
@@ -5685,6 +5830,14 @@ spec:
                               type: object
                             enabled:
                               type: boolean
+                            enrichment:
+                              properties:
+                                usage:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                              type: object
                             host:
                               properties:
                                 analyzers:

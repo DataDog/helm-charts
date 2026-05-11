@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 0.17.24
+
+* Update private location image version to `1.67.0`.
+
+## 0.17.23
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 0.17.22
 
 * Update private location image version to `1.66.0`.
