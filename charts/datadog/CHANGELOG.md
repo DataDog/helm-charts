@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.209.0
+## 3.210.0
 
 * Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.0`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
+
+## 3.209.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
 
 ## 3.208.2
 
