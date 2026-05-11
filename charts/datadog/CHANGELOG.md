@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.208.3
+
+* Update `fips.image.tag` to `1.1.24` fixing CVEs and updating packages.
+
 ## 3.208.2
 
 * Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
