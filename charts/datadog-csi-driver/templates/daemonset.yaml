@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
   labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.0"
   {{- end }}
 spec:
   {{- with .Values.updateStrategy }}
@@ -55,11 +55,9 @@ spec:
             # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
-            {{- if ne (include "csi.gke-autopilot" .) "true" }}
             # storage-dir stores the data and database for the CSI driver.
             - name: storage-dir
               mountPath: /var/lib/datadog-csi-driver
-            {{- end }}
             - name: apm-socket
               mountPath: {{ (dir .Values.sockets.apmHostSocketPath) }}
               readOnly: true
@@ -78,10 +76,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            {{- if ne (include "csi.gke-autopilot" .) "true" }}
             - name: DD_APM_ENABLED
               value: {{ .Values.apm.enabled | quote }}
-            {{- end }}
         - name: csi-node-driver-registrar
           image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
           imagePullPolicy: {{ .Values.registrar.image.pullPolicy }}
@@ -125,12 +121,10 @@ spec:
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/driver
             type: DirectoryOrCreate
-        {{- if ne (include "csi.gke-autopilot" .) "true" }}
         - name: storage-dir
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/storage
             type: DirectoryOrCreate
-        {{- end }}
         - name: registration-dir
           hostPath:
             path: /var/lib/kubelet/plugins_registry
