@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.209.0
+
+* [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
+
 ## 3.208.2
 
 * Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
