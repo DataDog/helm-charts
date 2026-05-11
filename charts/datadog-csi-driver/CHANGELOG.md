@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+* Enable SSI (Single Step Instrumentation) on GKE Autopilot by always rendering the `storage-dir` volume/mount and the `DD_APM_ENABLED` env var, and by adding a new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.0` allowlist entry.
+
 ## 0.10.1
 
 * Fix false positive outcome in csi e2e test ([#2579](https://github.com/DataDog/helm-charts/pull/2579)).
