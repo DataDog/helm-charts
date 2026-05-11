@@ -1779,7 +1779,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
               value: agent
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-              value: 7.78.0
+              value: 7.78.3
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
@@ -1844,7 +1844,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.78.0
+          image: registry.datadoghq.com/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1917,7 +1917,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.78.0
+          image: registry.datadoghq.com/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
