@@ -10,3 +10,6 @@ go.work*
 # VSCode Profiles
 .vscode/*
 !.vscode/extensions.json
+
+# Claude
+.claude/*
