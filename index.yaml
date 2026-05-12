@@ -379,6 +379,47 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2026-05-12T08:20:26.50361212Z"
+    dependencies:
+    - condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 2.20.0
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    - condition: datadog.csi.enabled
+      name: datadog-csi-driver
+      repository: https://helm.datadoghq.com
+      version: 0.10.1
+    - alias: operator
+      condition: datadog.operator.enabled
+      name: datadog-operator
+      repository: https://helm.datadoghq.com
+      version: 2.22.0
+    description: Datadog Agent
+    digest: 1cb675f5bc1711ab2c2686ac3877a06c6ab35d9bbf6157cbb5f52169074a9715
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-3.212.0/datadog-3.212.0.tgz
+    version: 3.212.0
+  - apiVersion: v1
+    appVersion: "7"
     created: "2026-05-11T17:46:41.186156083Z"
     dependencies:
     - condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
@@ -31357,6 +31398,19 @@ entries:
   datadog-csi-driver:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2026-05-12T08:20:26.768047409Z"
+    description: Datadog CSI Driver helm chart
+    digest: 6689ee702ac0aa33d19b1d657cb7406c0874fef2dfb47f11bc0f1d06544cfdfd
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-csi-driver
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-csi-driver-0.11.0/datadog-csi-driver-0.11.0.tgz
+    version: 0.11.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2026-04-22T08:29:38.870325637Z"
     description: Datadog CSI Driver helm chart
     digest: 63fdc1defa74758e7de1b2b3691b52eada7940c7992c93db1dbf6f9f31c8e3aa
@@ -41592,4 +41646,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-11T17:46:41.188641353Z"
+generated: "2026-05-12T08:20:26.771336699Z"
