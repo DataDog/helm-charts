@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.67.0" -}}
+{{- $version = "7.78.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}

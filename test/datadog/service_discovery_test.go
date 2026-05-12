@@ -67,12 +67,15 @@ func Test_serviceDiscoveryResolvedDefaulting(t *testing.T) {
 			expectDiscoveryBlock: false,
 		},
 		{
-			name: "omitted discovery with floating agent 7 disables discovery",
+			name: "omitted discovery with floating agent 7 follows get-agent-version policy",
 			overrides: map[string]string{
 				"agents.image.tag": "7",
 			},
-			expectSystemProbe:    false,
-			expectDiscoveryBlock: false,
+			expectSystemProbe:           shouldAutoEnableDiscoveryFromTag("7"),
+			expectDiscoveryBlock:        shouldAutoEnableDiscoveryFromTag("7"),
+			expectDiscoveryEnabled:      shouldAutoEnableDiscoveryFromTag("7"),
+			expectUseSystemProbeLiteKey: shouldAutoEnableDiscoveryFromTag("7"),
+			expectUseSystemProbeLite:    shouldAutoEnableDiscoveryFromTag("7"),
 		},
 		{
 			name: "explicit false with agent 7.78.0 keeps discovery disabled",
@@ -308,7 +311,7 @@ func shouldAutoEnableDiscoveryFromTag(tag string) bool {
 	case "6":
 		tag = "6.55.1"
 	case "7", "latest":
-		tag = "7.67.0"
+		tag = "7.78.3"
 	}
 
 	normalized := normalizeDiscoveryVersion(tag)
