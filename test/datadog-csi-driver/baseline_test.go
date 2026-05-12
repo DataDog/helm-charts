@@ -75,6 +75,52 @@ func Test_baseline_manifests(t *testing.T) {
 			baselineManifestPath: "./baseline/CSI_Driver_nodeselector_and_nodeaffinity.yaml",
 			assertions:           verifyCSIDriverDaemonSet,
 		},
+		{
+			// Legacy GKE Autopilot (< 1.32.1-gke.1729000) exposes the
+			// AllowlistedV2Workload CRD but not the newer WorkloadAllowlist /
+			// AllowlistSynchronizer CRDs. The Datadog CSI driver allowlist published
+			// for this mode (v1.0.1) does not exempt the `storage-dir` hostPath nor
+			// the `DD_APM_ENABLED` env var, so the chart must omit them. This
+			// baseline pins that behavior to avoid regressing legacy Autopilot
+			// installability.
+			name: "CSI Driver on legacy GKE Autopilot (AllowlistedV2Workload)",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-csi-driver",
+				ChartPath:   "../../charts/datadog-csi-driver",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
+				Overrides:   map[string]string{},
+				ExtraArgs: []string{
+					"--api-versions=allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload",
+					"--kube-version=1.31.0-gke.0",
+				},
+			},
+			baselineManifestPath: "./baseline/CSI_Driver_legacy_gke_autopilot.yaml",
+			assertions:           verifyCSIDriverDaemonSet,
+		},
+		{
+			// New GKE Autopilot (>= 1.32.1-gke.1729000) exposes the
+			// WorkloadAllowlist / AllowlistSynchronizer CRDs. The chart installs
+			// the v1.1.0 allowlist (via gke_autopilot_allowlist_synchronizer.yaml)
+			// which exempts the `storage-dir` hostPath and the `DD_APM_ENABLED`
+			// env var, so SSI is enabled. The DaemonSet must carry the matching
+			// `cloud.google.com/matching-allowlist` label pointing at v1.1.0.
+			name: "CSI Driver on GKE Autopilot (WorkloadAllowlist)",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-csi-driver",
+				ChartPath:   "../../charts/datadog-csi-driver",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
+				Overrides:   map[string]string{},
+				ExtraArgs: []string{
+					"--api-versions=auto.gke.io/v1/AllowlistSynchronizer",
+					"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
+					"--kube-version=1.32.1-gke.1729000",
+				},
+			},
+			baselineManifestPath: "./baseline/CSI_Driver_gke_autopilot_workloadallowlist.yaml",
+			assertions:           verifyCSIDriverDaemonSet,
+		},
 	}
 
 	for _, tt := range tests {

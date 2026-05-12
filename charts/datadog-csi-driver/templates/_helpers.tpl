@@ -80,3 +80,15 @@ true
 false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Check if target cluster is legacy GKE Autopilot (GKE Autopilot but no
+WorkloadAllowlist support, i.e. GKE < 1.32.1-gke.1729000).
+*/}}
+{{- define "csi.gke-autopilot-legacy" -}}
+{{- if and (.Capabilities.APIVersions.Has "allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload") (ne (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

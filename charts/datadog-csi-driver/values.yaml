@@ -72,6 +72,7 @@ sockets:
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
 ## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
+## Note: SSI is not supported on legacy GKE Autopilot clusters (< 1.32.1-gke.1729000)
 apm:
   # apm.enabled -- Enable APM/SSI support for the CSI driver.
   enabled: true
