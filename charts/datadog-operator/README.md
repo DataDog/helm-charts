@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.23.0-dev.1](https://img.shields.io/badge/Version-2.23.0--dev.1-informational?style=flat-square) ![AppVersion: 1.27.0-rc.1](https://img.shields.io/badge/AppVersion-1.27.0--rc.1-informational?style=flat-square)
+![Version: 2.23.0-dev.2](https://img.shields.io/badge/Version-2.23.0--dev.2-informational?style=flat-square) ![AppVersion: 1.27.0-rc.1](https://img.shields.io/badge/AppVersion-1.27.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -24,6 +24,7 @@
 | datadogCRDs.crds.datadogCSIDrivers | bool | `false` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
+| datadogCRDs.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
