@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.213.1
+
+* Update `fips.image.tag` to `1.1.24` fixing CVEs and updating packages.
+
 ## 3.213.0
 
 * Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.3`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
