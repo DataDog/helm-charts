@@ -1,8 +1,9 @@
 # Changelog
 
-## 2.23.0-dev.1
+## 2.23.0
 
 * Update Datadog Operator chart for 1.27.0-rc.1.
+* Explicitly document health endpoint as a named container port.
 
 ## 2.22.2
 
