@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.78.0" -}}
+{{- $version = "7.78.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -1276,7 +1276,7 @@ securityContext:
 {{- if not (empty $securityContext) }}
 {{ toYaml $securityContext | indent 2 }}
 {{- end }}
-{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
+{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0-0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
     type: Localhost

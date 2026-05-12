@@ -311,7 +311,7 @@ func shouldAutoEnableDiscoveryFromTag(tag string) bool {
 	case "6":
 		tag = "6.55.1"
 	case "7", "latest":
-		tag = "7.78.0"
+		tag = "7.78.3"
 	}
 
 	normalized := normalizeDiscoveryVersion(tag)
