@@ -6,6 +6,8 @@ on:
       - "charts/**/requirements.*"
       - "charts/**/values.*"
       - "charts/**/templates/**"
+      - "charts/**/CHANGELOG.md"
+      - "charts/**/README.md"
 jobs:
   pr-validated:
     name: pr-validated
