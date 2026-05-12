@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Assert get-agent-version latest matches image tags in values.yaml
+      - name: Assert get-agent-version matches image tags in values.yaml
         run: |
           HELPERS="charts/datadog/templates/_helpers.tpl"
           VALUES="charts/datadog/values.yaml"
