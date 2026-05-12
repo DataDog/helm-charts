@@ -16,6 +16,8 @@ github_teams_restrictions:
   - observability-pipelines
   - telemetry-and-analytics
   - vector
+  - profiling-full-host
+  - injection-platform
 github_users_restrictions:
   - cahillsf
   - clamoriniere

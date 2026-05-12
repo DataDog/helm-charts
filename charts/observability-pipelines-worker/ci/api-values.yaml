@@ -2,7 +2,6 @@ datadog:
   pipelineId: "8799b5cc-c2c9-4be5-9660-f97a4eede7f7"
   workerAPI:
     enabled: true
-    playground: false
     address: "0.0.0.0:8686"
 
 args:

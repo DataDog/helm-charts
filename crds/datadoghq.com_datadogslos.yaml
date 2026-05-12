@@ -112,6 +112,42 @@ spec:
                   description: TargetThreshold is the target threshold such that when the service level indicator is above this threshold over the given timeframe, the objective is being met.
                   pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                   x-kubernetes-int-or-string: true
+                timeSlice:
+                  description: |-
+                    TimeSlice defines the SLI specification for a time_slice SLO. Required if type is time_slice.
+                    It specifies a metric query and a comparator/threshold that determines what counts as good uptime.
+                  properties:
+                    comparator:
+                      allOf:
+                        - enum:
+                            - '>'
+                            - '>='
+                            - <
+                            - <=
+                        - enum:
+                            - '>'
+                            - '>='
+                            - <
+                            - <=
+                      description: Comparator is the comparison operator used to compare the SLI value to the threshold.
+                      type: string
+                    query:
+                      description: Query is a Datadog metric query string that produces the SLI value.
+                      type: string
+                    threshold:
+                      anyOf:
+                        - type: integer
+                        - type: string
+                      description: |-
+                        Threshold is the value against which the SLI is compared using the comparator to determine
+                        if a time slice is good or bad.
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                  required:
+                    - comparator
+                    - query
+                    - threshold
+                  type: object
                 timeframe:
                   description: The SLO time window options.
                   type: string

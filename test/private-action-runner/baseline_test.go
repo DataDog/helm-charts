@@ -235,6 +235,63 @@ func Test_baseline_manifests(t *testing.T) {
 			snapshotName: "scc-enabled",
 			assertions:   verifyPrivateActionRunner,
 		},
+		{
+			name: "imagePullSecrets configured",
+			command: common.HelmCommand{
+				ReleaseName: "image-pull-secrets-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"imagePullSecrets": `[{"name": "cloudsmith-registry-secret"}, {"name": "docker-registry-secret"}]`,
+				},
+			},
+			snapshotName: "image-pull-secrets",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "ServiceAccount with custom name and annotations",
+			command: common.HelmCommand{
+				ReleaseName: "custom-sa-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"serviceAccount.create":      `true`,
+					"serviceAccount.name":        `"my-custom-runner-sa"`,
+					"serviceAccount.annotations": `{"iam.amazonaws.com/role": "arn:aws:iam::123456789012:role/my-role", "eks.amazonaws.com/role-arn": "arn:aws:iam::123456789012:role/my-role"}`,
+				},
+			},
+			snapshotName: "custom-service-account",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "Use existing ServiceAccount",
+			command: common.HelmCommand{
+				ReleaseName: "existing-sa-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"serviceAccount.create": `false`,
+					"serviceAccount.name":   `"existing-service-account"`,
+				},
+			},
+			snapshotName: "existing-service-account",
+			assertions:   verifyPrivateActionRunner,
+		},
+		{
+			name: "imagePullSecrets with custom ServiceAccount",
+			command: common.HelmCommand{
+				ReleaseName: "combined-test",
+				ChartPath:   "../../charts/private-action-runner",
+				Values:      []string{"../../charts/private-action-runner/values.yaml"},
+				OverridesJson: map[string]string{
+					"imagePullSecrets":           `[{"name": "my-registry-secret"}]`,
+					"serviceAccount.name":        `"custom-sa"`,
+					"serviceAccount.annotations": `{"example.com/annotation": "value"}`,
+				},
+			},
+			snapshotName: "image-pull-secrets-with-custom-sa",
+			assertions:   verifyPrivateActionRunner,
+		},
 	}
 
 	for _, tt := range tests {

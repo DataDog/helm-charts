@@ -48,7 +48,7 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver unit-test-ci-scripts
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
@@ -68,6 +68,10 @@ unit-test-datadog-csi-driver:
 .PHONY: unit-test-private-action-runner
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
+
+.PHONY: unit-test-ci-scripts
+unit-test-ci-scripts:
+	node --test .github/scripts/chart-version-utils.test.js
 
 .PHONY: update-test-baselines
 update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-datadog-csi-driver
@@ -106,4 +110,4 @@ test-e2e: fmt vet e2e-test
 # aws-vault exec sso-agent-sandbox-account-admin -- make e2e-test
 .PHONY: e2e-test
 e2e-test:
-	E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) E2E_AGENT_VERSION=$(E2E_AGENT_VERSION) go test -C test/e2e ./... --tags=$(E2E_BUILD_TAGS) -v -vet=off -timeout 1h -count=1
+	set +o pipefail; E2E_CONFIG_PARAMS=$(E2E_CONFIG_PARAMS) E2E_PROFILE=$(E2E_PROFILE) E2E_AGENT_VERSION=$(E2E_AGENT_VERSION) go test -C test/e2e ./... --tags=$(E2E_BUILD_TAGS) -json -vet=off -timeout 1h -count=1 | python3 test/scripts/testwasher.py

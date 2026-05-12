@@ -3,6 +3,7 @@ module github.com/DataDog/helm-charts/test
 go 1.24.9
 
 require (
+	github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/DataDog/datadog-agent/test/new-e2e v0.72.2
 	github.com/DataDog/test-infra-definitions v0.0.6-0.20251119093242-958482005014

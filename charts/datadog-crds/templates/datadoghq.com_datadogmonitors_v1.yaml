@@ -7,6 +7,9 @@ metadata:
     {{- if .Values.keepCrds }}
     helm.sh/resource-policy: keep
     {{- end }}
+    {{- with .Values.crds.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogmonitors.datadoghq.com
   labels:
@@ -293,6 +296,7 @@ spec:
                     - event-v2 alert
                     - audit alert
                     - composite
+                    - error-tracking alert
                   type: string
               required:
                 - message

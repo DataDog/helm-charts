@@ -157,6 +157,8 @@ clusterAgent.admissionController.agentSidecarInjection.imageTag: spec.features.a
 clusterAgent.admissionController.agentSidecarInjection.profiles: spec.features.admissionController.agentSidecarInjection.profiles
 clusterAgent.admissionController.agentSidecarInjection.provider: spec.features.admissionController.agentSidecarInjection.provider
 clusterAgent.admissionController.agentSidecarInjection.selectors: spec.features.admissionController.agentSidecarInjection.selectors
+clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled: spec.features.admissionController.agentSidecarInjection.clusterAgentTlsVerification.enabled
+clusterAgent.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap: spec.features.admissionController.agentSidecarInjection.clusterAgentTlsVerification.copyCaConfigMap
 clusterAgent.admissionController.configMode: spec.features.admissionController.agentCommunicationMode
 clusterAgent.admissionController.containerRegistry: spec.features.admissionController.registry
 clusterAgent.admissionController.cwsInstrumentation.enabled: ""
@@ -371,11 +373,21 @@ datadog.appKeyExistingSecret:
   newPath: spec.global.credentials.appSecret.secretName
 datadog.appsec.injector.autoDetect: ""
 datadog.appsec.injector.enabled: ""
+datadog.appsec.injector.mode: ""
 datadog.appsec.injector.processor.address: ""
 datadog.appsec.injector.processor.port: ""
 datadog.appsec.injector.processor.service.name: ""
 datadog.appsec.injector.processor.service.namespace: ""
 datadog.appsec.injector.proxies: ""
+datadog.appsec.injector.sidecar.bodyParsingSizeLimit: ""
+datadog.appsec.injector.sidecar.healthPort: ""
+datadog.appsec.injector.sidecar.image: ""
+datadog.appsec.injector.sidecar.imageTag: ""
+datadog.appsec.injector.sidecar.port: ""
+datadog.appsec.injector.sidecar.resources.limits.cpu: ""
+datadog.appsec.injector.sidecar.resources.limits.memory: ""
+datadog.appsec.injector.sidecar.resources.requests.cpu: ""
+datadog.appsec.injector.sidecar.resources.requests.memory: ""
 datadog.asm.iast.enabled: ""
 datadog.asm.sca.enabled: ""
 datadog.asm.threats.enabled: ""
@@ -403,8 +415,8 @@ datadog.csi.enabled: ""
 datadog.dd_url: spec.global.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""
-datadog.discovery.enabled: ""
-datadog.discovery.networkStats.enabled: ""
+datadog.discovery.enabled: spec.features.serviceDiscovery.enabled
+datadog.discovery.networkStats.enabled: spec.features.serviceDiscovery.networkStats.enabled
 datadog.dockerSocketPath: spec.global.dockerSocketPath
 datadog.dogstatsd.hostSocketPath: ""
 datadog.dogstatsd.nonLocalTraffic: spec.features.dogstatsd.nonLocalTraffic
@@ -516,7 +528,6 @@ datadog.processAgent.containerCollection: spec.features.liveContainerCollection.
 datadog.processAgent.enabled: ""
 datadog.processAgent.processCollection: spec.features.liveProcessCollection.enabled
 datadog.processAgent.processDiscovery: spec.features.processDiscovery.enabled
-datadog.processAgent.runInCoreAgent: ""
 datadog.processAgent.stripProcessArguments: spec.features.liveProcessCollection.stripProcessArguments
 datadog.profiling.enabled: ""
 datadog.prometheusScrape.additionalConfigs:
@@ -534,6 +545,7 @@ datadog.sbom.containerImage.containerInclude: ""
 datadog.sbom.containerImage.enabled: ""
 datadog.sbom.containerImage.overlayFSDirectScan: ""
 datadog.sbom.containerImage.uncompressedLayersSupport: ""
+datadog.sbom.enrichment.usage.enabled: ""
 datadog.sbom.host.analyzers: ""
 datadog.sbom.host.enabled: ""
 datadog.secretAnnotations: ""

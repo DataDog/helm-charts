@@ -187,14 +187,12 @@ spec:
           # Remove unused features
           - name: DD_PROCESS_AGENT_ENABLED
             value: "false"
-          - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
-            value: "false"
           - name: DD_LOGS_ENABLED
             value: "false"
           - name: DD_APM_ENABLED
             value: "false"
           - name: DD_REMOTE_CONFIGURATION_ENABLED
-            value: "false"
+            value: {{ (and .Values.remoteConfiguration.enabled .Values.clusterChecksRunner.remoteConfiguration.enabled (not .Values.providers.gke.gdc)) | quote }}
           - name: DD_HOSTNAME
             valueFrom:
               fieldRef:

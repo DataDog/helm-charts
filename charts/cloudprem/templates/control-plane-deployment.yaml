@@ -60,9 +60,8 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- range $key, $value := .Values.control_plane.extraEnv }}
-            - name: "{{ $key }}"
-              value: "{{ $value }}"
+            {{- with (include "quickwit.extraEnv" .Values.control_plane.extraEnv) }}
+            {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.control_plane.extraEnvFrom) }}
           envFrom:
@@ -91,7 +90,7 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-            {{- with .Values.indexer.extraVolumeMounts }}
+            {{- with .Values.control_plane.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -110,14 +109,14 @@ spec:
           configMap:
             name: {{ .name }}
         {{- end }}
-        {{- with .Values.indexer.extraVolumes }}
+        {{- with .Values.control_plane.extraVolumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.control_plane.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge .Values.affinity .Values.control_plane.affinity }}
+      {{- with merge (dict) .Values.control_plane.affinity .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}

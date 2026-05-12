@@ -1,8 +1,304 @@
 # Datadog changelog
 
-## 3.174.1
+## 3.213.1
 
 * Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
+
+## 3.213.0
+
+* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.3`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
+
+## 3.212.0
+
+* Add `global.apmRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.211.0
+
+* feat(datadog): default agent to 7.78.3 ([#2647](https://github.com/DataDog/helm-charts/pull/2647)).
+
+## 3.210.0
+
+* [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
+
+## 3.209.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
+
+## 3.208.2
+
+* Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
+
+## 3.208.1
+
+* Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
+
+## 3.208.0
+
+* Add cluster autoscaling RBAC permissions.
+
+## 3.207.0
+
+* Add cluster agent RBAC permissions required for cluster-profile-aware workload autoscaling: `datadogpodautoscalerclusterprofiles` CRD access for reading and writing cluster-wide scaling profiles; `statefulsets` and `argoproj.io/rollouts` get/list/watch/patch to read workload metadata and trigger rollouts; `namespaces` get/list/watch to resolve namespace-scoped profiles.
+
+## 3.206.0
+
+* Bump Datadog Operator chart dependency to 2.22.0.
+* Bump Datadog CRD chart dependency to 2.20.0.
+* Bump Operator image tag to 1.26.0.
+
+## 3.205.0
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 3.204.0
+
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
+## 3.203.0
+
+* Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
+
+## 3.202.6
+
+* Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.5
+
+* Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.4
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
+
+## 3.202.1
+
+* Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)
+
+## 3.202.0
+
+* Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
+
+## 3.201.8
+
+* Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
+
+## 3.201.7
+
+* [CONS-8251] Service is not needed when node agent is disabled ([#2575](https://github.com/DataDog/helm-charts/pull/2575)).
+* [PROF-14062] Rename the profiler in the datadog-agent, helm, operator ([#2568](https://github.com/DataDog/helm-charts/pull/2568)).
+
+## 3.201.5
+
+* Update Default Agent Version to 7.78.0.
+
+## 3.201.4
+
+* Update `check-cluster-name` pre-install hook regex to allow cluster names containing underscores or starting with a digit, and improve the failure message ([#2428](https://github.com/DataDog/helm-charts/pull/2428)).
+
+## 3.201.3
+
+* Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
+
+## 3.201.2
+
+* [OTAGENT-920] Set DD_OTELCOLLECTOR_INSTALLATION_METHOD on otel-agent container ([#2528](https://github.com/DataDog/helm-charts/pull/2528)).
+
+## 3.201.1
+
+* Remove optional run subcommand ([#2547](https://github.com/DataDog/helm-charts/pull/2547)).
+
+## 3.201.0
+
+* Remove collector config from host profiler ([#2535](https://github.com/DataDog/helm-charts/pull/2535)).
+
+## 3.200.1
+
+* Extend `registryMigrationMode: auto` to all US1 users (remove APM gate). Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) remains excluded from migration.
+
+## 3.200.0
+
+* Bump Datadog Operator chart dependency to 2.21.0.
+* Bump Datadog CRD chart dependency to 2.18.0.
+* Bump Operator image tag to 1.25.0.
+
+## 3.199.2
+
+* DDOT FIPS with an incompatible version: fail instead of falling back to non-FIPS ([#2527](https://github.com/DataDog/helm-charts/pull/2527)).
+
+## 3.199.1
+
+* [PROF-14075] add profiling preset to upstream otel Helm config follow up ([#2526](https://github.com/DataDog/helm-charts/pull/2526)).
+
+## 3.199.0
+
+* [CXP-2639] Remove `DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED` envvar override check and cleanup. Remove the envvar from cluster-checks-runner and otel-agent-gateway defaults. Remove `datadog.processAgent.runInCoreAgent` yaml-mapper mapping. When `doNotCheckTag` is true, assume the agent supports run-in-core-agent.
+
+## 3.198.0
+
+* Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.
+
+## 3.197.2
+
+* [PAR] Add host mounts, NET_RAW capability, and restrictedShellAllowedPaths to node-agent PAR container ([#2517](https://github.com/DataDog/helm-charts/pull/2517)).
+
+## 3.197.1
+
+* Re-enable `registryMigrationMode: "auto"` after rollback (#2457) with the following scope:
+  * **Migrated in `auto` mode**: AP1, AP2, US5, EU1, and US1 **without APM** (`datadog.apm.enabled=false` and `datadog.apm.portEnabled=false`). Agent, Cluster Agent, and init container images are pulled from `registry.datadoghq.com`.
+  * **Not migrated in `auto` mode (requires `all`)**: US1 with APM enabled. Will be enabled in a follow-up PR.
+  * **Not migrated at all in this PR**: `DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`, which controls images injected by the admission controller (APM library injection, Agent sidecar injection, CWS instrumentation). These images will be migrated in a follow-up PR.
+
+## 3.197.0
+
+* Allow using the fips variant of the otel collector image in the daemonset ([#2366](https://github.com/DataDog/helm-charts/pull/2366)).
+
+## 3.196.0
+
+* [CONTP-1259] Enable kubernetes use endpointslice config by default ([#2503](https://github.com/DataDog/helm-charts/pull/2503)).
+
+## 3.195.3
+
+* TON-XXXX: Update Default Agent Version to 7.77.1 ([#2507](https://github.com/DataDog/helm-charts/pull/2507)).
+
+## 3.195.2
+
+* Disable `registryMigrationMode` by setting default to `""`, reverting all sites to their previous site-specific registries. This is a rollback due to stale `v1` tags on `registry.datadoghq.com` causing outdated tracer versions to be injected.
+
+## 3.195.1
+
+* Gate `KILL` capability on `system-probe` when `securityAgent.runtime.enforcement.enabled=true` and `securityAgent.runtime.enabled=true`.
+
+## 3.195.0
+
+* Extend `registryMigrationMode: "auto"` to US1 (`datadoghq.com`) users with APM disabled (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.194.0
+
+* [CONTP-1361] add admission controller probe configuration ([#2449](https://github.com/DataDog/helm-charts/pull/2449)).
+
+## 3.193.0
+
+* Add `datadog.appsec.injector.mode`, `datadog.appsec.injector.sidecar.*` values to configure the AppSec sidecar processor (image, ports, resource requests/limits, body parsing limit). Add `istio-gateway` as a valid `datadog.appsec.injector.proxies` value. Add `networking.istio.io/gateways` RBAC rule to the cluster-agent ClusterRole for Istio Gateway support.
+
+## 3.192.1
+
+* Add IPC env vars to core agent when full host profiler is enabled.
+
+## 3.192.0
+
+* Add Private Action Runner support in Node Agent as a sidecar container with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.191.1
+
+* fix(gke_autopilot): Use pointerdir volume for GKE autopilot clusters ([#2495](https://github.com/DataDog/helm-charts/pull/2495)).
+
+## 3.190.1
+
+* Add log volume to full host profiler ([#2461](https://github.com/DataDog/helm-charts/pull/2461)).
+
+## 3.191.0
+
+* Extend `registryMigrationMode: "auto"` to all EU1 (`datadoghq.eu`) users regardless of APM configuration. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.190.0
+
+* Extend `registryMigrationMode: "auto"` to EU1 (`datadoghq.eu`) users with `datadog.apm.enabled: false` (the default). If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.189.0
+
+* Add `datadog.kubernetesEvents.maxEventsPerRun` and `datadog.kubernetesEvents.kubernetesEventResyncPeriodS` for kubernetes event collection.
+
+## 3.188.0
+
+* Enable remote configuration by default on cluster check runners ([#2473](https://github.com/DataDog/helm-charts/pull/2473)).
+
+## 3.187.0
+
+* Extend `registryMigrationMode: "auto"` to US5 (`us5.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.186.0
+
+* Add liveness and readiness probes to the OTel Agent Gateway deployment. Probes are **opt-in** (`enabled: false` by default). Set `otelAgentGateway.containers.otelAgent.livenessProbe.enabled: true` and/or `otelAgentGateway.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `otelAgentGateway.containers.otelAgent.healthPort`). The OTel config must expose the `health_check` extension on that port; the generated default config (used when `otelAgentGateway.config` and `otelAgentGateway.configMap` are unset) does this automatically.
+
+## 3.185.1
+
+* [OTAGENT-886] Set `deployment_type` for DDOT Gateway deployments ([#2470](https://github.com/DataDog/helm-charts/pull/2470)).
+
+## 3.185.0
+
+* Bump Datadog Operator chart dependency to 2.19.1, image tag to 1.24.0.
+
+## 3.184.0
+
+* Extend `registryMigrationMode: "auto"` to AP2 (`ap2.datadoghq.com`) users. If you experience image pull issues, set `registryMigrationMode: ""` to revert to the previous registry.
+
+## 3.183.0
+
+* Extend `registryMigrationMode: "auto"` to all AP1 (`ap1.datadoghq.com`) users regardless of APM configuration.
+
+## 3.182.0
+
+* Add `registryMigrationMode` to control gradual migration of default image registry to `registry.datadoghq.com`, replacing site-specific regional mirrors (GCR, ACR). Defaults to `"auto"`, which currently enables `registry.datadoghq.com` for the AP1 site (`ap1.datadoghq.com`) when `datadog.apm.enabled` is `false` (the default). More sites will be enabled in future releases. Set to `""` to disable. GKE Autopilot, GKE GDC, US1-FED, and US3 clusters are excluded.
+
+## 3.181.1
+
+* [datadog] Update system-probe seccomp profile to fix container creation issue on OpenShift
+
+## 3.181.0
+
+* [datadog/chart] Support DCA Sidecar TLS Config ([#2432](https://github.com/DataDog/helm-charts/pull/2432)).
+
+## 3.180.0
+
+* Update Cluster Agent RBAC to include `update` verb when autoscaling is enabled.
+
+## 3.179.0
+
+* Add experimental support for host profiler.
+
+## 3.178.2
+* Remove comments for deprecated autodiscovery configurations under `agents.customAgentConfig`.
+
+## 3.178.1
+
+* [datadog/datadog] Update default Agent version to 7.76.1 ([#2420](https://github.com/DataDog/helm-charts/pull/2420)).
+
+## 3.178.0
+
+* Add `datadog.networkMonitoring.dnsMonitoringPorts` option to configure custom DNS monitoring ports for network performance monitoring.
+
+## 3.177.0
+
+* Add Private Action Runner support in Cluster Agent with configuration options for self-enrollment, manual credentials, and existing secrets.
+
+## 3.176.1
+
+* Include the Datadog Extension by default in daemon otel agents when DDOT Gateway is enabled.
+
+## 3.176.0
+
+* Support 'image_volume' for apm.instrumentation.injectionMode
+
+## 3.175.2
+
+* Revert "Remove envvar ovveride for controlling whether process checks run in core or process agent" ([#2402](https://github.com/DataDog/helm-charts/pull/2402)).
+
+## 3.175.1
+
+* [CASCL-864]  Add RBAC for eks.amazonaws.com NodeClass CRD ([#2397](https://github.com/DataDog/helm-charts/pull/2397)).
+
+## 3.175.0
+
+* [datadog] Add namespace restriction support to kubernetes_state_core check ([#2407](https://github.com/DataDog/helm-charts/pull/2407)).
+
 
 ## 3.174.0
 

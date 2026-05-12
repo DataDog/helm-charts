@@ -1,5 +1,62 @@
 # Changelog
 
+## 0.4.0
+
+* Update Docker image to `v0.1.26`.
+* Add intake service: new `intake` deployment, service, configmap, HPA, PDB, and ingress (disabled by default; enable with `intake.enabled=true`) for accepting Datadog Agent and OTLP traffic ([#74](https://github.com/DataDog/pomsky-helm-charts/pull/74)).
+* Add top-level `signals` config (`logs`, `metrics`, `traces`) to gate intake ingress paths and the indexes the cloudprem binary creates on startup. Defaults: logs enabled, metrics and traces disabled.
+
+## 0.3.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 0.3.2
+
+* Update Docker image to `v0.1.25`
+
+## 0.3.1
+
+* Remove unnecessary `datadog-values.yaml` file
+
+## 0.3.0
+
+* Update Docker image to `v0.1.24`
+
+## 0.2.4
+
+* Update Docker image to `v0.1.23`
+* Set default `QW_LOG_FORMAT` to `DDG`
+* Remove default CPU limits from all components
+* Fix default environment variables (`NO_COLOR`, `QW_DISABLE_TELEMETRY`, `QW_LOG_FORMAT`) not being applied when `environment` is empty
+
+## 0.2.3
+
+* Add support for annotations on searcher PersistentVolumeClaim (`searcher.persistentVolume.annotations`)
+* Merge upstream Quickwit Helm chart version 0.8.4
+
+## 0.2.2
+
+* Update Docker image to `v0.1.22`
+
+## 0.2.1
+
+* Add support for annotations on indexer PersistentVolumeClaim (`indexer.persistentVolume.annotations`)
+* Propagate global `annotations` and `podAnnotations` to index/source creation jobs
+* Conditionally render services based on component `enabled` flag
+* Merge upstream Quickwit Helm chart version 0.8.3
+
+## 0.2.0
+
+* Update Docker image to `v0.1.21`
+* Add auto-configuration based on pod size (`podSize`)
+* Merge upstream Quickwit Helm chart version 0.8.1
+  * **Breaking:** Component-specific `affinity` values (e.g. `searcher.affinity`) now take precedence over global `affinity`. Previously, global values took precedence.
+
+## 0.1.15
+
+* Read availability zone using Kubernetes Downward API
+* Disable self-export and ingest of traces by default
+
 ## 0.1.14
 
 * Add support for PodDisruptionBudget for metastore

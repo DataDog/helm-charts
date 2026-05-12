@@ -1,0 +1,23 @@
+{{- if .Values.intake.enabled }}
+{{- $indexer := printf "http://%s-indexer.%s.svc.%s:7280" (include "quickwit.fullname" .) .Release.Namespace .Values.clusterDomain }}
+{{- $signalConfig := dict }}
+{{- if .Values.signals.logs.enabled }}
+  {{- $_ := set $signalConfig "logs_endpoint" (printf "%s/api/datadog/v1/byoc/logs" $indexer) }}
+{{- end }}
+{{- if .Values.signals.metrics.enabled }}
+  {{- $_ := set $signalConfig "metrics_endpoint" (printf "%s/api/datadog/v1/byoc/metrics" $indexer) }}
+{{- end }}
+{{- if .Values.signals.traces.enabled }}
+  {{- $_ := set $signalConfig "traces_endpoint" (printf "%s/api/datadog/v1/byoc/traces" $indexer) }}
+{{- end }}
+{{- $config := merge (.Values.intake.config | default dict) $signalConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quickwit.fullname" . }}-intake
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{- toYaml $config | nindent 4 }}
+{{- end }}

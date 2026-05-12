@@ -28,6 +28,8 @@ github.com/DataDog/datadog-agent/pkg/util/pointer v0.72.2 h1:cKyWMOdnrBJJwQ3pS6c
 github.com/DataDog/datadog-agent/pkg/util/pointer v0.72.2/go.mod h1:SEBomDOo5/fjCBdRy1fdnSdBnv7g0keyRiQgoqFFESw=
 github.com/DataDog/datadog-agent/pkg/util/scrubber v0.72.2 h1:KsQ1g0tdXtBBiV2Zwwhvhf69AC/OvGk/oaZ89pEkB4A=
 github.com/DataDog/datadog-agent/pkg/util/scrubber v0.72.2/go.mod h1:O8h2B/0JYdAEjHw20gbBcL+rAYWHanUbYFDiCH2m7Jk=
+github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2 h1:05R9eLwsAqHoxxIBZhIVswKxr2DoEfluamQsf7D5SnI=
+github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2/go.mod h1:+2wH1RZ6UWGNaYw5BLofYnbrGhcHv8OeCIjEnTopfss=
 github.com/DataDog/datadog-agent/pkg/version v0.72.2 h1:+xyUOMKlt+AwSVGn9kN/bYEUIbc/7v+phYnYCqWGhpc=
 github.com/DataDog/datadog-agent/pkg/version v0.72.2/go.mod h1:MgBQaeV9WBYPRePAccfBtBexhqOIQiRl4VJYpgfV+go=
 github.com/DataDog/datadog-agent/test/fakeintake v0.72.2 h1:nnIdPVOgjzmccYuy34ftPV1qBcMf2kkP1LMswMaiFE0=

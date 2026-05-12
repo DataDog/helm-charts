@@ -193,7 +193,7 @@ func Test_processAgentConfigs(t *testing.T) {
 					"agents.image.doNotCheckTag":   "true",
 				},
 			},
-			assertions: verifyLinuxRunInCoreAgentOld,
+			assertions: verifyDefaultDaemonset,
 		},
 		{
 			name: "language detection on process agent",

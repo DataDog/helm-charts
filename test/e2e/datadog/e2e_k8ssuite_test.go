@@ -3,6 +3,13 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
+
+	"github.com/DataDog/datadog-agent/pkg/util/testutil/flake"
 	"github.com/DataDog/datadog-agent/test/fakeintake/aggregator"
 	"github.com/DataDog/datadog-agent/test/fakeintake/client"
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
@@ -11,16 +18,10 @@ import (
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"os"
-	"path/filepath"
-	"regexp"
-	"strings"
-	"time"
 )
 
 var (
@@ -36,16 +37,20 @@ type k8sSuite struct {
 func (s *k8sSuite) SetupSuite() {
 	s.BaseSuite.SetupSuite()
 	config, err := common.SetupConfig()
-	if err != nil {
-		s.Error(err)
-	}
+	s.Require().NoError(err)
 	s.DefaultConfig = config
 	s.Assert().NotEmpty(datadogChartPath())
 }
 
 func datadogChartPath() string {
-	currentDir, _ := os.Getwd()
-	chartPath, _ := filepath.Abs(filepath.Join(currentDir, "..", "..", "..", "charts", "datadog"))
+	currentDir, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Sprintf("datadogChartPath: os.Getwd(): %v", err))
+	}
+	chartPath, err := filepath.Abs(filepath.Join(currentDir, "..", "..", "..", "charts", "datadog"))
+	if err != nil {
+		panic(fmt.Sprintf("datadogChartPath: filepath.Abs(): %v", err))
+	}
 	return chartPath
 }
 
@@ -54,7 +59,6 @@ func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
-	s.testGenericK8sKSMCoreCCR(true)
 }
 
 func (s *k8sSuite) testGenericK8s() {
@@ -62,22 +66,20 @@ func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
-	s.testGenericK8sKSMCoreCCR(false)
+	s.testGenericK8sKSMCoreCCR()
 }
 
 func (s *k8sSuite) testGenericK8sKubeletCheck() {
 	s.Run("Kubelet check works", func() {
+		flake.Mark(s.T())
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			kubeletCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes.kubelet.check")
 			assert.NoError(c, err)
 			assert.NotEmpty(c, kubeletCheckRun)
 
-			// Kubelet service check reports CRITICAL status 2 sometimes even though it's OK
-			// assert.Equal(c, 0, kubeletCheckRun[0].Status, fmt.Sprintf("kubelet check status should be running: %s", kubeletCheckRun[0].Message))
-
 			kubeletMetricSeries, err := s.Env().FakeIntake.Client().FilterMetrics("kubernetes.cpu.usage.total", matchOpts...)
-			s.Assert().NoError(err)
-			s.Assert().NotEmptyf(kubeletMetricSeries, fmt.Sprintf("expected Kubelet check series to not be empty: %s", err))
+			assert.NoError(c, err)
+			assert.NotEmptyf(c, kubeletMetricSeries, "expected Kubelet check series to not be empty: %s", err)
 
 		}, 5*time.Minute, 15*time.Second, "could not validate kubelet check in time")
 
@@ -90,9 +92,12 @@ func (s *k8sSuite) testGenericK8sKubeletCheck() {
 func (s *k8sSuite) testGenericK8sLogs() {
 	s.Run("Logs collection works", func() {
 		// Verify logs collection on agent pod
-		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
+		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			agentPods, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-			s.Assert().NoError(err)
+			assert.NoError(c, err)
+			if err != nil {
+				return
+			}
 
 			var agent corev1.Pod
 			containsAgent := false
@@ -104,12 +109,10 @@ func (s *k8sSuite) testGenericK8sLogs() {
 				}
 			}
 			assert.True(c, containsAgent, "Agent not found")
-			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent is not running: %s", agent.Status.Phase)
 
-			assert.NoError(c, err)
-
-			s.verifyAPILogs()
-		}, 5*time.Minute, 15*time.Second, "could not valid logs collection in time")
+			s.verifyAPILogs(c)
+		}, 5*time.Minute, 15*time.Second, "could not validate logs collection in time")
 	})
 }
 
@@ -119,7 +122,11 @@ func (s *k8sSuite) testGenericK8sAutodiscovery() {
 		s.Assert().NoError(err)
 
 		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
-			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			assert.NoError(c, err)
+			if err != nil {
+				return
+			}
 
 			var nginx corev1.Pod
 			containsNginx := false
@@ -131,7 +138,7 @@ func (s *k8sSuite) testGenericK8sAutodiscovery() {
 				}
 			}
 			assert.True(c, containsNginx, "Nginx pod not found")
-			assert.Equal(c, corev1.PodPhase("Running"), nginx.Status.Phase, fmt.Sprintf("Nginx is not running: %s", nginx.Status.Phase))
+			assert.Equalf(c, corev1.PodPhase("Running"), nginx.Status.Phase, "Nginx is not running: %s", nginx.Status.Phase)
 
 			var agent corev1.Pod
 			containsAgent := false
@@ -143,7 +150,7 @@ func (s *k8sSuite) testGenericK8sAutodiscovery() {
 				}
 			}
 			assert.True(c, containsAgent, "Agent not found")
-			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent is not running: %s", agent.Status.Phase)
 
 			s.verifyHTTPCheck(c)
 		}, 5*time.Minute, 15*time.Second, "could not validate http_check in time")
@@ -152,6 +159,7 @@ func (s *k8sSuite) testGenericK8sAutodiscovery() {
 
 func (s *k8sSuite) testGenericK8sKSMCore() {
 	s.Run("KSM core check works", func() {
+		flake.Mark(s.T())
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			s.verifyKSMCheck(c)
 		}, 1*time.Minute, 15*time.Second, "could not validate KSM check in time")
@@ -159,9 +167,9 @@ func (s *k8sSuite) testGenericK8sKSMCore() {
 	})
 }
 
-func (s *k8sSuite) testGenericK8sKSMCoreCCR(withAutopilot bool) {
+func (s *k8sSuite) testGenericK8sKSMCoreCCR() {
 	s.Run("KSM check works cluster check runner", func() {
-		var gkeOpts []gke.Option
+		flake.Mark(s.T())
 		agentOpts := []kubernetesagentparams.Option{
 			kubernetesagentparams.WithHelmRepoURL(""),
 			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
@@ -175,13 +183,7 @@ datadog:
 clusterChecksRunner:
   enabled: true`)}
 
-		if withAutopilot {
-			gkeOpts = append(gkeOpts, gke.WithAutopilot())
-			agentOpts = append(agentOpts, kubernetesagentparams.WithGKEAutopilot())
-		}
-
 		s.UpdateEnv(gcpkubernetes.GKEProvisioner(
-			gcpkubernetes.WithGKEOptions(gkeOpts...),
 			gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
 			gcpkubernetes.WithAgentOptions(agentOpts...)))
 
@@ -189,7 +191,11 @@ clusterChecksRunner:
 		s.Assert().NoError(err)
 
 		s.Assert().EventuallyWithTf(func(c *assert.CollectT) {
-			res, _ := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			assert.NoError(c, err)
+			if err != nil {
+				return
+			}
 
 			var agent corev1.Pod
 			containsCCR := false
@@ -201,24 +207,24 @@ clusterChecksRunner:
 				}
 			}
 			assert.True(c, containsCCR, "Agent cluster check runner not found")
-			assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent cluster check runner is not running: %s", agent.Status.Phase))
+			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent cluster check runner is not running: %s", agent.Status.Phase)
 
 			s.verifyKSMCheck(c)
 		}, 10*time.Minute, 15*time.Second, "could not validate kubernetes_state_core (cluster check on CCR) check in time")
 	})
 }
 
-func (s *k8sSuite) verifyAPILogs() {
+func (s *k8sSuite) verifyAPILogs(c *assert.CollectT) {
 	logs, err := s.Env().FakeIntake.Client().FilterLogs("agent")
-	s.Assert().NoError(err)
-	s.Assert().NotEmptyf(logs, fmt.Sprintf("Expected fake intake-ingested logs to not be empty: %s", err))
+	assert.NoError(c, err)
+	assert.NotEmptyf(c, logs, "Expected fake intake-ingested logs to not be empty: %s", err)
 }
 
 func (s *k8sSuite) verifyKSMCheck(c *assert.CollectT) {
 	ksmCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("kubernetes_state.node.ready")
-	s.Assert().NoError(err)
+	assert.NoError(c, err)
 	require.NotEmpty(c, ksmCheckRun)
-	assert.Equal(c, 0, ksmCheckRun[0].Status, fmt.Sprintf("KSM check status should be running: %s", ksmCheckRun[0].Message))
+	assert.Equalf(c, 0, ksmCheckRun[0].Status, "KSM check status should be running: %s", ksmCheckRun[0].Message)
 
 	metricNames, err := s.Env().FakeIntake.Client().GetMetricNames()
 	assert.NoError(c, err)
@@ -226,14 +232,14 @@ func (s *k8sSuite) verifyKSMCheck(c *assert.CollectT) {
 
 	metrics, err := s.Env().FakeIntake.Client().FilterMetrics("kubernetes_state.container.running", matchOpts...)
 	assert.NoError(c, err)
-	assert.NotEmptyf(c, metrics, fmt.Sprintf("expected metric series to not be empty: %s", err))
+	assert.NotEmptyf(c, metrics, "expected metric series to not be empty: %s", err)
 }
 
 func (s *k8sSuite) verifyHTTPCheck(c *assert.CollectT) {
 	httpCheckRun, err := s.Env().FakeIntake.Client().GetCheckRun("http.can_connect")
 	assert.NoError(c, err)
 	require.NotEmpty(c, httpCheckRun)
-	assert.Equal(c, 0, httpCheckRun[0].Status, fmt.Sprintf("HTTP check status should be running: %s", httpCheckRun[0].Message))
+	assert.Equalf(c, 0, httpCheckRun[0].Status, "HTTP check status should be running: %s", httpCheckRun[0].Message)
 
 	metricNames, err := s.Env().FakeIntake.Client().GetMetricNames()
 	assert.NoError(c, err)

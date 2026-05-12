@@ -1,0 +1,39 @@
+{{- if and .Values.intake.enabled .Values.intake.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "quickwit.fullname" . }}-intake
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+    app.kubernetes.io/component: intake-hpa
+  {{- with .Values.intake.autoscaling.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "quickwit.fullname" . }}-intake
+  minReplicas: {{ .Values.intake.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.intake.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.intake.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.intake.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.intake.autoscaling.targetCPUUtilizationPercentage }}
+  {{- with .Values.intake.autoscaling.behavior }}
+  behavior:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,4 +1,16 @@
-{{- $config := .Values.config }}
+{{- $sizingMap := .Files.Get "sizing-map.yaml" | fromYaml }}
+{{- $sizingDefaults := dict }}
+{{- if not .Values.indexer.resources }}
+  {{- $indexerPodSize := .Values.indexer.podSize }}
+  {{- $_ := set $sizingDefaults "indexer" (index $sizingMap $indexerPodSize).config.indexer }}
+  {{- $_ := set $sizingDefaults "ingest_api" (index $sizingMap $indexerPodSize).config.ingest_api }}
+{{- end }}
+{{- if not .Values.searcher.resources }}
+  {{- $searcherPodSize := .Values.searcher.podSize }}
+  {{- $_ := set $sizingDefaults "searcher" (index $sizingMap $searcherPodSize).config.searcher }}
+{{- end }}
+{{- $config := merge (dict) (.Values.config | default dict) $sizingDefaults }}
+
 {{- $ingress := .Values.ingress.public }}
 {{- $mtlsHeader := "X-Amzn-Mtls-Clientcert" }}
 
@@ -7,6 +19,9 @@
 {{- end }}
 
 {{- $cloudpremConfig := set ($config.cloudprem | default dict) "mtls_header" $mtlsHeader }}
+{{- $_ := set $cloudpremConfig "create_dd_logs_index" .Values.signals.logs.enabled }}
+{{- $_ := set $cloudpremConfig "create_dd_metrics_index" .Values.signals.metrics.enabled }}
+{{- $_ := set $cloudpremConfig "create_dd_traces_index" .Values.signals.traces.enabled }}
 {{- $config = merge $config (dict "cloudprem" $cloudpremConfig) }}
 
 apiVersion: v1

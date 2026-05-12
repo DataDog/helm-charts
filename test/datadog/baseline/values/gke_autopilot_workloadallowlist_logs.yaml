@@ -1,0 +1,20 @@
+# Baseline test for GKE Autopilot WorkloadAllowlist with logs collection enabled.
+# Validates that pointerdir (hostPath) is mounted and datadogrun emptyDir is absent.
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  envDict:
+    HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
+  logs:
+    enabled: true
+    containerCollectAll: true
+
+clusterAgent:
+  enabled: true
+
+clusterChecksRunner:
+  enabled: true
+
+providers:
+  gke:
+    autopilot: true

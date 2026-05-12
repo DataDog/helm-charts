@@ -17,11 +17,17 @@ jobs:
     permissions:
       # https://github.com/helm/chart-releaser-action
       contents: write
+      id-token: write # Required for dd-octo-sts action
     steps:
       - name: Checkout
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           fetch-depth: 0
+      - uses: DataDog/dd-octo-sts-action@acaa02eee7e3bb0839e4272dacb37b8f3b58ba80 # v1.0.3
+        id: octo-sts
+        with:
+          scope: DataDog/helm-charts
+          policy: self.release.create-release
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -33,7 +39,7 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@be16258da8010256c6e82849661221415f031968 # v1.5.0
         env:
-          CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          CR_TOKEN: '${{ steps.octo-sts.outputs.token }}'
           CR_SKIP_EXISTING: true # Ignore chart changes when version was not updated (documentation)
           CR_GENERATE_RELEASE_NOTES: true
       - name: Check if datadog chart was modified  
@@ -139,4 +145,4 @@ jobs:
             echo "No datadog release found to enhance"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}

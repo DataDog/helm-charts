@@ -53,11 +53,19 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
         checksum/otel-config: {{ include "otel-agent-config-configmap-content" . | sha256sum }}
         {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+        checksum/privateactionrunner-config: {{ include (print $.Template.BasePath "/private-action-runner-configmap.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.agents.customAgentConfig }}
         checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
         {{- end }}
         {{- if .Values.datadog.secretBackend.roles }}
         checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
+        {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        container.apparmor.security.beta.kubernetes.io/host-profiler: {{ .Values.datadog.hostProfiler.apparmor }}
+        {{- end }}
         {{- end }}
         {{- if eq  (include "should-enable-system-probe" .) "true" }}
         {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
@@ -158,8 +166,14 @@ spec:
         {{- if eq (include "should-enable-otel-agent" .) "true" }}
           {{- include "container-otel-agent" . | nindent 6 }}
         {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+          {{- include "container-host-profiler" . | nindent 6 }}
+        {{- end }}
         {{- if eq (include "should-enable-data-plane" .) "true" }}
           {{- include "container-agent-data-plane" . | nindent 6 }}
+        {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+          {{- include "container-private-action-runner" . | nindent 6 }}
         {{- end }}
       initContainers:
         {{- if eq .Values.targetSystem "windows" }}
@@ -167,6 +181,9 @@ spec:
         {{- end }}
         {{- if eq .Values.targetSystem "linux" }}
           {{- include "containers-init-linux" . | nindent 6 -}}
+        {{- end }}
+        {{- if and (eq (include "should-enable-host-profiler" .) "true") (eq .Values.datadog.hostProfiler.seccomp "localhost/host-profiler") }}
+          {{ include "host-profiler-seccomp-init" . | nindent 6 }}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
           {{ include "system-probe-init" . | nindent 6 }}
@@ -181,6 +198,19 @@ spec:
           name: {{ include "agents-install-info-configmap-name" . }}
       - name: config
         emptyDir: {}
+      {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+      - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
+        configMap:
+          name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+      - name: host-osrelease
+        hostPath:
+          path: /etc/os-release
+      - name: host-varlog
+        hostPath:
+          path: /var/log
+      {{- end }}
+      {{- end }}
       {{- if .Values.datadog.checksd }}
       - name: checksd
         configMap:

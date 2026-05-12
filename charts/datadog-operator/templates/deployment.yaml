@@ -49,6 +49,9 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
+      {{- if eq .Values.serviceAccount.automountServiceAccountToken false }}
+      automountServiceAccountToken: false
+      {{- end }} 
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -121,6 +124,19 @@ spec:
             - name: DD_URL
               value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
+            {{- $registryMode := include "datadog-registry-mode" . }}
+            {{- if or (eq $registryMode "auto") (eq $registryMode "all") }}
+            - name: DD_REGISTRY_OVERRIDE_ASIA
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_EU
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
+            {{- end }}
+            {{- if eq $registryMode "all" }}
+            - name: DD_REGISTRY_OVERRIDE_AZURE
+              value: "true"
+            {{- end }}
             {{- range .Values.env }}
             - name: {{ .name }}
               value: {{ .value | quote }}
@@ -136,6 +152,9 @@ spec:
           {{- end }}
           {{- if .Values.secretBackend.arguments }}
             - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
+          {{- end }}
+          {{- if .Values.secretBackend.refreshInterval }}
+            - "-secretRefreshInterval={{ .Values.secretBackend.refreshInterval }}"
           {{- end }}
           {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" $version) }}
             - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
@@ -162,8 +181,11 @@ spec:
           {{- if (semverCompare ">=1.7.0-0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.18.0-0" $version) }}
+          {{- if and (semverCompare ">=1.18.0-0 <1.27.0-0" $version) (or (not .Values.image.doNotCheckTag) (not .Values.datadogAgentInternal.enabled)) }}
             - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.26.0-0" $version) }}
+            - "-datadogCSIDriverEnabled={{ .Values.datadogCSIDriver.enabled }}"
           {{- end }}
           ports:
             - name: metrics

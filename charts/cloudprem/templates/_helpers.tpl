@@ -101,6 +101,38 @@ app.kubernetes.io/component: indexer
 {{- end }}
 
 {{/*
+Intake Selector labels
+*/}}
+{{- define "quickwit.intake.selectorLabels" -}}
+{{ include "quickwit.selectorLabels" . }}
+app.kubernetes.io/component: intake
+{{- end }}
+
+{{/*
+Intake container ports
+*/}}
+{{- define "quickwit.intake.ports" -}}
+- name: dd-agent
+  containerPort: 8181
+  protocol: TCP
+- name: http-ingest
+  containerPort: 8282
+  protocol: TCP
+- name: otlp-grpc
+  containerPort: 8383
+  protocol: TCP
+- name: otlp-http
+  containerPort: 8384
+  protocol: TCP
+- name: connections
+  containerPort: 8585
+  protocol: TCP
+- name: api
+  containerPort: 8686
+  protocol: TCP
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "quickwit.serviceAccountName" -}}
@@ -178,6 +210,12 @@ Quickwit environment
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
+{{ if semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version }}
+- name: QW_AVAILABILITY_ZONE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.labels['topology.kubernetes.io/zone']
+{{- end }}
 - name: QW_PEER_SEEDS
   value: {{ include "quickwit.fullname" . }}-headless
 - name: QW_ADVERTISE_ADDRESS
@@ -252,8 +290,60 @@ Quickwit environment
 - name: IMAGE_TAG
   value: {{ .Values.image.tag }}
 {{- end }}
-{{- range $key, $value := .Values.environment }}
-- name: "{{ $key }}"
-  value: "{{ $value }}"
+{{- with (include "quickwit.environmentDefaults" .Values.environment) }}
+{{ . }}
 {{- end }}
+{{- end }}
+
+{{/*
+Merge default environment variables (NO_COLOR, QW_DISABLE_TELEMETRY, QW_LOG_FORMAT) with
+user-provided values. Supports both legacy map and list formats. User-provided values
+take precedence over defaults.
+Defaults are stored as a list (not a dict) to guarantee deterministic rendering order
+and avoid spurious rollouts from manifest drift.
+*/}}
+{{- define "quickwit.environmentDefaults" -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
+{{- $envs := list -}}
+{{- $keys := list -}}
+{{- if kindIs "map" . -}}
+{{- range $key, $value := . -}}
+{{- $envs = append $envs (dict "name" $key "value" ($value | toString)) -}}
+{{- $keys = append $keys $key -}}
+{{- end -}}
+{{- else -}}
+{{- range . -}}
+{{- $envs = append $envs . -}}
+{{- $keys = append $keys .name -}}
+{{- end -}}
+{{- end -}}
+{{- range $defaults -}}
+{{- if not (has .name $keys) -}}
+{{- $envs = append $envs . -}}
+{{- end -}}
+{{- end -}}
+{{- with $envs -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Render extra environment variables supporting both map and list formats.
+Map format (legacy): { KEY: VALUE }
+List format (recommended): [{ name: KEY, value: VALUE, valueFrom: ... }]
+*/}}
+{{- define "quickwit.extraEnv" -}}
+{{- if kindIs "map" . -}}
+{{- $envList := list -}}
+{{- range $key, $value := . -}}
+{{- $envList = append $envList (dict "name" $key "value" ($value | toString)) -}}
+{{- end -}}
+{{- if $envList -}}
+{{- toYaml $envList -}}
+{{- end -}}
+{{- else -}}
+{{- with . -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end -}}
 {{- end }}

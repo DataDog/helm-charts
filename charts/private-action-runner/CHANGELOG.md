@@ -1,5 +1,27 @@
 # Datadog changelog
 
+## 1.28.1
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 1.28.0
+
+* Bump private actions runner version to v1.21.0!
+
+## 1.27.1
+
+* Bump private actions runner version to v1.20.1!
+
+## 1.27.0
+
+* Bump private actions runner version to v1.20.0!
+
+## 1.26.0
+
+* Add `imagePullSecrets` support for using private container registries
+* Add `serviceAccount.create`, `serviceAccount.name`, and `serviceAccount.annotations` configuration options
+* Fix dead links in documentation (workflow -> actions URLs)
+
 ## 1.25.0
 
 * Bump private actions runner version to v1.19.0!

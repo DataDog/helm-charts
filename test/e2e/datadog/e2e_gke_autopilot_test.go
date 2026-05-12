@@ -5,6 +5,11 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
 	"github.com/DataDog/helm-charts/test/common"
@@ -14,10 +19,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"os"
-	"strings"
-	"testing"
-	"time"
 )
 
 type gkeAutopilotSuite struct {

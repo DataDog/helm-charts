@@ -351,6 +351,7 @@ rules:
   - watch
 - apiGroups:
   - "datadoghq.com"
+  - eks.amazonaws.com
   - karpenter.azure.com
   - karpenter.k8s.aws
   - karpenter.sh
@@ -429,6 +430,14 @@ rules:
     - get
     - create
     - delete
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - gateways
+  verbs:
+    - get
+    - list
+    - watch
 {{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
@@ -477,6 +486,9 @@ rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get", "list", "watch", "update", "create"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "update", "create"]
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: RoleBinding
@@ -489,6 +501,81 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: {{ template "datadog.fullname" . }}-cluster-agent-main
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: Role
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames:
+    - {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
+  verbs: ["get", "update", "create"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: "{{ template "datadog.fullname" . }}-private-action-runner"
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if and .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "statefulsets", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods", "events", "configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["patch"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-private-action-runner
 subjects:
   - kind: ServiceAccount
     name: {{ template "datadog.fullname" . }}-cluster-agent
@@ -534,7 +621,7 @@ subjects:
     namespace: {{ .Release.Namespace }}
 {{- end -}}
 
-{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) }}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
@@ -552,12 +639,14 @@ rules:
   - create
   - patch
 {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
-# Access to own CRD
+# Access to own CRDs
 - apiGroups:
   - "datadoghq.com"
   resources:
   - "datadogpodautoscalers"
   - "datadogpodautoscalers/status"
+  - "datadogpodautoscalerclusterprofiles"
+  - "datadogpodautoscalerclusterprofiles/status"
   verbs:
   - "*"
 # Scale subresource for all resources
@@ -566,8 +655,8 @@ rules:
   resources:
   - "*/scale"
   verbs:
-  - 'update'
-  - 'get'
+  - get
+  - update
 # Patching POD to add annotations. TODO: Remove when we have a better way to generate single event
 - apiGroups:
   - ""
@@ -575,11 +664,11 @@ rules:
   - pods
   verbs:
   - patch
-# Triggering rollout on Deployments
+# In-place resize: patching pod resources via resize subresource (K8s 1.33+)
 - apiGroups:
-  - apps
+  - ""
   resources:
-  - deployments
+  - pods/resize
   verbs:
   - patch
 - apiGroups:
@@ -587,7 +676,39 @@ rules:
   resources:
   - rollouts
   verbs:
+  - get
+  - list
+  - watch
   - patch
+# List/watch namespaces for cluster profiles
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+{{- end}}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+# Read and patch workloads for autoscaling and spot on-demand fallback
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+# Evict pods during in-place resize or spot-to-on-demand fallback
+- apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
 {{- end}}
 {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
 - apiGroups:
@@ -595,14 +716,22 @@ rules:
   resources:
   - '*'
   verbs:
-  - create
-  - delete
   - get
   - list
   - watch
+  - create
   - patch
+  - update
+  - delete
 - apiGroups:
   - karpenter.k8s.aws
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - eks.amazonaws.com
   resources:
   - '*'
   verbs:
