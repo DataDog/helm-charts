@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.213.1
+## 3.213.2
 
 * Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
 * Update `fips.image.tag` to `1.1.24` fixing CVEs and updating packages.
