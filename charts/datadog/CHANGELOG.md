@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.209.0
+## 3.212.0
 
 * Add `global.apmRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.211.0
+
+* feat(datadog): default agent to 7.78.3 ([#2647](https://github.com/DataDog/helm-charts/pull/2647)).
+
+## 3.210.0
+
+* [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
+
+## 3.209.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
 
 ## 3.208.2
 

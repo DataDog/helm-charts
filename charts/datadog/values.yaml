@@ -801,6 +801,13 @@ datadog:
     enabled: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
+    # datadog.hostProfiler.seccomp -- Apply a seccomp profile to the host-profiler container (e.g. "localhost/host-profiler" or "runtime/default")
+    seccomp: localhost/host-profiler
+    # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
+    seccompRoot: /var/lib/kubelet/seccomp
+    # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
+    ## Only used when agents.podSecurity.apparmor.enabled is true.
+    apparmor: unconfined
 
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
@@ -1472,7 +1479,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2089,7 +2096,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2179,6 +2186,7 @@ agents:
       - AUDIT_READ
       - DAC_READ_SEARCH
       - MKNOD
+      - SYSLOG
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -2195,6 +2203,7 @@ agents:
     seccompProfiles:
       - "runtime/default"
       - "localhost/system-probe"
+      - "localhost/host-profiler"
 
     apparmor:
       # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
@@ -2403,7 +2412,16 @@ agents:
       # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
       securityContext:
         readOnlyRootFilesystem: true
-        privileged: true
+        privileged: false
+        capabilities:
+          add:
+            - BPF
+            - PERFMON
+            - SYS_PTRACE
+            - SYS_RESOURCE
+            - DAC_READ_SEARCH
+            - SYSLOG
+            - CHECKPOINT_RESTORE
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
@@ -2756,7 +2774,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -3042,6 +3060,8 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
+      datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
       datadogAgentInternals: false
       # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
@@ -3053,6 +3073,8 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
+    # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
+    datadogPodAutoscalerClusterProfiles: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
