@@ -1,0 +1,69 @@
+# Test values for full observability setup - APM, Logs, Process, Events, KSM
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  site: datadoghq.com
+  clusterName: full-observability-cluster
+  logLevel: INFO
+  tags:
+    - "env:staging"
+    - "team:platform"
+  
+  # APM
+  apm:
+    socketEnabled: true
+    portEnabled: false
+  
+  # Logs
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+  
+  # Dogstatsd
+  dogstatsd:
+    useSocketVolume: true
+    originDetection: true
+    tagCardinality: orchestrator
+  
+  # Process
+  processAgent:
+    processCollection: true
+    containerCollection: true
+    processDiscovery: true
+  
+  # Events
+  collectEvents: true
+  kubernetesEvents:
+    unbundleEvents: true
+  
+  # Orchestrator Explorer
+  orchestratorExplorer:
+    enabled: true
+    container_scrubbing:
+      enabled: true
+  
+  # KSM Core
+  kubeStateMetricsCore:
+    enabled: true
+  
+  # Prometheus Scrape
+  prometheusScrape:
+    enabled: true
+    serviceEndpoints: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+  admissionController:
+    enabled: true
+    mutateUnlabelled: true
+
