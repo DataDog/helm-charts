@@ -1940,6 +1940,8 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
@@ -1982,6 +1984,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true

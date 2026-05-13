@@ -2049,6 +2049,8 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
           image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -2087,6 +2089,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
             - mountPath: /sys/fs/bpf
               mountPropagation: None
               name: bpffs

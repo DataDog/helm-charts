@@ -1983,6 +1983,8 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
           image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: system-probe
@@ -2020,6 +2022,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true

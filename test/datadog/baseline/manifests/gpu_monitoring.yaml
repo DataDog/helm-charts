@@ -1958,6 +1958,8 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
           image: registry.datadoghq.com/agent:7.78.3
@@ -1998,6 +2000,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
