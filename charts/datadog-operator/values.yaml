@@ -258,6 +258,30 @@ watchNamespacesAgentProfile: []
 # watchNamespacesAgentProfile:
 # - ""
 
+# watchNamespacesDashboard -- Restricts the Operator to watch DatadogDashboard resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesDashboard: []
+# example: watch only two namespaces:
+# watchNamespacesDashboard:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesDashboard:
+# - ""
+
+# watchNamespacesGenericResource -- Restricts the Operator to watch DatadogGenericResource resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesGenericResource: []
+# example: watch only two namespaces:
+# watchNamespacesGenericResource:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesGenericResource:
+# - ""
+
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.
 containerSecurityContext: {}
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.23.0-dev.3
+
+* Support Helm parameters for `DD_DASHBOARD_WATCH_NAMESPACE`and `DD_GENERIC_RESOURCE_WATCH_NAMESPACE`
+
 ## 2.23.0-dev.2
 
 * Install the DatadogPodAutoscalerClusterProfiles CRD by default. 

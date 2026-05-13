@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.23.0-dev.2](https://img.shields.io/badge/Version-2.23.0--dev.2-informational?style=flat-square) ![AppVersion: 1.27.0-rc.1](https://img.shields.io/badge/AppVersion-1.27.0--rc.1-informational?style=flat-square)
+![Version: 2.23.0-dev.3](https://img.shields.io/badge/Version-2.23.0--dev.3-informational?style=flat-square) ![AppVersion: 1.27.0-rc.1](https://img.shields.io/badge/AppVersion-1.27.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -75,6 +75,8 @@
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
 | watchNamespacesAgent | list | `[]` | Restricts the Operator to watch DatadogAgent resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesAgentProfile | list | `[]` | Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces. Requires v1.8.0+ |
+| watchNamespacesDashboard | list | `[]` | Restricts the Operator to watch DatadogDashboard resources on specific namespaces. Requires v1.13.0+ |
+| watchNamespacesGenericResource | list | `[]` | Restricts the Operator to watch DatadogGenericResource resources on specific namespaces. Requires v1.13.0+ |
 | watchNamespacesMonitor | list | `[]` | Restricts the Operator to watch DatadogMonitor resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesSLO | list | `[]` | Restricts the Operator to watch DatadogSLO resources on specific namespaces. Requires v1.8.0+ |
 
