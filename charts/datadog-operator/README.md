@@ -24,6 +24,7 @@
 | datadogCRDs.crds.datadogCSIDrivers | bool | `false` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
+| datadogCRDs.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
 | datadogCRDs.crds.datadogPodAutoscalerClusterProfiles | bool | `true` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |

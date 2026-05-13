@@ -189,6 +189,8 @@ datadogCRDs:
     datadogAgentProfiles: false
     # datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
     datadogAgentInternals: true
+    # datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+    datadogInstrumentations: true
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
