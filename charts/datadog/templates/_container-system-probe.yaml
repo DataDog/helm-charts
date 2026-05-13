@@ -25,6 +25,8 @@
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
      # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
     - name: NVIDIA_VISIBLE_DEVICES
@@ -64,6 +66,9 @@
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for kprobe_events
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: true # write access is not needed because system-probe only accesses the socket file to connect/send dogstatsd data
 {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: bpffs
       mountPath: /sys/fs/bpf
