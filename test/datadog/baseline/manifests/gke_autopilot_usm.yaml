@@ -1812,6 +1812,8 @@ spec:
               value: gke-autopilot
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
           image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: system-probe
