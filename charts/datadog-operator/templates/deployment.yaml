@@ -81,15 +81,14 @@ spec:
             - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
               value: {{ .Values.watchNamespacesAgentProfile | join "," }}
             {{- end }}
-            {{- if .Values. }}
+            {{- if .Values.watchNamespacesDashboard }}
             - name: DD_DASHBOARD_WATCH_NAMESPACE
-              value: {{ .Values. | join "," }}
+              value: {{ .Values.watchNamespacesDashboard | join "," }}
             {{- end }}
-            {{- if .Values. }}
+            {{- if .Values.watchNamespacesGenericResource }}
             - name: DD_GENERIC_RESOURCE_WATCH_NAMESPACE
-              value: {{ .Values. | join "," }}
+              value: {{ .Values.watchNamespacesGenericResource | join "," }}
             {{- end }}
-            {{- if .Values. }}
             - name: DD_HOSTNAME
               valueFrom:
                 fieldRef:
