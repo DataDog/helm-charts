@@ -2,7 +2,7 @@
 
 ## 3.209.0
 
-* Add `datadog.discovery.serviceMap.enabled` to opt non-APM customers into the free Discovery Service Map mode (HTTP/HTTPS topology only, not billed). Requires Agent >= 7.78.0; Linux only. Mutually exclusive with paid USM, which wins on coexistence.
+* Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
 
 ## 3.208.2
 
