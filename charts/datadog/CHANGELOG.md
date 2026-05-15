@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.1
+
+* [OTAGENT-980] On GKE Autopilot, reference the `v1.0.5` Datadog WorkloadAllowlist exemption in the `AllowlistSynchronizer` when `datadog.otelCollector.featureGates` is configured, so the DDOT-enabled DaemonSet is admitted by Autopilot Warden.
+
 ## 3.215.0
 
 * Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
