@@ -4483,11 +4483,11 @@ spec:
                     phase:
                       enum:
                         - running
-                        - stopped
-                        - rollback
-                        - timeout
+                        - terminated
                         - promoted
                         - aborted
+                      type: string
+                    terminationReason:
                       type: string
                   type: object
                 otelAgentGateway:
