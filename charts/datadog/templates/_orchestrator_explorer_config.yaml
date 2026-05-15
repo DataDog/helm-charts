@@ -1,4 +1,7 @@
 {{- define "orchestratorExplorer-add-custom-orchestrator-explorer-config" -}}
+{{- if not .Values.datadog.orchestratorExplorer.enabled -}}
+false
+{{- else -}}
 {{- $useCRDConfig := true -}}
 
 {{/*
@@ -29,6 +32,7 @@ If customResources is empty and not using cluster check runners, then we don't a
 {{- end -}}
 
 {{- $useCRDConfig -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "orchestratorExplorer-config" -}}
