@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.23.0-dev.4
+
+* Update Datadog Operator chart for 1.27.0-rc.2.
+
 ## 2.23.0-dev.3
 
 * Support Helm parameters for `DD_DASHBOARD_WATCH_NAMESPACE`and `DD_GENERIC_RESOURCE_WATCH_NAMESPACE`
