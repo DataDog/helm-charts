@@ -168,14 +168,20 @@ envFrom: []
 # containerPorts -- Manually define ContainerPort array, overriding automated generation of ContainerPorts.
 containerPorts: []
 
-# resources -- Specify resource requests and limits.
-resources: {}
-  # requests:
-  #   cpu: 200m
-  #   memory: 256Mi
+# resources -- Specify resource requests and limits. The default requests are conservative recommendations for typical Worker workloads; tune for your pipeline throughput. Limits are intentionally omitted by default — see the commented example below.
+resources:
+  requests:
+    cpu: 2
+    memory: 4Gi
+  # Limits are commented out by default:
+  #   - cpu: CFS throttling hurts bursty pipeline workloads and breaks
+  #     `autoscaling.targetCPUUtilizationPercentage` (HPA).
+  #   - memory: OPW absorbs downstream backpressure in memory, so a hard cap can
+  #     OOMKill the Worker exactly when buffering is most needed. Set `limits.memory`
+  #     only once you know your real memory ceiling.
   # limits:
-  #   cpu: 200m
-  #   memory: 256Mi
+  #   cpu: 2
+  #   memory: 4Gi
 
 # lifecycle -- Specify lifecycle hooks for Containers.
 lifecycle: {}

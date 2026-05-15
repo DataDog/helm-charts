@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.15.6](https://img.shields.io/badge/Version-2.15.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.2](https://img.shields.io/badge/AppVersion-2.15.2-informational?style=flat-square)
+![Version: 2.15.7](https://img.shields.io/badge/Version-2.15.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.15.2](https://img.shields.io/badge/AppVersion-2.15.2-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -147,7 +147,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | podSecurityContext | object | `{}` | Allows you to overwrite the default [PodSecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/). |
 | readinessProbe | object | `{"failureThreshold":3,"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":15}` | Specify the readinessProbe [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes). When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes version. Setting any handler in your values disables the default, so existing overrides are not coalesced with it. |
 | replicas | int | `1` | Specify the number of replicas to create. |
-| resources | object | `{}` | Specify resource requests and limits. |
+| resources | object | `{"requests":{"cpu":2,"memory":"4Gi"}}` | Specify resource requests and limits. The default requests are conservative recommendations for typical Worker workloads; tune for your pipeline throughput. Limits are intentionally omitted by default — see the commented example below. |
 | securityContext | object | `{}` | Specify securityContext for Containers. |
 | service.annotations | object | `{}` | Specify annotations for the Service. |
 | service.enabled | bool | `true` | If **true**, create a Service resource. |

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.15.7
+
+* Set default resource requests for the Worker container (`requests.cpu: 2`, `requests.memory: 4Gi`). No limits are set by default: a CPU limit would cause CFS throttling under bursty pipeline load and break `autoscaling.targetCPUUtilizationPercentage` (HPA), while a memory limit can OOMKill the Worker exactly when it is absorbing downstream backpressure. Recommended limit values are documented as commented examples in `values.yaml`. Installs that previously relied on the empty default (`resources: {}`) will now require nodes with at least 2 CPU and 4Gi memory available; override `resources` in your values to keep the prior behavior. Partial overrides under `resources` (e.g., setting only `resources.limits` or only `resources.requests.memory`) will inherit any unset keys from the new defaults — provide a full `resources` block if you need to opt out of the new requests.
+
 ## 2.15.6
 
 * Adding PROXY and NOPROXY options to Observability Pipelines ([#2578](https://github.com/DataDog/helm-charts/pull/2578)).
