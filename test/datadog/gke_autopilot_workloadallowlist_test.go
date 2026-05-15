@@ -107,7 +107,7 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 			assertions: func(t *testing.T, manifest string) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
-				requireContainerNames(t, ds, "agent", "agent-data-plane")
+				requireContainerNames(t, ds, "agent", "system-probe", "agent-data-plane")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
