@@ -4,9 +4,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.25.0
+  name: datadog-datadog-operator
   namespace: datadog-agent
 ---
 apiVersion: v1
@@ -400,9 +400,9 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.25.0
+  name: datadog-datadog-operator
 rules:
   - nonResourceURLs:
       - /metrics
@@ -464,18 +464,6 @@ rules:
     verbs:
       - get
   - apiGroups:
-      - ""
-    resources:
-      - pods/eviction
-    verbs:
-      - create
-  - apiGroups:
-      - ""
-    resources:
-      - pods/resize
-    verbs:
-      - patch
-  - apiGroups:
       - '*'
     resources:
       - '*/scale'
@@ -508,11 +496,7 @@ rules:
     resources:
       - controllerrevisions
     verbs:
-      - create
-      - delete
-      - get
       - list
-      - patch
       - watch
   - apiGroups:
       - apps
@@ -532,18 +516,10 @@ rules:
       - apps
     resources:
       - replicasets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
       - statefulsets
     verbs:
       - get
       - list
-      - patch
       - watch
   - apiGroups:
       - argoproj.io
@@ -558,10 +534,9 @@ rules:
     resources:
       - rollouts
     verbs:
-      - get
       - list
-      - patch
       - watch
+      - patch
   - apiGroups:
       - authentication.k8s.io
     resources:
@@ -692,8 +667,6 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
-      - datadogpodautoscalerclusterprofiles
-      - datadogpodautoscalerclusterprofiles/status
       - datadogpodautoscalers
       - datadogpodautoscalers/status
     verbs:
@@ -709,6 +682,7 @@ rules:
       - watch
   - apiGroups:
       - datadoghq.com
+      - eks.amazonaws.com
       - karpenter.azure.com
     resources:
       - '*'
@@ -891,6 +865,45 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - metrics.eks.amazonaws.com
+    resources:
+      - kcm/metrics
+      - ksh/metrics
+    verbs:
+      - get
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/status
+    verbs:
+      - get
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1340,14 +1353,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: datadog-operator
+  name: datadog-datadog-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: datadog-operator
+  name: datadog-datadog-operator
 subjects:
   - kind: ServiceAccount
-    name: datadog-operator
+    name: datadog-datadog-operator
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -2358,22 +2371,22 @@ metadata:
   labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
-  name: datadog-operator
+    app.kubernetes.io/name: datadog-operator
+    app.kubernetes.io/version: 1.25.0
+  name: datadog-datadog-operator
   namespace: datadog-agent
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/instance: datadog
-      app.kubernetes.io/name: operator
+      app.kubernetes.io/name: datadog-operator
   template:
     metadata:
       annotations:
-        ad.datadoghq.com/operator.check_names: '["openmetrics"]'
-        ad.datadoghq.com/operator.init_configs: '[{}]'
-        ad.datadoghq.com/operator.instances: |
+        ad.datadoghq.com/datadog-operator.check_names: '["openmetrics"]'
+        ad.datadoghq.com/datadog-operator.init_configs: '[{}]'
+        ad.datadoghq.com/datadog-operator.instances: |
           [{
             "prometheus_url": "http://%%host%%:8383/metrics",
             "namespace": "datadog.operator",
@@ -2381,7 +2394,7 @@ spec:
           }]
       labels:
         app.kubernetes.io/instance: datadog
-        app.kubernetes.io/name: operator
+        app.kubernetes.io/name: datadog-operator
     spec:
       containers:
         - args:
@@ -2398,8 +2411,7 @@ spec:
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
-            - -datadogAgentInternalEnabled=false
-            - -datadogCSIDriverEnabled=false
+            - -datadogAgentInternalEnabled=true
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2425,7 +2437,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.26.0
+          image: registry.datadoghq.com/operator:1.25.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2433,7 +2445,7 @@ spec:
               port: 8081
             initialDelaySeconds: 15
             periodSeconds: 10
-          name: operator
+          name: datadog-operator
           ports:
             - containerPort: 8383
               name: metrics
@@ -2442,7 +2454,7 @@ spec:
           volumeMounts: null
       nodeSelector:
         kubernetes.io/os: linux
-      serviceAccountName: datadog-operator
+      serviceAccountName: datadog-datadog-operator
       volumes: null
 ---
 apiVersion: apps/v1
