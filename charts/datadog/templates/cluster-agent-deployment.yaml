@@ -335,6 +335,10 @@ spec:
           - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
             value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
           {{- end }}
+          {{- if .Values.global.apmRegistryAllowList }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST
+            value: {{ join "," .Values.global.apmRegistryAllowList | quote }}
+          {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
             value: "true"
@@ -484,6 +488,10 @@ spec:
           {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
           - name: DD_AUTOSCALING_CLUSTER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).cluster).enabled) | quote }}
+          {{- end }}
+          {{- if ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+          - name: DD_AUTOSCALING_CLUSTER_SPOT_ENABLED
+            value: {{ ((((.Values.datadog.autoscaling).cluster).spot).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:

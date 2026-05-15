@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.15.7
+
+* Set default resource requests on the Worker container (`requests.cpu: 2`, `requests.memory: 4Gi`); limits remain unset by default (commented example in `values.yaml`). Installs previously on `resources: {}` will now need nodes with 2 CPU / 4Gi available — override `resources` to opt out ([#2664](https://github.com/DataDog/helm-charts/pull/2664)).
+
+## 2.15.6
+
+* Adding PROXY and NOPROXY options to Observability Pipelines ([#2578](https://github.com/DataDog/helm-charts/pull/2578)).
+
+## 2.15.5
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 2.15.4
+
+- Official image `2.15.2`
+
+## 2.15.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 2.15.2
+
+- Switch default `livenessProbe`/`readinessProbe` from `httpGet` to `tcpSocket` on port 8686. Upstream Vector replaced the HTTP/GraphQL observability API with a gRPC server ([vectordotdev/vector#24364](https://github.com/vectordotdev/vector/pull/24364)), so the previous `httpGet :8686/health` probes were incompatible with the worker as of OPW 2.15.0+ and caused pods to enter a probe-failure restart loop. The default `tcpSocket :8686` handler is injected by the chart template only when the user has not provided their own probe handler (`httpGet`/`tcpSocket`/`exec`/`grpc`) — existing user overrides are preserved as-is and not coalesced with the default. The legacy broken `httpGet :8686/health` is also stripped if it appears in the rendered values (e.g., carried over by `helm upgrade --reuse-values` from chart 2.15.0/2.15.1).
+
 ## 2.15.1
 
 - Official image `2.15.1`

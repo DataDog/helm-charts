@@ -1,0 +1,56 @@
+name: Check Agent Version Drift
+
+on:
+  pull_request:
+    paths:
+      - "charts/datadog/values.yaml"
+      - "charts/datadog/templates/_helpers.tpl"
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+
+jobs:
+  check-agent-version-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Assert get-agent-version matches image tags in values.yaml
+        run: |
+          HELPERS="charts/datadog/templates/_helpers.tpl"
+          VALUES="charts/datadog/values.yaml"
+
+          HELPERS_VERSION=$(grep -A1 '\$version "7".*\$version "latest"' "$HELPERS" | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
+          AGENT_VERSION=$(yq e '.agents.image.tag' "$VALUES")
+          DCA_VERSION=$(yq e '.clusterAgent.image.tag' "$VALUES")
+          CCR_VERSION=$(yq e '.clusterChecksRunner.image.tag' "$VALUES")
+
+          echo "get-agent-version 'latest' fallback:  ${HELPERS_VERSION}"
+          echo "agents.image.tag:                     ${AGENT_VERSION}"
+          echo "clusterAgent.image.tag:               ${DCA_VERSION}"
+          echo "clusterChecksRunner.image.tag:        ${CCR_VERSION}"
+
+          fail=0
+          check() {
+            local field="$1" value="$2"
+            if [[ "${value}" != "${HELPERS_VERSION}" ]]; then
+              echo "ERROR: ${field} (${value}) does not match get-agent-version fallback (${HELPERS_VERSION})"
+              fail=1
+            fi
+          }
+
+          check "agents.image.tag"              "${AGENT_VERSION}"
+          check "clusterAgent.image.tag"        "${DCA_VERSION}"
+          check "clusterChecksRunner.image.tag" "${CCR_VERSION}"
+
+          if [[ "${fail}" -ne 0 ]]; then
+            echo ""
+            echo "Agent image tags in values.yaml and the get-agent-version 'latest' fallback version"
+            echo "in _helpers.tpl must be set to the same version. Update the stale one(s) above and"
+            echo "run \`make update-test-baselines-datadog-agent\`"
+            exit 1
+          fi
+
+          echo "OK: No drift detected"

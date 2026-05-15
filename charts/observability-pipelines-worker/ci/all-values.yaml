@@ -67,11 +67,9 @@ persistence:
     - kubernetes.io/pvc-protection
 
 livenessProbe:
-  httpGet:
-    path: /health
+  tcpSocket:
     port: api
 
 readinessProbe:
-  httpGet:
-    path: /health
+  tcpSocket:
     port: api

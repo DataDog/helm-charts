@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -143,7 +143,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: true\n  tls:\ntraceroute:\n  enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: true\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -172,6 +172,7 @@ data:
             "capset",
             "chdir",
             "chmod",
+            "chown",
             "clock_gettime",
             "clone",
             "clone3",
@@ -316,10 +317,10 @@ data:
             "setresuid",
             "setrlimit",
             "setsid",
-            "setsidaccept4",
             "setsockopt",
             "setuid",
             "setuid32",
+            "shutdown",
             "sigaltstack",
             "socket",
             "socketcall",
@@ -342,7 +343,8 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            "writev"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
@@ -399,7 +401,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -462,6 +464,18 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+    verbs:
+      - patch
+  - apiGroups:
       - '*'
     resources:
       - '*/scale'
@@ -494,7 +508,11 @@ rules:
     resources:
       - controllerrevisions
     verbs:
+      - create
+      - delete
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - apps
@@ -514,10 +532,18 @@ rules:
       - apps
     resources:
       - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
       - statefulsets
     verbs:
       - get
       - list
+      - patch
       - watch
   - apiGroups:
       - argoproj.io
@@ -532,9 +558,10 @@ rules:
     resources:
       - rollouts
     verbs:
+      - get
       - list
-      - watch
       - patch
+      - watch
   - apiGroups:
       - authentication.k8s.io
     resources:
@@ -665,6 +692,8 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadogpodautoscalerclusterprofiles
+      - datadogpodautoscalerclusterprofiles/status
       - datadogpodautoscalers
       - datadogpodautoscalers/status
     verbs:
@@ -680,7 +709,6 @@ rules:
       - watch
   - apiGroups:
       - datadoghq.com
-      - eks.amazonaws.com
       - karpenter.azure.com
     resources:
       - '*'
@@ -863,13 +891,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - metrics.eks.amazonaws.com
-    resources:
-      - kcm/metrics
-      - ksh/metrics
-    verbs:
-      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1683,6 +1704,8 @@ spec:
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1697,7 +1720,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1865,7 +1888,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1970,7 +1993,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -2049,7 +2072,7 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2122,7 +2145,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2163,7 +2186,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2190,7 +2213,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2286,7 +2309,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2326,6 +2349,7 @@ spec:
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
+            - -datadogCSIDriverEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2351,7 +2375,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.25.0
+          image: registry.datadoghq.com/operator:1.26.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2544,7 +2568,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.78.0
+          image: registry.datadoghq.com/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2617,7 +2641,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.78.0
+          image: registry.datadoghq.com/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

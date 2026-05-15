@@ -1,5 +1,17 @@
 # Datadog changelog
 
+## 0.17.25
+
+* Mount an `emptyDir` at `/run` on the worker pod so s6-overlay's preinit can chown its runtime directory on clusters that mount the container root read-only (OpenShift, FIPS-hardened pod security standards, `securityContext.readOnlyRootFilesystem: true`). Without this, s6 fails to start with `s6-overlay-suexec: fatal: child failed with exit code 111` because `s6-chown: fatal: unable to chown /run: Read-only file system`.
+
+## 0.17.24
+
+* Update private location image version to `1.67.0`.
+
+## 0.17.23
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 0.17.22
 
 * Update private location image version to `1.66.0`.

@@ -21,6 +21,17 @@ datadog:
   ## If set, this parameter takes precedence over `datadog.apiKey`.
   apiKeyExistingSecret:
 
+# Which observability signals this deployment accepts. Gates the intake ingress
+# path groups; the binary uses the same flags to create default indexes on startup.
+# At least one signal must be enabled when `intake.ingress.enabled` is true.
+signals:
+  logs:
+    enabled: true
+  metrics:
+    enabled: false
+  traces:
+    enabled: false
+
 # CloudPrem configuration
 cloudprem:
   # # Index configuration
@@ -695,6 +706,128 @@ janitor:
   topologySpreadConstraints: []
 
   runtimeClassName: ""
+
+intake:
+  # Enable the intake Deployment, Service, ConfigMap (+ HPA / Ingress if enabled below).
+  enabled: false
+
+  replicaCount: 1
+
+  # Vector pipeline config mounted at /quickwit/config.yaml.
+  # If empty, the binary falls back to its built-in defaults.
+  config: {}
+
+  # Extra env for intake.
+  # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
+  extraEnv: []
+    # - name: KEY
+    #   value: VALUE
+  extraEnvFrom: []
+    # - secretRef:
+    #     name: quickwit-intake
+
+  # extraVolumes -- Additional volumes to use with Pods.
+  extraVolumes: []
+
+  # extraVolumeMounts -- Additional volumes to mount into intake containers.
+  extraVolumeMounts: []
+
+  # No CPU limit on purpose — lets the pod use any spare CPU on the node when available.
+  resources:
+    requests:
+      cpu: 2
+      memory: 1Gi
+    limits:
+      memory: 1Gi
+
+  startupProbe:
+    httpGet:
+      path: /health
+      port: api
+    failureThreshold: 12
+    periodSeconds: 5
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: api
+    failureThreshold: 5
+    periodSeconds: 10
+    timeoutSeconds: 15
+
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: api
+    failureThreshold: 3
+    periodSeconds: 10
+    timeoutSeconds: 15
+
+  # Override args. When unset, defaults to `["--config", "/quickwit/config.yaml"]`.
+  # The container command is always `pomsky-intake` (set explicitly in the Deployment).
+  args: []
+
+  # initContainers -- Init containers to be added to the pods.
+  initContainers: []
+
+  annotations: {}
+
+  podAnnotations: {}
+
+  serviceAnnotations: {}
+
+  # serviceType: ClusterIP
+
+  updateStrategy: {}
+
+  lifecycleHooks: {}
+
+  terminationGracePeriodSeconds: 60
+
+  # intake.nodeSelector -- Configure
+  # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
+  nodeSelector: {}
+
+  # intake.tolerations -- Configure
+  # [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+  tolerations: []
+
+  # intake.affinity -- Configure
+  # [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+  affinity: {}
+
+  # intake.topologySpreadConstraints -- Configure
+  # [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/).
+  topologySpreadConstraints: []
+
+  runtimeClassName: ""
+
+  # Set to `{}` (or a map with minAvailable / maxUnavailable) to create a PodDisruptionBudget.
+  podDisruptionBudget: {}
+    # minAvailable: 1
+
+  # Autoscaling — patterned after the OP worker chart (CPU + memory utilization).
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    # Set to a number to enable memory-based scaling too.
+    targetMemoryUtilizationPercentage: null
+    behavior: {}
+    annotations: {}
+
+  # AWS ALB ingress for DD agent + OTLP HTTP endpoints.
+  # gRPC is intentionally out of scope — it requires a separate ingress
+  # with `alb.ingress.kubernetes.io/backend-protocol-version: GRPC`.
+  ingress:
+    enabled: false
+    ingressClassName: alb
+    # ALB scheme: `internal` (default) or `internet-facing`.
+    albScheme: internal
+    # host: intake.example.com
+    tls: []
+    extraAnnotations: {}
 
 # Deploy jobs to bootstrap creation of indexes and sources for quickwit clusters
 bootstrap:

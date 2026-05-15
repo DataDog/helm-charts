@@ -19,6 +19,9 @@
 {{- end }}
 
 {{- $cloudpremConfig := set ($config.cloudprem | default dict) "mtls_header" $mtlsHeader }}
+{{- $_ := set $cloudpremConfig "create_dd_logs_index" .Values.signals.logs.enabled }}
+{{- $_ := set $cloudpremConfig "create_dd_metrics_index" .Values.signals.metrics.enabled }}
+{{- $_ := set $cloudpremConfig "create_dd_traces_index" .Values.signals.traces.enabled }}
 {{- $config = merge $config (dict "cloudprem" $cloudpremConfig) }}
 
 apiVersion: v1
