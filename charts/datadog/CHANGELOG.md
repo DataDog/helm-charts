@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.213.4
+
+* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+
 ## 3.213.3
 
 * [GKE Autopilot] Add `agent-data-plane` to WorkloadAllowlist by referencing exemption v1.0.4 when `datadog.dataPlane.enabled=true` ([#2605](https://github.com/DataDog/helm-charts/pull/2605)).
