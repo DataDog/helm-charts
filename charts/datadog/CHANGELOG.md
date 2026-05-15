@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.213.3
+
+* Mount the DogStatsD UDS socket directory and set `DD_DOGSTATSD_SOCKET` in the system-probe container so it can submit its own metrics over UDS.
+
 ## 3.213.2
 
 * Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
