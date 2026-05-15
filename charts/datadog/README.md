@@ -916,6 +916,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
+| datadog.otelCollector.allowlistWaitTimeout | string | `"300s"` | On GKE Autopilot only, max time to wait for the AllowlistSynchronizer to report Ready when `featureGates` is set The synchronizer must finish syncing the v1.0.5 partner exemption before the otel-agent DaemonSet is deployed, otherwise Warden rejects the pod. |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
 | datadog.otelCollector.configMap | object | `{"items":null,"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
 | datadog.otelCollector.configMap.items | string | `nil` | Items within the ConfigMap that contain DDOT Collector configuration |
