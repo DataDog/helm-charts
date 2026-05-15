@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.213.5
+
+* [OTAGENT-980] On GKE Autopilot, reference the `v1.0.5` Datadog WorkloadAllowlist exemption in the `AllowlistSynchronizer` when `datadog.otelCollector.featureGates` is configured, so the DDOT-enabled DaemonSet is admitted by Autopilot Warden.
+
 ## 3.213.4
 
 * Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.
