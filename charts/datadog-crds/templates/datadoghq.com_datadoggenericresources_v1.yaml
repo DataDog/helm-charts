@@ -7,6 +7,9 @@ metadata:
     {{- if .Values.keepCrds }}
     helm.sh/resource-policy: keep
     {{- end }}
+    {{- with .Values.crds.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadoggenericresources.datadoghq.com
   labels:
@@ -62,10 +65,12 @@ spec:
               properties:
                 jsonSpec:
                   description: JsonSpec is the specification of the API object
+                  minLength: 1
                   type: string
                 type:
                   description: Type is the type of the API object
                   enum:
+                    - dashboard
                     - downtime
                     - monitor
                     - notebook

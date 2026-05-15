@@ -49,6 +49,9 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
+      {{- if eq .Values.serviceAccount.automountServiceAccountToken false }}
+      automountServiceAccountToken: false
+      {{- end }} 
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -77,6 +80,14 @@ spec:
             {{- if .Values.watchNamespacesAgentProfile }}
             - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
               value: {{ .Values.watchNamespacesAgentProfile | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesDashboard }}
+            - name: DD_DASHBOARD_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesDashboard | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesGenericResource }}
+            - name: DD_GENERIC_RESOURCE_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesGenericResource | join "," }}
             {{- end }}
             - name: DD_HOSTNAME
               valueFrom:
@@ -150,6 +161,9 @@ spec:
           {{- if .Values.secretBackend.arguments }}
             - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
           {{- end }}
+          {{- if .Values.secretBackend.refreshInterval }}
+            - "-secretRefreshInterval={{ .Values.secretBackend.refreshInterval }}"
+          {{- end }}
           {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" $version) }}
             - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
           {{- end }}
@@ -175,7 +189,7 @@ spec:
           {{- if (semverCompare ">=1.7.0-0" $version) }}
             - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
           {{- end }}
-          {{- if (semverCompare ">=1.18.0-0" $version) }}
+          {{- if and (semverCompare ">=1.18.0-0 <1.27.0-0" $version) (or (not .Values.image.doNotCheckTag) (not .Values.datadogAgentInternal.enabled)) }}
             - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
           {{- end }}
           {{- if (semverCompare ">=1.26.0-0" $version) }}

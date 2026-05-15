@@ -53,10 +53,12 @@ spec:
               properties:
                 jsonSpec:
                   description: JsonSpec is the specification of the API object
+                  minLength: 1
                   type: string
                 type:
                   description: Type is the type of the API object
                   enum:
+                    - dashboard
                     - downtime
                     - monitor
                     - notebook

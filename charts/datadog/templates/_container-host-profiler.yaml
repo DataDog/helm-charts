@@ -9,7 +9,7 @@
   command:
     - "host-profiler"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" .Values.datadog.hostProfiler.seccomp "kubeversion" .Capabilities.KubeVersion.Version "apparmor" (and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.hostProfiler.apparmor)) | nindent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.hostProfiler.resources | indent 4 }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.hostProfiler.envFrom }}
@@ -38,7 +38,11 @@
       readOnly: false                                                                                                                   
     - name: tracingfs
       mountPath: /sys/kernel/tracing
-      readOnly: false
+      # cilium/ebpf writes on /sys/kernel/tracing as fallback to old kernel limitations
+      # Upstream has (at the time of writing) as minimum kernel version 5.10 which does not have that limitation
+      # anymore; readOnly can be enforced.
+      # https://github.com/cilium/ebpf/blob/9f87aafaeb37c579ad1e3f5729462d8540200504/link/kprobe.go#L294-L299
+      readOnly: true
     - name: config
       mountPath: {{ template "datadog.confPath" . }}
       readOnly: true

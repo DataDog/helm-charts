@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+* Update Docker image to `v0.1.26`.
+* Add intake service: new `intake` deployment, service, configmap, HPA, PDB, and ingress (disabled by default; enable with `intake.enabled=true`) for accepting Datadog Agent and OTLP traffic ([#74](https://github.com/DataDog/pomsky-helm-charts/pull/74)).
+* Add top-level `signals` config (`logs`, `metrics`, `traces`) to gate intake ingress paths and the indexes the cloudprem binary creates on startup. Defaults: logs enabled, metrics and traces disabled.
+
+## 0.3.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 0.3.2
+
+* Update Docker image to `v0.1.25`
+
 ## 0.3.1
 
 * Remove unnecessary `datadog-values.yaml` file

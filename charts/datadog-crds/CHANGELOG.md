@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.21.0-dev.1
+
+* Update CRDs from Datadog Operator v1.27.0-rc.1 release candidate tag.
+
+## 2.20.0
+
+* Update CRDs from Datadog Operator v1.26.0.
+
+## 2.20.0-dev.6
+
+* Add `crds.annotations` value to allow setting custom annotations on all CRD resources (useful for ArgoCD users).
+
+## 2.20.0-dev.5
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 2.20.0-dev.4
+
+* Update CRDs from Datadog Operator v1.26.0-rc.3 release candidate tag.
+
 ## 2.20.0-dev.3
 
 * Update CRDs from Datadog Operator v1.26.0-rc.2 release candidate tag.

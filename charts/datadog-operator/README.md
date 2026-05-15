@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.22.0-dev.4](https://img.shields.io/badge/Version-2.22.0--dev.4-informational?style=flat-square) ![AppVersion: 1.26.0-rc.2](https://img.shields.io/badge/AppVersion-1.26.0--rc.2-informational?style=flat-square)
+![Version: 2.23.0-dev.3](https://img.shields.io/badge/Version-2.23.0--dev.3-informational?style=flat-square) ![AppVersion: 1.27.0-rc.1](https://img.shields.io/badge/AppVersion-1.27.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -26,6 +26,7 @@
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogPodAutoscalerClusterProfiles | bool | `true` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
 | datadogCSIDriver.enabled | bool | `false` | Enables the Datadog CSI Driver controller |
@@ -41,7 +42,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.26.0-rc.2"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.27.0-rc.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -61,6 +62,7 @@
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| secretBackend.refreshInterval | string | `nil` | Specifies the secret backend refresh interval in seconds. |
 | serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.automountServiceAccountToken | bool | `true` | Specifies whether the service account token should be automatically mounted |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
@@ -73,6 +75,8 @@
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
 | watchNamespacesAgent | list | `[]` | Restricts the Operator to watch DatadogAgent resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesAgentProfile | list | `[]` | Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces. Requires v1.8.0+ |
+| watchNamespacesDashboard | list | `[]` | Restricts the Operator to watch DatadogDashboard resources on specific namespaces. Requires v1.13.0+ |
+| watchNamespacesGenericResource | list | `[]` | Restricts the Operator to watch DatadogGenericResource resources on specific namespaces. Requires v1.13.0+ |
 | watchNamespacesMonitor | list | `[]` | Restricts the Operator to watch DatadogMonitor resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesSLO | list | `[]` | Restricts the Operator to watch DatadogSLO resources on specific namespaces. Requires v1.8.0+ |
 
