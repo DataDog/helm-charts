@@ -840,6 +840,9 @@ datadog:
       key: otel-config.yaml
     # datadog.otelCollector.featureGates -- Feature gates to pass to OTel collector, as a comma separated list
     featureGates: null
+    # datadog.otelCollector.allowlistWaitTimeout -- On GKE Autopilot only, max time to wait for the AllowlistSynchronizer to report Ready when `featureGates` is set
+    # The synchronizer must finish syncing the v1.0.5 partner exemption before the otel-agent DaemonSet is deployed, otherwise Warden rejects the pod.
+    allowlistWaitTimeout: 300s
     # datadog.otelCollector.useStandaloneImage -- If true, the OTel Collector will use the `ddot-collector` image instead of the `agent` image
     # The tag is retrieved from the `agents.image.tag` value.
     # This is only supported for agent versions 7.67.0+

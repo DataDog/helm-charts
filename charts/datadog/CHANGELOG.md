@@ -3,6 +3,7 @@
 ## 3.215.1
 
 * [OTAGENT-980] On GKE Autopilot, reference the `v1.0.5` Datadog WorkloadAllowlist exemption in the `AllowlistSynchronizer` when `datadog.otelCollector.featureGates` is configured, so the DDOT-enabled DaemonSet is admitted by Autopilot Warden.
+* [OTAGENT-980] Add a `pre-install`/`pre-upgrade` Job (gated on `datadog.otelCollector.featureGates`) that `kubectl wait`s for the `AllowlistSynchronizer` to report `Ready` before the agent DaemonSet is deployed, preventing Warden from rejecting the workload while `v1.0.5` is still syncing. Wait timeout is configurable via `datadog.otelCollector.allowlistWaitTimeout` (default `300s`).
 
 ## 3.215.0
 

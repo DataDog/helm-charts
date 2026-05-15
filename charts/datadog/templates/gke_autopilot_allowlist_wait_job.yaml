@@ -1,0 +1,91 @@
+{{- /*
+OTAGENT-980: When `datadog.otelCollector.featureGates` is set, the
+AllowlistSynchronizer references v1.0.5 — a path GKE must fetch and install
+before privileged DDOT workloads can be admitted by Warden. Helm considers
+non-Job/Pod hook resources ready as soon as the CR is loaded, so without an
+explicit gate the DaemonSet could be applied before v1.0.5 is installed.
+
+This Job runs as a pre-install/pre-upgrade hook with weight 0 (after the
+synchronizer hook at weight -1), `kubectl wait`s for the AllowlistSynchronizer
+to report `Ready=True`, then exits. Helm waits for Job hooks to complete, so
+the DaemonSet rollout is gated on the synchronizer being fully synced.
+
+The companion ServiceAccount / ClusterRole / ClusterRoleBinding are created at
+weight -2 so they exist before the Job runs.
+*/}}
+{{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") .Values.datadog.otelCollector.enabled .Values.datadog.otelCollector.featureGates (not .Values.providers.gke.gdc) (not .Values.datadog.envDict.HELM_FORCE_RENDER) }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "-2"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "-2"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+rules:
+- apiGroups: ["auto.gke.io"]
+  resources: ["allowlistsynchronizers"]
+  resourceNames: ["datadog-synchronizer"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "-2"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+subjects:
+- kind: ServiceAccount
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "datadog.fullname" . }}-allowlist-wait
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "0"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: {{ template "datadog.fullname" . }}-allowlist-wait
+      restartPolicy: Never
+      containers:
+      - name: wait
+        image: bitnami/kubectl:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        command:
+        - kubectl
+        - wait
+        - --for=condition=Ready
+        - --timeout={{ .Values.datadog.otelCollector.allowlistWaitTimeout | default "300s" }}
+        - allowlistsynchronizer/datadog-synchronizer
+{{- end }}

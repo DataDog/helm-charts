@@ -276,6 +276,88 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 	}
 }
 
+// Test_autopilotAllowlistWaitJob verifies that the wait Job + RBAC are rendered only
+// when datadog.otelCollector.featureGates is set on GKE Autopilot (and not GDC), so the
+// DaemonSet rollout is gated on v1.0.5 being installed by the AllowlistSynchronizer.
+// See OTAGENT-980.
+func Test_autopilotAllowlistWaitJob(t *testing.T) {
+	gkeCRDArgs := []string{
+		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
+		"--api-versions", "auto.gke.io/v1/WorkloadAllowlist",
+		"--kube-version", "v1.33.0",
+	}
+
+	tests := []struct {
+		name          string
+		overrides     map[string]string
+		expectRender  bool
+	}{
+		{
+			name: "wait job is NOT rendered without featureGates",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":  "datadog-secret",
+				"datadog.appKeyExistingSecret":  "datadog-secret",
+				"providers.gke.autopilot":       "true",
+				"datadog.otelCollector.enabled": "true",
+			},
+			expectRender: false,
+		},
+		{
+			name: "wait job is NOT rendered when GDC",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":       "datadog-secret",
+				"datadog.appKeyExistingSecret":       "datadog-secret",
+				"providers.gke.autopilot":            "true",
+				"providers.gke.gdc":                  "true",
+				"datadog.otelCollector.enabled":      "true",
+				"datadog.otelCollector.featureGates": "service.profilesSupport",
+			},
+			expectRender: false,
+		},
+		{
+			name: "wait job is rendered when featureGates is set",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":       "datadog-secret",
+				"datadog.appKeyExistingSecret":       "datadog-secret",
+				"providers.gke.autopilot":            "true",
+				"datadog.otelCollector.enabled":      "true",
+				"datadog.otelCollector.featureGates": "service.profilesSupport",
+			},
+			expectRender: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/gke_autopilot_allowlist_wait_job.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   tt.overrides,
+				ExtraArgs:   gkeCRDArgs,
+			})
+
+			if !tt.expectRender {
+				// helm template returns an error when --show-only matches no rendered content.
+				assert.Error(t, err, "expected template to be empty / not rendered")
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Contains(t, manifest, "kind: Job", "wait Job should be rendered")
+			assert.Contains(t, manifest, "kind: ServiceAccount", "ServiceAccount should be rendered")
+			assert.Contains(t, manifest, "kind: ClusterRole", "ClusterRole should be rendered")
+			assert.Contains(t, manifest, "kind: ClusterRoleBinding", "ClusterRoleBinding should be rendered")
+			assert.Contains(t, manifest, "allowlistsynchronizer/datadog-synchronizer", "wait should target the synchronizer")
+			assert.Contains(t, manifest, "--for=condition=Ready", "wait should gate on Ready condition")
+			// Hook ordering: SA/Role/Binding at -2, Job at 0, after the synchronizer at -1.
+			assert.Contains(t, manifest, `"helm.sh/hook-weight": "-2"`, "RBAC should run before the synchronizer")
+			assert.Contains(t, manifest, `"helm.sh/hook-weight": "0"`, "Job should run after the synchronizer")
+		})
+	}
+}
+
 // requireContainerNames asserts that exactly the expected container names are present.
 func requireContainerNames(t *testing.T, ds appsv1.DaemonSet, expected ...string) {
 	t.Helper()
