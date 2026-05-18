@@ -91,7 +91,7 @@ datadogAgentInternal:
   enabled: true
 datadogCSIDriver:
   # datadogCSIDriver.enabled -- Enables the Datadog CSI Driver controller
-  enabled: false
+  enabled: true
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
   enabled: false
@@ -180,7 +180,7 @@ datadogCRDs:
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
     # datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
-    datadogCSIDrivers: false
+    datadogCSIDrivers: true
     # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
     datadogDashboards: false
     # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
