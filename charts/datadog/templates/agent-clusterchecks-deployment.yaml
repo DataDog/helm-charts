@@ -197,6 +197,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (.Values.datadog.orchestratorExplorer.useClusterCheckRunners) }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
+            value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
+          {{- end }}
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
