@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -163,7 +163,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -226,6 +226,18 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+    verbs:
+      - patch
+  - apiGroups:
       - '*'
     resources:
       - '*/scale'
@@ -258,7 +270,11 @@ rules:
     resources:
       - controllerrevisions
     verbs:
+      - create
+      - delete
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - apps
@@ -278,10 +294,18 @@ rules:
       - apps
     resources:
       - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
       - statefulsets
     verbs:
       - get
       - list
+      - patch
       - watch
   - apiGroups:
       - argoproj.io
@@ -296,9 +320,10 @@ rules:
     resources:
       - rollouts
     verbs:
+      - get
       - list
-      - watch
       - patch
+      - watch
   - apiGroups:
       - authentication.k8s.io
     resources:
@@ -429,6 +454,8 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadogpodautoscalerclusterprofiles
+      - datadogpodautoscalerclusterprofiles/status
       - datadogpodautoscalers
       - datadogpodautoscalers/status
     verbs:
@@ -444,7 +471,6 @@ rules:
       - watch
   - apiGroups:
       - datadoghq.com
-      - eks.amazonaws.com
       - karpenter.azure.com
     resources:
       - '*'
@@ -627,13 +653,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - metrics.eks.amazonaws.com
-    resources:
-      - kcm/metrics
-      - ksh/metrics
-    verbs:
-      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1445,6 +1464,8 @@ spec:
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1453,7 +1474,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1530,7 +1551,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1581,7 +1602,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -1653,7 +1674,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.25.0
+    app.kubernetes.io/version: 1.26.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1693,6 +1714,7 @@ spec:
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogAgentInternalEnabled=false
+            - -datadogCSIDriverEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -1718,7 +1740,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.25.0
+          image: registry.datadoghq.com/operator:1.26.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -1849,7 +1871,7 @@ spec:
                   fieldPath: spec.nodeName
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1912,7 +1934,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -1931,7 +1953,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.78.0
+          image: gcr.io/datadoghq/agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -2140,7 +2162,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.78.0
+          image: gcr.io/datadoghq/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2219,7 +2241,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.78.0
+          image: gcr.io/datadoghq/cluster-agent:7.78.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

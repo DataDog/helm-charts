@@ -77,9 +77,10 @@ data:
         {{- end }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
-    {{- if not (eq .Values.datadog.discovery.enabled nil) }}
+    {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:
-      enabled: {{ $.Values.datadog.discovery.enabled }}
+      enabled: {{ include "resolved-discovery-enabled" . }}
+      use_system_probe_lite: {{ include "discovery-use-system-probe-lite" . }}
       network_stats:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
     {{- end }}
@@ -139,8 +140,12 @@ data:
         dir: /var/run/sysprobe/runtime-security/profiles
       enforcement:
         enabled: {{ and $.Values.datadog.securityAgent.runtime.enabled $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+      compliance_module:
+        enabled: {{ $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
     dynamic_instrumentation:
       enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
+    compliance_config:
+      enabled: {{ and $.Values.datadog.securityAgent.compliance.enabled $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
@@ -168,9 +173,7 @@ data:
             "capset",
             "chdir",
             "chmod",
-            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
             "chown",
-            {{- end }}
             "clock_gettime",
             "clone",
             "clone3",
@@ -326,10 +329,10 @@ data:
             "setresuid",
             "setrlimit",
             "setsid",
-            "setsidaccept4",
             "setsockopt",
             "setuid",
             "setuid32",
+            "shutdown",
             "sigaltstack",
             "socket",
             "socketcall",
@@ -355,7 +358,8 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            "writev"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null

@@ -11,4 +11,7 @@ spec:
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.1.yaml
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.2.yaml
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.3.yaml
+  {{- if and .Values.datadog.dataPlane.enabled (not .Values.providers.gke.gdc) }}
+  - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml
+  {{- end }}
 {{- end }}

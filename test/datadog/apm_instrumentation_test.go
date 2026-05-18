@@ -198,3 +198,63 @@ func Test_apm_injectionMode_envVar_only_when_explicitly_configured(t *testing.T)
 		})
 	}
 }
+
+func Test_apm_registryAllowList_envVar_only_when_explicitly_configured(t *testing.T) {
+	tests := []struct {
+		name        string
+		overrides   map[string]string
+		wantPresent bool
+		wantValue   string
+	}{
+		{
+			name:        "default values - env var is not set",
+			overrides:   map[string]string{},
+			wantPresent: false,
+		},
+		{
+			name: "explicit allow list - env var is set",
+			overrides: map[string]string{
+				"global.apmRegistryAllowList[0]": "public.ecr.aws/datadog",
+				"global.apmRegistryAllowList[1]": "gcr.io/datadoghq",
+			},
+			wantPresent: true,
+			wantValue:   "public.ecr.aws/datadog,gcr.io/datadoghq",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+			}
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+			require.NoError(t, err, "failed to render chart")
+
+			var deployment appsv1.Deployment
+			common.Unmarshal(t, manifest, &deployment)
+			require.NotEmpty(t, deployment.Spec.Template.Spec.Containers, "expected at least one container in cluster-agent deployment")
+
+			dcaContainer := deployment.Spec.Template.Spec.Containers[0]
+			envVar, found := findEnvVar(dcaContainer.Env, "DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST")
+
+			if !tt.wantPresent {
+				require.False(t, found, "did not expect DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST to be present")
+				return
+			}
+
+			require.True(t, found, "expected DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST to be present")
+			require.Equal(t, tt.wantValue, envVar.Value)
+		})
+	}
+}

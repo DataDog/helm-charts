@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.28.1
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
 ## 1.28.0
 
 * Bump private actions runner version to v1.21.0!

@@ -10,9 +10,91 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.67.0" -}}
+{{- $version = "7.78.3" -}}
 {{- end -}}
 {{- $version -}}
+{{- end -}}
+
+{{/*
+  Returns a semver-ish version for discovery defaulting.
+  Discovery reuses the chart's existing agent-version resolution for supported tags.
+  If that resolution still returns a non-semver-ish value, discovery treats it as latest.
+*/}}
+{{- define "get-agent-version-for-discovery" -}}
+{{- $version := include "get-agent-version" . -}}
+{{- if regexMatch "^[0-9]+\\.[0-9]+(\\.[0-9]+)?([-.+][0-9A-Za-z.-]+)?$" $version -}}
+{{- $version -}}
+{{- else -}}
+latest
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if datadog.discovery.enabled was explicitly set by the user.
+*/}}
+{{- define "discovery-enabled-explicitly-set" -}}
+{{- if not (eq .Values.datadog.discovery.enabled nil) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the resolved discovery state.
+  Explicit true/false wins. When omitted, discovery is enabled only for Agent >= 7.78.0
+  after the chart's agent-version resolution. Non-semver-ish results are treated as latest.
+*/}}
+{{- define "resolved-discovery-enabled" -}}
+{{- if eq (include "discovery-enabled-explicitly-set" .) "true" -}}
+{{- .Values.datadog.discovery.enabled -}}
+{{- else -}}
+  {{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") -}}
+false
+  {{- else -}}
+  {{- $version := include "get-agent-version-for-discovery" . -}}
+  {{- if eq $version "latest" -}}
+true
+  {{- else if semverCompare ">=7.78.0-0" $version -}}
+true
+  {{- else -}}
+false
+  {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if the discovery block should be rendered in system-probe.yaml.
+  Explicit values render the block even when set to false so nil vs false is preserved.
+*/}}
+{{- define "should-render-discovery-config" -}}
+{{- if or (eq (include "discovery-enabled-explicitly-set" .) "true") (eq (include "resolved-discovery-enabled" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true when discovery should request the system-probe-lite path.
+  This only applies on Agent versions that ship system-probe-lite (>= 7.78.0), or
+  when the resolved image version is non-semver-ish and treated as latest. Older Agents
+  keep discovery enabled without requesting it.
+*/}}
+{{- define "discovery-use-system-probe-lite" -}}
+{{- if ne (include "resolved-discovery-enabled" .) "true" -}}
+false
+{{- else -}}
+{{- $version := include "get-agent-version-for-discovery" . -}}
+{{- if eq $version "latest" -}}
+true
+{{- else if semverCompare ">=7.78.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
 
@@ -184,11 +266,10 @@ This considers both whether or not the Data Plane feature is enabled and whether
 data pipeline enabled
 */}}
 {{- define "should-enable-data-plane" -}}
-{{- $adpVersion := .Values.datadog.dataPlane.image.tag -}}
-{{- if not (semverCompare ">=0.1.29" $adpVersion) -}}
-{{- fail "Agent Data Plane 0.1.29 or newer is required to enable the Data Plane feature." -}}
-{{- end -}}
 {{- if and .Values.datadog.dataPlane.enabled  (not .Values.providers.gke.gdc) -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.74.0" (include "get-agent-version" .)) -}}
+{{- fail "Agent Data Plane requires Datadog Agent 7.74 or newer." -}}
+{{- end -}}
 {{- if .Values.datadog.dataPlane.dogstatsd.enabled -}}
 true
 {{- else -}}
@@ -578,7 +659,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled .Values.datadog.discovery.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
 true
 {{- else -}}
 false
@@ -605,7 +686,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
+{{- if or (and .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe)) (eq (include "should-enable-security-agent-cws-integration" .) "true") -}}
 true
 {{- else -}}
 false
@@ -660,7 +741,7 @@ false
 Return true if the compliance features should be enabled.
 */}}
 {{- define "should-enable-compliance" -}}
-{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled (not .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -696,7 +777,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID) -}}
+{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1092,7 +1173,7 @@ Return true if runtime compilation is enabled in the system-probe
 {{- if .Values.providers.talos.enabled -}}
 {{- /* Talos does not support runtime compilation */ -}}
 false
-{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.discovery.enabled .Values.datadog.discovery.networkStats.enabled) -}}
+{{- else if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled (and (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.networkStats.enabled) -}}
 true
 {{- else -}}
 false
@@ -1195,7 +1276,7 @@ securityContext:
 {{- if not (empty $securityContext) }}
 {{ toYaml $securityContext | indent 2 }}
 {{- end }}
-{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion) }}
+{{- if and .seccomp .kubeversion (semverCompare ">=1.19.0-0" .kubeversion) }}
   seccompProfile:
     {{- if hasPrefix "localhost/" .seccomp }}
     type: Localhost
@@ -1338,6 +1419,7 @@ Return orchestratorExplorer customResources list with conditional addition of da
 {{- $customResources := .Values.datadog.orchestratorExplorer.customResources | default list -}}
 {{- if (((.Values.datadog.autoscaling).workload).enabled) -}}
 {{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalers" -}}
+{{- $customResources = append $customResources "datadoghq.com/v1alpha2/datadogpodautoscalerclusterprofiles" -}}
 {{- end -}}
 {{- $filteredResources := list -}}
 {{- range $cr := $customResources -}}
@@ -1409,6 +1491,17 @@ Create RBACs for custom resources
 */}}
 {{- define "should-enable-sbom-host-fs-collection" -}}
   {{- if and (.Values.datadog.sbom.host.enabled) (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
+    true
+  {{- else -}}
+    false
+  {{- end -}}
+{{- end -}}
+
+{{/*
+  Return true if SBOM enrichment "package in use" runtime detection is enabled
+*/}}
+{{- define "should-enable-sbom-enrichment-usage" -}}
+  {{- if and .Values.datadog.sbom.enrichment.usage.enabled (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) -}}
     true
   {{- else -}}
     false

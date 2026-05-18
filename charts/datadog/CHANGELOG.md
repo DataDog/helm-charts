@@ -1,5 +1,96 @@
 # Datadog changelog
 
+## 3.213.3
+
+* [GKE Autopilot] Add `agent-data-plane` to WorkloadAllowlist by referencing exemption v1.0.4 when `datadog.dataPlane.enabled=true` ([#2605](https://github.com/DataDog/helm-charts/pull/2605)).
+
+## 3.213.2
+
+* Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
+* Update `fips.image.tag` to `1.1.24` fixing CVEs and updating packages.
+
+## 3.213.0
+
+* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.3`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
+
+## 3.212.0
+
+* Add `global.apmRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.211.0
+
+* feat(datadog): default agent to 7.78.3 ([#2647](https://github.com/DataDog/helm-charts/pull/2647)).
+
+## 3.210.0
+
+* [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
+
+## 3.209.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
+
+## 3.208.2
+
+* Remove bogus setsidaccept4 from system-probe seccomp profile ([#2636](https://github.com/DataDog/helm-charts/pull/2636)).
+
+## 3.208.1
+
+* Allow `writev`, `shutdown`, and `chown` syscalls in the system-probe seccomp profile, required by `system-probe-lite`.
+
+## 3.208.0
+
+* Add cluster autoscaling RBAC permissions.
+
+## 3.207.0
+
+* Add cluster agent RBAC permissions required for cluster-profile-aware workload autoscaling: `datadogpodautoscalerclusterprofiles` CRD access for reading and writing cluster-wide scaling profiles; `statefulsets` and `argoproj.io/rollouts` get/list/watch/patch to read workload metadata and trigger rollouts; `namespaces` get/list/watch to resolve namespace-scoped profiles.
+
+## 3.206.0
+
+* Bump Datadog Operator chart dependency to 2.22.0.
+* Bump Datadog CRD chart dependency to 2.20.0.
+* Bump Operator image tag to 1.26.0.
+
+## 3.205.0
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 3.204.0
+
+* Add `pods/resize`, `pods/eviction` roles to the cluster agent deployment when autoscaling workloads is enabled.
+
+## 3.203.0
+
+* Add `datadog.sbom.enrichment.usage.enabled` to enable runtime "package in use" SBOM enrichment via system-probe (Agent 7.79.0+).
+
+## 3.202.6
+
+* Update `fips.image.tag` to `1.1.23` fixing CVEs and updating packages.
+
+## 3.202.5
+
+* Default `datadog.dataPlane.dogstatsd.enabled` to `true` so that setting `datadog.dataPlane.enabled: true` is sufficient to route DogStatsD to ADP ([#2604](https://github.com/DataDog/helm-charts/pull/2604)).
+
+## 3.202.4
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 3.202.3
+
+* [CSPM] add new configuration to run CSPM within system-probe
+
+## 3.202.2
+
+* Use the standard Agent image for the `agent-data-plane` container instead of the dedicated `agent-data-plane` image, matching the Datadog Operator behavior.
+
+## 3.202.1
+
+* Update datadog-csi-driver chart dependency version to fix a CSI Driver startup failure bug on gke autopilot. [Release v1.2.2](https://github.com/DataDog/datadog-csi-driver/pull/78)
+
+## 3.202.0
+
+* Add `clusterAgent.privateActionRunner.k8sRemediationEnabled` to create the ClusterRole and ClusterRoleBinding required for k8s remediation actions ([#2592](https://github.com/DataDog/helm-charts/pull/2592)).
+
 ## 3.201.8
 
 * Fix deployment issues when using an agent image tag that contains the string `latest` when `doNotCheckTag` is not set due to the semverCompare for `controllerrevisions` in `kube-state-metrics-core-rbac.yaml`.
@@ -20,7 +111,6 @@
 ## 3.201.3
 
 * Update `fips.image.tag` to `1.1.22` fixing CVEs and updating packages.
-
 
 ## 3.201.2
 

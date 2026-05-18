@@ -5,6 +5,14 @@
 ## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
 ## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
 
+# global.apmRegistryAllowList -- Restrict which registries can be used for APM library injection.
+## When non-empty, only libraries from the listed registries will be injected. Enforced by both the
+## admission controller webhook and the CSI driver. An empty list allows all registries (default).
+global:
+  apmRegistryAllowList: []
+  #   - public.ecr.aws/datadog
+  #   - gcr.io/datadoghq
+
 # nameOverride -- Override name of app
 nameOverride:  # ""
 
@@ -793,6 +801,13 @@ datadog:
     enabled: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
+    # datadog.hostProfiler.seccomp -- Apply a seccomp profile to the host-profiler container (e.g. "localhost/host-profiler" or "runtime/default")
+    seccomp: localhost/host-profiler
+    # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
+    seccompRoot: /var/lib/kubelet/seccomp
+    # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
+    ## Only used when agents.podSecurity.apparmor.enabled is true.
+    apparmor: unconfined
 
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
@@ -1136,7 +1151,7 @@ datadog:
     enabled: false
 
   discovery:
-    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
     enabled:  # false
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
@@ -1197,6 +1212,13 @@ datadog:
       analyzers:
         - "os"
 
+    enrichment:
+      usage:
+        # datadog.sbom.enrichment.usage.enabled -- Enable runtime "package in use" SBOM enrichment.
+        # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
+        # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
+        enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -1222,6 +1244,10 @@ datadog:
       # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+)
       host_benchmarks:
         enabled: true
+
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
+      runInSystemProbe: false
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -1401,23 +1427,7 @@ datadog:
 
     dogstatsd:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
-      enabled: false
-
-    image:
-      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
-      name: agent-data-plane
-
-      # datadog.dataPlane.image.tag -- Define the data plane version to use
-      tag: 0.1.30
-
-      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
-      digest: ""
-
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
-      repository:
-
-      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
-      pullPolicy: IfNotPresent
+      enabled: true
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
@@ -1449,7 +1459,7 @@ datadog:
   # Configuration related to Workload Autoscaling
   autoscaling:
     workload:
-      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      # datadog.autoscaling.workload.enabled -- (bool) Enable Workload Autoscaling.
       enabled:
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
@@ -1469,7 +1479,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1858,6 +1868,12 @@ clusterAgent:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
 
+    # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
+    ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
+    ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
+    ## and manage ConfigMaps and Events cluster-wide.
+    k8sRemediationEnabled: false
+
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
@@ -2037,7 +2053,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.22
+    tag: 1.1.24
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2080,7 +2096,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2170,6 +2186,7 @@ agents:
       - AUDIT_READ
       - DAC_READ_SEARCH
       - MKNOD
+      - SYSLOG
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -2186,6 +2203,7 @@ agents:
     seccompProfiles:
       - "runtime/default"
       - "localhost/system-probe"
+      - "localhost/host-profiler"
 
     apparmor:
       # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
@@ -2394,7 +2412,16 @@ agents:
       # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
       securityContext:
         readOnlyRootFilesystem: true
-        privileged: true
+        privileged: false
+        capabilities:
+          add:
+            - BPF
+            - PERFMON
+            - SYS_PTRACE
+            - SYS_RESOURCE
+            - DAC_READ_SEARCH
+            - SYSLOG
+            - CHECKPOINT_RESTORE
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
@@ -2747,7 +2774,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.78.0
+    tag: 7.78.3
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2988,7 +3015,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.25.0
+    tag: 1.26.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3033,8 +3060,12 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
+      datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
       datadogAgentInternals: false
+      # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
+      datadogCSIDrivers: false
 
 datadog-crds:
   crds:
@@ -3042,6 +3073,8 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
+    # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
+    datadogPodAutoscalerClusterProfiles: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.

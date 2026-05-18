@@ -101,6 +101,38 @@ app.kubernetes.io/component: indexer
 {{- end }}
 
 {{/*
+Intake Selector labels
+*/}}
+{{- define "quickwit.intake.selectorLabels" -}}
+{{ include "quickwit.selectorLabels" . }}
+app.kubernetes.io/component: intake
+{{- end }}
+
+{{/*
+Intake container ports
+*/}}
+{{- define "quickwit.intake.ports" -}}
+- name: dd-agent
+  containerPort: 8181
+  protocol: TCP
+- name: http-ingest
+  containerPort: 8282
+  protocol: TCP
+- name: otlp-grpc
+  containerPort: 8383
+  protocol: TCP
+- name: otlp-http
+  containerPort: 8384
+  protocol: TCP
+- name: connections
+  containerPort: 8585
+  protocol: TCP
+- name: api
+  containerPort: 8686
+  protocol: TCP
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "quickwit.serviceAccountName" -}}
