@@ -76,7 +76,7 @@ spec:
             - "-datadogDashboardEnabled=false"
             - "-datadogGenericResourceEnabled=false"
             - "-remoteConfigEnabled=false"
-            - "-datadogCSIDriverEnabled=false"
+            - "-datadogCSIDriverEnabled=true"
           ports:
             - name: metrics
               containerPort: 8383
