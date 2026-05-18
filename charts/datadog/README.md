@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.213.4](https://img.shields.io/badge/Version-3.213.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.213.5](https://img.shields.io/badge/Version-3.213.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -915,6 +915,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
+| datadog.otelCollector.allowlistWaitTimeout | string | `"300s"` | On GKE Autopilot only, max time to wait for the AllowlistSynchronizer to report Ready when `featureGates` is set The synchronizer must finish syncing the v1.0.5 partner exemption before the otel-agent DaemonSet is deployed, otherwise Warden rejects the pod. |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
 | datadog.otelCollector.configMap | object | `{"items":null,"key":"otel-config.yaml","name":null}` | Use an existing ConfigMap for DDOT Collector configuration |
 | datadog.otelCollector.configMap.items | string | `nil` | Items within the ConfigMap that contain DDOT Collector configuration |

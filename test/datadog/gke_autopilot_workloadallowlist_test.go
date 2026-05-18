@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/assert"
+	yaml "gopkg.in/yaml.v3"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"testing"
-
-	yaml "gopkg.in/yaml.v3"
 )
 
 // Capabilities allowed by the Datadog WorkloadAllowlist (system-probe securityContext).
@@ -112,6 +111,33 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 			},
 		},
 		{
+			// OTAGENT-980: when datadog.otelCollector.featureGates is set, the rendered
+			// DaemonSet must still satisfy the WorkloadAllowlist (no extra hostPaths,
+			// no hostPorts, no disallowed capabilities). The synchronizer is expected
+			// to reference v1.0.5 for this configuration.
+			name: "with otel-agent featureGates",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.envDict.HELM_FORCE_RENDER":  "true",
+					"datadog.apiKeyExistingSecret":       "datadog-secret",
+					"datadog.appKeyExistingSecret":       "datadog-secret",
+					"providers.gke.autopilot":            "true",
+					"datadog.otelCollector.enabled":      "true",
+					"datadog.otelCollector.featureGates": "service.profilesSupport",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				requireContainerNames(t, ds, "agent", "system-probe", "otel-agent")
+				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+			},
+		},
+		{
 			// Exercises system-probe features to catch hostPath and capability violations
 			// when npm/usm/enforcement are enabled (e.g. KILL from CWS enforcement).
 			name: "with system-probe",
@@ -150,9 +176,13 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 }
 
 // Test_autopilotAllowlistSynchronizerPaths verifies the AllowlistSynchronizer references
-// the v1.0.4 exemption (which permits agent-data-plane) when ADP is enabled, and omits
-// it when ADP is disabled. Uses --api-versions to simulate a GKE cluster that supports
-// WorkloadAllowlist CRDs (>= 1.32.1-gke.1729000).
+// the right Datadog WorkloadAllowlist exemption versions:
+//   - v1.0.4 (permits agent-data-plane) only when ADP is enabled (#2605).
+//   - v1.0.5 (permits the otel-agent container when feature gates are configured) only
+//     when datadog.otelCollector.featureGates is set (OTAGENT-980).
+//
+// Uses --api-versions to simulate a GKE cluster that supports WorkloadAllowlist CRDs
+// (>= 1.32.1-gke.1729000).
 func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 	gkeCRDArgs := []string{
 		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
@@ -160,19 +190,26 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 		"--kube-version", "v1.33.0",
 	}
 
+	const (
+		v104Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml"
+		v105Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.5.yaml"
+	)
+
 	tests := []struct {
 		name       string
 		overrides  map[string]string
 		expectV104 bool
+		expectV105 bool
 	}{
 		{
-			name: "without ADP",
+			name: "default (autopilot, no feature toggles)",
 			overrides: map[string]string{
 				"datadog.apiKeyExistingSecret": "datadog-secret",
 				"datadog.appKeyExistingSecret": "datadog-secret",
 				"providers.gke.autopilot":      "true",
 			},
 			expectV104: false,
+			expectV105: false,
 		},
 		{
 			name: "with ADP enabled",
@@ -184,6 +221,30 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 				"datadog.dataPlane.dogstatsd.enabled": "true",
 			},
 			expectV104: true,
+			expectV105: false,
+		},
+		{
+			name: "with otelCollector enabled (no featureGates)",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":  "datadog-secret",
+				"datadog.appKeyExistingSecret":  "datadog-secret",
+				"providers.gke.autopilot":       "true",
+				"datadog.otelCollector.enabled": "true",
+			},
+			expectV104: false,
+			expectV105: false,
+		},
+		{
+			name: "with otelCollector featureGates",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":       "datadog-secret",
+				"datadog.appKeyExistingSecret":       "datadog-secret",
+				"providers.gke.autopilot":            "true",
+				"datadog.otelCollector.enabled":      "true",
+				"datadog.otelCollector.featureGates": "service.profilesSupport",
+			},
+			expectV104: false,
+			expectV105: true,
 		},
 	}
 
@@ -206,13 +267,93 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 			}
 			assert.NoError(t, yaml.Unmarshal([]byte(manifest), &synchronizer))
 
-			const v104Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml"
 			hasV104 := common.Contains(v104Path, synchronizer.Spec.AllowlistPaths)
-			if tt.expectV104 {
-				assert.True(t, hasV104, "expected v1.0.4 exemption path when ADP is enabled")
-			} else {
-				assert.False(t, hasV104, "v1.0.4 exemption path should not be present when ADP is disabled")
+			assert.Equal(t, tt.expectV104, hasV104, "v1.0.4 exemption path presence (gated on dataPlane.enabled)")
+
+			hasV105 := common.Contains(v105Path, synchronizer.Spec.AllowlistPaths)
+			assert.Equal(t, tt.expectV105, hasV105, "v1.0.5 exemption path presence (gated on otelCollector.featureGates)")
+		})
+	}
+}
+
+// Test_autopilotAllowlistWaitJob verifies that the wait Job + RBAC are rendered only
+// when datadog.otelCollector.featureGates is set on GKE Autopilot (and not GDC), so the
+// DaemonSet rollout is gated on v1.0.5 being installed by the AllowlistSynchronizer.
+// See OTAGENT-980.
+func Test_autopilotAllowlistWaitJob(t *testing.T) {
+	gkeCRDArgs := []string{
+		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
+		"--api-versions", "auto.gke.io/v1/WorkloadAllowlist",
+		"--kube-version", "v1.33.0",
+	}
+
+	tests := []struct {
+		name          string
+		overrides     map[string]string
+		expectRender  bool
+	}{
+		{
+			name: "wait job is NOT rendered without featureGates",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":  "datadog-secret",
+				"datadog.appKeyExistingSecret":  "datadog-secret",
+				"providers.gke.autopilot":       "true",
+				"datadog.otelCollector.enabled": "true",
+			},
+			expectRender: false,
+		},
+		{
+			name: "wait job is NOT rendered when GDC",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":       "datadog-secret",
+				"datadog.appKeyExistingSecret":       "datadog-secret",
+				"providers.gke.autopilot":            "true",
+				"providers.gke.gdc":                  "true",
+				"datadog.otelCollector.enabled":      "true",
+				"datadog.otelCollector.featureGates": "service.profilesSupport",
+			},
+			expectRender: false,
+		},
+		{
+			name: "wait job is rendered when featureGates is set",
+			overrides: map[string]string{
+				"datadog.apiKeyExistingSecret":       "datadog-secret",
+				"datadog.appKeyExistingSecret":       "datadog-secret",
+				"providers.gke.autopilot":            "true",
+				"datadog.otelCollector.enabled":      "true",
+				"datadog.otelCollector.featureGates": "service.profilesSupport",
+			},
+			expectRender: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/gke_autopilot_allowlist_wait_job.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   tt.overrides,
+				ExtraArgs:   gkeCRDArgs,
+			})
+
+			if !tt.expectRender {
+				// helm template returns an error when --show-only matches no rendered content.
+				assert.Error(t, err, "expected template to be empty / not rendered")
+				return
 			}
+
+			assert.NoError(t, err)
+			assert.Contains(t, manifest, "kind: Job", "wait Job should be rendered")
+			assert.Contains(t, manifest, "kind: ServiceAccount", "ServiceAccount should be rendered")
+			assert.Contains(t, manifest, "kind: ClusterRole", "ClusterRole should be rendered")
+			assert.Contains(t, manifest, "kind: ClusterRoleBinding", "ClusterRoleBinding should be rendered")
+			assert.Contains(t, manifest, "allowlistsynchronizer/datadog-synchronizer", "wait should target the synchronizer")
+			assert.Contains(t, manifest, "--for=condition=Ready", "wait should gate on Ready condition")
+			// Hook ordering: SA/Role/Binding at -2, Job at 0, after the synchronizer at -1.
+			assert.Contains(t, manifest, `"helm.sh/hook-weight": "-2"`, "RBAC should run before the synchronizer")
+			assert.Contains(t, manifest, `"helm.sh/hook-weight": "0"`, "Job should run after the synchronizer")
 		})
 	}
 }

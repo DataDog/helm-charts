@@ -14,4 +14,7 @@ spec:
   {{- if and .Values.datadog.dataPlane.enabled (not .Values.providers.gke.gdc) }}
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml
   {{- end }}
+  {{- if and .Values.datadog.otelCollector.enabled .Values.datadog.otelCollector.featureGates (not .Values.providers.gke.gdc) }}
+  - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.5.yaml
+  {{- end }}
 {{- end }}
