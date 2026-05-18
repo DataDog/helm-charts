@@ -25,6 +25,10 @@
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
+    {{- if .Values.datadog.dogstatsd.port }}
+    - name: DD_DOGSTATSD_PORT
+      value: {{ .Values.datadog.dogstatsd.port | quote }}
+    {{- end }}
     {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode }}
      # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
     - name: NVIDIA_VISIBLE_DEVICES

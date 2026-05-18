@@ -1969,6 +1969,8 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
