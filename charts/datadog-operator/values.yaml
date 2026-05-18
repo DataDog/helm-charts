@@ -91,7 +91,7 @@ datadogAgentInternal:
   enabled: true
 datadogCSIDriver:
   # datadogCSIDriver.enabled -- Enables the Datadog CSI Driver controller
-  enabled: false
+  enabled: true
 datadogDashboard:
   # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
   enabled: false
@@ -173,12 +173,14 @@ datadogCRDs:
     datadogMetrics: true
     # datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
+    # datadogCRDs.crds.datadogPodAutoscalerClusterProfiles -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
+    datadogPodAutoscalerClusterProfiles: true
     # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
     datadogMonitors: true
     # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
     datadogSLOs: false
     # datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
-    datadogCSIDrivers: false
+    datadogCSIDrivers: true
     # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
     datadogDashboards: false
     # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
@@ -254,6 +256,30 @@ watchNamespacesAgentProfile: []
 #
 # to watch all namespaces
 # watchNamespacesAgentProfile:
+# - ""
+
+# watchNamespacesDashboard -- Restricts the Operator to watch DatadogDashboard resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesDashboard: []
+# example: watch only two namespaces:
+# watchNamespacesDashboard:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesDashboard:
+# - ""
+
+# watchNamespacesGenericResource -- Restricts the Operator to watch DatadogGenericResource resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesGenericResource: []
+# example: watch only two namespaces:
+# watchNamespacesGenericResource:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesGenericResource:
 # - ""
 
 # containerSecurityContext -- A security context defines privileges and access control settings for a container.

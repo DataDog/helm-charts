@@ -83,8 +83,10 @@ data:
       use_system_probe_lite: {{ include "discovery-use-system-probe-lite" . }}
       network_stats:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
+      {{- if not (eq $.Values.datadog.discovery.serviceMap.enabled nil) }}
       service_map:
         enabled: {{ $.Values.datadog.discovery.serviceMap.enabled }}
+      {{- end }}
     {{- end }}
     gpu_monitoring:
       enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}

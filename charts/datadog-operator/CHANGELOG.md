@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.23.0-dev.4
+
+* [datadog-operator] Enable DatadogCSIDriver by default and install related CRD ([#2670](https://github.com/DataDog/helm-charts/pull/2670)).
+
+## 2.23.0-dev.3
+
+* Support Helm parameters for `DD_DASHBOARD_WATCH_NAMESPACE`and `DD_GENERIC_RESOURCE_WATCH_NAMESPACE`
+
+## 2.23.0-dev.2
+
+* Install the DatadogPodAutoscalerClusterProfiles CRD by default. 
+
 ## 2.23.0-dev.1
 
 * Update Datadog Operator chart for 1.27.0-rc.1.

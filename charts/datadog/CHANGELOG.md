@@ -1,8 +1,37 @@
 # Datadog changelog
 
-## 3.209.0
+## 3.214.0
 
 * Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+
+## 3.213.3
+
+* [GKE Autopilot] Add `agent-data-plane` to WorkloadAllowlist by referencing exemption v1.0.4 when `datadog.dataPlane.enabled=true` ([#2605](https://github.com/DataDog/helm-charts/pull/2605)).
+
+## 3.213.2
+
+* Add `appProtocol` field to OTLP service ports (`otlpgrpcport` and `otlphttpport`) so that Envoy-based service meshes (Istio, Gloo, etc.) correctly identify gRPC and HTTP protocols on the local-traffic service.
+* Update `fips.image.tag` to `1.1.24` fixing CVEs and updating packages.
+
+## 3.213.0
+
+* Bump `get-agent-version` fallback for `agents.image.tag: latest` (and `"7"`) from `7.67.0` to `7.78.3`. Floating tags now behave consistently with the chart's default tag in every version-gated feature: service discovery defaulting auto-enables `system-probe-lite`, Agent Data Plane no longer fails its `< 7.74.0` guard, the `-fips-full` and standalone DDOT FIPS image guards no longer fail, and the `DD_USE_DOGSTATSD` toggle for ADP matches the `^7.75.0-0` branch.
+
+## 3.212.0
+
+* Add `global.apmRegistryAllowList` and pass it to the cluster-agent admission controller for `DatadogLibrary` volumes.
+
+## 3.211.0
+
+* feat(datadog): default agent to 7.78.3 ([#2647](https://github.com/DataDog/helm-charts/pull/2647)).
+
+## 3.210.0
+
+* [PROF-14068] Remove privileges for host-profiler ([#2586](https://github.com/DataDog/helm-charts/pull/2586)).
+
+## 3.209.0
+
+* feat(datadog): add autoscaling DPACP CRD support ([#2561](https://github.com/DataDog/helm-charts/pull/2561)).
 
 ## 3.208.2
 

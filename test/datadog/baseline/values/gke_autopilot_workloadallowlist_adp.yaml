@@ -1,0 +1,20 @@
+# Baseline test for GKE Autopilot with agent-data-plane and WorkloadAllowlist (GKE versions >= 1.32.1-gke.1729000).
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  envDict:
+    HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
+  dataPlane:
+    enabled: true
+    dogstatsd:
+      enabled: true
+
+clusterAgent:
+  enabled: true
+
+clusterChecksRunner:
+  enabled: true
+
+providers:
+  gke:
+    autopilot: true
