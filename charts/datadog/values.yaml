@@ -2434,8 +2434,11 @@ agents:
       # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
       securityContext:
         readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
         privileged: false
         capabilities:
+          drop:
+            - ALL
           add:
             - BPF
             - PERFMON
