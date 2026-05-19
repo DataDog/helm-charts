@@ -1024,13 +1024,20 @@ Build part-of label
 {{- end }}
 
 {{/*
-Common agent, cluster-agent, and cluster-checks-runner workload template labels
+Common agent, cluster-agent, and cluster-checks-runner workload template labels.
+Per-workload `instanceLabelOverride` overrides the `app.kubernetes.io/instance`
+value (restored from pre-3.140.0 for callers that pin on the previous label, e.g.
+NetworkPolicies).
 */}}
 {{- define "datadog.pod-template-labels" }}
 {{- $ctx := index . 0 }}
 {{- $name := index . 1 }}
+{{- $instance := printf "%s-%s" (include "datadog.fullname" $ctx) $name }}
+{{- if and (eq $name "agent") $ctx.Values.agents.instanceLabelOverride }}{{- $instance = $ctx.Values.agents.instanceLabelOverride }}{{- end }}
+{{- if and (eq $name "cluster-agent") $ctx.Values.clusterAgent.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterAgent.instanceLabelOverride }}{{- end }}
+{{- if and (eq $name "cluster-checks-runner") $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- end }}
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
-app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
+app.kubernetes.io/instance: {{ $instance | quote }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
