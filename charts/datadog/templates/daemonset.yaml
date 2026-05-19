@@ -6,6 +6,7 @@ kind: DaemonSet
 metadata:
   name: {{ template "datadog.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  invalidFieldForAnnotationTesting: true  # DUMMY: triggers kubeconform failure
   labels:
 {{ include "datadog.workload-labels" (list . "agent") | indent 4 }}
     app.kubernetes.io/component: agent
