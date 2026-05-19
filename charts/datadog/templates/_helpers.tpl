@@ -1037,7 +1037,7 @@ NetworkPolicies).
 {{- if and (eq $name "cluster-agent") $ctx.Values.clusterAgent.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterAgent.instanceLabelOverride }}{{- end }}
 {{- if and (eq $name "cluster-checks-runner") $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- end }}
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
-app.kubernetes.io/instance: {{ $instance }}
+app.kubernetes.io/instance: {{ $instance | quote }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
