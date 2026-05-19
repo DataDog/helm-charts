@@ -97,6 +97,9 @@ securityContext: {}
 # annotations -- Configure the annotations for the csi driver daemonset pods.
 annotations: {}
 
+# labels -- Configure the labels for the csi driver daemonset pods.
+labels: {}
+
 # global -- Global values shared across charts when this chart is used as a sub-chart.
 # When installed standalone, these values have no effect.
 global:
