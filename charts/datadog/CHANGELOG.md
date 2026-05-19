@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.214.0
+
+* Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+
 ## 3.213.4
 
 * Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.
