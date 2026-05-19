@@ -18,6 +18,8 @@ spec:
       labels:
         app: datadog-csi-driver-node-server
         admission.datadoghq.com/enabled: "false"
+        cost-center: engineering
+        team: observability
       annotations:
         ad.datadoghq.com/csi-node-driver.checks: |
           {
