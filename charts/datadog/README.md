@@ -817,7 +817,7 @@ helm install <RELEASE_NAME> \
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
-| datadog.discovery.serviceMap.enabled | bool | `nil` | Enable Discovery Service Map (HTTP/HTTPS topology only; restricted USM) |
+| datadog.discovery.serviceMap.enabled | bool | `nil` | Enable Discovery Service Map (restricted USM) |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |
