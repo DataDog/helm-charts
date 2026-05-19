@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.214.0
+
+* Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+
 ## 3.213.4
 
 * Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.
