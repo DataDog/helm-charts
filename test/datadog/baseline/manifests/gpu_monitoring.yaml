@@ -1958,6 +1958,8 @@ spec:
               value: INFO
             - name: HOST_ROOT
               value: /host/root
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
             - name: NVIDIA_VISIBLE_DEVICES
               value: all
           image: registry.datadoghq.com/agent:7.78.3

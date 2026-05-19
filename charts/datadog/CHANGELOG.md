@@ -4,6 +4,10 @@
 
 * Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
 
+## 3.213.4
+
+* Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.
+
 ## 3.213.3
 
 * [GKE Autopilot] Add `agent-data-plane` to WorkloadAllowlist by referencing exemption v1.0.4 when `datadog.dataPlane.enabled=true` ([#2605](https://github.com/DataDog/helm-charts/pull/2605)).
