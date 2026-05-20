@@ -46,11 +46,11 @@ BPF, CHOWN, DAC_READ_SEARCH, IPC_LOCK, NET_ADMIN, NET_BROADCAST, NET_RAW, SYS_AD
 
 ### Volume constraints
 
-`datadogrun` emptyDir is **not** allowed. The WorkloadAllowlist only permits `pointerdir` (hostPath) at `/opt/datadog-agent/run`.
+`datadogrun` emptyDir is **not** allowed in WorkloadAllowlist mode. The WorkloadAllowlist permits `datadogrun` only as a hostPath-backed volume at `/opt/datadog-agent/run`.
 
 **Reviewer action:** Flag any PR that introduces a new emptyDir or hostPath volume not in the allowed list above for Autopilot/GDC environments.
 
-> **Example:** A PR adds a `datadogrun` emptyDir volume to the DaemonSet. This volume type is not in the WorkloadAllowlist, so Warden rejects the DaemonSet on all GKE Autopilot clusters.
+> **Example:** A PR changes `datadogrun` back to an emptyDir volume in WorkloadAllowlist mode. This volume type is not in the WorkloadAllowlist, so Warden rejects the DaemonSet on GKE Autopilot clusters using WorkloadAllowlist.
 
 ### Container command and args constraints
 
@@ -73,9 +73,9 @@ The WorkloadAllowlist specifies the exact `command` and allowed `args` patterns 
 
 | Container | Allowed arg patterns |
 |---|---|
-| `otel-agent` | `^--config=/etc/otel-agent/.*.yaml$` (each config arg); no other args allowed |
+| `otel-agent` | `^--config=/etc/otel-agent/.*.yaml$` (each config arg); `^--feature-gates=.*$` |
 
-> **Example:** A PR adds `--some-new-flag=value` to the `otel-agent` args. This arg does not match the WLA's `^--config=...` pattern, so Warden rejects the DaemonSet on all GKE Autopilot clusters where this value is set.
+> **Example:** A PR adds `--some-new-flag=value` to the `otel-agent` args. This arg does not match the WLA's allowed arg patterns, so Warden rejects the DaemonSet on all GKE Autopilot clusters where this value is set.
 
 **Reviewer action:** If a PR changes a container's `command` or adds new `args` (including conditionally via `.Values.*`), verify:
 1. The change is gated with `{{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}` until the Datadog WorkloadAllowlist CR is updated, OR

@@ -1806,7 +1806,7 @@ spec:
               name: passwd
               readOnly: true
             - mountPath: /opt/datadog-agent/run
-              name: pointerdir
+              name: datadogrun
               readOnly: false
         - command:
             - system-probe
@@ -1897,6 +1897,9 @@ spec:
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
               readOnly: false
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -1940,6 +1943,7 @@ spec:
             - mountPath: /host/etc/rhsm
               name: rhel-subscription-dir
               readOnly: true
+      hostPID: true
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt
@@ -2125,7 +2129,7 @@ spec:
           name: runtimesocketdir
         - hostPath:
             path: /var/autopilot/addon/datadog/logs
-          name: pointerdir
+          name: datadogrun
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%

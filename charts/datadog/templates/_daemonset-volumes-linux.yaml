@@ -238,7 +238,7 @@
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
+  name: {{ include "datadog.agentRunVolumeName" . }}
 {{- else }}
 - name: datadogrun
   emptyDir: {}

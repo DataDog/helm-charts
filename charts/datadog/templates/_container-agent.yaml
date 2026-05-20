@@ -352,7 +352,7 @@
     {{- end }}
     {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
-    - name: pointerdir
+    - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for logs pointer
@@ -371,7 +371,7 @@
       readOnly: true
     {{- end }}
     {{- else if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
-    - name: pointerdir
+    - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       readOnly: false
     {{- else }}

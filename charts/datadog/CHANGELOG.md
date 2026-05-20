@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.214.0
+
+* Tbavelier/operator helm autopilot alignment ([#2674](https://github.com/DataDog/helm-charts/pull/2674)).
+
 ## 3.213.4
 
 * Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.
