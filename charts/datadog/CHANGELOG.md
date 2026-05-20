@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.198.1
+
+* Grant the Cluster Agent `get`/`list`/`watch` on the `dd-cluster-info` ConfigMap (cluster-wide, gated by `datadog.orchestratorExplorer.enabled`). Required by the orchestrator check to surface the cluster-info snapshot written by `kubectl datadog autoscaling cluster install` to the Datadog back-end.
+
 ## 3.198.0
 
 * Update datadog-csi-driver chart dependency version to support configuring `priorityClass` on csi driver node server pods.

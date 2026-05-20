@@ -391,6 +391,16 @@ rules:
   - list
   - watch
   - get
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - dd-cluster-info
+  verbs:
+  - get
+  - list
+  - watch
 {{- include "orchestratorExplorer-config-crs" . }}
 {{- end }}
 {{- if .Values.datadog.appsec.injector.enabled }}
