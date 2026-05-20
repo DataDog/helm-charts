@@ -1545,6 +1545,7 @@ spec:
             - mountPath: /opt/datadog-agent/run
               name: pointerdir
               readOnly: false
+      hostPID: true
       initContainers:
         - args:
             - cp -r /etc/datadog-agent /opt

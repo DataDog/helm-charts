@@ -1,5 +1,5 @@
 # Baseline test for GKE Autopilot WorkloadAllowlist with logs collection enabled.
-# Validates that pointerdir (hostPath) is mounted and datadogrun emptyDir is absent.
+# Validates that datadogrun is a hostPath volume in WorkloadAllowlist mode.
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
