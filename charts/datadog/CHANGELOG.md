@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.214.0
+
+* Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
+
 ## 3.213.4
 
 * Propagate `DD_DOGSTATSD_PORT` to the system-probe container so it keeps submitting its metrics over UDP when the DogStatsD port is changed.

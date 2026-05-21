@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.0
+
+* Add `driver.resources` value to configure resource requests and limits for the CSI driver container.
+
 ## 0.12.0
 
 * Add `labels` value to configure labels on CSI driver daemonset pods.
