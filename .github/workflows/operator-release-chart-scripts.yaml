@@ -1,0 +1,59 @@
+name: Operator Release - Chart Scripts
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to check out, run release-operator.sh on, and push back to"
+        required: true
+        type: string
+      version:
+        description: "Operator version to bump to (e.g. 1.26.0-rc.3, 1.25.1)"
+        required: true
+        type: string
+      phase:
+        description: "Release phase to run"
+        required: true
+        type: choice
+        options:
+          - crds
+          - operator
+          - datadog
+      correlation_id:
+        description: "Correlation ID, surfaced in run-name so the caller can find this run"
+        required: true
+        type: string
+
+run-name: "operator release - chart scripts ${{ inputs.phase }} ${{ inputs.version }} [${{ inputs.correlation_id }}]"
+
+permissions:
+  contents: read
+
+jobs:
+  chart-scripts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+
+      - name: Run release-operator.sh
+        run: ./scripts/release-operator.sh "${{ inputs.phase }}" --operator-version "${{ inputs.version }}"
+
+      - name: Commit & push
+        run: |
+          # Attribute the commit to the github-actions[bot] account so it links
+          # to the bot's profile in the GitHub UI. 41898282 is the bot's user ID
+          # and follows GitHub's standard noreply format: <id>+<user>@users.noreply.github.com.
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No chart changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(${{ inputs.phase }}): release-operator.sh for v${{ inputs.version }}"
+          git push origin HEAD:${{ inputs.branch }}
