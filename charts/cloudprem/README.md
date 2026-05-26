@@ -11,6 +11,10 @@ helm repo add datadog https://helm.datadoghq.com
 helm repo update
 ```
 
+## Requirements
+
+Kubernetes: `>= 1.25.0-0`
+
 ## Prerequisites
 
 - A cloud account (AWS, GCP, Azure) or a self-managed Kubernetes cluster.
