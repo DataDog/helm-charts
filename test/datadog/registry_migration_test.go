@@ -213,7 +213,8 @@ func TestRegistryMigration(t *testing.T) {
 }
 
 // TestAdmissionControllerContainerRegistry verifies that DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-// is excluded from migration and always uses site-specific registries regardless of registryMigrationMode.
+// follows registryMigrationMode (same as the Agent image registry), and that
+// clusterAgent.admissionController.containerRegistry always takes precedence when set.
 func TestAdmissionControllerContainerRegistry(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -221,15 +222,23 @@ func TestAdmissionControllerContainerRegistry(t *testing.T) {
 		mode         string
 		wantRegistry string
 	}{
-		// Migration must not affect the admission controller registry.
-		{name: "US1/auto", site: "", mode: "auto", wantRegistry: "gcr.io/datadoghq"},
-		{name: "US1/all", site: "", mode: "all", wantRegistry: "gcr.io/datadoghq"},
-		{name: "EU1/auto", site: "datadoghq.eu", mode: "auto", wantRegistry: "eu.gcr.io/datadoghq"},
-		{name: "EU1/all", site: "datadoghq.eu", mode: "all", wantRegistry: "eu.gcr.io/datadoghq"},
-		{name: "AP1/auto", site: "ap1.datadoghq.com", mode: "auto", wantRegistry: "asia.gcr.io/datadoghq"},
-		{name: "AP1/all", site: "ap1.datadoghq.com", mode: "all", wantRegistry: "asia.gcr.io/datadoghq"},
-		{name: "US5/auto", site: "us5.datadoghq.com", mode: "auto", wantRegistry: "gcr.io/datadoghq"},
-		{name: "US5/all", site: "us5.datadoghq.com", mode: "all", wantRegistry: "gcr.io/datadoghq"},
+		// Migration disabled: site-specific registries.
+		{name: "US1/disabled", site: "", mode: "", wantRegistry: "gcr.io/datadoghq"},
+		{name: "EU1/disabled", site: "datadoghq.eu", mode: "", wantRegistry: "eu.gcr.io/datadoghq"},
+		{name: "AP1/disabled", site: "ap1.datadoghq.com", mode: "", wantRegistry: "asia.gcr.io/datadoghq"},
+		{name: "US5/disabled", site: "us5.datadoghq.com", mode: "", wantRegistry: "gcr.io/datadoghq"},
+		// Migration enabled: registry.datadoghq.com for migrated sites.
+		{name: "US1/auto", site: "", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "US1/all", site: "", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "EU1/auto", site: "datadoghq.eu", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "EU1/all", site: "datadoghq.eu", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "AP1/auto", site: "ap1.datadoghq.com", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "AP1/all", site: "ap1.datadoghq.com", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "US5/auto", site: "us5.datadoghq.com", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "US5/all", site: "us5.datadoghq.com", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		// Sites excluded from migration always use their site-specific registry.
+		{name: "US3/auto", site: "us3.datadoghq.com", mode: "auto", wantRegistry: "datadoghq.azurecr.io"},
+		{name: "US1-FED/auto", site: "ddog-gov.com", mode: "auto", wantRegistry: "public.ecr.aws/datadog"},
 		// Explicit containerRegistry override takes precedence.
 		{name: "explicit override", site: "", mode: "auto", wantRegistry: "my-custom-registry.example.com"},
 	}
