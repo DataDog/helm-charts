@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.214.1
+
+* Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
+
+
 ## 3.214.0
 
 * Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
