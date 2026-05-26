@@ -1975,6 +1975,9 @@ clusterAgent:
   additionalLabels: {}
     # key: "value"
 
+  # clusterAgent.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
   # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
 
@@ -2705,6 +2708,9 @@ agents:
   additionalLabels: {}
     # key: "value"
 
+  # agents.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
   useConfigMap:  # false
 
@@ -2996,6 +3002,9 @@ clusterChecksRunner:
   # clusterChecksRunner.additionalLabels -- Adds labels to the cluster checks runner deployment and pods
   additionalLabels: {}
     # key: "value"
+
+  # clusterChecksRunner.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
 
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}

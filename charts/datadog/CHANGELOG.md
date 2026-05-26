@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.0
+
+* Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+
 ## 3.214.0
 
 * Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
