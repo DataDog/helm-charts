@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.2
+
+* Grant the cluster-agent `get`/`list`/`watch` on `csidrivers.storage.k8s.io` so the admission controller can auto-detect the Datadog CSI driver for SSI library injection. The rule is rendered whenever `clusterAgent.admissionController.enabled` is `true`.
+
 ## 3.215.1
 
 * Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
