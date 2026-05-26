@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.26](https://img.shields.io/badge/AppVersion-v0.1.26-informational?style=flat-square)
+![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.26](https://img.shields.io/badge/AppVersion-v0.1.26-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -13,11 +13,18 @@ helm repo update
 
 ## Prerequisites
 
-- AWS account
-- Kubernetes `1.25+` ([EKS](https://aws.amazon.com/eks/) preferred)
-- [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller)
-- PostgreSQL database ([RDS](https://aws.amazon.com/rds/) preferred)
-- S3 bucket
+- A cloud account (AWS, GCP, Azure) or a self-managed Kubernetes cluster.
+- Kubernetes `1.25+` — enforced by the chart's `kubeVersion` constraint. See the
+  per-cloud install guides at <https://docs.datadoghq.com/byoc-logs/install/>.
+- An ingress controller compatible with the chart defaults:
+    - [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller)
+      (default; required on EKS), or
+    - [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/)
+      (used on AKS, supported elsewhere).
+- PostgreSQL database — managed (RDS, Cloud SQL, Azure Database for PostgreSQL
+  Flexible Server) or self-hosted.
+- Object storage — Amazon S3, Google Cloud Storage, Azure Blob Storage, MinIO,
+  Ceph, or any S3-compatible storage.
 
 ## Quick start
 
@@ -199,7 +206,12 @@ This command removes all the Kubernetes resources associated with the chart and 
 |extraConfigMaps | list | [] | Additional ConfigMaps to create with custom data and configuration|
 |image.pullPolicy | string | IfNotPresent | Image pull policy for CloudPrem containers|
 |image.repository | string | public.ecr.aws/datadog/cloudprem | Repository of the CloudPrem image|
-|image.tag | string | devel | Tag of the CloudPrem image to deploy|
+|image.tag | string | chart `appVersion` (currently `v0.1.26`) | Tag of the CloudPrem image to deploy. When unset, helm uses the chart's `appVersion`.|
+|azure.tenantId | string | "" | Azure tenant ID (when deploying on AKS / using Azure Blob Storage)|
+|azure.clientId | string | "" | Azure client ID for the BYOC Logs service principal|
+|azure.clientSecretRef | dict | {} | Reference to a Secret containing the Azure client secret (`name` + `key`)|
+|azure.storageAccount.name | string | "" | Azure storage account name used for indexes|
+|azure.storageAccount.accessKeySecretRef | dict | {} | Reference to a Secret containing the storage-account access key|
 |ingress.internal.enabled | bool | false | Whether to enable the internal ingress|
 |ingress.internal.host | string | null | Hostname for internal ingress access|
 |ingress.internal.name | string | null | Name of the internal ingress resource|
