@@ -53,6 +53,15 @@ driver:
     readOnlyRootFilesystem: true
     privileged: true
 
+  # driver.resources -- Resource requests and limits for the CSI driver container.
+  resources: {}
+  #  requests:
+  #    cpu: 100m
+  #    memory: 128Mi
+  #  limits:
+  #    cpu: 200m
+  #    memory: 256Mi
+
 sockets:
   # apmHostSocketPath -- Host path of the apm socket.
   # Should correspond to `datadog.apm.hostSocketPath`
@@ -96,6 +105,9 @@ securityContext: {}
 
 # annotations -- Configure the annotations for the csi driver daemonset pods.
 annotations: {}
+
+# labels -- Configure the labels for the csi driver daemonset pods.
+labels: {}
 
 # global -- Global values shared across charts when this chart is used as a sub-chart.
 # When installed standalone, these values have no effect.

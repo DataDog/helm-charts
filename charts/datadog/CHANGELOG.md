@@ -3,6 +3,7 @@
 ## 3.214.0
 
 * Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+* Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
 
 ## 3.213.4
 
