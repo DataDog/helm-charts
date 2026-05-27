@@ -183,7 +183,7 @@ datadog:
     rbac:
     # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
       create: true
-    
+
     ## Configuring this field changes the default kubernetes_state_core check configuration. Recommended for large clusters to reduce load on the API server.
     useApiServerCache: false
 
