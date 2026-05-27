@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.0
+
+* [Host Profiler] Tighten seccomp profile ([#2675](https://github.com/DataDog/helm-charts/pull/2675)).
+
 ## 3.214.1
 
 * Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
