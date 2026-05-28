@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 3.215.0
+
+* Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+
 ## 3.214.1
 
 * Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
-
 
 ## 3.214.0
 

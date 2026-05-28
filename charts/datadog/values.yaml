@@ -1158,6 +1158,10 @@ datadog:
     networkStats:
       enabled: true
 
+    # datadog.discovery.serviceMap.enabled -- (bool) Enable Discovery Service Map (restricted USM)
+    serviceMap:
+      enabled: false
+
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
