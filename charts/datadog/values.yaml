@@ -775,8 +775,6 @@ datadog:
           namespace: ""
 
       nginx:
-        # datadog.appsec.injector.nginx.initImage -- Container image for the init container that ships the nginx-datadog module .so into ingress-nginx controller pods
-        initImage: "datadog/ingress-nginx-injection"
         # datadog.appsec.injector.nginx.moduleMountPath -- Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir
         moduleMountPath: "/modules_mount"
 

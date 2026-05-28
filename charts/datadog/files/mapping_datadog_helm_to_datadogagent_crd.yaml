@@ -374,7 +374,6 @@ datadog.appKeyExistingSecret:
 datadog.appsec.injector.autoDetect: ""
 datadog.appsec.injector.enabled: ""
 datadog.appsec.injector.mode: ""
-datadog.appsec.injector.nginx.initImage: ""
 datadog.appsec.injector.nginx.moduleMountPath: ""
 datadog.appsec.injector.processor.address: ""
 datadog.appsec.injector.processor.port: ""

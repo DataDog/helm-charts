@@ -32,7 +32,6 @@ const (
 	ddAppsecProcessorServiceNameEnvVar    = "DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAME"
 	ddAppsecProcessorServiceNsEnvVar      = "DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE"
 	// nginx-specific env vars
-	ddAppsecNginxInitImageEnvVar       = "DD_ADMISSION_CONTROLLER_APPSEC_NGINX_INIT_IMAGE"
 	ddAppsecNginxModuleMountPathEnvVar = "DD_ADMISSION_CONTROLLER_APPSEC_NGINX_MODULE_MOUNT_PATH"
 )
 
@@ -77,7 +76,6 @@ func Test_AppSecInjector_Disabled_DoesNotRenderAppSecEnvVars(t *testing.T) {
 		ddAppsecSidecarLimitCPUEnvVar,
 		ddAppsecSidecarLimitMemoryEnvVar,
 		ddAppsecSidecarBodyParsingLimitEnvVar,
-		ddAppsecNginxInitImageEnvVar,
 		ddAppsecNginxModuleMountPathEnvVar,
 	} {
 		_, found := findEnvVar(containerEnv, envVarName)
@@ -103,7 +101,6 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 		ddAppsecSidecarReqCPUEnvVar:        "10m",
 		ddAppsecSidecarReqMemoryEnvVar:     "128Mi",
 		ddAppsecProcessorPortEnvVar:        "443",
-		ddAppsecNginxInitImageEnvVar:       "datadog/ingress-nginx-injection",
 		ddAppsecNginxModuleMountPathEnvVar: "/modules_mount",
 	}
 
@@ -148,7 +145,6 @@ func Test_AppSecInjector_Enabled_RendersCustomOptions(t *testing.T) {
 		"datadog.appsec.injector.processor.port":                    "8443",
 		"datadog.appsec.injector.processor.service.name":            "appsec-processor",
 		"datadog.appsec.injector.processor.service.namespace":       "datadog",
-		"datadog.appsec.injector.nginx.initImage":                   "myco/init:v1",
 		"datadog.appsec.injector.nginx.moduleMountPath":             "/custom/mount",
 	}, map[string]string{
 		"datadog.appsec.injector.proxies": `["envoy-gateway","istio","istio-gateway","ingress-nginx"]`,
@@ -172,7 +168,6 @@ func Test_AppSecInjector_Enabled_RendersCustomOptions(t *testing.T) {
 		ddAppsecSidecarReqMemoryEnvVar:        "256Mi",
 		ddAppsecSidecarLimitCPUEnvVar:         "200m",
 		ddAppsecSidecarLimitMemoryEnvVar:      "512Mi",
-		ddAppsecNginxInitImageEnvVar:          "myco/init:v1",
 		ddAppsecNginxModuleMountPathEnvVar:    "/custom/mount",
 	}
 

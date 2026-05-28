@@ -378,9 +378,6 @@
                 "nginx": {
                   "type": "object",
                   "properties": {
-                    "initImage": {
-                      "type": "string"
-                    },
                     "moduleMountPath": {
                       "type": "string"
                     }

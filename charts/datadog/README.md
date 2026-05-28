@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.215.1](https://img.shields.io/badge/Version-3.215.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.216.0](https://img.shields.io/badge/Version-3.216.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -772,7 +772,6 @@ helm install <RELEASE_NAME> \
 | datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway, ingress-nginx) |
 | datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
 | datadog.appsec.injector.mode | string | `""` | Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly. |
-| datadog.appsec.injector.nginx.initImage | string | `"datadog/ingress-nginx-injection"` | Container image for the init container that ships the nginx-datadog module .so into ingress-nginx controller pods |
 | datadog.appsec.injector.nginx.moduleMountPath | string | `"/modules_mount"` | Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir |
 | datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
 | datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
