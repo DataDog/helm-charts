@@ -294,7 +294,8 @@
                     "enum": [
                       "envoy-gateway",
                       "istio",
-                      "istio-gateway"
+                      "istio-gateway",
+                      "ingress-nginx"
                     ]
                   }
                 },
@@ -370,6 +371,18 @@
                         }
                       },
                       "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "nginx": {
+                  "type": "object",
+                  "properties": {
+                    "initImage": {
+                      "type": "string"
+                    },
+                    "moduleMountPath": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false

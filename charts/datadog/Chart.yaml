@@ -1,7 +1,9 @@
 ---
 apiVersion: v1
 name: datadog
-version: 3.215.1
+version: 3.216.0
+version: 3.216.0
+>>>>>>> 89c0ae29 (feat(datadog): add AppSec ingress-nginx injection support)
 appVersion: "7"
 description: Datadog Agent
 keywords:

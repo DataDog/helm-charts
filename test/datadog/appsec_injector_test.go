@@ -31,6 +31,9 @@ const (
 	ddAppsecProcessorAddressEnvVar        = "DD_APPSEC_PROXY_PROCESSOR_ADDRESS"
 	ddAppsecProcessorServiceNameEnvVar    = "DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAME"
 	ddAppsecProcessorServiceNsEnvVar      = "DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE"
+	// nginx-specific env vars
+	ddAppsecNginxInitImageEnvVar       = "DD_ADMISSION_CONTROLLER_APPSEC_NGINX_INIT_IMAGE"
+	ddAppsecNginxModuleMountPathEnvVar = "DD_ADMISSION_CONTROLLER_APPSEC_NGINX_MODULE_MOUNT_PATH"
 )
 
 func renderAppsecInjectorEnvVars(t *testing.T, overrides map[string]string, overridesJSON map[string]string) []corev1.EnvVar {
@@ -74,6 +77,8 @@ func Test_AppSecInjector_Disabled_DoesNotRenderAppSecEnvVars(t *testing.T) {
 		ddAppsecSidecarLimitCPUEnvVar,
 		ddAppsecSidecarLimitMemoryEnvVar,
 		ddAppsecSidecarBodyParsingLimitEnvVar,
+		ddAppsecNginxInitImageEnvVar,
+		ddAppsecNginxModuleMountPathEnvVar,
 	} {
 		_, found := findEnvVar(containerEnv, envVarName)
 		assert.False(t, found, "did not expect %s when appsec injector is disabled", envVarName)
@@ -88,16 +93,18 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 	}, nil)
 
 	tests := map[string]string{
-		ddAppsecProxyEnabledEnvVar:      "true",
-		ddAppsecProxyAutoDetectEnvVar:   "true",
-		ddAppsecInjectorEnabledEnvVar:   "true",
-		ddAppsecSidecarImageEnvVar:      "ghcr.io/datadog/dd-trace-go/service-extensions-callout",
-		ddAppsecSidecarImageTagEnvVar:   "v2.6.0",
-		ddAppsecSidecarPortEnvVar:       "8080",
-		ddAppsecSidecarHealthPortEnvVar: "8081",
-		ddAppsecSidecarReqCPUEnvVar:     "10m",
-		ddAppsecSidecarReqMemoryEnvVar:  "128Mi",
-		ddAppsecProcessorPortEnvVar:     "443",
+		ddAppsecProxyEnabledEnvVar:         "true",
+		ddAppsecProxyAutoDetectEnvVar:      "true",
+		ddAppsecInjectorEnabledEnvVar:      "true",
+		ddAppsecSidecarImageEnvVar:         "ghcr.io/datadog/dd-trace-go/service-extensions-callout",
+		ddAppsecSidecarImageTagEnvVar:      "v2.6.0",
+		ddAppsecSidecarPortEnvVar:          "8080",
+		ddAppsecSidecarHealthPortEnvVar:    "8081",
+		ddAppsecSidecarReqCPUEnvVar:        "10m",
+		ddAppsecSidecarReqMemoryEnvVar:     "128Mi",
+		ddAppsecProcessorPortEnvVar:        "443",
+		ddAppsecNginxInitImageEnvVar:       "datadog/ingress-nginx-injection",
+		ddAppsecNginxModuleMountPathEnvVar: "/modules_mount",
 	}
 
 	for envVarName, expectedValue := range tests {
@@ -141,15 +148,17 @@ func Test_AppSecInjector_Enabled_RendersCustomOptions(t *testing.T) {
 		"datadog.appsec.injector.processor.port":                    "8443",
 		"datadog.appsec.injector.processor.service.name":            "appsec-processor",
 		"datadog.appsec.injector.processor.service.namespace":       "datadog",
+		"datadog.appsec.injector.nginx.initImage":                   "myco/init:v1",
+		"datadog.appsec.injector.nginx.moduleMountPath":             "/custom/mount",
 	}, map[string]string{
-		"datadog.appsec.injector.proxies": `["envoy-gateway","istio","istio-gateway"]`,
+		"datadog.appsec.injector.proxies": `["envoy-gateway","istio","istio-gateway","ingress-nginx"]`,
 	})
 
 	tests := map[string]string{
 		ddAppsecProxyEnabledEnvVar:            "true",
 		ddAppsecInjectorEnabledEnvVar:         "true",
 		ddAppsecInjectorModeEnvVar:            "external",
-		ddAppsecProxyProxiesEnvVar:            "[\"envoy-gateway\",\"istio\",\"istio-gateway\"]",
+		ddAppsecProxyProxiesEnvVar:            "[\"envoy-gateway\",\"istio\",\"istio-gateway\",\"ingress-nginx\"]",
 		ddAppsecProcessorPortEnvVar:           "8443",
 		ddAppsecProcessorAddressEnvVar:        "processor.example.svc",
 		ddAppsecProcessorServiceNameEnvVar:    "appsec-processor",
@@ -163,6 +172,8 @@ func Test_AppSecInjector_Enabled_RendersCustomOptions(t *testing.T) {
 		ddAppsecSidecarReqMemoryEnvVar:        "256Mi",
 		ddAppsecSidecarLimitCPUEnvVar:         "200m",
 		ddAppsecSidecarLimitMemoryEnvVar:      "512Mi",
+		ddAppsecNginxInitImageEnvVar:          "myco/init:v1",
+		ddAppsecNginxModuleMountPathEnvVar:    "/custom/mount",
 	}
 
 	for envVarName, expectedValue := range tests {
@@ -219,4 +230,98 @@ func Test_AppSecInjector_RBAC_IncludesIstioGatewaysRule(t *testing.T) {
 	}
 	assert.True(t, hasEnvoyFiltersRule, "expected networking.istio.io/envoyfilters rule")
 	assert.True(t, hasGatewaysRule, "expected networking.istio.io/gateways rule")
+}
+
+func Test_AppSecInjector_RBAC_IncludesNginxRules(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":    "datadog-secret",
+			"datadog.appKeyExistingSecret":    "datadog-secret",
+			"datadog.appsec.injector.enabled": "true",
+		},
+	})
+	require.NoError(t, err, "failed to render cluster-agent-rbac.yaml")
+
+	var clusterRole rbacv1.ClusterRole
+	for _, doc := range strings.Split(manifest, "---") {
+		if strings.Contains(doc, "kind: ClusterRole") && strings.Contains(doc, "name: datadog-cluster-agent\n") {
+			common.Unmarshal(t, doc, &clusterRole)
+			break
+		}
+	}
+	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should have rules")
+
+	var hasIngressClassesRule, hasConfigMapsRule bool
+	for _, rule := range clusterRole.Rules {
+		for _, apiGroup := range rule.APIGroups {
+			if apiGroup == "networking.k8s.io" {
+				for _, resource := range rule.Resources {
+					if resource == "ingressclasses" {
+						hasIngressClassesRule = true
+						assert.ElementsMatch(t, []string{"get", "list", "watch"}, rule.Verbs,
+							"networking.k8s.io/ingressclasses rule should have get/list/watch verbs")
+					}
+				}
+			}
+			if apiGroup == "" {
+				for _, resource := range rule.Resources {
+					if resource == "configmaps" {
+						// Check for the AppSec-specific configmaps rule (all 6 verbs)
+						if len(rule.Verbs) == 6 {
+							hasConfigMapsRule = true
+							assert.ElementsMatch(t, []string{"get", "list", "watch", "create", "update", "delete"}, rule.Verbs,
+								"empty apiGroup/configmaps appsec rule should have 6 verbs")
+						}
+					}
+				}
+			}
+		}
+	}
+	assert.True(t, hasIngressClassesRule, "expected networking.k8s.io/ingressclasses rule")
+	assert.True(t, hasConfigMapsRule, "expected empty apiGroup/configmaps rule with 6 verbs for AppSec ingress-nginx")
+}
+
+func Test_AppSecInjector_RBAC_Disabled_OmitsNginxRules(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+		},
+	})
+	require.NoError(t, err, "failed to render cluster-agent-rbac.yaml")
+
+	var clusterRole rbacv1.ClusterRole
+	for _, doc := range strings.Split(manifest, "---") {
+		if strings.Contains(doc, "kind: ClusterRole") && strings.Contains(doc, "name: datadog-cluster-agent\n") {
+			common.Unmarshal(t, doc, &clusterRole)
+			break
+		}
+	}
+	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should have rules")
+
+	for _, rule := range clusterRole.Rules {
+		for _, apiGroup := range rule.APIGroups {
+			if apiGroup == "networking.k8s.io" {
+				for _, resource := range rule.Resources {
+					assert.NotEqual(t, "ingressclasses", resource,
+						"should not have networking.k8s.io/ingressclasses rule when AppSec injector is disabled")
+				}
+			}
+			if apiGroup == "" {
+				for _, resource := range rule.Resources {
+					if resource == "configmaps" && len(rule.Verbs) == 6 {
+						assert.Fail(t, "should not have empty apiGroup/configmaps rule with 6 verbs when AppSec injector is disabled")
+					}
+				}
+			}
+		}
+	}
 }
