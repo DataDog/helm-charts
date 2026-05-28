@@ -1,9 +1,12 @@
 # Datadog changelog
 
+## 3.215.1
+
+* Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
+
 ## 3.215.0
 
 * Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
-* Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the APi server cache in the Kube Metrics Core check.
 
 ## 3.214.1
 
