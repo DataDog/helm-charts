@@ -69,7 +69,7 @@ false
   Explicit values render the block even when set to false so nil vs false is preserved.
 */}}
 {{- define "should-render-discovery-config" -}}
-{{- if or (eq (include "discovery-enabled-explicitly-set" .) "true") (eq (include "resolved-discovery-enabled" .) "true") -}}
+{{- if or (eq (include "discovery-enabled-explicitly-set" .) "true") (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled -}}
 true
 {{- else -}}
 false
@@ -659,7 +659,7 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
 true
 {{- else -}}
 false

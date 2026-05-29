@@ -1,8 +1,20 @@
 # Datadog changelog
 
-## 3.213.5
+## 3.215.1
 
-* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+* Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
+
+## 3.215.0
+
+* Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+
+## 3.214.1
+
+* Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
+
+## 3.214.0
+
+* Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
 
 ## 3.213.4
 

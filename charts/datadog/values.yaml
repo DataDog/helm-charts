@@ -184,6 +184,9 @@ datadog:
     # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
       create: true
 
+    ## Configuring this field changes the default kubernetes_state_core check configuration. Recommended for large clusters to reduce load on the API server.
+    useApiServerCache: false
+
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
     ## Disabling this field is not recommended as it results in enabling both checks, it can be useful though during the migration phase.
@@ -1168,6 +1171,10 @@ datadog:
     networkStats:
       enabled: true
 
+    # datadog.discovery.serviceMap.enabled -- (bool) Enable Discovery Service Map (restricted USM)
+    serviceMap:
+      enabled: false
+
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
@@ -2063,7 +2070,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.24
+    tag: 1.1.25
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent

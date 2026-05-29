@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.16.1
+
+* Official image `2.16.1`
+
+## 2.16.0
+
+* Official image `2.16.0`
+
 ## 2.15.7
 
 * Set default resource requests on the Worker container (`requests.cpu: 2`, `requests.memory: 4Gi`); limits remain unset by default (commented example in `values.yaml`). Installs previously on `resources: {}` will now need nodes with 2 CPU / 4Gi available — override `resources` to opt out ([#2664](https://github.com/DataDog/helm-charts/pull/2664)).

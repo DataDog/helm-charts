@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.26
+
+* Update private location image version to `1.68.0`.
+
 ## 0.17.25
 
 * Mount an `emptyDir` at `/run` on the worker pod so s6-overlay's preinit can chown its runtime directory on clusters that mount the container root read-only (OpenShift, FIPS-hardened pod security standards, `securityContext.readOnlyRootFilesystem: true`). Without this, s6 fails to start with `s6-overlay-suexec: fatal: child failed with exit code 111` because `s6-chown: fatal: unable to chown /run: Read-only file system`.

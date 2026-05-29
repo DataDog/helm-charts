@@ -8,7 +8,7 @@ metadata:
 spec:
   updateStrategy:
     rollingUpdate:
-      maxUnavailable: 5%
+      maxUnavailable: 10%
     type: RollingUpdate
   selector:
     matchLabels:
@@ -18,30 +18,7 @@ spec:
       labels:
         app: datadog-csi-driver-node-server
         admission.datadoghq.com/enabled: "false"
-        cost-center: engineering
-        team: observability
-      annotations:
-        ad.datadoghq.com/csi-node-driver.checks: |
-          {
-            "openmetrics": {
-              "init_config": {},
-              "instances": [
-                {
-                  "openmetrics_endpoint": "http://%%host%%:5000/metrics",
-                  "metrics": [{
-                    "datadog_csi_driver_node_publish_volume_attempts": "datadog_csi.driver_node_publish_volume_attempts",
-                    "datadog_csi_driver_node_unpublish_volume_attempts": "datadog_csi.driver_node_unpublish_volume_attempts"
-                    }]
-                }
-              ]
-            }
-          }
     spec:
-      securityContext:
-        fsGroup: 0
-        runAsGroup: 0
-        runAsNonRoot: false
-        runAsUser: 0
       containers:
         - name: csi-node-driver
           image: "gcr.io/datadoghq/csi-driver:1.2.2"
@@ -49,6 +26,13 @@ spec:
           securityContext:
             privileged: true
             readOnlyRootFilesystem: true
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           ports:
             - containerPort: 5000
               protocol: TCP
@@ -81,9 +65,6 @@ spec:
         - name: csi-node-driver-registrar
           image: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.0.1"
           imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: true
-            readOnlyRootFilesystem: false
           args:
             - "--csi-address=$(ADDRESS)"
             - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
