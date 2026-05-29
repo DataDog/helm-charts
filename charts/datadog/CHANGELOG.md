@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.2
+
+* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+
 ## 3.215.1
 
 * Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
