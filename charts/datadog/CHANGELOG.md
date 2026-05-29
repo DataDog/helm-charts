@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.2
+
+* Add ports defined in `datadog.otelCollector.ports` to the agent NetworkPolicy and CiliumNetworkPolicy ingress when `datadog.otelCollector.enabled` and `datadog.networkPolicy.create` are set, so OTLP traffic reaches the embedded DDOT collector on clusters that enforce NetworkPolicy.
+
 ## 3.215.1
 
 * Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
