@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1
+
+* Enforce `Kubernetes 1.25+` via `Chart.yaml` `kubeVersion` so `helm install` rejects older clusters with a clear error instead of failing later at runtime.
+* Rewrite the README Prerequisites section to reflect the chart's actual multi-cloud support (AWS / GCP / Azure / self-managed), supported ingress controllers (ALB + NGINX), and full object-storage list (S3, GCS, Azure Blob, MinIO, Ceph, any S3-compatible).
+* Fix the `image.tag` default documented in the README values table — it follows the chart's `appVersion`, not the literal string `devel`.
+* Add `azure.*` rows to the README values table so the Azure configuration surface is discoverable.
+
 ## 0.4.0
 
 * Update Docker image to `v0.1.26`.
