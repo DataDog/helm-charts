@@ -777,10 +777,43 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
+{{- else if (eq (include "datadog.otelCollector.featureGatesEnabled" .) "true") -}}
+{{- /* OTAGENT-980: v1.0.5 WorkloadAllowlist requires hostPID=true for matchingCriteria
+       on GKE Autopilot when otelCollector.featureGates is set. */ -}}
+true
 {{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  OTAGENT-980: returns "true" when the workload must match the v1.0.5 Datadog
+  WorkloadAllowlist (renamed `pointerdir` -> `datadogrun`, hostPID=true), i.e. when
+  the OTel collector is enabled with feature gates on GKE Autopilot (non-GDC).
+*/}}
+{{- define "datadog.otelCollector.featureGatesEnabled" -}}
+{{- if and .Values.providers .Values.providers.gke.autopilot (not .Values.providers.gke.gdc) .Values.datadog.otelCollector .Values.datadog.otelCollector.enabled .Values.datadog.otelCollector.featureGates -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+  OTAGENT-980: returns the volume name used for `/opt/datadog-agent/run`. v1.0.5
+  renamed it from `pointerdir` to `datadogrun` so workloads that need v1.0.5 must
+  use the new name. All other cases keep the existing names: `pointerdir` for
+  hostPath, `datadogrun` for emptyDir.
+*/}}
+{{- define "datadog.logsPointerVolumeName" -}}
+{{- if (eq (include "datadog.otelCollector.featureGatesEnabled" .) "true") -}}
+datadogrun
+{{- else if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc -}}
+pointerdir
+{{- else -}}
+datadogrun
 {{- end -}}
 {{- end -}}
 

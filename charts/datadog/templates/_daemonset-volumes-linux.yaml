@@ -238,9 +238,9 @@
 {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
+  name: {{ include "datadog.logsPointerVolumeName" . }}
 {{- else }}
-- name: datadogrun
+- name: {{ include "datadog.logsPointerVolumeName" . }}
   emptyDir: {}
 {{- end }}
 {{- if .Values.providers.gke.gdc }}

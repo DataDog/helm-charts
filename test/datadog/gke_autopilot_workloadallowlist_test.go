@@ -85,6 +85,13 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+
+				// Without featureGates the workload must match v1.0.1-v1.0.3 (which use
+				// `pointerdir` and do not require hostPID=true).
+				assert.False(t, ds.Spec.Template.Spec.HostPID, "hostPID should remain false on Autopilot without featureGates")
+				volNames := common.GetVolumeNames(ds)
+				assert.True(t, common.Contains("pointerdir", volNames), "v1.0.1-v1.0.3 expect the volume to be named `pointerdir`, got: %v", volNames)
+				assert.False(t, common.Contains("datadogrun", volNames), "`datadogrun` is reserved for the v1.0.5 path (featureGates enabled)")
 			},
 		},
 		{
@@ -135,6 +142,12 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe", "otel-agent")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+
+				// OTAGENT-980: v1.0.5 requires hostPID=true and the logs-pointer volume named "datadogrun".
+				assert.True(t, ds.Spec.Template.Spec.HostPID, "v1.0.5 matchingCriteria requires hostPID=true")
+				volNames := common.GetVolumeNames(ds)
+				assert.True(t, common.Contains("datadogrun", volNames), "v1.0.5 requires the volume to be named `datadogrun`, got: %v", volNames)
+				assert.False(t, common.Contains("pointerdir", volNames), "`pointerdir` must NOT be present when featureGates is set; v1.0.5 expects `datadogrun`")
 			},
 		},
 		{
