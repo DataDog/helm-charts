@@ -4475,6 +4475,11 @@ spec:
                         - promoted
                         - aborted
                       type: string
+                    startTaskID:
+                      type: string
+                    startedAt:
+                      format: date-time
+                      type: string
                     terminationReason:
                       type: string
                   type: object
