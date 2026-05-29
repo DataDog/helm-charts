@@ -43,17 +43,24 @@ jobs:
       - name: Run release-operator.sh
         run: ./scripts/release-operator.sh "${{ inputs.phase }}" --operator-version "${{ inputs.version }}"
 
-      - name: Commit & push
+      - name: Check for changes
+        id: changes
         run: |
-          # Attribute the commit to the github-actions[bot] account so it links
-          # to the bot's profile in the GitHub UI. 41898282 is the bot's user ID
-          # and follows GitHub's standard noreply format: <id>+<user>@users.noreply.github.com.
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No chart changes to commit"
-            exit 0
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
-          git commit -m "chore(${{ inputs.phase }}): release-operator.sh for v${{ inputs.version }}"
-          git push origin HEAD:${{ inputs.branch }}
+
+      # Commits made via the GitHub API are automatically signed by GitHub
+      - name: Commit & push (signed via GitHub API)
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: planetscale/ghcommit-action@25309d8005ac7c3bcd61d3fe19b69e0fe47dbdde # v0.2.20
+        with:
+          commit_message: "chore(${{ inputs.phase }}): release-operator.sh for v${{ inputs.version }}"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
