@@ -77,9 +77,6 @@
   name: apmsocket
 {{- end }}
 {{- if and (eq (include "should-enable-host-profiler" .) "true") (eq .Values.datadog.hostProfiler.seccomp "localhost/host-profiler") }}
-- name: host-profiler-security
-  configMap:
-    name: {{ template "datadog.fullname" . }}-host-profiler-security
 - hostPath:
     path: {{ .Values.datadog.hostProfiler.seccompRoot }}
   name: host-profiler-seccomp-root
