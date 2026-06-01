@@ -790,7 +790,6 @@ helm install <RELEASE_NAME> \
 | datadog.asm.sca.enabled | bool | `false` | Enable Application Security Management Software Composition Analysis by injecting `DD_APPSEC_SCA_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.asm.threats.enabled | bool | `false` | Enable Application Security Management Threats App & API Protection by injecting `DD_APPSEC_ENABLED=true` environment variable to all pods in the cluster |
 | datadog.autoscaling.workload.enabled | bool | `nil` | Enable Workload Autoscaling. |
-| datadog.autoscaling.workload.inPlaceVerticalScaling.enabled | bool | `false` | Enable in-place vertical scaling for Workload Autoscaling (requires Cluster Agent 7.78.0+ and Kubernetes 1.33+). |
 | datadog.celWorkloadExclude | string | `nil` | Exclude workloads using a CEL-based definition in the Agent. (Requires Agent 7.73.0+) ref: https://docs.datadoghq.com/containers/guide/container-discovery-management/ |
 | datadog.checksCardinality | string | `nil` | Sets the tag cardinality for the checks run by the Agent. |
 | datadog.checksd | object | `{}` | Provide additional custom checks as python code |
