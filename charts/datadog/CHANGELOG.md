@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.215.4
+
+* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+
 ## 3.215.3
 
 * Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) now follows `registryMigrationMode`, aligning it with Agent image pulls. Set `registryMigrationMode: ""` to revert to the previous site-specific registry, or set `clusterAgent.admissionController.containerRegistry` explicitly to override.
