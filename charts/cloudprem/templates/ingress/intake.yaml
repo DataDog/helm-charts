@@ -3,6 +3,7 @@
 {{- $ingress := .Values.intake.ingress }}
 {{- $ingressClassName := $ingress.ingressClassName }}
 {{- $signals := .Values.signals }}
+{{- $forwardHostMetadata := .Values.intake.forwardHostMetadata }}
 
 {{- if and .Values.intake.enabled $ingress.enabled -}}
 {{- if not (or $signals.logs.enabled $signals.metrics.enabled $signals.traces.enabled) -}}
@@ -84,6 +85,13 @@ spec:
                 name: {{ $fullname }}-intake
                 port:
                   name: dd-agent
+          - path: /api/v1/connections
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: connections
           {{- end }}
           {{- if $signals.logs.enabled }}
           - path: /api/v2/logs
@@ -102,6 +110,20 @@ spec:
                   name: dd-agent
           {{- end }}
           {{- if $signals.traces.enabled }}
+          - path: /api/v0.2/traces
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
+          - path: /api/v0.2/stats
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: dd-agent
           - path: /v0.4/traces
             pathType: Prefix
             backend:
@@ -130,6 +152,26 @@ spec:
                 name: {{ $fullname }}-intake
                 port:
                   name: dd-agent
+          {{- end }}
+          # Agent host metadata endpoints — pomsky-intake forwards these
+          # verbatim to the configured DD_SITE because BYOC cannot process
+          # them. Disable when the agent is dual-shipping to BYOC and SaaS
+          # to avoid duplicate host metadata writes.
+          {{- if $forwardHostMetadata.enabled }}
+          - path: /intake
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: host-meta
+          - path: /api/v1/metadata
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-intake
+                port:
+                  name: inv-meta
           {{- end }}
       {{- with $ingress.host }}
       host: {{ . }}

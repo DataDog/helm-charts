@@ -59,6 +59,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.signals.metrics.enabled }}
+          command: ["quickwit-metrics"]
+          {{- end }}
           {{- if $.Values.searcher.args }}
           args: {{- toYaml $.Values.searcher.args | nindent 10 }}
           {{- else }}
@@ -66,6 +69,14 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- if .Values.searcher.persistentVolume.enabled }}
+            {{- if .Values.searcher.persistentVolume.storageClass }}
+            - name: KUBERNETES_STORAGE_CLASS
+              value: {{ .Values.searcher.persistentVolume.storageClass | quote }}
+            {{- end }}
+            - name: KUBERNETES_STORAGE_SIZE
+              value: {{ .Values.searcher.persistentVolume.storage | quote }}
+            {{- end }}
             {{- with (include "quickwit.extraEnv" .Values.searcher.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}

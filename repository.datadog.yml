@@ -9,7 +9,6 @@ github_teams_restrictions:
   - container-ecosystems
   - container-helm-chart-maintainers
   - container-integrations
-  - container-t2
   - logs-cloudprem
   - synthetics
   - documentation
@@ -18,6 +17,7 @@ github_teams_restrictions:
   - vector
   - profiling-full-host
   - injection-platform
+  - containers-tee
 github_users_restrictions:
   - cahillsf
   - clamoriniere
