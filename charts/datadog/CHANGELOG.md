@@ -3,6 +3,9 @@
 ## 3.217.0
 
 * Add cluster-agent helm support for AppSec ingress-nginx injection: new ClusterRole rules (`networking.k8s.io/ingressclasses`, cluster-wide `configmaps`) gated by `datadog.appsec.injector.enabled`, new `datadog.appsec.injector.nginx.moduleMountPath` value, and `ingress-nginx` added to the supported `datadog.appsec.injector.proxies` list.
+
+## 3.216.0
+
 * Expose `datadog.autoscaling.workload.inPlaceVerticalScaling.enabled` to enable in-place vertical scaling for Workload Autoscaling.
 
 ## 3.215.3
