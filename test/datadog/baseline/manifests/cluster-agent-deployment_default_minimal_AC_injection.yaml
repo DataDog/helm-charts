@@ -1051,6 +1051,14 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - security.openshift.io
     resourceNames:
       - datadog-cluster-agent
@@ -1817,7 +1825,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: gcr.io/datadoghq
+              value: registry.datadoghq.com
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_ENABLED
               value: "true"
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_CLUSTER_AGENT_ENABLED

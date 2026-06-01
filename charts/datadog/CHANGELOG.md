@@ -1,8 +1,12 @@
 # Datadog changelog
 
+## 3.215.3
+
+* Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) now follows `registryMigrationMode`, aligning it with Agent image pulls. Set `registryMigrationMode: ""` to revert to the previous site-specific registry, or set `clusterAgent.admissionController.containerRegistry` explicitly to override.
+
 ## 3.215.2
 
-* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+* Grant the cluster-agent `get`/`list`/`watch` on `csidrivers.storage.k8s.io` so the admission controller can auto-detect the Datadog CSI driver for SSI library injection. The rule is rendered whenever `clusterAgent.admissionController.enabled` is `true`.
 
 ## 3.215.1
 
