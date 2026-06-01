@@ -274,6 +274,9 @@ rules:
 - apiGroups: [""]
   resources: ["replicationcontrollers"]
   verbs: ["get"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["csidrivers"]
+  verbs: ["get", "list", "watch"]
 {{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
 - apiGroups: [""]
   resources: ["pods/exec"]
