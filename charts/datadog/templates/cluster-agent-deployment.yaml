@@ -484,6 +484,10 @@ spec:
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          {{- if ((((.Values.datadog.autoscaling).workload).inPlaceVerticalScaling).enabled) }}
+          - name: DD_AUTOSCALING_WORKLOAD_IN_PLACE_VERTICAL_SCALING_ENABLED
+            value: "true"
+          {{- end }}
           {{- end }}
           {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
           - name: DD_AUTOSCALING_CLUSTER_ENABLED

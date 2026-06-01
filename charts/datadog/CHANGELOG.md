@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.216.0
+
+* Expose `datadog.autoscaling.workload.inPlaceVerticalScaling.enabled` to enable in-place vertical scaling for Workload Autoscaling.
+
 ## 3.215.3
 
 * Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) now follows `registryMigrationMode`, aligning it with Agent image pulls. Set `registryMigrationMode: ""` to revert to the previous site-specific registry, or set `clusterAgent.admissionController.containerRegistry` explicitly to override.
