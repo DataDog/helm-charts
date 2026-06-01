@@ -719,19 +719,20 @@ datadog:
       # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
       enabled: false
 
-      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway)
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway, ingress-nginx)
       autoDetect: true
 
       # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
       mode: ""
 
-      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway"
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway", "ingress-nginx"
       # When autoDetect is true, detected proxies are added to this list
       # When autoDetect is false, only proxies in this list are enabled
       proxies: []
       # - envoy-gateway: Configures Envoy Gateway resources for AppSec injection
       # - istio: Watches Istio-managed Kubernetes Gateway API GatewayClasses for AppSec injection
       # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
+      # - ingress-nginx: Watches IngressClass resources to discover ingress-nginx controllers and injects the nginx-datadog module via an init container
 
       sidecar:
         # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
@@ -772,6 +773,10 @@ datadog:
           name: ""
           # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
           namespace: ""
+
+      nginx:
+        # datadog.appsec.injector.nginx.moduleMountPath -- Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir
+        moduleMountPath: "/modules_mount"
 
   ## OTLP ingest related configuration
   otlp:
