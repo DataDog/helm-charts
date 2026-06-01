@@ -18,6 +18,7 @@ github_teams_restrictions:
   - vector
   - profiling-full-host
   - injection-platform
+  - containers-tee
 github_users_restrictions:
   - cahillsf
   - clamoriniere
