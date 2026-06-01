@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.0
+
+* Set the `csi.datadoghq.com/apm-enabled` annotation on the `k8s.csi.datadoghq.com` `CSIDriver` resource based on `apm.enabled`. The cluster-agent admission controller reads this annotation (via the `workloadmeta-kubeapiserver` CSIDriver collector) to decide whether SSI library injection can use CSI mode for this driver.
+
 ## 0.13.0
 
 * Add `driver.resources` value to configure resource requests and limits for the CSI driver container.
