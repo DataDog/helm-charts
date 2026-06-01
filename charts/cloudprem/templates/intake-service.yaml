@@ -37,14 +37,24 @@ spec:
       targetPort: otlp-http
       protocol: TCP
       name: otlp-http
+    {{- if .Values.signals.metrics.enabled }}
     - port: 8585
       targetPort: connections
       protocol: TCP
       name: connections
+    {{- end }}
     - port: 8686
       targetPort: api
       protocol: TCP
       name: api
+    - port: 8787
+      targetPort: host-meta
+      protocol: TCP
+      name: host-meta
+    - port: 8788
+      targetPort: inv-meta
+      protocol: TCP
+      name: inv-meta
   selector:
     {{- include "quickwit.intake.selectorLabels" . | nindent 4 }}
 {{- end }}
