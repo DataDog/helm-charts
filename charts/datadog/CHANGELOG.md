@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.215.4
+
+* Update `fips.image.tag` to `1.1.26` fixing CVEs and updating packages.
+
+
 ## 3.215.3
 
 * Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) now follows `registryMigrationMode`, aligning it with Agent image pulls. Set `registryMigrationMode: ""` to revert to the previous site-specific registry, or set `clusterAgent.admissionController.containerRegistry` explicitly to override.
