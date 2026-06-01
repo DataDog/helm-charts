@@ -484,6 +484,10 @@ spec:
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          {{- if ((((.Values.datadog.autoscaling).workload).inPlaceVerticalScaling).enabled) }}
+          - name: DD_AUTOSCALING_WORKLOAD_IN_PLACE_VERTICAL_SCALING_ENABLED
+            value: "true"
+          {{- end }}
           {{- end }}
           {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
           - name: DD_AUTOSCALING_CLUSTER_ENABLED
@@ -540,6 +544,8 @@ spec:
             value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.cpu | quote }}
           - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_REQUESTS_MEMORY
             value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.memory | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_NGINX_MODULE_MOUNT_PATH
+            value: {{ .Values.datadog.appsec.injector.nginx.moduleMountPath | quote }}
           {{- if .Values.datadog.appsec.injector.sidecar.resources.limits.cpu }}
           - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_LIMITS_CPU
             value: {{ .Values.datadog.appsec.injector.sidecar.resources.limits.cpu | quote }}
