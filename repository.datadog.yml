@@ -9,7 +9,6 @@ github_teams_restrictions:
   - container-ecosystems
   - container-helm-chart-maintainers
   - container-integrations
-  - container-t2
   - logs-cloudprem
   - synthetics
   - documentation
