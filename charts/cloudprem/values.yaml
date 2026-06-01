@@ -21,6 +21,11 @@ datadog:
   ## If set, this parameter takes precedence over `datadog.apiKey`.
   apiKeyExistingSecret:
 
+  # datadog.byocTelemetry.enabled -- Export Datadog BYOC service logs and metrics to Datadog for product observability and improvement.
+  # Customer logs, metrics, and traces ingested through the intake are not exported.
+  byocTelemetry:
+    enabled: true
+
 # Which observability signals this deployment accepts. Gates the intake ingress
 # path groups; the binary uses the same flags to create default indexes on startup.
 # At least one signal must be enabled when `intake.ingress.enabled` is true.
@@ -828,6 +833,20 @@ intake:
     # host: intake.example.com
     tls: []
     extraAnnotations: {}
+
+  # Forwarding of the agent's host metadata payloads (POST /intake and
+  # POST /api/v1/metadata) to the configured DD_SITE. BYOC cannot process
+  # these payloads — they must land in the SaaS intake to populate host
+  # tags and the host map / infra list.
+  #
+  # Disable when the agent is dual-shipping to BYOC and SaaS (e.g. demos,
+  # POCs) to avoid duplicate writes from both the agent's SaaS path and
+  # the pomsky-intake forwarder.
+  #
+  # Only affects ingress routing; pomsky-intake always listens on the
+  # forwarder ports.
+  forwardHostMetadata:
+    enabled: true
 
 # Deploy jobs to bootstrap creation of indexes and sources for quickwit clusters
 bootstrap:
