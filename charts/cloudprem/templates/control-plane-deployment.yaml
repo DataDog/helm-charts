@@ -53,6 +53,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.signals.metrics.enabled }}
+          command: ["quickwit-metrics"]
+          {{- end }}
           {{- if $.Values.control_plane.args }}
           args: {{- toYaml $.Values.control_plane.args | nindent 10 }}
           {{- else }}

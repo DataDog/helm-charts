@@ -59,6 +59,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.signals.metrics.enabled }}
+          command: ["quickwit-metrics"]
+          {{- end }}
           {{- if $.Values.indexer.args }}
           args: {{- toYaml $.Values.indexer.args | nindent 10 }}
           {{- else }}
@@ -66,6 +69,14 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- if .Values.indexer.persistentVolume.enabled }}
+            {{- if .Values.indexer.persistentVolume.storageClass }}
+            - name: KUBERNETES_STORAGE_CLASS
+              value: {{ .Values.indexer.persistentVolume.storageClass | quote }}
+            {{- end }}
+            - name: KUBERNETES_STORAGE_SIZE
+              value: {{ .Values.indexer.persistentVolume.storage | quote }}
+            {{- end }}
             {{- if .Values.pipelinesConfig }}
             - name: "QW_PIPELINE_CONFIG_PATH"
               value: "/quickwit/pipelines_config.json"
