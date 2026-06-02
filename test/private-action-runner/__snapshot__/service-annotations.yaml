@@ -31,8 +31,7 @@ stringData:
     actionsAllowlist:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
-    httpTimeoutSeconds: 30  
-
+    httpTimeoutSeconds: 30
 ---
 # Source: private-action-runner/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -48,7 +47,6 @@ rules:
   verbs:
   - get
   - list
-
 ---
 # Source: private-action-runner/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -64,7 +62,6 @@ subjects:
   - kind: ServiceAccount
     name: scripts-test-private-action-runner
     namespace: datadog-agent
-
 ---
 # Source: private-action-runner/templates/service.yaml
 apiVersion: v1
@@ -83,7 +80,6 @@ spec:
     - name: http
       port: 9016
       targetPort: 9016
-
 ---
 # Source: private-action-runner/templates/deployment.yaml
 apiVersion: apps/v1
