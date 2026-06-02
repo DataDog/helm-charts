@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.224.0
+
+* Add `agents.containers.agent.command` value to override the default `agent run` entrypoint of the agent container. When unset, the agent container continues to run `agent run` as before. Setting this value on GKE Autopilot or GDC is rejected at template render time to avoid breaking the Datadog WorkloadAllowlist constraint.
+
 ## 3.223.0
 
 * [CONTP-1710] Install DatadogInstrumentation CRD and add RBAC permissions when controller is enabled ([#2717](https://github.com/DataDog/helm-charts/pull/2717)).

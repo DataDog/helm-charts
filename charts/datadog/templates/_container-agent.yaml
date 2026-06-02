@@ -6,7 +6,15 @@
   lifecycle:
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
+  {{- if and .Values.agents.containers.agent.command (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+  {{- fail "agents.containers.agent.command override is not supported on GKE Autopilot or GDC. The Datadog WorkloadAllowlist requires the agent container command to be exactly [\"agent\", \"run\"]." }}
+  {{- end }}
+  {{- if .Values.agents.containers.agent.command }}
+  command:
+{{ toYaml .Values.agents.containers.agent.command | indent 4 }}
+  {{- else }}
   command: ["agent", "run"]
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined") "mknod" .Values.datadog.gpuMonitoring.enabled) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
