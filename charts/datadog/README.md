@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.214.0](https://img.shields.io/badge/Version-3.214.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.217.1](https://img.shields.io/badge/Version-3.217.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -32,7 +32,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.20.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.10.1 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.13.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.22.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
@@ -769,14 +769,15 @@ helm install <RELEASE_NAME> \
 | datadog.apm.useSocketVolume | bool | `false` | Enable APM over Unix Domain Socket DEPRECATED. Use datadog.apm.socketEnabled instead |
 | datadog.appKey | string | `nil` | Datadog APP key required to use metricsProvider |
 | datadog.appKeyExistingSecret | string | `nil` | Use existing Secret which stores APP key instead of creating a new one. The value should be set with the `app-key` key inside the secret. |
-| datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway) |
+| datadog.appsec.injector.autoDetect | bool | `true` | Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway, ingress-nginx) |
 | datadog.appsec.injector.enabled | bool | `false` | Enable App & API Protection on your cluster ingress usage across all your cluster at once |
 | datadog.appsec.injector.mode | string | `""` | Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly. |
+| datadog.appsec.injector.nginx.moduleMountPath | string | `"/modules_mount"` | Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir |
 | datadog.appsec.injector.processor.address | string | `""` | Address of the AppSec processor service Defaults to `{service.name}.{service.namespace}.svc` |
 | datadog.appsec.injector.processor.port | int | `443` | Port of the AppSec processor service (defaults to 443) |
 | datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |
 | datadog.appsec.injector.processor.service.namespace | string | `""` | Namespace where the AppSec processor service is deployed |
-| datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
+| datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway", "ingress-nginx" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
 | datadog.appsec.injector.sidecar.bodyParsingSizeLimit | int | `0` | Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely. |
 | datadog.appsec.injector.sidecar.healthPort | int | `8081` | Health check port for the AppSec sidecar processor |
 | datadog.appsec.injector.sidecar.image | string | `"ghcr.io/datadog/dd-trace-go/service-extensions-callout"` | Container image for the AppSec sidecar processor |
@@ -817,6 +818,7 @@ helm install <RELEASE_NAME> \
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
+| datadog.discovery.serviceMap.enabled | bool | `false` | Enable Discovery Service Map (restricted USM) |
 | datadog.dockerSocketPath | string | `nil` | Path to the docker socket |
 | datadog.dogstatsd.hostSocketPath | string | `"/var/run/datadog"` | Host path to the DogStatsD socket |
 | datadog.dogstatsd.nonLocalTraffic | bool | `true` | Enable this to make each node accept non-local statsd traffic (from outside of the pod) |
@@ -861,6 +863,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.namespaces | list | `[]` | Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces. # When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole. # Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole. |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
+| datadog.kubeStateMetricsCore.useApiServerCache | bool | `false` |  |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |
 | datadog.kubeStateMetricsEnabled | bool | `false` | If true, deploys the kube-state-metrics deployment |
 | datadog.kubeStateMetricsNetworkPolicy.create | bool | `false` | If true, create a NetworkPolicy for kube state metrics |
@@ -913,6 +916,8 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
+| datadog.orchestratorExplorer.rbac.create | bool | `true` | If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions |
+| datadog.orchestratorExplorer.useClusterCheckRunners | bool | `false` | For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent. |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
 | datadog.osReleasePath | string | `"/etc/os-release"` | Specify the path to your os-release file |
 | datadog.otelCollector.config | string | `nil` | OTel collector configuration |
@@ -1037,7 +1042,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.24"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.25"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |

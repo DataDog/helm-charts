@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+* Update Docker image to `v0.1.28`.
+* Enable `datadog.byocTelemetry.enabled` by default.
+* Expose pomsky-intake host metadata forwarders. New container/service ports `host-meta` (8787) and `inv-meta` (8788) for the agent's `POST /intake` and `POST /api/v1/metadata` payloads, plus ingress rules routing those paths to the new ports. Gated by `intake.forwardHostMetadata.enabled` (default `true`); disable when the agent is dual-shipping to BYOC and SaaS to avoid duplicate host metadata writes.
+
 ## 0.4.0
 
 * Update Docker image to `v0.1.26`.

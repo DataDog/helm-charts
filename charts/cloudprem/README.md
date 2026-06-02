@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.26](https://img.shields.io/badge/AppVersion-v0.1.26-informational?style=flat-square)
+![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.28](https://img.shields.io/badge/AppVersion-v0.1.28-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 

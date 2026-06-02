@@ -24,6 +24,13 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Default Quickwit cluster ID.
+*/}}
+{{- define "quickwit.defaultClusterID" -}}
+{{- printf "%s-%s" .Release.Namespace (include "quickwit.fullname" .) -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "quickwit.chart" -}}
@@ -58,6 +65,17 @@ Selector labels
 {{- define "quickwit.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "quickwit.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Datadog BYOC telemetry intake host.
+*/}}
+{{- define "quickwit.byocTelemetryHost" -}}
+{{- if has .Values.datadog.site (list "datadoghq.com" "datadoghq.eu" "ddog-gov.com") -}}
+{{- printf "app.%s" .Values.datadog.site -}}
+{{- else -}}
+{{- .Values.datadog.site -}}
+{{- end -}}
 {{- end }}
 
 {{/*
@@ -124,11 +142,19 @@ Intake container ports
 - name: otlp-http
   containerPort: 8384
   protocol: TCP
+{{- if .Values.signals.metrics.enabled }}
 - name: connections
   containerPort: 8585
   protocol: TCP
+{{- end }}
 - name: api
   containerPort: 8686
+  protocol: TCP
+- name: host-meta
+  containerPort: 8787
+  protocol: TCP
+- name: inv-meta
+  containerPort: 8788
   protocol: TCP
 {{- end }}
 
@@ -197,6 +223,11 @@ Quickwit environment
     resourceFieldRef:
       containerName: {{ .Chart.Name }}
       resource: requests.cpu
+- name: QW_NUM_CPUS
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: requests.cpu
 - name: KUBERNETES_REQUESTS_MEMORY
   valueFrom:
     resourceFieldRef:
@@ -206,7 +237,7 @@ Quickwit environment
   value: {{ .Values.configLocation }}
 {{- if not .Values.config.cluster_id }}
 - name: QW_CLUSTER_ID
-  value: {{ .Release.Namespace }}-{{ include "quickwit.fullname" . }}
+  value: {{ include "quickwit.defaultClusterID" . }}
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
@@ -248,6 +279,10 @@ Quickwit environment
       name: {{ .Values.azure.storageAccount.accessKeySecretRef.name }}
       key: {{ .Values.azure.storageAccount.accessKeySecretRef.key }}
 {{- end}}
+{{- if .Values.signals.metrics.enabled }}
+- name: QW_ENABLE_DATAFUSION_ENDPOINT
+  value: "true"
+{{- end }}
 - name: CP_DOGSTATSD_SERVER_HOST
 {{- if .Values.dogstatsdServer.host.value }}
   value: {{ .Values.dogstatsdServer.host.value | quote }}
@@ -276,14 +311,34 @@ Quickwit environment
       {{- end }}
       key: api-key
 {{- end }}
-{{- if .Values.tracingEnabled }}
+{{- if or .Values.datadog.byocTelemetry.enabled .Values.tracingEnabled }}
 - name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
   value: "true"
-- name: OTEL_EXPORTER_OTLP_ENDPOINT
+{{- end }}
+{{- if .Values.datadog.byocTelemetry.enabled }}
+{{- $byocTelemetryHost := include "quickwit.byocTelemetryHost" . }}
+{{- $clusterID := .Values.config.cluster_id | default (include "quickwit.defaultClusterID" .) }}
+- name: BYOC_TELEMETRY_ENABLED
+  value: "true"
+- name: OTEL_RESOURCE_ATTRIBUTES
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID)" $clusterID | quote }}
+- name: OTEL_EXPORTER_OTLP_LOGS_PROTOCOL
+  value: "http/protobuf"
+- name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
+  value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/logs" $byocTelemetryHost | quote }}
+- name: OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
+  value: "http/protobuf"
+- name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+  value: "delta"
+- name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+  value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/metrics" $byocTelemetryHost | quote }}
+{{- end }}
+{{- if .Values.tracingEnabled }}
+- name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
   value: http://{{ include "quickwit.fullname" $ }}-indexer:7281
-- name: OTEL_EXPORTER_OTLP_PROTOCOL
+- name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
   value: "grpc"
-- name: OTEL_EXPORTER_OTLP_TIMEOUT
+- name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
   value: "10"
 - name: IMAGE_NAME
   value: {{ .Values.image.repository }}

@@ -184,6 +184,9 @@ datadog:
     # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
       create: true
 
+    ## Configuring this field changes the default kubernetes_state_core check configuration. Recommended for large clusters to reduce load on the API server.
+    useApiServerCache: false
+
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
     ## Disabling this field is not recommended as it results in enabling both checks, it can be useful though during the migration phase.
@@ -716,19 +719,20 @@ datadog:
       # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
       enabled: false
 
-      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway)
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway, ingress-nginx)
       autoDetect: true
 
       # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
       mode: ""
 
-      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway"
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway", "ingress-nginx"
       # When autoDetect is true, detected proxies are added to this list
       # When autoDetect is false, only proxies in this list are enabled
       proxies: []
       # - envoy-gateway: Configures Envoy Gateway resources for AppSec injection
       # - istio: Watches Istio-managed Kubernetes Gateway API GatewayClasses for AppSec injection
       # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
+      # - ingress-nginx: Watches IngressClass resources to discover ingress-nginx controllers and injects the nginx-datadog module via an init container
 
       sidecar:
         # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
@@ -769,6 +773,10 @@ datadog:
           name: ""
           # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
           namespace: ""
+
+      nginx:
+        # datadog.appsec.injector.nginx.moduleMountPath -- Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir
+        moduleMountPath: "/modules_mount"
 
   ## OTLP ingest related configuration
   otlp:
@@ -1084,6 +1092,16 @@ datadog:
     #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
     customResources: []
 
+    rbac:
+    # datadog.orchestratorExplorer.rbac.create -- If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions
+      create: true
+
+    # datadog.orchestratorExplorer.useClusterCheckRunners -- For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent.
+
+    ## When enabled, the orchestrator explorer RBAC is bound to the Cluster Checks Runner ServiceAccount instead of the Cluster Agent.
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
+    useClusterCheckRunners: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
@@ -1157,6 +1175,10 @@ datadog:
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
       enabled: true
+
+    # datadog.discovery.serviceMap.enabled -- (bool) Enable Discovery Service Map (restricted USM)
+    serviceMap:
+      enabled: false
 
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
@@ -2053,7 +2075,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.24
+    tag: 1.1.25
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.14.0
+
+* Set the `csi.datadoghq.com/apm-enabled` annotation on the `k8s.csi.datadoghq.com` `CSIDriver` resource based on `apm.enabled`. The cluster-agent admission controller reads this annotation (via the `workloadmeta-kubeapiserver` CSIDriver collector) to decide whether SSI library injection can use CSI mode for this driver.
+
+## 0.13.0
+
+* Add `driver.resources` value to configure resource requests and limits for the CSI driver container.
+
+## 0.12.0
+
+* Add `labels` value to configure labels on CSI driver daemonset pods.
+
 ## 0.11.0
 
 * Registry allow list is now configured via `global.apmRegistryAllowList` in the parent `datadog` chart. When set, the CSI driver enforces the list via `DD_REGISTRY_ALLOW_LIST` and the admission controller enforces it via `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST`. Both layers must be satisfied for injection to proceed.

@@ -1,8 +1,40 @@
 # Datadog changelog
 
+## 3.217.1
+
+* Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
+
+## 3.217.0
+
+* Add cluster-agent helm support for AppSec ingress-nginx injection: new ClusterRole rules (`networking.k8s.io/ingressclasses`, cluster-wide `configmaps`) gated by `datadog.appsec.injector.enabled`, new `datadog.appsec.injector.nginx.moduleMountPath` value, and `ingress-nginx` added to the supported `datadog.appsec.injector.proxies` list.
+
+## 3.216.0
+
+* Expose `datadog.autoscaling.workload.inPlaceVerticalScaling.enabled` to enable in-place vertical scaling for Workload Autoscaling.
+
+## 3.215.3
+
+* Admission controller registry (`DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY`) now follows `registryMigrationMode`, aligning it with Agent image pulls. Set `registryMigrationMode: ""` to revert to the previous site-specific registry, or set `clusterAgent.admissionController.containerRegistry` explicitly to override.
+
+## 3.215.2
+
+* Grant the cluster-agent `get`/`list`/`watch` on `csidrivers.storage.k8s.io` so the admission controller can auto-detect the Datadog CSI driver for SSI library injection. The rule is rendered whenever `clusterAgent.admissionController.enabled` is `true`.
+
+## 3.215.1
+
+* Add `datadog.kubeStateMetricsCore.useApiServerCache` to enable the use of the API server cache in the Kube Metrics Core check.
+
+## 3.215.0
+
+* Add `datadog.discovery.serviceMap.enabled` configuration to control Discovery Service Map
+
+## 3.214.1
+
+* Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
+
 ## 3.214.0
 
-* Tbavelier/operator helm autopilot alignment ([#2674](https://github.com/DataDog/helm-charts/pull/2674)).
+* Update datadog-csi-driver chart dependency version to support configuring labels and resources requests and limits on csi driver node server pods.
 
 ## 3.213.4
 
