@@ -11,5 +11,6 @@ spec:
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.1.yaml
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.2.yaml
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.3.yaml
+  - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml
   - Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.5.yaml
 {{- end }}
