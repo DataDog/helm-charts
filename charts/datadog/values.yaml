@@ -2322,6 +2322,14 @@ agents:
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+      # agents.containers.agent.command -- Override the default `agent run` entrypoint for the agent container.
+      # Useful for wrapping the agent in a shell entrypoint (e.g. to set environment variables based on
+      # node-level information before `exec`-ing the agent). When unset, the container runs `agent run`.
+      # Not supported on GKE Autopilot or GDC: the Datadog WorkloadAllowlist requires the agent container
+      # command to be exactly `["agent", "run"]` on those providers, so setting this value with
+      # `providers.gke.autopilot=true` or `providers.gke.gdc=true` fails at template render time.
+      command: []
+
     privateActionRunner:
       # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
       env: []
