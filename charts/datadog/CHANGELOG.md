@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.217.1
+## 3.217.2
 
 * Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
 
