@@ -6,6 +6,7 @@
 {{- end }}
 {{- if .Values.signals.metrics.enabled }}
   {{- $_ := set $signalConfig "metrics_endpoint" (printf "%s/api/datadog/v1/byoc/metrics" $indexer) }}
+  {{- $_ := set $signalConfig "sketches_endpoint" (printf "%s/api/datadog/v1/byoc/sketches" $indexer) }}
 {{- end }}
 {{- if .Values.signals.traces.enabled }}
   {{- $_ := set $signalConfig "traces_endpoint" (printf "%s/api/datadog/v1/byoc/traces" $indexer) }}
