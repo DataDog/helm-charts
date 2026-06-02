@@ -2,6 +2,10 @@
 
 ## 3.217.2
 
+* Update `fips.image.tag` to `1.1.26` fixing CVEs and updating packages.
+
+## 3.217.1
+
 * Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
 
 ## 3.217.0
@@ -11,10 +15,6 @@
 ## 3.216.0
 
 * Expose `datadog.autoscaling.workload.inPlaceVerticalScaling.enabled` to enable in-place vertical scaling for Workload Autoscaling.
-
-## 3.215.4
-
-* Update `fips.image.tag` to `1.1.26` fixing CVEs and updating packages.
 
 ## 3.215.3
 
