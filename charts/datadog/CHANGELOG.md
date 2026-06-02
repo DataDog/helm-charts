@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.218.0
+
+* Include v1.0.5 GKE Autopilot Allowlist: operator and otelCollector feature gates support ([#2674](https://github.com/DataDog/helm-charts/pull/2674)).
+
 ## 3.217.1
 
 * Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
