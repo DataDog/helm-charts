@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.217.2
+
+* Update `fips.image.tag` to `1.1.26` fixing CVEs and updating packages.
+
 ## 3.217.1
 
 * Add Cluster Check Dispatching option for the Orchestrator Check ([#2606](https://github.com/DataDog/helm-charts/pull/2606)).
