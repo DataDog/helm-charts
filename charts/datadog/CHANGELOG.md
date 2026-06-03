@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.217.3
+
+* Preserve the floating `latest` tag for the standalone DDOT Collector image when `datadog.otelCollector.useStandaloneImage=true` and the Agent image is configured as `latest`, `latest-jmx`, or `latest` with `agents.image.tagSuffix=jmx`.
+
 ## 3.217.2
 
 * Update `fips.image.tag` to `1.1.26` fixing CVEs and updating packages.
