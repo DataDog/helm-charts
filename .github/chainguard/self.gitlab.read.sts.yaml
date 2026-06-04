@@ -4,7 +4,7 @@ subject_pattern: "project_path:DataDog/.*"
 
 claim_pattern:
   project_path: "DataDog/helm-charts"
-  ref: "*"
+  ref: ".+"
   ref_protected: "true"
 permissions:
   contents: read
