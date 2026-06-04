@@ -11,15 +11,15 @@ import (
 
 	"github.com/DataDog/helm-charts/test/common"
 
-	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/scenarios/gcp/gke"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
+	gcpkubernetes "github.com/DataDog/datadog-agent/test/e2e-framework/testing/provisioners/gcp/kubernetes"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/e2e"
 )
 
 type gkeAutopilotSystemProbeSuite struct {
@@ -40,15 +40,24 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
-		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-		gcpkubernetes.WithAgentOptions(
-			kubernetesagentparams.WithGKEAutopilot(),
-			kubernetesagentparams.WithHelmRepoURL(""),
-			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-			kubernetesagentparams.WithHelmValues(helmValues),
-		),
-		gcpkubernetes.WithExtraConfigParams(config))))
+	// Override the default stack name to keep the Pulumi stack name short enough
+	// (<= 63 chars) for GCP resource labels. e2e-framework's DefaultResourceTags
+	// adds a `stack` label valued with Ctx().Stack(), and GCP rejects label
+	// values > 63 bytes. The default `e2e-<TypeName>-<hash>` combined with the
+	// CI namePrefix `ci-${CI_PIPELINE_ID}-${CI_JOB_ID}-` overflows this limit
+	// for this suite. Remove this override once the upstream fix lands (cf.
+	// pending PR on DataDog/datadog-agent to truncate GCP label values).
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{},
+		e2e.WithStackName("gke-ap-sysprobe"),
+		e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
+			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+			gcpkubernetes.WithAgentOptions(
+				kubernetesagentparams.WithGKEAutopilot(),
+				kubernetesagentparams.WithHelmRepoURL(""),
+				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+				kubernetesagentparams.WithHelmValues(helmValues),
+			),
+			gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
